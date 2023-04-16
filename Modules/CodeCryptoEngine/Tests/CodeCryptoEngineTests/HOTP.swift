@@ -74,6 +74,11 @@ struct HOTP {
         return value % digits.moduloValue
     }
 
+    func verify(counter: UInt64, value: UInt32) throws -> Bool {
+        let expectedValue = try code(counter: counter)
+        return value == expectedValue
+    }
+
     private func truncatedHMAC(hmacCode: Data) throws -> UInt32 {
         let offset = Int((hmacCode.last ?? 0x00) & 0x0F)
         let truncatedHMAC = Array(hmacCode[offset ... offset + 3]).reversed()
@@ -91,6 +96,23 @@ final class HOTPTests: XCTestCase {
     func test_bytesGenerationLittleEndian() {
         let data = Data(hex: "ffffffee")
         XCTAssertEqual(data.asType(UInt32.self), 0xEEFF_FFFF)
+    }
+
+    func test_verify_trueIfEqualToGeneratedSeed() throws {
+        let data = Data(hex: "0")
+        let sut = makeSUT(secret: data)
+
+        let actualCode = try sut.code(counter: 1234)
+        try XCTAssertTrue(sut.verify(counter: 1234, value: actualCode))
+    }
+
+    func test_verify_falseIfNotEqualToGeneratedSeed() throws {
+        let data = Data(hex: "0")
+        let sut = makeSUT(secret: data)
+
+        let actualCode = try sut.code(counter: 1234)
+        let notActualCode = actualCode + 1
+        try XCTAssertFalse(sut.verify(counter: 1234, value: notActualCode))
     }
 
     func test_code_generatesSHA1SixDigitCodesForZeroSeed() throws {
