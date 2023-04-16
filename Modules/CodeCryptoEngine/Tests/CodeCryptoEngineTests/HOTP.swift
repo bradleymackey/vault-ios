@@ -2,11 +2,6 @@ import XCTest
 @testable import CodeCryptoEngine
 
 final class HOTPTests: XCTestCase {
-    func test_bytesGenerationLittleEndian() {
-        let data = Data(hex: "ffffffee")
-        XCTAssertEqual(data.asType(UInt32.self), 0xEEFF_FFFF)
-    }
-
     func test_verify_trueIfEqualToGeneratedSeed() throws {
         let sut = makeSUT(secret: zeroSecret)
 
