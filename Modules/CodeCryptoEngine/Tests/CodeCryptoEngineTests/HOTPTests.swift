@@ -185,8 +185,7 @@ final class HOTPTests: XCTestCase {
     }
 
     private var rfcSecret: Data {
-        // 12345678901234567890 in Hex
-        Data(hex: "3132333435363738393031323334353637383930")
+        Data(byteString: "12345678901234567890")
     }
 
     private var zeroSecret: Data {
