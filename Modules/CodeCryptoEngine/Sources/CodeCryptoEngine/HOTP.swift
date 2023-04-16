@@ -1,7 +1,9 @@
 import CryptoSwift
 import Foundation
 
-/// "HMAC-based one-time password", a counter-based generator.
+/// # HMAC-based one-time password
+///
+/// HMAC-based one-time password (HOTP) is a one-time password (OTP) algorithm based on HMAC.
 ///
 /// https://en.wikipedia.org/wiki/HMAC-based_one-time_password
 public struct HOTP {
@@ -29,12 +31,18 @@ public struct HOTP {
         hmac = HMAC(key: secret.bytes, variant: algorithm.hmacVariant)
     }
 
+    /// Generate the HOTP code using the current counter value.
+    ///
+    /// - Throws: only if an internal authentication error occurs.
     public func code(counter: UInt64) throws -> UInt32 {
         let code = try hmacCode(counter: counter)
         let value = try truncatedHMAC(hmacCode: code)
         return value % digits.moduloValue
     }
 
+    /// Verify that the provided `value` is expected for the given `counter` value.
+    ///
+    /// - Throws: only if an an internal authentication error occurs.
     public func verify(counter: UInt64, value: UInt32) throws -> Bool {
         let expectedValue = try code(counter: counter)
         return value == expectedValue

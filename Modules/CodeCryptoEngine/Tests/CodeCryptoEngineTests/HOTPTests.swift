@@ -184,6 +184,9 @@ final class HOTPTests: XCTestCase {
         HOTP(secret: secret, digits: digits, algorithm: algorithm)
     }
 
+    /// A secret seed used in the RFC.
+    ///
+    /// We can use this to validate against known-good values.
     private var rfcSecret: Data {
         Data(byteString: "12345678901234567890")
     }
