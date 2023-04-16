@@ -27,6 +27,19 @@ extension Data {
 struct HOTP {
     let secret: Data
     let digits: Digits
+    let algorithm: Algorithm
+    private let hmac: HMAC
+
+    enum Algorithm {
+        case sha1
+
+        var hmacVariant: HMAC.Variant {
+            switch self {
+            case .sha1:
+                return .sha1
+            }
+        }
+    }
 
     enum Digits: Int {
         case six = 6
@@ -42,9 +55,11 @@ struct HOTP {
 
     struct CodeGenerationError: Error {}
 
-    init(secret: Data, digits: Digits = .six) {
+    init(secret: Data, digits: Digits = .six, algorithm: Algorithm = .sha1) {
         self.secret = secret
         self.digits = digits
+        self.algorithm = algorithm
+        hmac = HMAC(key: secret.bytes, variant: algorithm.hmacVariant)
     }
 
     func code(counter: UInt64) throws -> UInt32 {
@@ -60,7 +75,6 @@ struct HOTP {
     }
 
     private func hmacCode(counter: UInt64) throws -> Data {
-        let hmac = HMAC(key: secret.bytes, variant: .sha1)
         let counterBytes = counter.bigEndian.data.bytes
         let bytes = try hmac.authenticate(counterBytes)
         return Data(bytes)
