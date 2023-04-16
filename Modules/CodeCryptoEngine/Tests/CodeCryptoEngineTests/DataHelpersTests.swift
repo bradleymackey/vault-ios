@@ -14,4 +14,9 @@ final class DataHelpersTests: XCTestCase {
         let number: UInt64 = 1
         XCTAssertEqual(number.data.bytes, [1, 0, 0, 0, 0, 0, 0, 0])
     }
+
+    func test_byteString_interpretsUTF8StringValues() {
+        let value = Data(byteString: "1234")
+        XCTAssertEqual(value.bytes, [49, 50, 51, 52])
+    }
 }

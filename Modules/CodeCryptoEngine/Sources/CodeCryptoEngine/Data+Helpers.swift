@@ -13,4 +13,8 @@ extension Data {
             ptr.load(as: T.self)
         }
     }
+
+    public init(byteString: String) {
+        self.init(byteString.utf8)
+    }
 }
