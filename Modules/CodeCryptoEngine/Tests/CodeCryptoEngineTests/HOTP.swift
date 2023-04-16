@@ -53,8 +53,6 @@ struct HOTP {
         }
     }
 
-    struct CodeGenerationError: Error {}
-
     init(secret: Data, digits: Digits = .six, algorithm: Algorithm = .sha1) {
         self.secret = secret
         self.digits = digits
