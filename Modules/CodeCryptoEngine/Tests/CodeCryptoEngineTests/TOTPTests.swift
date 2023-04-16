@@ -3,6 +3,22 @@ import CryptoSwift
 import XCTest
 
 final class TOTPTests: XCTestCase {
+    func test_verify_matchesExpected() throws {
+        let hotp = HOTP(secret: anySecret())
+        let sut = TOTP(hotp: hotp)
+
+        let expected = try sut.code(epochSeconds: 10)
+        try XCTAssertTrue(sut.verify(epochSeconds: 10, value: expected))
+    }
+
+    func test_verify_doesNotMatchExpected() throws {
+        let hotp = HOTP(secret: anySecret())
+        let sut = TOTP(hotp: hotp)
+
+        let expected = try sut.code(epochSeconds: 10)
+        try XCTAssertFalse(sut.verify(epochSeconds: 10, value: expected + 1))
+    }
+
     func test_code_rfcSHA1Example() throws {
         let secret = Data(byteString: "12345678901234567890")
         let hotp = HOTP(secret: secret, digits: .eight, algorithm: .sha1)
@@ -40,5 +56,11 @@ final class TOTPTests: XCTestCase {
         try XCTAssertEqual(sut.code(epochSeconds: 1_234_567_890), 93_441_116)
         try XCTAssertEqual(sut.code(epochSeconds: 2_000_000_000), 38_618_901)
         try XCTAssertEqual(sut.code(epochSeconds: 20_000_000_000), 47_863_826)
+    }
+
+    // MARK: - Helpers
+
+    private func anySecret() -> Data {
+        Data(hex: "123")
     }
 }

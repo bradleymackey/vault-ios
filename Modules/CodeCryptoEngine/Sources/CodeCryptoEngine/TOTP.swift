@@ -21,4 +21,9 @@ public struct TOTP {
         let counter = epochSeconds / timeInterval
         return try hotp.code(counter: counter)
     }
+
+    public func verify(epochSeconds: UInt64, value: UInt32) throws -> Bool {
+        let expected = try code(epochSeconds: epochSeconds)
+        return expected == value
+    }
 }
