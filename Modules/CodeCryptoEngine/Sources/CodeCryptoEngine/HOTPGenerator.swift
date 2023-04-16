@@ -6,7 +6,7 @@ import Foundation
 /// HMAC-based one-time password (HOTP) is a one-time password (OTP) algorithm based on HMAC.
 ///
 /// https://en.wikipedia.org/wiki/HMAC-based_one-time_password
-public struct HOTP {
+public struct HOTPGenerator {
     public let secret: Data
     public let digits: Digits
     public let algorithm: Algorithm
@@ -61,7 +61,7 @@ public struct HOTP {
     }
 }
 
-extension HOTP.Algorithm {
+extension HOTPGenerator.Algorithm {
     var hmacVariant: HMAC.Variant {
         switch self {
         case .sha1:
@@ -74,7 +74,7 @@ extension HOTP.Algorithm {
     }
 }
 
-extension HOTP.Digits {
+extension HOTPGenerator.Digits {
     var floatValue: Float {
         Float(rawValue)
     }

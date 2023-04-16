@@ -2,7 +2,7 @@ import CodeCryptoEngine
 import CryptoSwift
 import XCTest
 
-final class HOTPTests: XCTestCase {
+final class HOTPGeneratorTests: XCTestCase {
     func test_verify_trueIfEqualToGeneratedSeed() throws {
         let sut = makeSUT(secret: zeroSecret)
 
@@ -180,8 +180,8 @@ final class HOTPTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(secret: Data, digits: HOTP.Digits = .six, algorithm: HOTP.Algorithm = .sha1) -> HOTP {
-        HOTP(secret: secret, digits: digits, algorithm: algorithm)
+    private func makeSUT(secret: Data, digits: HOTPGenerator.Digits = .six, algorithm: HOTPGenerator.Algorithm = .sha1) -> HOTPGenerator {
+        HOTPGenerator(secret: secret, digits: digits, algorithm: algorithm)
     }
 
     /// A secret seed used in the RFC.

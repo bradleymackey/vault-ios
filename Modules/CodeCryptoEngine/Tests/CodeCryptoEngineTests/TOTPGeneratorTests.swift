@@ -2,18 +2,18 @@ import CodeCryptoEngine
 import CryptoSwift
 import XCTest
 
-final class TOTPTests: XCTestCase {
+final class TOTPGeneratorTests: XCTestCase {
     func test_verify_matchesExpected() throws {
-        let hotp = HOTP(secret: anySecret())
-        let sut = TOTP(hotp: hotp)
+        let hotp = HOTPGenerator(secret: anySecret())
+        let sut = TOTPGenerator(generator: hotp)
 
         let expected = try sut.code(epochSeconds: 10)
         try XCTAssertTrue(sut.verify(epochSeconds: 10, value: expected))
     }
 
     func test_verify_doesNotMatchExpected() throws {
-        let hotp = HOTP(secret: anySecret())
-        let sut = TOTP(hotp: hotp)
+        let hotp = HOTPGenerator(secret: anySecret())
+        let sut = TOTPGenerator(generator: hotp)
 
         let expected = try sut.code(epochSeconds: 10)
         try XCTAssertFalse(sut.verify(epochSeconds: 10, value: expected + 1))
@@ -21,8 +21,8 @@ final class TOTPTests: XCTestCase {
 
     func test_code_rfcSHA1Example() throws {
         let secret = Data(byteString: "12345678901234567890")
-        let hotp = HOTP(secret: secret, digits: .eight, algorithm: .sha1)
-        let sut = TOTP(hotp: hotp, timeInterval: 30)
+        let hotp = HOTPGenerator(secret: secret, digits: .eight, algorithm: .sha1)
+        let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         try XCTAssertEqual(sut.code(epochSeconds: 59), 94_287_082)
         try XCTAssertEqual(sut.code(epochSeconds: 1_111_111_109), 07_081_804)
@@ -34,8 +34,8 @@ final class TOTPTests: XCTestCase {
 
     func test_code_rfcSHA256Example() {
         let secret = Data(byteString: "12345678901234567890123456789012")
-        let hotp = HOTP(secret: secret, digits: .eight, algorithm: .sha256)
-        let sut = TOTP(hotp: hotp, timeInterval: 30)
+        let hotp = HOTPGenerator(secret: secret, digits: .eight, algorithm: .sha256)
+        let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         try XCTAssertEqual(sut.code(epochSeconds: 59), 46_119_246)
         try XCTAssertEqual(sut.code(epochSeconds: 1_111_111_109), 68_084_774)
@@ -47,8 +47,8 @@ final class TOTPTests: XCTestCase {
 
     func test_code_rfcSHA512Example() {
         let secret = Data(byteString: "1234567890123456789012345678901234567890123456789012345678901234")
-        let hotp = HOTP(secret: secret, digits: .eight, algorithm: .sha512)
-        let sut = TOTP(hotp: hotp, timeInterval: 30)
+        let hotp = HOTPGenerator(secret: secret, digits: .eight, algorithm: .sha512)
+        let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         try XCTAssertEqual(sut.code(epochSeconds: 59), 90_693_936)
         try XCTAssertEqual(sut.code(epochSeconds: 1_111_111_109), 25_091_201)
