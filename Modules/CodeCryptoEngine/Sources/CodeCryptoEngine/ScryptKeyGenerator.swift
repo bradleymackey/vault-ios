@@ -3,7 +3,30 @@ import Foundation
 
 /// A key generator, generating a 256-bit key using Scrypt.
 public struct ScryptKeyGenerator {
-    public struct Parameters {
+    private let engine: Scrypt
+    public let parameters: Parameters
+
+    public init(password: Data, salt: Data, parameters: Parameters) throws {
+        self.parameters = parameters
+        engine = try Scrypt(
+            password: password.bytes,
+            salt: salt.bytes,
+            dkLen: parameters.outputLengthBytes,
+            N: parameters.costFactor,
+            r: parameters.blockSizeFactor,
+            p: parameters.parallelizationFactor
+        )
+    }
+
+    public func key() throws -> Data {
+        try Data(engine.calculate())
+    }
+}
+
+// MARK: - Parameters
+
+public extension ScryptKeyGenerator {
+    struct Parameters {
         /// **dkLen**
         ///
         /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer satisfying dkLen ≤ (232− 1) * hLen.)
@@ -28,26 +51,7 @@ public struct ScryptKeyGenerator {
             self.parallelizationFactor = parallelizationFactor
         }
     }
-
-    private let engine: Scrypt
-
-    public init(password: Data, salt: Data, parameters: Parameters) throws {
-        engine = try Scrypt(
-            password: password.bytes,
-            salt: salt.bytes,
-            dkLen: parameters.outputLengthBytes,
-            N: parameters.costFactor,
-            r: parameters.blockSizeFactor,
-            p: parameters.parallelizationFactor
-        )
-    }
-
-    public func key() throws -> Data {
-        try Data(engine.calculate())
-    }
 }
-
-// MARK: - Parameters
 
 public extension ScryptKeyGenerator.Parameters {
     static var aes256Strong: Self {
