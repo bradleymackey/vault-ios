@@ -1,6 +1,6 @@
-@testable import CodeCryptoEngine
 import CryptoSwift
 import XCTest
+@testable import CodeCryptoEngine
 
 extension UInt64 {
     var data: Data {
