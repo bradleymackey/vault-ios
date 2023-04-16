@@ -1,5 +1,6 @@
+import CodeCryptoEngine
+import CryptoSwift
 import XCTest
-@testable import CodeCryptoEngine
 
 final class HOTPTests: XCTestCase {
     func test_verify_trueIfEqualToGeneratedSeed() throws {
