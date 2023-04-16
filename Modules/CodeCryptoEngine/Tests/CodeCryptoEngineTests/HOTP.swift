@@ -85,7 +85,7 @@ final class HOTPTests: XCTestCase {
         XCTAssertEqual(data.asType(UInt32.self), 0xEEFF_FFFF)
     }
 
-    func test_generateCode_generatesSixDigitCodesForZeroSeed() throws {
+    func test_code_generatesSixDigitCodesForZeroSeed() throws {
         let data = Data(hex: "0")
         let sut = makeSUT(secret: data, digits: .six)
 
@@ -95,7 +95,7 @@ final class HOTPTests: XCTestCase {
         try XCTAssertEqual(sut.code(counter: .max), 566_304)
     }
 
-    func test_generateCode_generatesSixDigitCodesForPredeterminedSeed() throws {
+    func test_code_generatesSixDigitCodesForPredeterminedSeed() throws {
         // 12345678901234567890 in Hex
         let data = Data(hex: "3132333435363738393031323334353637383930")
         let sut = makeSUT(secret: data, digits: .six)
