@@ -99,16 +99,14 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_verify_trueIfEqualToGeneratedSeed() throws {
-        let data = Data(hex: "0")
-        let sut = makeSUT(secret: data)
+        let sut = makeSUT(secret: zeroSecret)
 
         let actualCode = try sut.code(counter: 1234)
         try XCTAssertTrue(sut.verify(counter: 1234, value: actualCode))
     }
 
     func test_verify_falseIfNotEqualToGeneratedSeed() throws {
-        let data = Data(hex: "0")
-        let sut = makeSUT(secret: data)
+        let sut = makeSUT(secret: zeroSecret)
 
         let actualCode = try sut.code(counter: 1234)
         let notActualCode = actualCode + 1
@@ -116,8 +114,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA1SixDigitCodesForZeroSeed() throws {
-        let data = Data(hex: "0")
-        let sut = makeSUT(secret: data, digits: .six, algorithm: .sha1)
+        let sut = makeSUT(secret: zeroSecret, digits: .six, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 328_482)
         try XCTAssertEqual(sut.code(counter: 1), 812_658)
@@ -133,9 +130,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA1SixDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .six, algorithm: .sha1)
+        let sut = makeSUT(secret: rfcSecret, digits: .six, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 755_224)
         try XCTAssertEqual(sut.code(counter: 1), 287_082)
@@ -151,9 +146,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA1SevenDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .seven, algorithm: .sha1)
+        let sut = makeSUT(secret: rfcSecret, digits: .seven, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_755_224)
         try XCTAssertEqual(sut.code(counter: 1), 4_287_082)
@@ -169,9 +162,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA1EightDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .eight, algorithm: .sha1)
+        let sut = makeSUT(secret: rfcSecret, digits: .eight, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 84_755_224)
         try XCTAssertEqual(sut.code(counter: 1), 94_287_082)
@@ -187,9 +178,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA256SixDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .six, algorithm: .sha256)
+        let sut = makeSUT(secret: rfcSecret, digits: .six, algorithm: .sha256)
 
         try XCTAssertEqual(sut.code(counter: 0), 875_740)
         try XCTAssertEqual(sut.code(counter: 1), 247_374)
@@ -205,9 +194,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA256SevenDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .seven, algorithm: .sha256)
+        let sut = makeSUT(secret: rfcSecret, digits: .seven, algorithm: .sha256)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_875_740)
         try XCTAssertEqual(sut.code(counter: 1), 2_247_374)
@@ -223,9 +210,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA256EightDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .eight, algorithm: .sha256)
+        let sut = makeSUT(secret: rfcSecret, digits: .eight, algorithm: .sha256)
 
         try XCTAssertEqual(sut.code(counter: 0), 74_875_740)
         try XCTAssertEqual(sut.code(counter: 1), 32_247_374)
@@ -241,9 +226,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA512SixDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .six, algorithm: .sha512)
+        let sut = makeSUT(secret: rfcSecret, digits: .six, algorithm: .sha512)
 
         try XCTAssertEqual(sut.code(counter: 0), 125_165)
         try XCTAssertEqual(sut.code(counter: 1), 342_147)
@@ -259,9 +242,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA512SevenDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .seven, algorithm: .sha512)
+        let sut = makeSUT(secret: rfcSecret, digits: .seven, algorithm: .sha512)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_125_165)
         try XCTAssertEqual(sut.code(counter: 1), 9_342_147)
@@ -277,9 +258,7 @@ final class HOTPTests: XCTestCase {
     }
 
     func test_code_generatesSHA512EightDigitCodes() throws {
-        // 12345678901234567890 in Hex
-        let data = Data(hex: "3132333435363738393031323334353637383930")
-        let sut = makeSUT(secret: data, digits: .eight, algorithm: .sha512)
+        let sut = makeSUT(secret: rfcSecret, digits: .eight, algorithm: .sha512)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_125_165)
         try XCTAssertEqual(sut.code(counter: 1), 69_342_147)
@@ -298,5 +277,14 @@ final class HOTPTests: XCTestCase {
 
     private func makeSUT(secret: Data, digits: HOTP.Digits = .six, algorithm: HOTP.Algorithm = .sha1) -> HOTP {
         HOTP(secret: secret, digits: digits, algorithm: algorithm)
+    }
+
+    private var rfcSecret: Data {
+        // 12345678901234567890 in Hex
+        Data(hex: "3132333435363738393031323334353637383930")
+    }
+
+    private var zeroSecret: Data {
+        Data(hex: "0")
     }
 }
