@@ -11,7 +11,7 @@ final class AESDecryptorTests: XCTestCase {
         let tag = Data(hex: "anytag")
 
         let sut = makeSUT(key: key, iv: iv)
-        let decrypted = try sut.decrypt(data: ciphertext, tag: tag)
+        let decrypted = try sut.decrypt(ciphertext: ciphertext, tag: tag)
 
         XCTAssertEqual(decrypted, plaintext)
     }
@@ -24,7 +24,7 @@ final class AESDecryptorTests: XCTestCase {
         let tag = Data(hex: "0x4d5c2af327cd64a62cf35abd2ba6fab4")
 
         let sut = makeSUT(key: key, iv: iv)
-        let decrypted = try sut.decrypt(data: ciphertext, tag: tag)
+        let decrypted = try sut.decrypt(ciphertext: ciphertext, tag: tag)
 
         XCTAssertEqual(decrypted, plaintext)
     }
@@ -36,7 +36,7 @@ final class AESDecryptorTests: XCTestCase {
         let tag = Data(hex: "0x4d5c2af327cd64a62cf35abd2ba6fab5") // tag is slightly off
 
         let sut = makeSUT(key: key, iv: iv)
-        XCTAssertThrowsError(try sut.decrypt(data: ciphertext, tag: tag))
+        XCTAssertThrowsError(try sut.decrypt(ciphertext: ciphertext, tag: tag))
     }
 
     // MARK: - Helpers
