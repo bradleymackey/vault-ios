@@ -14,31 +14,12 @@ public struct HOTP {
         case sha1
         case sha256
         case sha512
-
-        var hmacVariant: HMAC.Variant {
-            switch self {
-            case .sha1:
-                return .sha1
-            case .sha256:
-                return .sha2(.sha256)
-            case .sha512:
-                return .sha2(.sha512)
-            }
-        }
     }
 
     public enum Digits: Int {
         case six = 6
         case seven = 7
         case eight = 8
-
-        var floatValue: Float {
-            Float(rawValue)
-        }
-
-        var moduloValue: UInt32 {
-            UInt32(pow(10, floatValue))
-        }
     }
 
     public init(secret: Data, digits: Digits = .six, algorithm: Algorithm = .sha1) {
@@ -69,5 +50,28 @@ public struct HOTP {
         let counterBytes = counter.bigEndian.data.bytes
         let bytes = try hmac.authenticate(counterBytes)
         return Data(bytes)
+    }
+}
+
+extension HOTP.Algorithm {
+    var hmacVariant: HMAC.Variant {
+        switch self {
+        case .sha1:
+            return .sha1
+        case .sha256:
+            return .sha2(.sha256)
+        case .sha512:
+            return .sha2(.sha512)
+        }
+    }
+}
+
+extension HOTP.Digits {
+    var floatValue: Float {
+        Float(rawValue)
+    }
+
+    var moduloValue: UInt32 {
+        UInt32(pow(10, floatValue))
     }
 }
