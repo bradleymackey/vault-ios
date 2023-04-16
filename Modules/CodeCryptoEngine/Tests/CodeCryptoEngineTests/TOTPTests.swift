@@ -2,21 +2,6 @@ import CodeCryptoEngine
 import CryptoSwift
 import XCTest
 
-struct TOTP {
-    let hotp: HOTP
-    let timeInterval: UInt64
-
-    init(hotp: HOTP, timeInterval: UInt64 = 30) {
-        self.hotp = hotp
-        self.timeInterval = timeInterval
-    }
-
-    func code(epochSeconds: UInt64) throws -> UInt32 {
-        let counter = epochSeconds / timeInterval
-        return try hotp.code(counter: counter)
-    }
-}
-
 final class TOTPTests: XCTestCase {
     func test_code_rfcSHA1Example() throws {
         let secret = Data(byteString: "12345678901234567890")
