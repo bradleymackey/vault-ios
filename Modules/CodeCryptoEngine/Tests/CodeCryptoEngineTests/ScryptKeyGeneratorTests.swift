@@ -31,20 +31,22 @@ final class KeyGeneratorV1Tests: XCTestCase {
         XCTAssertThrowsError(try makeSUT(password: anyData(), salt: Data(), parameters: .fastForTesting))
     }
 
-    func test_key_generatesValidKeyWithSalt() throws {
+    func test_key_generatesValidKeyWithSalt() async throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
 
         let sut = try makeSUT(password: password, salt: salt, parameters: .fastForTesting)
-        try XCTAssertEqual(sut.key(), Data(hex: "14a1ba9b9236df39"))
+        let key = try await sut.key()
+        XCTAssertEqual(key, Data(hex: "14a1ba9b9236df39"))
     }
 
-    func test_key_generatesValidKeyWithEmptyPassword() throws {
+    func test_key_generatesValidKeyWithEmptyPassword() async throws {
         let password = Data()
         let salt = Data(hex: "ABCDEF")
 
         let sut = try makeSUT(password: password, salt: salt, parameters: .fastForTesting)
-        try XCTAssertEqual(sut.key(), Data(hex: "fa09cf2f564fb137"))
+        let key = try await sut.key()
+        XCTAssertEqual(key, Data(hex: "fa09cf2f564fb137"))
     }
 
     // MARK: - Helpers

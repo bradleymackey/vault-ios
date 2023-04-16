@@ -18,8 +18,14 @@ public struct ScryptKeyGenerator {
         )
     }
 
-    public func key() throws -> Data {
-        try Data(engine.calculate())
+    public func key() async throws -> Data {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .utility).async {
+                continuation.resume(with: Result {
+                    try Data(engine.calculate())
+                })
+            }
+        }
     }
 }
 
