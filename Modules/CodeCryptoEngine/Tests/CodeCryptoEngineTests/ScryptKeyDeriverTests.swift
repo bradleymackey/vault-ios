@@ -2,29 +2,29 @@ import CodeCryptoEngine
 import CryptoSwift
 import XCTest
 
-final class KeyGeneratorV1Tests: XCTestCase {
+final class ScryptKeyDeriverTests: XCTestCase {
     func test_init_doesNotThrowForValidParameters() {
-        let params = ScryptKeyGenerator.Parameters(
+        let params = ScryptKeyDeriver.Parameters(
             outputLengthBytes: 32,
             costFactor: 16384,
             blockSizeFactor: 8,
             parallelizationFactor: 1
         )
-        XCTAssertNoThrow(try ScryptKeyGenerator(password: anyData(), salt: anyData(), parameters: params))
+        XCTAssertNoThrow(try ScryptKeyDeriver(password: anyData(), salt: anyData(), parameters: params))
     }
 
     func test_init_doesNotThrowForAES256StrongVariant() {
-        XCTAssertNoThrow(try ScryptKeyGenerator(password: anyData(), salt: anyData(), parameters: .aes256Strong))
+        XCTAssertNoThrow(try ScryptKeyDeriver(password: anyData(), salt: anyData(), parameters: .aes256Strong))
     }
 
     func test_init_throwsForInvalidParameters() {
-        let params = ScryptKeyGenerator.Parameters(
+        let params = ScryptKeyDeriver.Parameters(
             outputLengthBytes: 32,
             costFactor: 16385,
             blockSizeFactor: 8,
             parallelizationFactor: 1
         )
-        XCTAssertThrowsError(try ScryptKeyGenerator(password: anyData(), salt: anyData(), parameters: params))
+        XCTAssertThrowsError(try ScryptKeyDeriver(password: anyData(), salt: anyData(), parameters: params))
     }
 
     func test_init_throwsIfMissingSalt() {
@@ -61,8 +61,8 @@ final class KeyGeneratorV1Tests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(password: Data = anyData(), salt: Data = anyData(), parameters: ScryptKeyGenerator.Parameters = .fastForTesting) throws -> ScryptKeyGenerator {
-        try ScryptKeyGenerator(password: password, salt: salt, parameters: parameters)
+    private func makeSUT(password: Data = anyData(), salt: Data = anyData(), parameters: ScryptKeyDeriver.Parameters = .fastForTesting) throws -> ScryptKeyDeriver {
+        try ScryptKeyDeriver(password: password, salt: salt, parameters: parameters)
     }
 }
 
@@ -70,7 +70,7 @@ func anyData() -> Data {
     Data(hex: "FF")
 }
 
-extension ScryptKeyGenerator.Parameters {
+extension ScryptKeyDeriver.Parameters {
     static var fastForTesting: Self {
         .init(
             outputLengthBytes: 8,

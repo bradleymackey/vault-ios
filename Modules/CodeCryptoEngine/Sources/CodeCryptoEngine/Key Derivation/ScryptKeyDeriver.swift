@@ -1,8 +1,10 @@
 import CryptoSwift
 import Foundation
 
-/// A key generator, generating a 256-bit key using Scrypt.
-public struct ScryptKeyGenerator: KeyGenerator {
+/// Derives keys using the *scrypt* algorithm.
+///
+/// https://en.wikipedia.org/wiki/Scrypt
+public struct ScryptKeyDeriver: KeyDeriver {
     private let engine: Scrypt
     public let parameters: Parameters
 
@@ -35,7 +37,7 @@ public struct ScryptKeyGenerator: KeyGenerator {
 
 // MARK: - Parameters
 
-public extension ScryptKeyGenerator {
+public extension ScryptKeyDeriver {
     struct Parameters {
         /// **dkLen**
         ///
@@ -63,7 +65,7 @@ public extension ScryptKeyGenerator {
     }
 }
 
-public extension ScryptKeyGenerator.Parameters {
+public extension ScryptKeyDeriver.Parameters {
     static var aes256Strong: Self {
         .init(
             outputLengthBytes: 32,
