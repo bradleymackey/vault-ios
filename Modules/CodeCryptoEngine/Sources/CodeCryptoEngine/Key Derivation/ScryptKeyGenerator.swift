@@ -18,6 +18,10 @@ public struct ScryptKeyGenerator {
         )
     }
 
+    /// Generate a the key using the provided data and parameters.
+    ///
+    /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
+    /// current thread.
     public func key() async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .utility).async {
@@ -45,7 +49,7 @@ public extension ScryptKeyGenerator {
         ///
         /// blocksize parameter, which fine-tunes sequential memory read size and performance. (8 is commonly used)
         public var blockSizeFactor: Int
-        ///
+        /// **p**
         ///
         /// Parallelization parameter. (1 .. 232-1 * hLen/MFlen)
         public var parallelizationFactor: Int
