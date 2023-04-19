@@ -2,7 +2,7 @@ import CryptoSwift
 import Foundation
 
 /// A key generator, generating a 256-bit key using Scrypt.
-public struct ScryptKeyGenerator {
+public struct ScryptKeyGenerator: KeyGenerator {
     private let engine: Scrypt
     public let parameters: Parameters
 
