@@ -49,6 +49,16 @@ final class KeyGeneratorV1Tests: XCTestCase {
         XCTAssertEqual(key, Data(hex: "fa09cf2f564fb137"))
     }
 
+    func test_key_generatesTheSameKeyMultipleTimes() async throws {
+        let password = Data()
+        let salt = Data(hex: "ABCDEF")
+
+        let sut = try makeSUT(password: password, salt: salt, parameters: .fastForTesting)
+        let expected = Data(hex: "fa09cf2f564fb137")
+        let keys = [try await sut.key(), try await sut.key(), try await sut.key()]
+        XCTAssertEqual(keys, [expected, expected, expected])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(password: Data = anyData(), salt: Data = anyData(), parameters: ScryptKeyGenerator.Parameters = .fastForTesting) throws -> ScryptKeyGenerator {
