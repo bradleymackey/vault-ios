@@ -5,7 +5,7 @@ import Foundation
 /// Time-based one-time password (TOTP) is a computer algorithm that generates a one-time password (OTP) that uses the current time as a source of uniqueness.
 ///
 /// https://en.wikipedia.org/wiki/Time-based_one-time_password
-public struct TOTPGenerator {
+public struct TOTPGenerator: OTPGenerator {
     private let generator: HOTPGenerator
     public let timeInterval: UInt64
 
