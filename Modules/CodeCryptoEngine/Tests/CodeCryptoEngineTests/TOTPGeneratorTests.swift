@@ -4,7 +4,7 @@ import XCTest
 
 final class TOTPGeneratorTests: XCTestCase {
     func test_verify_matchesExpected() throws {
-        let hotp = HOTPGenerator(secret: anySecret())
+        let hotp = HOTPGenerator(secret: anyData())
         let sut = TOTPGenerator(generator: hotp)
 
         let expected = try sut.code(epochSeconds: 10)
@@ -12,7 +12,7 @@ final class TOTPGeneratorTests: XCTestCase {
     }
 
     func test_verify_doesNotMatchExpected() throws {
-        let hotp = HOTPGenerator(secret: anySecret())
+        let hotp = HOTPGenerator(secret: anyData())
         let sut = TOTPGenerator(generator: hotp)
 
         let expected = try sut.code(epochSeconds: 10)
@@ -56,11 +56,5 @@ final class TOTPGeneratorTests: XCTestCase {
         try XCTAssertEqual(sut.code(epochSeconds: 1_234_567_890), 93_441_116)
         try XCTAssertEqual(sut.code(epochSeconds: 2_000_000_000), 38_618_901)
         try XCTAssertEqual(sut.code(epochSeconds: 20_000_000_000), 47_863_826)
-    }
-
-    // MARK: - Helpers
-
-    private func anySecret() -> Data {
-        Data(hex: "123")
     }
 }
