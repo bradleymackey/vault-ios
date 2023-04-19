@@ -5,7 +5,9 @@ import Foundation
 ///
 /// Ciphertext and the authentication tag are used to decrypt and validate the message.
 /// No padding is used for AES-GCM.
-public struct AESDecryptor {
+public struct AESGCMDecryptor: Decryptor {
+    public typealias Message = AESGCMEncryptedMessage
+
     private let key: Data
     private let iv: Data
 
@@ -16,11 +18,11 @@ public struct AESDecryptor {
 
     /// - Parameter ciphertext: The encrypted message.
     /// - Parameter tag: AES-GCM authentication tag that verifies the message
-    public func decrypt(ciphertext: Data, tag: Data) throws -> Data {
-        let gcm = GCM(iv: iv.bytes, authenticationTag: tag.bytes, mode: .detached)
+    public func decrypt(message: Message) throws -> Data {
+        let gcm = GCM(iv: iv.bytes, authenticationTag: message.authenticationTag.bytes, mode: .detached)
         let aes = try AES(key: key.bytes, blockMode: gcm, padding: .noPadding)
-        if ciphertext.isEmpty { return Data() }
-        let plaintextBytes = try aes.decrypt(ciphertext.bytes)
+        if message.ciphertext.isEmpty { return Data() }
+        let plaintextBytes = try aes.decrypt(message.ciphertext.bytes)
         return Data(plaintextBytes)
     }
 }

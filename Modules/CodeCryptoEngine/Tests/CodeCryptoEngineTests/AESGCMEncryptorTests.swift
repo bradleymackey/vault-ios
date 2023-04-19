@@ -3,7 +3,7 @@ import CryptoSwift
 import Foundation
 import XCTest
 
-final class AESEncryptorTests: XCTestCase {
+final class AESGCMEncryptorTests: XCTestCase {
     func test_encrypt_throwsForInvalidKeyLength() throws {
         let key = Data("a".utf8)
         let sut = makeSUT(key: key)
@@ -37,7 +37,7 @@ final class AESEncryptorTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(key: Data = anyData(), iv: Data = anyData()) -> AESEncryptor {
-        AESEncryptor(key: key, iv: iv)
+    private func makeSUT(key: Data = anyData(), iv: Data = anyData()) -> AESGCMEncryptor {
+        AESGCMEncryptor(key: key, iv: iv)
     }
 }
