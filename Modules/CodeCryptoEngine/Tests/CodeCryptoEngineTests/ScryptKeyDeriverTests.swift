@@ -66,10 +66,6 @@ final class ScryptKeyDeriverTests: XCTestCase {
     }
 }
 
-func anyData() -> Data {
-    Data(hex: "FF")
-}
-
 extension ScryptKeyDeriver.Parameters {
     static var fastForTesting: Self {
         .init(
