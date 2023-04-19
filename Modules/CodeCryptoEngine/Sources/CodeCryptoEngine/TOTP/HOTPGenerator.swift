@@ -7,11 +7,6 @@ import Foundation
 ///
 /// https://en.wikipedia.org/wiki/HMAC-based_one-time_password
 public struct HOTPGenerator {
-    public let secret: Data
-    public let digits: Digits
-    public let algorithm: Algorithm
-    private let hmac: HMAC
-
     public enum Algorithm {
         case sha1
         case sha256
@@ -23,6 +18,11 @@ public struct HOTPGenerator {
         case seven = 7
         case eight = 8
     }
+
+    public let secret: Data
+    public let digits: Digits
+    public let algorithm: Algorithm
+    private let hmac: HMAC
 
     public init(secret: Data, digits: Digits = .six, algorithm: Algorithm = .sha1) {
         self.secret = secret
@@ -47,7 +47,11 @@ public struct HOTPGenerator {
         let expectedValue = try code(counter: counter)
         return value == expectedValue
     }
+}
 
+// MARK: - Helpers
+
+extension HOTPGenerator {
     private func truncatedHMAC(hmacCode: Data) throws -> UInt32 {
         let offset = Int((hmacCode.last ?? 0x00) & 0x0F)
         let truncatedHMAC = Array(hmacCode[offset ... offset + 3])
@@ -64,7 +68,7 @@ public struct HOTPGenerator {
     }
 }
 
-extension HOTPGenerator.Algorithm {
+private extension HOTPGenerator.Algorithm {
     var hmacVariant: HMAC.Variant {
         switch self {
         case .sha1:
@@ -77,7 +81,7 @@ extension HOTPGenerator.Algorithm {
     }
 }
 
-extension HOTPGenerator.Digits {
+private extension HOTPGenerator.Digits {
     var floatValue: Float {
         Float(rawValue)
     }
