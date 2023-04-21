@@ -10,6 +10,7 @@ extension Collection {
 
 struct BlockIterator: IteratorProtocol {
     typealias Configuration = BlockExporter.Configuration
+    typealias BlockContext = BlockExporter.BlockContext
 
     let config: Configuration
     var blockNumber = 0
@@ -23,7 +24,8 @@ struct BlockIterator: IteratorProtocol {
 
         guard blockRange.isNotEmpty else { return nil }
 
-        let header = config.blockHeader?(blockNumber) ?? Data()
+        let context = BlockContext(blockNumber: blockNumber)
+        let header = config.blockHeader?(context) ?? Data()
         return header + payload.subdata(in: blockRange)
     }
 
@@ -49,8 +51,13 @@ extension BlockExporter {
         var payload: Data
         /// Maximum size of the block, not including the header.
         var maxBlockSize: Int
-        /// Header included in every block, parameterized by block number, starting at 0.
-        var blockHeader: ((Int) -> Data)?
+        /// Header included in every block, given the current block context.
+        var blockHeader: ((BlockContext) -> Data)?
+    }
+
+    struct BlockContext {
+        /// The number block that this will become, starting from 0.
+        var blockNumber: Int
     }
 }
 
@@ -113,7 +120,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(
             payload: payload,
             maxBlockSize: 8,
-            blockHeader: { blockNumber in byte(int: blockNumber) + baseHeader }
+            blockHeader: { context in byte(int: context.blockNumber) + baseHeader }
         )
         let sut = BlockExporter(config: config)
 
@@ -130,7 +137,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(
             payload: payload,
             maxBlockSize: chunkSize,
-            blockHeader: { blockNumber in byte(int: blockNumber) + baseHeader }
+            blockHeader: { context in byte(int: context.blockNumber) + baseHeader }
         )
         let sut = BlockExporter(config: config)
 
