@@ -14,18 +14,23 @@ struct BlockIterator: IteratorProtocol {
 
     let config: Configuration
     var blockNumber = 0
+    var offsetHeaderBytes = 0
 
     mutating func next() -> Data? {
         defer { blockNumber += 1 }
 
-        let start = min(blockSize * blockNumber, payload.count)
-        let end = min(start + blockSize, payload.count)
+        let context = BlockContext(blockNumber: blockNumber)
+        let header = config.blockHeader?(context) ?? Data()
+        let nextHeaderSize = header.count
+
+        defer { offsetHeaderBytes += nextHeaderSize }
+
+        let start = min(blockSize * blockNumber - offsetHeaderBytes, payload.count)
+        let end = min(start + blockSize - nextHeaderSize, payload.count)
         let blockRange = start ..< end
 
         guard blockRange.isNotEmpty else { return nil }
 
-        let context = BlockContext(blockNumber: blockNumber)
-        let header = config.blockHeader?(context) ?? Data()
         return header + payload.subdata(in: blockRange)
     }
 
@@ -49,7 +54,7 @@ struct BlockExporter: Sequence {
 extension BlockExporter {
     struct Configuration {
         var payload: Data
-        /// Maximum size of the block, not including the header.
+        /// Maximum size of the block, **including** the header.
         var maxBlockSize: Int
         /// Header included in every block, given the current block context.
         var blockHeader: ((BlockContext) -> Data)?
@@ -114,12 +119,12 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
-    func test_singleBlock_returnsWithHeader() {
-        let baseHeader = Data(hex: "DEADBEEF")
+    func test_singleBlock_returnsWithHeaderMatchingBlockSize() {
+        let baseHeader = Data(hex: "DEADBEEF") // 4 bytes
         let payload = anyData(bytes: 4)
         let config = BlockExporter.Configuration(
             payload: payload,
-            maxBlockSize: 8,
+            maxBlockSize: baseHeader.count + payload.count + 1, // single extra counter byte in the header
             blockHeader: { context in byte(int: context.blockNumber) + baseHeader }
         )
         let sut = BlockExporter(config: config)
@@ -127,7 +132,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [byte(int: 0) + baseHeader + payload])
     }
 
-    func test_multipleBlocks_returnsWithHeader() {
+    func test_multipleBlocks_returnsWithHeaderMatchingBlockSize() {
         let baseHeader = Data(hex: "DEADBEEF")
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
@@ -136,7 +141,7 @@ final class BlockExporterTests: XCTestCase {
         let payload = block1 + block2 + block3
         let config = BlockExporter.Configuration(
             payload: payload,
-            maxBlockSize: chunkSize,
+            maxBlockSize: chunkSize + baseHeader.count + 1, // single extra counter byte in the header
             blockHeader: { context in byte(int: context.blockNumber) + baseHeader }
         )
         let sut = BlockExporter(config: config)
@@ -145,6 +150,39 @@ final class BlockExporterTests: XCTestCase {
             byte(int: 0) + baseHeader + block1,
             byte(int: 1) + baseHeader + block2,
             byte(int: 2) + baseHeader + block3,
+        ])
+    }
+
+    func test_multipleBlocks_blockSplittingDueToHeaderSizeIntoBlockDivisibleBySize() {
+        let header = Data(hex: "01020304")
+        let block = Data(hex: "FFFFFFFFEEEEEEEEDDDDDDDD")
+        let config = BlockExporter.Configuration(
+            payload: block,
+            maxBlockSize: 8,
+            blockHeader: { _ in header }
+        )
+        let sut = BlockExporter(config: config)
+
+        XCTAssertEqual(sut.allElements(), [
+            header + Data(hex: "FFFFFFFF"),
+            header + Data(hex: "EEEEEEEE"),
+            header + Data(hex: "DDDDDDDD"),
+        ])
+    }
+
+    func test_multipleBlocks_blockSplittingDueToHeaderSizeIntoNonDivisibleBlockSize() {
+        let header = Data(hex: "01020304")
+        let block = Data(hex: "FFFFFFFFEE")
+        let config = BlockExporter.Configuration(
+            payload: block,
+            maxBlockSize: 8,
+            blockHeader: { _ in header }
+        )
+        let sut = BlockExporter(config: config)
+
+        XCTAssertEqual(sut.allElements(), [
+            header + Data(hex: "FFFFFFFF"),
+            header + Data(hex: "EE"),
         ])
     }
 }
