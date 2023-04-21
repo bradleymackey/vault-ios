@@ -69,7 +69,7 @@ extension BlockExporter {
 }
 
 final class BlockExporterTests: XCTestCase {
-    func test_singleBlock_returnsUnderBlockSizeLimit() {
+    func test_noHeader_returnsSingleBlockUnderSizeLimit() {
         let payload = anyData(bytes: 4)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
@@ -77,7 +77,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [payload])
     }
 
-    func test_singleBlock_returnsMatchingBlockSizeLimit() {
+    func test_noHeader_returnsSingleMatchingBlockSizeLimit() {
         let payload = anyData(bytes: 8)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
@@ -85,7 +85,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [payload])
     }
 
-    func test_multipleBlocks_returnsDivisibleByBlockSize() {
+    func test_noHeader_returnsMultipleBlocksDivisibleByMaxBlockSize() {
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
@@ -97,7 +97,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
-    func test_multipleBlocks_returnsWithPartialLastBlock() {
+    func test_noHeader_returnsMultipleBlocksWithPartialLastBlock() {
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
@@ -109,7 +109,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
-    func test_multipleBlocks_returnsWithOneByteLastBlock() {
+    func test_noHeader_returnsMultipleBlocksWithOneByteLastBlock() {
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
@@ -121,46 +121,42 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
-    func test_singleBlock_returnsWithHeaderMatchingBlockSize() {
-        let baseHeader = Data(hex: "DEADBEEF") // 4 bytes
-        let payload = anyData(bytes: 4)
+    func test_blockHeader_providesAccumulatingBlockNumbersInBlockHeader() {
+        let payload = anyData(bytes: 50)
+        var accumulatedNumbers = [Int]()
         let config = BlockExporter.Configuration(
             payload: payload,
-            maxBlockSize: baseHeader.count + payload.count + 1, // single extra counter byte in the header
-            blockHeader: { context in byte(int: context.blockNumber) + baseHeader }
+            maxBlockSize: 10,
+            blockHeader: { context in
+                accumulatedNumbers.append(context.blockNumber)
+                return Data()
+            }
+        )
+        let sut = BlockExporter(config: config)
+        _ = sut.allElements()
+
+        XCTAssertEqual(accumulatedNumbers, [0, 1, 2, 3, 4, 5], "Last header closure is called, but not used in output.")
+    }
+
+    func test_header_returnsSingleBlockWhereBlockSizePerfectlyMatchesDataSize() {
+        let header = Data(hex: "01020304")
+        let payload = Data(hex: "FFEEDDCC")
+        let config = BlockExporter.Configuration(
+            payload: payload,
+            maxBlockSize: header.count + payload.count,
+            blockHeader: { _ in header }
         )
         let sut = BlockExporter(config: config)
 
-        XCTAssertEqual(sut.allElements(), [byte(int: 0) + baseHeader + payload])
+        XCTAssertEqual(sut.allElements(), [header + payload])
     }
 
-    func test_multipleBlocks_returnsWithHeaderMatchingBlockSize() {
-        let baseHeader = Data(hex: "DEADBEEF")
-        let chunkSize = 8
-        let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
-        let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
-        let block3 = repeatingData(byte: 0xDD, bytes: chunkSize / 2)
-        let payload = block1 + block2 + block3
-        let config = BlockExporter.Configuration(
-            payload: payload,
-            maxBlockSize: chunkSize + baseHeader.count + 1, // single extra counter byte in the header
-            blockHeader: { context in byte(int: context.blockNumber) + baseHeader }
-        )
-        let sut = BlockExporter(config: config)
-
-        XCTAssertEqual(sut.allElements(), [
-            byte(int: 0) + baseHeader + block1,
-            byte(int: 1) + baseHeader + block2,
-            byte(int: 2) + baseHeader + block3,
-        ])
-    }
-
-    func test_multipleBlocks_blockSplittingDueToHeaderSizeIntoBlockDivisibleBySize() {
+    func test_header_blockSplittingDueToHeaderSizeIntoBlockDivisibleBySize() {
         let header = Data(hex: "01020304")
         let block = Data(hex: "FFFFFFFFEEEEEEEEDDDDDDDD")
         let config = BlockExporter.Configuration(
             payload: block,
-            maxBlockSize: 8,
+            maxBlockSize: header.count + 4,
             blockHeader: { _ in header }
         )
         let sut = BlockExporter(config: config)
@@ -172,12 +168,12 @@ final class BlockExporterTests: XCTestCase {
         ])
     }
 
-    func test_multipleBlocks_blockSplittingDueToHeaderSizeIntoNonDivisibleBlockSize() {
+    func test_header_blockSplittingDueToHeaderSizeIntoNonDivisibleBlockSize() {
         let header = Data(hex: "01020304")
         let block = Data(hex: "FFFFFFFFEE")
         let config = BlockExporter.Configuration(
             payload: block,
-            maxBlockSize: 8,
+            maxBlockSize: header.count + 4,
             blockHeader: { _ in header }
         )
         let sut = BlockExporter(config: config)
