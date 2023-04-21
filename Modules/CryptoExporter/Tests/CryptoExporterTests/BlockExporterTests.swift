@@ -15,9 +15,9 @@ struct BlockExporter {
     /// Header included in every block, given the current block context.
     let blockHeader: ((BlockContext) -> Data)?
     /// The current number of block we are iterating on.
-    private var blockNumber = 0
+    private var currentBlockNumber = 0
     /// The current number of accumulated bytes the header has caused an offset of.
-    private var offsetHeaderBytes = 0
+    private var currentOffsetHeaderBytes = 0
 
     init(payload: Data, maxBlockSize: Int, blockHeader: ((BlockContext) -> Data)? = nil) {
         self.payload = payload
@@ -31,14 +31,14 @@ struct BlockExporter {
     }
 
     mutating func next() throws -> Data? {
-        defer { blockNumber += 1 }
+        defer { currentBlockNumber += 1 }
 
-        let header = try makeHeader()
+        let header = try makeHeader(blockNumber: currentBlockNumber)
         let nextHeaderSize = header.count
 
-        defer { offsetHeaderBytes += nextHeaderSize }
+        defer { currentOffsetHeaderBytes += nextHeaderSize }
 
-        let start = min(maxBlockSize * blockNumber - offsetHeaderBytes, payload.count)
+        let start = min(maxBlockSize * currentBlockNumber - currentOffsetHeaderBytes, payload.count)
         let end = min(start + maxBlockSize - nextHeaderSize, payload.count)
         let blockRange = start ..< end
 
@@ -47,7 +47,7 @@ struct BlockExporter {
         return header + payload.subdata(in: blockRange)
     }
 
-    private func makeHeader() throws -> Data {
+    private func makeHeader(blockNumber: Int) throws -> Data {
         let context = BlockContext(blockNumber: blockNumber)
         let header = blockHeader?(context) ?? Data()
         guard header.count < maxBlockSize else {
