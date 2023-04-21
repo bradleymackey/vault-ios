@@ -17,5 +17,5 @@ lint:
 ifndef SWIFTLINT
 	$(error "swiftlint not found; install with `brew install swiftlint`")
 endif
-	$(SWIFTLINT) lint --quiet --scrict .
+	$(SWIFTLINT) lint --quiet --strict .
 
