@@ -13,7 +13,9 @@ struct BlockIterator: IteratorProtocol {
     typealias BlockContext = BlockExporter.BlockContext
 
     let config: Configuration
+    /// The current number of block we are iterating on.
     var blockNumber = 0
+    /// The current number of accumulated bytes the header has caused an offset of.
     var offsetHeaderBytes = 0
 
     mutating func next() -> Data? {
