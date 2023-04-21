@@ -15,12 +15,21 @@ struct BlockExporter {
     /// The current number of accumulated bytes the header has caused an offset of.
     var offsetHeaderBytes = 0
 
+    struct HeaderTooLargeError: Error {
+        let maxSize: Int
+        let actualSize: Int
+    }
+
     mutating func next() throws -> Data? {
         defer { blockNumber += 1 }
 
         let context = BlockContext(blockNumber: blockNumber)
         let header = config.blockHeader?(context) ?? Data()
         let nextHeaderSize = header.count
+
+        if nextHeaderSize >= blockSize {
+            throw HeaderTooLargeError(maxSize: blockSize, actualSize: nextHeaderSize)
+        }
 
         defer { offsetHeaderBytes += nextHeaderSize }
 
@@ -125,6 +134,30 @@ final class BlockExporterTests: XCTestCase {
         _ = sut.allElements()
 
         XCTAssertEqual(accumulatedNumbers, [0, 1, 2, 3, 4, 5], "Last header closure is called, but not used in output.")
+    }
+
+    func test_header_throwsIfHeaderEqualToBlockSize() {
+        let header = anyData(bytes: 50)
+        let config = BlockExporter.Configuration(
+            payload: anyData(),
+            maxBlockSize: 50,
+            blockHeader: { _ in header }
+        )
+        var sut = BlockExporter(config: config)
+
+        XCTAssertThrowsError(try sut.next())
+    }
+
+    func test_header_throwsIfHeaderLargerThanBlockSize() {
+        let header = anyData(bytes: 50)
+        let config = BlockExporter.Configuration(
+            payload: anyData(),
+            maxBlockSize: 10,
+            blockHeader: { _ in header }
+        )
+        var sut = BlockExporter(config: config)
+
+        XCTAssertThrowsError(try sut.next())
     }
 
     func test_header_returnsSingleBlockWhereBlockSizePerfectlyMatchesDataSize() {
