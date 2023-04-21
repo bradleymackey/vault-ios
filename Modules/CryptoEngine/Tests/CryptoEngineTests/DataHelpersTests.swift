@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import CodeCryptoEngine
+@testable import CryptoEngine
 
 final class DataHelpersTests: XCTestCase {
     func test_dataAsType_interpretsAsLittleEndian() {

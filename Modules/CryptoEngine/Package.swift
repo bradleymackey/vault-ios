@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "CodeCryptoEngine",
+    name: "CryptoEngine",
     platforms: [.macOS(.v10_15), .iOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "CodeCryptoEngine",
-            targets: ["CodeCryptoEngine"]
+            name: "CryptoEngine",
+            targets: ["CryptoEngine"]
         ),
     ],
     dependencies: [
@@ -20,12 +20,12 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "CodeCryptoEngine",
+            name: "CryptoEngine",
             dependencies: ["CryptoSwift"]
         ),
         .testTarget(
-            name: "CodeCryptoEngineTests",
-            dependencies: ["CodeCryptoEngine"]
+            name: "CryptoEngineTests",
+            dependencies: ["CryptoEngine"]
         ),
     ]
 )
