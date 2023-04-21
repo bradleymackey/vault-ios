@@ -31,7 +31,7 @@ struct BlockExporter: Sequence {
 }
 
 final class BlockExporterTests: XCTestCase {
-    func test_iterate_iteratesOverDataUnderBlockSizeLimit() {
+    func test_blocks_iteratesOverDataUnderBlockSizeLimit() {
         let payload = anyData(bytes: 4)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
@@ -40,7 +40,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(iter.next(), payload)
     }
 
-    func test_iterate_returnsDataAtPacketSizeLimit() {
+    func test_blocks_returnsDataAtPacketSizeLimit() {
         let payload = anyData(bytes: 8)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
@@ -49,7 +49,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(iter.next(), payload)
     }
 
-    func test_iterate_truncatesDataOverLimit() {
+    func test_blocks_truncatesDataOverLimit() {
         let payload = anyData(bytes: 16)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
