@@ -9,6 +9,8 @@ extension Collection {
 }
 
 struct BlockIterator: IteratorProtocol {
+    typealias Configuration = BlockExporter.Configuration
+
     let config: Configuration
     var blockNumber = 0
 
@@ -33,19 +35,18 @@ struct BlockIterator: IteratorProtocol {
     }
 }
 
-extension BlockIterator {
-    struct Configuration {
-        let payload: Data
-        let maxBlockSize: Int
-    }
-}
-
 struct BlockExporter: Sequence {
-    typealias Configuration = BlockIterator.Configuration
     let config: Configuration
 
     func makeIterator() -> some IteratorProtocol<Data> {
         BlockIterator(config: config)
+    }
+}
+
+extension BlockExporter {
+    struct Configuration {
+        let payload: Data
+        let maxBlockSize: Int
     }
 }
 
