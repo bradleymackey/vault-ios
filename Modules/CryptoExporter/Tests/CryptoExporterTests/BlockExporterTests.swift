@@ -23,7 +23,7 @@ struct BlockIterator: IteratorProtocol {
 
         guard blockRange.isNotEmpty else { return nil }
 
-        let header = config.blockHeader ?? Data()
+        let header = config.blockHeader?(blockNumber) ?? Data()
         return header + payload.subdata(in: blockRange)
     }
 
@@ -49,8 +49,8 @@ extension BlockExporter {
         var payload: Data
         /// Maximum size of the block, not including the header.
         var maxBlockSize: Int
-        /// Header included in every block.
-        var blockHeader: Data?
+        /// Header included in every block, parameterized by block number, starting at 0.
+        var blockHeader: ((Int) -> Data)?
     }
 }
 
@@ -108,36 +108,52 @@ final class BlockExporterTests: XCTestCase {
     }
 
     func test_singleBlock_returnsWithHeader() {
-        let header = Data(hex: "DEADBEEF")
+        let baseHeader = Data(hex: "DEADBEEF")
         let payload = anyData(bytes: 4)
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8, blockHeader: header)
+        let config = BlockExporter.Configuration(
+            payload: payload,
+            maxBlockSize: 8,
+            blockHeader: { blockNumber in byte(int: blockNumber) + baseHeader }
+        )
         let sut = BlockExporter(config: config)
 
-        XCTAssertEqual(sut.allElements(), [header + payload])
+        XCTAssertEqual(sut.allElements(), [byte(int: 0) + baseHeader + payload])
     }
 
     func test_multipleBlocks_returnsWithHeader() {
-        let header = Data(hex: "DEADBEEF")
+        let baseHeader = Data(hex: "DEADBEEF")
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
         let block3 = repeatingData(byte: 0xDD, bytes: chunkSize / 2)
         let payload = block1 + block2 + block3
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize, blockHeader: header)
+        let config = BlockExporter.Configuration(
+            payload: payload,
+            maxBlockSize: chunkSize,
+            blockHeader: { blockNumber in byte(int: blockNumber) + baseHeader }
+        )
         let sut = BlockExporter(config: config)
 
-        XCTAssertEqual(sut.allElements(), [header + block1, header + block2, header + block3])
+        XCTAssertEqual(sut.allElements(), [
+            byte(int: 0) + baseHeader + block1,
+            byte(int: 1) + baseHeader + block2,
+            byte(int: 2) + baseHeader + block3,
+        ])
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
-    private func repeatingData(byte: UInt8, bytes: Int) -> Data {
-        Data(repeating: byte, count: bytes)
-    }
+private func repeatingData(byte: UInt8, bytes: Int) -> Data {
+    Data(repeating: byte, count: bytes)
+}
 
-    private func anyData(bytes: Int = 8) -> Data {
-        Data(repeating: 0xFF, count: bytes)
-    }
+private func anyData(bytes: Int = 8) -> Data {
+    Data(repeating: 0xFF, count: bytes)
+}
+
+private func byte(int: Int) -> Data {
+    Data(repeating: UInt8(int), count: 1)
 }
 
 private extension Sequence {
