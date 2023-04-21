@@ -23,13 +23,8 @@ struct BlockExporter {
     mutating func next() throws -> Data? {
         defer { blockNumber += 1 }
 
-        let context = BlockContext(blockNumber: blockNumber)
-        let header = config.blockHeader?(context) ?? Data()
+        let header = try makeHeader()
         let nextHeaderSize = header.count
-
-        if nextHeaderSize >= blockSize {
-            throw HeaderTooLargeError(maxSize: blockSize, actualSize: nextHeaderSize)
-        }
 
         defer { offsetHeaderBytes += nextHeaderSize }
 
@@ -40,6 +35,15 @@ struct BlockExporter {
         guard blockRange.isNotEmpty else { return nil }
 
         return header + payload.subdata(in: blockRange)
+    }
+
+    private func makeHeader() throws -> Data {
+        let context = BlockContext(blockNumber: blockNumber)
+        let header = config.blockHeader?(context) ?? Data()
+        guard header.count < blockSize else {
+            throw HeaderTooLargeError(maxSize: blockSize, actualSize: header.count)
+        }
+        return header
     }
 
     private var blockSize: Int {
