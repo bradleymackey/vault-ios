@@ -8,17 +8,14 @@ extension Collection {
     }
 }
 
-struct BlockIterator: IteratorProtocol {
-    typealias Configuration = BlockExporter.Configuration
-    typealias BlockContext = BlockExporter.BlockContext
-
+struct BlockExporter {
     let config: Configuration
     /// The current number of block we are iterating on.
     var blockNumber = 0
     /// The current number of accumulated bytes the header has caused an offset of.
     var offsetHeaderBytes = 0
 
-    mutating func next() -> Data? {
+    mutating func next() throws -> Data? {
         defer { blockNumber += 1 }
 
         let context = BlockContext(blockNumber: blockNumber)
@@ -45,14 +42,6 @@ struct BlockIterator: IteratorProtocol {
     }
 }
 
-struct BlockExporter: Sequence {
-    let config: Configuration
-
-    func makeIterator() -> some IteratorProtocol<Data> {
-        BlockIterator(config: config)
-    }
-}
-
 extension BlockExporter {
     struct Configuration {
         var payload: Data
@@ -72,7 +61,7 @@ final class BlockExporterTests: XCTestCase {
     func test_noHeader_returnsSingleBlockUnderSizeLimit() {
         let payload = anyData(bytes: 4)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [payload])
     }
@@ -80,7 +69,7 @@ final class BlockExporterTests: XCTestCase {
     func test_noHeader_returnsSingleMatchingBlockSizeLimit() {
         let payload = anyData(bytes: 8)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [payload])
     }
@@ -92,7 +81,7 @@ final class BlockExporterTests: XCTestCase {
         let block3 = repeatingData(byte: 0xDD, bytes: chunkSize)
         let payload = block1 + block2 + block3
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
@@ -104,7 +93,7 @@ final class BlockExporterTests: XCTestCase {
         let block3 = repeatingData(byte: 0xDD, bytes: chunkSize / 2)
         let payload = block1 + block2 + block3
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
@@ -116,7 +105,7 @@ final class BlockExporterTests: XCTestCase {
         let block3 = repeatingData(byte: 0xDD, bytes: 1)
         let payload = block1 + block2 + block3
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
@@ -132,7 +121,7 @@ final class BlockExporterTests: XCTestCase {
                 return Data()
             }
         )
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
         _ = sut.allElements()
 
         XCTAssertEqual(accumulatedNumbers, [0, 1, 2, 3, 4, 5], "Last header closure is called, but not used in output.")
@@ -146,7 +135,7 @@ final class BlockExporterTests: XCTestCase {
             maxBlockSize: header.count + payload.count,
             blockHeader: { _ in header }
         )
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [header + payload])
     }
@@ -159,7 +148,7 @@ final class BlockExporterTests: XCTestCase {
             maxBlockSize: header.count + 4,
             blockHeader: { _ in header }
         )
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [
             header + Data(hex: "FFFFFFFF"),
@@ -176,7 +165,7 @@ final class BlockExporterTests: XCTestCase {
             maxBlockSize: header.count + 4,
             blockHeader: { _ in header }
         )
-        let sut = BlockExporter(config: config)
+        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [
             header + Data(hex: "FFFFFFFF"),
@@ -199,8 +188,12 @@ private func byte(int: Int) -> Data {
     Data(repeating: UInt8(int), count: 1)
 }
 
-private extension Sequence {
-    func allElements() -> [Element] {
-        map { $0 }
+private extension BlockExporter {
+    mutating func allElements() -> [Data] {
+        var acc = [Data]()
+        while let next = try? next() {
+            acc.append(next)
+        }
+        return acc
     }
 }
