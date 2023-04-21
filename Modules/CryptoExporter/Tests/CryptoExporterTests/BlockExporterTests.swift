@@ -3,32 +3,38 @@ import CryptoExporter
 import XCTest
 
 struct BlockIterator: IteratorProtocol {
-    let payload: Data
-    let maxBlockSize: Int
+    let config: Configuration
 
     func next() -> Data? {
-        if payload.count > maxBlockSize {
-            return payload.subdata(in: 0 ..< maxBlockSize)
+        if config.payload.count > config.maxBlockSize {
+            return config.payload.subdata(in: 0 ..< config.maxBlockSize)
         } else {
-            return payload
+            return config.payload
         }
     }
 }
 
+extension BlockIterator {
+    struct Configuration {
+        let payload: Data
+        let maxBlockSize: Int
+    }
+}
+
 struct BlockExporter: Sequence {
-    /// The data payload to export
-    let payload: Data
-    let maxBlockSize: Int
+    typealias Configuration = BlockIterator.Configuration
+    let config: Configuration
 
     func makeIterator() -> some IteratorProtocol<Data> {
-        BlockIterator(payload: payload, maxBlockSize: maxBlockSize)
+        BlockIterator(config: config)
     }
 }
 
 final class BlockExporterTests: XCTestCase {
     func test_iterate_iteratesOverDataUnderBlockSizeLimit() {
         let payload = anyData(bytes: 4)
-        let sut = BlockExporter(payload: payload, maxBlockSize: 8)
+        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
+        let sut = BlockExporter(config: config)
         var iter = sut.makeIterator()
 
         XCTAssertEqual(iter.next(), payload)
@@ -36,7 +42,8 @@ final class BlockExporterTests: XCTestCase {
 
     func test_iterate_returnsDataAtPacketSizeLimit() {
         let payload = anyData(bytes: 8)
-        let sut = BlockExporter(payload: payload, maxBlockSize: 8)
+        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
+        let sut = BlockExporter(config: config)
         var iter = sut.makeIterator()
 
         XCTAssertEqual(iter.next(), payload)
@@ -44,7 +51,8 @@ final class BlockExporterTests: XCTestCase {
 
     func test_iterate_truncatesDataOverLimit() {
         let payload = anyData(bytes: 16)
-        let sut = BlockExporter(payload: payload, maxBlockSize: 8)
+        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
+        let sut = BlockExporter(config: config)
         var iter = sut.makeIterator()
 
         XCTAssertEqual(iter.next(), payload[0 ..< 8])
