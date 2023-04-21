@@ -9,11 +9,21 @@ extension Collection {
 }
 
 struct BlockExporter {
-    let config: Configuration
+    let payload: Data
+    /// Maximum size of the block, **including** the header.
+    let maxBlockSize: Int
+    /// Header included in every block, given the current block context.
+    let blockHeader: ((BlockContext) -> Data)?
     /// The current number of block we are iterating on.
-    var blockNumber = 0
+    private var blockNumber = 0
     /// The current number of accumulated bytes the header has caused an offset of.
-    var offsetHeaderBytes = 0
+    private var offsetHeaderBytes = 0
+
+    init(payload: Data, maxBlockSize: Int, blockHeader: ((BlockContext) -> Data)? = nil) {
+        self.payload = payload
+        self.maxBlockSize = maxBlockSize
+        self.blockHeader = blockHeader
+    }
 
     struct HeaderTooLargeError: Error {
         let maxSize: Int
@@ -28,8 +38,8 @@ struct BlockExporter {
 
         defer { offsetHeaderBytes += nextHeaderSize }
 
-        let start = min(blockSize * blockNumber - offsetHeaderBytes, payload.count)
-        let end = min(start + blockSize - nextHeaderSize, payload.count)
+        let start = min(maxBlockSize * blockNumber - offsetHeaderBytes, payload.count)
+        let end = min(start + maxBlockSize - nextHeaderSize, payload.count)
         let blockRange = start ..< end
 
         guard blockRange.isNotEmpty else { return nil }
@@ -39,31 +49,15 @@ struct BlockExporter {
 
     private func makeHeader() throws -> Data {
         let context = BlockContext(blockNumber: blockNumber)
-        let header = config.blockHeader?(context) ?? Data()
-        guard header.count < blockSize else {
-            throw HeaderTooLargeError(maxSize: blockSize, actualSize: header.count)
+        let header = blockHeader?(context) ?? Data()
+        guard header.count < maxBlockSize else {
+            throw HeaderTooLargeError(maxSize: maxBlockSize, actualSize: header.count)
         }
         return header
-    }
-
-    private var blockSize: Int {
-        config.maxBlockSize
-    }
-
-    private var payload: Data {
-        config.payload
     }
 }
 
 extension BlockExporter {
-    struct Configuration {
-        var payload: Data
-        /// Maximum size of the block, **including** the header.
-        var maxBlockSize: Int
-        /// Header included in every block, given the current block context.
-        var blockHeader: ((BlockContext) -> Data)?
-    }
-
     struct BlockContext {
         /// The number block that this will become, starting from 0.
         var blockNumber: Int
@@ -73,16 +67,14 @@ extension BlockExporter {
 final class BlockExporterTests: XCTestCase {
     func test_noHeader_returnsSingleBlockUnderSizeLimit() {
         let payload = anyData(bytes: 4)
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
-        var sut = BlockExporter(config: config)
+        var sut = BlockExporter(payload: payload, maxBlockSize: 8)
 
         XCTAssertEqual(sut.allElements(), [payload])
     }
 
     func test_noHeader_returnsSingleMatchingBlockSizeLimit() {
         let payload = anyData(bytes: 8)
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
-        var sut = BlockExporter(config: config)
+        var sut = BlockExporter(payload: payload, maxBlockSize: 8)
 
         XCTAssertEqual(sut.allElements(), [payload])
     }
@@ -93,8 +85,7 @@ final class BlockExporterTests: XCTestCase {
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
         let block3 = repeatingData(byte: 0xDD, bytes: chunkSize)
         let payload = block1 + block2 + block3
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
-        var sut = BlockExporter(config: config)
+        var sut = BlockExporter(payload: payload, maxBlockSize: chunkSize)
 
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
@@ -105,8 +96,7 @@ final class BlockExporterTests: XCTestCase {
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
         let block3 = repeatingData(byte: 0xDD, bytes: chunkSize / 2)
         let payload = block1 + block2 + block3
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
-        var sut = BlockExporter(config: config)
+        var sut = BlockExporter(payload: payload, maxBlockSize: chunkSize)
 
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
@@ -117,8 +107,7 @@ final class BlockExporterTests: XCTestCase {
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
         let block3 = repeatingData(byte: 0xDD, bytes: 1)
         let payload = block1 + block2 + block3
-        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
-        var sut = BlockExporter(config: config)
+        var sut = BlockExporter(payload: payload, maxBlockSize: chunkSize)
 
         XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
@@ -126,7 +115,7 @@ final class BlockExporterTests: XCTestCase {
     func test_blockHeader_providesAccumulatingBlockNumbersInBlockHeader() {
         let payload = anyData(bytes: 50)
         var accumulatedNumbers = [Int]()
-        let config = BlockExporter.Configuration(
+        var sut = BlockExporter(
             payload: payload,
             maxBlockSize: 10,
             blockHeader: { context in
@@ -134,7 +123,6 @@ final class BlockExporterTests: XCTestCase {
                 return Data()
             }
         )
-        var sut = BlockExporter(config: config)
         _ = sut.allElements()
 
         XCTAssertEqual(accumulatedNumbers, [0, 1, 2, 3, 4, 5], "Last header closure is called, but not used in output.")
@@ -142,24 +130,22 @@ final class BlockExporterTests: XCTestCase {
 
     func test_header_throwsIfHeaderEqualToBlockSize() {
         let header = anyData(bytes: 50)
-        let config = BlockExporter.Configuration(
+        var sut = BlockExporter(
             payload: anyData(),
             maxBlockSize: 50,
             blockHeader: { _ in header }
         )
-        var sut = BlockExporter(config: config)
 
         XCTAssertThrowsError(try sut.next())
     }
 
     func test_header_throwsIfHeaderLargerThanBlockSize() {
         let header = anyData(bytes: 50)
-        let config = BlockExporter.Configuration(
+        var sut = BlockExporter(
             payload: anyData(),
             maxBlockSize: 10,
             blockHeader: { _ in header }
         )
-        var sut = BlockExporter(config: config)
 
         XCTAssertThrowsError(try sut.next())
     }
@@ -167,12 +153,11 @@ final class BlockExporterTests: XCTestCase {
     func test_header_returnsSingleBlockWhereBlockSizePerfectlyMatchesDataSize() {
         let header = Data(hex: "01020304")
         let payload = Data(hex: "FFEEDDCC")
-        let config = BlockExporter.Configuration(
+        var sut = BlockExporter(
             payload: payload,
             maxBlockSize: header.count + payload.count,
             blockHeader: { _ in header }
         )
-        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [header + payload])
     }
@@ -180,12 +165,11 @@ final class BlockExporterTests: XCTestCase {
     func test_header_blockSplittingDueToHeaderSizeIntoBlockDivisibleBySize() {
         let header = Data(hex: "01020304")
         let block = Data(hex: "FFFFFFFFEEEEEEEEDDDDDDDD")
-        let config = BlockExporter.Configuration(
+        var sut = BlockExporter(
             payload: block,
             maxBlockSize: header.count + 4,
             blockHeader: { _ in header }
         )
-        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [
             header + Data(hex: "FFFFFFFF"),
@@ -197,12 +181,11 @@ final class BlockExporterTests: XCTestCase {
     func test_header_blockSplittingDueToHeaderSizeIntoNonDivisibleBlockSize() {
         let header = Data(hex: "01020304")
         let block = Data(hex: "FFFFFFFFEE")
-        let config = BlockExporter.Configuration(
+        var sut = BlockExporter(
             payload: block,
             maxBlockSize: header.count + 4,
             blockHeader: { _ in header }
         )
-        var sut = BlockExporter(config: config)
 
         XCTAssertEqual(sut.allElements(), [
             header + Data(hex: "FFFFFFFF"),
