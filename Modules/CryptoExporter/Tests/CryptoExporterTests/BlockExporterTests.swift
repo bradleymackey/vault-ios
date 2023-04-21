@@ -23,7 +23,8 @@ struct BlockIterator: IteratorProtocol {
 
         guard blockRange.isNotEmpty else { return nil }
 
-        return payload.subdata(in: blockRange)
+        let header = config.blockHeader ?? Data()
+        return header + payload.subdata(in: blockRange)
     }
 
     private var blockSize: Int {
@@ -45,13 +46,16 @@ struct BlockExporter: Sequence {
 
 extension BlockExporter {
     struct Configuration {
-        let payload: Data
-        let maxBlockSize: Int
+        var payload: Data
+        /// Maximum size of the block, not including the header.
+        var maxBlockSize: Int
+        /// Header included in every block.
+        var blockHeader: Data?
     }
 }
 
 final class BlockExporterTests: XCTestCase {
-    func test_blocks_returnsSingleBlockUnderBlockSizeLimit() {
+    func test_singleBlock_returnsUnderBlockSizeLimit() {
         let payload = anyData(bytes: 4)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
@@ -60,7 +64,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(allBlocks, [payload])
     }
 
-    func test_blocks_returnsSingleBlockMatchingBlockSizeLimit() {
+    func test_singleBlock_returnsMatchingBlockSizeLimit() {
         let payload = anyData(bytes: 8)
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
@@ -69,7 +73,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(allBlocks, [payload])
     }
 
-    func test_blocks_returnsMultipleBlocksOverBlockSizeLimit() {
+    func test_multipleBlocks_returnsDivisibleByBlockSize() {
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
@@ -82,7 +86,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(allBlocks, [block1, block2, block3])
     }
 
-    func test_blocks_returnsMultipleBlocksOverBlockSizeLimitWithPartialLastBlock() {
+    func test_multipleBlocks_returnsWithPartialLastBlock() {
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
@@ -95,7 +99,7 @@ final class BlockExporterTests: XCTestCase {
         XCTAssertEqual(allBlocks, [block1, block2, block3])
     }
 
-    func test_blocks_returnsMultipleBlocksOverBlockSizeLimitWithOneByteLastBlock() {
+    func test_multipleBlocks_returnsWithOneByteLastBlock() {
         let chunkSize = 8
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
@@ -106,6 +110,30 @@ final class BlockExporterTests: XCTestCase {
 
         let allBlocks = sut.map { $0 }
         XCTAssertEqual(allBlocks, [block1, block2, block3])
+    }
+
+    func test_singleBlock_returnsWithHeader() {
+        let header = Data(hex: "DEADBEEF")
+        let payload = anyData(bytes: 4)
+        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8, blockHeader: header)
+        let sut = BlockExporter(config: config)
+
+        let allBlocks = sut.map { $0 }
+        XCTAssertEqual(allBlocks, [header + payload])
+    }
+
+    func test_multipleBlocks_returnsWithHeader() {
+        let header = Data(hex: "DEADBEEF")
+        let chunkSize = 8
+        let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
+        let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
+        let block3 = repeatingData(byte: 0xDD, bytes: chunkSize / 2)
+        let payload = block1 + block2 + block3
+        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize, blockHeader: header)
+        let sut = BlockExporter(config: config)
+
+        let allBlocks = sut.map { $0 }
+        XCTAssertEqual(allBlocks, [header + block1, header + block2, header + block3])
     }
 
     // MARK: - Helpers
