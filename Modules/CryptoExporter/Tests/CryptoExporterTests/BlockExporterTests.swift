@@ -60,8 +60,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [payload])
+        XCTAssertEqual(sut.allElements(), [payload])
     }
 
     func test_singleBlock_returnsMatchingBlockSizeLimit() {
@@ -69,8 +68,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [payload])
+        XCTAssertEqual(sut.allElements(), [payload])
     }
 
     func test_multipleBlocks_returnsDivisibleByBlockSize() {
@@ -82,8 +80,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [block1, block2, block3])
+        XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
     func test_multipleBlocks_returnsWithPartialLastBlock() {
@@ -95,8 +92,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [block1, block2, block3])
+        XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
     func test_multipleBlocks_returnsWithOneByteLastBlock() {
@@ -108,8 +104,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [block1, block2, block3])
+        XCTAssertEqual(sut.allElements(), [block1, block2, block3])
     }
 
     func test_singleBlock_returnsWithHeader() {
@@ -118,8 +113,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: 8, blockHeader: header)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [header + payload])
+        XCTAssertEqual(sut.allElements(), [header + payload])
     }
 
     func test_multipleBlocks_returnsWithHeader() {
@@ -132,8 +126,7 @@ final class BlockExporterTests: XCTestCase {
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize, blockHeader: header)
         let sut = BlockExporter(config: config)
 
-        let allBlocks = sut.map { $0 }
-        XCTAssertEqual(allBlocks, [header + block1, header + block2, header + block3])
+        XCTAssertEqual(sut.allElements(), [header + block1, header + block2, header + block3])
     }
 
     // MARK: - Helpers
@@ -144,5 +137,11 @@ final class BlockExporterTests: XCTestCase {
 
     private func anyData(bytes: Int = 8) -> Data {
         Data(repeating: 0xFF, count: bytes)
+    }
+}
+
+private extension Sequence {
+    func allElements() -> [Element] {
+        map { $0 }
     }
 }
