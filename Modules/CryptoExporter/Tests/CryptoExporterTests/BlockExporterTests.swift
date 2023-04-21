@@ -2,6 +2,12 @@ import CryptoEngine
 import CryptoExporter
 import XCTest
 
+extension Collection {
+    var isNotEmpty: Bool {
+        !isEmpty
+    }
+}
+
 struct BlockIterator: IteratorProtocol {
     let config: Configuration
     var blockNumber = 0
@@ -9,17 +15,13 @@ struct BlockIterator: IteratorProtocol {
     mutating func next() -> Data? {
         defer { blockNumber += 1 }
 
-        let start = blockSize * blockNumber
-        let end = start + blockSize
-        if start > payload.count {
-            return nil
-        } else if payload.count > end {
-            return payload.subdata(in: start ..< end)
-        } else {
-            let finalRange = start ..< payload.count
-            if finalRange.isEmpty { return nil }
-            return payload.subdata(in: finalRange)
-        }
+        let start = min(blockSize * blockNumber, payload.count)
+        let end = min(start + blockSize, payload.count)
+        let blockRange = start ..< end
+
+        guard blockRange.isNotEmpty else { return nil }
+
+        return payload.subdata(in: blockRange)
     }
 
     private var blockSize: Int {
@@ -84,6 +86,19 @@ final class BlockExporterTests: XCTestCase {
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
         let block3 = repeatingData(byte: 0xDD, bytes: chunkSize / 2)
+        let payload = block1 + block2 + block3
+        let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
+        let sut = BlockExporter(config: config)
+
+        let allBlocks = sut.map { $0 }
+        XCTAssertEqual(allBlocks, [block1, block2, block3])
+    }
+
+    func test_blocks_returnsMultipleBlocksOverBlockSizeLimitWithOneByteLastBlock() {
+        let chunkSize = 8
+        let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
+        let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
+        let block3 = repeatingData(byte: 0xDD, bytes: 1)
         let payload = block1 + block2 + block3
         let config = BlockExporter.Configuration(payload: payload, maxBlockSize: chunkSize)
         let sut = BlockExporter(config: config)
