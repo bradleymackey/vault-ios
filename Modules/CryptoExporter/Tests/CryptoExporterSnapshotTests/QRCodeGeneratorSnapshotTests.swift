@@ -1,7 +1,7 @@
-import AppKit
 import CryptoExporter
 import Foundation
 import SnapshotTesting
+import UIKit
 import XCTest
 
 final class QRCodeGeneratorSnapshotTests: XCTestCase {
@@ -30,7 +30,7 @@ final class QRCodeGeneratorSnapshotTests: XCTestCase {
         QRCodeGenerator()
     }
 
-    private func imageForSnapshotting(pngData: Data) throws -> NSImage {
-        try XCTUnwrap(NSImage(data: pngData))
+    private func imageForSnapshotting(pngData: Data) throws -> UIImage {
+        try XCTUnwrap(UIImage(data: pngData))
     }
 }
