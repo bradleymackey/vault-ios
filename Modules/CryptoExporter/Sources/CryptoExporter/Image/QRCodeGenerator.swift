@@ -7,11 +7,7 @@ public struct QRCodeGenerator {
 
     /// Generates PNG data for a QR code containing the provided `data`.
     public func generatePNG(data: Data) -> Data? {
-        let transform = CGAffineTransform(scaleX: 3, y: 3)
-        return CIFilter.qrCode(data: data)?
-            .outputImage?
-            .transformed(by: transform)
-            .asPNG()
+        CIFilter.qrCode(data: data)?.outputImage?.asPNG()
     }
 }
 
