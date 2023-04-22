@@ -15,6 +15,10 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "CryptoEngine", path: "../CryptoEngine"),
+        .package(
+            url: "https://github.com/pointfreeco/swift-snapshot-testing",
+            .upToNextMajor(from: "1.11.0")
+        ),
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -25,7 +29,21 @@ let package = Package(
         ),
         .testTarget(
             name: "CryptoExporterTests",
-            dependencies: ["CryptoExporter"]
+            dependencies: [
+                "CryptoExporter",
+            ]
+        ),
+        .testTarget(
+            name: "CryptoExporterSnapshotTests",
+            dependencies: [
+                "CryptoExporter",
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing",
+                    condition: .when(platforms: [.macOS])
+                ),
+            ],
+            exclude: ["__Snapshots__"]
         ),
     ]
 )
