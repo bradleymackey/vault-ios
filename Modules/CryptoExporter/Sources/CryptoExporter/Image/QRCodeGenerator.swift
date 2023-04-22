@@ -5,16 +5,36 @@ import Foundation
 public struct QRCodeGenerator {
     public init() {}
 
+    /// Generates PNG data for a QR code containing the provided `data`.
     public func generatePNG(data: Data) -> Data? {
-        if let filter = CIFilter(name: "CIQRCodeGenerator") {
-            filter.setValue(data, forKey: "inputMessage")
-            let transform = CGAffineTransform(scaleX: 3, y: 3)
-            if let ciImage = filter.outputImage?.transformed(by: transform) {
-                let context = CIContext()
-                let colorSpace = CGColorSpace(name: CGColorSpace.sRGB)!
-                return context.pngRepresentation(of: ciImage, format: .RGBA16, colorSpace: colorSpace)
-            }
+        let transform = CGAffineTransform(scaleX: 3, y: 3)
+        return CIFilter.qrCode(data: data)?
+            .outputImage?
+            .transformed(by: transform)
+            .asPNG()
+    }
+}
+
+private extension CIFilter {
+    /// Create a filter to produce a QRCode from the provided data.
+    ///
+    /// - Returns: `nil` only if the filter cannot be loaded internally.
+    static func qrCode(data: Data) -> CIFilter? {
+        let filter = CIFilter(name: "CIQRCodeGenerator")
+        filter?.setValue(data, forKey: "inputMessage")
+        return filter
+    }
+}
+
+private extension CIImage {
+    /// Convert this image into PNG data, in the `RBGA16` color space.
+    ///
+    /// - Returns: `nil` if the image cannot be rendered.
+    func asPNG() -> Data? {
+        guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
+            return nil
         }
-        return nil
+        let context = CIContext()
+        return context.pngRepresentation(of: self, format: .RGBA16, colorSpace: colorSpace)
     }
 }
