@@ -2,68 +2,6 @@ import CryptoEngine
 import CryptoExporter
 import XCTest
 
-extension Collection {
-    var isNotEmpty: Bool {
-        !isEmpty
-    }
-}
-
-struct BlockExporter {
-    let payload: Data
-    /// Maximum size of the block, **including** the header.
-    let maxBlockSize: Int
-    /// Header included in every block, given the current block context.
-    let blockHeader: ((BlockContext) -> Data)?
-    /// The current number of block we are iterating on.
-    private var currentBlockNumber = 0
-    /// The current number of accumulated bytes the header has caused an offset of.
-    private var currentOffsetHeaderBytes = 0
-
-    init(payload: Data, maxBlockSize: Int, blockHeader: ((BlockContext) -> Data)? = nil) {
-        self.payload = payload
-        self.maxBlockSize = maxBlockSize
-        self.blockHeader = blockHeader
-    }
-
-    struct HeaderTooLargeError: Error {
-        let maxSize: Int
-        let actualSize: Int
-    }
-
-    mutating func next() throws -> Data? {
-        defer { currentBlockNumber += 1 }
-
-        let header = try makeHeader(blockNumber: currentBlockNumber)
-        let nextHeaderSize = header.count
-
-        defer { currentOffsetHeaderBytes += nextHeaderSize }
-
-        let start = min(maxBlockSize * currentBlockNumber - currentOffsetHeaderBytes, payload.count)
-        let end = min(start + maxBlockSize - nextHeaderSize, payload.count)
-        let blockRange = start ..< end
-
-        guard blockRange.isNotEmpty else { return nil }
-
-        return header + payload.subdata(in: blockRange)
-    }
-
-    private func makeHeader(blockNumber: Int) throws -> Data {
-        let context = BlockContext(blockNumber: blockNumber)
-        let header = blockHeader?(context) ?? Data()
-        guard header.count < maxBlockSize else {
-            throw HeaderTooLargeError(maxSize: maxBlockSize, actualSize: header.count)
-        }
-        return header
-    }
-}
-
-extension BlockExporter {
-    struct BlockContext {
-        /// The number block that this will become, starting from 0.
-        var blockNumber: Int
-    }
-}
-
 final class BlockExporterTests: XCTestCase {
     func test_noHeader_returnsSingleBlockUnderSizeLimit() {
         let payload = anyData(bytes: 4)
