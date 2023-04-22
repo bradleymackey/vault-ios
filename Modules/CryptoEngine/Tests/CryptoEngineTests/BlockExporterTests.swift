@@ -1,5 +1,4 @@
 import CryptoEngine
-import CryptoExporter
 import XCTest
 
 final class BlockExporterTests: XCTestCase {
