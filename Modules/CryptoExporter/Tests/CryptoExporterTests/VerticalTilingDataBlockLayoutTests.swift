@@ -27,18 +27,20 @@ struct VerticalTilingDataBlockLayout {
 
     /// Origin without any margin considerations
     private func origin(index: UInt) -> CGPoint {
-        let rowNumber = CGFloat(index % tilesPerRow)
-        let columnNumber = CGFloat(index / tilesPerRow)
-        var x = rowNumber * sideLength
-        x += margin
-        x += rowNumber * spacing
-        var y = columnNumber * sideLength
-        y += margin
-        y += columnNumber * spacing
+        let rowNumber = index % tilesPerRow
+        let columnNumber = index / tilesPerRow
         return CGPoint(
-            x: x,
-            y: y
+            x: applyOffset(position: rowNumber),
+            y: applyOffset(position: columnNumber)
         )
+    }
+
+    private func applyOffset(position: UInt) -> CGFloat {
+        let value = CGFloat(position)
+        var position = value * sideLength
+        position += margin
+        position += value * spacing
+        return position
     }
 
     /// The length of the side of all tiles.
