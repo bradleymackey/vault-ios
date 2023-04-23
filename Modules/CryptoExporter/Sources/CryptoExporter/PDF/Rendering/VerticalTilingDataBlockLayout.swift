@@ -27,7 +27,7 @@ public struct VerticalTilingDataBlockLayout: DataBlockLayout {
     public func isFullyWithinBounds(rect: CGRect) -> Bool {
         let ourBounds = CGRect(origin: .zero, size: bounds)
         let effectiveBounds = ourBounds.insetBy(dx: margin, dy: margin)
-        return effectiveBounds.intersection(rect) == rect
+        return effectiveBounds.intersection(rect).isAlmostEqual(to: rect)
     }
 
     /// Origin without any margin considerations
