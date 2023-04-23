@@ -45,10 +45,20 @@ final class DocumentPagePDFRendererFactoryTests: XCTestCase {
         XCTAssertEqual(format.documentInfo(forKey: kCGPDFContextAuthor) as? String?, authorName)
     }
 
+    func test_makeRenderer_formatDocumentTitleIsDocumentTitle() throws {
+        let documentTitle = UUID().uuidString
+        let sut = makeSUT(documentTitle: documentTitle)
+
+        let renderer = sut.makeRenderer()
+
+        let format = try XCTUnwrap(renderer.format as? UIGraphicsPDFRendererFormat)
+        XCTAssertEqual(format.documentInfo(forKey: kCGPDFContextTitle) as? String?, documentTitle)
+    }
+
     // MARK: - Helpers
 
-    private func makeSUT(size: PDFDocumentSize = .usLetter, applicationName: String? = "Any", authorName: String? = "Any") -> DocumentPagePDFRendererFactory {
-        DocumentPagePDFRendererFactory(size: size, applicationName: applicationName, authorName: authorName)
+    private func makeSUT(size: PDFDocumentSize = .usLetter, applicationName: String? = "Any", authorName: String? = "Any", documentTitle: String? = "Any") -> DocumentPagePDFRendererFactory {
+        DocumentPagePDFRendererFactory(size: size, applicationName: applicationName, authorName: authorName, documentTitle: documentTitle)
     }
 }
 

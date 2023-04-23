@@ -3,13 +3,15 @@ import UIKit
 /// Produces renderers optimized for rendering a standard size document.
 public struct DocumentPagePDFRendererFactory: PDFRendererFactory {
     public var size: PDFDocumentSize
+    public var documentTitle: String?
     public var applicationName: String?
     public var authorName: String?
 
-    public init(size: PDFDocumentSize, applicationName: String? = nil, authorName: String? = nil) {
+    public init(size: PDFDocumentSize, applicationName: String? = nil, authorName: String? = nil, documentTitle: String? = nil) {
         self.size = size
         self.applicationName = applicationName
         self.authorName = authorName
+        self.documentTitle = documentTitle
     }
 
     public func makeRenderer() -> UIGraphicsPDFRenderer {
@@ -33,6 +35,7 @@ extension DocumentPagePDFRendererFactory {
         var metadata = [CFString: String]()
         metadata[kCGPDFContextCreator] = applicationName
         metadata[kCGPDFContextAuthor] = authorName
+        metadata[kCGPDFContextTitle] = documentTitle
         return metadata
     }
 }
