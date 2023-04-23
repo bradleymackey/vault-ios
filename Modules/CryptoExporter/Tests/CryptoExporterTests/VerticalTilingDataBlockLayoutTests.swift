@@ -8,11 +8,13 @@ struct VerticalTilingDataBlockLayout {
     let bounds: CGSize
     let tilesPerRow: UInt
     let margin: CGFloat
+    let spacing: CGFloat
 
-    init(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0) {
+    init(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) {
         self.bounds = bounds
         self.tilesPerRow = tilesPerRow
         self.margin = margin
+        self.spacing = spacing
     }
 
     /// Gets the rect for this index.
@@ -23,27 +25,27 @@ struct VerticalTilingDataBlockLayout {
         )
     }
 
-    private func origin(index: UInt) -> CGPoint {
-        var point = originalOrigin(index: index)
-        point.x += margin
-        point.y += margin
-        return point
-    }
-
     /// Origin without any margin considerations
-    private func originalOrigin(index: UInt) -> CGPoint {
-        let rowNumber = index % tilesPerRow
-        let columnNumber = index / tilesPerRow
+    private func origin(index: UInt) -> CGPoint {
+        let rowNumber = CGFloat(index % tilesPerRow)
+        let columnNumber = CGFloat(index / tilesPerRow)
+        var x = rowNumber * sideLength
+        x += margin
+        x += rowNumber * spacing
+        var y = columnNumber * sideLength
+        y += margin
+        y += columnNumber * spacing
         return CGPoint(
-            x: CGFloat(rowNumber) * sideLength,
-            y: CGFloat(columnNumber) * sideLength
+            x: x,
+            y: y
         )
     }
 
     /// The length of the side of all tiles.
     private var sideLength: CGFloat {
+        let horizontalSpacingRequired = CGFloat(tilesPerRow - 1) * spacing
         let totalHorizontalMargin = margin * 2
-        let availableWidth = bounds.width - totalHorizontalMargin
+        let availableWidth = bounds.width - totalHorizontalMargin - horizontalSpacingRequired
         return availableWidth / CGFloat(tilesPerRow)
     }
 }
@@ -105,10 +107,30 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
+    func test_rectWithMargin_layoutRowSizesToRespectSpacing() {
+        let sut = makeSUT(bounds: .square(110), tilesPerRow: 3, spacing: 10)
+
+        expectRow(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [.zero, CGPoint(x: 40, y: 0), CGPoint(x: 80, y: 0)]
+        )
+    }
+
+    func test_rectWithMargin_layoutColumnSizesToRespectSpacing() {
+        let sut = makeSUT(bounds: .square(110), tilesPerRow: 3, spacing: 10)
+
+        expectColumn(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [.zero, CGPoint(x: 0, y: 40), CGPoint(x: 0, y: 80)]
+        )
+    }
+
     // MARK: - Helpers
 
-    private func makeSUT(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0) -> VerticalTilingDataBlockLayout {
-        VerticalTilingDataBlockLayout(bounds: bounds, tilesPerRow: tilesPerRow, margin: margin)
+    private func makeSUT(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) -> VerticalTilingDataBlockLayout {
+        VerticalTilingDataBlockLayout(bounds: bounds, tilesPerRow: tilesPerRow, margin: margin, spacing: spacing)
     }
 
     private func expectRow(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
