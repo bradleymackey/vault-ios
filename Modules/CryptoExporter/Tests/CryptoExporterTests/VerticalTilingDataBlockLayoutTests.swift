@@ -80,6 +80,25 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
+    func test_rect_adjustsLayoutRelativeToBounds() {
+        let sut = makeSUT(
+            origin: .init(x: 20, y: 20),
+            size: .square(100),
+            tilesPerRow: 4
+        )
+
+        expectRow(
+            for: sut,
+            sizes: [.square(25), .square(25), .square(25), .square(25)],
+            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 45, y: 20), CGPoint(x: 70, y: 20), CGPoint(x: 95, y: 20)]
+        )
+        expectColumn(
+            for: sut,
+            sizes: [.square(25), .square(25), .square(25)],
+            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 20, y: 45), CGPoint(x: 20, y: 70)]
+        )
+    }
+
     func test_isFullyWithinBounds_containsItem() {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
 
@@ -112,8 +131,19 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(size: CGSize, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) -> VerticalTilingDataBlockLayout {
-        VerticalTilingDataBlockLayout(bounds: CGRect(origin: .zero, size: size), tilesPerRow: tilesPerRow, margin: margin, spacing: spacing)
+    private func makeSUT(
+        origin: CGPoint = .zero,
+        size: CGSize,
+        tilesPerRow: UInt,
+        margin: CGFloat = 0,
+        spacing: CGFloat = 0
+    ) -> VerticalTilingDataBlockLayout {
+        VerticalTilingDataBlockLayout(
+            bounds: CGRect(origin: origin, size: size),
+            tilesPerRow: tilesPerRow,
+            margin: margin,
+            spacing: spacing
+        )
     }
 
     private func expectRow(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {

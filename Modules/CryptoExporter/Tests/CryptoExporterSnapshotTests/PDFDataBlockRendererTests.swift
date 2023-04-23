@@ -26,12 +26,12 @@ class PDFDataBlockRenderer<
 
     let rendererFactory: RendererFactory
     let imageRenderer: ImageRenderer
-    let blockLayout: (CGSize) -> BlockLayout
+    let blockLayout: (CGRect) -> BlockLayout
 
     init(
         rendererFactory: RendererFactory,
         imageRenderer: ImageRenderer,
-        blockLayout: @escaping (CGSize) -> BlockLayout
+        blockLayout: @escaping (CGRect) -> BlockLayout
     ) {
         self.rendererFactory = rendererFactory
         self.imageRenderer = imageRenderer
