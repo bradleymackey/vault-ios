@@ -65,16 +65,6 @@ final class PDFDataBlockRendererTests: XCTestCase {
     }
 }
 
-extension UIImage {
-    static func from(color: UIColor) -> UIImage {
-        let size = CGSize(width: 10, height: 10)
-        return UIGraphicsImageRenderer(size: size).image { context in
-            context.cgContext.setFillColor(color.cgColor)
-            context.fill(CGRect(origin: .zero, size: size))
-        }
-    }
-}
-
 private struct StubPDFRendererFactory: PDFRendererFactory {
     var size = CGSize(width: 200, height: 200)
     var rect: CGRect {
