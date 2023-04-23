@@ -23,7 +23,7 @@ private extension CIFilter {
 }
 
 private extension CIImage {
-    /// Convert this image into PNG data, in the `RBGA16` color space.
+    /// Convert this image into PNG data, in the `sRGB` color space.
     ///
     /// - Returns: `nil` if the image cannot be rendered.
     func asPNG() -> Data? {
@@ -31,6 +31,6 @@ private extension CIImage {
             return nil
         }
         let context = CIContext()
-        return context.pngRepresentation(of: self, format: .RGBA16, colorSpace: colorSpace)
+        return context.pngRepresentation(of: self, format: .RGBA8, colorSpace: colorSpace)
     }
 }
