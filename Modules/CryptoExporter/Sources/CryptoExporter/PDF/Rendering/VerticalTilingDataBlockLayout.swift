@@ -4,12 +4,12 @@ import Foundation
 /// Lays out square rects in a tile.
 /// This is essentially an iterator that can be used once per layout.
 public struct VerticalTilingDataBlockLayout: DataBlockLayout {
-    public let bounds: CGSize
+    public let bounds: CGRect
     public let tilesPerRow: UInt
     public let margin: CGFloat
     public let spacing: CGFloat
 
-    public init(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) {
+    public init(bounds: CGRect, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) {
         self.bounds = bounds
         self.tilesPerRow = tilesPerRow
         self.margin = margin
@@ -25,8 +25,7 @@ public struct VerticalTilingDataBlockLayout: DataBlockLayout {
     }
 
     public func isFullyWithinBounds(rect: CGRect) -> Bool {
-        let ourBounds = CGRect(origin: .zero, size: bounds)
-        let effectiveBounds = ourBounds.insetBy(dx: margin, dy: margin)
+        let effectiveBounds = bounds.insetBy(dx: margin, dy: margin)
         return effectiveBounds.intersection(rect).isAlmostEqual(to: rect)
     }
 
