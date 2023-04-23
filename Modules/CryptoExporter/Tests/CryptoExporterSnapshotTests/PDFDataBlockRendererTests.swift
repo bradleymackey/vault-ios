@@ -75,16 +75,14 @@ final class PDFDataBlockRendererTests: XCTestCase {
     }
 
     func test_render_drawsEmptyPDFDocument() throws {
-        let renderer = StubPDFRendererFactory()
-        let sut = makeSUT(renderer: renderer)
+        let sut = makeSUT(tilesPerRow: 3)
         let pdf = try XCTUnwrap(sut.render(document: emptyDocument()))
 
         assertSnapshot(matching: pdf, as: .pdf())
     }
 
     func test_render_drawsSingleImage() throws {
-        let renderer = StubPDFRendererFactory()
-        let sut = makeSUT(renderer: renderer)
+        let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockExportDocument(dataBlockImageData: [anyData()])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -92,17 +90,23 @@ final class PDFDataBlockRendererTests: XCTestCase {
     }
 
     func test_render_drawsRowOfImages() throws {
-        let renderer = StubPDFRendererFactory()
-        let sut = makeSUT(renderer: renderer)
-        let document = DataBlockExportDocument(dataBlockImageData: [anyData(), anyData(), anyData()])
+        let sut = makeSUT(tilesPerRow: 3)
+        let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 3))
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 24))
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
     }
 
     func test_render_drawsMultiplePagesOfImages() throws {
-        let renderer = StubPDFRendererFactory()
-        let sut = makeSUT(renderer: renderer)
+        let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 14))
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -113,14 +117,14 @@ final class PDFDataBlockRendererTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeSUT(
-        renderer: StubPDFRendererFactory = StubPDFRendererFactory(),
+        tilesPerRow: UInt,
         imageRenderer: RGBCyclingStubColorImageRenderer = RGBCyclingStubColorImageRenderer()
     ) -> some PDFDocumentRenderer<DataBlockExportDocument> {
         PDFDataBlockRenderer(
-            rendererFactory: renderer,
+            rendererFactory: StubPDFRendererFactory(),
             imageRenderer: imageRenderer,
             blockLayout: { size in
-                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: 3, margin: 10, spacing: 5)
+                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: tilesPerRow, margin: 10, spacing: 5)
             }
         )
     }
