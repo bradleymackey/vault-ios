@@ -46,12 +46,21 @@ class PDFDataBlockRenderer<
             let imageResizer = UIImageResizer(mode: .noSmoothing)
             let blockLayoutEngine = blockLayout(context.pdfContextBounds.size)
 
-            for (imageIndex, imageData) in document.dataBlockImageData.enumerated() {
+            var imageNumberForPage = 0
+
+            for imageData in document.dataBlockImageData {
+                defer { imageNumberForPage += 1 }
                 guard let image = imageRenderer.makeImage(fromData: imageData) else {
                     continue
                 }
 
-                let desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageIndex))
+                var desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
+                if !blockLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
+                    context.beginPage()
+                    imageNumberForPage = 0
+                    desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
+                }
+
                 let resized = imageResizer.resize(image: image, to: desiredRect.size)
                 resized.draw(in: desiredRect)
             }
@@ -89,6 +98,16 @@ final class PDFDataBlockRendererTests: XCTestCase {
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsMultiplePagesOfImages() throws {
+        let renderer = StubPDFRendererFactory()
+        let sut = makeSUT(renderer: renderer)
+        let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 14))
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
+        assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
     }
 
     // MARK: - Helpers
