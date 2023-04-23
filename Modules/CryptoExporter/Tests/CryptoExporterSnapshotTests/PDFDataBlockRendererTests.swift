@@ -5,6 +5,7 @@ import SnapshotTesting
 import XCTest
 
 struct DataBlockExportDocument {
+    var title: String?
     var dataBlockImageData: [Data]
 }
 
@@ -43,8 +44,18 @@ class PDFDataBlockRenderer<
         let data = renderer.pdfData { context in
             context.beginPage()
 
+            var offsetForTitle = 0.0
+            if let title = document.title {
+                let attributes = [
+                    NSAttributedString.Key.font: UIFont.boldSystemFont(ofSize: 30),
+                ]
+                title.draw(at: CGPoint(x: 0, y: 0), withAttributes: attributes)
+                offsetForTitle += 40
+            }
+
             let imageResizer = UIImageResizer(mode: .noSmoothing)
-            let blockLayoutEngine = blockLayout(context.pdfContextBounds.size)
+            let inset = UIEdgeInsets(top: offsetForTitle, left: 0, bottom: 0, right: 0)
+            let blockLayoutEngine = blockLayout(context.pdfContextBounds.inset(by: inset))
 
             var imageNumberForPage = 0
 
@@ -112,6 +123,17 @@ final class PDFDataBlockRendererTests: XCTestCase {
 
         assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
         assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
+    }
+
+    func test_render_drawsTitleAboveImages() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let document = DataBlockExportDocument(
+            title: "Hello World",
+            dataBlockImageData: Array(repeating: anyData(), count: 14)
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf(), record: true)
     }
 
     // MARK: - Helpers
