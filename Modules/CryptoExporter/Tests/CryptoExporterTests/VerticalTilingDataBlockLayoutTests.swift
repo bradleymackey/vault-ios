@@ -69,7 +69,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         XCTAssertEqual(first.size, .square(30))
     }
 
-    func test_rect_laysOutGridRowEvenly() {
+    func test_rect_laysOutGridEvenly() {
         let sut = makeSUT(bounds: .square(90), tilesPerRow: 3)
 
         expectRow(
@@ -77,11 +77,6 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
             sizes: [.square(30), .square(30), .square(30)],
             origins: [.zero, CGPoint(x: 30, y: 0), CGPoint(x: 60, y: 0)]
         )
-    }
-
-    func test_rect_laysOutGridColumnEvenly() {
-        let sut = makeSUT(bounds: .square(90), tilesPerRow: 3)
-
         expectColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
@@ -89,7 +84,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    func test_rectWithMargin_layoutRowSizesToRespectMargin() {
+    func test_rect_layoutSizesToRespectMargin() {
         let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
 
         expectRow(
@@ -97,11 +92,6 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
             sizes: [.square(30), .square(30), .square(30)],
             origins: [CGPoint(x: 5, y: 5), CGPoint(x: 35, y: 5), CGPoint(x: 65, y: 5)]
         )
-    }
-
-    func test_rectWithMargin_layoutColumnSizesToRespectMargin() {
-        let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
-
         expectColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
@@ -109,7 +99,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    func test_rectWithMargin_layoutRowSizesToRespectSpacing() {
+    func test_rect_layoutSizesToRespectSpacing() {
         let sut = makeSUT(bounds: .square(110), tilesPerRow: 3, spacing: 10)
 
         expectRow(
@@ -117,11 +107,6 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
             sizes: [.square(30), .square(30), .square(30)],
             origins: [.zero, CGPoint(x: 40, y: 0), CGPoint(x: 80, y: 0)]
         )
-    }
-
-    func test_rectWithMargin_layoutColumnSizesToRespectSpacing() {
-        let sut = makeSUT(bounds: .square(110), tilesPerRow: 3, spacing: 10)
-
         expectColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
