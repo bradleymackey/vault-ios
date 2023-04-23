@@ -44,9 +44,8 @@ final class PDFDataBlockRendererTests: XCTestCase {
         let renderer = StubPDFRendererFactory()
         let sut = makeSUT(renderer: renderer)
         let pdf = try XCTUnwrap(sut.render(document: ()))
-        let pdfImage = try XCTUnwrap(pdf.asImage())
 
-        assertSnapshot(matching: pdfImage, as: .image)
+        assertSnapshot(matching: pdf, as: .pdf())
     }
 
     // MARK: - Helpers
@@ -91,42 +90,5 @@ private struct StubColorImageRenderer: PDFImageRenderer {
     var color: UIColor
     func makeImage(fromData _: Data) -> UIImage? {
         UIImage.from(color: color)
-    }
-}
-
-extension PDFDocument {
-    func asImage(page: Int = 1) -> UIImage? {
-        guard let data = dataRepresentation() else { return nil }
-        let cfData = data as CFData
-        guard let provider = CGDataProvider(data: cfData) else { return nil }
-        guard let pdfDoc = CGPDFDocument(provider) else { return nil }
-        guard let page = pdfDoc.page(at: page) else { return nil }
-
-        let pageRect = page.getBoxRect(.mediaBox)
-        let renderer = UIGraphicsImageRenderer(size: pageRect.size)
-        return renderer.image { ctx in
-            UIColor.white.set()
-            ctx.fill(pageRect)
-
-            ctx.cgContext.translateBy(x: 0.0, y: pageRect.size.height)
-            ctx.cgContext.scaleBy(x: 1.0, y: -1.0)
-
-            ctx.cgContext.drawPDFPage(page)
-        }
-    }
-}
-
-extension Snapshotting where Value == Data, Format == Data {
-    static var pdf: Snapshotting {
-        .init(
-            pathExtension: "pdf",
-            diffing: .init(toData: { $0 }, fromData: { $0 }) { old, new in
-                guard old != new else { return nil }
-                let message = old.count == new.count
-                    ? "Expected data in pdf to match"
-                    : "Expected \(new) to match \(old)"
-                return (message, [])
-            }
-        )
     }
 }
