@@ -99,6 +99,21 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
+    func test_rect_escapesBoundsIfNegativeMargin() {
+        let sut = makeSUT(bounds: .square(80), tilesPerRow: 3, margin: -5)
+
+        expectRow(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [CGPoint(x: -5, y: -5), CGPoint(x: 25, y: -5), CGPoint(x: 55, y: -5)]
+        )
+        expectColumn(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [CGPoint(x: -5, y: -5), CGPoint(x: -5, y: 25), CGPoint(x: -5, y: 55)]
+        )
+    }
+
     func test_rect_layoutSizesToRespectSpacing() {
         let sut = makeSUT(bounds: .square(110), tilesPerRow: 3, spacing: 10)
 
