@@ -80,6 +80,36 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
+    func test_isFullyWithinBounds_containsItem() {
+        let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
+
+        let validRects: [CGRect] = [
+            CGRect(x: 5, y: 5, width: 10, height: 10),
+            CGRect(x: 5, y: 5, width: 90, height: 90),
+            CGRect(x: 50, y: 50, width: 40, height: 40),
+        ]
+
+        for rect in validRects {
+            XCTAssertTrue(sut.isFullyWithinBounds(rect: rect), "Does not contain \(rect)")
+        }
+    }
+
+    func test_isFullyWithinBounds_doesNotContainItem() {
+        let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
+
+        let invalidRects: [CGRect] = [
+            CGRect(x: 0, y: 0, width: 10, height: 10),
+            CGRect(x: 0, y: 0, width: 100, height: 100),
+            CGRect(x: 5, y: 5, width: 95, height: 95),
+            CGRect(x: -5, y: -5, width: 10, height: 10),
+            CGRect(x: -5, y: -5, width: 500, height: 10),
+        ]
+
+        for rect in invalidRects {
+            XCTAssertFalse(sut.isFullyWithinBounds(rect: rect), "Contains \(rect)")
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) -> VerticalTilingDataBlockLayout {
