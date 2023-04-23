@@ -28,6 +28,7 @@ struct DocumentPagePDFRendererFactory: PDFRendererFactory {
 
     private var pdfMetadata: [CFString: String] {
         var metadata = [CFString: String]()
+        metadata[kCGPDFContextCreator] = applicationName
         return metadata
     }
 }
@@ -55,9 +56,29 @@ final class DocumentPagePDFRendererFactoryTests: XCTestCase {
         XCTAssertEqual(actualOrigin, .zero)
     }
 
+    func test_makeRenderer_formatCreatorIsApplicationName() throws {
+        let applicationName = UUID().uuidString
+        let sut = makeSUT(applicationName: applicationName)
+
+        let renderer = sut.makeRenderer()
+
+        let format = try XCTUnwrap(renderer.format as? UIGraphicsPDFRendererFormat)
+        XCTAssertEqual(format.documentInfo(forKey: kCGPDFContextCreator) as? String?, applicationName)
+    }
+
     // MARK: - Helpers
 
-    private func makeSUT(size: PDFDocumentSize = .usLetter) -> DocumentPagePDFRendererFactory {
-        DocumentPagePDFRendererFactory(size: size)
+    private func makeSUT(size: PDFDocumentSize = .usLetter, applicationName: String? = "Any") -> DocumentPagePDFRendererFactory {
+        DocumentPagePDFRendererFactory(size: size, applicationName: applicationName)
+    }
+}
+
+private extension UIGraphicsPDFRendererFormat {
+    func documentInfo(forKey key: String) -> Any? {
+        documentInfo[key]
+    }
+
+    func documentInfo(forKey key: CFString) -> Any? {
+        documentInfo[key as String]
     }
 }
