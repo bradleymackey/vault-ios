@@ -68,71 +68,65 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     func test_rect_laysOutGridRowEvenly() {
         let sut = makeSUT(bounds: .square(90), tilesPerRow: 3)
 
-        let first = sut.rect(atIndex: 0)
-        XCTAssertEqual(first.size, .square(30))
-        XCTAssertEqual(first.origin, .zero)
-
-        let second = sut.rect(atIndex: 1)
-        XCTAssertEqual(second.size, .square(30))
-        XCTAssertEqual(second.origin, CGPoint(x: 30, y: 0))
-
-        let third = sut.rect(atIndex: 2)
-        XCTAssertEqual(third.size, .square(30))
-        XCTAssertEqual(third.origin, CGPoint(x: 60, y: 0))
+        expectRow(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [.zero, CGPoint(x: 30, y: 0), CGPoint(x: 60, y: 0)]
+        )
     }
 
     func test_rect_laysOutGridColumnEvenly() {
         let sut = makeSUT(bounds: .square(90), tilesPerRow: 3)
 
-        let first = sut.rect(atIndex: 0)
-        XCTAssertEqual(first.size, .square(30))
-        XCTAssertEqual(first.origin, .zero)
-
-        let second = sut.rect(atIndex: 3)
-        XCTAssertEqual(second.size, .square(30))
-        XCTAssertEqual(second.origin, CGPoint(x: 0, y: 30))
-
-        let third = sut.rect(atIndex: 6)
-        XCTAssertEqual(third.size, .square(30))
-        XCTAssertEqual(third.origin, CGPoint(x: 0, y: 60))
+        expectColumn(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [.zero, CGPoint(x: 0, y: 30), CGPoint(x: 0, y: 60)]
+        )
     }
 
     func test_rectWithMargin_layoutRowSizesToRespectMargin() {
         let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
 
-        let first = sut.rect(atIndex: 0)
-        XCTAssertEqual(first.size, .square(30))
-        XCTAssertEqual(first.origin, CGPoint(x: 5, y: 5))
-
-        let second = sut.rect(atIndex: 1)
-        XCTAssertEqual(second.size, .square(30))
-        XCTAssertEqual(second.origin, CGPoint(x: 35, y: 5))
-
-        let third = sut.rect(atIndex: 2)
-        XCTAssertEqual(third.size, .square(30))
-        XCTAssertEqual(third.origin, CGPoint(x: 65, y: 5))
+        expectRow(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [CGPoint(x: 5, y: 5), CGPoint(x: 35, y: 5), CGPoint(x: 65, y: 5)]
+        )
     }
 
     func test_rectWithMargin_layoutColumnSizesToRespectMargin() {
         let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
 
-        let first = sut.rect(atIndex: 0)
-        XCTAssertEqual(first.size, .square(30))
-        XCTAssertEqual(first.origin, CGPoint(x: 5, y: 5))
-
-        let second = sut.rect(atIndex: 3)
-        XCTAssertEqual(second.size, .square(30))
-        XCTAssertEqual(second.origin, CGPoint(x: 5, y: 35))
-
-        let third = sut.rect(atIndex: 6)
-        XCTAssertEqual(third.size, .square(30))
-        XCTAssertEqual(third.origin, CGPoint(x: 5, y: 65))
+        expectColumn(
+            for: sut,
+            sizes: [.square(30), .square(30), .square(30)],
+            origins: [CGPoint(x: 5, y: 5), CGPoint(x: 5, y: 35), CGPoint(x: 5, y: 65)]
+        )
     }
 
     // MARK: - Helpers
 
     private func makeSUT(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0) -> VerticalTilingDataBlockLayout {
         VerticalTilingDataBlockLayout(bounds: bounds, tilesPerRow: tilesPerRow, margin: margin)
+    }
+
+    private func expectRow(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
+        let rowIndexes: [UInt] = Array(0 ..< sut.tilesPerRow)
+        for (index, rowIndex) in rowIndexes.enumerated() {
+            let point = sut.rect(atIndex: rowIndex)
+            XCTAssertEqual(point.size, sizes[index])
+            XCTAssertEqual(point.origin, origins[index])
+        }
+    }
+
+    private func expectColumn(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
+        let columnIndexes: [UInt] = [0, sut.tilesPerRow, sut.tilesPerRow * 2]
+        for (index, columnIndex) in columnIndexes.enumerated() {
+            let point = sut.rect(atIndex: columnIndex)
+            XCTAssertEqual(point.size, sizes[index])
+            XCTAssertEqual(point.origin, origins[index])
+        }
     }
 }
 
