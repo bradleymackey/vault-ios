@@ -2,38 +2,6 @@ import CryptoExporter
 import Foundation
 import XCTest
 
-/// Creates a rendering context where PDFs will be drawn onto.
-protocol PDFRendererFactory {
-    func makeRenderer() -> UIGraphicsPDFRenderer
-}
-
-/// Produces renderers optimized for rendering a standard size document.
-struct DocumentPagePDFRendererFactory: PDFRendererFactory {
-    let size: PDFDocumentSize
-    var applicationName: String?
-    var authorName: String?
-
-    func makeRenderer() -> UIGraphicsPDFRenderer {
-        let format = UIGraphicsPDFRendererFormat()
-        format.documentInfo = pdfMetadata as [String: Any]
-
-        return UIGraphicsPDFRenderer(bounds: pageRect(), format: format)
-    }
-
-    private func pageRect() -> CGRect {
-        let (pageWidth, pageHeight) = size.pointSize()
-        let size = CGSize(width: pageWidth, height: pageHeight)
-        return CGRect(origin: .zero, size: size)
-    }
-
-    private var pdfMetadata: [CFString: String] {
-        var metadata = [CFString: String]()
-        metadata[kCGPDFContextCreator] = applicationName
-        metadata[kCGPDFContextAuthor] = authorName
-        return metadata
-    }
-}
-
 final class DocumentPagePDFRendererFactoryTests: XCTestCase {
     func test_makeRenderer_rendererHasSpecifiedSizeSet() {
         let documentSize = PDFDocumentSize.usLetter
