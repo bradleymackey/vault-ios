@@ -7,6 +7,13 @@ import XCTest
 struct VerticalTilingDataBlockLayout {
     let bounds: CGSize
     let tilesPerRow: UInt
+    let margin: CGFloat
+
+    init(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0) {
+        self.bounds = bounds
+        self.tilesPerRow = tilesPerRow
+        self.margin = margin
+    }
 
     /// Gets the rect for this index.
     func rect(atIndex index: UInt) -> CGRect {
@@ -17,6 +24,14 @@ struct VerticalTilingDataBlockLayout {
     }
 
     private func origin(index: UInt) -> CGPoint {
+        var point = originalOrigin(index: index)
+        point.x += margin
+        point.y += margin
+        return point
+    }
+
+    /// Origin without any margin considerations
+    private func originalOrigin(index: UInt) -> CGPoint {
         let rowNumber = index % tilesPerRow
         let columnNumber = index / tilesPerRow
         return CGPoint(
@@ -27,7 +42,9 @@ struct VerticalTilingDataBlockLayout {
 
     /// The length of the side of all tiles.
     private var sideLength: CGFloat {
-        bounds.width / CGFloat(tilesPerRow)
+        let totalHorizontalMargin = margin * 2
+        let availableWidth = bounds.width - totalHorizontalMargin
+        return availableWidth / CGFloat(tilesPerRow)
     }
 }
 
@@ -80,10 +97,42 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         XCTAssertEqual(third.origin, CGPoint(x: 0, y: 60))
     }
 
+    func test_rectWithMargin_layoutRowSizesToRespectMargin() {
+        let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
+
+        let first = sut.rect(atIndex: 0)
+        XCTAssertEqual(first.size, .square(30))
+        XCTAssertEqual(first.origin, CGPoint(x: 5, y: 5))
+
+        let second = sut.rect(atIndex: 1)
+        XCTAssertEqual(second.size, .square(30))
+        XCTAssertEqual(second.origin, CGPoint(x: 35, y: 5))
+
+        let third = sut.rect(atIndex: 2)
+        XCTAssertEqual(third.size, .square(30))
+        XCTAssertEqual(third.origin, CGPoint(x: 65, y: 5))
+    }
+
+    func test_rectWithMargin_layoutColumnSizesToRespectMargin() {
+        let sut = makeSUT(bounds: .square(100), tilesPerRow: 3, margin: 5)
+
+        let first = sut.rect(atIndex: 0)
+        XCTAssertEqual(first.size, .square(30))
+        XCTAssertEqual(first.origin, CGPoint(x: 5, y: 5))
+
+        let second = sut.rect(atIndex: 3)
+        XCTAssertEqual(second.size, .square(30))
+        XCTAssertEqual(second.origin, CGPoint(x: 5, y: 35))
+
+        let third = sut.rect(atIndex: 6)
+        XCTAssertEqual(third.size, .square(30))
+        XCTAssertEqual(third.origin, CGPoint(x: 5, y: 65))
+    }
+
     // MARK: - Helpers
 
-    private func makeSUT(bounds: CGSize, tilesPerRow: UInt) -> VerticalTilingDataBlockLayout {
-        VerticalTilingDataBlockLayout(bounds: bounds, tilesPerRow: tilesPerRow)
+    private func makeSUT(bounds: CGSize, tilesPerRow: UInt, margin: CGFloat = 0) -> VerticalTilingDataBlockLayout {
+        VerticalTilingDataBlockLayout(bounds: bounds, tilesPerRow: tilesPerRow, margin: margin)
     }
 }
 
