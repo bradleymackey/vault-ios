@@ -94,7 +94,7 @@ final class PDFDataBlockRendererTests: XCTestCase {
     func test_render_drawsRowOfImages() throws {
         let renderer = StubPDFRendererFactory()
         let sut = makeSUT(renderer: renderer)
-        let document = DataBlockExportDocument(dataBlockImageData: [anyData(), anyData(), anyData(), anyData()])
+        let document = DataBlockExportDocument(dataBlockImageData: [anyData(), anyData(), anyData()])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
