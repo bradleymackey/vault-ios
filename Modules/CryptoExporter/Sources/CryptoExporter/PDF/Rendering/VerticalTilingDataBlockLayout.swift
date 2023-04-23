@@ -29,19 +29,19 @@ public struct VerticalTilingDataBlockLayout: DataBlockLayout {
         return effectiveBounds.intersection(rect).isAlmostEqual(to: rect)
     }
 
-    /// Origin without any margin considerations
     private func origin(index: UInt) -> CGPoint {
         let rowNumber = index % tilesPerRow
         let columnNumber = index / tilesPerRow
         return CGPoint(
-            x: applyOffset(position: rowNumber),
-            y: applyOffset(position: columnNumber)
+            x: applyOffset(position: rowNumber, offset: bounds.origin.x),
+            y: applyOffset(position: columnNumber, offset: bounds.origin.y)
         )
     }
 
-    private func applyOffset(position: UInt) -> CGFloat {
+    private func applyOffset(position: UInt, offset: CGFloat) -> CGFloat {
         let value = CGFloat(position)
         var position = value * sideLength
+        position += offset
         position += margin
         position += value * spacing
         return position
