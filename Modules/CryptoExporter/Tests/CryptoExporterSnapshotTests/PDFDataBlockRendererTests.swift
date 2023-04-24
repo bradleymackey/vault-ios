@@ -48,22 +48,20 @@ class PDFDataBlockRenderer<
 
     func render(document: DataBlockExportDocument) -> PDFDocument? {
         let renderer = rendererFactory.makeRenderer()
-        let data = renderer.pdfData { context in
-            let pageRect = context.pdfContextBounds
-
-            context.beginPage()
+        let data = renderer.drawPDFPage { context in
+            context.startNextPage()
 
             var currentVerticalOffset = 0.0
             for label in [document.title, document.subtitle] {
                 guard let label else { continue }
-                let (attributedString, rect) = renderedLabel(for: label, pageRect: pageRect, textTop: currentVerticalOffset, horizontalPadding: 10)
+                let (attributedString, rect) = renderedLabel(for: label, pageRect: context.currentPageBounds, textTop: currentVerticalOffset, horizontalPadding: 10)
                 attributedString.draw(in: rect)
                 currentVerticalOffset += label.padding.top
                 currentVerticalOffset += rect.height
             }
 
             var blockLayoutEngine = blockLayout(
-                pageRect.inset(by: UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0))
+                context.currentPageBounds.inset(by: UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0))
             )
 
             var imageNumberForPage = 0
@@ -72,9 +70,9 @@ class PDFDataBlockRenderer<
                 defer { imageNumberForPage += 1 }
                 var desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
                 if !blockLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
-                    context.beginPage()
+                    context.startNextPage()
                     blockLayoutEngine = blockLayout(
-                        pageRect.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
+                        context.currentPageBounds.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
                     )
                     imageNumberForPage = 0
                     desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
@@ -112,6 +110,34 @@ class PDFDataBlockRenderer<
             height: boundingRect.height + label.padding.bottom
         )
         return (attributedText, textRect)
+    }
+}
+
+extension UIGraphicsPDFRenderer {
+    /// A wrapper around UIGraphicsPDFRendererContext that exposes a nicer interface.
+    final class PDFPageContext {
+        private let context: UIGraphicsPDFRendererContext
+        private(set) var pageNumber: Int = 0
+
+        init(context: UIGraphicsPDFRendererContext) {
+            self.context = context
+        }
+
+        var currentPageBounds: CGRect {
+            context.pdfContextBounds
+        }
+
+        func startNextPage() {
+            context.beginPage()
+            pageNumber += 1
+        }
+    }
+
+    func drawPDFPage(actions: (PDFPageContext) -> Void) -> Data {
+        pdfData { context in
+            let pageContext = PDFPageContext(context: context)
+            actions(pageContext)
+        }
     }
 }
 
