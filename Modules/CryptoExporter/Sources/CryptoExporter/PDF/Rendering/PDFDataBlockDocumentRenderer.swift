@@ -5,7 +5,7 @@ import UIKit
 public struct PDFDataBlockDocumentRenderer<
     RendererFactory: PDFRendererFactory,
     ImageRenderer: PDFImageRenderer,
-    BlockLayout: DataBlockLayout
+    BlockLayout: PDFDataBlockLayout
 >: PDFDocumentRenderer {
     public typealias Document = DataBlockExportDocument
 

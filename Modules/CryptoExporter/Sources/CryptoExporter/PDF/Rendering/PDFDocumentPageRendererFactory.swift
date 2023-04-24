@@ -3,7 +3,7 @@ import UIKit
 /// Produces renderers optimized for rendering a standard size document.
 ///
 /// Contains information about the size of PDF to render and metadata that will be associated with the PDF.
-public struct DocumentPagePDFRendererFactory: PDFRendererFactory {
+public struct PDFDocumentPageRendererFactory: PDFRendererFactory {
     public var size: PDFDocumentSize
     public var documentTitle: String?
     public var applicationName: String?
@@ -26,7 +26,7 @@ public struct DocumentPagePDFRendererFactory: PDFRendererFactory {
 
 // MARK: - Helpers
 
-extension DocumentPagePDFRendererFactory {
+extension PDFDocumentPageRendererFactory {
     private func pageRect() -> CGRect {
         let (pageWidth, pageHeight) = size.pointSize()
         let size = CGSize(width: pageWidth, height: pageHeight)
