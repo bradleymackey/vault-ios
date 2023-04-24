@@ -54,18 +54,12 @@ class PDFDataBlockRenderer<
             context.beginPage()
 
             var currentVerticalOffset = 0.0
-            if let title = document.title {
-                let (titleString, titleRect) = renderedLabel(for: title, pageRect: pageRect, textTop: currentVerticalOffset, horizontalPadding: 10)
-                titleString.draw(in: titleRect)
-                currentVerticalOffset += title.padding.top
-                currentVerticalOffset += titleRect.height
-            }
-
-            if let subtitle = document.subtitle {
-                let (subtitleString, subtitleRect) = renderedLabel(for: subtitle, pageRect: pageRect, textTop: currentVerticalOffset, horizontalPadding: 10)
-                subtitleString.draw(in: subtitleRect)
-                currentVerticalOffset += subtitle.padding.top
-                currentVerticalOffset += subtitleRect.height
+            for label in [document.title, document.subtitle] {
+                guard let label else { continue }
+                let (attributedString, rect) = renderedLabel(for: label, pageRect: pageRect, textTop: currentVerticalOffset, horizontalPadding: 10)
+                attributedString.draw(in: rect)
+                currentVerticalOffset += label.padding.top
+                currentVerticalOffset += rect.height
             }
 
             let imageResizer = UIImageResizer(mode: .noSmoothing)
