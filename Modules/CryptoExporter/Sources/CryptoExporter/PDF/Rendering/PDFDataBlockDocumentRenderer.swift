@@ -28,11 +28,8 @@ public struct PDFDataBlockDocumentRenderer<
         let data = renderer.pdfData { context in
             let drawer = PDFDocumentDrawerHelper(context: context)
             drawer.startNextPage()
-            if let title = document.title {
+            for title in document.titles {
                 drawer.draw(label: title)
-            }
-            if let subtitle = document.subtitle {
-                drawer.draw(label: subtitle)
             }
             drawer.draw(images: document.dataBlockImageData, imageRenderer: imageRenderer, blockLayout: blockLayout)
         }

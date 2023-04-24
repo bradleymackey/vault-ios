@@ -57,7 +57,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
-            title: titleLabel,
+            titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -74,7 +74,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
-            title: titleLabel,
+            titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -91,7 +91,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
-            title: titleLabel,
+            titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -108,7 +108,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
-            subtitle: titleLabel,
+            titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -124,8 +124,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 0, right: 10)
         )
         let document = DataBlockExportDocument(
-            title: titleLabel,
-            subtitle: longSubtitle(),
+            titles: [titleLabel, longSubtitle()],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -135,9 +134,10 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_labelsRespectPadding() throws {
         let sut = makeSUT(tilesPerRow: 10)
+        let title = longTitle(padding: .init(top: 40, left: 40, bottom: 10, right: 40))
+        let subtitle = longSubtitle(padding: .init(top: 40, left: 60, bottom: 10, right: 60))
         let document = DataBlockExportDocument(
-            title: longTitle(padding: .init(top: 40, left: 40, bottom: 10, right: 40)),
-            subtitle: longSubtitle(padding: .init(top: 40, left: 60, bottom: 10, right: 60)),
+            titles: [title, subtitle],
             dataBlockImageData: Array(repeating: anyData(), count: 0)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
