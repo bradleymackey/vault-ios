@@ -53,23 +53,23 @@ class PDFDataBlockRenderer<
 
             context.beginPage()
 
-            var offsetForTitle = 0.0
+            var currentVerticalOffset = 0.0
             if let title = document.title {
-                let (titleString, titleRect) = titleLabel(for: title, pageRect: pageRect)
+                let (titleString, titleRect) = renderedLabel(for: title, pageRect: pageRect, textTop: currentVerticalOffset, horizontalPadding: 10)
                 titleString.draw(in: titleRect)
-                offsetForTitle += title.padding.top
-                offsetForTitle += titleRect.height
+                currentVerticalOffset += title.padding.top
+                currentVerticalOffset += titleRect.height
             }
 
             if let subtitle = document.subtitle {
-                let (subtitleString, subtitleRect) = subtitleLabel(for: subtitle, pageRect: pageRect, textTop: offsetForTitle, horizontalPadding: 10)
+                let (subtitleString, subtitleRect) = renderedLabel(for: subtitle, pageRect: pageRect, textTop: currentVerticalOffset, horizontalPadding: 10)
                 subtitleString.draw(in: subtitleRect)
-                offsetForTitle += subtitle.padding.top
-                offsetForTitle += subtitleRect.height
+                currentVerticalOffset += subtitle.padding.top
+                currentVerticalOffset += subtitleRect.height
             }
 
             let imageResizer = UIImageResizer(mode: .noSmoothing)
-            let inset = UIEdgeInsets(top: offsetForTitle, left: 0, bottom: 0, right: 0)
+            let inset = UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0)
             let blockLayoutEngine = blockLayout(pageRect.inset(by: inset))
 
             var imageNumberForPage = 0
@@ -94,24 +94,7 @@ class PDFDataBlockRenderer<
         return PDFDocument(data: data)
     }
 
-    private func titleLabel(for label: DataBlockLabel, pageRect: CGRect) -> (NSAttributedString, CGRect) {
-        let attributedTitle = NSAttributedString(
-            string: label.text,
-            attributes: [
-                NSAttributedString.Key.font: label.font,
-            ]
-        )
-        let titleSize = attributedTitle.size()
-        let titleRect = CGRect(
-            x: (pageRect.width - titleSize.width) / 2.0,
-            y: label.padding.top,
-            width: titleSize.width,
-            height: titleSize.height + label.padding.bottom
-        )
-        return (attributedTitle, titleRect)
-    }
-
-    private func subtitleLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat, horizontalPadding: CGFloat) -> (NSAttributedString, CGRect) {
+    private func renderedLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat, horizontalPadding: CGFloat) -> (NSAttributedString, CGRect) {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineBreakMode = .byWordWrapping
@@ -188,6 +171,23 @@ final class PDFDataBlockRendererTests: XCTestCase {
         let sut = makeSUT(tilesPerRow: 10)
         let titleLabel = DataBlockLabel(
             text: "Hello World",
+            font: UIFont.systemFont(ofSize: 50, weight: .bold),
+            padding: (top: 36, bottom: 22)
+        )
+        let document = DataBlockExportDocument(
+            title: titleLabel,
+            dataBlockImageData: Array(repeating: anyData(), count: 14)
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsLongTitleAboveImages() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let title = Array(repeating: "Title", count: 10).joined(separator: " ")
+        let titleLabel = DataBlockLabel(
+            text: "<START> \(title) <END>",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
             padding: (top: 36, bottom: 22)
         )
