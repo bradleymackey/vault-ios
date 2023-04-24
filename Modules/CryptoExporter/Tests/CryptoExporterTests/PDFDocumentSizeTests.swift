@@ -17,6 +17,12 @@ final class PDFDocumentSizeTests: XCTestCase {
         XCTAssertEqual(height, 792)
     }
 
+    func test_idealNumberOfHorizontalSquaresForPaperSize_usLetter() {
+        let number = makeSquares(.usLetter)
+
+        XCTAssertEqual(number, 5)
+    }
+
     // MARK: - Helpers
 
     private func makeInches(_ size: PDFDocumentSize) -> (width: Double, height: Double) {
@@ -25,5 +31,9 @@ final class PDFDocumentSizeTests: XCTestCase {
 
     private func makeDefaultPointSize(_ size: PDFDocumentSize) -> (width: Double, height: Double) {
         size.pointSize()
+    }
+
+    private func makeSquares(_ size: PDFDocumentSize) -> Int {
+        size.idealNumberOfHorizontalSquaresForPaperSize
     }
 }

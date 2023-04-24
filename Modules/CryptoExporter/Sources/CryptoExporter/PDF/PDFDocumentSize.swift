@@ -18,4 +18,12 @@ public enum PDFDocumentSize {
         let (width, height) = inchDimensions
         return (width * pointsPerInch, height * pointsPerInch)
     }
+
+    /// The number of squares most appropriate for the size of the paper.
+    ///
+    /// This ensures that the squares sizing remains roughly constant, no matter the size of the paper.
+    public var idealNumberOfHorizontalSquaresForPaperSize: Int {
+        let (width, _) = inchDimensions
+        return Int(width / 1.6)
+    }
 }
