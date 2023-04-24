@@ -12,6 +12,7 @@ struct DataBlockLabel {
 
 struct DataBlockExportDocument {
     var title: DataBlockLabel?
+    var subtitle: DataBlockLabel?
     var dataBlockImageData: [Data]
 }
 
@@ -60,6 +61,13 @@ class PDFDataBlockRenderer<
                 offsetForTitle += titleRect.height
             }
 
+            if let subtitle = document.subtitle {
+                let (subtitleString, subtitleRect) = subtitleLabel(for: subtitle, pageRect: pageRect, textTop: offsetForTitle, horizontalPadding: 10)
+                subtitleString.draw(in: subtitleRect)
+                offsetForTitle += subtitle.padding.top
+                offsetForTitle += subtitleRect.height
+            }
+
             let imageResizer = UIImageResizer(mode: .noSmoothing)
             let inset = UIEdgeInsets(top: offsetForTitle, left: 0, bottom: 0, right: 0)
             let blockLayoutEngine = blockLayout(pageRect.inset(by: inset))
@@ -101,6 +109,33 @@ class PDFDataBlockRenderer<
             height: titleSize.height + label.padding.bottom
         )
         return (attributedTitle, titleRect)
+    }
+
+    private func subtitleLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat, horizontalPadding: CGFloat) -> (NSAttributedString, CGRect) {
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = .center
+        paragraphStyle.lineBreakMode = .byWordWrapping
+
+        let attributedText = NSAttributedString(
+            string: label.text,
+            attributes: [
+                NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                NSAttributedString.Key.font: label.font,
+            ]
+        )
+        let width = pageRect.width - horizontalPadding * 2
+        let boundingRect = attributedText.boundingRect(
+            with: CGSize(width: width, height: .greatestFiniteMagnitude),
+            options: .usesLineFragmentOrigin,
+            context: nil
+        )
+        let textRect = CGRect(
+            x: horizontalPadding,
+            y: textTop + label.padding.top,
+            width: width,
+            height: boundingRect.height + label.padding.bottom
+        )
+        return (attributedText, textRect)
     }
 }
 
@@ -158,6 +193,46 @@ final class PDFDataBlockRendererTests: XCTestCase {
         )
         let document = DataBlockExportDocument(
             title: titleLabel,
+            dataBlockImageData: Array(repeating: anyData(), count: 14)
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsSubtitleAboveImages() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let subtitleMain = Array(repeating: "Subtitle", count: 50).joined(separator: " ")
+        let titleLabel = DataBlockLabel(
+            text: "<START> \(subtitleMain) <END>",
+            font: UIFont.systemFont(ofSize: 14, weight: .regular),
+            padding: (top: 36, bottom: 22)
+        )
+        let document = DataBlockExportDocument(
+            subtitle: titleLabel,
+            dataBlockImageData: Array(repeating: anyData(), count: 14)
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsTitleAndSubtitleAboveImages() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let titleLabel = DataBlockLabel(
+            text: "Hello World",
+            font: UIFont.systemFont(ofSize: 50, weight: .bold),
+            padding: (top: 36, bottom: 0)
+        )
+        let subtitleMain = Array(repeating: "Subtitle", count: 50).joined(separator: " ")
+        let subtitleLabel = DataBlockLabel(
+            text: "<START> \(subtitleMain) <END>",
+            font: UIFont.systemFont(ofSize: 14, weight: .regular),
+            padding: (top: 12, bottom: 14)
+        )
+        let document = DataBlockExportDocument(
+            title: titleLabel,
+            subtitle: subtitleLabel,
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
