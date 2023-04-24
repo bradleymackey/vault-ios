@@ -22,7 +22,7 @@ protocol PDFDocumentRenderer<Document> {
 }
 
 protocol PDFImageRenderer {
-    func makeImage(fromData data: Data) -> UIImage?
+    func makeImage(fromData data: Data, size: CGSize) -> UIImage?
 }
 
 class PDFDataBlockRenderer<
@@ -62,7 +62,6 @@ class PDFDataBlockRenderer<
                 currentVerticalOffset += rect.height
             }
 
-            let imageResizer = UIImageResizer(mode: .noSmoothing)
             var blockLayoutEngine = blockLayout(
                 pageRect.inset(by: UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0))
             )
@@ -71,10 +70,6 @@ class PDFDataBlockRenderer<
 
             for imageData in document.dataBlockImageData {
                 defer { imageNumberForPage += 1 }
-                guard let image = imageRenderer.makeImage(fromData: imageData) else {
-                    continue
-                }
-
                 var desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
                 if !blockLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
                     context.beginPage()
@@ -85,8 +80,8 @@ class PDFDataBlockRenderer<
                     desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
                 }
 
-                let resized = imageResizer.resize(image: image, to: desiredRect.size)
-                resized.draw(in: desiredRect)
+                let image = imageRenderer.makeImage(fromData: imageData, size: desiredRect.size)
+                image?.draw(in: desiredRect)
             }
         }
         return PDFDocument(data: data)
@@ -294,8 +289,10 @@ private struct StubPDFRendererFactory: PDFRendererFactory {
 private class RGBCyclingStubColorImageRenderer: PDFImageRenderer {
     var states: [UIColor] = [.red, .green, .blue]
     var currentState = 0
-    func makeImage(fromData _: Data) -> UIImage? {
+    func makeImage(fromData _: Data, size: CGSize) -> UIImage? {
         defer { currentState += 1 }
-        return UIImage.from(color: states[currentState % states.count])
+        let image = UIImage.from(color: states[currentState % states.count])
+        let resizer = UIImageResizer(mode: .noSmoothing)
+        return resizer.resize(image: image, to: size)
     }
 }
