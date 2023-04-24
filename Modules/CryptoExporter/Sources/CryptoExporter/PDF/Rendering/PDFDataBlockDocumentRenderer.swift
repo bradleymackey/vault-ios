@@ -61,28 +61,39 @@ private final class PDFDocumentDrawerHelper {
     }
 
     func draw(images: [Data], imageRenderer: some PDFImageRenderer, blockLayout: (CGRect) -> some PDFDataBlockLayout) {
-        var blockLayoutEngine = blockLayout(
-            context.pdfContextBounds.inset(by: UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0))
-        )
         for imageData in images {
             defer { currentImageNumberOnPage += 1 }
-            var desiredRect = blockLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
-            if !blockLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
+            if let imageRect = getNextRectForImageOnPage(blockLayout: blockLayout) {
+                let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
+                image?.draw(in: imageRect)
+            } else {
                 startNextPage()
-                blockLayoutEngine = blockLayout(
-                    context.pdfContextBounds.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
-                )
-                currentImageNumberOnPage = 0
-                desiredRect = blockLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
+                if let imageRect = getNextRectForImageOnPage(blockLayout: blockLayout) {
+                    let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
+                    image?.draw(in: imageRect)
+                }
             }
-            let image = imageRenderer.makeImage(fromData: imageData, size: desiredRect.size)
-            image?.draw(in: desiredRect)
         }
     }
 
     func startNextPage() {
         context.beginPage()
         currentVerticalOffset = 0.0
+        currentImageNumberOnPage = 0
+    }
+
+    /// Returns the first rect that fits in the page bounds or `nil`.
+    private func getNextRectForImageOnPage(blockLayout: (CGRect) -> some PDFDataBlockLayout) -> CGRect? {
+        let currentInsets = UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0)
+        let currentLayoutEngine = blockLayout(
+            context.pdfContextBounds.inset(by: currentInsets)
+        )
+        let desiredRect = currentLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
+        if currentLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
+            return desiredRect
+        } else {
+            return nil
+        }
     }
 
     private func renderedLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat) -> (NSAttributedString, CGRect) {
