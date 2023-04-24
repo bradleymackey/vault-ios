@@ -54,9 +54,10 @@ class PDFDataBlockRenderer<
 
             var offsetForTitle = 0.0
             if let title = document.title {
-                let (title, titleRect) = titleLabel(for: title, pageRect: pageRect)
-                title.draw(in: titleRect)
-                offsetForTitle += titleRect.maxY
+                let (titleString, titleRect) = titleLabel(for: title, pageRect: pageRect)
+                titleString.draw(in: titleRect)
+                offsetForTitle += title.padding.top
+                offsetForTitle += titleRect.height
             }
 
             let imageResizer = UIImageResizer(mode: .noSmoothing)
