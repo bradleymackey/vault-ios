@@ -63,8 +63,9 @@ class PDFDataBlockRenderer<
             }
 
             let imageResizer = UIImageResizer(mode: .noSmoothing)
-            let inset = UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0)
-            let blockLayoutEngine = blockLayout(pageRect.inset(by: inset))
+            var blockLayoutEngine = blockLayout(
+                pageRect.inset(by: UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0))
+            )
 
             var imageNumberForPage = 0
 
@@ -77,6 +78,9 @@ class PDFDataBlockRenderer<
                 var desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
                 if !blockLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
                     context.beginPage()
+                    blockLayoutEngine = blockLayout(
+                        pageRect.inset(by: UIEdgeInsets(top: 0, left: 0, bottom: 0, right: 0))
+                    )
                     imageNumberForPage = 0
                     desiredRect = blockLayoutEngine.rect(atIndex: UInt(imageNumberForPage))
                 }
@@ -155,6 +159,23 @@ final class PDFDataBlockRendererTests: XCTestCase {
     func test_render_drawsMultiplePagesOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 14))
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
+        assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
+    }
+
+    func test_render_ignoresOffsetForTitleOnSecondPage() throws {
+        let sut = makeSUT(tilesPerRow: 3)
+        let titleLabel = DataBlockLabel(
+            text: "Hello World",
+            font: UIFont.systemFont(ofSize: 50, weight: .bold),
+            padding: (top: 36, bottom: 22)
+        )
+        let document = DataBlockExportDocument(
+            title: titleLabel,
+            dataBlockImageData: Array(repeating: anyData(), count: 14)
+        )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
