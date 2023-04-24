@@ -133,7 +133,7 @@ final class PDFDataBlockRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf(), record: true)
+        assertSnapshot(matching: pdf, as: .pdf())
     }
 
     // MARK: - Helpers
