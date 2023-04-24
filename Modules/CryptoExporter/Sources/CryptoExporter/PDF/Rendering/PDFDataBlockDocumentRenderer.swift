@@ -53,8 +53,7 @@ private final class PDFDocumentDrawerHelper {
         let (attributedString, rect) = renderedLabel(
             for: label,
             pageRect: context.pdfContextBounds,
-            textTop: currentVerticalOffset,
-            horizontalPadding: 10
+            textTop: currentVerticalOffset
         )
         attributedString.draw(in: rect)
         currentVerticalOffset += label.padding.top
@@ -86,7 +85,7 @@ private final class PDFDocumentDrawerHelper {
         currentVerticalOffset = 0.0
     }
 
-    private func renderedLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat, horizontalPadding: CGFloat) -> (NSAttributedString, CGRect) {
+    private func renderedLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat) -> (NSAttributedString, CGRect) {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineBreakMode = .byWordWrapping
@@ -98,14 +97,14 @@ private final class PDFDocumentDrawerHelper {
                 NSAttributedString.Key.font: label.font,
             ]
         )
-        let width = pageRect.width - horizontalPadding * 2
+        let width = pageRect.width - label.padding.horizontalTotal
         let boundingRect = attributedText.boundingRect(
             with: CGSize(width: width, height: .greatestFiniteMagnitude),
             options: .usesLineFragmentOrigin,
             context: nil
         )
         let textRect = CGRect(
-            x: horizontalPadding,
+            x: label.padding.left,
             y: textTop + label.padding.top,
             width: width,
             height: boundingRect.height + label.padding.bottom

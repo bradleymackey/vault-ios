@@ -54,7 +54,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let titleLabel = DataBlockLabel(
             text: "Hello World",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: (top: 36, bottom: 22)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
             title: titleLabel,
@@ -71,7 +71,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let titleLabel = DataBlockLabel(
             text: "Hello World",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: (top: 36, bottom: 22)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
             title: titleLabel,
@@ -88,7 +88,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let titleLabel = DataBlockLabel(
             text: "<START> \(title) <END>",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: (top: 36, bottom: 22)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
             title: titleLabel,
@@ -105,7 +105,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let titleLabel = DataBlockLabel(
             text: "<START> \(subtitleMain) <END>",
             font: UIFont.systemFont(ofSize: 14, weight: .regular),
-            padding: (top: 36, bottom: 22)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockExportDocument(
             subtitle: titleLabel,
@@ -121,18 +121,24 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let titleLabel = DataBlockLabel(
             text: "Hello World",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: (top: 36, bottom: 0)
-        )
-        let subtitleMain = Array(repeating: "Subtitle", count: 50).joined(separator: " ")
-        let subtitleLabel = DataBlockLabel(
-            text: "<START> \(subtitleMain) <END>",
-            font: UIFont.systemFont(ofSize: 14, weight: .regular),
-            padding: (top: 12, bottom: 14)
+            padding: .init(top: 36, left: 10, bottom: 0, right: 10)
         )
         let document = DataBlockExportDocument(
             title: titleLabel,
-            subtitle: subtitleLabel,
+            subtitle: longSubtitle(),
             dataBlockImageData: Array(repeating: anyData(), count: 14)
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_labelsRespectPadding() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let document = DataBlockExportDocument(
+            title: longTitle(padding: .init(top: 40, left: 40, bottom: 10, right: 40)),
+            subtitle: longSubtitle(padding: .init(top: 40, left: 60, bottom: 10, right: 60)),
+            dataBlockImageData: Array(repeating: anyData(), count: 0)
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -160,6 +166,24 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     private func emptyDocument() -> DataBlockExportDocument {
         DataBlockExportDocument(dataBlockImageData: [])
+    }
+
+    private func longTitle(padding: UIEdgeInsets = .init(top: 36, left: 10, bottom: 0, right: 10)) -> DataBlockLabel {
+        let title = Array(repeating: "Title", count: 10).joined(separator: " ")
+        return DataBlockLabel(
+            text: "<START> \(title) <END>",
+            font: UIFont.systemFont(ofSize: 50, weight: .bold),
+            padding: padding
+        )
+    }
+
+    private func longSubtitle(padding: UIEdgeInsets = .init(top: 12, left: 10, bottom: 14, right: 10)) -> DataBlockLabel {
+        let subtitleMain = Array(repeating: "Subtitle", count: 50).joined(separator: " ")
+        return DataBlockLabel(
+            text: "<START> \(subtitleMain) <END>",
+            font: UIFont.systemFont(ofSize: 14, weight: .regular),
+            padding: padding
+        )
     }
 }
 
