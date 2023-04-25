@@ -9,7 +9,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
 
         let first = sut.rect(atIndex: 0)
 
-        XCTAssertEqual(first.origin, .zero)
+        XCTAssertEqual(first?.origin, .zero)
     }
 
     func test_rect_isSizeOfSquareThatFits() {
@@ -17,7 +17,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
 
         let first = sut.rect(atIndex: 0)
 
-        XCTAssertEqual(first.size, .square(30))
+        XCTAssertEqual(first?.size, .square(30))
     }
 
     func test_rect_laysOutGridEvenly() {
@@ -99,6 +99,22 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
+    func test_rect_isNotNilIfContainedWithinBounds() {
+        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
+
+        for index: UInt in 0 ..< 9 {
+            XCTAssertNotNil(sut.rect(atIndex: index))
+        }
+    }
+
+    func test_rect_isNilIfOutsideOfBounds() {
+        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
+
+        for index: UInt in 9 ..< 100 {
+            XCTAssertNil(sut.rect(atIndex: index))
+        }
+    }
+
     func test_isFullyWithinBounds_containsItem() {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
 
@@ -150,8 +166,8 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         let rowIndexes: [UInt] = Array(0 ..< sut.tilesPerRow)
         for (index, rowIndex) in rowIndexes.enumerated() {
             let point = sut.rect(atIndex: rowIndex)
-            XCTAssertEqual(point.size, sizes[index])
-            XCTAssertEqual(point.origin, origins[index])
+            XCTAssertEqual(point?.size, sizes[index])
+            XCTAssertEqual(point?.origin, origins[index])
         }
     }
 
@@ -159,8 +175,8 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         let columnIndexes: [UInt] = [0, sut.tilesPerRow, sut.tilesPerRow * 2]
         for (index, columnIndex) in columnIndexes.enumerated() {
             let point = sut.rect(atIndex: columnIndex)
-            XCTAssertEqual(point.size, sizes[index])
-            XCTAssertEqual(point.origin, origins[index])
+            XCTAssertEqual(point?.size, sizes[index])
+            XCTAssertEqual(point?.origin, origins[index])
         }
     }
 }
