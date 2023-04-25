@@ -1,4 +1,4 @@
-import CryptoExporter
+import CryptoDocumentExporter
 import Foundation
 import PDFKit
 import SnapshotTesting

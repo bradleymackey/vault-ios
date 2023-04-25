@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "CryptoExporter",
+    name: "CryptoDocumentExporter",
     platforms: [.iOS(.v13)],
     products: [
         // Products define the executables and libraries a package produces, making them visible to other packages.
         .library(
-            name: "CryptoExporter",
-            targets: ["CryptoExporter"]
+            name: "CryptoDocumentExporter",
+            targets: ["CryptoDocumentExporter"]
         ),
     ],
     dependencies: [
@@ -24,19 +24,19 @@ let package = Package(
         // Targets are the basic building blocks of a package, defining a module or a test suite.
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
-            name: "CryptoExporter",
+            name: "CryptoDocumentExporter",
             dependencies: ["CryptoEngine"]
         ),
         .testTarget(
-            name: "CryptoExporterTests",
+            name: "CryptoDocumentExporterTests",
             dependencies: [
-                "CryptoExporter",
+                "CryptoDocumentExporter",
             ]
         ),
         .testTarget(
-            name: "CryptoExporterSnapshotTests",
+            name: "CryptoDocumentExporterSnapshotTests",
             dependencies: [
-                "CryptoExporter",
+                "CryptoDocumentExporter",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"
