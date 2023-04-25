@@ -85,12 +85,7 @@ private final class PDFDocumentDrawerHelper {
         let currentLayoutEngine = blockLayout(
             context.pdfContextBounds.inset(by: currentInsets)
         )
-        let desiredRect = currentLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
-        if currentLayoutEngine.isFullyWithinBounds(rect: desiredRect) {
-            return desiredRect
-        } else {
-            return nil
-        }
+        return currentLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
     }
 
     private func renderedLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat) -> (NSAttributedString, CGRect) {

@@ -2,6 +2,6 @@ import CoreGraphics
 import Foundation
 
 public protocol PDFDataBlockLayout {
-    func rect(atIndex index: UInt) -> CGRect
-    func isFullyWithinBounds(rect: CGRect) -> Bool
+    /// - Returns: `nil` if we cannot fit a block on this page at this position.
+    func rect(atIndex index: UInt) -> CGRect?
 }

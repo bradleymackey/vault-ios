@@ -17,13 +17,15 @@ public struct VerticalTilingDataBlockLayout: PDFDataBlockLayout {
     }
 
     /// Gets the rect for this index.
-    public func rect(atIndex index: UInt) -> CGRect {
-        CGRect(
+    public func rect(atIndex index: UInt) -> CGRect? {
+        let provisionalRect = CGRect(
             origin: origin(index: index),
             size: CGSize(width: sideLength, height: sideLength)
         )
+        return isFullyWithinBounds(rect: provisionalRect) ? provisionalRect : nil
     }
 
+    /// Determines if this rect fits within the bounds of the layout.
     public func isFullyWithinBounds(rect: CGRect) -> Bool {
         let effectiveBounds = bounds.insetBy(dx: margin, dy: margin)
         return effectiveBounds.intersection(rect).isAlmostEqual(to: rect)
