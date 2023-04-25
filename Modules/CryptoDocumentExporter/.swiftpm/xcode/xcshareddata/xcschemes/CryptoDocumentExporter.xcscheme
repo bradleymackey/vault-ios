@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CryptoExporter"
-               BuildableName = "CryptoExporter"
-               BlueprintName = "CryptoExporter"
+               BlueprintIdentifier = "CryptoDocumentExporter"
+               BuildableName = "CryptoDocumentExporter"
+               BlueprintName = "CryptoDocumentExporter"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -28,9 +28,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CryptoExporterSnapshotTests"
-               BuildableName = "CryptoExporterSnapshotTests"
-               BlueprintName = "CryptoExporterSnapshotTests"
+               BlueprintIdentifier = "CryptoDocumentExporterSnapshotTests"
+               BuildableName = "CryptoDocumentExporterSnapshotTests"
+               BlueprintName = "CryptoDocumentExporterSnapshotTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -42,9 +42,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CryptoExporterTests"
-               BuildableName = "CryptoExporterTests"
-               BlueprintName = "CryptoExporterTests"
+               BlueprintIdentifier = "CryptoDocumentExporterTests"
+               BuildableName = "CryptoDocumentExporterTests"
+               BlueprintName = "CryptoDocumentExporterTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
@@ -61,9 +61,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CryptoExporterSnapshotTests"
-               BuildableName = "CryptoExporterSnapshotTests"
-               BlueprintName = "CryptoExporterSnapshotTests"
+               BlueprintIdentifier = "CryptoDocumentExporterSnapshotTests"
+               BuildableName = "CryptoDocumentExporterSnapshotTests"
+               BlueprintName = "CryptoDocumentExporterSnapshotTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -71,9 +71,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CryptoExporterTests"
-               BuildableName = "CryptoExporterTests"
-               BlueprintName = "CryptoExporterTests"
+               BlueprintIdentifier = "CryptoDocumentExporterTests"
+               BuildableName = "CryptoDocumentExporterTests"
+               BlueprintName = "CryptoDocumentExporterTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
@@ -99,9 +99,9 @@
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CryptoExporter"
-            BuildableName = "CryptoExporter"
-            BlueprintName = "CryptoExporter"
+            BlueprintIdentifier = "CryptoDocumentExporter"
+            BuildableName = "CryptoDocumentExporter"
+            BlueprintName = "CryptoDocumentExporter"
             ReferencedContainer = "container:">
          </BuildableReference>
       </MacroExpansion>

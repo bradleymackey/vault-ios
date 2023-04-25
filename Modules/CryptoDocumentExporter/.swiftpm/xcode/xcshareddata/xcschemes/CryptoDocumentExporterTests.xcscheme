@@ -17,9 +17,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "CryptoExporterSnapshotTests"
-               BuildableName = "CryptoExporterSnapshotTests"
-               BlueprintName = "CryptoExporterSnapshotTests"
+               BlueprintIdentifier = "CryptoDocumentExporterTests"
+               BuildableName = "CryptoDocumentExporterTests"
+               BlueprintName = "CryptoDocumentExporterTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
