@@ -49,10 +49,10 @@ public enum OTPAuthDigits: Int {
     case eight = 8
 }
 
-public enum OTPAuthAlgorithm: String {
-    case sha1 = "SHA1"
-    case sha256 = "SHA256"
-    case sha512 = "SHA512"
+public enum OTPAuthAlgorithm {
+    case sha1
+    case sha256
+    case sha512
 }
 
 public enum OTPAuthType {
