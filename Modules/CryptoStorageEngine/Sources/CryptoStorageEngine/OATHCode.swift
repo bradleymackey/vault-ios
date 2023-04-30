@@ -1,17 +1,17 @@
 import Foundation
 
-public struct TOTPCode {
-    public var secret: TOTPSecret
-    public var algorithm: TOTPAlgorithm
-    public var digits: TOTPDigits
+public struct OATHCode {
+    public var secret: OATHSecret
+    public var algorithm: OATHAlgorithm
+    public var digits: OATHDigits
     public var label: String
     public var issuer: String?
     public var period: UInt = 30
 
     public init(
-        secret: TOTPSecret,
-        algorithm: TOTPAlgorithm = .sha1,
-        digits: TOTPDigits = .six,
+        secret: OATHSecret,
+        algorithm: OATHAlgorithm = .sha1,
+        digits: OATHDigits = .six,
         label: String,
         issuer: String? = nil,
         period: UInt = 30
@@ -25,7 +25,7 @@ public struct TOTPCode {
     }
 }
 
-public struct TOTPSecret {
+public struct OATHSecret {
     public var data: Data
     /// The format that the secret was stored in.
     public var format: Format
@@ -40,13 +40,13 @@ public struct TOTPSecret {
     }
 }
 
-public enum TOTPDigits: Int {
+public enum OATHDigits: Int {
     case six = 6
     case seven = 7
     case eight = 8
 }
 
-public enum TOTPAlgorithm: String {
+public enum OATHAlgorithm: String {
     case sha1 = "SHA1"
     case sha256 = "SHA256"
     case sha512 = "SHA512"

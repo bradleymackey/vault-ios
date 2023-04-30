@@ -2,13 +2,13 @@ import CryptoStorageEngine
 import Foundation
 import XCTest
 
-struct TOTPURIEncoder {
-    func encode(code _: TOTPCode) throws -> String {
+struct OATHURIEncoder {
+    func encode(code _: OATHCode) throws -> String {
         "otpauth://totp/?secret="
     }
 }
 
-final class TOTPURIEncoderTests: XCTestCase {
+final class OATHURIEncoderTests: XCTestCase {
     func test_encode_emptyTOTPHasCodePrefix() throws {
         let sut = makeSUT()
         let empty = makeEmptyTOTP()
@@ -20,12 +20,12 @@ final class TOTPURIEncoderTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> TOTPURIEncoder {
-        TOTPURIEncoder()
+    private func makeSUT() -> OATHURIEncoder {
+        OATHURIEncoder()
     }
 
-    private func makeEmptyTOTP() -> TOTPCode {
-        TOTPCode(
+    private func makeEmptyTOTP() -> OATHCode {
+        OATHCode(
             secret: .init(data: Data(), format: .base32),
             label: "any"
         )
