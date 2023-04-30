@@ -42,13 +42,23 @@ struct OTPAuthURIEncoder {
 }
 
 final class OTPAuthURIEncoderTests: XCTestCase {
+    func test_encode_otpauthscheme() throws {
+        let code = makeCode(type: .totp, accountName: "")
+        let sut = makeSUT()
+
+        let encoded = try sut.encode(code: code)
+
+        expect(url: encoded, hasScheme: "otpauth")
+    }
+
     func test_encode_totpUsesTOTPType() throws {
         let code = makeCode(type: .totp, accountName: "")
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded.absoluteString, "otpauth://totp/?")
+        expect(url: encoded, hasType: "totp")
+        expect(url: encoded, hasPathComponents: ["/"])
     }
 
     func test_encode_hotpUsesHOTPType() throws {
@@ -57,34 +67,37 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/?")
+        expect(url: encoded, hasType: "hotp")
+        expect(url: encoded, hasPathComponents: ["/"])
     }
 
     func test_encode_accountNameOnlyRendersAsStandaloneLabel() throws {
-        let code = makeCode(type: .hotp, accountName: "Account")
+        let code = makeCode(accountName: "Account")
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/Account?")
+        expect(url: encoded, hasPathComponents: ["/", "Account"])
     }
 
     func test_encode_labelIncludesIssuerAndAccountIssuerParameter() throws {
-        let code = makeCode(type: .hotp, accountName: "Account", issuer: "Issuer")
+        let code = makeCode(accountName: "Account", issuer: "Issuer")
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/Issuer:Account?issuer=Issuer")
+        expect(url: encoded, hasPathComponents: ["/", "Issuer:Account"])
+        expect(url: encoded, hasAllQueryParameters: ["issuer": "Issuer"])
     }
 
-    func test_encode_labelEncodesSpecialCharacters() throws {
-        let code = makeCode(type: .hotp, accountName: "Account Name", issuer: "Issuer Name")
+    func test_encode_labelEncodesIssuerAndAccountNamesWithSpaces() throws {
+        let code = makeCode(accountName: "Account Name", issuer: "Issuer Name")
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/Issuer%20Name:Account%20Name?issuer=Issuer%20Name")
+        expect(url: encoded, hasPathComponents: ["/", "Issuer Name:Account Name"])
+        expect(url: encoded, hasAllQueryParameters: ["issuer": "Issuer Name"])
     }
 
     // MARK: - Helpers
@@ -93,7 +106,38 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         OTPAuthURIEncoder()
     }
 
-    private func makeCode(type: OTPAuthType, accountName: String, issuer: String? = nil) -> OTPAuthCode {
+    private func makeCode(type: OTPAuthType = .totp, accountName: String, issuer: String? = nil) -> OTPAuthCode {
         OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), accountName: accountName, issuer: issuer)
+    }
+
+    private func expect(url: URL, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
+        let actual = url.scheme
+        XCTAssertEqual(actual, scheme, file: file, line: line)
+    }
+
+    private func expect(url: URL, hasType type: String, file: StaticString = #filePath, line: UInt = #line) {
+        let actual = url.host
+        XCTAssertEqual(actual, type, file: file, line: line)
+    }
+
+    private func expect(url: URL, hasPathComponents pathComponents: [String], file: StaticString = #filePath, line: UInt = #line) {
+        let actual = url.pathComponents
+        XCTAssertEqual(actual, pathComponents, file: file, line: line)
+    }
+
+    private func expect(url: URL, hasAllQueryParameters queryParamters: [String: String], file: StaticString = #filePath, line: UInt = #line) {
+        let actual = url.queryParameters
+        XCTAssertEqual(actual, queryParamters, file: file, line: line)
+    }
+}
+
+private extension URL {
+    var queryParameters: [String: String]? {
+        guard
+            let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
+            let queryItems = components.queryItems else { return nil }
+        return queryItems.reduce(into: [String: String]()) { result, item in
+            result[item.name] = item.value
+        }
     }
 }
