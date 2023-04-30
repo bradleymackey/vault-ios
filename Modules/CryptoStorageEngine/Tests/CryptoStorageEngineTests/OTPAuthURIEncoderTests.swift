@@ -2,24 +2,24 @@ import CryptoStorageEngine
 import Foundation
 import XCTest
 
-enum OATHType: String {
+enum OTPAuthType: String {
     case totp
     case hotp
 }
 
-struct OATHURI {
+struct OTPAuthURI {
     let scheme: String = "otpauth"
-    var type: OATHType
+    var type: OTPAuthType
     var accountName: String
     var issuer: String?
 }
 
-struct OATHURIEncoder {
+struct OTPAuthURIEncoder {
     enum URIEncodingError: Error {
         case badURIComponents
     }
 
-    func encode(uri: OATHURI) throws -> String {
+    func encode(uri: OTPAuthURI) throws -> String {
         var components = URLComponents()
         components.scheme = uri.scheme
         components.host = formatted(type: uri.type)
@@ -35,7 +35,7 @@ struct OATHURIEncoder {
         return string
     }
 
-    private func formattedLabel(uri: OATHURI) -> String {
+    private func formattedLabel(uri: OTPAuthURI) -> String {
         if let issuer = uri.issuer {
             return "\(issuer):\(uri.accountName)"
         } else {
@@ -43,7 +43,7 @@ struct OATHURIEncoder {
         }
     }
 
-    private func formatted(type: OATHType) -> String {
+    private func formatted(type: OTPAuthType) -> String {
         switch type {
         case .totp:
             return "totp"
@@ -53,9 +53,9 @@ struct OATHURIEncoder {
     }
 }
 
-final class OATHURIEncoderTests: XCTestCase {
+final class OTPAuthURIEncoderTests: XCTestCase {
     func test_encode_totpUsesTOTPType() throws {
-        let uri = OATHURI(type: .totp, accountName: "any")
+        let uri = OTPAuthURI(type: .totp, accountName: "any")
         let sut = makeSUT()
 
         let encoded = try sut.encode(uri: uri)
@@ -64,7 +64,7 @@ final class OATHURIEncoderTests: XCTestCase {
     }
 
     func test_encode_hotpUsesHOTPType() throws {
-        let uri = OATHURI(type: .hotp, accountName: "any")
+        let uri = OTPAuthURI(type: .hotp, accountName: "any")
         let sut = makeSUT()
 
         let encoded = try sut.encode(uri: uri)
@@ -73,7 +73,7 @@ final class OATHURIEncoderTests: XCTestCase {
     }
 
     func test_encode_emptyLabelRendersNothingAfterSlash() throws {
-        let uri = OATHURI(type: .hotp, accountName: "")
+        let uri = OTPAuthURI(type: .hotp, accountName: "")
         let sut = makeSUT()
 
         let encoded = try sut.encode(uri: uri)
@@ -82,7 +82,7 @@ final class OATHURIEncoderTests: XCTestCase {
     }
 
     func test_encode_accountNameOnlyRendersAsStandaloneLabel() throws {
-        let uri = OATHURI(type: .hotp, accountName: "Account")
+        let uri = OTPAuthURI(type: .hotp, accountName: "Account")
         let sut = makeSUT()
 
         let encoded = try sut.encode(uri: uri)
@@ -91,7 +91,7 @@ final class OATHURIEncoderTests: XCTestCase {
     }
 
     func test_encode_labelIncludesIssuerAndAccountIssuerParameter() throws {
-        let uri = OATHURI(type: .hotp, accountName: "Account", issuer: "Issuer")
+        let uri = OTPAuthURI(type: .hotp, accountName: "Account", issuer: "Issuer")
         let sut = makeSUT()
 
         let encoded = try sut.encode(uri: uri)
@@ -100,7 +100,7 @@ final class OATHURIEncoderTests: XCTestCase {
     }
 
     func test_encode_labelEncodesSpecialCharacters() throws {
-        let uri = OATHURI(type: .hotp, accountName: "Account Name", issuer: "Issuer Name")
+        let uri = OTPAuthURI(type: .hotp, accountName: "Account Name", issuer: "Issuer Name")
         let sut = makeSUT()
 
         let encoded = try sut.encode(uri: uri)
@@ -110,7 +110,7 @@ final class OATHURIEncoderTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> OATHURIEncoder {
-        OATHURIEncoder()
+    private func makeSUT() -> OTPAuthURIEncoder {
+        OTPAuthURIEncoder()
     }
 }
