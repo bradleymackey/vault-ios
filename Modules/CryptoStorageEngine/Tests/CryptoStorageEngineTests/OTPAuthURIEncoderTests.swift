@@ -2,29 +2,17 @@ import CryptoStorageEngine
 import Foundation
 import XCTest
 
-enum OTPAuthType: String {
-    case totp
-    case hotp
-}
-
-struct OTPAuthURI {
-    let scheme: String = "otpauth"
-    var type: OTPAuthType
-    var accountName: String
-    var issuer: String?
-}
-
 struct OTPAuthURIEncoder {
     enum URIEncodingError: Error {
         case badURIComponents
     }
 
-    func encode(uri: OTPAuthURI) throws -> String {
+    func encode(code: OTPAuthCode) throws -> String {
         var components = URLComponents()
-        components.scheme = uri.scheme
-        components.host = formatted(type: uri.type)
-        components.path = "/" + formattedLabel(uri: uri)
-        if let issuer = uri.issuer {
+        components.scheme = "otpauth"
+        components.host = formatted(type: code.type)
+        components.path = "/" + formattedLabel(code: code)
+        if let issuer = code.issuer {
             components.queryItems = [
                 URLQueryItem(name: "issuer", value: issuer),
             ]
@@ -35,11 +23,11 @@ struct OTPAuthURIEncoder {
         return string
     }
 
-    private func formattedLabel(uri: OTPAuthURI) -> String {
-        if let issuer = uri.issuer {
-            return "\(issuer):\(uri.accountName)"
+    private func formattedLabel(code: OTPAuthCode) -> String {
+        if let issuer = code.issuer {
+            return "\(issuer):\(code.accountName)"
         } else {
-            return uri.accountName
+            return code.accountName
         }
     }
 
@@ -55,55 +43,46 @@ struct OTPAuthURIEncoder {
 
 final class OTPAuthURIEncoderTests: XCTestCase {
     func test_encode_totpUsesTOTPType() throws {
-        let uri = OTPAuthURI(type: .totp, accountName: "any")
+        let code = makeCode(type: .totp, accountName: "")
         let sut = makeSUT()
 
-        let encoded = try sut.encode(uri: uri)
+        let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded, "otpauth://totp/any")
+        XCTAssertEqual(encoded, "otpauth://totp/")
     }
 
     func test_encode_hotpUsesHOTPType() throws {
-        let uri = OTPAuthURI(type: .hotp, accountName: "any")
+        let code = makeCode(type: .hotp, accountName: "")
         let sut = makeSUT()
 
-        let encoded = try sut.encode(uri: uri)
-
-        XCTAssertEqual(encoded, "otpauth://hotp/any")
-    }
-
-    func test_encode_emptyLabelRendersNothingAfterSlash() throws {
-        let uri = OTPAuthURI(type: .hotp, accountName: "")
-        let sut = makeSUT()
-
-        let encoded = try sut.encode(uri: uri)
+        let encoded = try sut.encode(code: code)
 
         XCTAssertEqual(encoded, "otpauth://hotp/")
     }
 
     func test_encode_accountNameOnlyRendersAsStandaloneLabel() throws {
-        let uri = OTPAuthURI(type: .hotp, accountName: "Account")
+        let code = makeCode(type: .hotp, accountName: "Account")
         let sut = makeSUT()
 
-        let encoded = try sut.encode(uri: uri)
+        let encoded = try sut.encode(code: code)
 
         XCTAssertEqual(encoded, "otpauth://hotp/Account")
     }
 
     func test_encode_labelIncludesIssuerAndAccountIssuerParameter() throws {
-        let uri = OTPAuthURI(type: .hotp, accountName: "Account", issuer: "Issuer")
+        let code = makeCode(type: .hotp, accountName: "Account", issuer: "Issuer")
         let sut = makeSUT()
 
-        let encoded = try sut.encode(uri: uri)
+        let encoded = try sut.encode(code: code)
 
         XCTAssertEqual(encoded, "otpauth://hotp/Issuer:Account?issuer=Issuer")
     }
 
     func test_encode_labelEncodesSpecialCharacters() throws {
-        let uri = OTPAuthURI(type: .hotp, accountName: "Account Name", issuer: "Issuer Name")
+        let code = makeCode(type: .hotp, accountName: "Account Name", issuer: "Issuer Name")
         let sut = makeSUT()
 
-        let encoded = try sut.encode(uri: uri)
+        let encoded = try sut.encode(code: code)
 
         XCTAssertEqual(encoded, "otpauth://hotp/Issuer%20Name:Account%20Name?issuer=Issuer%20Name")
     }
@@ -112,5 +91,9 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
     private func makeSUT() -> OTPAuthURIEncoder {
         OTPAuthURIEncoder()
+    }
+
+    private func makeCode(type: OTPAuthType, accountName: String, issuer: String? = nil) -> OTPAuthCode {
+        OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), accountName: accountName, issuer: issuer)
     }
 }
