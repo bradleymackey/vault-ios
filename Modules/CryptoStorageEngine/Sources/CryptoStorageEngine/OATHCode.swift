@@ -4,7 +4,7 @@ public struct OATHCode {
     public var secret: OATHSecret
     public var algorithm: OATHAlgorithm
     public var digits: OATHDigits
-    public var label: String
+    public var accountName: String
     public var issuer: String?
     public var period: UInt = 30
 
@@ -12,14 +12,14 @@ public struct OATHCode {
         secret: OATHSecret,
         algorithm: OATHAlgorithm = .sha1,
         digits: OATHDigits = .six,
-        label: String,
+        accountName: String,
         issuer: String? = nil,
         period: UInt = 30
     ) {
         self.secret = secret
         self.algorithm = algorithm
         self.digits = digits
-        self.label = label
+        self.accountName = accountName
         self.issuer = issuer
         self.period = period
     }
