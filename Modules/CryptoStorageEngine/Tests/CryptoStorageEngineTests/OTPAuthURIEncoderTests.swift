@@ -12,11 +12,16 @@ struct OTPAuthURIEncoder {
         components.scheme = "otpauth"
         components.host = formatted(type: code.type)
         components.path = "/" + formattedLabel(code: code)
+        var queryItems = [URLQueryItem]()
+        queryItems.append(
+            URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
+        )
         if let issuer = code.issuer {
-            components.queryItems = [
-                URLQueryItem(name: "issuer", value: issuer),
-            ]
+            queryItems.append(
+                URLQueryItem(name: "issuer", value: issuer)
+            )
         }
+        components.queryItems = queryItems
         guard let url = components.url else {
             throw URIEncodingError.badURIComponents
         }
@@ -39,11 +44,22 @@ struct OTPAuthURIEncoder {
             return "hotp"
         }
     }
+
+    private func formatted(algorithm: OTPAuthAlgorithm) -> String {
+        switch algorithm {
+        case .sha1:
+            return "SHA1"
+        case .sha256:
+            return "SHA256"
+        case .sha512:
+            return "SHA512"
+        }
+    }
 }
 
 final class OTPAuthURIEncoderTests: XCTestCase {
     func test_encode_otpauthscheme() throws {
-        let code = makeCode(type: .totp, accountName: "")
+        let code = makeCode(type: .totp)
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
@@ -87,7 +103,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         let encoded = try sut.encode(code: code)
 
         expect(url: encoded, hasPathComponents: ["/", "Issuer:Account"])
-        expect(url: encoded, hasAllQueryParameters: ["issuer": "Issuer"])
+        expect(url: encoded, containsQueryParameter: ("issuer", "Issuer"))
     }
 
     func test_encode_labelEncodesIssuerAndAccountNamesWithSpaces() throws {
@@ -97,7 +113,23 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         let encoded = try sut.encode(code: code)
 
         expect(url: encoded, hasPathComponents: ["/", "Issuer Name:Account Name"])
-        expect(url: encoded, hasAllQueryParameters: ["issuer": "Issuer Name"])
+        expect(url: encoded, containsQueryParameter: ("issuer", "Issuer Name"))
+    }
+
+    func test_encode_encodesAlgorithmTypesCorrectly() throws {
+        let expected: [OTPAuthAlgorithm: String] = [
+            .sha1: "SHA1",
+            .sha256: "SHA256",
+            .sha512: "SHA512",
+        ]
+        for (algorithm, string) in expected {
+            let code = makeCode(algorithm: algorithm)
+            let sut = makeSUT()
+
+            let encoded = try sut.encode(code: code)
+
+            expect(url: encoded, containsQueryParameter: ("algorithm", string))
+        }
     }
 
     // MARK: - Helpers
@@ -106,8 +138,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         OTPAuthURIEncoder()
     }
 
-    private func makeCode(type: OTPAuthType = .totp, accountName: String, issuer: String? = nil) -> OTPAuthCode {
-        OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), accountName: accountName, issuer: issuer)
+    private func makeCode(type: OTPAuthType = .totp, accountName: String = "any", issuer: String? = nil, algorithm: OTPAuthAlgorithm = .sha1) -> OTPAuthCode {
+        OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), algorithm: algorithm, accountName: accountName, issuer: issuer)
     }
 
     private func expect(url: URL, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
@@ -128,6 +160,13 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     private func expect(url: URL, hasAllQueryParameters queryParamters: [String: String], file: StaticString = #filePath, line: UInt = #line) {
         let actual = url.queryParameters
         XCTAssertEqual(actual, queryParamters, file: file, line: line)
+    }
+
+    private func expect(url: URL, containsQueryParameter parameter: (key: String, value: String), file: StaticString = #filePath, line: UInt = #line) {
+        let actual = url.queryParameters ?? [:]
+        XCTAssertTrue(actual.contains { test in
+            test.key == parameter.key && test.value == parameter.value
+        }, file: file, line: line)
     }
 }
 
