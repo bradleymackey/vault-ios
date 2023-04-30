@@ -7,7 +7,7 @@ struct OTPAuthURIEncoder {
         case badURIComponents
     }
 
-    func encode(code: OTPAuthCode) throws -> String {
+    func encode(code: OTPAuthCode) throws -> URL {
         var components = URLComponents()
         components.scheme = "otpauth"
         components.host = formatted(type: code.type)
@@ -17,10 +17,10 @@ struct OTPAuthURIEncoder {
                 URLQueryItem(name: "issuer", value: issuer),
             ]
         }
-        guard let string = components.string else {
+        guard let url = components.url else {
             throw URIEncodingError.badURIComponents
         }
-        return string
+        return url
     }
 
     private func formattedLabel(code: OTPAuthCode) -> String {
@@ -48,7 +48,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded, "otpauth://totp/")
+        XCTAssertEqual(encoded.absoluteString, "otpauth://totp/?")
     }
 
     func test_encode_hotpUsesHOTPType() throws {
@@ -57,7 +57,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded, "otpauth://hotp/")
+        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/?")
     }
 
     func test_encode_accountNameOnlyRendersAsStandaloneLabel() throws {
@@ -66,7 +66,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded, "otpauth://hotp/Account")
+        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/Account?")
     }
 
     func test_encode_labelIncludesIssuerAndAccountIssuerParameter() throws {
@@ -75,7 +75,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded, "otpauth://hotp/Issuer:Account?issuer=Issuer")
+        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/Issuer:Account?issuer=Issuer")
     }
 
     func test_encode_labelEncodesSpecialCharacters() throws {
@@ -84,7 +84,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        XCTAssertEqual(encoded, "otpauth://hotp/Issuer%20Name:Account%20Name?issuer=Issuer%20Name")
+        XCTAssertEqual(encoded.absoluteString, "otpauth://hotp/Issuer%20Name:Account%20Name?issuer=Issuer%20Name")
     }
 
     // MARK: - Helpers
