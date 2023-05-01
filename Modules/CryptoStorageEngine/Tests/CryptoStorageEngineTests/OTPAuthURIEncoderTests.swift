@@ -22,6 +22,14 @@ struct OTPAuthURIEncoder {
         components.scheme = "otpauth"
         components.host = formatted(type: code.type)
         components.path = "/" + formattedLabel(code: code)
+        components.queryItems = makeQueryParameters(code: code)
+        guard let url = components.url else {
+            throw URIEncodingError.badURIComponents
+        }
+        return url
+    }
+
+    private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
             URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
@@ -46,11 +54,7 @@ struct OTPAuthURIEncoder {
                 URLQueryItem(name: "counter", value: digitFormatter.string(from: counter as NSNumber))
             )
         }
-        components.queryItems = queryItems
-        guard let url = components.url else {
-            throw URIEncodingError.badURIComponents
-        }
-        return url
+        return queryItems
     }
 
     private func formattedLabel(code: OTPAuthCode) -> String {
