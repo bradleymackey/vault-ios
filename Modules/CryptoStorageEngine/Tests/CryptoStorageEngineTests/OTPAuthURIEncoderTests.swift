@@ -201,8 +201,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let actual = uri.pathComponents
-        XCTAssertEqual(actual, pathComponents, file: file, line: line)
+        XCTAssertEqual(uri.pathComponents, pathComponents, file: file, line: line)
     }
 
     private func expect(
@@ -211,8 +210,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let actual = uri.queryParameters
-        XCTAssertEqual(actual, queryParamters, file: file, line: line)
+        XCTAssertEqual(uri.queryParameters, queryParamters, file: file, line: line)
     }
 
     private func expect(
@@ -221,8 +219,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let actual = uri.queryParameters ?? [:]
-        let actualValue = actual[parameter.key]
+        let actualValue = uri.queryParameters[parameter.key]
         XCTAssertEqual(actualValue, parameter.value, file: file, line: line)
     }
 
@@ -232,17 +229,16 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         file _: StaticString = #filePath,
         line _: UInt = #line
     ) {
-        let actual = uri.queryParameters ?? [:]
-        let keys = actual.keys
+        let keys = uri.queryParameters.keys
         XCTAssertFalse(keys.contains(where: { $0 == parameter }))
     }
 }
 
 private extension URL {
-    var queryParameters: [String: String]? {
+    var queryParameters: [String: String] {
         guard
             let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
-            let queryItems = components.queryItems else { return nil }
+            let queryItems = components.queryItems else { return [:] }
         return queryItems.reduce(into: [String: String]()) { result, item in
             result[item.name] = item.value
         }
