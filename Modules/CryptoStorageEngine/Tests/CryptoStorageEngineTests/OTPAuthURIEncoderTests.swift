@@ -58,7 +58,7 @@ struct OTPAuthURIEncoder {
 }
 
 final class OTPAuthURIEncoderTests: XCTestCase {
-    func test_encode_otpauthscheme() throws {
+    func test_encodeScheme_isOtpauth() throws {
         let code = makeCode(type: .totp)
         let sut = makeSUT()
 
@@ -67,7 +67,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(url: encoded, hasScheme: "otpauth")
     }
 
-    func test_encode_totpUsesTOTPType() throws {
+    func test_encodeType_totp() throws {
         let code = makeCode(type: .totp, accountName: "")
         let sut = makeSUT()
 
@@ -77,7 +77,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(url: encoded, hasPathComponents: ["/"])
     }
 
-    func test_encode_hotpUsesHOTPType() throws {
+    func test_encodeType_hotp() throws {
         let code = makeCode(type: .hotp, accountName: "")
         let sut = makeSUT()
 
@@ -87,7 +87,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(url: encoded, hasPathComponents: ["/"])
     }
 
-    func test_encode_accountNameOnlyRendersAsStandaloneLabel() throws {
+    func test_encodeAccountName_includesInPath() throws {
         let code = makeCode(accountName: "Account")
         let sut = makeSUT()
 
@@ -96,7 +96,16 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(url: encoded, hasPathComponents: ["/", "Account"])
     }
 
-    func test_encode_labelIncludesIssuerAndAccountIssuerParameter() throws {
+    func test_encodeAccountName_includesInPathWithSpaces() throws {
+        let code = makeCode(accountName: "Account Name")
+        let sut = makeSUT()
+
+        let encoded = try sut.encode(code: code)
+
+        expect(url: encoded, hasPathComponents: ["/", "Account Name"])
+    }
+
+    func test_encodeIssuer_includesInPathAndParameter() throws {
         let code = makeCode(accountName: "Account", issuer: "Issuer")
         let sut = makeSUT()
 
@@ -106,7 +115,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(url: encoded, containsQueryParameter: ("issuer", "Issuer"))
     }
 
-    func test_encode_labelEncodesIssuerAndAccountNamesWithSpaces() throws {
+    func test_encodeIssuer_includesInPathAndParameterWithSpaces() throws {
         let code = makeCode(accountName: "Account Name", issuer: "Issuer Name")
         let sut = makeSUT()
 
@@ -116,7 +125,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(url: encoded, containsQueryParameter: ("issuer", "Issuer Name"))
     }
 
-    func test_encode_encodesAlgorithmTypesCorrectly() throws {
+    func test_encodeAlgorithm_includesInParameters() throws {
         let expected: [OTPAuthAlgorithm: String] = [
             .sha1: "SHA1",
             .sha256: "SHA256",
