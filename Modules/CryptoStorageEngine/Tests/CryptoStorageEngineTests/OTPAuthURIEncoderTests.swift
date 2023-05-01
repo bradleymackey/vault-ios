@@ -41,8 +41,10 @@ struct OTPAuthURIEncoder {
             queryItems.append(
                 URLQueryItem(name: "period", value: digitFormatter.string(from: period as NSNumber))
             )
-        default:
-            break
+        case let .hotp(counter):
+            queryItems.append(
+                URLQueryItem(name: "counter", value: digitFormatter.string(from: counter as NSNumber))
+            )
         }
         components.queryItems = queryItems
         guard let url = components.url else {
@@ -195,6 +197,18 @@ final class OTPAuthURIEncoderTests: XCTestCase {
             let encoded = try sut.encode(code: code)
 
             expect(url: encoded, containsQueryParameter: ("period", "\(sample)"))
+        }
+    }
+
+    func test_encodeCounter_includesCounterInParameters() throws {
+        let samples: [UInt32] = [2, 100, 200, 2_000_000]
+        for sample in samples {
+            let code = makeCode(type: .hotp(counter: sample))
+            let sut = makeSUT()
+
+            let encoded = try sut.encode(code: code)
+
+            expect(url: encoded, containsQueryParameter: ("counter", "\(sample)"))
         }
     }
 
