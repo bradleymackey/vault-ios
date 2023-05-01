@@ -7,16 +7,14 @@ public struct OTPAuthCode {
     public var digits: OTPAuthDigits
     public var accountName: String
     public var issuer: String?
-    public var period: UInt = 30
 
     public init(
-        type: OTPAuthType = .totp,
+        type: OTPAuthType = .totp(period: 30),
         secret: OTPAuthSecret,
         algorithm: OTPAuthAlgorithm = .sha1,
         digits: OTPAuthDigits = .six,
         accountName: String,
-        issuer: String? = nil,
-        period: UInt = 30
+        issuer: String? = nil
     ) {
         self.type = type
         self.secret = secret
@@ -24,7 +22,6 @@ public struct OTPAuthCode {
         self.digits = digits
         self.accountName = accountName
         self.issuer = issuer
-        self.period = period
     }
 }
 
@@ -56,6 +53,6 @@ public enum OTPAuthAlgorithm {
 }
 
 public enum OTPAuthType {
-    case totp
-    case hotp
+    case totp(period: UInt32 = 30)
+    case hotp(counter: UInt32 = 0)
 }

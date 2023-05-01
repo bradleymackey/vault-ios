@@ -36,6 +36,14 @@ struct OTPAuthURIEncoder {
                 URLQueryItem(name: "issuer", value: issuer)
             )
         }
+        switch code.type {
+        case let .totp(period):
+            queryItems.append(
+                URLQueryItem(name: "period", value: digitFormatter.string(from: period as NSNumber))
+            )
+        default:
+            break
+        }
         components.queryItems = queryItems
         guard let url = components.url else {
             throw URIEncodingError.badURIComponents
@@ -79,7 +87,7 @@ struct OTPAuthURIEncoder {
 
 final class OTPAuthURIEncoderTests: XCTestCase {
     func test_encodeScheme_isOtpauth() throws {
-        let code = makeCode(type: .totp)
+        let code = makeCode(type: .totp())
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
@@ -88,7 +96,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     func test_encodeType_totp() throws {
-        let code = makeCode(type: .totp, accountName: "")
+        let code = makeCode(type: .totp(), accountName: "")
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
@@ -98,7 +106,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     func test_encodeType_hotp() throws {
-        let code = makeCode(type: .hotp, accountName: "")
+        let code = makeCode(type: .hotp(), accountName: "")
         let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
@@ -178,6 +186,18 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         }
     }
 
+    func test_encodePeriod_includesPeriodInParameters() throws {
+        let samples: [UInt32] = [2, 100, 200, 2_000_000]
+        for sample in samples {
+            let code = makeCode(type: .totp(period: sample))
+            let sut = makeSUT()
+
+            let encoded = try sut.encode(code: code)
+
+            expect(url: encoded, containsQueryParameter: ("period", "\(sample)"))
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> OTPAuthURIEncoder {
@@ -185,7 +205,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     private func makeCode(
-        type: OTPAuthType = .totp,
+        type: OTPAuthType = .totp(),
         accountName: String = "any",
         issuer: String? = nil,
         algorithm: OTPAuthAlgorithm = .sha1,
