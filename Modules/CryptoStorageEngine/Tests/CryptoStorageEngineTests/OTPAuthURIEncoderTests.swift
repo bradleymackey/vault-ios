@@ -2,6 +2,9 @@ import CryptoStorageEngine
 import Foundation
 import XCTest
 
+/// Encodes according to the spec for *otpauth*.
+///
+/// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
 struct OTPAuthURIEncoder {
     enum URIEncodingError: Error {
         case badURIComponents
