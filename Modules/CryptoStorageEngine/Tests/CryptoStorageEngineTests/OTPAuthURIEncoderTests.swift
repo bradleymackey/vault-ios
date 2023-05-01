@@ -34,6 +34,9 @@ struct OTPAuthURIEncoder {
     private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
+            URLQueryItem(name: "secret", value: "")
+        )
+        queryItems.append(
             URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
         )
         if let digits = formatted(digits: code.digits) {
@@ -220,6 +223,16 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         }
     }
 
+    func test_encodeSecret_includesEmptySecret() throws {
+        let secret = OTPAuthSecret(data: Data(), format: .base32)
+        let code = makeCode(secret: secret)
+        let sut = makeSUT()
+
+        let encoded = try sut.encode(code: code)
+
+        expect(encoded, containsQueryParameter: ("secret", ""))
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> OTPAuthURIEncoder {
@@ -231,11 +244,12 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         accountName: String = "any",
         issuer: String? = nil,
         algorithm: OTPAuthAlgorithm = .sha1,
-        digits: OTPAuthDigits = .six
+        digits: OTPAuthDigits = .six,
+        secret: OTPAuthSecret = .init(data: Data(), format: .base32)
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,
-            secret: .init(data: Data(), format: .base32),
+            secret: secret,
             algorithm: algorithm,
             digits: digits,
             accountName: accountName,
