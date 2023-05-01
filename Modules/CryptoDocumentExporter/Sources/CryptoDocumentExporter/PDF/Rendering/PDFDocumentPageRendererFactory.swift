@@ -9,7 +9,12 @@ public struct PDFDocumentPageRendererFactory: PDFRendererFactory {
     public var applicationName: String?
     public var authorName: String?
 
-    public init(size: PDFDocumentSize, applicationName: String? = nil, authorName: String? = nil, documentTitle: String? = nil) {
+    public init(
+        size: PDFDocumentSize,
+        applicationName: String? = nil,
+        authorName: String? = nil,
+        documentTitle: String? = nil
+    ) {
         self.size = size
         self.applicationName = applicationName
         self.authorName = authorName

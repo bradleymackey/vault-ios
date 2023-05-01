@@ -61,7 +61,11 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(password: Data = anyData(), salt: Data = anyData(), parameters: ScryptKeyDeriver.Parameters = .fastForTesting) throws -> ScryptKeyDeriver {
+    private func makeSUT(
+        password: Data = anyData(),
+        salt: Data = anyData(),
+        parameters: ScryptKeyDeriver.Parameters = .fastForTesting
+    ) throws -> ScryptKeyDeriver {
         try ScryptKeyDeriver(password: password, salt: salt, parameters: parameters)
     }
 }

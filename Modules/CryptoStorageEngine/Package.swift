@@ -13,7 +13,8 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CryptoStorageEngine"),
+            name: "CryptoStorageEngine"
+        ),
         .testTarget(
             name: "CryptoStorageEngineTests",
             dependencies: ["CryptoStorageEngine"]

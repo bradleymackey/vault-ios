@@ -177,7 +177,9 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
     }
 
-    private func longSubtitle(padding: UIEdgeInsets = .init(top: 12, left: 10, bottom: 14, right: 10)) -> DataBlockLabel {
+    private func longSubtitle(padding: UIEdgeInsets = .init(top: 12, left: 10, bottom: 14, right: 10))
+        -> DataBlockLabel
+    {
         let subtitleMain = Array(repeating: "Subtitle", count: 50).joined(separator: " ")
         return DataBlockLabel(
             text: "<START> \(subtitleMain) <END>",

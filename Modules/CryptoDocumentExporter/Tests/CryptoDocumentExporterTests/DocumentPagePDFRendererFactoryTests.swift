@@ -57,8 +57,18 @@ final class DocumentPagePDFRendererFactoryTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(size: PDFDocumentSize = .usLetter, applicationName: String? = "Any", authorName: String? = "Any", documentTitle: String? = "Any") -> PDFDocumentPageRendererFactory {
-        PDFDocumentPageRendererFactory(size: size, applicationName: applicationName, authorName: authorName, documentTitle: documentTitle)
+    private func makeSUT(
+        size: PDFDocumentSize = .usLetter,
+        applicationName: String? = "Any",
+        authorName: String? = "Any",
+        documentTitle: String? = "Any"
+    ) -> PDFDocumentPageRendererFactory {
+        PDFDocumentPageRendererFactory(
+            size: size,
+            applicationName: applicationName,
+            authorName: authorName,
+            documentTitle: documentTitle
+        )
     }
 }
 

@@ -181,8 +181,21 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         OTPAuthURIEncoder()
     }
 
-    private func makeCode(type: OTPAuthType = .totp, accountName: String = "any", issuer: String? = nil, algorithm: OTPAuthAlgorithm = .sha1, digits: OTPAuthDigits = .six) -> OTPAuthCode {
-        OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), algorithm: algorithm, digits: digits, accountName: accountName, issuer: issuer)
+    private func makeCode(
+        type: OTPAuthType = .totp,
+        accountName: String = "any",
+        issuer: String? = nil,
+        algorithm: OTPAuthAlgorithm = .sha1,
+        digits: OTPAuthDigits = .six
+    ) -> OTPAuthCode {
+        OTPAuthCode(
+            type: type,
+            secret: .init(data: Data(), format: .base32),
+            algorithm: algorithm,
+            digits: digits,
+            accountName: accountName,
+            issuer: issuer
+        )
     }
 
     private func expect(url: URL, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
@@ -195,17 +208,32 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         XCTAssertEqual(actual, type, file: file, line: line)
     }
 
-    private func expect(url: URL, hasPathComponents pathComponents: [String], file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(
+        url: URL,
+        hasPathComponents pathComponents: [String],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let actual = url.pathComponents
         XCTAssertEqual(actual, pathComponents, file: file, line: line)
     }
 
-    private func expect(url: URL, hasAllQueryParameters queryParamters: [String: String], file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(
+        url: URL,
+        hasAllQueryParameters queryParamters: [String: String],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let actual = url.queryParameters
         XCTAssertEqual(actual, queryParamters, file: file, line: line)
     }
 
-    private func expect(url: URL, containsQueryParameter parameter: (key: String, value: String), file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(
+        url: URL,
+        containsQueryParameter parameter: (key: String, value: String),
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let actual = url.queryParameters ?? [:]
         XCTAssertTrue(actual.contains { test in
             test.key == parameter.key && test.value == parameter.value

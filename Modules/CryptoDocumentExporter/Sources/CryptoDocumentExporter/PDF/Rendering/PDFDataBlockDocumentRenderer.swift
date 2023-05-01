@@ -88,7 +88,11 @@ private final class PDFDocumentDrawerHelper {
         return currentLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
     }
 
-    private func renderedLabel(for label: DataBlockLabel, pageRect: CGRect, textTop: CGFloat) -> (NSAttributedString, CGRect) {
+    private func renderedLabel(
+        for label: DataBlockLabel,
+        pageRect: CGRect,
+        textTop: CGFloat
+    ) -> (NSAttributedString, CGRect) {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
         paragraphStyle.lineBreakMode = .byWordWrapping

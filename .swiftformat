@@ -18,7 +18,7 @@
 --indentcase false
 --importgrouping testable-bottom
 --linebreaks lf
---maxwidth none
+--maxwidth 120
 --octalgrouping 4,8
 --operatorfunc spaced
 --patternlet hoist
@@ -27,8 +27,10 @@
 --semicolons inline
 --stripunusedargs always
 --trimwhitespace always
---wraparguments preserve
---wrapcollections preserve
+--wraparguments before-first
+--wrapcollections before-first
+--wrapparameters before-first
+--wrapreturntype preserve
 
 # rules
 

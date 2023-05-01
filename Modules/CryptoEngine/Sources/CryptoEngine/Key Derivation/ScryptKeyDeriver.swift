@@ -41,7 +41,8 @@ public extension ScryptKeyDeriver {
     struct Parameters {
         /// **dkLen**
         ///
-        /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer satisfying dkLen ≤ (232− 1) * hLen.)
+        /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer
+        /// satisfying dkLen ≤ (232− 1) * hLen.)
         public var outputLengthBytes: Int
         /// **N**
         ///
