@@ -197,6 +197,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
             let encoded = try sut.encode(code: code)
 
             expect(url: encoded, containsQueryParameter: ("period", "\(sample)"))
+            expect(url: encoded, doesNotContainQueryParameter: "counter")
         }
     }
 
@@ -209,6 +210,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
             let encoded = try sut.encode(code: code)
 
             expect(url: encoded, containsQueryParameter: ("counter", "\(sample)"))
+            expect(url: encoded, doesNotContainQueryParameter: "period")
         }
     }
 
@@ -275,6 +277,17 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         XCTAssertTrue(actual.contains { test in
             test.key == parameter.key && test.value == parameter.value
         }, file: file, line: line)
+    }
+
+    private func expect(
+        url: URL,
+        doesNotContainQueryParameter parameter: String,
+        file _: StaticString = #filePath,
+        line _: UInt = #line
+    ) {
+        let actual = url.queryParameters ?? [:]
+        let keys = actual.keys
+        XCTAssertFalse(keys.contains(where: { $0 == parameter }))
     }
 }
 
