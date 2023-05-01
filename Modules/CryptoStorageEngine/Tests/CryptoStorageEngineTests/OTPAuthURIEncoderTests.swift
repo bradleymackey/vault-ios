@@ -7,6 +7,13 @@ struct OTPAuthURIEncoder {
         case badURIComponents
     }
 
+    private let digitFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .none
+        formatter.usesGroupingSeparator = false
+        return formatter
+    }()
+
     func encode(code: OTPAuthCode) throws -> URL {
         var components = URLComponents()
         components.scheme = "otpauth"
@@ -16,6 +23,11 @@ struct OTPAuthURIEncoder {
         queryItems.append(
             URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
         )
+        if let digits = formatted(digits: code.digits) {
+            queryItems.append(
+                URLQueryItem(name: "digits", value: digits)
+            )
+        }
         if let issuer = code.issuer {
             queryItems.append(
                 URLQueryItem(name: "issuer", value: issuer)
@@ -54,6 +66,11 @@ struct OTPAuthURIEncoder {
         case .sha512:
             return "SHA512"
         }
+    }
+
+    private func formatted(digits: OTPAuthDigits) -> String? {
+        let value = digits.rawValue
+        return digitFormatter.string(from: value as NSNumber)
     }
 }
 
@@ -141,14 +158,31 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         }
     }
 
+    func test_encodeDigits_includesInParameters() throws {
+        let expected: [OTPAuthDigits: String] = [
+            .six: "6",
+            .seven: "7",
+            .eight: "8",
+        ]
+
+        for (digits, string) in expected {
+            let code = makeCode(digits: digits)
+            let sut = makeSUT()
+
+            let encoded = try sut.encode(code: code)
+
+            expect(url: encoded, containsQueryParameter: ("digits", string))
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> OTPAuthURIEncoder {
         OTPAuthURIEncoder()
     }
 
-    private func makeCode(type: OTPAuthType = .totp, accountName: String = "any", issuer: String? = nil, algorithm: OTPAuthAlgorithm = .sha1) -> OTPAuthCode {
-        OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), algorithm: algorithm, accountName: accountName, issuer: issuer)
+    private func makeCode(type: OTPAuthType = .totp, accountName: String = "any", issuer: String? = nil, algorithm: OTPAuthAlgorithm = .sha1, digits: OTPAuthDigits = .six) -> OTPAuthCode {
+        OTPAuthCode(type: type, secret: .init(data: Data(), format: .base32), algorithm: algorithm, digits: digits, accountName: accountName, issuer: issuer)
     }
 
     private func expect(url: URL, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
