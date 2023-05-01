@@ -180,7 +180,11 @@ final class HOTPGeneratorTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(secret: Data, digits: HOTPGenerator.Digits = .six, algorithm: HOTPGenerator.Algorithm = .sha1) -> HOTPGenerator {
+    private func makeSUT(
+        secret: Data,
+        digits: HOTPGenerator.Digits = .six,
+        algorithm: HOTPGenerator.Algorithm = .sha1
+    ) -> HOTPGenerator {
         HOTPGenerator(secret: secret, digits: digits, algorithm: algorithm)
     }
 
