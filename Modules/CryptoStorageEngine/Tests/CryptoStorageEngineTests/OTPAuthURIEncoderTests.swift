@@ -2,6 +2,8 @@ import CryptoStorageEngine
 import Foundation
 import XCTest
 
+typealias OAuthURI = URL
+
 /// Encodes according to the spec for *otpauth*.
 ///
 /// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
@@ -17,7 +19,7 @@ struct OTPAuthURIEncoder {
         return formatter
     }()
 
-    func encode(code: OTPAuthCode) throws -> URL {
+    func encode(code: OTPAuthCode) throws -> OAuthURI {
         var components = URLComponents()
         components.scheme = "otpauth"
         components.host = formatted(type: code.type)
@@ -98,7 +100,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasScheme: "otpauth")
+        expect(encoded, hasScheme: "otpauth")
     }
 
     func test_encodeType_totp() throws {
@@ -107,8 +109,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasType: "totp")
-        expect(url: encoded, hasPathComponents: ["/"])
+        expect(encoded, hasType: "totp")
+        expect(encoded, hasPathComponents: ["/"])
     }
 
     func test_encodeType_hotp() throws {
@@ -117,8 +119,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasType: "hotp")
-        expect(url: encoded, hasPathComponents: ["/"])
+        expect(encoded, hasType: "hotp")
+        expect(encoded, hasPathComponents: ["/"])
     }
 
     func test_encodeAccountName_includesInPath() throws {
@@ -127,7 +129,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasPathComponents: ["/", "Account"])
+        expect(encoded, hasPathComponents: ["/", "Account"])
     }
 
     func test_encodeAccountName_includesInPathWithSpaces() throws {
@@ -136,7 +138,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasPathComponents: ["/", "Account Name"])
+        expect(encoded, hasPathComponents: ["/", "Account Name"])
     }
 
     func test_encodeIssuer_includesInPathAndParameter() throws {
@@ -145,8 +147,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasPathComponents: ["/", "Issuer:Account"])
-        expect(url: encoded, containsQueryParameter: ("issuer", "Issuer"))
+        expect(encoded, hasPathComponents: ["/", "Issuer:Account"])
+        expect(encoded, containsQueryParameter: ("issuer", "Issuer"))
     }
 
     func test_encodeIssuer_includesInPathAndParameterWithSpaces() throws {
@@ -155,8 +157,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
         let encoded = try sut.encode(code: code)
 
-        expect(url: encoded, hasPathComponents: ["/", "Issuer Name:Account Name"])
-        expect(url: encoded, containsQueryParameter: ("issuer", "Issuer Name"))
+        expect(encoded, hasPathComponents: ["/", "Issuer Name:Account Name"])
+        expect(encoded, containsQueryParameter: ("issuer", "Issuer Name"))
     }
 
     func test_encodeAlgorithm_includesInParameters() throws {
@@ -171,7 +173,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
             let encoded = try sut.encode(code: code)
 
-            expect(url: encoded, containsQueryParameter: ("algorithm", string))
+            expect(encoded, containsQueryParameter: ("algorithm", string))
         }
     }
 
@@ -188,7 +190,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
             let encoded = try sut.encode(code: code)
 
-            expect(url: encoded, containsQueryParameter: ("digits", string))
+            expect(encoded, containsQueryParameter: ("digits", string))
         }
     }
 
@@ -200,8 +202,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
             let encoded = try sut.encode(code: code)
 
-            expect(url: encoded, containsQueryParameter: ("period", "\(sample)"))
-            expect(url: encoded, doesNotContainQueryParameter: "counter")
+            expect(encoded, containsQueryParameter: ("period", "\(sample)"))
+            expect(encoded, doesNotContainQueryParameter: "counter")
         }
     }
 
@@ -213,8 +215,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
             let encoded = try sut.encode(code: code)
 
-            expect(url: encoded, containsQueryParameter: ("counter", "\(sample)"))
-            expect(url: encoded, doesNotContainQueryParameter: "period")
+            expect(encoded, containsQueryParameter: ("counter", "\(sample)"))
+            expect(encoded, doesNotContainQueryParameter: "period")
         }
     }
 
@@ -241,55 +243,55 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         )
     }
 
-    private func expect(url: URL, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
-        let actual = url.scheme
+    private func expect(_ uri: OAuthURI, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
+        let actual = uri.scheme
         XCTAssertEqual(actual, scheme, file: file, line: line)
     }
 
-    private func expect(url: URL, hasType type: String, file: StaticString = #filePath, line: UInt = #line) {
-        let actual = url.host
+    private func expect(_ uri: OAuthURI, hasType type: String, file: StaticString = #filePath, line: UInt = #line) {
+        let actual = uri.host
         XCTAssertEqual(actual, type, file: file, line: line)
     }
 
     private func expect(
-        url: URL,
+        _ uri: OAuthURI,
         hasPathComponents pathComponents: [String],
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let actual = url.pathComponents
+        let actual = uri.pathComponents
         XCTAssertEqual(actual, pathComponents, file: file, line: line)
     }
 
     private func expect(
-        url: URL,
+        _ uri: OAuthURI,
         hasAllQueryParameters queryParamters: [String: String],
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let actual = url.queryParameters
+        let actual = uri.queryParameters
         XCTAssertEqual(actual, queryParamters, file: file, line: line)
     }
 
     private func expect(
-        url: URL,
+        _ uri: OAuthURI,
         containsQueryParameter parameter: (key: String, value: String),
         file: StaticString = #filePath,
         line: UInt = #line
     ) {
-        let actual = url.queryParameters ?? [:]
+        let actual = uri.queryParameters ?? [:]
         XCTAssertTrue(actual.contains { test in
             test.key == parameter.key && test.value == parameter.value
         }, file: file, line: line)
     }
 
     private func expect(
-        url: URL,
+        _ uri: OAuthURI,
         doesNotContainQueryParameter parameter: String,
         file _: StaticString = #filePath,
         line _: UInt = #line
     ) {
-        let actual = url.queryParameters ?? [:]
+        let actual = uri.queryParameters ?? [:]
         let keys = actual.keys
         XCTAssertFalse(keys.contains(where: { $0 == parameter }))
     }
