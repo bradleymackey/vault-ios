@@ -13,8 +13,8 @@ public struct OTPAuthURIEncoder {
     public func encode(code: OTPAuthCode) throws -> OAuthURI {
         var components = URLComponents()
         components.scheme = "otpauth"
-        components.host = formatted(type: code.type)
-        components.path = "/" + formattedLabel(code: code)
+        components.host = makeFormatted(type: code.type)
+        components.path = makePath(code: code)
         components.queryItems = makeQueryParameters(code: code)
         guard let url = components.url else {
             throw URIEncodingError.badURIComponents
@@ -33,10 +33,14 @@ public struct OTPAuthURIEncoder {
 // MARK: - Helpers
 
 extension OTPAuthURIEncoder {
+    private func makePath(code: OTPAuthCode) -> String {
+        "/" + makeFormattedLabel(code: code)
+    }
+
     private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
-            URLQueryItem(name: "secret", value: formatted(secret: code.secret))
+            URLQueryItem(name: "secret", value: makeFormatted(secret: code.secret))
         )
         queryItems.append(
             URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
@@ -64,11 +68,11 @@ extension OTPAuthURIEncoder {
         return queryItems
     }
 
-    private func formatted(secret: OTPAuthSecret) -> String {
+    private func makeFormatted(secret: OTPAuthSecret) -> String {
         base32Encode(secret.data)
     }
 
-    private func formattedLabel(code: OTPAuthCode) -> String {
+    private func makeFormattedLabel(code: OTPAuthCode) -> String {
         if let issuer = code.issuer {
             return "\(issuer):\(code.accountName)"
         } else {
@@ -76,7 +80,7 @@ extension OTPAuthURIEncoder {
         }
     }
 
-    private func formatted(type: OTPAuthType) -> String {
+    private func makeFormatted(type: OTPAuthType) -> String {
         switch type {
         case .totp:
             return "totp"
