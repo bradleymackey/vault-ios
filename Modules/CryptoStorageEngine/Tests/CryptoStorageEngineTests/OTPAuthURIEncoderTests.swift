@@ -34,7 +34,7 @@ struct OTPAuthURIEncoder {
     private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
-            URLQueryItem(name: "secret", value: "")
+            URLQueryItem(name: "secret", value: formatted(secret: code.secret))
         )
         queryItems.append(
             URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
@@ -60,6 +60,10 @@ struct OTPAuthURIEncoder {
             )
         }
         return queryItems
+    }
+
+    private func formatted(secret: OTPAuthSecret) -> String {
+        base32Encode(secret.data)
     }
 
     private func formattedLabel(code: OTPAuthCode) -> String {
@@ -233,6 +237,28 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(encoded, containsQueryParameter: ("secret", ""))
     }
 
+    func test_encodeSecret_includesSecretWithData() throws {
+        let data = Data(repeating: 0xAA, count: 5)
+        let secret = OTPAuthSecret(data: data, format: .base32)
+        let code = makeCode(secret: secret)
+        let sut = makeSUT()
+
+        let encoded = try sut.encode(code: code)
+
+        expect(encoded, containsQueryParameter: ("secret", "VKVKVKVK"))
+    }
+
+    func test_encodeSecret_includesSecretWithDataAndPadding() throws {
+        let bytes: [UInt8] = [0xAB, 0x21, 0x12, 0x43, 0xFF, 0xEE, 0xDD, 0x00]
+        let secret = OTPAuthSecret(data: Data(bytes), format: .base32)
+        let code = makeCode(secret: secret)
+        let sut = makeSUT()
+
+        let encoded = try sut.encode(code: code)
+
+        expect(encoded, containsQueryParameter: ("secret", "VMQREQ7753OQA==="))
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> OTPAuthURIEncoder {
@@ -294,9 +320,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         line: UInt = #line
     ) {
         let actual = uri.queryParameters ?? [:]
-        XCTAssertTrue(actual.contains { test in
-            test.key == parameter.key && test.value == parameter.value
-        }, file: file, line: line)
+        let actualValue = actual[parameter.key]
+        XCTAssertEqual(actualValue, parameter.value, file: file, line: line)
     }
 
     private func expect(
