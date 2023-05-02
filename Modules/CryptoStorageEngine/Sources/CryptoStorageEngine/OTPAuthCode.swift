@@ -55,4 +55,17 @@ public enum OTPAuthAlgorithm {
 public enum OTPAuthType {
     case totp(period: UInt32 = 30)
     case hotp(counter: UInt32 = 0)
+
+    public enum Kind: Equatable {
+        case totp, hotp
+    }
+
+    public var kind: Kind {
+        switch self {
+        case .totp:
+            return .totp
+        case .hotp:
+            return .hotp
+        }
+    }
 }
