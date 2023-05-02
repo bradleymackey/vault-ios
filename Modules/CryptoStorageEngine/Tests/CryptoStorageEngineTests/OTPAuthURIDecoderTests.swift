@@ -24,12 +24,19 @@ struct OTPAuthURIDecoder {
         let label = try decodeLabel(uri: url)
         return try OTPAuthCode(
             type: decodeType(uri: url),
-            secret: .init(data: Data(), format: .base32),
+            secret: decodeSecret(uri: url),
             algorithm: decodeAlgorithm(uri: url),
             digits: decodeDigits(uri: url),
             accountName: label.accountName,
             issuer: label.issuer
         )
+    }
+
+    private func decodeSecret(uri: URL) throws -> OTPAuthSecret {
+        guard let secret = uri.queryParameters["secret"], let data = base32DecodeToData(secret) else {
+            return .empty(.base32)
+        }
+        return .init(data: data, format: .base32)
     }
 
     private func decodeDigits(uri: URL) throws -> OTPAuthDigits {
@@ -344,6 +351,35 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
     func test_decodeSecret_defaultsToEmptySecretBase32() throws {
         let value = "otpauth://totp/any"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.secret.data, Data())
+        XCTAssertEqual(code.secret.format, .base32)
+    }
+
+    func test_decodeSecret_decodesBase32Secret() throws {
+        let value = "otpauth://totp/any?secret=5372UEJC"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22]
+        XCTAssertEqual(code.secret.data, Data(expectedBytes))
+        XCTAssertEqual(code.secret.format, .base32)
+    }
+
+    func test_decodeSecret_decodesBase32SecretWithPadding() throws {
+        let value = "otpauth://totp/any?secret=5372UEJC77XA%3D%3D%3D%3D"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22, 0xFF, 0xEE]
+        XCTAssertEqual(code.secret.data, Data(expectedBytes))
+        XCTAssertEqual(code.secret.format, .base32)
+    }
+
+    func test_decodeSecret_invalidBase32ReturnsNoDataInSecret() throws {
+        let value = "otpauth://totp/any?secret=ee~~~"
         let sut = makeSUT()
 
         let code = try sut.decode(string: value)

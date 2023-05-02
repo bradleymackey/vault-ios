@@ -38,6 +38,10 @@ public struct OTPAuthSecret: Equatable {
         self.data = data
         self.format = format
     }
+
+    public static func empty(_ format: Format = .base32) -> OTPAuthSecret {
+        .init(data: Data(), format: format)
+    }
 }
 
 public enum OTPAuthDigits: Int {
