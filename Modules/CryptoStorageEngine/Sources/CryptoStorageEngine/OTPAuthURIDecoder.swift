@@ -14,22 +14,19 @@ public struct OTPAuthURIDecoder {
 
     public init() {}
 
-    public func decode(string: String) throws -> OTPAuthCode {
-        guard
-            let url = URL(string: string),
-            let scheme = url.scheme
-        else {
+    public func decode(uri: OTPAuthURI) throws -> OTPAuthCode {
+        guard let scheme = uri.scheme else {
             throw URIDecodingError.invalidURI
         }
         guard scheme == OTPAuthURI.otpAuthScheme else {
             throw URIDecodingError.invalidScheme
         }
-        let label = try decodeLabel(uri: url)
+        let label = try decodeLabel(uri: uri)
         return try OTPAuthCode(
-            type: decodeType(uri: url),
-            secret: decodeSecret(uri: url),
-            algorithm: decodeAlgorithm(uri: url),
-            digits: decodeDigits(uri: url),
+            type: decodeType(uri: uri),
+            secret: decodeSecret(uri: uri),
+            algorithm: decodeAlgorithm(uri: uri),
+            digits: decodeDigits(uri: uri),
             accountName: label.accountName,
             issuer: label.issuer
         )
