@@ -1,5 +1,8 @@
 import Foundation
 
+/// Decodes according to the spec for *otpauth*.
+///
+/// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
 public struct OTPAuthURIDecoder {
     public enum URIDecodingError: Error {
         case invalidURI
