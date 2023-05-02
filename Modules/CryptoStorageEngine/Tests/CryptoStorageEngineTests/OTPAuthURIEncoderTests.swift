@@ -185,18 +185,23 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         )
     }
 
-    private func expect(_ uri: OAuthURI, hasScheme scheme: String, file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(
+        _ uri: OTPAuthURI,
+        hasScheme scheme: String,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
         let actual = uri.scheme
         XCTAssertEqual(actual, scheme, file: file, line: line)
     }
 
-    private func expect(_ uri: OAuthURI, hasType type: String, file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(_ uri: OTPAuthURI, hasType type: String, file: StaticString = #filePath, line: UInt = #line) {
         let actual = uri.host
         XCTAssertEqual(actual, type, file: file, line: line)
     }
 
     private func expect(
-        _ uri: OAuthURI,
+        _ uri: OTPAuthURI,
         hasPathComponents pathComponents: [String],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -205,7 +210,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     private func expect(
-        _ uri: OAuthURI,
+        _ uri: OTPAuthURI,
         hasAllQueryParameters queryParamters: [String: String],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -214,7 +219,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     private func expect(
-        _ uri: OAuthURI,
+        _ uri: OTPAuthURI,
         containsQueryParameter parameter: (key: String, value: String),
         file: StaticString = #filePath,
         line: UInt = #line
@@ -224,7 +229,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     private func expect(
-        _ uri: OAuthURI,
+        _ uri: OTPAuthURI,
         doesNotContainQueryParameter parameter: String,
         file _: StaticString = #filePath,
         line _: UInt = #line

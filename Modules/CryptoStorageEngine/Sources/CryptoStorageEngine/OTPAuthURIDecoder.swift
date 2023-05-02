@@ -18,7 +18,7 @@ public struct OTPAuthURIDecoder {
         else {
             throw URIDecodingError.invalidURI
         }
-        guard scheme == "otpauth" else {
+        guard scheme == OTPAuthURI.otpAuthScheme else {
             throw URIDecodingError.invalidScheme
         }
         let label = try decodeLabel(uri: url)

@@ -10,9 +10,9 @@ public struct OTPAuthURIEncoder {
 
     public init() {}
 
-    public func encode(code: OTPAuthCode) throws -> OAuthURI {
+    public func encode(code: OTPAuthCode) throws -> OTPAuthURI {
         var components = URLComponents()
-        components.scheme = "otpauth"
+        components.scheme = OTPAuthURI.otpAuthScheme
         components.host = makeFormatted(type: code.type)
         components.path = makePath(code: code)
         components.queryItems = makeQueryParameters(code: code)
