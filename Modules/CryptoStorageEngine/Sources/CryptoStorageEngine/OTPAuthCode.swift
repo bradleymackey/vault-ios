@@ -44,6 +44,8 @@ public enum OTPAuthDigits: Int {
     case six = 6
     case seven = 7
     case eight = 8
+
+    public static var `default`: OTPAuthDigits { .six }
 }
 
 public enum OTPAuthAlgorithm {

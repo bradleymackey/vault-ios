@@ -26,9 +26,17 @@ struct OTPAuthURIDecoder {
             type: decodeType(uri: url),
             secret: .init(data: Data(), format: .base32),
             algorithm: decodeAlgorithm(uri: url),
+            digits: decodeDigits(uri: url),
             accountName: label.accountName,
             issuer: label.issuer
         )
+    }
+
+    private func decodeDigits(uri: URL) throws -> OTPAuthDigits {
+        guard let digits = uri.queryParameters["digits"], let value = Int(digits) else {
+            return .default
+        }
+        return OTPAuthDigits(rawValue: value) ?? .default
     }
 
     private func decodeAlgorithm(uri: URL) throws -> OTPAuthAlgorithm {
@@ -300,6 +308,38 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         XCTAssertThrowsError(try sut.decode(string: value))
+    }
+
+    func test_decodeDigits_defaultstoSix() throws {
+        let value = "otpauth://totp/any"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.digits, .six)
+    }
+
+    func test_decodeDigits_setsToSix() throws {
+        let value = "otpauth://totp/any?digits=6"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.digits, .six)
+    }
+
+    func test_decodeDigits_setsToSeven() throws {
+        let value = "otpauth://totp/any?digits=7"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.digits, .seven)
+    }
+
+    func test_decodeDigits_setsToEight() throws {
+        let value = "otpauth://totp/any?digits=8"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.digits, .eight)
     }
 
     // MARK: - Helpers
