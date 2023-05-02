@@ -5,7 +5,12 @@ import XCTest
 final class OTPAuthURIDecoderTests: XCTestCase {
     func test_decodeScheme_invalidSchemeThrowsError() throws {
         let invalidCases = [
+            "http://",
+            "http://example.com",
+            "https://",
+            "https://example.com",
             "notvalid://",
+            "notvalid://example",
             "://",
         ]
         for string in invalidCases {
