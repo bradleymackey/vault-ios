@@ -25,12 +25,12 @@ public struct OTPAuthCode {
     }
 }
 
-public struct OTPAuthSecret {
+public struct OTPAuthSecret: Equatable {
     public var data: Data
     /// The format that the secret was stored in.
     public var format: Format
 
-    public enum Format {
+    public enum Format: Equatable {
         case base32
     }
 
