@@ -161,6 +161,33 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(encoded, containsQueryParameter: ("secret", "VMQREQ7753OQA==="))
     }
 
+    func test_encode_encodesAllParameters() throws {
+        let data = Data(repeating: 0xAA, count: 5)
+        let secret = OTPAuthSecret(data: data, format: .base32)
+        let code = makeCode(
+            type: .totp(period: 69),
+            accountName: "Account",
+            issuer: "Issuer",
+            algorithm: .sha512,
+            digits: .eight,
+            secret: secret
+        )
+
+        let sut = makeSUT()
+
+        let encoded = try sut.encode(code: code)
+        expect(encoded, hasScheme: "otpauth")
+        expect(encoded, hasType: "totp")
+        expect(encoded, hasPathComponents: ["/", "Issuer:Account"])
+        expect(encoded, hasAllQueryParameters: [
+            "issuer": "Issuer",
+            "digits": "8",
+            "secret": "VKVKVKVK",
+            "period": "69",
+            "algorithm": "SHA512",
+        ])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> OTPAuthURIEncoder {
