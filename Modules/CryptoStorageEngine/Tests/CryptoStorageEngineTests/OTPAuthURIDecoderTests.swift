@@ -3,20 +3,6 @@ import Foundation
 import XCTest
 
 final class OTPAuthURIDecoderTests: XCTestCase {
-    func test_decode_invalidURIThrowsInvalidURIError() throws {
-        let invalidCases = [
-            "",
-            "aaaaaaaaaaaaa",
-            "notvalid",
-            "123",
-        ]
-        for string in invalidCases {
-            let sut = makeSUT()
-
-            XCTAssertThrowsError(try sut.decode(string: string))
-        }
-    }
-
     func test_decodeScheme_invalidSchemeThrowsError() throws {
         let invalidCases = [
             "notvalid://",
@@ -25,7 +11,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         for string in invalidCases {
             let sut = makeSUT()
 
-            XCTAssertThrowsError(try sut.decode(string: string))
+            XCTAssertThrowsError(try sut.decode(string))
         }
     }
 
@@ -33,7 +19,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.type.kind, .totp)
     }
 
@@ -41,7 +27,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://hotp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.type.kind, .hotp)
     }
 
@@ -49,14 +35,14 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://invalid/any"
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(string: value))
+        XCTAssertThrowsError(try sut.decode(value))
     }
 
     func test_decodeType_usesDefaultTotpTimingIfNotSpecified() throws {
         let value = "otpauth://totp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         switch code.type {
         case let .totp(period):
             XCTAssertEqual(period, 30)
@@ -69,7 +55,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://hotp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         switch code.type {
         case let .hotp(counter):
             XCTAssertEqual(counter, 0)
@@ -82,7 +68,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?period=69"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         switch code.type {
         case let .totp(period):
             XCTAssertEqual(period, 69)
@@ -95,7 +81,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://hotp/any?counter=420"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         switch code.type {
         case let .hotp(counter):
             XCTAssertEqual(counter, 420)
@@ -108,7 +94,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/Hello%20World"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.accountName, "Hello World")
     }
 
@@ -116,7 +102,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/Issuer:Hello%20World"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.accountName, "Hello World")
     }
 
@@ -124,7 +110,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/Issuer:Extra:Colons:Invalid:Hello%20World"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.accountName, "Hello World")
     }
 
@@ -132,7 +118,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/Issuer:%20%20Hello%20World%20%20"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.accountName, "Hello World")
     }
 
@@ -140,7 +126,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertNil(code.issuer)
     }
 
@@ -148,7 +134,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/%20Some%20Issuer%20:any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.issuer, "Some Issuer")
     }
 
@@ -156,7 +142,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?issuer=%20Some%20Issuer%20"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.issuer, "Some Issuer")
     }
 
@@ -164,7 +150,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/Disfavored:any?issuer=Preferred"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.issuer, "Preferred")
     }
 
@@ -172,7 +158,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.algorithm, .sha1)
     }
 
@@ -180,7 +166,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?algorithm=SHA1"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.algorithm, .sha1)
     }
 
@@ -188,7 +174,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?algorithm=SHA256"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.algorithm, .sha256)
     }
 
@@ -196,7 +182,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?algorithm=SHA512"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.algorithm, .sha512)
     }
 
@@ -204,14 +190,14 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?algorithm=BAD"
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(string: value))
+        XCTAssertThrowsError(try sut.decode(value))
     }
 
     func test_decodeDigits_defaultstoSix() throws {
         let value = "otpauth://totp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.digits, .six)
     }
 
@@ -219,7 +205,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?digits=6"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.digits, .six)
     }
 
@@ -227,7 +213,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?digits=7"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.digits, .seven)
     }
 
@@ -235,7 +221,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?digits=8"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.digits, .eight)
     }
 
@@ -243,7 +229,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.secret.data, Data())
         XCTAssertEqual(code.secret.format, .base32)
     }
@@ -252,7 +238,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?secret=5372UEJC"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22]
         XCTAssertEqual(code.secret.data, Data(expectedBytes))
         XCTAssertEqual(code.secret.format, .base32)
@@ -262,7 +248,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?secret=5372UEJC77XA%3D%3D%3D%3D"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22, 0xFF, 0xEE]
         XCTAssertEqual(code.secret.data, Data(expectedBytes))
         XCTAssertEqual(code.secret.format, .base32)
@@ -272,7 +258,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let value = "otpauth://totp/any?secret=ee~~~"
         let sut = makeSUT()
 
-        let code = try sut.decode(string: value)
+        let code = try sut.decode(value)
         XCTAssertEqual(code.secret.data, Data())
         XCTAssertEqual(code.secret.format, .base32)
     }
@@ -281,5 +267,12 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
     private func makeSUT() -> OTPAuthURIDecoder {
         OTPAuthURIDecoder()
+    }
+}
+
+private extension OTPAuthURIDecoder {
+    func decode(_ testCaseValue: String) throws -> OTPAuthCode {
+        let uri = try XCTUnwrap(OTPAuthURI(string: testCaseValue), "Not a valid url.")
+        return try decode(uri: uri)
     }
 }
