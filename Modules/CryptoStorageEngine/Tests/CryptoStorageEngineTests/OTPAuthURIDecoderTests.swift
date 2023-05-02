@@ -6,6 +6,7 @@ struct OTPAuthURIDecoder {
     enum URIDecodingError: Error {
         case invalidURI
         case invalidScheme
+        case invalidType
     }
 
     public func decode(string: String) throws -> OTPAuthCode {
@@ -18,7 +19,25 @@ struct OTPAuthURIDecoder {
         guard scheme == "otpauth" else {
             throw URIDecodingError.invalidScheme
         }
-        return OTPAuthCode(secret: .init(data: Data(), format: .base32), accountName: "any")
+        return try OTPAuthCode(
+            type: decodeType(uri: url),
+            secret: .init(data: Data(), format: .base32),
+            accountName: "any"
+        )
+    }
+
+    private func decodeType(uri: URL) throws -> OTPAuthType {
+        guard let host = uri.host else {
+            throw URIDecodingError.invalidType
+        }
+        switch host {
+        case "totp":
+            return .totp()
+        case "hotp":
+            return .hotp()
+        default:
+            throw URIDecodingError.invalidType
+        }
     }
 }
 
@@ -47,6 +66,29 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
             XCTAssertThrowsError(try sut.decode(string: string))
         }
+    }
+
+    func test_decodeType_decodesTotpType() throws {
+        let value = "otpauth://totp/"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.type.kind, .totp)
+    }
+
+    func test_decodeType_decodesHotpType() throws {
+        let value = "otpauth://hotp/"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.type.kind, .hotp)
+    }
+
+    func test_decodeType_throwsErrorForInvalidType() throws {
+        let value = "otpauth://invalid/"
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(string: value))
     }
 
     // MARK: - Helpers
