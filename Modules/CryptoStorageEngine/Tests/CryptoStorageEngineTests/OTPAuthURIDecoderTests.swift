@@ -8,6 +8,7 @@ struct OTPAuthURIDecoder {
         case invalidScheme
         case invalidType
         case invalidLabel
+        case invalidAlgorithm
     }
 
     public func decode(string: String) throws -> OTPAuthCode {
@@ -24,9 +25,26 @@ struct OTPAuthURIDecoder {
         return try OTPAuthCode(
             type: decodeType(uri: url),
             secret: .init(data: Data(), format: .base32),
+            algorithm: decodeAlgorithm(uri: url),
             accountName: label.accountName,
             issuer: label.issuer
         )
+    }
+
+    private func decodeAlgorithm(uri: URL) throws -> OTPAuthAlgorithm {
+        guard let algorithm = uri.queryParameters["algorithm"] else {
+            return .default
+        }
+        switch algorithm {
+        case "SHA1":
+            return .sha1
+        case "SHA256":
+            return .sha256
+        case "SHA512":
+            return .sha512
+        default:
+            throw URIDecodingError.invalidAlgorithm
+        }
     }
 
     private func decodeLabel(uri: URL) throws -> (accountName: String, issuer: String?) {
@@ -243,6 +261,45 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
         let code = try sut.decode(string: value)
         XCTAssertEqual(code.issuer, "Preferred")
+    }
+
+    func test_decodeAlgorithm_defaultsToSHA1() throws {
+        let value = "otpauth://totp/any"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.algorithm, .sha1)
+    }
+
+    func test_decodeAlgorithm_setsToSHA1() throws {
+        let value = "otpauth://totp/any?algorithm=SHA1"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.algorithm, .sha1)
+    }
+
+    func test_decodeAlgorithm_setsToSHA256() throws {
+        let value = "otpauth://totp/any?algorithm=SHA256"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.algorithm, .sha256)
+    }
+
+    func test_decodeAlgorithm_setsToSHA512() throws {
+        let value = "otpauth://totp/any?algorithm=SHA512"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.algorithm, .sha512)
+    }
+
+    func test_decodeAlgorithm_throwsForInvalidAlgorithm() throws {
+        let value = "otpauth://totp/any?algorithm=BAD"
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(string: value))
     }
 
     // MARK: - Helpers

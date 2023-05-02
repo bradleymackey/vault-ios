@@ -50,6 +50,8 @@ public enum OTPAuthAlgorithm {
     case sha1
     case sha256
     case sha512
+
+    public static var `default`: OTPAuthAlgorithm { .sha1 }
 }
 
 public enum OTPAuthType {
