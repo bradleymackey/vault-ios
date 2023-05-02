@@ -1,0 +1,14 @@
+diff --git a/Modules/CryptoStorageEngine/Sources/CryptoStorageEngine/OTPAuthURIDecoder.swift b/Modules/CryptoStorageEngine/Sources/CryptoStorageEngine/OTPAuthURIDecoder.swift
+new file mode 100644
+index 0000000..bffabfe
+--- /dev/null
++++ b/Modules/CryptoStorageEngine/Sources/CryptoStorageEngine/OTPAuthURIDecoder.swift
+@@ -0,0 +1,8 @@
++//
++//  File.swift
++//  
++//
++//  Created by Bradley Mackey on 02/05/2023.
++//
++
++import Foundation
