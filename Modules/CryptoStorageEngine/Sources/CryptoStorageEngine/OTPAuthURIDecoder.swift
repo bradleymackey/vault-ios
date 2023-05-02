@@ -5,7 +5,6 @@ import Foundation
 /// https://docs.yubico.com/yesdk/users-manual/application-oath/uri-string-format.html
 public struct OTPAuthURIDecoder {
     public enum URIDecodingError: Error {
-        case invalidURI
         case invalidScheme
         case invalidType
         case invalidLabel
@@ -15,10 +14,7 @@ public struct OTPAuthURIDecoder {
     public init() {}
 
     public func decode(uri: OTPAuthURI) throws -> OTPAuthCode {
-        guard let scheme = uri.scheme else {
-            throw URIDecodingError.invalidURI
-        }
-        guard scheme == OTPAuthURI.otpAuthScheme else {
+        guard let scheme = uri.scheme, scheme == OTPAuthURI.otpAuthScheme else {
             throw URIDecodingError.invalidScheme
         }
         let label = try decodeLabel(uri: uri)
