@@ -268,6 +268,26 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         XCTAssertEqual(code.secret.format, .base32)
     }
 
+    func test_decode_decodesAllParameters() throws {
+        let value = "otpauth://totp/Issuer:Account?period=69&digits=8&algorithm=SHA512&issuer=Issuer&secret=5372UEJC"
+        let sut = makeSUT()
+
+        let code = try sut.decode(value)
+        let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22]
+        XCTAssertEqual(code.secret.data, Data(expectedBytes))
+        XCTAssertEqual(code.secret.format, .base32)
+        XCTAssertEqual(code.algorithm, .sha512)
+        XCTAssertEqual(code.digits, .eight)
+        XCTAssertEqual(code.issuer, "Issuer")
+        XCTAssertEqual(code.accountName, "Account")
+        switch code.type {
+        case let .totp(period):
+            XCTAssertEqual(period, 69)
+        default:
+            XCTFail("Did not decode totp")
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> OTPAuthURIDecoder {
