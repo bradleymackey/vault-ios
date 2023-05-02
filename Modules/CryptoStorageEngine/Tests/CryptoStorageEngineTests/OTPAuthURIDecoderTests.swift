@@ -5,6 +5,7 @@ import XCTest
 struct OTPAuthURIDecoder {
     enum URIDecodingError: Error {
         case invalidURI
+        case invalidScheme
     }
 
     public func decode(string: String) throws -> OTPAuthCode {
@@ -13,6 +14,9 @@ struct OTPAuthURIDecoder {
             let scheme = url.scheme
         else {
             throw URIDecodingError.invalidURI
+        }
+        guard scheme == "otpauth" else {
+            throw URIDecodingError.invalidScheme
         }
         return OTPAuthCode(secret: .init(data: Data(), format: .base32), accountName: "any")
     }
@@ -25,6 +29,18 @@ final class OTPAuthURIDecoderTests: XCTestCase {
             "aaaaaaaaaaaaa",
             "notvalid",
             "123",
+        ]
+        for string in invalidCases {
+            let sut = makeSUT()
+
+            XCTAssertThrowsError(try sut.decode(string: string))
+        }
+    }
+
+    func test_decodeScheme_invalidSchemeThrowsError() throws {
+        let invalidCases = [
+            "notvalid://",
+            "://",
         ]
         for string in invalidCases {
             let sut = makeSUT()
