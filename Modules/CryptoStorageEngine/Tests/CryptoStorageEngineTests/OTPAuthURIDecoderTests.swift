@@ -32,11 +32,30 @@ struct OTPAuthURIDecoder {
         }
         switch host {
         case "totp":
-            return .totp()
+            if let periodString = uri.queryParameters["period"], let period = UInt32(periodString) {
+                return .totp(period: period)
+            } else {
+                return .totp()
+            }
         case "hotp":
-            return .hotp()
+            if let counterStr = uri.queryParameters["counter"], let count = UInt32(counterStr) {
+                return .hotp(counter: count)
+            } else {
+                return .hotp()
+            }
         default:
             throw URIDecodingError.invalidType
+        }
+    }
+}
+
+private extension URL {
+    var queryParameters: [String: String] {
+        guard
+            let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
+            let queryItems = components.queryItems else { return [:] }
+        return queryItems.reduce(into: [String: String]()) { result, item in
+            result[item.name] = item.value
         }
     }
 }
@@ -89,6 +108,58 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         XCTAssertThrowsError(try sut.decode(string: value))
+    }
+
+    func test_decodeType_usesDefaultTotpTimingIfNotSpecified() throws {
+        let value = "otpauth://totp/"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        switch code.type {
+        case let .totp(period):
+            XCTAssertEqual(period, 30)
+        default:
+            XCTFail("Didn't decode totp")
+        }
+    }
+
+    func test_decodeType_usesDefaultHotpCounterIfNotSpecified() throws {
+        let value = "otpauth://hotp/"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        switch code.type {
+        case let .hotp(counter):
+            XCTAssertEqual(counter, 0)
+        default:
+            XCTFail("Didn't decode hotp")
+        }
+    }
+
+    func test_decodeType_decodesTotpPeriod() throws {
+        let value = "otpauth://totp/?period=69"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        switch code.type {
+        case let .totp(period):
+            XCTAssertEqual(period, 69)
+        default:
+            XCTFail("Didn't decode totp")
+        }
+    }
+
+    func test_decodeType_decodesHotpCounter() throws {
+        let value = "otpauth://hotp/?counter=420"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        switch code.type {
+        case let .hotp(counter):
+            XCTAssertEqual(counter, 420)
+        default:
+            XCTFail("Didn't decode hotp")
+        }
     }
 
     // MARK: - Helpers
