@@ -20,14 +20,16 @@ struct OTPAuthURIDecoder {
         guard scheme == "otpauth" else {
             throw URIDecodingError.invalidScheme
         }
+        let label = try decodeLabel(uri: url)
         return try OTPAuthCode(
             type: decodeType(uri: url),
             secret: .init(data: Data(), format: .base32),
-            accountName: decodeAccountName(uri: url)
+            accountName: label.accountName,
+            issuer: label.issuer
         )
     }
 
-    private func decodeAccountName(uri: URL) throws -> String {
+    private func decodeLabel(uri: URL) throws -> (accountName: String, issuer: String?) {
         guard uri.pathComponents.count > 1 else {
             throw URIDecodingError.invalidLabel
         }
@@ -36,7 +38,11 @@ struct OTPAuthURIDecoder {
         guard let accountName = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) else {
             throw URIDecodingError.invalidLabel
         }
-        return String(accountName)
+        var issuer = uri.queryParameters["issuer"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+        if issuer == nil, parts.count > 1 {
+            issuer = parts.first?.trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return (String(accountName), issuer)
     }
 
     private func decodeType(uri: URL) throws -> OTPAuthType {
@@ -205,6 +211,38 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
         let code = try sut.decode(string: value)
         XCTAssertEqual(code.accountName, "Hello World")
+    }
+
+    func test_decodeIssuer_decodesNoIssuerIfNotPresent() throws {
+        let value = "otpauth://totp/any"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertNil(code.issuer)
+    }
+
+    func test_decodeIssuer_decodesIssuerFromLabelIfNoParameter() throws {
+        let value = "otpauth://totp/%20Some%20Issuer%20:any"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.issuer, "Some Issuer")
+    }
+
+    func test_decodeIssuer_decodesIssuerFromParameterIfNoLabel() throws {
+        let value = "otpauth://totp/any?issuer=%20Some%20Issuer%20"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.issuer, "Some Issuer")
+    }
+
+    func test_decodeIssuer_decodesIssuerFromParameterWhenBothLabelAndParameter() throws {
+        let value = "otpauth://totp/Disfavored:any?issuer=Preferred"
+        let sut = makeSUT()
+
+        let code = try sut.decode(string: value)
+        XCTAssertEqual(code.issuer, "Preferred")
     }
 
     // MARK: - Helpers
