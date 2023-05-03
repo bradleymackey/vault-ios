@@ -8,3 +8,15 @@ public extension OTPAuthURI {
         "otpauth"
     }
 }
+
+extension OTPAuthURI {
+    /// A parameter value for OTPAuthURI
+    enum Parameter: String {
+        case secret
+        case algorithm
+        case digits
+        case issuer
+        case period
+        case counter
+    }
+}
