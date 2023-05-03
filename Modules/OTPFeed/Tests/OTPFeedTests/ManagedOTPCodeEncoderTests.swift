@@ -88,6 +88,23 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         XCTAssertEqual(encoded.accountName, accountName)
     }
 
+    func test_encodeIssuer_encodesCorrectIssuerIfPresent() {
+        let sut = makeSUT()
+        let issuer = UUID().uuidString
+        let code = makeCode(issuer: issuer)
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.issuer, issuer)
+    }
+
+    func test_encodeIssuer_encodesNilIfNotPresent() {
+        let sut = makeSUT()
+        let code = makeCode(issuer: nil)
+
+        let encoded = sut.encode(code: code)
+        XCTAssertNil(encoded.issuer)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {
