@@ -4,6 +4,18 @@ import XCTest
 @testable import OTPFeed
 
 final class ManagedOTPCodeEncoderTests: XCTestCase {
+    func test_generateUUID_generatesRandomUUID() {
+        var seen = Set<UUID>()
+        for _ in 0 ..< 100 {
+            let sut = makeSUT()
+            let code = makeCode()
+
+            let encoded = sut.encode(code: code)
+            XCTAssertFalse(seen.contains(encoded.id))
+            seen.insert(encoded.id)
+        }
+    }
+
     func test_encodeDigits_encodesToNSNumber() {
         let samples: [OTPAuthDigits: NSNumber] = [
             .six: 6,
