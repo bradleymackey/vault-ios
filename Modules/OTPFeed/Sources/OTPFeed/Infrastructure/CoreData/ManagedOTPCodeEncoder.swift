@@ -8,6 +8,16 @@ struct ManagedOTPCodeEncoder {
         let managed = ManagedOTPCode(context: context)
         managed.id = UUID()
         managed.digits = code.digits.rawValue as NSNumber
+        managed.authType = authTypeString(authType: code.type)
         return managed
+    }
+
+    private func authTypeString(authType: OTPAuthType) -> String {
+        switch authType {
+        case .totp:
+            return "totp"
+        case .hotp:
+            return "hotp"
+        }
     }
 }
