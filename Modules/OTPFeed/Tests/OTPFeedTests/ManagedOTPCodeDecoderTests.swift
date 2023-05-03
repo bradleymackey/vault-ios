@@ -9,7 +9,7 @@ struct ManagedOTPCodeDecoder {
         try OTPAuthCode(
             secret: .empty(),
             digits: decode(digits: code.digits),
-            accountName: "any"
+            accountName: code.accountName
         )
     }
 
@@ -50,6 +50,15 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
 
             XCTAssertThrowsError(try sut.decode(code: code))
         }
+    }
+
+    func test_decodeAccountName_decodesExpected() throws {
+        let accountName = UUID().uuidString
+        let code = makeManagedCode(accountName: accountName)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(code: code)
+        XCTAssertEqual(decoded.accountName, accountName)
     }
 
     // MARK: - Helpers
