@@ -63,6 +63,22 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         XCTAssertNil(encoded.period)
     }
 
+    func test_encodeCounter_encodesCounterForHOTP() {
+        let sut = makeSUT()
+        let code = makeCode(type: .hotp(counter: 69))
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.counter, 69)
+    }
+
+    func test_encodePeriod_doesNotEncodePeriodForTOTP() {
+        let sut = makeSUT()
+        let code = makeCode(type: .totp())
+
+        let encoded = sut.encode(code: code)
+        XCTAssertNil(encoded.counter)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {

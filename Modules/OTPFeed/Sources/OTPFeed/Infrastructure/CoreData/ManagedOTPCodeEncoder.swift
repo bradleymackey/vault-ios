@@ -10,6 +10,7 @@ struct ManagedOTPCodeEncoder {
         managed.digits = code.digits.rawValue as NSNumber
         managed.authType = authTypeString(authType: code.type)
         managed.period = authTypePeriod(authType: code.type)
+        managed.counter = authTypeCounter(authType: code.type)
         return managed
     }
 
@@ -28,6 +29,15 @@ struct ManagedOTPCodeEncoder {
             return period as NSNumber
         case .hotp:
             return nil
+        }
+    }
+
+    private func authTypeCounter(authType: OTPAuthType) -> NSNumber? {
+        switch authType {
+        case .totp:
+            return nil
+        case let .hotp(counter):
+            return counter as NSNumber
         }
     }
 }
