@@ -2,7 +2,7 @@ import CoreData
 import OTPCore
 
 public class CoreDataCodeStore {
-    public static let modelName = "Model"
+    public static let modelName = "OTPStore"
     public static let model = NSManagedObjectModel.with(name: modelName, in: .module)
 
     private let container: NSPersistentContainer
