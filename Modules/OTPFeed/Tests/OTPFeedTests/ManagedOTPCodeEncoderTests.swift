@@ -105,6 +105,21 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         XCTAssertNil(encoded.issuer)
     }
 
+    func test_encodeAlgorithm_encodesToString() {
+        let expected: [OTPAuthAlgorithm: String] = [
+            .sha1: "SHA1",
+            .sha256: "SHA256",
+            .sha512: "SHA512",
+        ]
+        for (algo, expected) in expected {
+            let sut = makeSUT()
+            let code = makeCode(algorithm: algo)
+
+            let encoded = sut.encode(code: code)
+            XCTAssertEqual(encoded.algorithm, expected)
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {
