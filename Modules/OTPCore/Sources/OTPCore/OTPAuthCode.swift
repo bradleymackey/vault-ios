@@ -1,6 +1,6 @@
 import Foundation
 
-public struct OTPAuthCode {
+public struct OTPAuthCode: Equatable {
     public var type: OTPAuthType
     public var secret: OTPAuthSecret
     public var algorithm: OTPAuthAlgorithm
@@ -44,7 +44,7 @@ public struct OTPAuthSecret: Equatable {
     }
 }
 
-public enum OTPAuthDigits: Int {
+public enum OTPAuthDigits: Int, Equatable {
     case six = 6
     case seven = 7
     case eight = 8
@@ -52,7 +52,7 @@ public enum OTPAuthDigits: Int {
     public static var `default`: OTPAuthDigits { .six }
 }
 
-public enum OTPAuthAlgorithm {
+public enum OTPAuthAlgorithm: Equatable {
     case sha1
     case sha256
     case sha512
@@ -60,7 +60,7 @@ public enum OTPAuthAlgorithm {
     public static var `default`: OTPAuthAlgorithm { .sha1 }
 }
 
-public enum OTPAuthType {
+public enum OTPAuthType: Equatable {
     case totp(period: UInt32 = 30)
     case hotp(counter: UInt32 = 0)
 
