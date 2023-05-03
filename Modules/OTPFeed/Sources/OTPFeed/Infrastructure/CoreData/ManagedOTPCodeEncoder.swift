@@ -9,6 +9,7 @@ struct ManagedOTPCodeEncoder {
         managed.id = UUID()
         managed.digits = code.digits.rawValue as NSNumber
         managed.accountName = code.accountName
+        managed.issuer = code.issuer
         managed.authType = authTypeString(authType: code.type)
         managed.period = authTypePeriod(authType: code.type)
         managed.counter = authTypeCounter(authType: code.type)
