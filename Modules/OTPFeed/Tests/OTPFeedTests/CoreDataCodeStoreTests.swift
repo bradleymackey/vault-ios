@@ -9,6 +9,15 @@ final class CoreDataCodeStoreTests: XCTestCase {
         let result = try await sut.retrieve()
         XCTAssertEqual(result, [])
     }
+
+    func test_retrieve_hasNoSideEffectsOnEmptyCache() async throws {
+        let sut = try makeSUT()
+
+        let result1 = try await sut.retrieve()
+        XCTAssertEqual(result1, [])
+        let result2 = try await sut.retrieve()
+        XCTAssertEqual(result2, [])
+    }
 }
 
 // MARK: - Helpers
