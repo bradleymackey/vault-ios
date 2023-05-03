@@ -31,6 +31,22 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         }
     }
 
+    func test_encodeType_encodesKindTOTP() {
+        let sut = makeSUT()
+        let code = makeCode(type: .totp())
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.authType, "totp")
+    }
+
+    func test_encodeType_encodesKindHOTP() {
+        let sut = makeSUT()
+        let code = makeCode(type: .hotp())
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.authType, "hotp")
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {
