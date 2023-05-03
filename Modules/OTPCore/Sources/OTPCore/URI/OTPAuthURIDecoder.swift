@@ -33,21 +33,21 @@ public struct OTPAuthURIDecoder {
 
 extension OTPAuthURIDecoder {
     private func decodeSecret(uri: URL) throws -> OTPAuthSecret {
-        guard let secret = uri.queryParameters["secret"], let data = base32DecodeToData(secret) else {
+        guard let secret = uri.otpParameter(.secret), let data = base32DecodeToData(secret) else {
             return .empty(.base32)
         }
         return .init(data: data, format: .base32)
     }
 
     private func decodeDigits(uri: URL) throws -> OTPAuthDigits {
-        guard let digits = uri.queryParameters["digits"], let value = Int(digits) else {
+        guard let digits = uri.otpParameter(.digits), let value = Int(digits) else {
             return .default
         }
         return OTPAuthDigits(rawValue: value) ?? .default
     }
 
     private func decodeAlgorithm(uri: URL) throws -> OTPAuthAlgorithm {
-        guard let algorithm = uri.queryParameters["algorithm"] else {
+        guard let algorithm = uri.otpParameter(.algorithm) else {
             return .default
         }
         switch algorithm {
@@ -71,7 +71,7 @@ extension OTPAuthURIDecoder {
         guard let accountName = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) else {
             throw URIDecodingError.invalidLabel
         }
-        var issuer = uri.queryParameters["issuer"]?.trimmingCharacters(in: .whitespacesAndNewlines)
+        var issuer = uri.otpParameter(.issuer)?.trimmingCharacters(in: .whitespacesAndNewlines)
         if issuer == nil, parts.count > 1 {
             issuer = parts.first?.trimmingCharacters(in: .whitespacesAndNewlines)
         }
@@ -84,13 +84,13 @@ extension OTPAuthURIDecoder {
         }
         switch host {
         case "totp":
-            if let periodString = uri.queryParameters["period"], let period = UInt32(periodString) {
+            if let periodString = uri.otpParameter(.period), let period = UInt32(periodString) {
                 return .totp(period: period)
             } else {
                 return .totp()
             }
         case "hotp":
-            if let counterStr = uri.queryParameters["counter"], let count = UInt32(counterStr) {
+            if let counterStr = uri.otpParameter(.counter), let count = UInt32(counterStr) {
                 return .hotp(counter: count)
             } else {
                 return .hotp()
@@ -98,5 +98,11 @@ extension OTPAuthURIDecoder {
         default:
             throw URIDecodingError.invalidType
         }
+    }
+}
+
+extension URL {
+    func otpParameter(_ parameter: OTPAuthURI.Parameter) -> String? {
+        queryParameters[parameter.rawValue]
     }
 }

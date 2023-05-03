@@ -33,27 +33,27 @@ extension OTPAuthURIEncoder {
     private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
-            URLQueryItem(name: "secret", value: makeFormatted(secret: code.secret))
+            .otpAuth(.secret, value: makeFormatted(secret: code.secret))
         )
         queryItems.append(
-            URLQueryItem(name: "algorithm", value: formatted(algorithm: code.algorithm))
+            .otpAuth(.algorithm, value: formatted(algorithm: code.algorithm))
         )
         queryItems.append(
-            URLQueryItem(name: "digits", value: "\(code.digits.rawValue)")
+            .otpAuth(.digits, value: "\(code.digits.rawValue)")
         )
         if let issuer = code.issuer {
             queryItems.append(
-                URLQueryItem(name: "issuer", value: issuer)
+                .otpAuth(.issuer, value: issuer)
             )
         }
         switch code.type {
         case let .totp(period):
             queryItems.append(
-                URLQueryItem(name: "period", value: "\(period)")
+                .otpAuth(.period, value: "\(period)")
             )
         case let .hotp(counter):
             queryItems.append(
-                URLQueryItem(name: "counter", value: "\(counter)")
+                .otpAuth(.counter, value: "\(counter)")
             )
         }
         return queryItems
@@ -89,5 +89,11 @@ extension OTPAuthURIEncoder {
         case .sha512:
             return "SHA512"
         }
+    }
+}
+
+extension URLQueryItem {
+    static func otpAuth(_ parameter: OTPAuthURI.Parameter, value: String) -> URLQueryItem {
+        URLQueryItem(name: parameter.rawValue, value: value)
     }
 }
