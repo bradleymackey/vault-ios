@@ -14,6 +14,8 @@ struct ManagedOTPCodeEncoder {
         managed.period = authTypePeriod(authType: code.type)
         managed.counter = authTypeCounter(authType: code.type)
         managed.algorithm = encoded(algorithm: code.algorithm)
+        managed.secretFormat = encoded(secretFormat: code.secret.format)
+        managed.secretData = code.secret.data
         return managed
     }
 
@@ -52,6 +54,13 @@ struct ManagedOTPCodeEncoder {
             return "SHA256"
         case .sha512:
             return "SHA512"
+        }
+    }
+
+    private func encoded(secretFormat: OTPAuthSecret.Format) -> String {
+        switch secretFormat {
+        case .base32:
+            return "BASE_32"
         }
     }
 }

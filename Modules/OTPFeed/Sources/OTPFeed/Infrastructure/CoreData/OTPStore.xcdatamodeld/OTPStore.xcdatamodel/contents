@@ -9,5 +9,7 @@
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="issuer" optional="YES" attributeType="String"/>
         <attribute name="period" optional="YES" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="secretData" attributeType="Binary"/>
+        <attribute name="secretFormat" attributeType="String"/>
     </entity>
 </model>
