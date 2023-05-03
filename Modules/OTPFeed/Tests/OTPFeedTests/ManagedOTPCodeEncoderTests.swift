@@ -47,6 +47,22 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         XCTAssertEqual(encoded.authType, "hotp")
     }
 
+    func test_encodePeriod_encodesPeriodForTOTP() {
+        let sut = makeSUT()
+        let code = makeCode(type: .totp(period: 69))
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.period, 69)
+    }
+
+    func test_encodePeriod_doesNotEncodePeriodForHOTP() {
+        let sut = makeSUT()
+        let code = makeCode(type: .hotp())
+
+        let encoded = sut.encode(code: code)
+        XCTAssertNil(encoded.period)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {
