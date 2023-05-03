@@ -13,6 +13,7 @@ struct ManagedOTPCodeEncoder {
         managed.authType = authTypeString(authType: code.type)
         managed.period = authTypePeriod(authType: code.type)
         managed.counter = authTypeCounter(authType: code.type)
+        managed.algorithm = encoded(algorithm: code.algorithm)
         return managed
     }
 
@@ -40,6 +41,17 @@ struct ManagedOTPCodeEncoder {
             return nil
         case let .hotp(counter):
             return counter as NSNumber
+        }
+    }
+
+    private func encoded(algorithm: OTPAuthAlgorithm) -> String {
+        switch algorithm {
+        case .sha1:
+            return "SHA1"
+        case .sha256:
+            return "SHA256"
+        case .sha512:
+            return "SHA512"
         }
     }
 }
