@@ -1,5 +1,5 @@
-import CryptoStorageEngine
 import Foundation
+import OTPCore
 import XCTest
 
 final class OTPAuthURIDecoderTests: XCTestCase {
