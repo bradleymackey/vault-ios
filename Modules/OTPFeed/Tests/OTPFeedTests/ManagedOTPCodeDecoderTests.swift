@@ -7,6 +7,7 @@ import XCTest
 struct ManagedOTPCodeDecoder {
     func decode(code: ManagedOTPCode) throws -> OTPAuthCode {
         try OTPAuthCode(
+            type: decodeType(code: code),
             secret: .empty(),
             digits: decode(digits: code.digits),
             accountName: code.accountName,
@@ -16,6 +17,8 @@ struct ManagedOTPCodeDecoder {
 
     enum DecodingError: Error {
         case badDigits(NSNumber)
+        case invalidType
+        case missingPeriod
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
@@ -23,6 +26,18 @@ struct ManagedOTPCodeDecoder {
             return digits
         } else {
             throw DecodingError.badDigits(digits)
+        }
+    }
+
+    private func decodeType(code: ManagedOTPCode) throws -> OTPAuthType {
+        switch code.authType {
+        case "totp":
+            guard let period = code.period?.uint32Value else {
+                throw DecodingError.missingPeriod
+            }
+            return .totp(period: period)
+        default:
+            throw DecodingError.invalidType
         }
     }
 }
@@ -79,6 +94,21 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         XCTAssertNil(decoded.issuer)
     }
 
+    func test_decodeType_decodesTOTPWithPeriod() throws {
+        let code = makeManagedCode(authType: "totp", period: 69)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(code: code)
+        XCTAssertEqual(decoded.type, .totp(period: 69))
+    }
+
+    func test_decodeType_totpWithoutPeriodThrows() throws {
+        let code = makeManagedCode(authType: "totp", period: nil)
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(code: code))
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeDecoder {
@@ -88,11 +118,11 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
     private func makeManagedCode(
         accountName: String = "any",
         algorithm: String = "any",
-        authType: String = "any",
-        counter: NSNumber? = 30,
-        digits: NSNumber = 6,
+        authType: String = "totp",
+        counter: NSNumber? = UInt32(30) as NSNumber,
+        digits: NSNumber = UInt32(6) as NSNumber,
         issuer: String? = "issuer",
-        period: NSNumber? = 30,
+        period: NSNumber? = UInt32(30) as NSNumber,
         secretData: Data = Data(),
         secretFormat: String = "any"
     ) -> ManagedOTPCode {
