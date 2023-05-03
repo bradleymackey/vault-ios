@@ -3,14 +3,14 @@ import OTPFeed
 import XCTest
 
 final class CoreDataCodeStoreTests: XCTestCase {
-    func test_retrieve_deliversEmptyOnEmptyCache() async throws {
+    func test_retrieve_deliversEmptyOnEmptyStore() async throws {
         let sut = try makeSUT()
 
         let result = try await sut.retrieve()
         XCTAssertEqual(result, [])
     }
 
-    func test_retrieve_hasNoSideEffectsOnEmptyCache() async throws {
+    func test_retrieve_hasNoSideEffectsOnEmptyStore() async throws {
         let sut = try makeSUT()
 
         let result1 = try await sut.retrieve()
