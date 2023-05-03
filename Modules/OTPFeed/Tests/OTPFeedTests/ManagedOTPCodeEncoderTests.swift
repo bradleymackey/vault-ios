@@ -120,6 +120,30 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         }
     }
 
+    func test_encodeSecret_formatEncodesToString() {
+        let expected: [OTPAuthSecret.Format: String] = [
+            .base32: "BASE_32",
+        ]
+        for (format, expected) in expected {
+            let sut = makeSUT()
+            let secret = OTPAuthSecret(data: Data(), format: format)
+            let code = makeCode(secret: secret)
+
+            let encoded = sut.encode(code: code)
+            XCTAssertEqual(encoded.secretFormat, expected)
+        }
+    }
+
+    func test_encodeSecret_encodesSecretBinaryData() {
+        let sut = makeSUT()
+        let secretData = Data([0xFF, 0xEE, 0x66, 0x77, 0x22])
+        let secret = OTPAuthSecret(data: secretData, format: .base32)
+        let code = makeCode(secret: secret)
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.secretData, secretData)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {

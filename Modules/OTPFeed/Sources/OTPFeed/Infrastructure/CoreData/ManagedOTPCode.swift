@@ -4,6 +4,8 @@ import OTPCore
 @objc(ManagedOTPCode)
 class ManagedOTPCode: NSManagedObject {
     @NSManaged var id: UUID
+    @NSManaged var secretFormat: String
+    @NSManaged var secretData: Data
     @NSManaged var authType: String
     @NSManaged var period: NSNumber?
     @NSManaged var counter: NSNumber?
