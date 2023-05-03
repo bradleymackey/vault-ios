@@ -91,7 +91,6 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         authType: String = "any",
         counter: NSNumber? = 30,
         digits: NSNumber = 6,
-        id: UUID = UUID(),
         issuer: String? = "issuer",
         period: NSNumber? = 30,
         secretData: Data = Data(),
@@ -99,12 +98,12 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
     ) -> ManagedOTPCode {
         let anyContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         let code = ManagedOTPCode(context: anyContext)
+        code.id = UUID()
         code.accountName = accountName
         code.algorithm = algorithm
         code.authType = authType
         code.counter = counter
         code.digits = digits
-        code.id = id
         code.issuer = issuer
         code.period = period
         code.secretData = secretData
