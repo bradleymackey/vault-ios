@@ -3,21 +3,21 @@
 import PackageDescription
 
 let package = Package(
-    name: "CryptoStorageEngine",
+    name: "OTPCore",
     platforms: [.iOS(.v13), .macOS(.v10_15)],
     products: [
         .library(
-            name: "CryptoStorageEngine",
-            targets: ["CryptoStorageEngine"]
+            name: "OTPCore",
+            targets: ["OTPCore"]
         ),
     ],
     targets: [
         .target(
-            name: "CryptoStorageEngine"
+            name: "OTPCore"
         ),
         .testTarget(
-            name: "CryptoStorageEngineTests",
-            dependencies: ["CryptoStorageEngine"]
+            name: "OTPCoreTests",
+            dependencies: ["OTPCore"]
         ),
     ]
 )

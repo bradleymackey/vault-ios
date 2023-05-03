@@ -26,7 +26,7 @@
 
 import Foundation
 import XCTest
-@testable import CryptoStorageEngine
+@testable import OTPCore
 
 final class StringExtensionTests: XCTestCase {
     func test_dataUsingUTF8StringEncoding() throws {

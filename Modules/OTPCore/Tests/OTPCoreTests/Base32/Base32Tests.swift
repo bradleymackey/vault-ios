@@ -26,7 +26,7 @@
 
 import Foundation
 import XCTest
-@testable import CryptoStorageEngine
+@testable import OTPCore
 
 final class Base32Tests: XCTestCase {
     let vectors: [(String, String, String)] = [
