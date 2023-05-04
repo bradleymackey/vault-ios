@@ -2,18 +2,41 @@ import Combine
 import Foundation
 import OTPCore
 
-public final class CodeTimerViewModel: ObservableObject {
+public final class CodeTimerViewModel<Clock: EpochClock & IntervalClock>: ObservableObject {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
     private let period: Double
+    private var timerPublisher: AnyCancellable?
+    private let clock: Clock
 
-    public init(clock: some EpochClock, period: UInt32) {
-        self.period = Double(period)
-        let currentCodeNumber = UInt64(clock.currentTime) / UInt64(period)
+    public init(clock: Clock, period: Double) {
+        self.period = period
+        self.clock = clock
+        let initialState = Self.timerState(currentTime: clock.currentTime, period: period)
+        timerStateSubject = .init(initialState)
+
+        scheduleNextClock()
+    }
+
+    private func updateTimerState() {
+        let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
+        timerStateSubject.send(nextState)
+    }
+
+    private func scheduleNextClock() {
+        let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
+        timerPublisher = clock.timerPublisher(interval: remaining)
+            .sink { [weak self] _ in
+                self?.updateTimerState()
+                self?.scheduleNextClock()
+            }
+    }
+
+    private static func timerState(currentTime: Double, period: Double) -> OTPTimerState {
+        let currentCodeNumber = UInt64(currentTime) / UInt64(period)
         let nextCodeNumber = currentCodeNumber + 1
         let codeStart = currentCodeNumber * UInt64(period)
         let codeEnd = nextCodeNumber * UInt64(period)
-        let initialState = OTPTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
-        timerStateSubject = .init(initialState)
+        return OTPTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
     }
 
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
