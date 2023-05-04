@@ -41,6 +41,20 @@ final class CoreDataCodeStoreTests: XCTestCase {
         let result = try await sut.retrieve()
         XCTAssertEqual(result, codes)
     }
+
+    func test_retrieve_hasNoSideEffectsOnNonEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let codes: [OTPAuthCode] = [uniqueCode(), uniqueCode(), uniqueCode()]
+        for code in codes {
+            try await sut.insert(code: code)
+        }
+
+        let result1 = try await sut.retrieve()
+        XCTAssertEqual(result1, codes)
+        let result2 = try await sut.retrieve()
+        XCTAssertEqual(result2, codes)
+    }
 }
 
 // MARK: - Helpers
