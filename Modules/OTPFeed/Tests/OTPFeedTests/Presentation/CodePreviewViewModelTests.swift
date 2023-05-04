@@ -26,7 +26,7 @@ final class CodePreviewViewModelTests: XCTestCase {
         XCTAssertEqual(output, [.visible("hi"), .noMoreCodes])
     }
 
-    func test_code_goesToNoErrorWhenErrors() async throws {
+    func test_code_goesToErrorWhenErrors() async throws {
         let (renderer, sut) = makeSUT()
         let publisher = sut.$code.collectNext(2)
 
