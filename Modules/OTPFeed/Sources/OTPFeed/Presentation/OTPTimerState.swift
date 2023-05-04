@@ -15,4 +15,8 @@ public struct OTPTimerState: Equatable {
         self.startTime = startTime
         self.endTime = endTime
     }
+
+    public func remainingTime(at epoch: Double) -> Double {
+        epoch - endTime
+    }
 }

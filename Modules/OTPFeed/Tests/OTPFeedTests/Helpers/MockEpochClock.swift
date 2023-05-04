@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import OTPCore
 
-struct MockEpochClock: EpochClock {
+struct MockEpochClock: EpochClock, IntervalClock {
     private let publisher: CurrentValueSubject<Double, Never>
     init(initialTime: Double) {
         publisher = CurrentValueSubject<Double, Never>(initialTime)
@@ -22,5 +22,15 @@ struct MockEpochClock: EpochClock {
 
     var currentTime: Double {
         publisher.value
+    }
+
+    private let timerPublisher = PassthroughSubject<Double, Never>()
+
+    func finishTimer(currentTime: Double) {
+        timerPublisher.send(currentTime)
+    }
+
+    func timerPublisher(interval _: Double) -> AnyPublisher<Double, Never> {
+        timerPublisher.eraseToAnyPublisher()
     }
 }
