@@ -1,4 +1,5 @@
 import CoreData
+import OTPCore
 import OTPFeed
 import XCTest
 
@@ -18,6 +19,28 @@ final class CoreDataCodeStoreTests: XCTestCase {
         let result2 = try await sut.retrieve()
         XCTAssertEqual(result2, [])
     }
+
+    func test_retrieve_deliversSingleCodeOnNonEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let code = uniqueCode()
+        try await sut.insert(code: code)
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result, [code])
+    }
+
+    func test_retrieve_deliversMultipleCodesOnNonEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let codes: [OTPAuthCode] = [uniqueCode(), uniqueCode(), uniqueCode()]
+        for code in codes {
+            try await sut.insert(code: code)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result, codes)
+    }
 }
 
 // MARK: - Helpers
@@ -31,5 +54,22 @@ extension CoreDataCodeStoreTests {
     private func inMemoryStoreURL() -> URL {
         URL(fileURLWithPath: "/dev/null")
             .appendingPathComponent("\(type(of: self)).store")
+    }
+
+    private func uniqueCode() -> OTPAuthCode {
+        let randomData = Data.random(count: 50)
+        return OTPAuthCode(secret: .init(data: randomData, format: .base32), accountName: "Some Account")
+    }
+}
+
+extension Data {
+    static func random(count: Int) -> Data {
+        var bytes = [UInt8]()
+        bytes.reserveCapacity(count)
+        for _ in 0 ..< count {
+            let nextByte = UInt8.random(in: UInt8.min ... UInt8.max)
+            bytes.append(nextByte)
+        }
+        return Data(bytes)
     }
 }

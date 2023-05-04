@@ -25,16 +25,31 @@ public class CoreDataCodeStore {
         }
     }
 
+    public func insert(code: OTPAuthCode) async throws {
+        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
+            context.perform {
+                do {
+                    let encoder = ManagedOTPCodeEncoder(context: self.context)
+                    _ = encoder.encode(code: code)
+
+                    try self.context.save()
+                    cont.resume()
+                } catch {
+                    self.context.rollback()
+                    cont.resume(throwing: error)
+                }
+            }
+        }
+    }
+
     public func retrieve() async throws -> [OTPAuthCode] {
         try await withCheckedThrowingContinuation { cont in
             context.perform {
                 do {
                     let results = try ManagedOTPCode.fetchAll(in: self.context)
-                    cont.resume(returning: results.map { _ in
-                        OTPAuthCode(
-                            secret: .empty(),
-                            accountName: "any"
-                        )
+                    let decoder = ManagedOTPCodeDecoder()
+                    try cont.resume(returning: results.map { managedCode in
+                        try decoder.decode(code: managedCode)
                     })
                 } catch {
                     cont.resume(throwing: error)
