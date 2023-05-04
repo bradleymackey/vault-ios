@@ -19,6 +19,19 @@ final class TOTPGeneratorTests: XCTestCase {
         try XCTAssertFalse(sut.verify(epochSeconds: 10, value: expected + 1))
     }
 
+    func test_code_rollover30Seconds() throws {
+        let secret = Data(byteString: "12345678901234567890")
+        let hotp = HOTPGenerator(secret: secret, digits: .eight, algorithm: .sha1)
+        let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
+
+        try XCTAssertEqual(sut.code(epochSeconds: 30), sut.code(epochSeconds: 31))
+        try XCTAssertEqual(sut.code(epochSeconds: 30), sut.code(epochSeconds: 59))
+        try XCTAssertNotEqual(sut.code(epochSeconds: 30), sut.code(epochSeconds: 60))
+        try XCTAssertEqual(sut.code(epochSeconds: 60), sut.code(epochSeconds: 61))
+        try XCTAssertEqual(sut.code(epochSeconds: 60), sut.code(epochSeconds: 89))
+        try XCTAssertNotEqual(sut.code(epochSeconds: 60), sut.code(epochSeconds: 90))
+    }
+
     func test_code_rfcSHA1Example() throws {
         let secret = Data(byteString: "12345678901234567890")
         let hotp = HOTPGenerator(secret: secret, digits: .eight, algorithm: .sha1)
