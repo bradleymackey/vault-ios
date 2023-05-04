@@ -4,73 +4,45 @@ import OTPFeed
 import XCTest
 
 final class CodePreviewViewModelTests: XCTestCase {
-    func test_code_updatesWithCodes() {
+    func test_code_updatesWithCodes() throws {
         let (renderer, sut) = makeSUT()
-        let expectation = sut.$code.recordPublished(numberOfRecords: 2)
+        let publisher = sut.$code.collect(3).first()
 
-        renderer.subject.send("hello")
-        renderer.subject.send("world")
-
-        let values = expectation.waitAndCollectRecords()
-        let mappedValues: [CodePreviewViewModel.VisibleCode?] = values.map {
-            switch $0 {
-            case let .value(output):
-                return output
-            default:
-                return nil
-            }
+        let output = try awaitPublisher(publisher) {
+            renderer.subject.send("hello")
+            renderer.subject.send("world")
         }
-        XCTAssertEqual(mappedValues, [.visible("hello"), .visible("world")])
+        XCTAssertEqual(output, [.notReady, .visible("hello"), .visible("world")])
     }
 
-    func test_code_goesToNoMoreCodesWhenFinished() {
+    func test_code_goesToNoMoreCodesWhenFinished() throws {
         let (renderer, sut) = makeSUT()
-        let expectation = sut.$code.recordPublished(numberOfRecords: 2)
+        let publisher = sut.$code.collect(3).first()
 
-        renderer.subject.send("hello")
-        renderer.subject.send("world")
-        renderer.subject.send(completion: .finished)
-
-        let values = expectation.waitAndCollectRecords()
-        let mappedValues: [String?] = values.map {
-            switch $0 {
-            case let .value(v):
-                switch v {
-                case .noMoreCodes:
-                    return "no more codes"
-                default:
-                    return "value"
-                }
-            default:
-                return nil
-            }
+        let output = try awaitPublisher(publisher) {
+            renderer.subject.send("hi")
+            renderer.subject.send(completion: .finished)
         }
-        XCTAssertEqual(mappedValues, ["value", "value", "no more codes"])
+        XCTAssertEqual(output, [.notReady, .visible("hi"), .noMoreCodes])
     }
 
-    func test_code_goesToNoErrorWhenErrors() {
+    func test_code_goesToNoErrorWhenErrors() throws {
         let (renderer, sut) = makeSUT()
-        let expectation = sut.$code.recordPublished(numberOfRecords: 2)
+        let publisher = sut.$code.collect(3).first()
 
-        renderer.subject.send("hello")
-        renderer.subject.send("world")
-        renderer.subject.send(completion: .failure(anyNSError()))
-
-        let values = expectation.waitAndCollectRecords()
-        let mappedValues: [String?] = values.map {
+        let output = try awaitPublisher(publisher) {
+            renderer.subject.send("hi")
+            renderer.subject.send(completion: .failure(anyNSError()))
+        }
+        let kind: [String] = output.map {
             switch $0 {
-            case let .value(v):
-                switch v {
-                case .error:
-                    return "error"
-                default:
-                    return "value"
-                }
+            case .error:
+                return "error"
             default:
-                return nil
+                return "other"
             }
         }
-        XCTAssertEqual(mappedValues, ["value", "value", "error"])
+        XCTAssertEqual(kind, ["other", "other", "error"])
     }
 
     // MARK: - Helpers
