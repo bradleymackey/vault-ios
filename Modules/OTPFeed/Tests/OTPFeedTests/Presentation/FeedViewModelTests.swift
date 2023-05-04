@@ -1,59 +1,72 @@
+import Combine
 import CombineTestExtensions
 import Foundation
 import OTPFeed
 import XCTest
 
 final class FeedViewModelTests: XCTestCase {
+    private var cancellables: Set<AnyCancellable>!
+
+    override func setUp() async throws {
+        try await super.setUp()
+
+        cancellables = Set<AnyCancellable>()
+    }
+
+    override func tearDown() async throws {
+        cancellables = nil
+
+        try await super.tearDown()
+    }
+
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let getCodes = sut.$codes.record(scheduler: TestScheduler(), numberOfRecords: 1)
+        let getCodes = sut.$codes.recordPublished(numberOfRecords: 1)
 
         await sut.reloadData()
 
         let codes = getCodes.waitAndCollectRecords()
-        XCTAssertEqual(codes, [.value([]), .value([])])
+        XCTAssertEqual(codes, [.value([])])
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let getErrors = sut.$retrievalError.record(scheduler: TestScheduler(), numberOfRecords: 1)
+        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst(), bag: &cancellables)
 
         await sut.reloadData()
 
-        let errors = getErrors.waitAndCollectRecords()
-        XCTAssertEqual(errors, [.value(nil)])
+        await fulfillment(of: [exp], timeout: 0.5)
     }
 
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let getCodes = sut.$codes.record(scheduler: TestScheduler(), numberOfRecords: 2)
+        let getCodes = sut.$codes.recordPublished(numberOfRecords: 1)
 
         await sut.reloadData()
 
         let codes = getCodes.waitAndCollectRecords()
-        XCTAssertEqual(codes, [.value([]), .value(store.codes)])
+        XCTAssertEqual(codes, [.value(store.codes)])
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let getErrors = sut.$retrievalError.record(scheduler: TestScheduler(), numberOfRecords: 1)
+        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst(), bag: &cancellables)
 
         await sut.reloadData()
 
-        let errors = getErrors.waitAndCollectRecords()
-        XCTAssertEqual(errors, [.value(nil)])
+        await fulfillment(of: [exp], timeout: 0.5)
     }
 
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
         let sut = FeedViewModel(store: ErrorStubStore(error: anyNSError()))
-        let getErrors = sut.$retrievalError.record(scheduler: TestScheduler(), numberOfRecords: 1)
+        let getErrors = sut.$retrievalError.recordPublished(numberOfRecords: 1)
 
         await sut.reloadData()
 
         let errors = getErrors.waitAndCollectRecords()
-        XCTAssertEqual(errors.count, 2)
+        XCTAssertEqual(errors.count, 1)
     }
 
     // MARK: - Helpers
