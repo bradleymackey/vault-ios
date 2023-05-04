@@ -25,13 +25,16 @@ public final class CoreDataCodeStore {
         }
     }
 
-    public func insert(code: OTPAuthCode) async throws {
+    /// - Returns: The underlying ID of the entry in the store.
+    @discardableResult
+    public func insert(code: OTPAuthCode) async throws -> UUID {
         try await asyncPerform { context in
             do {
                 let encoder = ManagedOTPCodeEncoder(context: context)
-                _ = encoder.encode(code: code)
+                let encoded = encoder.encode(code: code)
 
                 try context.save()
+                return encoded.id
             } catch {
                 context.rollback()
                 throw error
