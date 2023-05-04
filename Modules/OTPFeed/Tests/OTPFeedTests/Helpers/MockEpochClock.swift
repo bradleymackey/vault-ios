@@ -24,13 +24,13 @@ struct MockEpochClock: EpochClock, IntervalClock {
         publisher.value
     }
 
-    private let timerPublisher = PassthroughSubject<Double, Never>()
+    private let timerPublisher = PassthroughSubject<Void, Never>()
 
-    func finishTimer(currentTime: Double) {
-        timerPublisher.send(currentTime)
+    func finishTimer() {
+        timerPublisher.send()
     }
 
-    func timerPublisher(interval _: Double) -> AnyPublisher<Double, Never> {
+    func timerPublisher(interval _: Double) -> AnyPublisher<Void, Never> {
         timerPublisher.eraseToAnyPublisher()
     }
 }

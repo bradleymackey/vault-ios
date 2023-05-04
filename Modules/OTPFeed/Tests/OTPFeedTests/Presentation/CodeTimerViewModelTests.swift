@@ -25,9 +25,9 @@ final class CodeTimerViewModelTests: XCTestCase {
 
         let values = try await awaitPublisher(publisher, when: {
             clock.send(time: 60)
-            clock.finishTimer(currentTime: 60)
+            clock.finishTimer()
             clock.send(time: 90)
-            clock.finishTimer(currentTime: 90)
+            clock.finishTimer()
         })
         XCTAssertEqual(values, [
             OTPTimerState(startTime: 30, endTime: 60),

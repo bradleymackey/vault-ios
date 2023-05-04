@@ -25,7 +25,7 @@ public final class CodeTimerViewModel<Clock: EpochClock & IntervalClock>: Observ
     private func scheduleNextClock() {
         let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
         timerPublisher = clock.timerPublisher(interval: remaining)
-            .sink { [weak self] _ in
+            .sink { [weak self] in
                 self?.updateTimerState()
                 self?.scheduleNextClock()
             }
