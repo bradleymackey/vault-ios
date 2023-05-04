@@ -177,7 +177,7 @@ final class CoreDataCodeStoreTests: XCTestCase {
 // MARK: - Helpers
 
 extension CoreDataCodeStoreTests {
-    private func makeSUT(file _: StaticString = #filePath, line _: UInt = #line) throws -> CoreDataCodeStore {
+    private func makeSUT(file _: StaticString = #filePath, line _: UInt = #line) throws -> some OTPCodeStore {
         let sut = try CoreDataCodeStore(storeURL: inMemoryStoreURL())
         return sut
     }
