@@ -36,7 +36,7 @@ final class TOTPCodeRenderer<Clock: EpochClock>: OTPCodeRenderer {
         return clock.secondsPublisher()
             .setFailureType(to: Error.self)
             .tryMap { epochSeconds in
-                try generator.code(epochSeconds: epochSeconds)
+                try generator.code(epochSeconds: UInt64(epochSeconds))
             }
             .eraseToAnyPublisher()
     }

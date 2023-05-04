@@ -7,7 +7,7 @@ final class CurrentDateEpochClockTests: XCTestCase {
     func test_currentTime_isInjectedCurrentTime() {
         let sut = makeSUT(value: 1234.14)
 
-        XCTAssertEqual(sut.currentTime, 1234)
+        XCTAssertEqual(sut.currentTime, 1234.14)
     }
 
     func test_secondsPublisher_isInjectedCurrentTime() throws {
@@ -18,7 +18,7 @@ final class CurrentDateEpochClockTests: XCTestCase {
             .first()
 
         let values = try awaitPublisher(publisher, timeout: 2)
-        XCTAssertEqual(values, [1234, 1234])
+        XCTAssertEqual(values, [1234.14, 1234.14])
     }
 
     // MARK: - Helpers

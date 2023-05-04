@@ -35,7 +35,7 @@ final class TOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(initialTime: UInt64) -> (MockEpochClock, some OTPCodeRenderer) {
+    private func makeSUT(initialTime: Double) -> (MockEpochClock, some OTPCodeRenderer) {
         let clock = MockEpochClock(initialTime: initialTime)
         let sut = TOTPCodeRenderer(clock: clock, totpGenerator: fixedGenerator(timeInterval: 30))
         return (clock, sut)
@@ -47,20 +47,20 @@ final class TOTPCodeRendererTests: XCTestCase {
     }
 
     private struct MockEpochClock: EpochClock {
-        private let publisher: CurrentValueSubject<UInt64, Never>
-        init(initialTime: UInt64) {
-            publisher = CurrentValueSubject<UInt64, Never>(initialTime)
+        private let publisher: CurrentValueSubject<Double, Never>
+        init(initialTime: Double) {
+            publisher = CurrentValueSubject<Double, Never>(initialTime)
         }
 
-        func send(time: UInt64) {
+        func send(time: Double) {
             publisher.send(time)
         }
 
-        func secondsPublisher() -> AnyPublisher<UInt64, Never> {
+        func secondsPublisher() -> AnyPublisher<Double, Never> {
             publisher.eraseToAnyPublisher()
         }
 
-        var currentTime: UInt64 {
+        var currentTime: Double {
             publisher.value
         }
     }
