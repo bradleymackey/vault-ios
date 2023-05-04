@@ -8,7 +8,7 @@ struct ManagedOTPCodeDecoder {
     func decode(code: ManagedOTPCode) throws -> OTPAuthCode {
         try OTPAuthCode(
             type: decodeType(code: code),
-            secret: .empty(),
+            secret: .init(data: code.secretData, format: decodeSecretFormat(value: code.secretFormat)),
             algorithm: decodeAlgorithm(value: code.algorithm),
             digits: decode(digits: code.digits),
             accountName: code.accountName,
@@ -22,6 +22,7 @@ struct ManagedOTPCodeDecoder {
         case missingPeriodForTOTP
         case missingCounterForHOTP
         case invalidAlgorithm
+        case invalidSecretFormat
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
@@ -59,6 +60,15 @@ struct ManagedOTPCodeDecoder {
             return .sha512
         default:
             throw DecodingError.invalidAlgorithm
+        }
+    }
+
+    private func decodeSecretFormat(value: String) throws -> OTPAuthSecret.Format {
+        switch value {
+        case "BASE_32":
+            return .base32
+        default:
+            throw DecodingError.invalidSecretFormat
         }
     }
 }
@@ -185,6 +195,43 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         XCTAssertThrowsError(try sut.decode(code: code))
     }
 
+    func test_decodeSecret_decodesFormat() throws {
+        let expected: [OTPAuthSecret.Format: String] = [
+            .base32: "BASE_32",
+        ]
+        for (format, string) in expected {
+            let code = makeManagedCode(secretFormat: string)
+            let sut = makeSUT()
+
+            let decoded = try sut.decode(code: code)
+            XCTAssertEqual(decoded.secret.format, format)
+        }
+    }
+
+    func test_decodeSecret_throwsIfFormatIsInvalid() throws {
+        let code = makeManagedCode(secretFormat: "INVALID")
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(code: code))
+    }
+
+    func test_decodeSecret_decodesEmptyData() throws {
+        let code = makeManagedCode(secretData: Data())
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(code: code)
+        XCTAssertEqual(decoded.secret.data, Data())
+    }
+
+    func test_decodeSecret_decodesExistingData() throws {
+        let data = Data([0xFF, 0xEE, 0x11, 0x12, 0x13, 0x56])
+        let code = makeManagedCode(secretData: data)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(code: code)
+        XCTAssertEqual(decoded.secret.data, data)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeDecoder {
@@ -200,7 +247,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         issuer: String? = "issuer",
         period: NSNumber? = UInt32(30) as NSNumber,
         secretData: Data = Data(),
-        secretFormat: String = "any"
+        secretFormat: String = "BASE_32"
     ) -> ManagedOTPCode {
         let code = ManagedOTPCode(context: anyContext())
         code.id = UUID()
