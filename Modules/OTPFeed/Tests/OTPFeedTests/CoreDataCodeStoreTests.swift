@@ -114,6 +114,17 @@ final class CoreDataCodeStoreTests: XCTestCase {
             try await sut.insert(code: uniqueCode())
         }
     }
+
+    func test_insert_hasNoSideEffectsOnInsertionError() async throws {
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        stub.startIntercepting()
+
+        let sut = try makeSUT()
+        _ = try? await sut.insert(code: uniqueCode())
+
+        let results = try await sut.retrieve()
+        XCTAssertEqual(results, [])
+    }
 }
 
 // MARK: - Helpers
