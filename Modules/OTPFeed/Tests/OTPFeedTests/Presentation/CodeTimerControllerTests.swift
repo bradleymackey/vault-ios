@@ -6,7 +6,7 @@ import XCTest
 
 final class CodeTimerControllerTests: XCTestCase {
     func test_timerUpdatedPublisher_initiallyPublishesForCreation() async throws {
-        let (clock, sut) = makeSUT(clock: 62, period: 30)
+        let (_, sut) = makeSUT(clock: 62, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(1)
 
