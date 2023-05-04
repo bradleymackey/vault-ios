@@ -27,7 +27,7 @@ final class CoreDataCodeStoreTests: XCTestCase {
         try await sut.insert(code: code)
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result, [code])
+        XCTAssertEqual(result.map(\.code), [code])
     }
 
     func test_retrieve_deliversMultipleCodesOnNonEmptyStore() async throws {
@@ -39,7 +39,7 @@ final class CoreDataCodeStoreTests: XCTestCase {
         }
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result, codes)
+        XCTAssertEqual(result.map(\.code), codes)
     }
 
     func test_retrieve_hasNoSideEffectsOnNonEmptyStore() async throws {
@@ -51,9 +51,9 @@ final class CoreDataCodeStoreTests: XCTestCase {
         }
 
         let result1 = try await sut.retrieve()
-        XCTAssertEqual(result1, codes)
+        XCTAssertEqual(result1.map(\.code), codes)
         let result2 = try await sut.retrieve()
-        XCTAssertEqual(result2, codes)
+        XCTAssertEqual(result2.map(\.code), codes)
     }
 
     func test_retrieve_deliversErrorOnRetrievalError() async throws {
@@ -93,7 +93,7 @@ final class CoreDataCodeStoreTests: XCTestCase {
         try await sut.insert(code: code)
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result, [code, code])
+        XCTAssertEqual(result.map(\.code), [code, code])
     }
 }
 

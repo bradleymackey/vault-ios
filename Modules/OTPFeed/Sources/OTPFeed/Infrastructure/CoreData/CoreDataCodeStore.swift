@@ -39,12 +39,13 @@ public final class CoreDataCodeStore {
         }
     }
 
-    public func retrieve() async throws -> [OTPAuthCode] {
+    public func retrieve() async throws -> [StoredOTPCode] {
         try await asyncPerform { context in
             let results = try ManagedOTPCode.fetchAll(in: context)
             let decoder = ManagedOTPCodeDecoder()
             return try results.map { managedCode in
-                try decoder.decode(code: managedCode)
+                let code = try decoder.decode(code: managedCode)
+                return StoredOTPCode(id: managedCode.id, code: code)
             }
         }
     }
