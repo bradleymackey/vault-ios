@@ -9,17 +9,17 @@ public struct CurrentDateEpochClock: EpochClock {
         self.currentDate = currentDate
     }
 
-    public func secondsPublisher() -> AnyPublisher<UInt64, Never> {
+    public func secondsPublisher() -> AnyPublisher<Double, Never> {
         Timer.publish(every: 0.5, on: .main, in: .default)
             .autoconnect()
             .removeDuplicates()
             .map { _ in
-                UInt64(currentDate().timeIntervalSince1970)
+                currentDate().timeIntervalSince1970
             }
             .eraseToAnyPublisher()
     }
 
-    public var currentTime: UInt64 {
-        UInt64(currentDate().timeIntervalSince1970)
+    public var currentTime: Double {
+        currentDate().timeIntervalSince1970
     }
 }
