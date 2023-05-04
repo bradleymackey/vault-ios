@@ -71,6 +71,19 @@ final class CoreDataCodeStoreTests: XCTestCase {
             XCTAssertEqual(nsError.code, anyNSError().code)
         }
     }
+
+    func test_insert_deliversNoErrorOnEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        try await sut.insert(code: uniqueCode())
+    }
+
+    func test_insert_deliversNoErrorOnNonEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        try await sut.insert(code: uniqueCode())
+        try await sut.insert(code: uniqueCode())
+    }
 }
 
 // MARK: - Helpers
