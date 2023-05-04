@@ -4,7 +4,18 @@ import Foundation
 import OTPFeed
 import XCTest
 
-final class FeedViewModelTests: UnitTestCase {
+final class FeedViewModelTests: XCTestCase {
+    private var cancellables: Set<AnyCancellable>!
+    override func setUp() {
+        super.setUp()
+        cancellables = Set()
+    }
+
+    override func tearDown() {
+        cancellables = nil
+        super.tearDown()
+    }
+
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
         let getCodes = sut.$codes.recordPublished(numberOfRecords: 1)
@@ -17,7 +28,7 @@ final class FeedViewModelTests: UnitTestCase {
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst())
+        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst(), bag: &cancellables)
 
         await sut.reloadData()
 
@@ -38,7 +49,7 @@ final class FeedViewModelTests: UnitTestCase {
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst())
+        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst(), bag: &cancellables)
 
         await sut.reloadData()
 

@@ -2,6 +2,7 @@ import Combine
 import CombineTestExtensions
 import CryptoEngine
 import Foundation
+import OTPCore
 import XCTest
 @testable import OTPFeed
 
