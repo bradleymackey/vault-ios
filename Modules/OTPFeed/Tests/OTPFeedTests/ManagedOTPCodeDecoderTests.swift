@@ -43,6 +43,24 @@ struct ManagedOTPCodeDecoder {
 }
 
 final class ManagedOTPCodeDecoderTests: XCTestCase {
+    private var persistentContainer: NSPersistentContainer!
+
+    override func setUpWithError() throws {
+        super.setUp()
+
+        persistentContainer = try NSPersistentContainer.load(
+            name: CoreDataCodeStore.modelName,
+            model: XCTUnwrap(CoreDataCodeStore.model),
+            url: inMemoryStoreURL()
+        )
+    }
+
+    override func tearDown() {
+        persistentContainer = nil
+
+        super.tearDown()
+    }
+
     func test_decodeDigits_decodesToCorrectValue() throws {
         let samples: [OTPAuthDigits: NSNumber] = [
             .six: 6,
@@ -126,8 +144,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         secretData: Data = Data(),
         secretFormat: String = "any"
     ) -> ManagedOTPCode {
-        let anyContext = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        let code = ManagedOTPCode(context: anyContext)
+        let code = ManagedOTPCode(context: anyContext())
         code.id = UUID()
         code.accountName = accountName
         code.algorithm = algorithm
@@ -139,5 +156,14 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         code.secretData = secretData
         code.secretFormat = secretFormat
         return code
+    }
+
+    private func anyContext() -> NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+
+    private func inMemoryStoreURL() -> URL {
+        URL(fileURLWithPath: "/dev/null")
+            .appendingPathComponent("\(type(of: self)).store")
     }
 }
