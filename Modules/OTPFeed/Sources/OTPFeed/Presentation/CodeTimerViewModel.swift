@@ -17,6 +17,13 @@ public final class CodeTimerViewModel<Clock: EpochClock & IntervalClock>: Observ
         scheduleNextClock()
     }
 
+    /// Publishes when there is a change to the timer that needs to be reflected in the view.
+    public func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
+        timerStateSubject.eraseToAnyPublisher()
+    }
+}
+
+extension CodeTimerViewModel {
     private func updateTimerState() {
         let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)
@@ -37,10 +44,5 @@ public final class CodeTimerViewModel<Clock: EpochClock & IntervalClock>: Observ
         let codeStart = currentCodeNumber * UInt64(period)
         let codeEnd = nextCodeNumber * UInt64(period)
         return OTPTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
-    }
-
-    /// Publishes when there is a change to the timer that needs to be reflected in the view.
-    public func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
-        timerStateSubject.eraseToAnyPublisher()
     }
 }
