@@ -26,34 +26,36 @@ public class CoreDataCodeStore {
     }
 
     public func insert(code: OTPAuthCode) async throws {
-        try await withCheckedThrowingContinuation { (cont: CheckedContinuation<Void, Error>) in
-            context.perform {
-                do {
-                    let encoder = ManagedOTPCodeEncoder(context: self.context)
-                    _ = encoder.encode(code: code)
+        try await asyncPerform { context in
+            do {
+                let encoder = ManagedOTPCodeEncoder(context: context)
+                _ = encoder.encode(code: code)
 
-                    try self.context.save()
-                    cont.resume()
-                } catch {
-                    self.context.rollback()
-                    cont.resume(throwing: error)
-                }
+                try context.save()
+            } catch {
+                context.rollback()
+                throw error
             }
         }
     }
 
     public func retrieve() async throws -> [OTPAuthCode] {
-        try await withCheckedThrowingContinuation { cont in
+        try await asyncPerform { context in
+            let results = try ManagedOTPCode.fetchAll(in: context)
+            let decoder = ManagedOTPCodeDecoder()
+            return try results.map { managedCode in
+                try decoder.decode(code: managedCode)
+            }
+        }
+    }
+
+    /// Helper for asynchronously performing a block of CoreData work
+    private func asyncPerform<T>(closure: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
             context.perform {
-                do {
-                    let results = try ManagedOTPCode.fetchAll(in: self.context)
-                    let decoder = ManagedOTPCodeDecoder()
-                    try cont.resume(returning: results.map { managedCode in
-                        try decoder.decode(code: managedCode)
-                    })
-                } catch {
-                    cont.resume(throwing: error)
-                }
+                continuation.resume(with: Result {
+                    try closure(self.context)
+                })
             }
         }
     }
