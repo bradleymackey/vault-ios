@@ -21,4 +21,12 @@ extension ManagedOTPCode {
         request.returnsObjectsAsFaults = false
         return try context.fetch(request)
     }
+
+    static func first(withID id: UUID, in context: NSManagedObjectContext) throws -> ManagedOTPCode? {
+        let request = NSFetchRequest<ManagedOTPCode>(entityName: entity().name!)
+        request.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(ManagedOTPCode.id), id as NSUUID])
+        request.fetchLimit = 1
+        request.returnsObjectsAsFaults = false
+        return try context.fetch(request).first
+    }
 }

@@ -125,6 +125,53 @@ final class CoreDataCodeStoreTests: XCTestCase {
         let results = try await sut.retrieve()
         XCTAssertEqual(results, [])
     }
+
+    func test_deleteByID_hasNoEffectOnEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        try await sut.delete(id: UUID())
+
+        let results = try await sut.retrieve()
+        XCTAssertEqual(results, [])
+    }
+
+    func test_deleteByID_deletesSingleEntryMatchingID() async throws {
+        let sut = try makeSUT()
+        let code = uniqueCode()
+
+        let id = try await sut.insert(code: code)
+
+        try await sut.delete(id: id)
+
+        let results = try await sut.retrieve()
+        XCTAssertEqual(results, [])
+    }
+
+    func test_deleteByID_hasNoEffectOnNoMatchingCode() async throws {
+        let sut = try makeSUT()
+
+        let otherCodes = [uniqueCode(), uniqueCode(), uniqueCode()]
+        for code in otherCodes {
+            try await sut.insert(code: code)
+        }
+
+        try await sut.delete(id: UUID())
+
+        let results = try await sut.retrieve()
+        XCTAssertEqual(results.map(\.code), otherCodes)
+    }
+
+    func test_deleteByID_deliversErrorOnDeletionError() async throws {
+        let sut = try makeSUT()
+        let id = try await sut.insert(code: uniqueCode())
+
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        stub.startIntercepting()
+
+        await expectThrows(nsError: anyNSError(), operation: {
+            try await sut.delete(id: id)
+        })
+    }
 }
 
 // MARK: - Helpers
