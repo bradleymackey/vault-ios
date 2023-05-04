@@ -31,6 +31,7 @@ extension CurrentDateEpochClock: IntervalClock {
         Timer.TimerPublisher(interval: interval, runLoop: .main, mode: .default)
             .autoconnect()
             .map { _ in }
+            .first()
             .eraseToAnyPublisher()
     }
 }

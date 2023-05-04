@@ -31,6 +31,6 @@ struct MockEpochClock: EpochClock, IntervalClock {
     }
 
     func timerPublisher(interval _: Double) -> AnyPublisher<Void, Never> {
-        timerPublisher.eraseToAnyPublisher()
+        timerPublisher.first().eraseToAnyPublisher()
     }
 }
