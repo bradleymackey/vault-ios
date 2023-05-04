@@ -1,15 +1,18 @@
 import Foundation
 
 public struct OTPTimerState: Equatable {
-    /// The duration for a full timer rotation.
-    public var totalTime: Double
-    /// The amount of time elapsed in the current total time.
-    /// This will be less than or equal to `totalTime`.
-    public var timeElapsed: Double
+    /// The number of epoch seconds when the timer started.
+    public var startTime: Double
+    /// The number of epoch seconds when the timer will end.
+    public var endTime: Double
 
-    /// The fraction of the time remaining.
-    public var fractionCompleted: Double {
-        if totalTime == 0 { return 0 }
-        return timeElapsed / totalTime
+    /// The duration for a full timer rotation.
+    public var totalTime: Double {
+        endTime - startTime
+    }
+
+    public init(startTime: Double, endTime: Double) {
+        self.startTime = startTime
+        self.endTime = endTime
     }
 }
