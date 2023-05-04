@@ -172,6 +172,81 @@ final class CoreDataCodeStoreTests: XCTestCase {
             try await sut.delete(id: id)
         })
     }
+
+    func test_updateByID_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
+        let sut = try makeSUT()
+
+        do {
+            try await sut.update(id: UUID(), code: uniqueCode())
+            XCTFail("Expected to throw error")
+        } catch {
+            // ignore
+        }
+    }
+
+    func test_updateByID_hasNoEffectOnEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
+        let sut = try makeSUT()
+
+        try? await sut.update(id: UUID(), code: uniqueCode())
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result, [])
+    }
+
+    func test_updateByID_hasNoEffectOnNonEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
+        let sut = try makeSUT()
+        let codes = [uniqueCode(), uniqueCode(), uniqueCode()]
+        for code in codes {
+            try await sut.insert(code: code)
+        }
+
+        try? await sut.update(id: UUID(), code: uniqueCode())
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.map(\.code), codes)
+    }
+
+    func test_updateByID_updatesDataForValidCode() async throws {
+        let sut = try makeSUT()
+        let initialCode = uniqueCode()
+        let id = try await sut.insert(code: initialCode)
+
+        let newCode = uniqueCode()
+        try await sut.update(id: id, code: newCode)
+
+        let result = try await sut.retrieve()
+        XCTAssertNotEqual(result.map(\.code), [initialCode], "Should be different from old code.")
+        XCTAssertEqual(result.map(\.code), [newCode], "Should be the same as the new code.")
+    }
+
+    func test_updateByID_hasNoSideEffectsOnOtherCodes() async throws {
+        let sut = try makeSUT()
+        let initialCodes = [uniqueCode(), uniqueCode(), uniqueCode()]
+        for code in initialCodes {
+            try await sut.insert(code: code)
+        }
+
+        let id = try await sut.insert(code: uniqueCode())
+
+        let newCode = uniqueCode()
+        try await sut.update(id: id, code: newCode)
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.map(\.code), initialCodes + [newCode])
+    }
+
+    func test_updateByID_deliversErrorOnUpdateError() async throws {
+        let sut = try makeSUT()
+
+        let id = try await sut.insert(code: uniqueCode())
+
+        let stub = NSManagedObjectContext.alwaysFailingSaveStub()
+        stub.startIntercepting()
+
+        await expectThrows(nsError: anyNSError()) {
+            try await sut.update(id: id, code: uniqueCode())
+        }
+    }
 }
 
 // MARK: - Helpers

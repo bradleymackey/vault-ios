@@ -4,6 +4,16 @@ import XCTest
 @testable import OTPFeed
 
 final class ManagedOTPCodeEncoderTests: XCTestCase {
+    func test_encodeExisting_retainsExistingUUID() {
+        let sut = makeSUT()
+
+        let existing = sut.encode(code: makeCode())
+        let existingID = existing.id
+
+        let newCode = sut.encode(code: makeCode(), into: existing)
+        XCTAssertEqual(newCode.id, existingID, "ID should not change for update")
+    }
+
     func test_generateUUID_generatesRandomUUID() {
         var seen = Set<UUID>()
         for _ in 0 ..< 100 {

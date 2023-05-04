@@ -31,6 +31,26 @@ extension CoreDataCodeStore: OTPCodeStoreWriter {
         }
     }
 
+    enum ManagedOTPCodeError: Error {
+        case entityNotFound
+    }
+
+    public func update(id: UUID, code: OTPAuthCode) async throws {
+        try await asyncPerform { context in
+            do {
+                guard let existingCode = try ManagedOTPCode.first(withID: id, in: context) else {
+                    throw ManagedOTPCodeError.entityNotFound
+                }
+                let encoder = ManagedOTPCodeEncoder(context: context)
+                _ = encoder.encode(code: code, into: existingCode)
+                try context.save()
+            } catch {
+                context.rollback()
+                throw error
+            }
+        }
+    }
+
     public func delete(id: UUID) async throws {
         try await asyncPerform { context in
             let result = try ManagedOTPCode.first(withID: id, in: context)

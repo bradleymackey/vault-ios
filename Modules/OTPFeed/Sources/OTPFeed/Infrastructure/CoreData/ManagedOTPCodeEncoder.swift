@@ -4,9 +4,10 @@ import OTPCore
 
 struct ManagedOTPCodeEncoder {
     let context: NSManagedObjectContext
-    func encode(code: OTPAuthCode) -> ManagedOTPCode {
-        let managed = ManagedOTPCode(context: context)
-        managed.id = UUID()
+
+    func encode(code: OTPAuthCode, into existing: ManagedOTPCode? = nil) -> ManagedOTPCode {
+        let managed = existing ?? ManagedOTPCode(context: context)
+        managed.id = existing?.id ?? UUID()
         managed.digits = code.digits.rawValue as NSNumber
         managed.accountName = code.accountName
         managed.issuer = code.issuer
