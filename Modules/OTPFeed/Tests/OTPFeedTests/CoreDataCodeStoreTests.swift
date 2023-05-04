@@ -62,13 +62,8 @@ final class CoreDataCodeStoreTests: XCTestCase {
 
         let sut = try makeSUT()
 
-        do {
+        await expectThrows(nsError: anyNSError()) {
             _ = try await sut.retrieve()
-            XCTFail("Expected error")
-        } catch {
-            let nsError = error as NSError
-            XCTAssertEqual(nsError.domain, anyNSError().domain)
-            XCTAssertEqual(nsError.code, anyNSError().code)
         }
     }
 
@@ -115,13 +110,8 @@ final class CoreDataCodeStoreTests: XCTestCase {
         stub.startIntercepting()
 
         let sut = try makeSUT()
-        do {
+        await expectThrows(nsError: anyNSError()) {
             try await sut.insert(code: uniqueCode())
-            XCTFail("Expected error")
-        } catch {
-            let nsError = error as NSError
-            XCTAssertEqual(nsError.domain, anyNSError().domain)
-            XCTAssertEqual(nsError.code, anyNSError().code)
         }
     }
 }
@@ -132,6 +122,22 @@ extension CoreDataCodeStoreTests {
     private func makeSUT(file _: StaticString = #filePath, line _: UInt = #line) throws -> CoreDataCodeStore {
         let sut = try CoreDataCodeStore(storeURL: inMemoryStoreURL())
         return sut
+    }
+
+    private func expectThrows(
+        nsError expectedError: NSError,
+        operation: () async throws -> Void,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async {
+        do {
+            try await operation()
+            XCTFail("Expected to throw \(expectedError) but operation completed successfully", file: file, line: line)
+        } catch {
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, expectedError.domain, file: file, line: line)
+            XCTAssertEqual(nsError.code, expectedError.code, file: file, line: line)
+        }
     }
 
     private func inMemoryStoreURL() -> URL {
