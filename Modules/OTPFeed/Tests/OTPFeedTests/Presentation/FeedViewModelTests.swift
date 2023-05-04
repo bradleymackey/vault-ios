@@ -1,5 +1,4 @@
 import Combine
-import CombineTestExtensions
 import Foundation
 import OTPFeed
 import XCTest
@@ -18,52 +17,50 @@ final class FeedViewModelTests: XCTestCase {
 
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let getCodes = sut.$codes.recordPublished(numberOfRecords: 1)
+        let getCodes = sut.$codes.collectNext(1)
 
-        await sut.reloadData()
-
-        let codes = getCodes.waitAndCollectRecords()
-        XCTAssertEqual(codes, [.value([])])
+        let codes = try await awaitPublisher(getCodes, when: {
+            await sut.reloadData()
+        })
+        XCTAssertEqual(codes, [[]])
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst(), bag: &cancellables)
 
-        await sut.reloadData()
-
-        await fulfillment(of: [exp], timeout: 0.5)
+        await awaitNoPublish(publisher: sut.$retrievalError.nextElements(), when: {
+            await sut.reloadData()
+        })
     }
 
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let getCodes = sut.$codes.recordPublished(numberOfRecords: 1)
+        let publisher = sut.$codes.collectNext(1)
 
-        await sut.reloadData()
-
-        let codes = getCodes.waitAndCollectRecords()
-        XCTAssertEqual(codes, [.value(store.codes)])
+        let codes = try await awaitPublisher(publisher, when: {
+            await sut.reloadData()
+        })
+        XCTAssertEqual(codes, [store.codes])
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let exp = expectationNoPublish(publisher: sut.$retrievalError.dropFirst(), bag: &cancellables)
 
-        await sut.reloadData()
-
-        await fulfillment(of: [exp], timeout: 0.5)
+        await awaitNoPublish(publisher: sut.$retrievalError.nextElements(), when: {
+            await sut.reloadData()
+        })
     }
 
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
         let sut = FeedViewModel(store: ErrorStubStore(error: anyNSError()))
-        let getErrors = sut.$retrievalError.recordPublished(numberOfRecords: 1)
+        let publisher = sut.$retrievalError.collectNext(1)
 
-        await sut.reloadData()
-
-        let errors = getErrors.waitAndCollectRecords()
-        XCTAssertEqual(errors.count, 1)
+        let values = try await awaitPublisher(publisher, when: {
+            await sut.reloadData()
+        })
+        XCTAssertEqual(values.count, 1)
     }
 
     // MARK: - Helpers
