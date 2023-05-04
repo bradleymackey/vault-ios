@@ -52,6 +52,10 @@ final class TOTPCodeRendererTests: XCTestCase {
             publisher = CurrentValueSubject<Double, Never>(initialTime)
         }
 
+        func tick() {
+            publisher.send(publisher.value)
+        }
+
         func send(time: Double) {
             publisher.send(time)
         }
