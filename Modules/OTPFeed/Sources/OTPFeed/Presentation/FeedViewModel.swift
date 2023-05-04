@@ -1,0 +1,24 @@
+import Combine
+import Foundation
+
+public final class FeedViewModel<Store: OTPCodeStoreReader>: ObservableObject {
+    @Published public private(set) var codes = [StoredOTPCode]()
+    @Published public private(set) var retrievalError: PresentationError?
+
+    private let store: Store
+
+    public init(store: Store) {
+        self.store = store
+    }
+
+    public func reloadData() async {
+        do {
+            codes = try await store.retrieve()
+        } catch {
+            retrievalError = PresentationError(
+                userVisibleDescription: localized(key: "feedRetrieval.error.title"),
+                debugDescription: error.localizedDescription
+            )
+        }
+    }
+}
