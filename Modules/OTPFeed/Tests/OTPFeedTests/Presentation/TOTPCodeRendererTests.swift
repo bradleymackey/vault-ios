@@ -45,27 +45,4 @@ final class TOTPCodeRendererTests: XCTestCase {
         let hotpGenerator = HOTPGenerator(secret: hotpRfcSecretData(), digits: .eight, algorithm: .sha1)
         return TOTPGenerator(generator: hotpGenerator, timeInterval: timeInterval)
     }
-
-    private struct MockEpochClock: EpochClock {
-        private let publisher: CurrentValueSubject<Double, Never>
-        init(initialTime: Double) {
-            publisher = CurrentValueSubject<Double, Never>(initialTime)
-        }
-
-        func tick() {
-            publisher.send(publisher.value)
-        }
-
-        func send(time: Double) {
-            publisher.send(time)
-        }
-
-        func secondsPublisher() -> AnyPublisher<Double, Never> {
-            publisher.eraseToAnyPublisher()
-        }
-
-        var currentTime: Double {
-            publisher.value
-        }
-    }
 }
