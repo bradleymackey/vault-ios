@@ -15,12 +15,13 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "OTPCore", path: "../OTPCore"),
+        .package(name: "CryptoEngine", path: "../CryptoEngine"),
         .package(url: "https://github.com/industrialbinaries/CombineTestExtensions", branch: "master"),
     ],
     targets: [
         .target(
             name: "OTPFeed",
-            dependencies: ["OTPCore"]
+            dependencies: ["OTPCore", "CryptoEngine"]
         ),
         .testTarget(
             name: "OTPFeedTests",

@@ -9,6 +9,9 @@ import Foundation
 public struct TOTPGenerator: OTPGenerator {
     private let generator: HOTPGenerator
     public let timeInterval: UInt64
+    public var digits: Int {
+        generator.digits.rawValue
+    }
 
     public init(generator: HOTPGenerator, timeInterval: UInt64 = 30) {
         self.generator = generator
