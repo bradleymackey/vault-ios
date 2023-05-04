@@ -95,6 +95,20 @@ final class CoreDataCodeStoreTests: XCTestCase {
         let result = try await sut.retrieve()
         XCTAssertEqual(result.map(\.code), [code, code])
     }
+
+    func test_insert_returnsUniqueCodeIDAfterSuccessfulInsert() async throws {
+        let sut = try makeSUT()
+        let code = uniqueCode()
+
+        var ids = [UUID]()
+        for _ in 0 ..< 5 {
+            let id = try await sut.insert(code: code)
+            ids.append(id)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.map(\.id), ids)
+    }
 }
 
 // MARK: - Helpers
