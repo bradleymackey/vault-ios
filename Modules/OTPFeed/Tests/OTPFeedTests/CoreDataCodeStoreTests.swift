@@ -55,6 +55,22 @@ final class CoreDataCodeStoreTests: XCTestCase {
         let result2 = try await sut.retrieve()
         XCTAssertEqual(result2, codes)
     }
+
+    func test_retrieve_deliversErrorOnRetrievalError() async throws {
+        let stub = NSManagedObjectContext.alwaysFailingFetchStub()
+        stub.startIntercepting()
+
+        let sut = try makeSUT()
+
+        do {
+            _ = try await sut.retrieve()
+            XCTFail("Expected error")
+        } catch {
+            let nsError = error as NSError
+            XCTAssertEqual(nsError.domain, anyNSError().domain)
+            XCTAssertEqual(nsError.code, anyNSError().code)
+        }
+    }
 }
 
 // MARK: - Helpers
