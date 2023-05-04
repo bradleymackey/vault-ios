@@ -144,9 +144,4 @@ extension CoreDataCodeStoreTests {
         URL(fileURLWithPath: "/dev/null")
             .appendingPathComponent("\(type(of: self)).store")
     }
-
-    private func uniqueCode() -> OTPAuthCode {
-        let randomData = Data.random(count: 50)
-        return OTPAuthCode(secret: .init(data: randomData, format: .base32), accountName: "Some Account")
-    }
 }
