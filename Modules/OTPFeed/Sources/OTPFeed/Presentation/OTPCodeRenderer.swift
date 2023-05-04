@@ -4,7 +4,7 @@ import Foundation
 import OTPCore
 
 /// Renders the code to a visible state for the given `code`.
-protocol OTPCodeRenderer {
+public protocol OTPCodeRenderer {
     func renderedCodePublisher() -> AnyPublisher<String, Error>
 }
 
