@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "combinetestextensions",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/industrialbinaries/CombineTestExtensions",
+      "state" : {
+        "branch" : "master",
+        "revision" : "7b3d916bf0b7d8109f04da38ef90d98417a13fa7"
+      }
+    }
+  ],
+  "version" : 2
+}
