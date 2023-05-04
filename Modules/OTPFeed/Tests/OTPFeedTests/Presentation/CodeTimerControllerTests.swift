@@ -4,10 +4,9 @@ import OTPCore
 import OTPFeed
 import XCTest
 
-final class CodeTimerViewModelTests: XCTestCase {
+final class CodeTimerControllerTests: XCTestCase {
     func test_timerUpdatedPublisher_initiallyPublishesForCreation() async throws {
-        let clock = MockEpochClock(initialTime: 62)
-        let sut = CodeTimerViewModel(clock: clock, period: 30)
+        let (clock, sut) = makeSUT(clock: 62, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(1)
 
@@ -18,8 +17,7 @@ final class CodeTimerViewModelTests: XCTestCase {
     }
 
     func test_timerUpdatedPublisher_publishesCounterInitialRanges() async throws {
-        let clock = MockEpochClock(initialTime: 32)
-        let sut = CodeTimerViewModel(clock: clock, period: 30)
+        let (clock, sut) = makeSUT(clock: 32, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
@@ -34,5 +32,16 @@ final class CodeTimerViewModelTests: XCTestCase {
             OTPTimerState(startTime: 60, endTime: 90),
             OTPTimerState(startTime: 90, endTime: 120),
         ])
+    }
+
+    // MARK: - Helpers
+
+    private func makeSUT(
+        clock clockTime: Double,
+        period: Double
+    ) -> (MockEpochClock, CodeTimerController<MockEpochClock>) {
+        let clock = MockEpochClock(initialTime: clockTime)
+        let sut = CodeTimerController(clock: clock, period: period)
+        return (clock, sut)
     }
 }

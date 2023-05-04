@@ -2,7 +2,8 @@ import Combine
 import Foundation
 import OTPCore
 
-public final class CodeTimerViewModel<Clock: EpochClock & IntervalClock>: ObservableObject {
+/// Controller for producing timers for a given code, according to a clock.
+public final class CodeTimerController<Clock: EpochClock & IntervalClock> {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
     private let period: Double
     private var timerPublisher: AnyCancellable?
@@ -23,7 +24,7 @@ public final class CodeTimerViewModel<Clock: EpochClock & IntervalClock>: Observ
     }
 }
 
-extension CodeTimerViewModel {
+extension CodeTimerController {
     private func updateTimerState() {
         let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)
