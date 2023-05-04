@@ -2,14 +2,17 @@ import Combine
 import Foundation
 import OTPCore
 
-struct MockEpochClock: EpochClock, IntervalClock {
+final class MockEpochClock: EpochClock, IntervalClock {
     private let publisher: CurrentValueSubject<Double, Never>
     init(initialTime: Double) {
         publisher = CurrentValueSubject<Double, Never>(initialTime)
     }
 
+    var didTick: () -> Void = {}
+
     func tick() {
         publisher.send(publisher.value)
+        didTick()
     }
 
     func send(time: Double) {

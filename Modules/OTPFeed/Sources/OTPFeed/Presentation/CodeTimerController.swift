@@ -32,6 +32,7 @@ extension CodeTimerController {
     private func updateTimerState() {
         let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)
+        clock.tick()
     }
 
     private func scheduleNextClock() {
