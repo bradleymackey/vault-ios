@@ -1,11 +1,14 @@
 import Foundation
 
+/// An error occurred at the presentation layer, we should inform the user with a message.
 public struct PresentationError: Error, Equatable {
-    public var userVisibleDescription: String
+    public var userTitle: String
+    public var userDescription: String?
     public var debugDescription: String
 
-    public init(userVisibleDescription: String, debugDescription: String) {
-        self.userVisibleDescription = userVisibleDescription
+    public init(userTitle: String, userDescription: String? = nil, debugDescription: String) {
+        self.userTitle = userTitle
+        self.userDescription = userDescription
         self.debugDescription = debugDescription
     }
 }
