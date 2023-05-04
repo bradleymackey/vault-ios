@@ -53,6 +53,16 @@ public final class CoreDataCodeStore {
         }
     }
 
+    public func delete(id: UUID) async throws {
+        try await asyncPerform { context in
+            let result = try ManagedOTPCode.first(withID: id, in: context)
+            if let result {
+                context.delete(result)
+                try context.save()
+            }
+        }
+    }
+
     /// Helper for asynchronously performing a block of CoreData work
     private func asyncPerform<T>(closure: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
