@@ -2,8 +2,12 @@ import Combine
 import Foundation
 import OTPCore
 
+public protocol CodeTimerUpdater {
+    func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never>
+}
+
 /// Controller for producing timers for a given code, according to a clock.
-public final class CodeTimerController<Clock: EpochClock & IntervalClock> {
+public final class CodeTimerController<Clock: EpochClock & IntervalClock>: CodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
     private let period: Double
     private var timerPublisher: AnyCancellable?
