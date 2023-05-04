@@ -8,6 +8,15 @@
         "branch" : "master",
         "revision" : "7b3d916bf0b7d8109f04da38ef90d98417a13fa7"
       }
+    },
+    {
+      "identity" : "cryptoswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/krzyzanowskim/CryptoSwift",
+      "state" : {
+        "revision" : "eee9ad754926c40a0f7e73f152357d37b119b7fa",
+        "version" : "1.7.1"
+      }
     }
   ],
   "version" : 2
