@@ -5,6 +5,7 @@ extension XCTestCase {
     func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 10,
+        when operation: () -> Void,
         file: StaticString = #file,
         line: UInt = #line
     ) throws -> T.Output {
@@ -28,6 +29,8 @@ extension XCTestCase {
                 result = .success(value)
             }
         )
+
+        operation()
 
         // Just like before, we await the expectation that we
         // created at the top of our test, and once done, we

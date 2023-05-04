@@ -5,20 +5,24 @@ import XCTest
 
 final class CurrentDateEpochClockTests: XCTestCase {
     func test_currentTime_isInjectedCurrentTime() {
-        let sut = makeSUT(value: 1234.14)
+        let sut = makeSUT(value: 1234)
 
-        XCTAssertEqual(sut.currentTime, 1234.14)
+        XCTAssertEqual(sut.currentTime, 1234)
     }
 
-    func test_secondsPublisher_isInjectedCurrentTime() throws {
-        let sut = makeSUT(value: 1234.14)
+    func test_secondsPublisher_ticksWithCurrentTimeWhenRequested() throws {
+        let sut = makeSUT(value: 1234)
 
         let publisher = sut.secondsPublisher()
-            .collect(2)
+            .collect(3)
             .first()
 
-        let values = try awaitPublisher(publisher, timeout: 2)
-        XCTAssertEqual(values, [1234.14, 1234.14])
+        let values = try awaitPublisher(publisher, timeout: 2) {
+            sut.tick()
+            sut.tick()
+            sut.tick()
+        }
+        XCTAssertEqual(values, [1234, 1234, 1234])
     }
 
     // MARK: - Helpers
