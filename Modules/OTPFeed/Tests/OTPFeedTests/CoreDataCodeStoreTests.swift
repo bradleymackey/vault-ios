@@ -84,6 +84,17 @@ final class CoreDataCodeStoreTests: XCTestCase {
         try await sut.insert(code: uniqueCode())
         try await sut.insert(code: uniqueCode())
     }
+
+    func test_insert_doesNotOverrideExactSameEntryAsUsesNewIDToUnique() async throws {
+        let sut = try makeSUT()
+        let code = uniqueCode()
+
+        try await sut.insert(code: code)
+        try await sut.insert(code: code)
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result, [code, code])
+    }
 }
 
 // MARK: - Helpers
