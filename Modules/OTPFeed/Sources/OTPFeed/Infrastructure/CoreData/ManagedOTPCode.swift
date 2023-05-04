@@ -2,7 +2,7 @@ import CoreData
 import OTPCore
 
 @objc(ManagedOTPCode)
-class ManagedOTPCode: NSManagedObject {
+final class ManagedOTPCode: NSManagedObject {
     @NSManaged var id: UUID
     @NSManaged var secretFormat: String
     @NSManaged var secretData: Data
