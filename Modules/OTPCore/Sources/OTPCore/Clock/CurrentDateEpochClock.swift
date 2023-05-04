@@ -25,3 +25,14 @@ public struct CurrentDateEpochClock: EpochClock {
         currentDate().timeIntervalSince1970
     }
 }
+
+extension CurrentDateEpochClock: IntervalClock {
+    public func timerPublisher(interval: Double) -> AnyPublisher<Double, Never> {
+        Timer.TimerPublisher(interval: interval, runLoop: .main, mode: .default)
+            .autoconnect()
+            .map { _ in
+                currentDate().timeIntervalSince1970
+            }
+            .eraseToAnyPublisher()
+    }
+}
