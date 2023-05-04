@@ -16,7 +16,8 @@ public final class FeedViewModel<Store: OTPCodeStoreReader>: ObservableObject {
             codes = try await store.retrieve()
         } catch {
             retrievalError = PresentationError(
-                userVisibleDescription: localized(key: "feedRetrieval.error.title"),
+                userTitle: localized(key: "feedRetrieval.error.title"),
+                userDescription: localized(key: "feedRetrieval.error.description"),
                 debugDescription: error.localizedDescription
             )
         }
