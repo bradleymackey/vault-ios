@@ -9,6 +9,7 @@ struct ManagedOTPCodeDecoder {
         try OTPAuthCode(
             type: decodeType(code: code),
             secret: .empty(),
+            algorithm: decodeAlgorithm(value: code.algorithm),
             digits: decode(digits: code.digits),
             accountName: code.accountName,
             issuer: code.issuer
@@ -20,6 +21,7 @@ struct ManagedOTPCodeDecoder {
         case invalidType
         case missingPeriodForTOTP
         case missingCounterForHOTP
+        case invalidAlgorithm
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
@@ -44,6 +46,19 @@ struct ManagedOTPCodeDecoder {
             return .hotp(counter: counter)
         default:
             throw DecodingError.invalidType
+        }
+    }
+
+    private func decodeAlgorithm(value: String) throws -> OTPAuthAlgorithm {
+        switch value {
+        case "SHA1":
+            return .sha1
+        case "SHA256":
+            return .sha256
+        case "SHA512":
+            return .sha512
+        default:
+            throw DecodingError.invalidAlgorithm
         }
     }
 }
@@ -148,6 +163,28 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         XCTAssertThrowsError(try sut.decode(code: code))
     }
 
+    func test_decodeAlgorithm_decodesValidAlgorithm() throws {
+        let expected: [OTPAuthAlgorithm: String] = [
+            .sha1: "SHA1",
+            .sha256: "SHA256",
+            .sha512: "SHA512",
+        ]
+        for (algo, string) in expected {
+            let code = makeManagedCode(algorithm: string)
+            let sut = makeSUT()
+
+            let decoded = try sut.decode(code: code)
+            XCTAssertEqual(decoded.algorithm, algo)
+        }
+    }
+
+    func test_decodeAlgorithm_throwsIfAlgorithmUnknown() throws {
+        let code = makeManagedCode(algorithm: "OTHER")
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(code: code))
+    }
+
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeDecoder {
@@ -156,7 +193,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
 
     private func makeManagedCode(
         accountName: String = "any",
-        algorithm: String = "any",
+        algorithm: String = "SHA1",
         authType: String = "totp",
         counter: NSNumber? = UInt32(30) as NSNumber,
         digits: NSNumber = UInt32(6) as NSNumber,
