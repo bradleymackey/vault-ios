@@ -16,7 +16,6 @@ let package = Package(
     dependencies: [
         .package(name: "OTPCore", path: "../OTPCore"),
         .package(name: "CryptoEngine", path: "../CryptoEngine"),
-        .package(url: "https://github.com/industrialbinaries/CombineTestExtensions", branch: "master"),
     ],
     targets: [
         .target(
@@ -25,7 +24,7 @@ let package = Package(
         ),
         .testTarget(
             name: "OTPFeedTests",
-            dependencies: ["OTPFeed", .product(name: "CombineTestExtensions", package: "CombineTestExtensions")]
+            dependencies: ["OTPFeed"]
         ),
     ]
 )

@@ -1,5 +1,4 @@
 import Combine
-import CombineTestExtensions
 import CryptoEngine
 import Foundation
 import OTPCore
@@ -7,34 +6,30 @@ import XCTest
 @testable import OTPFeed
 
 final class TOTPCodeRendererTests: XCTestCase {
-    func test_renderedCodePublisher_publishesInitialCodeBaseOnCurrentTimeValue() throws {
+    func test_renderedCodePublisher_publishesInitialCodeBaseOnCurrentTimeValue() async throws {
         let (_, sut) = makeSUT(initialTime: 59)
 
-        let publisher = sut.renderedCodePublisher()
-            .record(scheduler: TestScheduler(), numberOfRecords: 1)
+        let publisher = sut.renderedCodePublisher().collectFirst(1)
 
-        let values = publisher.waitAndCollectRecords()
-        XCTAssertEqual(values, [
-            .value("94287082"), // from initial time
-        ])
+        let values = try await awaitPublisher(publisher, when: {})
+        XCTAssertEqual(values, ["94287082"])
     }
 
-    func test_renderedCodePublisher_publishesCodesOnEpochSecondsTick() throws {
+    func test_renderedCodePublisher_publishesCodesOnEpochSecondsTick() async throws {
         let (clock, sut) = makeSUT(initialTime: 59)
 
-        let publisher = sut.renderedCodePublisher()
-            .record(scheduler: TestScheduler(), numberOfRecords: 3)
+        let publisher = sut.renderedCodePublisher().collectFirst(4)
 
-        clock.send(time: 1_111_111_109)
-        clock.send(time: 1_111_111_111)
-        clock.send(time: 2_000_000_000)
-
-        let values = publisher.waitAndCollectRecords()
+        let values = try await awaitPublisher(publisher, when: {
+            clock.send(time: 1_111_111_109)
+            clock.send(time: 1_111_111_111)
+            clock.send(time: 2_000_000_000)
+        })
         XCTAssertEqual(values, [
-            .value("94287082"), // from initial time
-            .value("07081804"),
-            .value("14050471"),
-            .value("69279037"),
+            "94287082", // from initial time
+            "07081804",
+            "14050471",
+            "69279037",
         ])
     }
 

@@ -3,23 +3,30 @@ import Foundation
 import XCTest
 
 extension XCTestCase {
-    /// Creates an expectation that the given publisher will not publish any values.
-    ///
-    /// It's an inverted expectation, so don't make your timeouts too long.
-    func expectationNoPublish(publisher: some Publisher, bag: inout Set<AnyCancellable>) -> XCTestExpectation {
+    func awaitNoPublish(
+        publisher: some Publisher,
+        timeout: Double = 1.0,
+        when perform: () async throws -> Void
+    ) async rethrows {
         var isFulfilled = false
-        let exp = expectation(description: "Wait for no publish")
-        exp.isInverted = true
-        publisher.sink(receiveCompletion: { _ in
-            // noop
-        }, receiveValue: { _ in
+        let expectation = expectation(description: "Wait for no publish")
+        expectation.isInverted = true
+        func fulfill() {
             if !isFulfilled {
                 isFulfilled = true
-                exp.fulfill()
+                expectation.fulfill()
             }
-        }).store(in: &bag)
+        }
+        let cancellable = publisher.sink(receiveCompletion: { _ in
+            fulfill()
+        }, receiveValue: { _ in
+            fulfill()
+        })
 
-        return exp
+        try await perform()
+
+        await fulfillment(of: [expectation], timeout: timeout)
+        cancellable.cancel()
     }
 }
 
@@ -27,10 +34,10 @@ extension XCTestCase {
     func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 1,
-        when perform: () -> Void,
+        when perform: () async throws -> Void,
         file: StaticString = #file,
         line: UInt = #line
-    ) throws -> T.Output {
+    ) async throws -> T.Output {
         var result: Result<T.Output, Error>?
         let expectation = expectation(description: "Awaiting publisher")
 
@@ -50,9 +57,9 @@ extension XCTestCase {
             }
         )
 
-        perform()
+        try await perform()
 
-        waitForExpectations(timeout: timeout)
+        await fulfillment(of: [expectation], timeout: timeout)
         cancellable.cancel()
 
         let unwrappedResult = try XCTUnwrap(
@@ -63,5 +70,29 @@ extension XCTestCase {
         )
 
         return try unwrappedResult.get()
+    }
+}
+
+extension Published.Publisher {
+    /// Collect the next *n* elements that are output, ignoring the first result
+    func collectNext(_ count: Int) -> AnyPublisher<[Output], Never> {
+        dropFirst()
+            .collect(count)
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    /// For @Published, this is a publisher that ignores the first element.
+    func nextElements() -> AnyPublisher<Output, Never> {
+        dropFirst().eraseToAnyPublisher()
+    }
+}
+
+extension Publisher {
+    /// Collects the first *n* elements that are output.
+    func collectFirst(_ count: Int) -> AnyPublisher<[Output], Failure> {
+        collect(count)
+            .first()
+            .eraseToAnyPublisher()
     }
 }
