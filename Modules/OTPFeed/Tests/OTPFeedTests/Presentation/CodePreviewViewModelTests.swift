@@ -3,7 +3,7 @@ import Foundation
 import OTPFeed
 import XCTest
 
-final class CodePreviewViewModelTests: UnitTestCase {
+final class CodePreviewViewModelTests: XCTestCase {
     func test_code_updatesWithCodes() {
         let (renderer, sut) = makeSUT()
         let expectation = sut.$code.recordPublished(numberOfRecords: 2)
