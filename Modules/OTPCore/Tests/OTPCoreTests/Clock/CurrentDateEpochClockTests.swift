@@ -25,6 +25,15 @@ final class CurrentDateEpochClockTests: XCTestCase {
         XCTAssertEqual(values, [1234, 1234, 1234])
     }
 
+    func test_timerPublisher_completesAfterFirstPublish() throws {
+        let sut = makeSUT(value: 1234)
+
+        // The publisher should complete as-is, not timeout.
+        try awaitPublisher(sut.timerPublisher(interval: 0.1), timeout: 1) {
+            // noop
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(value: Double) -> CurrentDateEpochClock {
