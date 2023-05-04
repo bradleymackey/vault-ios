@@ -25,46 +25,8 @@ public final class CoreDataCodeStore {
         }
     }
 
-    /// - Returns: The underlying ID of the entry in the store.
-    @discardableResult
-    public func insert(code: OTPAuthCode) async throws -> UUID {
-        try await asyncPerform { context in
-            do {
-                let encoder = ManagedOTPCodeEncoder(context: context)
-                let encoded = encoder.encode(code: code)
-
-                try context.save()
-                return encoded.id
-            } catch {
-                context.rollback()
-                throw error
-            }
-        }
-    }
-
-    public func retrieve() async throws -> [StoredOTPCode] {
-        try await asyncPerform { context in
-            let results = try ManagedOTPCode.fetchAll(in: context)
-            let decoder = ManagedOTPCodeDecoder()
-            return try results.map { managedCode in
-                let code = try decoder.decode(code: managedCode)
-                return StoredOTPCode(id: managedCode.id, code: code)
-            }
-        }
-    }
-
-    public func delete(id: UUID) async throws {
-        try await asyncPerform { context in
-            let result = try ManagedOTPCode.first(withID: id, in: context)
-            if let result {
-                context.delete(result)
-                try context.save()
-            }
-        }
-    }
-
     /// Helper for asynchronously performing a block of CoreData work
-    private func asyncPerform<T>(closure: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
+    func asyncPerform<T>(closure: @escaping (NSManagedObjectContext) throws -> T) async throws -> T {
         try await withCheckedThrowingContinuation { continuation in
             context.perform {
                 continuation.resume(with: Result {
