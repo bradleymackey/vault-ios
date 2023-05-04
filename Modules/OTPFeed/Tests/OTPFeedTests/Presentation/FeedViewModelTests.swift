@@ -6,7 +6,7 @@ import XCTest
 final class FeedViewModelTests: XCTestCase {
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let getCodes = sut.$codes.record(numberOfRecords: 1)
+        let getCodes = sut.$codes.record(scheduler: TestScheduler(), numberOfRecords: 1)
 
         await sut.reloadData()
 
@@ -16,7 +16,7 @@ final class FeedViewModelTests: XCTestCase {
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
         let sut = FeedViewModel(store: StubStore.empty)
-        let getErrors = sut.$retrievalError.record(numberOfRecords: 1)
+        let getErrors = sut.$retrievalError.record(scheduler: TestScheduler(), numberOfRecords: 1)
 
         await sut.reloadData()
 
@@ -27,7 +27,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let getCodes = sut.$codes.record(numberOfRecords: 2)
+        let getCodes = sut.$codes.record(scheduler: TestScheduler(), numberOfRecords: 2)
 
         await sut.reloadData()
 
@@ -38,7 +38,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = FeedViewModel(store: store)
-        let getErrors = sut.$retrievalError.record(numberOfRecords: 1)
+        let getErrors = sut.$retrievalError.record(scheduler: TestScheduler(), numberOfRecords: 1)
 
         await sut.reloadData()
 
@@ -48,13 +48,15 @@ final class FeedViewModelTests: XCTestCase {
 
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
         let sut = FeedViewModel(store: ErrorStubStore(error: anyNSError()))
-        let getErrors = sut.$retrievalError.record(numberOfRecords: 1)
+        let getErrors = sut.$retrievalError.record(scheduler: TestScheduler(), numberOfRecords: 1)
 
         await sut.reloadData()
 
         let errors = getErrors.waitAndCollectRecords()
         XCTAssertEqual(errors.count, 2)
     }
+
+    // MARK: - Helpers
 
     private struct StubStore: OTPCodeStoreReader {
         var codes = [StoredOTPCode]()
