@@ -18,7 +18,8 @@ struct ManagedOTPCodeDecoder {
     enum DecodingError: Error {
         case badDigits(NSNumber)
         case invalidType
-        case missingPeriod
+        case missingPeriodForTOTP
+        case missingCounterForHOTP
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
@@ -33,9 +34,14 @@ struct ManagedOTPCodeDecoder {
         switch code.authType {
         case "totp":
             guard let period = code.period?.uint32Value else {
-                throw DecodingError.missingPeriod
+                throw DecodingError.missingPeriodForTOTP
             }
             return .totp(period: period)
+        case "hotp":
+            guard let counter = code.counter?.uint32Value else {
+                throw DecodingError.missingCounterForHOTP
+            }
+            return .hotp(counter: counter)
         default:
             throw DecodingError.invalidType
         }
@@ -122,6 +128,21 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
 
     func test_decodeType_totpWithoutPeriodThrows() throws {
         let code = makeManagedCode(authType: "totp", period: nil)
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(code: code))
+    }
+
+    func test_decodeType_decodesHOTPWithCounter() throws {
+        let code = makeManagedCode(authType: "hotp", counter: 69)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(code: code)
+        XCTAssertEqual(decoded.type, .hotp(counter: 69))
+    }
+
+    func test_decodeType_hotpWithoutCounterThrows() throws {
+        let code = makeManagedCode(authType: "hotp", counter: nil)
         let sut = makeSUT()
 
         XCTAssertThrowsError(try sut.decode(code: code))
