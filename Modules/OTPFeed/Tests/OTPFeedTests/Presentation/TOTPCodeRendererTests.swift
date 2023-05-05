@@ -6,27 +6,17 @@ import XCTest
 @testable import OTPFeed
 
 final class TOTPCodeRendererTests: XCTestCase {
-    func test_renderedCodePublisher_publishesInitialCodeBaseOnCurrentTimeValue() async throws {
-        let (_, sut) = makeSUT(initialTime: 59)
-
-        let publisher = sut.renderedCodePublisher().collectFirst(1)
-
-        let values = try await awaitPublisher(publisher, when: {})
-        XCTAssertEqual(values, ["94287082"])
-    }
-
     func test_renderedCodePublisher_publishesCodesOnEpochSecondsTick() async throws {
-        let (clock, sut) = makeSUT(initialTime: 59)
+        let (timer, sut) = makeSUT()
 
-        let publisher = sut.renderedCodePublisher().collectFirst(4)
+        let publisher = sut.renderedCodePublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.send(time: 1_111_111_109)
-            clock.send(time: 1_111_111_111)
-            clock.send(time: 2_000_000_000)
+            timer.subject.send(OTPTimerState(startTime: 1_111_111_109, endTime: 1_111_111_109 + 1))
+            timer.subject.send(OTPTimerState(startTime: 1_111_111_111, endTime: 1_111_111_111 + 1))
+            timer.subject.send(OTPTimerState(startTime: 2_000_000_000, endTime: 2_000_000_000 + 1))
         })
         XCTAssertEqual(values, [
-            "94287082", // from initial time
             "07081804",
             "14050471",
             "69279037",
@@ -35,10 +25,10 @@ final class TOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(initialTime: Double) -> (MockEpochClock, some OTPCodeRenderer) {
-        let clock = MockEpochClock(initialTime: initialTime)
-        let sut = TOTPCodeRenderer(clock: clock, totpGenerator: fixedGenerator(timeInterval: 30))
-        return (clock, sut)
+    private func makeSUT() -> (MockCodeTimerUpdater, some OTPCodeRenderer) {
+        let timer = MockCodeTimerUpdater()
+        let sut = TOTPCodeRenderer(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30))
+        return (timer, sut)
     }
 
     private func fixedGenerator(timeInterval: UInt64) -> TOTPGenerator {

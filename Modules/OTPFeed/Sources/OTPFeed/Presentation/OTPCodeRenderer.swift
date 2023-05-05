@@ -17,12 +17,12 @@ extension Publisher where Output == UInt32 {
     }
 }
 
-final class TOTPCodeRenderer<Clock: EpochClock>: OTPCodeRenderer {
-    private let clock: Clock
+final class TOTPCodeRenderer<Timer: CodeTimerUpdater>: OTPCodeRenderer {
+    private let timer: Timer
     private let totpGenerator: TOTPGenerator
 
-    init(clock: Clock, totpGenerator: TOTPGenerator) {
-        self.clock = clock
+    init(timer: Timer, totpGenerator: TOTPGenerator) {
+        self.timer = timer
         self.totpGenerator = totpGenerator
     }
 
@@ -33,10 +33,10 @@ final class TOTPCodeRenderer<Clock: EpochClock>: OTPCodeRenderer {
 
     private func codeValuePublisher() -> AnyPublisher<UInt32, Error> {
         let generator = totpGenerator
-        return clock.secondsPublisher()
+        return timer.timerUpdatedPublisher()
             .setFailureType(to: Error.self)
-            .tryMap { epochSeconds in
-                try generator.code(epochSeconds: UInt64(epochSeconds))
+            .tryMap { state in
+                try generator.code(epochSeconds: UInt64(state.startTime))
             }
             .eraseToAnyPublisher()
     }

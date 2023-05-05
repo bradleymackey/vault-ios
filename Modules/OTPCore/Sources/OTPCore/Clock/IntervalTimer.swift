@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public protocol IntervalClock {
+public protocol IntervalTimer {
     /// Set an expectation to publish once after the specified `time`.
-    func timerPublisher(time: Double) -> AnyPublisher<Void, Never>
+    func wait(for time: Double) -> AnyPublisher<Void, Never>
 }
