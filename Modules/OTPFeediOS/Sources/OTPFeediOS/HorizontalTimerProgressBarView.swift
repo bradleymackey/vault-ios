@@ -50,7 +50,7 @@ public struct HorizontalTimerProgressBarView: View {
             }
         }
         .onReceive(startSignaller) { state in
-            withAnimation(.easeOut(duration: 0.3)) {
+            withAnimation(.linear(duration: 0.15)) {
                 currentFractionCompleted = state.fraction
             }
             if let timeToComplete = state.timeToComplete {
