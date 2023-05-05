@@ -1,0 +1,70 @@
+import Combine
+import OTPCore
+import OTPFeed
+import SwiftUI
+
+public struct CodeTimerHorizontalBarView: View {
+    @EnvironmentObject var clock: CurrentDateEpochClock
+    @StateObject public var viewModel: CodeTimerViewModel
+
+    private var color: Color
+    @State private var currentFractionCompleted = 0.0
+
+    init(viewModel: CodeTimerViewModel, color: Color = .blue) {
+        _viewModel = StateObject(wrappedValue: viewModel)
+        self.color = color
+    }
+
+    public var body: some View {
+        HorizontalTimerProgressBarView(
+            initialFractionCompleted: 0,
+            startSignaller: viewModel.timerPublisher(clock: clock),
+            color: viewModel.timer != nil ? .blue : .red
+        )
+    }
+}
+
+extension CodeTimerViewModel {
+    /// Maps timer state updates to events that can be rendered by the progress bar.
+    func timerPublisher(clock: CurrentDateEpochClock) -> AnyPublisher<HorizontalTimerProgressBarView.Progress, Never> {
+        $timer.map { state in
+            guard let state else { return .freeze(fraction: 1) }
+            let currentTime = clock.currentTime
+            let completed = state.fractionCompleted(at: currentTime)
+            let remainingTime = state.remainingTime(at: currentTime)
+            return .startAnimating(startFraction: completed, duration: remainingTime)
+        }
+        .eraseToAnyPublisher()
+    }
+}
+
+struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
+    static var previews: some View {
+        CodeTimerHorizontalBarView(viewModel: viewModel(clock: clock))
+            .environmentObject(clock)
+            .frame(width: 250, height: 20)
+            .previewLayout(.fixed(width: 300, height: 300))
+            .onAppear {
+                updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
+            }
+    }
+
+    // MARK: - Helpers
+
+    static func viewModel(clock: some EpochClock) -> CodeTimerViewModel {
+        CodeTimerViewModel(clock: clock, updater: updater)
+    }
+
+    private static let updater: MockCodeTimerUpdater = .init()
+
+    static let clock: CurrentDateEpochClock = .init(currentDate: {
+        Date(timeIntervalSince1970: 40)
+    })
+
+    private struct MockCodeTimerUpdater: CodeTimerUpdater {
+        let subject = PassthroughSubject<OTPTimerState, Never>()
+        func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
+            subject.eraseToAnyPublisher()
+        }
+    }
+}
