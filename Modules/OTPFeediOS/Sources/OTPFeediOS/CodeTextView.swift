@@ -15,8 +15,8 @@ public struct CodeTextView: View {
             placeholderCode
         case .error:
             HStack(alignment: .center, spacing: codeSpacing) {
-                Image(systemName: "exclamationmark.triangle.fill")
                 placeholderCode
+                Image(systemName: "exclamationmark.triangle.fill")
             }
             .foregroundColor(.red)
         case let .visible(code):

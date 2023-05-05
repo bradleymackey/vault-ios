@@ -8,6 +8,7 @@ public struct OTPCodePreviewView: View {
     var issuer: String?
     var textView: CodeTextView
     var timerView: CodeTimerHorizontalBarView
+    @ObservedObject var previewViewModel: CodePreviewViewModel
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -31,13 +32,41 @@ public struct OTPCodePreviewView: View {
     }
 
     private var codeSection: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .leading, spacing: 4) {
             textView
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
+            timerSection
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    @ViewBuilder
+    private var timerSection: some View {
+        ZStack(alignment: .leading) {
             timerView
-                .frame(height: 8)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
+                .frame(height: 20)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+
+            switch previewViewModel.code {
+            case let .error(err):
+                LoadingBarLabel(text: err.userTitle)
+            case .noMoreCodes:
+                LoadingBarLabel(text: "No more codes")
+            case .visible, .notReady:
+                EmptyView()
+            }
+        }
+    }
+
+    private struct LoadingBarLabel: View {
+        var text: String
+        var body: some View {
+            Text(text)
+                .textCase(.uppercase)
+                .font(.system(size: 10, weight: .bold))
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
         }
     }
 }
@@ -45,40 +74,30 @@ public struct OTPCodePreviewView: View {
 struct OTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 40) {
-            OTPCodePreviewView(
-                accountName: "test@example.com",
-                issuer: "Authority",
-                textView: CodeTextView(
-                    viewModel: .init(renderer: codeRenderer),
-                    codeSpacing: 10
-                ),
-                timerView: CodeTimerHorizontalBarView(
-                    viewModel: .init(updater: updater, clock: clock),
-                    color: .blue
-                )
-            )
-            .frame(width: 250, height: 100)
-            .onAppear {
-                codeRenderer.subject.send("123456")
-                updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
-            }
+            makePreview(issuer: "Authority")
+            makePreview(issuer: nil)
+        }
+    }
 
-            OTPCodePreviewView(
-                accountName: "test@example.com",
-                textView: CodeTextView(
-                    viewModel: .init(renderer: codeRenderer),
-                    codeSpacing: 10
-                ),
-                timerView: CodeTimerHorizontalBarView(
-                    viewModel: .init(updater: updater, clock: clock),
-                    color: .blue
-                )
-            )
-            .frame(width: 250, height: 100)
-            .onAppear {
-                codeRenderer.subject.send("123456")
-                updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
-            }
+    static func makePreview(issuer: String?) -> some View {
+        OTPCodePreviewView(
+            accountName: "test@example.com",
+            issuer: issuer,
+            textView: CodeTextView(
+                viewModel: .init(renderer: codeRenderer),
+                codeSpacing: 10
+            ),
+            timerView: CodeTimerHorizontalBarView(
+                viewModel: .init(updater: updater, clock: clock),
+                color: .blue
+            ),
+            previewViewModel: .init(renderer: codeRenderer)
+        )
+        .frame(width: 250, height: 100)
+        .onAppear {
+            codeRenderer.subject.send("123456")
+//            codeRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
+            updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
         }
     }
 
