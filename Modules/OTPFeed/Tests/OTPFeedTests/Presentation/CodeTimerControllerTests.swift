@@ -41,7 +41,9 @@ final class CodeTimerControllerTests: XCTestCase {
         period: Double
     ) -> (MockEpochClock, CodeTimerController<MockEpochClock>) {
         let clock = MockEpochClock(initialTime: clockTime)
-        let sut = CodeTimerController(clock: clock, period: period)
+        let sut = CodeTimerController(intervalTimer: clock, period: period, currentTime: {
+            clock.currentTime
+        })
         return (clock, sut)
     }
 }
