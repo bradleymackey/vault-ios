@@ -11,9 +11,13 @@ let package = Package(
             targets: ["OTPCore"]
         ),
     ],
+    dependencies: [
+        .package(name: "CryptoEngine", path: "../CryptoEngine"),
+    ],
     targets: [
         .target(
-            name: "OTPCore"
+            name: "OTPCore",
+            dependencies: ["CryptoEngine"]
         ),
         .testTarget(
             name: "OTPCoreTests",
