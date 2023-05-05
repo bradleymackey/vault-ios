@@ -3,11 +3,11 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct OTPCodePreviewView: View {
+public struct OTPCodePreviewView<Updater: CodeTimerUpdater>: View {
     var accountName: String
     var issuer: String?
     var textView: CodeTextView
-    var timerView: CodeTimerHorizontalBarView
+    var timerView: CodeTimerHorizontalBarView<Updater>
     @ObservedObject var previewViewModel: CodePreviewViewModel
 
     public var body: some View {
@@ -129,7 +129,7 @@ struct OTPCodePreviewView_Previews: PreviewProvider {
         .frame(width: 250, height: 100)
     }
 
-    static func viewModel(clock: EpochClock) -> CodeTimerViewModel {
+    static func viewModel(clock: EpochClock) -> CodeTimerViewModel<MockCodeTimerUpdater> {
         CodeTimerViewModel(updater: updater, clock: clock)
     }
 

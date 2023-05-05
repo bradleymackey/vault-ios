@@ -3,13 +3,13 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct CodeTimerHorizontalBarView: View {
-    @ObservedObject public var viewModel: CodeTimerViewModel
+public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
+    @ObservedObject public var viewModel: CodeTimerViewModel<Updater>
 
     private var color: Color
     @State private var currentFractionCompleted = 0.0
 
-    init(viewModel: CodeTimerViewModel, color: Color = .blue) {
+    init(viewModel: CodeTimerViewModel<Updater>, color: Color = .blue) {
         _viewModel = ObservedObject(wrappedValue: viewModel)
         self.color = color
     }
@@ -41,7 +41,7 @@ extension CodeTimerViewModel {
 
 struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     static var previews: some View {
-        CodeTimerHorizontalBarView(viewModel: viewModel(clock: clock))
+        CodeTimerHorizontalBarView<MockCodeTimerUpdater>(viewModel: viewModel(clock: clock))
             .frame(width: 250, height: 20)
             .previewLayout(.fixed(width: 300, height: 300))
             .onAppear {
@@ -51,7 +51,7 @@ struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
 
     // MARK: - Helpers
 
-    static func viewModel(clock: EpochClock) -> CodeTimerViewModel {
+    static func viewModel(clock: EpochClock) -> CodeTimerViewModel<MockCodeTimerUpdater> {
         CodeTimerViewModel(updater: updater, clock: clock)
     }
 
