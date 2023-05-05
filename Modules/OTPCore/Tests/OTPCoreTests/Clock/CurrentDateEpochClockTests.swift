@@ -29,7 +29,7 @@ final class CurrentDateEpochClockTests: XCTestCase {
         let sut = makeSUT(value: 1234)
 
         // The publisher should complete as-is, not timeout.
-        try awaitPublisher(sut.timerPublisher(interval: 0.1), timeout: 1) {
+        try awaitPublisher(sut.timerPublisher(time: 0.1), timeout: 1) {
             // noop
         }
     }

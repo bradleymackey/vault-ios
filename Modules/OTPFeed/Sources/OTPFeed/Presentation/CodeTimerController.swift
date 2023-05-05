@@ -36,7 +36,7 @@ extension CodeTimerController {
 
     private func scheduleNextClock() {
         let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
-        timerPublisher = clock.timerPublisher(interval: remaining)
+        timerPublisher = clock.timerPublisher(time: remaining)
             .sink { [weak self] in
                 self?.updateTimerState()
                 self?.scheduleNextClock()
