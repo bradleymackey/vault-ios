@@ -2,22 +2,39 @@ import Combine
 import SwiftUI
 
 public struct HorizontalProgressBarView: View {
-    var initialCompletion: Double
-    var timeToComplete: Double
     var color: Color
-    var startSignaller: AnyPublisher<Void, Never>
+    /// Recieves events indicating the progress view should update showing the given progress.
+    var startSignaller: AnyPublisher<Progress, Never>
+
+    enum Progress {
+        case freeze(fraction: Double)
+        case startAnimating(startFraction: Double, duration: Double)
+
+        var fraction: Double {
+            switch self {
+            case let .freeze(fraction), let .startAnimating(fraction, _):
+                return fraction
+            }
+        }
+
+        var timeToComplete: Double? {
+            switch self {
+            case let .startAnimating(_, duration):
+                return duration
+            case .freeze:
+                return nil
+            }
+        }
+    }
 
     @State private var currentFractionCompleted = 0.0
 
     init(
-        initialCompletion: Double,
-        timeToComplete: Double,
-        startSignaller: AnyPublisher<Void, Never>,
+        initialFractionCompleted: Double,
+        startSignaller: AnyPublisher<Progress, Never>,
         color: Color = .blue
     ) {
-        _currentFractionCompleted = State(initialValue: initialCompletion)
-        self.initialCompletion = initialCompletion
-        self.timeToComplete = timeToComplete
+        _currentFractionCompleted = State(initialValue: initialFractionCompleted)
         self.startSignaller = startSignaller
         self.color = color
     }
@@ -32,26 +49,40 @@ public struct HorizontalProgressBarView: View {
                     .frame(width: currentFractionCompleted * proxy.size.width, alignment: .leading)
             }
         }
-        .onReceive(startSignaller) { _ in
-            withAnimation(.linear(duration: timeToComplete)) {
-                currentFractionCompleted = 1
+        .onReceive(startSignaller) { state in
+            currentFractionCompleted = state.fraction
+            if let timeToComplete = state.timeToComplete {
+                withAnimation(.linear(duration: timeToComplete)) {
+                    currentFractionCompleted = 1
+                }
             }
         }
     }
 }
 
 struct HorizontalProgressBarView_Previews: PreviewProvider {
-    static let signaller = PassthroughSubject<Void, Never>()
+    static let signaller = PassthroughSubject<HorizontalProgressBarView.Progress, Never>()
     static var previews: some View {
         HorizontalProgressBarView(
-            initialCompletion: 0.3,
-            timeToComplete: 10,
-            startSignaller: signaller.eraseToAnyPublisher()
+            initialFractionCompleted: 0.4,
+            startSignaller: signaller.eraseToAnyPublisher(),
+            color: .blue
         )
         .frame(width: 250, height: 50)
         .previewLayout(.fixed(width: 300, height: 300))
         .onAppear {
-            signaller.send(())
+            signaller.send(.startAnimating(startFraction: 0.4, duration: 2))
+        }
+
+        HorizontalProgressBarView(
+            initialFractionCompleted: 0.4,
+            startSignaller: signaller.eraseToAnyPublisher(),
+            color: .red
+        )
+        .frame(width: 250, height: 50)
+        .previewLayout(.fixed(width: 300, height: 300))
+        .onAppear {
+            signaller.send(.freeze(fraction: 0.6))
         }
     }
 }
