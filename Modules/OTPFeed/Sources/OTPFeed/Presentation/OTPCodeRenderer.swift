@@ -17,16 +17,16 @@ extension Publisher where Output == UInt32 {
     }
 }
 
-final class TOTPCodeRenderer<Timer: CodeTimerUpdater>: OTPCodeRenderer {
+public final class TOTPCodeRenderer<Timer: CodeTimerUpdater>: OTPCodeRenderer {
     private let timer: Timer
     private let totpGenerator: TOTPGenerator
 
-    init(timer: Timer, totpGenerator: TOTPGenerator) {
+    public init(timer: Timer, totpGenerator: TOTPGenerator) {
         self.timer = timer
         self.totpGenerator = totpGenerator
     }
 
-    func renderedCodePublisher() -> AnyPublisher<String, Error> {
+    public func renderedCodePublisher() -> AnyPublisher<String, Error> {
         codeValuePublisher()
             .digitsRenderer(digits: totpGenerator.digits)
     }
@@ -42,21 +42,21 @@ final class TOTPCodeRenderer<Timer: CodeTimerUpdater>: OTPCodeRenderer {
     }
 }
 
-final class HOTPCodeRenderer: OTPCodeRenderer {
+public final class HOTPCodeRenderer: OTPCodeRenderer {
     private let hotpGenerator: HOTPGenerator
     private let counterSubject: CurrentValueSubject<UInt64, Never>
 
-    init(hotpGenerator: HOTPGenerator, initialCounter: UInt64) {
+    public init(hotpGenerator: HOTPGenerator, initialCounter: UInt64) {
         self.hotpGenerator = hotpGenerator
         counterSubject = CurrentValueSubject(initialCounter)
     }
 
     /// Update the current value of the counter.
-    func set(counter: UInt64) {
+    public func set(counter: UInt64) {
         counterSubject.send(counter)
     }
 
-    func renderedCodePublisher() -> AnyPublisher<String, Error> {
+    public func renderedCodePublisher() -> AnyPublisher<String, Error> {
         codeValuePublisher()
             .digitsRenderer(digits: hotpGenerator.digits.rawValue)
     }
