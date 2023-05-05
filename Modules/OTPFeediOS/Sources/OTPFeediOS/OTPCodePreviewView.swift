@@ -10,8 +10,9 @@ public struct OTPCodePreviewView: View {
     var timerView: CodeTimerHorizontalBarView
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 12) {
+        VStack(alignment: .leading, spacing: 8) {
             labelSection
+            Divider()
             codeSection
         }
         .frame(maxWidth: .infinity)
@@ -36,30 +37,49 @@ public struct OTPCodePreviewView: View {
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
             timerView
-                .frame(height: 10)
-                .clipShape(RoundedRectangle(cornerRadius: 10))
+                .frame(height: 8)
+                .clipShape(RoundedRectangle(cornerRadius: 8))
         }
     }
 }
 
 struct OTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        OTPCodePreviewView(
-            accountName: "test@example.com",
-            issuer: "Authority",
-            textView: CodeTextView(
-                viewModel: .init(renderer: codeRenderer),
-                codeSpacing: 10
-            ),
-            timerView: CodeTimerHorizontalBarView(
-                viewModel: .init(updater: updater, clock: clock),
-                color: .blue
+        VStack(spacing: 40) {
+            OTPCodePreviewView(
+                accountName: "test@example.com",
+                issuer: "Authority",
+                textView: CodeTextView(
+                    viewModel: .init(renderer: codeRenderer),
+                    codeSpacing: 10
+                ),
+                timerView: CodeTimerHorizontalBarView(
+                    viewModel: .init(updater: updater, clock: clock),
+                    color: .blue
+                )
             )
-        )
-        .frame(width: 250, height: 100)
-        .onAppear {
-            codeRenderer.subject.send("123456")
-            updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
+            .frame(width: 250, height: 100)
+            .onAppear {
+                codeRenderer.subject.send("123456")
+                updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
+            }
+
+            OTPCodePreviewView(
+                accountName: "test@example.com",
+                textView: CodeTextView(
+                    viewModel: .init(renderer: codeRenderer),
+                    codeSpacing: 10
+                ),
+                timerView: CodeTimerHorizontalBarView(
+                    viewModel: .init(updater: updater, clock: clock),
+                    color: .blue
+                )
+            )
+            .frame(width: 250, height: 100)
+            .onAppear {
+                codeRenderer.subject.send("123456")
+                updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
+            }
         }
     }
 
