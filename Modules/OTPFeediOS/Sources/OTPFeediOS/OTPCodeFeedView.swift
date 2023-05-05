@@ -8,7 +8,7 @@ public struct OTPCodeFeedView<Store: OTPCodeStoreReader>: View {
     public let clock: EpochClock
     public let timer: LiveIntervalTimer
 
-    init(viewModel: FeedViewModel<Store>, clock: EpochClock, timer: LiveIntervalTimer) {
+    public init(viewModel: FeedViewModel<Store>, clock: EpochClock, timer: LiveIntervalTimer) {
         _viewModel = ObservedObject(initialValue: viewModel)
         self.clock = clock
         self.timer = timer
