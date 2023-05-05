@@ -4,13 +4,13 @@ import OTPFeed
 import SwiftUI
 
 public struct CodeTimerHorizontalBarView: View {
-    @StateObject public var viewModel: CodeTimerViewModel
+    @ObservedObject public var viewModel: CodeTimerViewModel
 
     private var color: Color
     @State private var currentFractionCompleted = 0.0
 
     init(viewModel: CodeTimerViewModel, color: Color = .blue) {
-        _viewModel = StateObject(wrappedValue: viewModel)
+        _viewModel = ObservedObject(wrappedValue: viewModel)
         self.color = color
     }
 
@@ -58,11 +58,4 @@ struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     private static let updater: MockCodeTimerUpdater = .init()
 
     static let clock = EpochClock { 40 }
-
-    private struct MockCodeTimerUpdater: CodeTimerUpdater {
-        let subject = PassthroughSubject<OTPTimerState, Never>()
-        func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
-            subject.eraseToAnyPublisher()
-        }
-    }
 }
