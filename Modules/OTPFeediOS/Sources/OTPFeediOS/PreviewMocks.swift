@@ -19,3 +19,15 @@ struct OTPCodeRendererMock: OTPCodeRenderer {
 func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date())
 }
+
+struct MockCodeStore: OTPCodeStoreReader {
+    let codes: [StoredOTPCode] = [
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 1")),
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 2")),
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 3")),
+    ]
+
+    func retrieve() async throws -> [OTPFeed.StoredOTPCode] {
+        codes
+    }
+}
