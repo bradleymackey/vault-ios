@@ -5,10 +5,10 @@
 //  Created by Bradley Mackey on 05/05/2023.
 //
 
-import SwiftUI
-import OTPFeediOS
-import OTPFeed
 import OTPCore
+import OTPFeed
+import OTPFeediOS
+import SwiftUI
 
 struct ContentView: View {
     var body: some View {
