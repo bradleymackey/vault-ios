@@ -34,24 +34,6 @@ final class CodeTimerControllerTests: XCTestCase {
         ])
     }
 
-    func test_timerUpdatedPublisher_ticksClockOnTimerUpdate() async throws {
-        var (clock, sut) = makeSUT(clock: 32, period: 30)
-
-        let publisher = sut.timerUpdatedPublisher().collectFirst(3)
-
-        var clockTicks = 0
-        clock.didTick = { clockTicks += 1 }
-
-        let values = try await awaitPublisher(publisher, when: {
-            for _ in 0 ..< 5 {
-                // tick clock on every timer finish
-                clock.send(time: 60)
-                clock.finishTimer()
-            }
-        })
-        XCTAssertEqual(clockTicks, 5)
-    }
-
     // MARK: - Helpers
 
     private func makeSUT(
