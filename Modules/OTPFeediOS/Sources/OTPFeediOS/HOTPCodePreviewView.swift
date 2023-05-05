@@ -10,9 +10,42 @@ struct HOTPCodePreviewView: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            OTPCodeLabels(accountName: accountName, issuer: issuer)
+            labels
             Spacer()
             buttonView
+                .font(.largeTitle.bold())
+        }
+    }
+
+    private var labels: some View {
+        VStack(alignment: .leading, spacing: 8) {
+            OTPCodeLabels(accountName: accountName, issuer: issuer)
+            textView
+                .font(.system(.largeTitle, design: .monospaced))
+                .fontWeight(.bold)
+        }
+    }
+}
+
+struct HOTPCodePreviewView_Previews: PreviewProvider {
+    private static let codeRenderer = OTPCodeRendererMock()
+
+    static var previews: some View {
+        VStack(spacing: 20) {
+            HOTPCodePreviewView(
+                accountName: "test@test.com",
+                issuer: "Authority",
+                textView: CodeTextView(viewModel: .init(renderer: codeRenderer), codeSpacing: 10.0),
+                buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
+                    hotpGenerator: .init(secret: Data()),
+                    initialCounter: 0
+                ), counter: 0)),
+                previewViewModel: .init(renderer: codeRenderer)
+            )
+            .frame(width: 250, height: 100)
+        }
+        .onAppear {
+            codeRenderer.subject.send("123456")
         }
     }
 }
