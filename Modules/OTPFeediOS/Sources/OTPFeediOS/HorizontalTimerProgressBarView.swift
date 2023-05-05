@@ -1,7 +1,7 @@
 import Combine
 import SwiftUI
 
-public struct HorizontalProgressBarView: View {
+public struct HorizontalTimerProgressBarView: View {
     var color: Color
     /// Recieves events indicating the progress view should update showing the given progress.
     var startSignaller: AnyPublisher<Progress, Never>
@@ -62,26 +62,26 @@ public struct HorizontalProgressBarView: View {
     }
 }
 
-struct HorizontalProgressBarView_Previews: PreviewProvider {
-    static let signaller = PassthroughSubject<HorizontalProgressBarView.Progress, Never>()
+struct HorizontalTimerProgressBarView_Previews: PreviewProvider {
+    static let signaller = PassthroughSubject<HorizontalTimerProgressBarView.Progress, Never>()
     static var previews: some View {
-        HorizontalProgressBarView(
+        HorizontalTimerProgressBarView(
             initialFractionCompleted: 0.4,
             startSignaller: signaller.eraseToAnyPublisher(),
             color: .blue
         )
-        .frame(width: 250, height: 50)
+        .frame(width: 250, height: 20)
         .previewLayout(.fixed(width: 300, height: 300))
         .onAppear {
             signaller.send(.startAnimating(startFraction: 0.4, duration: 2))
         }
 
-        HorizontalProgressBarView(
+        HorizontalTimerProgressBarView(
             initialFractionCompleted: 0.4,
             startSignaller: signaller.eraseToAnyPublisher(),
             color: .red
         )
-        .frame(width: 250, height: 50)
+        .frame(width: 250, height: 20)
         .previewLayout(.fixed(width: 300, height: 300))
         .onAppear {
             signaller.send(.freeze(fraction: 0.6))
