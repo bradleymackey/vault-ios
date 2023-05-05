@@ -6,12 +6,17 @@ public final class CodeTimerViewModel: ObservableObject {
     @Published public private(set) var timer: OTPTimerState?
 
     private var cancellable: AnyCancellable?
+    private let clock: EpochClock
 
-    public init(clock: some EpochClock, updater: some CodeTimerUpdater) {
+    public init(updater: some CodeTimerUpdater, clock: EpochClock) {
+        self.clock = clock
         cancellable = updater.timerUpdatedPublisher()
             .sink { [weak self] state in
                 self?.timer = state
-                clock.tick()
             }
+    }
+
+    public var currentTime: Double {
+        clock.currentTime
     }
 }

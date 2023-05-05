@@ -7,18 +7,18 @@ public protocol CodeTimerUpdater {
 }
 
 /// Controller for producing timers for a given code, according to a clock.
-public final class CodeTimerController<IntervalTimer: IntervalClock>: CodeTimerUpdater {
+public final class CodeTimerController<Timer: IntervalTimer>: CodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
     private let period: Double
     private var timerPublisher: AnyCancellable?
-    private let intervalTimer: IntervalTimer
-    private let currentTime: () -> Double
+    private let timer: Timer
+    private let clock: EpochClock
 
-    public init(intervalTimer: IntervalTimer, period: Double, currentTime: @escaping () -> Double) {
+    public init(timer: Timer, period: Double, clock: EpochClock) {
         self.period = period
-        self.intervalTimer = intervalTimer
-        self.currentTime = currentTime
-        let initialState = Self.timerState(currentTime: currentTime(), period: period)
+        self.timer = timer
+        self.clock = clock
+        let initialState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject = .init(initialState)
 
         scheduleNextClock()
@@ -32,13 +32,13 @@ public final class CodeTimerController<IntervalTimer: IntervalClock>: CodeTimerU
 
 extension CodeTimerController {
     private func updateTimerState() {
-        let nextState = Self.timerState(currentTime: currentTime(), period: period)
+        let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)
     }
 
     private func scheduleNextClock() {
-        let remaining = timerStateSubject.value.remainingTime(at: currentTime())
-        timerPublisher = intervalTimer.timerPublisher(time: remaining)
+        let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
+        timerPublisher = timer.wait(for: remaining)
             .sink { [weak self] in
                 self?.updateTimerState()
                 self?.scheduleNextClock()

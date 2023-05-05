@@ -6,7 +6,7 @@ import XCTest
 
 final class CodeTimerControllerTests: XCTestCase {
     func test_timerUpdatedPublisher_initiallyPublishesForCreation() async throws {
-        let (_, sut) = makeSUT(clock: 62, period: 30)
+        let (_, _, sut) = makeSUT(clock: 62, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(1)
 
@@ -17,15 +17,15 @@ final class CodeTimerControllerTests: XCTestCase {
     }
 
     func test_timerUpdatedPublisher_publishesCounterInitialRanges() async throws {
-        let (clock, sut) = makeSUT(clock: 32, period: 30)
+        let (clock, timer, sut) = makeSUT(clock: 32, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.send(time: 60)
-            clock.finishTimer()
-            clock.send(time: 90)
-            clock.finishTimer()
+            clock.makeCurrentTime = { 60 }
+            timer.finishTimer()
+            clock.makeCurrentTime = { 90 }
+            timer.finishTimer()
         })
         XCTAssertEqual(values, [
             OTPTimerState(startTime: 30, endTime: 60),
@@ -39,11 +39,10 @@ final class CodeTimerControllerTests: XCTestCase {
     private func makeSUT(
         clock clockTime: Double,
         period: Double
-    ) -> (MockEpochClock, CodeTimerController<MockEpochClock>) {
-        let clock = MockEpochClock(initialTime: clockTime)
-        let sut = CodeTimerController(intervalTimer: clock, period: period, currentTime: {
-            clock.currentTime
-        })
-        return (clock, sut)
+    ) -> (EpochClock, MockIntervalTimer, CodeTimerController<MockIntervalTimer>) {
+        let timer = MockIntervalTimer()
+        let clock = EpochClock(makeCurrentTime: { clockTime })
+        let sut = CodeTimerController(timer: timer, period: period, clock: clock)
+        return (clock, timer, sut)
     }
 }
