@@ -2,6 +2,34 @@ import Combine
 import XCTest
 
 extension XCTestCase {
+    func awaitNoPublish(
+        publisher: some Publisher,
+        timeout: Double = 1.0,
+        when perform: () async throws -> Void
+    ) async rethrows {
+        var isFulfilled = false
+        let expectation = expectation(description: "Wait for no publish")
+        expectation.isInverted = true
+        func fulfill() {
+            if !isFulfilled {
+                isFulfilled = true
+                expectation.fulfill()
+            }
+        }
+        let cancellable = publisher.sink(receiveCompletion: { _ in
+            fulfill()
+        }, receiveValue: { _ in
+            fulfill()
+        })
+
+        try await perform()
+
+        await fulfillment(of: [expectation], timeout: timeout)
+        cancellable.cancel()
+    }
+}
+
+extension XCTestCase {
     func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 10,
