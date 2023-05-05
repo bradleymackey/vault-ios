@@ -39,6 +39,14 @@ public struct HorizontalTimerProgressBarView: View {
         self.color = color
     }
 
+    public static func fixed(at progress: Double, color: Color) -> HorizontalTimerProgressBarView {
+        HorizontalTimerProgressBarView(
+            initialFractionCompleted: progress,
+            startSignaller: PassthroughSubject().eraseToAnyPublisher(),
+            color: color
+        )
+    }
+
     public var body: some View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
@@ -63,28 +71,36 @@ public struct HorizontalTimerProgressBarView: View {
 }
 
 struct HorizontalTimerProgressBarView_Previews: PreviewProvider {
-    static let signaller = PassthroughSubject<HorizontalTimerProgressBarView.Progress, Never>()
-    static var previews: some View {
-        HorizontalTimerProgressBarView(
-            initialFractionCompleted: 0.4,
-            startSignaller: signaller.eraseToAnyPublisher(),
-            color: .blue
-        )
-        .frame(width: 250, height: 20)
-        .previewLayout(.fixed(width: 300, height: 300))
-        .onAppear {
-            signaller.send(.startAnimating(startFraction: 0.4, duration: 2))
-        }
+    static let signallerBlue = PassthroughSubject<HorizontalTimerProgressBarView.Progress, Never>()
+    static let signallerRed = PassthroughSubject<HorizontalTimerProgressBarView.Progress, Never>()
 
-        HorizontalTimerProgressBarView(
-            initialFractionCompleted: 0.4,
-            startSignaller: signaller.eraseToAnyPublisher(),
-            color: .red
-        )
-        .frame(width: 250, height: 20)
-        .previewLayout(.fixed(width: 300, height: 300))
-        .onAppear {
-            signaller.send(.freeze(fraction: 0.6))
+    static var previews: some View {
+        VStack {
+            HorizontalTimerProgressBarView(
+                initialFractionCompleted: 0.4,
+                startSignaller: signallerBlue.eraseToAnyPublisher(),
+                color: .blue
+            )
+            .frame(width: 250, height: 20)
+            .previewLayout(.fixed(width: 300, height: 300))
+            .onAppear {
+                signallerBlue.send(.startAnimating(startFraction: 0.4, duration: 2))
+            }
+
+            HorizontalTimerProgressBarView(
+                initialFractionCompleted: 0.4,
+                startSignaller: signallerRed.eraseToAnyPublisher(),
+                color: .red
+            )
+            .frame(width: 250, height: 20)
+            .previewLayout(.fixed(width: 300, height: 300))
+            .onAppear {
+                signallerRed.send(.freeze(fraction: 0.6))
+            }
+
+            HorizontalTimerProgressBarView.fixed(at: 0.5, color: .green)
+                .frame(width: 250, height: 20)
+                .previewLayout(.fixed(width: 300, height: 300))
         }
     }
 }
