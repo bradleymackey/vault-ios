@@ -3,7 +3,7 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct OTPCodePreviewView<Updater: CodeTimerUpdater>: View {
+public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
     var accountName: String
     var issuer: String?
     var textView: CodeTextView
@@ -83,7 +83,7 @@ public struct OTPCodePreviewView<Updater: CodeTimerUpdater>: View {
     }
 }
 
-struct OTPCodePreviewView_Previews: PreviewProvider {
+struct TOTPCodePreviewView_Previews: PreviewProvider {
     private static let codeRenderer = OTPCodeRendererMock()
     private static let errorRenderer = OTPCodeRendererMock()
     private static let noMoreCodesRenderer = OTPCodeRendererMock()
@@ -113,7 +113,7 @@ struct OTPCodePreviewView_Previews: PreviewProvider {
     }
 
     static func makePreview(issuer: String?, renderer: OTPCodeRendererMock) -> some View {
-        OTPCodePreviewView(
+        TOTPCodePreviewView(
             accountName: "test@example.com",
             issuer: issuer,
             textView: CodeTextView(
