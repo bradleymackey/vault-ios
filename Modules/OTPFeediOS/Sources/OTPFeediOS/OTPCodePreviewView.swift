@@ -12,7 +12,6 @@ public struct OTPCodePreviewView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelSection
-            Divider()
             codeSection
         }
         .frame(maxWidth: .infinity)
