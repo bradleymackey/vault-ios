@@ -33,7 +33,7 @@ final class MockEpochClock: EpochClock, IntervalClock {
         timerPublisher.send()
     }
 
-    func timerPublisher(interval _: Double) -> AnyPublisher<Void, Never> {
+    func timerPublisher(time _: Double) -> AnyPublisher<Void, Never> {
         timerPublisher.first().eraseToAnyPublisher()
     }
 }

@@ -7,16 +7,18 @@ public protocol CodeTimerUpdater {
 }
 
 /// Controller for producing timers for a given code, according to a clock.
-public final class CodeTimerController<Clock: EpochClock & IntervalClock>: CodeTimerUpdater {
+public final class CodeTimerController<IntervalTimer: IntervalClock>: CodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
     private let period: Double
     private var timerPublisher: AnyCancellable?
-    private let clock: Clock
+    private let intervalTimer: IntervalTimer
+    private let currentTime: () -> Double
 
-    public init(clock: Clock, period: Double) {
+    public init(intervalTimer: IntervalTimer, period: Double, currentTime: @escaping () -> Double) {
         self.period = period
-        self.clock = clock
-        let initialState = Self.timerState(currentTime: clock.currentTime, period: period)
+        self.intervalTimer = intervalTimer
+        self.currentTime = currentTime
+        let initialState = Self.timerState(currentTime: currentTime(), period: period)
         timerStateSubject = .init(initialState)
 
         scheduleNextClock()
@@ -30,13 +32,13 @@ public final class CodeTimerController<Clock: EpochClock & IntervalClock>: CodeT
 
 extension CodeTimerController {
     private func updateTimerState() {
-        let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
+        let nextState = Self.timerState(currentTime: currentTime(), period: period)
         timerStateSubject.send(nextState)
     }
 
     private func scheduleNextClock() {
-        let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
-        timerPublisher = clock.timerPublisher(time: remaining)
+        let remaining = timerStateSubject.value.remainingTime(at: currentTime())
+        timerPublisher = intervalTimer.timerPublisher(time: remaining)
             .sink { [weak self] in
                 self?.updateTimerState()
                 self?.scheduleNextClock()
