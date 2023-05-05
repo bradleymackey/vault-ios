@@ -47,9 +47,13 @@ final class CodePreviewViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> (MockCodeRenderer, CodePreviewViewModel) {
+    private func makeSUT(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (MockCodeRenderer, CodePreviewViewModel) {
         let renderer = MockCodeRenderer()
         let viewModel = CodePreviewViewModel(renderer: renderer)
+        trackForMemoryLeaks(viewModel, file: file, line: line)
         return (renderer, viewModel)
     }
 
