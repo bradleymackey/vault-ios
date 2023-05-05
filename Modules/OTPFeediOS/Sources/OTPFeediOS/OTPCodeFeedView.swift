@@ -3,12 +3,18 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-struct OTPCodeFeedView<Store: OTPCodeStoreReader>: View {
-    @ObservedObject var viewModel: FeedViewModel<Store>
-    let clock: EpochClock
-    let timer: LiveIntervalTimer
+public struct OTPCodeFeedView<Store: OTPCodeStoreReader>: View {
+    @ObservedObject public var viewModel: FeedViewModel<Store>
+    public let clock: EpochClock
+    public let timer: LiveIntervalTimer
 
-    var body: some View {
+    init(viewModel: FeedViewModel<Store>, clock: EpochClock, timer: LiveIntervalTimer) {
+        _viewModel = ObservedObject(initialValue: viewModel)
+        self.clock = clock
+        self.timer = timer
+    }
+
+    public var body: some View {
         List {
             ForEach(viewModel.codes) { storedCode in
                 switch storedCode.code.type {
