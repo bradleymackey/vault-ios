@@ -12,23 +12,10 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            labelSection
+            OTPCodeLabels(accountName: accountName, issuer: issuer)
             codeSection
         }
         .frame(maxWidth: .infinity)
-    }
-
-    private var labelSection: some View {
-        VStack(alignment: .leading, spacing: 2) {
-            if let issuer {
-                Text(issuer)
-                    .font(.headline)
-                    .foregroundColor(.primary)
-            }
-            Text(accountName)
-                .font(.footnote)
-                .foregroundColor(issuer != nil ? .secondary : .primary)
-        }
     }
 
     private var codeSection: some View {

@@ -10,17 +10,9 @@ struct HOTPCodePreviewView: View {
 
     var body: some View {
         HStack(alignment: .center) {
-            labels
+            OTPCodeLabels(accountName: accountName, issuer: issuer)
             Spacer()
             buttonView
-        }
-    }
-
-    private var labels: some View {
-        VStack {
-            Text("HOTP!")
-            Text(accountName)
-            textView
         }
     }
 }
