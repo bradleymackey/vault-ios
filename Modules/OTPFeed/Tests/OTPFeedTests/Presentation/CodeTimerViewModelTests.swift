@@ -18,9 +18,14 @@ final class CodeTimerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(initialTime _: Double) -> (MockCodeTimerUpdater, CodeTimerViewModel) {
+    private func makeSUT(
+        initialTime: Double,
+        file: StaticString = #file,
+        line: UInt = #line
+    ) -> (MockCodeTimerUpdater, CodeTimerViewModel) {
         let timer = MockCodeTimerUpdater()
-        let sut = CodeTimerViewModel(updater: timer, clock: EpochClock(makeCurrentTime: { 100 }))
+        let sut = CodeTimerViewModel(updater: timer, clock: EpochClock(makeCurrentTime: { initialTime }))
+        trackForMemoryLeaks(sut, file: file, line: line)
         return (timer, sut)
     }
 

@@ -38,11 +38,14 @@ final class CodeTimerControllerTests: XCTestCase {
 
     private func makeSUT(
         clock clockTime: Double,
-        period: Double
+        period: Double,
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) -> (EpochClock, MockIntervalTimer, CodeTimerController<MockIntervalTimer>) {
         let timer = MockIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { clockTime })
         let sut = CodeTimerController(timer: timer, period: period, clock: clock)
+        trackForMemoryLeaks(sut, file: file, line: line)
         return (clock, timer, sut)
     }
 }

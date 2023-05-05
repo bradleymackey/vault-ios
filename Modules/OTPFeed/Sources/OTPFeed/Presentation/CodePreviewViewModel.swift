@@ -17,19 +17,21 @@ public final class CodePreviewViewModel: ObservableObject {
 
     public init(renderer: some OTPCodeRenderer) {
         renderer.renderedCodePublisher()
-            .sink { completion in
+            .sink { [weak self] completion in
+                guard let self else { return }
                 switch completion {
                 case .finished:
-                    self.code = .noMoreCodes
+                    code = .noMoreCodes
                 case let .failure(error):
-                    self.code = .error(
+                    code = .error(
                         PresentationError(
                             userTitle: "Error",
                             debugDescription: error.localizedDescription
                         )
                     )
                 }
-            } receiveValue: { code in
+            } receiveValue: { [weak self] code in
+                guard let self else { return }
                 self.code = .visible(code)
             }
             .store(in: &cancellables)

@@ -25,9 +25,13 @@ final class TOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> (MockCodeTimerUpdater, some OTPCodeRenderer) {
+    private func makeSUT(
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> (MockCodeTimerUpdater, some OTPCodeRenderer) {
         let timer = MockCodeTimerUpdater()
         let sut = TOTPCodeRenderer(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30))
+        trackForMemoryLeaks(sut, file: file, line: line)
         return (timer, sut)
     }
 

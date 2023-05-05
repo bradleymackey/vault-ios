@@ -16,7 +16,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
-        let sut = FeedViewModel(store: StubStore.empty)
+        let sut = makeSUT(store: StubStore.empty)
         let getCodes = sut.$codes.collectNext(1)
 
         let codes = try await awaitPublisher(getCodes, when: {
@@ -26,7 +26,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
-        let sut = FeedViewModel(store: StubStore.empty)
+        let sut = makeSUT(store: StubStore.empty)
 
         await awaitNoPublish(publisher: sut.$retrievalError.nextElements(), when: {
             await sut.reloadData()
@@ -35,7 +35,7 @@ final class FeedViewModelTests: XCTestCase {
 
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
-        let sut = FeedViewModel(store: store)
+        let sut = makeSUT(store: store)
         let publisher = sut.$codes.collectNext(1)
 
         let codes = try await awaitPublisher(publisher, when: {
@@ -46,7 +46,7 @@ final class FeedViewModelTests: XCTestCase {
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
-        let sut = FeedViewModel(store: store)
+        let sut = makeSUT(store: store)
 
         await awaitNoPublish(publisher: sut.$retrievalError.nextElements(), when: {
             await sut.reloadData()
@@ -54,7 +54,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
-        let sut = FeedViewModel(store: ErrorStubStore(error: anyNSError()))
+        let sut = makeSUT(store: ErrorStubStore(error: anyNSError()))
         let publisher = sut.$retrievalError.collectNext(1)
 
         let values = try await awaitPublisher(publisher, when: {
@@ -64,6 +64,16 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     // MARK: - Helpers
+
+    private func makeSUT<T: OTPCodeStoreReader>(
+        store: T,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> FeedViewModel<T> {
+        let sut = FeedViewModel(store: store)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
+    }
 
     private struct StubStore: OTPCodeStoreReader {
         var codes = [StoredOTPCode]()

@@ -29,8 +29,13 @@ final class HOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(initialCounter: UInt64 = 0) -> HOTPCodeRenderer {
+    private func makeSUT(
+        initialCounter: UInt64 = 0,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> HOTPCodeRenderer {
         let sut = HOTPCodeRenderer(hotpGenerator: fixedGenerator(), initialCounter: initialCounter)
+        trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
 
