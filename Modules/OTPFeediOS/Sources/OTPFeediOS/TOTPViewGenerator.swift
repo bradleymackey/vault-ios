@@ -12,7 +12,7 @@ public struct LiveTOTPViewGenerator: TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer
 
-    init(clock: EpochClock, timer: LiveIntervalTimer) {
+    public init(clock: EpochClock, timer: LiveIntervalTimer) {
         self.clock = clock
         self.timer = timer
     }

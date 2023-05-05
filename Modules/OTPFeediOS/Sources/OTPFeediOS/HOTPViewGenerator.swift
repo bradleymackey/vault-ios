@@ -9,7 +9,7 @@ public protocol HOTPViewGenerator {
 }
 
 public struct LiveHOTPViewGenerator: HOTPViewGenerator {
-    init() {}
+    public init() {}
 
     public func makeHOTPView(counter: UInt32, code: OTPAuthCode) -> some View {
         let renderer = HOTPCodeRenderer(hotpGenerator: code.hotpGenerator(), initialCounter: UInt64(counter))
