@@ -3,7 +3,7 @@ import OTPFeed
 import SwiftUI
 
 public struct CodeTextView: View {
-    @StateObject public var viewModel: CodePreviewViewModel
+    @ObservedObject public var viewModel: CodePreviewViewModel
     var codeSpacing: Double
 
     /// The last number of digits sent by a code, so the placeholder can be accurate.
@@ -74,15 +74,4 @@ struct CodeTextView_Previews: PreviewProvider {
     private static let codeRenderer = OTPCodeRendererMock()
     private static let finishedRenderer = OTPCodeRendererMock()
     private static let errorRenderer = OTPCodeRendererMock()
-
-    private struct OTPCodeRendererMock: OTPCodeRenderer {
-        let subject = PassthroughSubject<String, Error>()
-        func renderedCodePublisher() -> AnyPublisher<String, Error> {
-            subject.eraseToAnyPublisher()
-        }
-    }
-
-    static func forceRunLoopAdvance() {
-        RunLoop.main.run(until: Date())
-    }
 }
