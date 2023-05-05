@@ -14,17 +14,20 @@ struct ContentView: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: .init(store: MockCodeStore()),
-            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer()
+            totpGenerator: LiveTOTPViewGenerator(
+                clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
+                timer: LiveIntervalTimer()
+            ),
+            hotpGenerator: LiveHOTPViewGenerator()
         )
     }
 }
 
 struct MockCodeStore: OTPCodeStoreReader {
     let codes: [StoredOTPCode] = [
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 1")),
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 2")),
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 3")),
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay")),
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Cloudflare")),
+        .init(id: UUID(), code: .init(type: .hotp(), secret: .empty(), accountName: "HOTP test", issuer: "Authority")),
     ]
 
     func retrieve() async throws -> [OTPFeed.StoredOTPCode] {
