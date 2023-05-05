@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 /// Epoch clock that derives the time from the injected time.
-public struct CurrentDateEpochClock: EpochClock {
+public final class CurrentDateEpochClock: EpochClock, ObservableObject {
     private var currentDate: () -> Date
     private let clockSubject = PassthroughSubject<Date, Never>()
 
@@ -11,6 +11,7 @@ public struct CurrentDateEpochClock: EpochClock {
     }
 
     public func tick() {
+        objectWillChange.send()
         clockSubject.send(currentDate())
     }
 
