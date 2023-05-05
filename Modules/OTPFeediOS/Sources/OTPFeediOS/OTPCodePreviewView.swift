@@ -93,8 +93,8 @@ struct OTPCodePreviewView_Previews: PreviewProvider {
             makePreview(issuer: "Working Example", renderer: codeRenderer)
                 .onAppear {
                     codeRenderer.subject.send("123456")
-                    updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
                 }
+
             makePreview(issuer: nil, renderer: codeRenderer)
 
             makePreview(issuer: "Code Error Example", renderer: errorRenderer)
@@ -106,6 +106,9 @@ struct OTPCodePreviewView_Previews: PreviewProvider {
                 .onAppear {
                     noMoreCodesRenderer.subject.send(completion: .finished)
                 }
+        }
+        .onAppear {
+            updater.subject.send(.init(startTime: 15, endTime: 100))
         }
     }
 
