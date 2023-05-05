@@ -24,7 +24,7 @@ public struct LiveTOTPViewGenerator: TOTPViewGenerator {
         let renderer = TOTPCodeRenderer(timer: timer, totpGenerator: totpGenerator)
         let previewViewModel = CodePreviewViewModel(renderer: renderer)
         let timerViewModel = CodeTimerViewModel(updater: timer, clock: clock)
-        return OTPCodePreviewView(
+        return TOTPCodePreviewView(
             accountName: code.accountName,
             issuer: code.issuer,
             textView: .init(viewModel: previewViewModel, codeSpacing: 10.0),
