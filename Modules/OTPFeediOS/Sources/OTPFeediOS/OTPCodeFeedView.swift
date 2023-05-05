@@ -3,13 +3,19 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct OTPCodeFeedView<Store: OTPCodeStoreReader, TOTPView: TOTPViewGenerator>: View {
+public struct OTPCodeFeedView<
+    Store: OTPCodeStoreReader,
+    TOTPView: TOTPViewGenerator,
+    HOTPView: HOTPViewGenerator
+>: View {
     @ObservedObject public var viewModel: FeedViewModel<Store>
     public var totpGenerator: TOTPView
+    public var hotpGenerator: HOTPView
 
-    public init(viewModel: FeedViewModel<Store>, totpGenerator: TOTPView) {
+    public init(viewModel: FeedViewModel<Store>, totpGenerator: TOTPView, hotpGenerator: HOTPView) {
         _viewModel = ObservedObject(initialValue: viewModel)
         self.totpGenerator = totpGenerator
+        self.hotpGenerator = hotpGenerator
     }
 
     public var body: some View {
@@ -18,8 +24,8 @@ public struct OTPCodeFeedView<Store: OTPCodeStoreReader, TOTPView: TOTPViewGener
                 switch storedCode.code.type {
                 case let .totp(period):
                     totpGenerator.makeTOTPView(period: period, code: storedCode.code)
-                case .hotp:
-                    Text("unsupported")
+                case let .hotp(counter):
+                    hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
                 }
             }
         }
@@ -36,7 +42,8 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
             totpGenerator: LiveTOTPViewGenerator(
                 clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
                 timer: LiveIntervalTimer()
-            )
+            ),
+            hotpGenerator: LiveHOTPViewGenerator()
         )
     }
 }
