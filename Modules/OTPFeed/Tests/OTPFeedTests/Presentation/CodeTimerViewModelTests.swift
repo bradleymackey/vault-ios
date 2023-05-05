@@ -16,13 +16,33 @@ final class CodeTimerViewModelTests: XCTestCase {
         XCTAssertEqual(values, [timeValue])
     }
 
+    func test_updateDeinit_stillPublishesIfTimerInstanceLost() async throws {
+        var timer: CodeTimerController<MockIntervalTimer>?
+        var sut: CodeTimerViewModel<CodeTimerController<MockIntervalTimer>>?
+        let intervalTimer = MockIntervalTimer()
+
+        autoreleasepool {
+            timer = CodeTimerController(timer: intervalTimer, period: 1, clock: EpochClock(makeCurrentTime: { 100 }))
+
+            sut = CodeTimerViewModel(updater: timer!, clock: EpochClock(makeCurrentTime: { 100 }))
+            timer = nil
+        }
+
+        let publisher = sut!.$timer.collectNext(1)
+
+        let values = try await awaitPublisher(publisher, timeout: 1, when: {
+            intervalTimer.finishTimer()
+        })
+        XCTAssertEqual(values, [OTPTimerState(startTime: 100, endTime: 101)])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
         initialTime: Double,
         file: StaticString = #file,
         line: UInt = #line
-    ) -> (MockCodeTimerUpdater, CodeTimerViewModel) {
+    ) -> (MockCodeTimerUpdater, CodeTimerViewModel<MockCodeTimerUpdater>) {
         let timer = MockCodeTimerUpdater()
         let sut = CodeTimerViewModel(updater: timer, clock: EpochClock(makeCurrentTime: { initialTime }))
         trackForMemoryLeaks(sut, file: file, line: line)
