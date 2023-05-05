@@ -74,31 +74,35 @@ public struct OTPCodePreviewView: View {
 struct OTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 40) {
-            makePreview(issuer: "Authority")
-            makePreview(issuer: nil)
+            makePreview(issuer: "Working Example", renderer: codeRenderer)
+                .onAppear {
+                    codeRenderer.subject.send("123456")
+                    updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
+                }
+            makePreview(issuer: nil, renderer: codeRenderer)
+
+            makePreview(issuer: "Issue Example", renderer: errorRenderer)
+                .onAppear {
+                    errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
+                }
         }
     }
 
-    static func makePreview(issuer: String?) -> some View {
+    static func makePreview(issuer: String?, renderer: OTPCodeRendererMock) -> some View {
         OTPCodePreviewView(
             accountName: "test@example.com",
             issuer: issuer,
             textView: CodeTextView(
-                viewModel: .init(renderer: codeRenderer),
+                viewModel: .init(renderer: renderer),
                 codeSpacing: 10
             ),
             timerView: CodeTimerHorizontalBarView(
                 viewModel: .init(updater: updater, clock: clock),
                 color: .blue
             ),
-            previewViewModel: .init(renderer: codeRenderer)
+            previewViewModel: .init(renderer: renderer)
         )
         .frame(width: 250, height: 100)
-        .onAppear {
-            codeRenderer.subject.send("123456")
-//            codeRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
-            updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
-        }
     }
 
     static func viewModel(clock: EpochClock) -> CodeTimerViewModel {
@@ -110,4 +114,5 @@ struct OTPCodePreviewView_Previews: PreviewProvider {
     static let clock = EpochClock { 20 }
 
     private static let codeRenderer = OTPCodeRendererMock()
+    private static let errorRenderer = OTPCodeRendererMock()
 }
