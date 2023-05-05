@@ -18,7 +18,7 @@ public struct CodeTimerHorizontalBarView: View {
         HorizontalTimerProgressBarView(
             initialFractionCompleted: 0,
             startSignaller: viewModel.timerPublisher(currentTime: { viewModel.currentTime }),
-            color: viewModel.timer != nil ? .blue : .red
+            color: color
         )
     }
 }
