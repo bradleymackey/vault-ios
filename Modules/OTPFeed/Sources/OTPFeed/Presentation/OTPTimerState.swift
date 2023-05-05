@@ -17,6 +17,20 @@ public struct OTPTimerState: Equatable {
     }
 
     public func remainingTime(at epoch: Double) -> Double {
-        epoch - endTime
+        endTime - epoch
+    }
+
+    public func fractionCompleted(at epoch: Double) -> Double {
+        if totalTime == 0 { return 1 }
+        let remainingTime = remainingTime(at: epoch)
+        let remainingFraction = remainingTime / totalTime
+        let fractionCompleted = 1 - remainingFraction
+        if fractionCompleted > 1 {
+            return 1
+        } else if fractionCompleted < 0 {
+            return 0
+        } else {
+            return fractionCompleted
+        }
     }
 }
