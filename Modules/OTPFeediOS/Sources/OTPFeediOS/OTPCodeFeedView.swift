@@ -27,7 +27,7 @@ public struct OTPCodeFeedView<
 
     public var body: some View {
         ScrollView(.vertical) {
-            LazyVGrid(columns: columns, spacing: gridSpacing) {
+            LazyVGrid(columns: columns, alignment: .trailing, spacing: gridSpacing) {
                 ForEach(viewModel.codes) { storedCode in
                     switch storedCode.code.type {
                     case let .totp(period):
@@ -46,7 +46,7 @@ public struct OTPCodeFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 150, maximum: 400))]
+        [GridItem(.adaptive(minimum: 150, maximum: 400), alignment: .bottom)]
     }
 }
 
