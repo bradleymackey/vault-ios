@@ -38,9 +38,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
             switch previewViewModel.code {
             case let .error(err):
                 LoadingBarLabel(text: err.userTitle)
-            case .noMoreCodes:
-                LoadingBarLabel(text: localized(key: "codePreview.noMoreCodes.title"))
-            case .visible, .notReady:
+            case .finished, .visible, .notReady:
                 EmptyView()
             }
         }
@@ -53,7 +51,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
             timerView
         case .error:
             Rectangle().fill(Color.red)
-        case .noMoreCodes, .notReady:
+        case .finished, .notReady:
             Rectangle().fill(Color.gray)
         }
     }
@@ -73,7 +71,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
 struct TOTPCodePreviewView_Previews: PreviewProvider {
     private static let codeRenderer = OTPCodeRendererMock()
     private static let errorRenderer = OTPCodeRendererMock()
-    private static let noMoreCodesRenderer = OTPCodeRendererMock()
+    private static let finishedRenderer = OTPCodeRendererMock()
 
     static var previews: some View {
         VStack(spacing: 40) {
@@ -89,9 +87,9 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
                 }
 
-            makePreview(issuer: "No More Codes Example", renderer: noMoreCodesRenderer)
+            makePreview(issuer: "Finished Example", renderer: finishedRenderer)
                 .onAppear {
-                    noMoreCodesRenderer.subject.send(completion: .finished)
+                    finishedRenderer.subject.send(completion: .finished)
                 }
         }
         .onAppear {

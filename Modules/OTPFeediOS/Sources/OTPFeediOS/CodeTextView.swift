@@ -11,7 +11,7 @@ public struct CodeTextView: View {
 
     public var body: some View {
         switch viewModel.code {
-        case .notReady, .noMoreCodes:
+        case .notReady, .finished:
             placeholderCode
         case .error:
             HStack(alignment: .center, spacing: codeSpacing) {
