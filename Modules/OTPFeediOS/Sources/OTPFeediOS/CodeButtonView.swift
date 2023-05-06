@@ -10,5 +10,6 @@ struct CodeButtonView: View {
         } label: {
             Image(systemName: "arrow.clockwise")
         }
+        .foregroundColor(.accentColor)
     }
 }
