@@ -25,11 +25,15 @@ public enum OTPCodeState: Equatable {
 /// A preview of an OTP code.
 @MainActor
 public final class CodePreviewViewModel: ObservableObject {
+    public let accountName: String
+    public let issuer: String?
     @Published public private(set) var code: OTPCodeState = .notReady
 
     private var cancellables = Set<AnyCancellable>()
 
-    public init(renderer: some OTPCodeRenderer) {
+    public init(accountName: String, issuer: String?, renderer: some OTPCodeRenderer) {
+        self.accountName = accountName
+        self.issuer = issuer
         renderer.renderedCodePublisher()
             .sink { [weak self] completion in
                 guard let self else { return }

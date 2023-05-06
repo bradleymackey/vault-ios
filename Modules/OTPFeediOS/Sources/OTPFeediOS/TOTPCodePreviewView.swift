@@ -4,14 +4,12 @@ import OTPFeed
 import SwiftUI
 
 public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
-    var accountName: String
-    var issuer: String?
     var timerView: CodeTimerHorizontalBarView<Updater>
     @ObservedObject var previewViewModel: CodePreviewViewModel
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            OTPCodeLabels(accountName: accountName, issuer: issuer)
+            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             codeSection
         }
         .frame(maxWidth: .infinity)
@@ -97,10 +95,12 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     }
 
     static func makePreview(issuer: String?, renderer: OTPCodeRendererMock) -> some View {
-        let previewViewModel = CodePreviewViewModel(renderer: renderer)
-        return TOTPCodePreviewView(
+        let previewViewModel = CodePreviewViewModel(
             accountName: "test@example.com",
             issuer: issuer,
+            renderer: renderer
+        )
+        return TOTPCodePreviewView(
             timerView: CodeTimerHorizontalBarView(
                 viewModel: .init(updater: updater, clock: clock),
                 color: .blue

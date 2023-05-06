@@ -23,11 +23,13 @@ public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
         let timerController = CodeTimerController(timer: timer, period: period, clock: clock)
         let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: period)
         let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
-        let previewViewModel = CodePreviewViewModel(renderer: renderer)
-        let timerViewModel = CodeTimerViewModel(updater: timerController, clock: clock)
-        return TOTPCodePreviewView(
+        let previewViewModel = CodePreviewViewModel(
             accountName: code.accountName,
             issuer: code.issuer,
+            renderer: renderer
+        )
+        let timerViewModel = CodeTimerViewModel(updater: timerController, clock: clock)
+        return TOTPCodePreviewView(
             timerView: .init(viewModel: timerViewModel),
             previewViewModel: previewViewModel
         )

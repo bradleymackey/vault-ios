@@ -53,7 +53,11 @@ final class CodePreviewViewModelTests: XCTestCase {
         line: UInt = #line
     ) -> (MockCodeRenderer, CodePreviewViewModel) {
         let renderer = MockCodeRenderer()
-        let viewModel = CodePreviewViewModel(renderer: renderer)
+        let viewModel = CodePreviewViewModel(
+            accountName: "any",
+            issuer: "any",
+            renderer: renderer
+        )
         trackForMemoryLeaks(viewModel, file: file, line: line)
         return (renderer, viewModel)
     }

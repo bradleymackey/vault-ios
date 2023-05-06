@@ -42,10 +42,12 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
     }
 
     static var code: some View {
-        let previewViewModel = CodePreviewViewModel(renderer: codeRenderer)
-        return HOTPCodePreviewView(
+        let previewViewModel = CodePreviewViewModel(
             accountName: "test@test.com",
             issuer: "Authority",
+            renderer: codeRenderer
+        )
+        return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
                 hotpGenerator: .init(secret: Data()),
                 initialCounter: 0
