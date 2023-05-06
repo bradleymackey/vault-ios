@@ -12,14 +12,20 @@ import SwiftUI
 
 struct ContentView: View {
     var body: some View {
-        OTPCodeFeedView(
-            viewModel: .init(store: MockCodeStore()),
-            totpGenerator: LiveTOTPViewGenerator(
-                clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-                timer: LiveIntervalTimer()
-            ),
-            hotpGenerator: LiveHOTPViewGenerator()
-        )
+        NavigationView {
+            OTPCodeFeedView(
+                viewModel: .init(store: MockCodeStore()),
+                totpGenerator: LiveTOTPViewGenerator(
+                    clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
+                    timer: LiveIntervalTimer()
+                ),
+                hotpGenerator: LiveHOTPViewGenerator(),
+                gridSpacing: 8,
+                contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
+            )
+            .navigationTitle(Text("Codes"))
+            .navigationBarTitleDisplayMode(.large)
+        }
     }
 }
 
