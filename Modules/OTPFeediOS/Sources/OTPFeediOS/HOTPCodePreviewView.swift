@@ -11,18 +11,20 @@ struct HOTPCodePreviewView: View {
     var body: some View {
         HStack(alignment: .center) {
             labels
-            Spacer()
-            buttonView
-                .font(.largeTitle.bold())
         }
     }
 
     private var labels: some View {
         VStack(alignment: .leading, spacing: 8) {
             OTPCodeLabels(accountName: accountName, issuer: issuer)
-            textView
-                .font(.system(.largeTitle, design: .monospaced))
-                .fontWeight(.bold)
+            HStack(alignment: .firstTextBaseline) {
+                textView
+                    .font(.system(.largeTitle, design: .monospaced))
+                    .fontWeight(.bold)
+                Spacer()
+                buttonView
+                    .font(.title.bold())
+            }
         }
     }
 }
