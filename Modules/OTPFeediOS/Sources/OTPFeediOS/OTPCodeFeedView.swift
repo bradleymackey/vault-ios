@@ -12,17 +12,20 @@ public struct OTPCodeFeedView<
     public var totpGenerator: TOTPView
     public var hotpGenerator: HOTPView
     public var gridSpacing: Double
+    public var contentPadding: EdgeInsets
 
     public init(
         viewModel: FeedViewModel<Store>,
         totpGenerator: TOTPView,
         hotpGenerator: HOTPView,
-        gridSpacing: Double = 8
+        gridSpacing: Double = 8,
+        contentPadding: EdgeInsets = .init()
     ) {
         _viewModel = ObservedObject(initialValue: viewModel)
         self.totpGenerator = totpGenerator
         self.hotpGenerator = hotpGenerator
         self.gridSpacing = gridSpacing
+        self.contentPadding = contentPadding
     }
 
     public var body: some View {
@@ -39,6 +42,7 @@ public struct OTPCodeFeedView<
                     }
                 }
             }
+            .padding(contentPadding)
         }
         .task {
             await viewModel.reloadData()
