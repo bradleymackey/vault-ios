@@ -69,11 +69,23 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
             viewModel: .init(store: MockCodeStore()),
-            totpGenerator: LiveTOTPViewGenerator(
-                clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-                timer: LiveIntervalTimer()
-            ),
-            hotpGenerator: LiveHOTPViewGenerator()
+            totpGenerator: LiveTOTPItemViewDecorator(generator: totpGenerator(), onDetailTap: { code in
+                print("tapped \(code.accountName)")
+            }),
+            hotpGenerator: LiveHOTPItemViewDecorator(generator: hotpGenerator(), onDetailTap: { code in
+                print("tapped \(code.accountName)")
+            })
         )
+    }
+
+    private static func totpGenerator() -> LiveTOTPPreviewViewGenerator {
+        LiveTOTPPreviewViewGenerator(
+            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
+            timer: LiveIntervalTimer()
+        )
+    }
+
+    private static func hotpGenerator() -> LiveHOTPPreviewViewGenerator {
+        LiveHOTPPreviewViewGenerator()
     }
 }

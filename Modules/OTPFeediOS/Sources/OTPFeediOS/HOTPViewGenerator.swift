@@ -10,7 +10,7 @@ public protocol HOTPViewGenerator {
 }
 
 @MainActor
-public struct LiveHOTPViewGenerator: HOTPViewGenerator {
+public struct LiveHOTPPreviewViewGenerator: HOTPViewGenerator {
     public init() {}
 
     public func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> some View {
@@ -24,5 +24,23 @@ public struct LiveHOTPViewGenerator: HOTPViewGenerator {
             buttonView: CodeButtonView(viewModel: incrementerViewModel),
             previewViewModel: previewViewModel
         )
+    }
+}
+
+@MainActor
+public struct LiveHOTPItemViewDecorator<Generator: HOTPViewGenerator>: HOTPViewGenerator {
+    let generator: Generator
+    let onDetailTap: (OTPAuthCode) -> Void
+
+    public init(generator: Generator, onDetailTap: @escaping (OTPAuthCode) -> Void) {
+        self.generator = generator
+        self.onDetailTap = onDetailTap
+    }
+
+    public func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> some View {
+        let baseView = generator.makeHOTPView(counter: counter, code: code)
+        return OTPFeedItemView(preview: baseView, buttonPadding: 8) {
+            onDetailTap(code)
+        }
     }
 }
