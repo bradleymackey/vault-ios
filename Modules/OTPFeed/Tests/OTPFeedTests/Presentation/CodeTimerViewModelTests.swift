@@ -4,6 +4,7 @@ import OTPCore
 import OTPFeed
 import XCTest
 
+@MainActor
 final class CodeTimerViewModelTests: XCTestCase {
     func test_timeUpdated_setsTimerStateOnPublish() async throws {
         let (timer, sut) = makeSUT(initialTime: 100)

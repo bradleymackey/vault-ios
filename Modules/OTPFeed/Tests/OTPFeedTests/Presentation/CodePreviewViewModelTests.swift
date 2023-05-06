@@ -3,6 +3,7 @@ import Foundation
 import OTPFeed
 import XCTest
 
+@MainActor
 final class CodePreviewViewModelTests: XCTestCase {
     func test_code_updatesWithCodes() async throws {
         let (renderer, sut) = makeSUT()

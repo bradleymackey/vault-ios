@@ -3,6 +3,7 @@ import Foundation
 import OTPFeed
 import XCTest
 
+@MainActor
 final class FeedViewModelTests: XCTestCase {
     private var cancellables: Set<AnyCancellable>!
     override func setUp() {
