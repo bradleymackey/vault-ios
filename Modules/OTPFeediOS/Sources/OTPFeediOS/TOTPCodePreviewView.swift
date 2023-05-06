@@ -39,7 +39,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
             case let .error(err):
                 LoadingBarLabel(text: err.userTitle)
             case .noMoreCodes:
-                LoadingBarLabel(text: "No more codes")
+                LoadingBarLabel(text: localized(key: "codePreview.noMoreCodes.title"))
             case .visible, .notReady:
                 EmptyView()
             }
