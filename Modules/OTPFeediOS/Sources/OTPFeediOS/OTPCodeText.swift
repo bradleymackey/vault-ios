@@ -10,6 +10,8 @@ struct OTPCodeText: View {
         HStack(alignment: .firstTextBaseline, spacing: spacing) {
             ForEach(splitText) { value in
                 Text(value.text)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.1)
             }
         }
     }
@@ -46,6 +48,11 @@ struct OTPCodeText_Previews: PreviewProvider {
                 .font(.system(.title2, design: .monospaced))
             OTPCodeText(text: "123456789", spacing: 10)
                 .font(.system(.title, design: .monospaced))
+
+            OTPCodeText(text: "123456789", spacing: 10)
+                .font(.system(.title, design: .monospaced))
+                .fontWeight(.bold)
+                .frame(width: 50)
         }
     }
 }
