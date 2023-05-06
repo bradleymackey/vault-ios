@@ -24,7 +24,7 @@ final class CodePreviewViewModelTests: XCTestCase {
             renderer.subject.send("hi")
             renderer.subject.send(completion: .finished)
         }
-        XCTAssertEqual(output, [.visible("hi"), .noMoreCodes])
+        XCTAssertEqual(output, [.visible("hi"), .finished])
     }
 
     func test_code_goesToErrorWhenErrors() async throws {
