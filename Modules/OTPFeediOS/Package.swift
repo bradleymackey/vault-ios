@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "OTPFeediOS",
+    defaultLocalization: "en",
     platforms: [.iOS(.v16)],
     products: [
         .library(
