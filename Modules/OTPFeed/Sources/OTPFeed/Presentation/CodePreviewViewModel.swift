@@ -9,7 +9,7 @@ public final class CodePreviewViewModel: ObservableObject {
 
     public enum VisibleCode: Equatable {
         case notReady
-        case noMoreCodes
+        case finished
         case visible(String)
         case error(PresentationError)
     }
@@ -22,7 +22,7 @@ public final class CodePreviewViewModel: ObservableObject {
                 guard let self else { return }
                 switch completion {
                 case .finished:
-                    code = .noMoreCodes
+                    code = .finished
                 case let .failure(error):
                     code = .error(
                         PresentationError(
