@@ -12,6 +12,19 @@ public final class CodePreviewViewModel: ObservableObject {
         case finished
         case visible(String)
         case error(PresentationError)
+
+        public var allowsNextCodeToBeGenerated: Bool {
+            isVisible
+        }
+
+        public var isVisible: Bool {
+            switch self {
+            case .visible:
+                return true
+            default:
+                return false
+            }
+        }
     }
 
     private var cancellables = Set<AnyCancellable>()

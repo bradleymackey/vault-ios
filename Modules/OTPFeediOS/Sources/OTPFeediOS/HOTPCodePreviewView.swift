@@ -23,9 +23,14 @@ struct HOTPCodePreviewView: View {
                     .fontWeight(.bold)
                 Spacer()
                 buttonView
-                    .font(.title.bold())
+                    .font(canLoadNextCode ? .title.bold() : .title)
+                    .disabled(!canLoadNextCode)
             }
         }
+    }
+
+    var canLoadNextCode: Bool {
+        previewViewModel.code.allowsNextCodeToBeGenerated
     }
 }
 
