@@ -38,7 +38,7 @@ final class CodeTimerControllerTests: XCTestCase {
 
     private func makeSUT(
         clock clockTime: Double,
-        period: Double,
+        period: UInt64,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (EpochClock, MockIntervalTimer, CodeTimerController<MockIntervalTimer>) {

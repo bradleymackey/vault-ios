@@ -20,7 +20,7 @@ public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
     }
 
     public func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
-        let timerController = CodeTimerController(timer: timer, period: Double(period), clock: clock)
+        let timerController = CodeTimerController(timer: timer, period: period, clock: clock)
         let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: period)
         let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
         let previewViewModel = CodePreviewViewModel(renderer: renderer)
