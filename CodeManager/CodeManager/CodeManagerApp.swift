@@ -11,7 +11,12 @@ import SwiftUI
 struct CodeManagerApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            TabView {
+                ContentView()
+                    .tabItem {
+                        Label("Codes", systemImage: "key.horizontal.fill")
+                    }
+            }
         }
     }
 }
