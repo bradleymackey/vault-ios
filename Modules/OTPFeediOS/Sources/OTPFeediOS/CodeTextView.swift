@@ -3,34 +3,26 @@ import OTPFeed
 import SwiftUI
 
 public struct CodeTextView: View {
-    @ObservedObject public var viewModel: CodePreviewViewModel
+    var codeState: OTPCodeState
     var codeSpacing: Double
 
-    /// The last number of digits sent by a code, so the placeholder can be accurate.
-    @State private var lastCodeNumberOfDigits = 6
-
     public var body: some View {
-        switch viewModel.code {
+        switch codeState {
         case .notReady, .finished:
-            placeholderCode
-        case .error:
+            placeholderCode(digits: 6)
+        case let .error(_, digits):
             HStack(alignment: .center, spacing: codeSpacing) {
-                placeholderCode
+                placeholderCode(digits: digits)
                 Image(systemName: "exclamationmark.triangle.fill")
             }
             .foregroundColor(.red)
         case let .visible(code):
             makeCodeView(text: code)
-                .onReceive(viewModel.$code) { update in
-                    if case let .visible(code) = update {
-                        lastCodeNumberOfDigits = code.count
-                    }
-                }
         }
     }
 
-    private var placeholderCode: some View {
-        makeCodeView(text: String(repeating: "0", count: lastCodeNumberOfDigits))
+    private func placeholderCode(digits: Int) -> some View {
+        makeCodeView(text: String(repeating: "0", count: digits))
             .redacted(reason: .placeholder)
     }
 
@@ -43,35 +35,20 @@ struct CodeTextView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
             CodeTextView(
-                viewModel: .init(renderer: codeRenderer),
+                codeState: .visible("123456"),
                 codeSpacing: 10
             )
-            .onAppear {
-                codeRenderer.subject.send("123456")
-            }
 
             CodeTextView(
-                viewModel: .init(renderer: finishedRenderer),
+                codeState: .finished,
                 codeSpacing: 10
             )
-            .onAppear {
-                finishedRenderer.subject.send(completion: .finished)
-            }
 
             CodeTextView(
-                viewModel: .init(renderer: errorRenderer),
+                codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6),
                 codeSpacing: 10
             )
-            .onAppear {
-                errorRenderer.subject.send("1234567")
-                forceRunLoopAdvance()
-                errorRenderer.subject.send(completion: .failure(NSError(domain: "anu", code: 100)))
-            }
         }
         .font(.system(.largeTitle, design: .monospaced))
     }
-
-    private static let codeRenderer = OTPCodeRendererMock()
-    private static let finishedRenderer = OTPCodeRendererMock()
-    private static let errorRenderer = OTPCodeRendererMock()
 }

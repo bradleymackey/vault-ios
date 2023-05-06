@@ -20,7 +20,6 @@ public struct LiveHOTPPreviewViewGenerator: HOTPViewGenerator {
         return HOTPCodePreviewView(
             accountName: code.accountName,
             issuer: code.issuer,
-            textView: CodeTextView(viewModel: previewViewModel, codeSpacing: 10.0),
             buttonView: CodeButtonView(viewModel: incrementerViewModel),
             previewViewModel: previewViewModel
         )

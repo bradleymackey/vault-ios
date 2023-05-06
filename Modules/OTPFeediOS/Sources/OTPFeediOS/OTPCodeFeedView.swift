@@ -69,9 +69,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
             viewModel: .init(store: MockCodeStore()),
-            totpGenerator: LiveTOTPItemViewDecorator(generator: totpGenerator(), onDetailTap: { code in
-                print("tapped \(code.accountName)")
-            }),
+            totpGenerator: totpGenerator(),
             hotpGenerator: LiveHOTPItemViewDecorator(generator: hotpGenerator(), onDetailTap: { code in
                 print("tapped \(code.accountName)")
             })

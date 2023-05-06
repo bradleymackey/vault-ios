@@ -4,7 +4,6 @@ import SwiftUI
 struct HOTPCodePreviewView: View {
     var accountName: String
     var issuer: String?
-    var textView: CodeTextView
     var buttonView: CodeButtonView
     @ObservedObject var previewViewModel: CodePreviewViewModel
 
@@ -18,7 +17,7 @@ struct HOTPCodePreviewView: View {
         VStack(alignment: .leading, spacing: 8) {
             OTPCodeLabels(accountName: accountName, issuer: issuer)
             HStack(alignment: .firstTextBaseline) {
-                textView
+                CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
                     .font(.system(.largeTitle, design: .monospaced))
                     .fontWeight(.bold)
                 Spacer()
@@ -63,7 +62,6 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
         return HOTPCodePreviewView(
             accountName: accountName,
             issuer: "Authority",
-            textView: CodeTextView(viewModel: previewViewModel, codeSpacing: 10.0),
             buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
                 hotpGenerator: .init(secret: Data()),
                 initialCounter: 0

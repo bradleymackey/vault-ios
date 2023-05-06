@@ -6,7 +6,6 @@ import SwiftUI
 public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
     var accountName: String
     var issuer: String?
-    var textView: CodeTextView
     var timerView: CodeTimerHorizontalBarView<Updater>
     @ObservedObject var previewViewModel: CodePreviewViewModel
 
@@ -20,7 +19,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
 
     private var codeSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            textView
+            CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
             timerSection
@@ -36,7 +35,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
             switch previewViewModel.code {
-            case let .error(err):
+            case let .error(err, _):
                 LoadingBarLabel(text: err.userTitle)
             case .finished, .visible, .notReady:
                 EmptyView()
@@ -98,18 +97,15 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     }
 
     static func makePreview(issuer: String?, renderer: OTPCodeRendererMock) -> some View {
-        TOTPCodePreviewView(
+        let previewViewModel = CodePreviewViewModel(renderer: renderer)
+        return TOTPCodePreviewView(
             accountName: "test@example.com",
             issuer: issuer,
-            textView: CodeTextView(
-                viewModel: .init(renderer: renderer),
-                codeSpacing: 10
-            ),
             timerView: CodeTimerHorizontalBarView(
                 viewModel: .init(updater: updater, clock: clock),
                 color: .blue
             ),
-            previewViewModel: .init(renderer: renderer)
+            previewViewModel: previewViewModel
         )
         .frame(width: 250, height: 100)
     }
