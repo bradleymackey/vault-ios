@@ -19,19 +19,38 @@ public struct OTPCodeFeedView<
     }
 
     public var body: some View {
-        List {
-            ForEach(viewModel.codes) { storedCode in
-                switch storedCode.code.type {
-                case let .totp(period):
-                    totpGenerator.makeTOTPView(period: period, code: storedCode.code)
-                case let .hotp(counter):
-                    hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
+        ScrollView(.vertical) {
+            LazyVGrid(columns: columns) {
+                ForEach(viewModel.codes) { storedCode in
+                    switch storedCode.code.type {
+                    case let .totp(period):
+                        totpGenerator.makeTOTPView(period: period, code: storedCode.code)
+                            .modifier(CardModifier(innerPadding: 8))
+                    case let .hotp(counter):
+                        hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
+                            .modifier(CardModifier(innerPadding: 8))
+                    }
                 }
             }
         }
         .task {
             await viewModel.reloadData()
         }
+    }
+
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: 150, maximum: 400))]
+    }
+}
+
+struct CardModifier: ViewModifier {
+    var innerPadding: Double
+
+    func body(content: Content) -> some View {
+        content
+            .padding(innerPadding)
+            .background(Color(UIColor.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 10))
     }
 }
 
