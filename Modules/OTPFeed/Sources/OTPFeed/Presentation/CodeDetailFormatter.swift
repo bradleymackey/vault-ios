@@ -27,16 +27,16 @@ public struct CodeDetailFormatter {
     public var secretType: String {
         switch code.secret.format {
         case .base32:
-            return "Base 32"
+            return localized(key: "codeDetail.secretType.base32")
         }
     }
 
     public var typeName: String {
         switch code.type {
         case .totp:
-            return "Timer (TOTP)"
+            return localized(key: "codeDetail.typeName.totp")
         case .hotp:
-            return "Counter (HOTP)"
+            return localized(key: "codeDetail.typeName.hotp")
         }
     }
 

@@ -1,2 +1,6 @@
 "feedRetrieval.error.title" = "Couldn't fetch codes";
 "feedRetrieval.error.description" = "We can't get your codes for some reason. Please reinstall the app and restore from a backup.";
+
+"codeDetail.secretType.base32" = "Base 32";
+"codeDetail.typeName.totp" = "Timer (TOTP)";
+"codeDetail.typeName.hotp" = "Counter (HOTP)";
