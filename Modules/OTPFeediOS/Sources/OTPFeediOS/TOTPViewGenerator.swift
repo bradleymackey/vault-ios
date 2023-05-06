@@ -18,12 +18,11 @@ public struct LiveTOTPViewGenerator: TOTPViewGenerator {
     }
 
     public func makeTOTPView(period: UInt32, code: OTPAuthCode) -> some View {
-        let hotpGenerator = code.hotpGenerator()
-        let totpGenerator = TOTPGenerator(generator: hotpGenerator, timeInterval: UInt64(period))
-        let timer = CodeTimerController(timer: timer, period: Double(period), clock: clock)
-        let renderer = TOTPCodeRenderer(timer: timer, totpGenerator: totpGenerator)
+        let timerController = CodeTimerController(timer: timer, period: Double(period), clock: clock)
+        let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: UInt64(period))
+        let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
         let previewViewModel = CodePreviewViewModel(renderer: renderer)
-        let timerViewModel = CodeTimerViewModel(updater: timer, clock: clock)
+        let timerViewModel = CodeTimerViewModel(updater: timerController, clock: clock)
         return TOTPCodePreviewView(
             accountName: code.accountName,
             issuer: code.issuer,
