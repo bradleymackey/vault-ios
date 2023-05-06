@@ -31,23 +31,40 @@ struct HOTPCodePreviewView: View {
 
 struct HOTPCodePreviewView_Previews: PreviewProvider {
     private static let codeRenderer = OTPCodeRendererMock()
+    private static let finishedRenderer = OTPCodeRendererMock()
+    private static let errorRenderer = OTPCodeRendererMock()
 
     static var previews: some View {
         VStack(spacing: 20) {
-            HOTPCodePreviewView(
-                accountName: "test@test.com",
-                issuer: "Authority",
-                textView: CodeTextView(viewModel: .init(renderer: codeRenderer), codeSpacing: 10.0),
-                buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
-                    hotpGenerator: .init(secret: Data()),
-                    initialCounter: 0
-                ), counter: 0)),
-                previewViewModel: .init(renderer: codeRenderer)
-            )
-            .frame(width: 250, height: 100)
+            makePreviewView(accountName: "Normal", renderer: codeRenderer)
+                .onAppear {
+                    codeRenderer.subject.send("123456")
+                }
+
+            makePreviewView(accountName: "Finished", renderer: finishedRenderer)
+                .onAppear {
+                    finishedRenderer.subject.send(completion: .finished)
+                }
+
+            makePreviewView(accountName: "Error", renderer: errorRenderer)
+                .onAppear {
+                    finishedRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
+                }
         }
-        .onAppear {
-            codeRenderer.subject.send("123456")
-        }
+    }
+
+    private static func makePreviewView(accountName: String, renderer: OTPCodeRendererMock) -> some View {
+        let previewViewModel = CodePreviewViewModel(renderer: renderer)
+        return HOTPCodePreviewView(
+            accountName: accountName,
+            issuer: "Authority",
+            textView: CodeTextView(viewModel: previewViewModel, codeSpacing: 10.0),
+            buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
+                hotpGenerator: .init(secret: Data()),
+                initialCounter: 0
+            ), counter: 0)),
+            previewViewModel: previewViewModel
+        )
+        .frame(width: 250, height: 100)
     }
 }
