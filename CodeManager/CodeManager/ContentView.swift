@@ -10,21 +10,94 @@ import OTPFeed
 import OTPFeediOS
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
+    @State private var modal: Modal?
+
+    enum Modal: Identifiable {
+        case detail(UUID, OTPAuthCode)
+
+        var id: some Hashable {
+            switch self {
+            case let .detail(id, _):
+                return id
+            }
+        }
+    }
+
     var body: some View {
         NavigationView {
             OTPCodeFeedView(
                 viewModel: .init(store: MockCodeStore()),
-                totpGenerator: LiveTOTPViewGenerator(
-                    clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-                    timer: LiveIntervalTimer()
-                ),
-                hotpGenerator: LiveHOTPViewGenerator(),
+                totpGenerator: totpGenerator(),
+                hotpGenerator: hotpGenerator(),
                 gridSpacing: 8,
                 contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
             )
             .navigationTitle(Text("Codes"))
             .navigationBarTitleDisplayMode(.large)
+            .sheet(item: $modal) { visible in
+                switch visible {
+                case let .detail(_, code):
+                    switch code.type {
+                    case let .totp(period):
+                        NavigationView {
+                            OTPCodeDetailView(
+                                preview: totpPreviewGenerator().makeTOTPView(period: period, code: code),
+                                viewModel: .init(code: code)
+                            )
+                            .toolbar {
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button {
+                                        modal = nil
+                                    } label: {
+                                        Text("Done")
+                                    }
+                                }
+                            }
+                        }
+                    case let .hotp(counter):
+                        NavigationView {
+                            OTPCodeDetailView(
+                                preview: hotpPreviewGenerator().makeHOTPView(counter: counter, code: code),
+                                viewModel: .init(code: code)
+                            )
+                            .toolbar {
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button {
+                                        modal = nil
+                                    } label: {
+                                        Text("Done")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    func totpPreviewGenerator() -> some TOTPViewGenerator {
+        LiveTOTPPreviewViewGenerator(
+            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
+            timer: LiveIntervalTimer()
+        )
+    }
+
+    func totpGenerator() -> some TOTPViewGenerator {
+        LiveTOTPItemViewDecorator(generator: totpPreviewGenerator()) { code in
+            modal = .detail(UUID(), code)
+        }
+    }
+
+    func hotpPreviewGenerator() -> some HOTPViewGenerator {
+        LiveHOTPPreviewViewGenerator()
+    }
+
+    func hotpGenerator() -> some HOTPViewGenerator {
+        LiveHOTPItemViewDecorator(generator: hotpPreviewGenerator()) { code in
+            modal = .detail(UUID(), code)
         }
     }
 }
