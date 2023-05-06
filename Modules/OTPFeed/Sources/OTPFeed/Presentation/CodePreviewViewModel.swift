@@ -25,7 +25,8 @@ public final class CodePreviewViewModel: ObservableObject {
                 case let .failure(error):
                     code = .error(
                         PresentationError(
-                            userTitle: "Error",
+                            userTitle: localized(key: "codePreview.codeGenerationError.title"),
+                            userDescription: localized(key: "codePreview.codeGenerationError.description"),
                             debugDescription: error.localizedDescription
                         )
                     )
