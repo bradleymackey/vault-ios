@@ -10,7 +10,7 @@ public protocol TOTPViewGenerator {
 }
 
 @MainActor
-public struct LiveTOTPViewGenerator: TOTPViewGenerator {
+public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer
 
@@ -32,5 +32,23 @@ public struct LiveTOTPViewGenerator: TOTPViewGenerator {
             timerView: .init(viewModel: timerViewModel),
             previewViewModel: previewViewModel
         )
+    }
+}
+
+@MainActor
+public struct LiveTOTPItemViewDecorator<Generator: TOTPViewGenerator>: TOTPViewGenerator {
+    let generator: Generator
+    let onDetailTap: (OTPAuthCode) -> Void
+
+    public init(generator: Generator, onDetailTap: @escaping (OTPAuthCode) -> Void) {
+        self.generator = generator
+        self.onDetailTap = onDetailTap
+    }
+
+    public func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
+        let baseView = generator.makeTOTPView(period: period, code: code)
+        return OTPFeedItemView(preview: baseView, buttonPadding: 8) {
+            onDetailTap(code)
+        }
     }
 }
