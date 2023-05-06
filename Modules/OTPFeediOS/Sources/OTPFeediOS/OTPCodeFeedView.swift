@@ -11,16 +11,23 @@ public struct OTPCodeFeedView<
     @ObservedObject public var viewModel: FeedViewModel<Store>
     public var totpGenerator: TOTPView
     public var hotpGenerator: HOTPView
+    public var gridSpacing: Double
 
-    public init(viewModel: FeedViewModel<Store>, totpGenerator: TOTPView, hotpGenerator: HOTPView) {
+    public init(
+        viewModel: FeedViewModel<Store>,
+        totpGenerator: TOTPView,
+        hotpGenerator: HOTPView,
+        gridSpacing: Double = 8
+    ) {
         _viewModel = ObservedObject(initialValue: viewModel)
         self.totpGenerator = totpGenerator
         self.hotpGenerator = hotpGenerator
+        self.gridSpacing = gridSpacing
     }
 
     public var body: some View {
         ScrollView(.vertical) {
-            LazyVGrid(columns: columns) {
+            LazyVGrid(columns: columns, spacing: gridSpacing) {
                 ForEach(viewModel.codes) { storedCode in
                     switch storedCode.code.type {
                     case let .totp(period):
