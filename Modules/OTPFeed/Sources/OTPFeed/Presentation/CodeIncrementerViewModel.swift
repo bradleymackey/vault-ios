@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import OTPCore
 
+@MainActor
 public final class CodeIncrementerViewModel: ObservableObject {
     private let hotpRenderer: HOTPCodeRenderer
     private var counter: UInt64

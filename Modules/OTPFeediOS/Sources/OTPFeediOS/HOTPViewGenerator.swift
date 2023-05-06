@@ -3,11 +3,13 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
+@MainActor
 public protocol HOTPViewGenerator {
     associatedtype CodeView: View
     func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> CodeView
 }
 
+@MainActor
 public struct LiveHOTPViewGenerator: HOTPViewGenerator {
     public init() {}
 

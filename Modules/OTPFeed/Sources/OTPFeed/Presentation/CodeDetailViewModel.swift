@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import OTPCore
 
+@MainActor
 public final class CodeDetailViewModel: ObservableObject {
     private let code: OTPAuthCode
     /// Detail entries about the code, in order, ready for presentation.
