@@ -9,12 +9,12 @@ public protocol CodeTimerUpdater {
 /// Controller for producing timers for a given code, according to a clock.
 public final class CodeTimerController<Timer: IntervalTimer>: CodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
-    private let period: Double
+    private let period: UInt64
     private var timerPublisher: AnyCancellable?
     private let timer: Timer
     private let clock: EpochClock
 
-    public init(timer: Timer, period: Double, clock: EpochClock) {
+    public init(timer: Timer, period: UInt64, clock: EpochClock) {
         self.period = period
         self.timer = timer
         self.clock = clock
@@ -45,11 +45,11 @@ extension CodeTimerController {
             }
     }
 
-    private static func timerState(currentTime: Double, period: Double) -> OTPTimerState {
-        let currentCodeNumber = UInt64(currentTime) / UInt64(period)
+    private static func timerState(currentTime: Double, period: UInt64) -> OTPTimerState {
+        let currentCodeNumber = UInt64(currentTime) / period
         let nextCodeNumber = currentCodeNumber + 1
-        let codeStart = currentCodeNumber * UInt64(period)
-        let codeEnd = nextCodeNumber * UInt64(period)
+        let codeStart = currentCodeNumber * period
+        let codeEnd = nextCodeNumber * period
         return OTPTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
     }
 }
