@@ -8,6 +8,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         let view = HorizontalTimerProgressBarView(
             initialFractionCompleted: 0,
             startSignaller: PassthroughSubject().eraseToAnyPublisher(),
+            direction: .fills,
             color: .blue
         ).frame(width: 150, height: 20)
 
@@ -18,6 +19,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         let view = HorizontalTimerProgressBarView(
             initialFractionCompleted: 0.5,
             startSignaller: PassthroughSubject().eraseToAnyPublisher(),
+            direction: .fills,
             color: .blue
         ).frame(width: 150, height: 20)
 
@@ -28,6 +30,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         let view = HorizontalTimerProgressBarView(
             initialFractionCompleted: 1,
             startSignaller: PassthroughSubject().eraseToAnyPublisher(),
+            direction: .fills,
             color: .blue
         ).frame(width: 150, height: 20)
 
