@@ -33,12 +33,12 @@ struct ManagedOTPCodeDecoder {
     private func decodeType(code: ManagedOTPCode) throws -> OTPAuthType {
         switch code.authType {
         case "totp":
-            guard let period = code.period?.uint32Value else {
+            guard let period = code.period?.uint64Value else {
                 throw DecodingError.missingPeriodForTOTP
             }
             return .totp(period: period)
         case "hotp":
-            guard let counter = code.counter?.uint32Value else {
+            guard let counter = code.counter?.uint64Value else {
                 throw DecodingError.missingCounterForHOTP
             }
             return .hotp(counter: counter)

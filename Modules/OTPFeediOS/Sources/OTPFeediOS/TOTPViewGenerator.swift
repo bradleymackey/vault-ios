@@ -5,7 +5,7 @@ import SwiftUI
 
 public protocol TOTPViewGenerator {
     associatedtype CodeView: View
-    func makeTOTPView(period: UInt32, code: OTPAuthCode) -> CodeView
+    func makeTOTPView(period: UInt64, code: OTPAuthCode) -> CodeView
 }
 
 public struct LiveTOTPViewGenerator: TOTPViewGenerator {
@@ -17,9 +17,9 @@ public struct LiveTOTPViewGenerator: TOTPViewGenerator {
         self.timer = timer
     }
 
-    public func makeTOTPView(period: UInt32, code: OTPAuthCode) -> some View {
+    public func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
         let timerController = CodeTimerController(timer: timer, period: Double(period), clock: clock)
-        let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: UInt64(period))
+        let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: period)
         let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
         let previewViewModel = CodePreviewViewModel(renderer: renderer)
         let timerViewModel = CodeTimerViewModel(updater: timerController, clock: clock)

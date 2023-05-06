@@ -84,13 +84,13 @@ extension OTPAuthURIDecoder {
         }
         switch host {
         case "totp":
-            if let periodString = uri.otpParameter(.period), let period = UInt32(periodString) {
+            if let periodString = uri.otpParameter(.period), let period = UInt64(periodString) {
                 return .totp(period: period)
             } else {
                 return .totp()
             }
         case "hotp":
-            if let counterStr = uri.otpParameter(.counter), let count = UInt32(counterStr) {
+            if let counterStr = uri.otpParameter(.counter), let count = UInt64(counterStr) {
                 return .hotp(counter: count)
             } else {
                 return .hotp()

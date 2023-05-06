@@ -61,8 +61,8 @@ public enum OTPAuthAlgorithm: Equatable {
 }
 
 public enum OTPAuthType: Equatable {
-    case totp(period: UInt32 = 30)
-    case hotp(counter: UInt32 = 0)
+    case totp(period: UInt64 = 30)
+    case hotp(counter: UInt64 = 0)
 
     public enum Kind: Equatable {
         case totp, hotp
