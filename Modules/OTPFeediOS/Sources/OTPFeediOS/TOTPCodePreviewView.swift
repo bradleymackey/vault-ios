@@ -10,6 +10,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
+                .padding(.horizontal, 2)
             codeSection
         }
         .frame(maxWidth: .infinity)
@@ -20,6 +21,7 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
             CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
+                .padding(.horizontal, 2)
             timerSection
         }
         .frame(maxWidth: .infinity, alignment: .leading)
