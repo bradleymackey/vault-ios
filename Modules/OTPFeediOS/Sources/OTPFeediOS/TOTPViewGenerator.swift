@@ -28,7 +28,6 @@ public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
         return TOTPCodePreviewView(
             accountName: code.accountName,
             issuer: code.issuer,
-            textView: .init(viewModel: previewViewModel, codeSpacing: 10.0),
             timerView: .init(viewModel: timerViewModel),
             previewViewModel: previewViewModel
         )
