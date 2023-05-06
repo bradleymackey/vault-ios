@@ -22,9 +22,12 @@ func forceRunLoopAdvance() {
 
 struct MockCodeStore: OTPCodeStoreReader {
     let codes: [StoredOTPCode] = [
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 1")),
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "Test 2")),
-        .init(id: UUID(), code: .init(type: .hotp(counter: 0), secret: .empty(), accountName: "Test 3")),
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "test@example.com", issuer: "Ebay")),
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com")),
+        .init(
+            id: UUID(),
+            code: .init(type: .hotp(counter: 0), secret: .empty(), accountName: "win@ein.com", issuer: "Google")
+        ),
     ]
 
     func retrieve() async throws -> [OTPFeed.StoredOTPCode] {
