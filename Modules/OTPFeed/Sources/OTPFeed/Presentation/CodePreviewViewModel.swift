@@ -3,6 +3,7 @@ import Foundation
 import OTPCore
 
 /// A preview of an OTP code.
+@MainActor
 public final class CodePreviewViewModel: ObservableObject {
     @Published public private(set) var code: VisibleCode = .notReady
 

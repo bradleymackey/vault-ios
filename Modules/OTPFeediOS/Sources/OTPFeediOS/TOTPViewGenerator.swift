@@ -3,11 +3,13 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
+@MainActor
 public protocol TOTPViewGenerator {
     associatedtype CodeView: View
     func makeTOTPView(period: UInt64, code: OTPAuthCode) -> CodeView
 }
 
+@MainActor
 public struct LiveTOTPViewGenerator: TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer

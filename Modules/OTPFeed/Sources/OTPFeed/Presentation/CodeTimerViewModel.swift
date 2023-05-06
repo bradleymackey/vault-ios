@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import OTPCore
 
+@MainActor
 public final class CodeTimerViewModel<Updater: CodeTimerUpdater>: ObservableObject {
     @Published public private(set) var timer: OTPTimerState?
 
