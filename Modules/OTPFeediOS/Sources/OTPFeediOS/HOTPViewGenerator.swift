@@ -15,11 +15,13 @@ public struct LiveHOTPPreviewViewGenerator: HOTPViewGenerator {
 
     public func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> some View {
         let renderer = HOTPCodeRenderer(hotpGenerator: code.hotpGenerator(), initialCounter: counter)
-        let previewViewModel = CodePreviewViewModel(renderer: renderer)
-        let incrementerViewModel = CodeIncrementerViewModel(hotpRenderer: renderer, counter: counter)
-        return HOTPCodePreviewView(
+        let previewViewModel = CodePreviewViewModel(
             accountName: code.accountName,
             issuer: code.issuer,
+            renderer: renderer
+        )
+        let incrementerViewModel = CodeIncrementerViewModel(hotpRenderer: renderer, counter: counter)
+        return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: incrementerViewModel),
             previewViewModel: previewViewModel
         )
