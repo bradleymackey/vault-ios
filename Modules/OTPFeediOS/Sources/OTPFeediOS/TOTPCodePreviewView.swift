@@ -13,7 +13,6 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
                 .padding(.horizontal, 2)
             codeSection
-                .redacted(reason: hideCode ? .placeholder : [])
         }
         .frame(maxWidth: .infinity)
     }
@@ -23,17 +22,25 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             Button {
                 previewViewModel.didTapCode()
             } label: {
-                CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
+                CodeTextView(codeState: effectiveCodeState, codeSpacing: 10.0)
                     .font(.system(.largeTitle, design: .monospaced))
                     .fontWeight(.bold)
                     .padding(.horizontal, 2)
             }
             .buttonStyle(.plain)
-            .disabled(!previewViewModel.code.isVisible)
+            .disabled(!effectiveCodeState.isVisible)
 
             timerSection
         }
         .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var effectiveCodeState: OTPCodeState {
+        if hideCode {
+            return .finished
+        } else {
+            return previewViewModel.code
+        }
     }
 
     @ViewBuilder
@@ -43,7 +50,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 .frame(height: 20)
                 .clipShape(RoundedRectangle(cornerRadius: 20))
 
-            switch previewViewModel.code {
+            switch effectiveCodeState {
             case let .error(err, _):
                 LoadingBarLabel(text: err.userTitle)
             case .finished, .visible, .notReady:
@@ -54,7 +61,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     @ViewBuilder
     private var activeTimerView: some View {
-        switch previewViewModel.code {
+        switch effectiveCodeState {
         case .visible:
             timerView
         case .error:
