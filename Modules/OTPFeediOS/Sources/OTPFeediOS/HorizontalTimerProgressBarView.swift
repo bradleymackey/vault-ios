@@ -5,6 +5,7 @@ public struct HorizontalTimerProgressBarView: View {
     @Environment(\.redactionReasons) var redactionReasons
 
     var color: Color
+    var backgroundColor: Color
     /// The wayt that the progress bar completes, by filling or draining.
     var direction: Direction
     /// Recieves events indicating the progress view should update showing the given progress.
@@ -62,20 +63,27 @@ public struct HorizontalTimerProgressBarView: View {
         initialFractionCompleted: Double,
         startSignaller: AnyPublisher<Progress, Never>,
         direction: Direction,
-        color: Color = .blue
+        color: Color = .blue,
+        backgroundColor: Color = Color(UIColor.systemGray6)
     ) {
         _currentFractionCompleted = State(initialValue: initialFractionCompleted)
         self.startSignaller = startSignaller
         self.direction = direction
         self.color = color
+        self.backgroundColor = backgroundColor
     }
 
-    public static func fixed(at progress: Double, color: Color) -> HorizontalTimerProgressBarView {
+    public static func fixed(
+        at progress: Double,
+        color: Color,
+        backgroundColor: Color = Color(UIColor.systemGray6)
+    ) -> HorizontalTimerProgressBarView {
         HorizontalTimerProgressBarView(
             initialFractionCompleted: progress,
             startSignaller: PassthroughSubject().eraseToAnyPublisher(),
             direction: .fills,
-            color: color
+            color: color,
+            backgroundColor: backgroundColor
         )
     }
 
@@ -83,7 +91,7 @@ public struct HorizontalTimerProgressBarView: View {
         GeometryReader { proxy in
             ZStack(alignment: .leading) {
                 Rectangle()
-                    .fill(Color(.systemGray6))
+                    .fill(backgroundColor)
                 if redactionReasons.isEmpty {
                     Rectangle()
                         .fill(color)
