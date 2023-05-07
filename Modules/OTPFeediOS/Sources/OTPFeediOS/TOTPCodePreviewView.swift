@@ -3,9 +3,9 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
-    var timerView: CodeTimerHorizontalBarView<Updater>
+public struct TOTPCodePreviewView<TimerBar: View>: View {
     @ObservedObject var previewViewModel: CodePreviewViewModel
+    var timerView: TimerBar
     var hideCode: Bool
 
     public var body: some View {
@@ -117,11 +117,11 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
             renderer: renderer
         )
         return TOTPCodePreviewView(
+            previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
                 viewModel: .init(updater: updater, clock: clock),
                 color: .blue
             ),
-            previewViewModel: previewViewModel,
             hideCode: hideCode
         )
         .frame(width: 250, height: 100)
