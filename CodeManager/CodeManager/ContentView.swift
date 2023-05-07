@@ -59,35 +59,17 @@ struct ContentView: View {
                     switch code.type {
                     case let .totp(period):
                         NavigationView {
-                            OTPCodeDetailView(
-                                preview: totpGenerator().makeTOTPView(period: period, code: code),
-                                viewModel: .init(code: code)
+                            CodeDetailView(
+                                code: code,
+                                preview: totpGenerator().makeTOTPView(period: period, code: code)
                             )
-                            .toolbar {
-                                ToolbarItem(placement: .confirmationAction) {
-                                    Button {
-                                        modal = nil
-                                    } label: {
-                                        Text("Done")
-                                    }
-                                }
-                            }
                         }
                     case let .hotp(counter):
                         NavigationView {
-                            OTPCodeDetailView(
-                                preview: hotpGenerator().makeHOTPView(counter: counter, code: code),
-                                viewModel: .init(code: code)
+                            CodeDetailView(
+                                code: code,
+                                preview: hotpGenerator().makeHOTPView(counter: counter, code: code)
                             )
-                            .toolbar {
-                                ToolbarItem(placement: .confirmationAction) {
-                                    Button {
-                                        modal = nil
-                                    } label: {
-                                        Text("Done")
-                                    }
-                                }
-                            }
                         }
                     }
                 }

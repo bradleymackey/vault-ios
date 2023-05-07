@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */; };
 		1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */; };
 		1CDA9C972A057A8B00555E7A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C962A057A8B00555E7A /* ContentView.swift */; };
 		1CDA9C992A057A8C00555E7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CDA9C982A057A8C00555E7A /* Assets.xcassets */; };
@@ -35,6 +36,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDetailView.swift; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* CodeManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeManagerApp.swift; sourceTree = "<group>"; };
 		1CDA9C962A057A8B00555E7A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -102,6 +104,7 @@
 			children = (
 				1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */,
 				1CDA9C962A057A8B00555E7A /* ContentView.swift */,
+				1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */,
 				1CDA9C982A057A8C00555E7A /* Assets.xcassets */,
 				1CDA9C9A2A057A8C00555E7A /* Preview Content */,
 			);
@@ -282,6 +285,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */,
 				1CDA9C972A057A8B00555E7A /* ContentView.swift in Sources */,
 				1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */,
 			);
