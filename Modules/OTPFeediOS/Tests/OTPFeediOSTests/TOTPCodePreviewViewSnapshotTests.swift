@@ -54,9 +54,14 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
         let preview = CodePreviewViewModel(accountName: accountName, issuer: issuer, fixedCodeState: state)
         return TOTPCodePreviewView(
             previewViewModel: preview,
-            timerView: Rectangle().fill(Color.red),
+            timerView: testTimerGradient(),
             hideCode: false
         )
         .frame(width: 250, height: 150)
+    }
+
+    /// We use this specific gradient for the default timer so it's very clear if it's been overridden.
+    private func testTimerGradient() -> some View {
+        LinearGradient(colors: [.red, .blue, .green], startPoint: .leading, endPoint: .trailing)
     }
 }
