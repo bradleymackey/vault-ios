@@ -103,7 +103,7 @@ public struct HorizontalTimerProgressBarView: View {
                 }
             }
         }
-        .onReceive(startSignaller) { state in
+        .onReceive(startSignaller.receive(on: RunLoop.main)) { state in
             withAnimation(.linear(duration: 0.15)) {
                 currentFractionCompleted = direction.fillFraction(state.fraction)
             }
