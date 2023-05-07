@@ -42,7 +42,7 @@ public struct OTPCodeFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 150, maximum: 400), spacing: gridSpacing, alignment: .bottom)]
+        [GridItem(.adaptive(minimum: 150, maximum: 400), spacing: gridSpacing, alignment: .top)]
     }
 }
 
