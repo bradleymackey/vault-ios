@@ -79,7 +79,8 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     private static func totpGenerator() -> LiveTOTPPreviewViewGenerator {
         LiveTOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer()
+            timer: LiveIntervalTimer(),
+            hideCodes: false
         )
     }
 

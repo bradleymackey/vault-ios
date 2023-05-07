@@ -31,6 +31,12 @@ public final class CodePreviewViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
+    public init(accountName: String, issuer: String?, fixedCodeState: OTPCodeState) {
+        self.accountName = accountName
+        self.issuer = issuer
+        code = fixedCodeState
+    }
+
     public init(accountName: String, issuer: String?, renderer: some OTPCodeRenderer) {
         self.accountName = accountName
         self.issuer = issuer
