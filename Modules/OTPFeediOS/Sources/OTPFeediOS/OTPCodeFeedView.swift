@@ -57,9 +57,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
         OTPCodeFeedView(
             viewModel: .init(store: MockCodeStore()),
             totpGenerator: totpGenerator(),
-            hotpGenerator: LiveHOTPItemViewDecorator(generator: hotpGenerator(), onDetailTap: { code in
-                print("tapped \(code.accountName)")
-            })
+            hotpGenerator: hotpGenerator()
         )
     }
 
@@ -72,6 +70,6 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     }
 
     private static func hotpGenerator() -> LiveHOTPPreviewViewGenerator {
-        LiveHOTPPreviewViewGenerator()
+        LiveHOTPPreviewViewGenerator(hideCodes: false)
     }
 }
