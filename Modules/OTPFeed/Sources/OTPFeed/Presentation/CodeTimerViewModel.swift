@@ -22,4 +22,9 @@ public final class CodeTimerViewModel<Updater: CodeTimerUpdater>: ObservableObje
     public var currentTime: Double {
         clock.currentTime
     }
+
+    /// Request that the timer controller to re-ticks it's clock so we have an up-to-date timer state sent to `timer`.
+    public func recalculateTimer() {
+        updater.recalculate()
+    }
 }

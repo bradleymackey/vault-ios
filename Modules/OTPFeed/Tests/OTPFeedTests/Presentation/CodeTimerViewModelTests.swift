@@ -37,6 +37,14 @@ final class CodeTimerViewModelTests: XCTestCase {
         XCTAssertEqual(values, [OTPTimerState(startTime: 100, endTime: 101)])
     }
 
+    func test_recalculateTimer_forcesUpdaterToRecalculate() async throws {
+        let (timer, sut) = makeSUT(initialTime: 100)
+        sut.recalculateTimer()
+        sut.recalculateTimer()
+        sut.recalculateTimer()
+        XCTAssertEqual(timer.recalculateCallCount, 3)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(

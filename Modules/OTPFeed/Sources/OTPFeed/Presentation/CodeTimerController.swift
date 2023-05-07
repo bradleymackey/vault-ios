@@ -3,6 +3,7 @@ import Foundation
 import OTPCore
 
 public protocol CodeTimerUpdater {
+    func recalculate()
     func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never>
 }
 
@@ -28,19 +29,19 @@ public final class CodeTimerController<Timer: IntervalTimer>: CodeTimerUpdater {
     public func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
         timerStateSubject.eraseToAnyPublisher()
     }
-}
 
-extension CodeTimerController {
-    private func updateTimerState() {
+    public func recalculate() {
         let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)
     }
+}
 
+extension CodeTimerController {
     private func scheduleNextClock() {
         let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
         timerPublisher = timer.wait(for: remaining)
             .sink { [weak self] in
-                self?.updateTimerState()
+                self?.recalculate()
                 self?.scheduleNextClock()
             }
     }

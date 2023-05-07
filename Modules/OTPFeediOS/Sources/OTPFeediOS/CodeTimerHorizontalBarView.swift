@@ -15,12 +15,20 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     }
 
     public var body: some View {
-        HorizontalTimerProgressBarView(
-            initialFractionCompleted: 0,
-            startSignaller: viewModel.timerPublisher(currentTime: { viewModel.currentTime }),
-            direction: .drains,
-            color: color
-        )
+        GeometryReader { proxy in
+            HorizontalTimerProgressBarView(
+                initialFractionCompleted: 0,
+                startSignaller: viewModel.timerPublisher(currentTime: { viewModel.currentTime }),
+                direction: .drains,
+                color: color
+            )
+            .onAppear {
+                viewModel.recalculateTimer()
+            }
+            .onChange(of: proxy.size) { _ in
+                viewModel.recalculateTimer()
+            }
+        }
     }
 }
 
