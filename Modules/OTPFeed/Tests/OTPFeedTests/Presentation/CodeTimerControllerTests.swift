@@ -5,7 +5,7 @@ import OTPFeed
 import XCTest
 
 final class CodeTimerControllerTests: XCTestCase {
-    func test_timerUpdatedPublisher_initiallyPublishesForCreation() async throws {
+    func test_timerUpdatedPublisher_publishesInitialValueImmediately() async throws {
         let (_, _, sut) = makeSUT(clock: 62, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(1)
@@ -16,7 +16,7 @@ final class CodeTimerControllerTests: XCTestCase {
         XCTAssertEqual(values, [OTPTimerState(startTime: 60, endTime: 90)])
     }
 
-    func test_timerUpdatedPublisher_publishesCounterInitialRanges() async throws {
+    func test_timerUpdatedPublisher_publishesStateForCurrentTimeOnTimerFinish() async throws {
         let (clock, timer, sut) = makeSUT(clock: 32, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
