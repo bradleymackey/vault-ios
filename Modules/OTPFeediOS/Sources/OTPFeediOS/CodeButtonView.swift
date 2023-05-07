@@ -8,7 +8,7 @@ struct CodeButtonView: View {
         Button {
             viewModel.incrementCounter()
         } label: {
-            Image(systemName: "arrow.clockwise")
+            CodeButtonIcon()
         }
         .foregroundColor(.accentColor)
     }
