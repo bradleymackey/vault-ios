@@ -1,8 +1,8 @@
 import OTPFeed
 import SwiftUI
 
-struct HOTPCodePreviewView: View {
-    var buttonView: CodeButtonView
+struct HOTPCodePreviewView<ButtonView: View>: View {
+    var buttonView: ButtonView
     @ObservedObject var previewViewModel: CodePreviewViewModel
     var hideCode: Bool
 
