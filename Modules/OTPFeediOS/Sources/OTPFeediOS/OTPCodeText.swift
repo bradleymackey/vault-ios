@@ -24,15 +24,21 @@ struct OTPCodeText: View {
     private var splitText: [TextPart] {
         let chunks = Array(text).chunked(by: chunkSize)
         return chunks.map { chunk in
-            TextPart(text: String(chunk))
+            TextPart(text: chunk)
         }
     }
 }
 
-private extension Array {
-    func chunked(by chunkSize: Int) -> [[Element]] {
+private extension [Character] {
+    func chunked(by chunkSize: Int) -> [String] {
         stride(from: 0, to: count, by: chunkSize).map {
-            Array(self[$0 ..< Swift.min($0 + chunkSize, count)])
+            let startIndex = $0
+            let endIndex = Swift.min($0 + chunkSize, count)
+            let characters = endIndex - startIndex
+            let paddingRequired = chunkSize - characters
+            let actual = Array(self[startIndex ..< endIndex])
+            let padding = Array(repeating: Character(" "), count: paddingRequired)
+            return String(actual + padding)
         }
     }
 }
@@ -49,10 +55,10 @@ struct OTPCodeText_Previews: PreviewProvider {
             OTPCodeText(text: "123456789", spacing: 10)
                 .font(.system(.title, design: .monospaced))
 
-            OTPCodeText(text: "123456789", spacing: 10)
-                .font(.system(.title, design: .monospaced))
+            OTPCodeText(text: "12345678", spacing: 10)
+                .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
-                .frame(width: 50)
+                .frame(width: 100)
         }
     }
 }
