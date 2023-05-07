@@ -50,6 +50,16 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
+    func test_textWrapping_longCodeMaintainsSameSizeForAllDigits() {
+        let digits = [6, 8, 20]
+        for count in digits {
+            let code = String(Array(repeating: Character("0"), count: count))
+            let sut = makeSUT(state: .visible(code))
+
+            assertSnapshot(matching: sut, as: .image, named: "\(count)-digits")
+        }
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
