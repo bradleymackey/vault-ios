@@ -1,3 +1,4 @@
+import Combine
 import CryptoEngine
 import OTPCore
 import OTPFeed
@@ -13,10 +14,12 @@ public protocol TOTPViewGenerator {
 public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer
+    let hideCodes: Bool
 
-    public init(clock: EpochClock, timer: LiveIntervalTimer) {
+    public init(clock: EpochClock, timer: LiveIntervalTimer, hideCodes: Bool) {
         self.clock = clock
         self.timer = timer
+        self.hideCodes = hideCodes
     }
 
     public func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
@@ -31,25 +34,8 @@ public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
         let timerViewModel = CodeTimerViewModel(updater: timerController, clock: clock)
         return TOTPCodePreviewView(
             timerView: .init(viewModel: timerViewModel),
-            previewViewModel: previewViewModel
+            previewViewModel: previewViewModel,
+            hideCode: hideCodes
         )
-    }
-}
-
-@MainActor
-public struct LiveTOTPItemViewDecorator<Generator: TOTPViewGenerator>: TOTPViewGenerator {
-    let generator: Generator
-    let onDetailTap: (OTPAuthCode) -> Void
-
-    public init(generator: Generator, onDetailTap: @escaping (OTPAuthCode) -> Void) {
-        self.generator = generator
-        self.onDetailTap = onDetailTap
-    }
-
-    public func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
-        let baseView = generator.makeTOTPView(period: period, code: code)
-        return OTPFeedItemView(preview: baseView, buttonPadding: 8) {
-            onDetailTap(code)
-        }
     }
 }

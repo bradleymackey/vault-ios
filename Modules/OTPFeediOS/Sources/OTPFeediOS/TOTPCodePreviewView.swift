@@ -6,12 +6,14 @@ import SwiftUI
 public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
     var timerView: CodeTimerHorizontalBarView<Updater>
     @ObservedObject var previewViewModel: CodePreviewViewModel
+    var hideCode: Bool
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
                 .padding(.horizontal, 2)
             codeSection
+                .redacted(reason: hideCode ? .placeholder : [])
         }
         .frame(maxWidth: .infinity)
     }
@@ -90,13 +92,18 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }
+
+            makePreview(issuer: "Details Hidden", renderer: codeRenderer, hideCode: true)
+                .onAppear {
+                    finishedRenderer.subject.send(completion: .finished)
+                }
         }
         .onAppear {
             updater.subject.send(.init(startTime: 15, endTime: 100))
         }
     }
 
-    static func makePreview(issuer: String?, renderer: OTPCodeRendererMock) -> some View {
+    static func makePreview(issuer: String?, renderer: OTPCodeRendererMock, hideCode: Bool = false) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: "test@example.com",
             issuer: issuer,
@@ -107,7 +114,8 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                 viewModel: .init(updater: updater, clock: clock),
                 color: .blue
             ),
-            previewViewModel: previewViewModel
+            previewViewModel: previewViewModel,
+            hideCode: hideCode
         )
         .frame(width: 250, height: 100)
     }

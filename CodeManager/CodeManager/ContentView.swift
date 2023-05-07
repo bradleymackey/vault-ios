@@ -12,6 +12,8 @@ import SwiftUI
 
 @MainActor
 struct ContentView: View {
+    @StateObject private var feedViewModel = FeedViewModel(store: MockCodeStore())
+    @State private var isEditing = false
     @State private var modal: Modal?
 
     enum Modal: Identifiable {
@@ -28,14 +30,23 @@ struct ContentView: View {
     var body: some View {
         NavigationView {
             OTPCodeFeedView(
-                viewModel: .init(store: MockCodeStore()),
-                totpGenerator: totpGenerator(),
+                viewModel: feedViewModel,
+                totpGenerator: totpGenerator(hideCodes: isEditing),
                 hotpGenerator: hotpGenerator(),
                 gridSpacing: 8,
                 contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
             )
             .navigationTitle(Text("Codes"))
             .navigationBarTitleDisplayMode(.large)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        isEditing.toggle()
+                    } label: {
+                        Text("Edit")
+                    }
+                }
+            }
             .sheet(item: $modal) { visible in
                 switch visible {
                 case let .detail(_, code):
@@ -43,7 +54,7 @@ struct ContentView: View {
                     case let .totp(period):
                         NavigationView {
                             OTPCodeDetailView(
-                                preview: totpPreviewGenerator().makeTOTPView(period: period, code: code),
+                                preview: totpGenerator(hideCodes: false).makeTOTPView(period: period, code: code),
                                 viewModel: .init(code: code)
                             )
                             .toolbar {
@@ -78,17 +89,12 @@ struct ContentView: View {
         }
     }
 
-    func totpPreviewGenerator() -> some TOTPViewGenerator {
+    func totpGenerator(hideCodes: Bool) -> some TOTPViewGenerator {
         LiveTOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer()
+            timer: LiveIntervalTimer(),
+            hideCodes: hideCodes
         )
-    }
-
-    func totpGenerator() -> some TOTPViewGenerator {
-        LiveTOTPItemViewDecorator(generator: totpPreviewGenerator()) { code in
-            modal = .detail(UUID(), code)
-        }
     }
 
     func hotpPreviewGenerator() -> some HOTPViewGenerator {
