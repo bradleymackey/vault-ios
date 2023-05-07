@@ -4,6 +4,7 @@ import SwiftUI
 struct HOTPCodePreviewView: View {
     var buttonView: CodeButtonView
     @ObservedObject var previewViewModel: CodePreviewViewModel
+    var hideCode: Bool
 
     var body: some View {
         HStack(alignment: .center) {
@@ -18,6 +19,7 @@ struct HOTPCodePreviewView: View {
                 CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
                     .font(.system(.largeTitle, design: .monospaced))
                     .fontWeight(.bold)
+                    .redacted(reason: hideCode ? .placeholder : [])
                 Spacer()
                 buttonView
                     .font(canLoadNextCode ? .title.bold() : .title)
@@ -27,7 +29,7 @@ struct HOTPCodePreviewView: View {
     }
 
     var canLoadNextCode: Bool {
-        previewViewModel.code.allowsNextCodeToBeGenerated
+        previewViewModel.code.allowsNextCodeToBeGenerated && !hideCode
     }
 }
 
@@ -50,12 +52,18 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
 
             makePreviewView(accountName: "Error", renderer: errorRenderer)
                 .onAppear {
-                    finishedRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
+                    errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
                 }
+
+            makePreviewView(accountName: "Hidden", renderer: codeRenderer, hideCode: true)
         }
     }
 
-    private static func makePreviewView(accountName: String, renderer: OTPCodeRendererMock) -> some View {
+    private static func makePreviewView(
+        accountName: String,
+        renderer: OTPCodeRendererMock,
+        hideCode: Bool = false
+    ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: accountName,
             issuer: "Authority",
@@ -66,7 +74,8 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                 hotpGenerator: .init(secret: Data()),
                 initialCounter: 0
             ), counter: 0)),
-            previewViewModel: previewViewModel
+            previewViewModel: previewViewModel,
+            hideCode: hideCode
         )
         .frame(width: 250, height: 100)
     }

@@ -52,7 +52,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 hotpGenerator: .init(secret: Data()),
                 initialCounter: 0
             ), counter: 0)),
-            previewViewModel: previewViewModel
+            previewViewModel: previewViewModel,
+            hideCode: false
         )
         .frame(width: 250, height: 100)
         .onAppear {

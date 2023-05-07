@@ -32,7 +32,7 @@ struct ContentView: View {
             OTPCodeFeedView(
                 viewModel: feedViewModel,
                 totpGenerator: totpGenerator(hideCodes: isEditing),
-                hotpGenerator: hotpGenerator(),
+                hotpGenerator: hotpGenerator(hideCodes: isEditing),
                 gridSpacing: 24,
                 contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
             )
@@ -72,7 +72,7 @@ struct ContentView: View {
                     case let .hotp(counter):
                         NavigationView {
                             OTPCodeDetailView(
-                                preview: hotpPreviewGenerator().makeHOTPView(counter: counter, code: code),
+                                preview: hotpGenerator(hideCodes: false).makeHOTPView(counter: counter, code: code),
                                 viewModel: .init(code: code)
                             )
                             .toolbar {
@@ -99,14 +99,8 @@ struct ContentView: View {
         )
     }
 
-    func hotpPreviewGenerator() -> some HOTPViewGenerator {
-        LiveHOTPPreviewViewGenerator()
-    }
-
-    func hotpGenerator() -> some HOTPViewGenerator {
-        LiveHOTPItemViewDecorator(generator: hotpPreviewGenerator()) { code in
-            modal = .detail(UUID(), code)
-        }
+    func hotpGenerator(hideCodes: Bool) -> some HOTPViewGenerator {
+        LiveHOTPPreviewViewGenerator(hideCodes: hideCodes)
     }
 }
 
