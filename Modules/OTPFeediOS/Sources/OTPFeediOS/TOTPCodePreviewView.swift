@@ -20,10 +20,17 @@ public struct TOTPCodePreviewView<Updater: CodeTimerUpdater>: View {
 
     private var codeSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
-                .font(.system(.largeTitle, design: .monospaced))
-                .fontWeight(.bold)
-                .padding(.horizontal, 2)
+            Button {
+                previewViewModel.didTapCode()
+            } label: {
+                CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
+                    .font(.system(.largeTitle, design: .monospaced))
+                    .fontWeight(.bold)
+                    .padding(.horizontal, 2)
+            }
+            .buttonStyle(.plain)
+            .disabled(!previewViewModel.code.isVisible)
+
             timerSection
         }
         .frame(maxWidth: .infinity, alignment: .leading)
