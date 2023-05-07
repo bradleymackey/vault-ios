@@ -92,15 +92,9 @@ public struct HorizontalTimerProgressBarView: View {
             ZStack(alignment: .leading) {
                 Rectangle()
                     .fill(backgroundColor)
-                if redactionReasons.isEmpty {
-                    Rectangle()
-                        .fill(color)
-                        .frame(width: currentFractionCompleted * proxy.size.width, alignment: .leading)
-                } else {
-                    Rectangle()
-                        .fill(Color(.systemGray3))
-                        .frame(width: proxy.size.width, alignment: .leading)
-                }
+                Rectangle()
+                    .fill(color)
+                    .frame(width: currentFractionCompleted * proxy.size.width, alignment: .leading)
             }
         }
         .onReceive(startSignaller.receive(on: RunLoop.main)) { state in
