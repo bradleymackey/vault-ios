@@ -27,4 +27,12 @@ public final class FeedViewModel<Store: OTPCodeStoreReader>: ObservableObject {
     public var title: String {
         localized(key: "feedViewModel.list.title")
     }
+
+    public var editTitle: String {
+        localized(key: "feedViewModel.edit.title")
+    }
+
+    public var doneEditingTitle: String {
+        localized(key: "feedViewModel.doneEditing.title")
+    }
 }
