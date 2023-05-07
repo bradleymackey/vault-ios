@@ -11,7 +11,7 @@ public protocol TOTPViewGenerator {
 }
 
 @MainActor
-public struct LiveTOTPPreviewViewGenerator: TOTPViewGenerator {
+public struct TOTPPreviewViewGenerator: TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer
     let hideCodes: Bool

@@ -10,7 +10,7 @@ public protocol HOTPViewGenerator {
 }
 
 @MainActor
-public struct LiveHOTPPreviewViewGenerator: HOTPViewGenerator {
+public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
     var hideCodes: Bool
     public init(hideCodes: Bool) {
         self.hideCodes = hideCodes

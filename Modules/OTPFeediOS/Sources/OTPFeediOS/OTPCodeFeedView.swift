@@ -55,15 +55,15 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
         )
     }
 
-    private static func totpGenerator() -> LiveTOTPPreviewViewGenerator {
-        LiveTOTPPreviewViewGenerator(
+    private static func totpGenerator() -> TOTPPreviewViewGenerator {
+        TOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
             timer: LiveIntervalTimer(),
             hideCodes: false
         )
     }
 
-    private static func hotpGenerator() -> LiveHOTPPreviewViewGenerator {
-        LiveHOTPPreviewViewGenerator(hideCodes: false)
+    private static func hotpGenerator() -> HOTPPreviewViewGenerator {
+        HOTPPreviewViewGenerator(hideCodes: false)
     }
 }

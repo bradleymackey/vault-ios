@@ -96,7 +96,7 @@ struct ContentView: View {
     }
 
     func totpGenerator(hideCodes: Bool = false) -> some TOTPViewGenerator {
-        LiveTOTPPreviewViewGenerator(
+        TOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
             timer: LiveIntervalTimer(),
             hideCodes: hideCodes
@@ -114,7 +114,7 @@ struct ContentView: View {
     }
 
     func hotpGenerator(hideCodes: Bool = false) -> some HOTPViewGenerator {
-        LiveHOTPPreviewViewGenerator(hideCodes: hideCodes)
+        HOTPPreviewViewGenerator(hideCodes: hideCodes)
     }
 
     func hotpEditingGenerator(hideCodes: Bool) -> some HOTPViewGenerator {
