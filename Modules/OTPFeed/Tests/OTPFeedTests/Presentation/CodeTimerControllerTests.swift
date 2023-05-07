@@ -52,6 +52,22 @@ final class CodeTimerControllerTests: XCTestCase {
         ])
     }
 
+    func test_recalculate_publishesDuplicateStatesIfRecalculatingInSamePeriod() async throws {
+        let (_, _, sut) = makeSUT(clock: 32, period: 30)
+
+        let publisher = sut.timerUpdatedPublisher().collectFirst(3)
+
+        let values = try await awaitPublisher(publisher, when: {
+            sut.recalculate()
+            sut.recalculate()
+        })
+        XCTAssertEqual(values, [
+            OTPTimerState(startTime: 30, endTime: 60), // initial time
+            OTPTimerState(startTime: 30, endTime: 60),
+            OTPTimerState(startTime: 30, endTime: 60),
+        ])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
