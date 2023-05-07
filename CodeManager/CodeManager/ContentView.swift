@@ -57,24 +57,30 @@ struct ContentView<Store: OTPCodeStoreReader>: View {
             .sheet(item: $modal) { visible in
                 switch visible {
                 case let .detail(_, code):
-                    switch code.type {
-                    case let .totp(period):
-                        NavigationView {
-                            CodeDetailView(
-                                code: code,
-                                preview: totpGenerator().makeTOTPView(period: period, code: code)
-                            )
-                        }
-                    case let .hotp(counter):
-                        NavigationView {
-                            CodeDetailView(
-                                code: code,
-                                preview: hotpGenerator().makeHOTPView(counter: counter, code: code)
-                            )
-                        }
+                    NavigationView {
+                        detailView(code: code)
+                    }
+                    .onDisappear {
+                        isEditing = false
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func detailView(code: OTPAuthCode) -> some View {
+        switch code.type {
+        case let .totp(period):
+            CodeDetailView(
+                code: code,
+                preview: totpGenerator().makeTOTPView(period: period, code: code)
+            )
+        case let .hotp(counter):
+            CodeDetailView(
+                code: code,
+                preview: hotpGenerator().makeHOTPView(counter: counter, code: code)
+            )
         }
     }
 
