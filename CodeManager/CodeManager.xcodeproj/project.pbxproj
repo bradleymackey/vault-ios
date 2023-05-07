@@ -10,7 +10,7 @@
 		1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */; };
 		1C58F28A2A07E212005A7DF5 /* MockCodeStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2892A07E212005A7DF5 /* MockCodeStore.swift */; };
 		1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */; };
-		1CDA9C972A057A8B00555E7A /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C962A057A8B00555E7A /* ContentView.swift */; };
+		1CDA9C972A057A8B00555E7A /* CodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C962A057A8B00555E7A /* CodeListView.swift */; };
 		1CDA9C992A057A8C00555E7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CDA9C982A057A8C00555E7A /* Assets.xcassets */; };
 		1CDA9C9C2A057A8C00555E7A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CDA9C9B2A057A8C00555E7A /* Preview Assets.xcassets */; };
 		1CDA9CA62A057A8C00555E7A /* CodeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9CA52A057A8C00555E7A /* CodeManagerTests.swift */; };
@@ -41,7 +41,7 @@
 		1C58F2892A07E212005A7DF5 /* MockCodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCodeStore.swift; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* CodeManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeManagerApp.swift; sourceTree = "<group>"; };
-		1CDA9C962A057A8B00555E7A /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		1CDA9C962A057A8B00555E7A /* CodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeListView.swift; sourceTree = "<group>"; };
 		1CDA9C982A057A8C00555E7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1CDA9C9B2A057A8C00555E7A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1CDA9CA12A057A8C00555E7A /* CodeManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -113,7 +113,7 @@
 			isa = PBXGroup;
 			children = (
 				1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */,
-				1CDA9C962A057A8B00555E7A /* ContentView.swift */,
+				1CDA9C962A057A8B00555E7A /* CodeListView.swift */,
 				1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */,
 				1C58F2882A07E20B005A7DF5 /* Mocks */,
 				1CDA9C982A057A8C00555E7A /* Assets.xcassets */,
@@ -298,7 +298,7 @@
 			files = (
 				1C58F28A2A07E212005A7DF5 /* MockCodeStore.swift in Sources */,
 				1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */,
-				1CDA9C972A057A8B00555E7A /* ContentView.swift in Sources */,
+				1CDA9C972A057A8B00555E7A /* CodeListView.swift in Sources */,
 				1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
