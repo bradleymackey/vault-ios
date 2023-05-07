@@ -29,13 +29,17 @@ struct ContentView: View {
 
     var body: some View {
         NavigationView {
-            OTPCodeFeedView(
-                viewModel: feedViewModel,
-                totpGenerator: totpEditingGenerator(hideCodes: isEditing),
-                hotpGenerator: hotpGenerator(hideCodes: isEditing),
-                gridSpacing: 24,
-                contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
-            )
+            ScrollView(.vertical) {
+                OTPCodeFeedView(
+                    viewModel: feedViewModel,
+                    totpGenerator: totpEditingGenerator(hideCodes: isEditing),
+                    hotpGenerator: hotpGenerator(hideCodes: isEditing),
+                    gridSpacing: 24
+                )
+                .padding(.top, 8)
+                .padding(.bottom, 16)
+                .padding(.horizontal, 16)
+            }
             .navigationTitle(Text("Codes"))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
