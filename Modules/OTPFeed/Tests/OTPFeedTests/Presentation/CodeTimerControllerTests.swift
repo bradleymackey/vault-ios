@@ -28,9 +28,27 @@ final class CodeTimerControllerTests: XCTestCase {
             timer.finishTimer()
         })
         XCTAssertEqual(values, [
-            OTPTimerState(startTime: 30, endTime: 60),
+            OTPTimerState(startTime: 30, endTime: 60), // initial time
             OTPTimerState(startTime: 60, endTime: 90),
             OTPTimerState(startTime: 90, endTime: 120),
+        ])
+    }
+
+    func test_recalculate_forcesPublishOfCurrentTimerState() async throws {
+        let (clock, _, sut) = makeSUT(clock: 32, period: 30)
+
+        let publisher = sut.timerUpdatedPublisher().collectFirst(3)
+
+        let values = try await awaitPublisher(publisher, when: {
+            clock.makeCurrentTime = { 301 }
+            sut.recalculate()
+            clock.makeCurrentTime = { 330 }
+            sut.recalculate()
+        })
+        XCTAssertEqual(values, [
+            OTPTimerState(startTime: 30, endTime: 60), // initial time
+            OTPTimerState(startTime: 300, endTime: 330),
+            OTPTimerState(startTime: 330, endTime: 360),
         ])
     }
 

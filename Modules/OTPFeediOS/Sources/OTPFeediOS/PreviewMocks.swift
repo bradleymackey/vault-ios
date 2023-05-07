@@ -7,6 +7,10 @@ struct MockCodeTimerUpdater: CodeTimerUpdater {
     func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
         subject.eraseToAnyPublisher()
     }
+
+    func recalculate() {
+        // noop
+    }
 }
 
 struct OTPCodeRendererMock: OTPCodeRenderer {
