@@ -54,14 +54,13 @@ struct ContentView<Store: OTPCodeStoreReader>: View {
                     }
                 }
             }
-            .sheet(item: $modal) { visible in
+            .sheet(item: $modal) {
+                isEditing = false
+            } content: { visible in
                 switch visible {
                 case let .detail(_, code):
                     NavigationView {
                         detailView(code: code)
-                    }
-                    .onDisappear {
-                        isEditing = false
                     }
                 }
             }
