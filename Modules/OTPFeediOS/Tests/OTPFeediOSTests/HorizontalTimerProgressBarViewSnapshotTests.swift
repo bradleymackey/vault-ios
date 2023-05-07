@@ -63,9 +63,17 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: view, as: .image)
     }
 
-    func test_redacted_hidesProgress() {
+    func test_redactedPlaceholder_showsProgressStill() {
         let view = HorizontalTimerProgressBarView.fixed(at: 0.5, color: .blue)
             .redacted(reason: .placeholder)
+            .frame(width: 150, height: 20)
+
+        assertSnapshot(matching: view, as: .image)
+    }
+
+    func test_redactedPrivacy_showsProgressStill() {
+        let view = HorizontalTimerProgressBarView.fixed(at: 0.5, color: .blue)
+            .redacted(reason: .privacy)
             .frame(width: 150, height: 20)
 
         assertSnapshot(matching: view, as: .image)
