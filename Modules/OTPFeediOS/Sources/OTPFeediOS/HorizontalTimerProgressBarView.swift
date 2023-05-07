@@ -2,6 +2,8 @@ import Combine
 import SwiftUI
 
 public struct HorizontalTimerProgressBarView: View {
+    @Environment(\.redactionReasons) var redactionReasons
+
     var color: Color
     /// The wayt that the progress bar completes, by filling or draining.
     var direction: Direction
@@ -82,9 +84,15 @@ public struct HorizontalTimerProgressBarView: View {
             ZStack(alignment: .leading) {
                 Rectangle()
                     .fill(Color(.systemGray6))
-                Rectangle()
-                    .fill(color)
-                    .frame(width: currentFractionCompleted * proxy.size.width, alignment: .leading)
+                if redactionReasons.isEmpty {
+                    Rectangle()
+                        .fill(color)
+                        .frame(width: currentFractionCompleted * proxy.size.width, alignment: .leading)
+                } else {
+                    Rectangle()
+                        .fill(Color(.systemGray3))
+                        .frame(width: proxy.size.width, alignment: .leading)
+                }
             }
         }
         .onReceive(startSignaller) { state in
@@ -145,6 +153,11 @@ struct HorizontalTimerProgressBarView_Previews: PreviewProvider {
 
             HorizontalTimerProgressBarView.fixed(at: 0.5, color: .green)
                 .frame(width: 250, height: 20)
+                .previewLayout(.fixed(width: 300, height: 300))
+
+            HorizontalTimerProgressBarView.fixed(at: 0.5, color: .green)
+                .frame(width: 250, height: 20)
+                .redacted(reason: .placeholder)
                 .previewLayout(.fixed(width: 300, height: 300))
         }
     }
