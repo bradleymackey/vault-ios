@@ -10,11 +10,22 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
-                .padding(.horizontal, 2)
+            labelsStack
             codeSection
         }
         .frame(maxWidth: .infinity)
+    }
+
+    private var labelsStack: some View {
+        HStack(alignment: .center) {
+            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
+            Spacer()
+            if case .error = effectiveCodeState {
+                CodeErrorIcon()
+                    .font(.title)
+            }
+        }
+        .padding(.horizontal, 2)
     }
 
     private var codeSection: some View {

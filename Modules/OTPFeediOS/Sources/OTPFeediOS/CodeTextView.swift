@@ -11,11 +11,8 @@ public struct CodeTextView: View {
         case .notReady, .finished:
             placeholderCode(digits: 6)
         case let .error(_, digits):
-            HStack(alignment: .center, spacing: codeSpacing) {
-                placeholderCode(digits: digits)
-                Image(systemName: "exclamationmark.triangle.fill")
-            }
-            .foregroundColor(.red)
+            placeholderCode(digits: digits)
+                .foregroundColor(.red)
         case let .visible(code):
             makeCodeView(text: code)
         }
