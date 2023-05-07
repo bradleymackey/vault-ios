@@ -5,7 +5,7 @@ struct OTPCodeLabels: View {
     var issuer: String?
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 0) {
             if let issuer {
                 Text(issuer)
                     .font(.subheadline.bold())
@@ -14,7 +14,7 @@ struct OTPCodeLabels: View {
                     .minimumScaleFactor(0.7)
             }
             Text(accountName)
-                .font(.footnote)
+                .font(issuer != nil ? .footnote : .footnote.weight(.semibold))
                 .foregroundColor(issuer != nil ? .secondary : .primary)
                 .lineLimit(1)
                 .minimumScaleFactor(0.7)
