@@ -5,16 +5,19 @@
 //  Created by Bradley Mackey on 05/05/2023.
 //
 
+import OTPFeed
 import SwiftUI
 
 @main
 struct CodeManagerApp: App {
+    @StateObject var feedViewModel = FeedViewModel(store: MockCodeStore())
+
     var body: some Scene {
         WindowGroup {
             TabView {
-                ContentView()
+                ContentView(feedViewModel: feedViewModel)
                     .tabItem {
-                        Label("Codes", systemImage: "key.horizontal.fill")
+                        Label(feedViewModel.title, systemImage: "key.horizontal.fill")
                     }
             }
         }
