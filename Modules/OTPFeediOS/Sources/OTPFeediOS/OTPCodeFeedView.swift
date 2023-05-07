@@ -35,10 +35,8 @@ public struct OTPCodeFeedView<
                     switch storedCode.code.type {
                     case let .totp(period):
                         totpGenerator.makeTOTPView(period: period, code: storedCode.code)
-                            .modifier(CardModifier(innerPadding: 8))
                     case let .hotp(counter):
                         hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
-                            .modifier(CardModifier(innerPadding: 8))
                     }
                 }
             }
@@ -50,18 +48,7 @@ public struct OTPCodeFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 150, maximum: 400), alignment: .bottom)]
-    }
-}
-
-struct CardModifier: ViewModifier {
-    var innerPadding: Double
-
-    func body(content: Content) -> some View {
-        content
-            .padding(innerPadding)
-            .background(Color(UIColor.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 10))
+        [GridItem(.adaptive(minimum: 150, maximum: 400), spacing: gridSpacing, alignment: .bottom)]
     }
 }
 

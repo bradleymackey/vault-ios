@@ -33,7 +33,7 @@ struct ContentView: View {
                 viewModel: feedViewModel,
                 totpGenerator: totpGenerator(hideCodes: isEditing),
                 hotpGenerator: hotpGenerator(),
-                gridSpacing: 8,
+                gridSpacing: 24,
                 contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
             )
             .navigationTitle(Text("Codes"))
