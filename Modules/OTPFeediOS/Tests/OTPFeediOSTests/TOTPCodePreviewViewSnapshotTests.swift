@@ -7,26 +7,26 @@ import XCTest
 
 @MainActor
 final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
-    func test_fixedState_codeVisible() {
+    func test_layout_codeVisible() {
         let sut = makeSUT(state: .visible("123456"))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_fixedState_codeError() {
+    func test_layout_codeError() {
         let error = PresentationError(userTitle: "userTitle", debugDescription: "debugDescription")
         let sut = makeSUT(state: .error(error, digits: 6))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_fixedState_codeNotReady() {
+    func test_layout_codeNotReady() {
         let sut = makeSUT(state: .notReady)
 
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_fixedState_noMoreCodes() {
+    func test_layout_noMoreCodes() {
         let sut = makeSUT(state: .finished)
 
         assertSnapshot(matching: sut, as: .image)
