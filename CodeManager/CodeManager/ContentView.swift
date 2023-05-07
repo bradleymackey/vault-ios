@@ -11,8 +11,9 @@ import OTPFeediOS
 import SwiftUI
 
 @MainActor
-struct ContentView: View {
-    @StateObject private var feedViewModel = FeedViewModel(store: MockCodeStore())
+struct ContentView<Store: OTPCodeStoreReader>: View {
+    @ObservedObject var feedViewModel: FeedViewModel<Store>
+
     @State private var isEditing = false
     @State private var modal: Modal?
 
@@ -40,7 +41,7 @@ struct ContentView: View {
                 .padding(.bottom, 16)
                 .padding(.horizontal, 16)
             }
-            .navigationTitle(Text("Codes"))
+            .navigationTitle(Text(feedViewModel.title))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
                 ToolbarItem(placement: .primaryAction) {
