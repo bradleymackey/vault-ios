@@ -33,7 +33,7 @@ struct ContentView: View {
                 OTPCodeFeedView(
                     viewModel: feedViewModel,
                     totpGenerator: totpEditingGenerator(hideCodes: isEditing),
-                    hotpGenerator: hotpGenerator(hideCodes: isEditing),
+                    hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
                     gridSpacing: 24
                 )
                 .padding(.top, 8)
@@ -76,7 +76,7 @@ struct ContentView: View {
                     case let .hotp(counter):
                         NavigationView {
                             OTPCodeDetailView(
-                                preview: hotpGenerator(hideCodes: false).makeHOTPView(counter: counter, code: code),
+                                preview: hotpGenerator().makeHOTPView(counter: counter, code: code),
                                 viewModel: .init(code: code)
                             )
                             .toolbar {
@@ -108,15 +108,23 @@ struct ContentView: View {
             generator: totpGenerator(hideCodes: hideCodes),
             isTapEnabled: isEditing,
             onTap: { code in
-                if isEditing {
-                    modal = .detail(UUID(), code)
-                }
+                modal = .detail(UUID(), code)
             }
         )
     }
 
-    func hotpGenerator(hideCodes: Bool) -> some HOTPViewGenerator {
+    func hotpGenerator(hideCodes: Bool = false) -> some HOTPViewGenerator {
         LiveHOTPPreviewViewGenerator(hideCodes: hideCodes)
+    }
+
+    func hotpEditingGenerator(hideCodes: Bool) -> some HOTPViewGenerator {
+        HOTPOnTapDecoratorViewGenerator(
+            generator: hotpGenerator(hideCodes: hideCodes),
+            isTapEnabled: isEditing,
+            onTap: { code in
+                modal = .detail(UUID(), code)
+            }
+        )
     }
 }
 
@@ -127,9 +135,35 @@ struct TOTPOnTapDecoratorViewGenerator<Generator: TOTPViewGenerator>: TOTPViewGe
 
     func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
         generator.makeTOTPView(period: period, code: code)
+            .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
+                onTap(code)
+            }))
+    }
+}
+
+struct HOTPOnTapDecoratorViewGenerator<Generator: HOTPViewGenerator>: HOTPViewGenerator {
+    let generator: Generator
+    let isTapEnabled: Bool
+    let onTap: (OTPAuthCode) -> Void
+
+    func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> some View {
+        generator.makeHOTPView(counter: counter, code: code)
+            .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
+                onTap(code)
+            }))
+    }
+}
+
+struct OnTapOverrideButtonModifier: ViewModifier {
+    let isTapEnabled: Bool
+    let onTap: () -> Void
+
+    func body(content: Content) -> some View {
+        content
             .disabled(isTapEnabled)
             .onTapGesture {
-                onTap(code)
+                guard isTapEnabled else { return }
+                onTap()
             }
     }
 }
