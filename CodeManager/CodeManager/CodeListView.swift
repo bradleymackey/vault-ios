@@ -1,5 +1,5 @@
 //
-//  ContentView.swift
+//  CodeListView.swift
 //  CodeManager
 //
 //  Created by Bradley Mackey on 05/05/2023.
@@ -11,7 +11,7 @@ import OTPFeediOS
 import SwiftUI
 
 @MainActor
-struct ContentView<Store: OTPCodeStoreReader>: View {
+struct CodeListView<Store: OTPCodeStoreReader>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
 
     @State private var isEditing = false

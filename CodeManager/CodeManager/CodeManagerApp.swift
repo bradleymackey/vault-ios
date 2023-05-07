@@ -15,7 +15,7 @@ struct CodeManagerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                ContentView(feedViewModel: feedViewModel)
+                CodeListView(feedViewModel: feedViewModel)
                     .tabItem {
                         Label(feedViewModel.title, systemImage: "key.horizontal.fill")
                     }
