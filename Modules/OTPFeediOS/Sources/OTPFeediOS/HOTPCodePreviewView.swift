@@ -7,25 +7,27 @@ struct HOTPCodePreviewView: View {
     var hideCode: Bool
 
     var body: some View {
-        HStack(alignment: .center) {
-            labels
+        VStack(alignment: .leading, spacing: 8) {
+            titleRow
+            codeText
         }
     }
 
-    private var labels: some View {
-        VStack(alignment: .leading, spacing: 8) {
+    private var titleRow: some View {
+        HStack(alignment: .center) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
-            HStack(alignment: .firstTextBaseline) {
-                CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
-                    .font(.system(.largeTitle, design: .monospaced))
-                    .fontWeight(.bold)
-                    .redacted(reason: hideCode ? .placeholder : [])
-                Spacer()
-                buttonView
-                    .font(canLoadNextCode ? .title.bold() : .title)
-                    .disabled(!canLoadNextCode)
-            }
+            Spacer()
+            buttonView
+                .font(canLoadNextCode ? .title.bold() : .title)
+                .disabled(!canLoadNextCode)
         }
+    }
+
+    private var codeText: some View {
+        CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
+            .font(.system(.largeTitle, design: .monospaced))
+            .fontWeight(.bold)
+            .redacted(reason: hideCode ? .placeholder : [])
     }
 
     var canLoadNextCode: Bool {
