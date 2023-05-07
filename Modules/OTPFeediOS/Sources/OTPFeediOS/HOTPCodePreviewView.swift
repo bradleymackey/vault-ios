@@ -17,11 +17,10 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         HStack(alignment: .center) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
-            switch previewViewModel.code {
-            case .error:
+            if case .error = previewViewModel.code {
                 CodeErrorIcon()
                     .font(.title)
-            default:
+            } else if !hideCode {
                 buttonView
                     .font(canLoadNextCode ? .title.bold() : .title)
                     .disabled(!canLoadNextCode)
