@@ -35,11 +35,9 @@ struct ContentView<Store: OTPCodeStoreReader>: View {
                     viewModel: feedViewModel,
                     totpGenerator: totpEditingGenerator(hideCodes: isEditing),
                     hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
-                    gridSpacing: 24
+                    gridSpacing: 32
                 )
-                .padding(.top, 8)
-                .padding(.bottom, 16)
-                .padding(.horizontal, 16)
+                .padding(16)
             }
             .navigationTitle(Text(feedViewModel.title))
             .navigationBarTitleDisplayMode(.large)
