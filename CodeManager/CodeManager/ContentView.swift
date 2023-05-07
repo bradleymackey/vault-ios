@@ -48,7 +48,9 @@ struct ContentView<Store: OTPCodeStoreReader>: View {
                             isEditing.toggle()
                         }
                     } label: {
-                        Text("Edit")
+                        Text(isEditing ? feedViewModel.doneEditingTitle : feedViewModel.editTitle)
+                            .fontWeight(isEditing ? .semibold : .regular)
+                            .animation(.none)
                     }
                 }
             }
