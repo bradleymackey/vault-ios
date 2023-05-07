@@ -10,10 +10,14 @@ struct OTPCodeLabels: View {
                 Text(issuer)
                     .font(.subheadline.bold())
                     .foregroundColor(.primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
             }
             Text(accountName)
                 .font(.footnote)
                 .foregroundColor(issuer != nil ? .secondary : .primary)
+                .lineLimit(1)
+                .minimumScaleFactor(0.7)
         }
     }
 }

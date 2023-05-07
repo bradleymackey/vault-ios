@@ -8,34 +8,50 @@ import XCTest
 @MainActor
 final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
     func test_fixedState_codeVisible() {
-        let sut = makeSUT(fixedState: .visible("123456"))
+        let sut = makeSUT(state: .visible("123456"))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     func test_fixedState_codeError() {
         let error = PresentationError(userTitle: "userTitle", debugDescription: "debugDescription")
-        let sut = makeSUT(fixedState: .error(error, digits: 6))
+        let sut = makeSUT(state: .error(error, digits: 6))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     func test_fixedState_codeNotReady() {
-        let sut = makeSUT(fixedState: .notReady)
+        let sut = makeSUT(state: .notReady)
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     func test_fixedState_noMoreCodes() {
-        let sut = makeSUT(fixedState: .finished)
+        let sut = makeSUT(state: .finished)
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
+    func test_textWrapping_longIssuerStaysOnASingleLine() {
+        let sut = makeSUT(issuer: "This is a very long issuer which should be long because it is so long")
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
+    func test_textWrapping_longAccountNameStaysOnASingleLine() {
+        let sut = makeSUT(accountName: "This is a very long account name which should be long because it is so long")
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     // MARK: - Helpers
 
-    private func makeSUT(fixedState: OTPCodeState) -> some View {
-        let preview = CodePreviewViewModel(accountName: "Test", issuer: "Issuer", fixedCodeState: fixedState)
+    private func makeSUT(
+        accountName: String = "Test",
+        issuer: String = "Issuer",
+        state: OTPCodeState = .visible("123456")
+    ) -> some View {
+        let preview = CodePreviewViewModel(accountName: accountName, issuer: issuer, fixedCodeState: state)
         return TOTPCodePreviewView(
             previewViewModel: preview,
             timerView: Rectangle().fill(Color.red),
