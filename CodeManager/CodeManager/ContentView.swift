@@ -31,7 +31,7 @@ struct ContentView: View {
         NavigationView {
             OTPCodeFeedView(
                 viewModel: feedViewModel,
-                totpGenerator: totpGenerator(hideCodes: isEditing),
+                totpGenerator: totpEditingGenerator(hideCodes: isEditing),
                 hotpGenerator: hotpGenerator(hideCodes: isEditing),
                 gridSpacing: 24,
                 contentPadding: .init(top: 8, leading: 16, bottom: 16, trailing: 16)
@@ -56,7 +56,7 @@ struct ContentView: View {
                     case let .totp(period):
                         NavigationView {
                             OTPCodeDetailView(
-                                preview: totpGenerator(hideCodes: false).makeTOTPView(period: period, code: code),
+                                preview: totpGenerator().makeTOTPView(period: period, code: code),
                                 viewModel: .init(code: code)
                             )
                             .toolbar {
@@ -91,7 +91,7 @@ struct ContentView: View {
         }
     }
 
-    func totpGenerator(hideCodes: Bool) -> some TOTPViewGenerator {
+    func totpGenerator(hideCodes: Bool = false) -> some TOTPViewGenerator {
         LiveTOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
             timer: LiveIntervalTimer(),
@@ -99,8 +99,34 @@ struct ContentView: View {
         )
     }
 
+    func totpEditingGenerator(hideCodes: Bool) -> some TOTPViewGenerator {
+        TOTPOnTapDecoratorViewGenerator(
+            generator: totpGenerator(hideCodes: hideCodes),
+            isTapEnabled: isEditing,
+            onTap: { code in
+                if isEditing {
+                    modal = .detail(UUID(), code)
+                }
+            }
+        )
+    }
+
     func hotpGenerator(hideCodes: Bool) -> some HOTPViewGenerator {
         LiveHOTPPreviewViewGenerator(hideCodes: hideCodes)
+    }
+}
+
+struct TOTPOnTapDecoratorViewGenerator<Generator: TOTPViewGenerator>: TOTPViewGenerator {
+    let generator: Generator
+    let isTapEnabled: Bool
+    let onTap: (OTPAuthCode) -> Void
+
+    func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
+        generator.makeTOTPView(period: period, code: code)
+            .disabled(isTapEnabled)
+            .onTapGesture {
+                onTap(code)
+            }
     }
 }
 
