@@ -33,8 +33,8 @@ public struct TOTPPreviewViewGenerator: TOTPViewGenerator {
         )
         let timerViewModel = CodeTimerViewModel(updater: timerController, clock: clock)
         return TOTPCodePreviewView(
-            timerView: .init(viewModel: timerViewModel),
             previewViewModel: previewViewModel,
+            timerView: CodeTimerHorizontalBarView(viewModel: timerViewModel),
             hideCode: hideCodes
         )
     }
