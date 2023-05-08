@@ -2,14 +2,15 @@ import Combine
 import Foundation
 import OTPFeed
 
-struct MockCodeTimerUpdater: CodeTimerUpdater {
+final class MockCodeTimerUpdater: CodeTimerUpdater {
+    var recalculateCallCount = 0
     let subject = PassthroughSubject<OTPTimerState, Never>()
     func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
         subject.eraseToAnyPublisher()
     }
 
     func recalculate() {
-        // noop
+        recalculateCallCount += 1
     }
 }
 
