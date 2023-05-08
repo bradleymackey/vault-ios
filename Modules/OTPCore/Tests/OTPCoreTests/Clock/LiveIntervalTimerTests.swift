@@ -16,9 +16,23 @@ final class LiveIntervalTimerTests: XCTestCase {
     @MainActor
     func test_wait_doesNotPublishBeforeWait() async throws {
         let sut = LiveIntervalTimer()
+        let delays: [(delay: Double, repetitions: Int)] = [
+            (0.01, 30),
+            (0.02, 10),
+            (0.1, 5),
+            (0.2, 3),
+            (0.5, 2),
+            (1, 1),
+            (2, 1),
+        ]
 
-        let publisher = sut.wait(for: 1).collect(1).first()
+        for testCase in delays {
+            for _ in 0 ..< testCase.repetitions {
+                let publisher = sut.wait(for: testCase.delay).collect(1).first()
 
-        await awaitNoPublish(publisher: publisher, timeout: 0.5, when: {})
+                // We should publish very slightly after the delay, so nothing should be seen here.
+                await awaitNoPublish(publisher: publisher, timeout: testCase.delay - .ulpOfOne, when: {})
+            }
+        }
     }
 }
