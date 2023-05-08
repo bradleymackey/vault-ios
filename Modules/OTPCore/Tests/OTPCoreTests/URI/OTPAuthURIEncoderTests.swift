@@ -104,7 +104,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     func test_encodePeriod_includesPeriodInParameters() throws {
-        let samples: [UInt32] = [2, 100, 200, 2_000_000]
+        let samples: [UInt64] = [2, 100, 200, 2_000_000]
         for sample in samples {
             let code = makeCode(type: .totp(period: sample))
             let sut = makeSUT()
@@ -117,7 +117,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 
     func test_encodeCounter_includesCounterInParameters() throws {
-        let samples: [UInt32] = [2, 100, 200, 2_000_000]
+        let samples: [UInt64] = [2, 100, 200, 2_000_000]
         for sample in samples {
             let code = makeCode(type: .hotp(counter: sample))
             let sut = makeSUT()
