@@ -8,16 +8,27 @@
 import Foundation
 import OTPFeed
 
-#if DEBUG
 struct MockCodeStore: OTPCodeStoreReader {
-    let codes: [StoredOTPCode] = [
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay")),
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Cloudflare")),
-        .init(id: UUID(), code: .init(type: .hotp(), secret: .empty(), accountName: "HOTP test", issuer: "Authority")),
-    ]
+    static func totpCode() -> StoredOTPCode {
+        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay"))
+    }
+
+    static func hotpCode() -> StoredOTPCode {
+        .init(id: UUID(), code: .init(type: .hotp(), secret: .empty(), accountName: "HOTP test", issuer: "Authority"))
+    }
+
+    static let codes: [StoredOTPCode] = {
+        var result = [StoredOTPCode]()
+        for _ in 0 ..< 50 {
+            result.append(totpCode())
+        }
+        for _ in 0 ..< 50 {
+            result.append(hotpCode())
+        }
+        return result
+    }()
 
     func retrieve() async throws -> [OTPFeed.StoredOTPCode] {
-        codes
+        Self.codes
     }
 }
-#endif
