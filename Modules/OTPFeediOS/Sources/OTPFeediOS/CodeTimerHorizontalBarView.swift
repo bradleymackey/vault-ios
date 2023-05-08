@@ -17,11 +17,12 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     public var body: some View {
         GeometryReader { proxy in
             HorizontalTimerProgressBarView(
-                initialFractionCompleted: 0,
-                startSignaller: viewModel.timerPublisher(currentTime: { viewModel.currentTime }),
-                direction: .drains,
+                fractionCompleted: $currentFractionCompleted,
                 color: color
             )
+            .onReceive(viewModel.timerPublisher()) { progress in
+                updateState(progress: progress)
+            }
             .onAppear {
                 viewModel.recalculateTimer()
             }
@@ -30,20 +31,42 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
             }
         }
     }
+
+    private func updateState(progress: CodeTimerProgress) {
+        withAnimation(.linear(duration: 0.15)) {
+            currentFractionCompleted = progress.initialFraction
+        }
+        if case let .startAnimating(_, duration) = progress {
+            withAnimation(.linear(duration: duration)) {
+                currentFractionCompleted = 0
+            }
+        }
+    }
 }
 
-extension CodeTimerViewModel {
+private enum CodeTimerProgress {
+    case freeze(fraction: Double)
+    case startAnimating(startFraction: Double, duration: Double)
+
+    var initialFraction: Double {
+        switch self {
+        case let .freeze(fraction), let .startAnimating(fraction, _):
+            return fraction
+        }
+    }
+}
+
+private extension CodeTimerViewModel {
     /// Maps timer state updates to events that can be rendered by the progress bar.
-    func timerPublisher(currentTime: @escaping () -> Double)
-        -> AnyPublisher<HorizontalTimerProgressBarView.Progress, Never>
-    {
+    func timerPublisher() -> AnyPublisher<CodeTimerProgress, Never> {
         $timer.map { state in
             guard let state else { return .freeze(fraction: 1) }
-            let time = currentTime()
+            let time = self.currentTime
             let completed = state.fractionCompleted(at: time)
             let remainingTime = state.remainingTime(at: time)
-            return .startAnimating(startFraction: completed, duration: remainingTime)
+            return .startAnimating(startFraction: 1 - completed, duration: remainingTime)
         }
+        .receive(on: RunLoop.main)
         .eraseToAnyPublisher()
     }
 }

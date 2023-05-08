@@ -4,44 +4,36 @@ import XCTest
 @testable import OTPFeediOS
 
 final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
-    func test_initialFraction_empty() {
+    func test_layout_empty() {
         let view = HorizontalTimerProgressBarView(
-            initialFractionCompleted: 0,
-            startSignaller: PassthroughSubject().eraseToAnyPublisher(),
-            direction: .fills,
+            fractionCompleted: .constant(0),
             color: .blue
         ).frame(width: 150, height: 20)
 
         assertSnapshot(matching: view, as: .image)
     }
 
-    func test_initialFraction_halfFull() {
+    func test_layout_halfFull() {
         let view = HorizontalTimerProgressBarView(
-            initialFractionCompleted: 0.5,
-            startSignaller: PassthroughSubject().eraseToAnyPublisher(),
-            direction: .fills,
+            fractionCompleted: .constant(0.5),
             color: .blue
         ).frame(width: 150, height: 20)
 
         assertSnapshot(matching: view, as: .image)
     }
 
-    func test_initialFraction_full() {
+    func test_layout_full() {
         let view = HorizontalTimerProgressBarView(
-            initialFractionCompleted: 1,
-            startSignaller: PassthroughSubject().eraseToAnyPublisher(),
-            direction: .fills,
+            fractionCompleted: .constant(1),
             color: .blue
         ).frame(width: 150, height: 20)
 
         assertSnapshot(matching: view, as: .image)
     }
 
-    func test_initialFraction_setsBackgroundColorCorrectly() {
+    func test_layout_setsBackgroundColor() {
         let view = HorizontalTimerProgressBarView(
-            initialFractionCompleted: 0.5,
-            startSignaller: PassthroughSubject().eraseToAnyPublisher(),
-            direction: .fills,
+            fractionCompleted: .constant(0.5),
             color: .blue,
             backgroundColor: .red
         ).frame(width: 150, height: 20)
@@ -49,22 +41,8 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: view, as: .image)
     }
 
-    func test_fixed_fillsToDesiredFill() {
-        let view = HorizontalTimerProgressBarView.fixed(at: 0.75, color: .red)
-            .frame(width: 150, height: 20)
-
-        assertSnapshot(matching: view, as: .image)
-    }
-
-    func test_fixed_setsBackgroundColorCorrectly() {
-        let view = HorizontalTimerProgressBarView.fixed(at: 0.5, color: .blue, backgroundColor: .red)
-            .frame(width: 150, height: 20)
-
-        assertSnapshot(matching: view, as: .image)
-    }
-
     func test_redactedPlaceholder_showsProgressStill() {
-        let view = HorizontalTimerProgressBarView.fixed(at: 0.5, color: .blue)
+        let view = HorizontalTimerProgressBarView(fractionCompleted: .constant(0.5), color: .blue)
             .redacted(reason: .placeholder)
             .frame(width: 150, height: 20)
 
@@ -72,7 +50,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     }
 
     func test_redactedPrivacy_showsProgressStill() {
-        let view = HorizontalTimerProgressBarView.fixed(at: 0.5, color: .blue)
+        let view = HorizontalTimerProgressBarView(fractionCompleted: .constant(0.5), color: .blue)
             .redacted(reason: .privacy)
             .frame(width: 150, height: 20)
 
