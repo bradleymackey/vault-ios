@@ -68,7 +68,7 @@ private extension CodeTimerUpdater {
             let remainingTime = state.remainingTime(at: time)
             return .startAnimating(startFraction: 1 - completed, duration: remainingTime)
         }
-        .receive(on: RunLoop.main)
+        .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
 }
