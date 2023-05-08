@@ -5,7 +5,7 @@ import Foundation
 public struct LiveIntervalTimer: IntervalTimer {
     public init() {}
     public func wait(for time: Double) -> AnyPublisher<Void, Never> {
-        Timer.TimerPublisher(interval: time, runLoop: .main, mode: .default)
+        Timer.TimerPublisher(interval: time, runLoop: .current, mode: .common)
             .autoconnect()
             .map { _ in }
             .first() // only publish once
