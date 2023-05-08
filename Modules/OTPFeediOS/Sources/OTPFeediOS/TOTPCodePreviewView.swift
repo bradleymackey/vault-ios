@@ -33,7 +33,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             Button {
                 previewViewModel.didTapCode()
             } label: {
-                CodeTextView(codeState: effectiveCodeState, codeSpacing: 10.0)
+                CodeTextView(codeState: effectiveCodeState)
                     .font(.system(.largeTitle, design: .monospaced))
                     .fontWeight(.bold)
                     .padding(.horizontal, 2)
@@ -104,7 +104,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         VStack(spacing: 40) {
             makePreview(issuer: "Working Example", renderer: codeRenderer)
                 .onAppear {
-                    codeRenderer.subject.send("123456")
+                    codeRenderer.subject.send("1234567")
                 }
 
             makePreview(issuer: nil, renderer: codeRenderer)

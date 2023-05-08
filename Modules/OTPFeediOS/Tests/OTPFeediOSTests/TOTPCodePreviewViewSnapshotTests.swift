@@ -51,7 +51,7 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
     }
 
     func test_textWrapping_longCodeMaintainsSameSizeForAllDigits() {
-        let digits = [6, 8, 20]
+        let digits = [6, 7, 8, 20]
         for count in digits {
             let code = String(Array(repeating: Character("0"), count: count))
             let sut = makeSUT(state: .visible(code))
