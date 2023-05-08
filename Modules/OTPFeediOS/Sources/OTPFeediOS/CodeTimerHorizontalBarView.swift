@@ -7,6 +7,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     var clock: EpochClock
     var updater: Updater
     var color: Color = .blue
+    var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
     @State private var currentFractionCompleted = 0.0
     @Environment(\.scenePhase) private var scenePhase
@@ -15,7 +16,8 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
         GeometryReader { proxy in
             HorizontalTimerProgressBarView(
                 fractionCompleted: currentFractionCompleted,
-                color: color
+                color: color,
+                backgroundColor: backgroundColor
             )
             .onChange(of: proxy.size) { _ in
                 updater.recalculate()
