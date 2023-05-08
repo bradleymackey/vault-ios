@@ -64,6 +64,6 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     }
 
     private static func hotpGenerator() -> HOTPPreviewViewGenerator {
-        HOTPPreviewViewGenerator(hideCodes: false)
+        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), hideCodes: false)
     }
 }

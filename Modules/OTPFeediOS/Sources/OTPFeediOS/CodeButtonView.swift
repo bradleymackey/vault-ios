@@ -1,8 +1,9 @@
+import OTPCore
 import OTPFeed
 import SwiftUI
 
-struct CodeButtonView: View {
-    @ObservedObject var viewModel: CodeIncrementerViewModel
+struct CodeButtonView<Timer: IntervalTimer>: View {
+    @ObservedObject var viewModel: CodeIncrementerViewModel<Timer>
 
     var body: some View {
         Button {

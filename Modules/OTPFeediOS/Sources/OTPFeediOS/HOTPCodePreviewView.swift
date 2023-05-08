@@ -1,3 +1,4 @@
+import OTPCore
 import OTPFeed
 import SwiftUI
 
@@ -77,10 +78,16 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
             renderer: renderer
         )
         return HOTPCodePreviewView(
-            buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
-                hotpGenerator: .init(secret: Data()),
-                initialCounter: 0
-            ), counter: 0)),
+            buttonView: CodeButtonView(
+                viewModel: .init(
+                    hotpRenderer: .init(
+                        hotpGenerator: .init(secret: Data()),
+                        initialCounter: 0
+                    ),
+                    timer: LiveIntervalTimer(),
+                    initialCounter: 0
+                )
+            ),
             previewViewModel: previewViewModel,
             hideCode: hideCode
         )
