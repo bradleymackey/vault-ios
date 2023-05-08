@@ -78,7 +78,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         case .error:
             Color.red
         case .finished, .notReady:
-            Color(UIColor.systemGray3)
+            Color.gray
+                .opacity(0.4)
         }
     }
 
