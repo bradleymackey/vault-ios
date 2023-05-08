@@ -35,7 +35,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                     viewModel: feedViewModel,
                     totpGenerator: totpEditingGenerator(hideCodes: isEditing),
                     hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
-                    gridSpacing: 32
+                    gridSpacing: 12
                 )
                 .padding(16)
             }
@@ -148,10 +148,22 @@ struct OnTapOverrideButtonModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
+            .modifier(OTPCardViewModifier(isSelectable: isTapEnabled))
             .disabled(isTapEnabled)
             .onTapGesture {
                 guard isTapEnabled else { return }
                 onTap()
             }
+    }
+}
+
+struct OTPCardViewModifier: ViewModifier {
+    var isSelectable: Bool
+
+    func body(content: Content) -> some View {
+        content
+            .padding(8)
+            .background(isSelectable ? .blue.opacity(0.2) : Color(UIColor.secondarySystemBackground))
+            .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }
