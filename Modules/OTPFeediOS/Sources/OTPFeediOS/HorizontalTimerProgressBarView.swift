@@ -2,8 +2,6 @@ import Combine
 import SwiftUI
 
 public struct HorizontalTimerProgressBarView: View {
-    @Environment(\.redactionReasons) var redactionReasons
-
     var color: Color
     var backgroundColor: Color
     /// The wayt that the progress bar completes, by filling or draining.
