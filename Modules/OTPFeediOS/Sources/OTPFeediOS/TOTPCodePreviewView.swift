@@ -38,8 +38,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                     .fontWeight(.bold)
                     .padding(.horizontal, 2)
             }
-            .buttonStyle(.plain)
-            .disabled(!effectiveCodeState.isVisible)
+            .foregroundColor(.primary)
+            .disabled(!effectiveCodeState.isVisible || !previewViewModel.allowsCodeTapAction)
 
             timerSection
         }

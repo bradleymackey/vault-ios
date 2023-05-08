@@ -29,14 +29,18 @@ public final class CodePreviewViewModel: ObservableObject {
     public let issuer: String?
     @Published public private(set) var code: OTPCodeState = .notReady
 
-    private let onCodeTap: (OTPCodeState) -> Void
+    private let onCodeTap: ((OTPCodeState) -> Void)?
     private var cancellables = Set<AnyCancellable>()
+
+    public var allowsCodeTapAction: Bool {
+        onCodeTap != nil
+    }
 
     public init(
         accountName: String,
         issuer: String?,
         fixedCodeState: OTPCodeState,
-        onCodeTap: @escaping (OTPCodeState) -> Void = { _ in }
+        onCodeTap: ((OTPCodeState) -> Void)? = nil
     ) {
         self.accountName = accountName
         self.issuer = issuer
@@ -48,7 +52,7 @@ public final class CodePreviewViewModel: ObservableObject {
         accountName: String,
         issuer: String?,
         renderer: some OTPCodeRenderer,
-        onCodeTap: @escaping (OTPCodeState) -> Void = { _ in }
+        onCodeTap: ((OTPCodeState) -> Void)? = nil
     ) {
         self.accountName = accountName
         self.issuer = issuer
@@ -77,6 +81,6 @@ public final class CodePreviewViewModel: ObservableObject {
     }
 
     public func didTapCode() {
-        onCodeTap(code)
+        onCodeTap?(code)
     }
 }
