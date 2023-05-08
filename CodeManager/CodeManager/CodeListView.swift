@@ -102,7 +102,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     }
 
     func hotpGenerator(hideCodes: Bool = false) -> some HOTPViewGenerator {
-        HOTPPreviewViewGenerator(hideCodes: hideCodes)
+        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), hideCodes: hideCodes)
     }
 
     func hotpEditingGenerator(hideCodes: Bool) -> some HOTPViewGenerator {

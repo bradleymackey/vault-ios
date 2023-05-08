@@ -11,8 +11,11 @@ public protocol HOTPViewGenerator {
 
 @MainActor
 public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
+    let timer: LiveIntervalTimer
     var hideCodes: Bool
-    public init(hideCodes: Bool) {
+
+    public init(timer: LiveIntervalTimer, hideCodes: Bool) {
+        self.timer = timer
         self.hideCodes = hideCodes
     }
 
@@ -23,7 +26,11 @@ public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
             issuer: code.issuer,
             renderer: renderer
         )
-        let incrementerViewModel = CodeIncrementerViewModel(hotpRenderer: renderer, counter: counter)
+        let incrementerViewModel = CodeIncrementerViewModel(
+            hotpRenderer: renderer,
+            timer: timer,
+            initialCounter: counter
+        )
         return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: incrementerViewModel),
             previewViewModel: previewViewModel,
