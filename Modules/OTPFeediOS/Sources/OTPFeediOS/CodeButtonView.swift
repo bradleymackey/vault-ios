@@ -12,5 +12,6 @@ struct CodeButtonView<Timer: IntervalTimer>: View {
             CodeButtonIcon()
         }
         .foregroundColor(.accentColor)
+        .disabled(!viewModel.isButtonEnabled)
     }
 }
