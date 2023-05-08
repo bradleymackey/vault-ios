@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(name: "OTPFeed", path: "../OTPFeed"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.11.0"),
+        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.6"),
     ],
     targets: [
         .target(
@@ -27,6 +28,7 @@ let package = Package(
             dependencies: [
                 "OTPFeediOS",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
+                .product(name: "ViewInspector", package: "ViewInspector"),
             ]
         ),
     ]

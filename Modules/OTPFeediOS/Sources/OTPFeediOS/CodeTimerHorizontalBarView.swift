@@ -9,6 +9,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     var color: Color = .blue
 
     @State private var currentFractionCompleted = 0.0
+    @Environment(\.scenePhase) private var scenePhase
 
     public var body: some View {
         GeometryReader { proxy in
@@ -16,15 +17,19 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
                 fractionCompleted: $currentFractionCompleted,
                 color: color
             )
-            .onReceive(updater.timerProgressPublisher(currentTime: clock.makeCurrentTime)) { progress in
-                updateState(progress: progress)
-            }
-            .onAppear {
-                updater.recalculate()
-            }
             .onChange(of: proxy.size) { _ in
                 updater.recalculate()
             }
+        }
+        .onReceive(updater.timerProgressPublisher(currentTime: clock.makeCurrentTime)) { progress in
+            updateState(progress: progress)
+        }
+        .onAppear {
+            updater.recalculate()
+        }
+        .onChange(of: scenePhase) { newPhase in
+            guard newPhase == .active else { return }
+            updater.recalculate()
         }
     }
 
