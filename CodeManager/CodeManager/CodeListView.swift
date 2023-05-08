@@ -72,11 +72,13 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         switch code.type {
         case let .totp(period):
             CodeDetailView(
+                feedViewModel: feedViewModel,
                 code: code,
                 preview: totpGenerator().makeTOTPView(period: period, code: code)
             )
         case let .hotp(counter):
             CodeDetailView(
+                feedViewModel: feedViewModel,
                 code: code,
                 preview: hotpGenerator().makeHOTPView(counter: counter, code: code)
             )
