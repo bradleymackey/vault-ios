@@ -54,9 +54,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                     }
                 }
             }
-            .sheet(item: $modal) {
-                isEditing = false
-            } content: { visible in
+            .sheet(item: $modal) { visible in
                 switch visible {
                 case let .detail(_, code):
                     NavigationView {
