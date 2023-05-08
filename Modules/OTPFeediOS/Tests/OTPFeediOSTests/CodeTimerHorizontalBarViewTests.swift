@@ -9,7 +9,7 @@ final class CodeTimerHorizontalBarViewTests: XCTestCase {
     func test_onAppear_recalculatesTimer() throws {
         let (timer, sut) = makeSUT()
 
-        try sut.inspect().geometryReader().callOnAppear()
+        try rootView(of: sut).callOnAppear()
 
         XCTAssertEqual(timer.recalculateCallCount, 1)
     }
@@ -17,8 +17,7 @@ final class CodeTimerHorizontalBarViewTests: XCTestCase {
     func test_onChangeSceneState_recalculatesTimerWhenActive() throws {
         let (timer, sut) = makeSUT()
 
-        let newState = ScenePhase.active
-        try sut.inspect().geometryReader().callOnChange(newValue: newState)
+        try rootView(of: sut).callOnChange(newValue: ScenePhase.active)
 
         XCTAssertEqual(timer.recalculateCallCount, 1)
     }
@@ -26,8 +25,8 @@ final class CodeTimerHorizontalBarViewTests: XCTestCase {
     func test_onChangeSceneState_doesNotRecalculateTimerWhenNotActive() throws {
         let (timer, sut) = makeSUT()
 
-        try sut.inspect().geometryReader().callOnChange(newValue: ScenePhase.background)
-        try sut.inspect().geometryReader().callOnChange(newValue: ScenePhase.inactive)
+        try rootView(of: sut).callOnChange(newValue: ScenePhase.background)
+        try rootView(of: sut).callOnChange(newValue: ScenePhase.inactive)
 
         XCTAssertEqual(timer.recalculateCallCount, 0)
     }
@@ -45,5 +44,9 @@ final class CodeTimerHorizontalBarViewTests: XCTestCase {
         trackForMemoryLeaks(clock, file: file, line: line)
         trackForMemoryLeaks(updater, file: file, line: line)
         return (updater, view)
+    }
+
+    private func rootView(of sut: some View) throws -> InspectableView<ViewType.GeometryReader> {
+        try sut.inspect().geometryReader()
     }
 }
