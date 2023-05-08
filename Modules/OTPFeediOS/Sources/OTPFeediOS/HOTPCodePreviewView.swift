@@ -29,7 +29,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     private var codeText: some View {
-        CodeTextView(codeState: previewViewModel.code, codeSpacing: 10.0)
+        CodeTextView(codeState: previewViewModel.code)
             .font(.system(.largeTitle, design: .monospaced))
             .fontWeight(.bold)
             .redacted(reason: hideCode ? .placeholder : [])
