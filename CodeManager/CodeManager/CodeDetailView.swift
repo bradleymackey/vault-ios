@@ -7,12 +7,14 @@
 
 import Foundation
 import OTPCore
+import OTPFeed
 import OTPFeediOS
 import SwiftUI
 
-struct CodeDetailView<Preview: View>: View {
+struct CodeDetailView<Store: OTPCodeStoreReader, Preview: View>: View {
     @Environment(\.dismiss) var dismiss
 
+    @ObservedObject var feedViewModel: FeedViewModel<Store>
     let code: OTPAuthCode
     var preview: Preview
 
@@ -26,7 +28,7 @@ struct CodeDetailView<Preview: View>: View {
                 Button {
                     dismiss()
                 } label: {
-                    Text("Done")
+                    Text(feedViewModel.doneEditingTitle)
                 }
             }
         }
