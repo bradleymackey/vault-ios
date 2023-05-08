@@ -25,9 +25,11 @@ public final class CodeIncrementerViewModel<Timer: IntervalTimer>: ObservableObj
         }
     }
 
-    public func lockingWithButton(operation _: () -> Void) {
+    public func lockingWithButton(operation: () -> Void) {
         guard isButtonEnabled else { return }
         isButtonEnabled = false
+
+        operation()
 
         timerCancellable = timer.wait(for: 4)
             .receive(on: DispatchQueue.main)

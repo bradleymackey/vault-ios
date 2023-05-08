@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OTPFeed
 import XCTest
@@ -5,13 +6,13 @@ import XCTest
 @MainActor
 final class CodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_isInitiallyTrue() {
-        let (_, sut) = makeSUT()
+        let (_, _, sut) = makeSUT()
 
         XCTAssertTrue(sut.isButtonEnabled)
     }
 
     func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
-        let (_, sut) = makeSUT()
+        let (_, _, sut) = makeSUT()
         let publisher = sut.$isButtonEnabled.collectNext(1)
 
         let values = try await awaitPublisher(publisher, when: {
@@ -21,7 +22,7 @@ final class CodeIncrementerViewModelTests: XCTestCase {
     }
 
     func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
-        let (_, sut) = makeSUT()
+        let (_, _, sut) = makeSUT()
         let publisher = sut.$isButtonEnabled.collectNext(2) // there should only be 1 event
 
         await awaitNoPublish(publisher: publisher, when: {
@@ -33,7 +34,7 @@ final class CodeIncrementerViewModelTests: XCTestCase {
     }
 
     func test_isButtonEnabled_enablesAfterTimerCompletion() async throws {
-        let (timer, sut) = makeSUT()
+        let (_, timer, sut) = makeSUT()
         let publisher = sut.$isButtonEnabled.collectNext(2)
 
         let values = try await awaitPublisher(publisher, when: {
@@ -44,7 +45,7 @@ final class CodeIncrementerViewModelTests: XCTestCase {
     }
 
     func test_isButtonEnabled_timerCompletingMultipleTimesHasNoEffect() async throws {
-        let (timer, sut) = makeSUT()
+        let (_, timer, sut) = makeSUT()
         let publisher = sut.$isButtonEnabled.collectNext(3) // there should only be 2 events
 
         await awaitNoPublish(publisher: publisher, when: {
@@ -57,15 +58,47 @@ final class CodeIncrementerViewModelTests: XCTestCase {
         })
     }
 
+    func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
+        let (renderer, _, sut) = makeSUT()
+        let publisher = renderer.counterIncrementedPublisher()
+            .dropFirst() // the renderer publishes the first value right away, so ignore that
+            .collectFirst(1)
+
+        let incrementOperations: [Void] = try await awaitPublisher(publisher) {
+            sut.incrementCounter()
+        }
+        XCTAssertEqual(incrementOperations.count, 1)
+    }
+
+    func test_incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
+        let (renderer, _, sut) = makeSUT()
+        let publisher = renderer.counterIncrementedPublisher()
+            .dropFirst() // the renderer publishes the first value right away, so ignore that
+            .collectFirst(1)
+
+        sut.incrementCounter() // disable button
+
+        await awaitNoPublish(publisher: publisher) {
+            sut.incrementCounter()
+        }
+    }
+
     // MARK: - Helpers
 
-    private func makeSUT() -> (MockIntervalTimer, CodeIncrementerViewModel<MockIntervalTimer>) {
+    private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, CodeIncrementerViewModel<MockIntervalTimer>) {
+        let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()), initialCounter: 0)
         let timer = MockIntervalTimer()
         let sut = CodeIncrementerViewModel(
-            hotpRenderer: HOTPCodeRenderer(hotpGenerator: .init(secret: Data()), initialCounter: 0),
+            hotpRenderer: renderer,
             timer: timer,
             initialCounter: 0
         )
-        return (timer, sut)
+        return (renderer, timer, sut)
+    }
+}
+
+extension HOTPCodeRenderer {
+    func counterIncrementedPublisher() -> AnyPublisher<Void, Error> {
+        renderedCodePublisher().map { _ in }.eraseToAnyPublisher()
     }
 }
