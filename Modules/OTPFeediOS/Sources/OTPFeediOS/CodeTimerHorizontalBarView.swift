@@ -15,7 +15,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     public var body: some View {
         GeometryReader { proxy in
             HorizontalTimerProgressBarView(
-                fractionCompleted: currentFractionCompleted,
+                fractionCompleted: $currentFractionCompleted,
                 color: color,
                 backgroundColor: backgroundColor
             )
