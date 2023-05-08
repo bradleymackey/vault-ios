@@ -138,16 +138,13 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
-                viewModel: .init(updater: updater, clock: clock),
+                clock: clock,
+                updater: updater,
                 color: .blue
             ),
             hideCode: hideCode
         )
         .frame(width: 250, height: 100)
-    }
-
-    static func viewModel(clock: EpochClock) -> CodeTimerViewModel<MockCodeTimerUpdater> {
-        CodeTimerViewModel(updater: updater, clock: clock)
     }
 
     private static let updater: MockCodeTimerUpdater = .init()

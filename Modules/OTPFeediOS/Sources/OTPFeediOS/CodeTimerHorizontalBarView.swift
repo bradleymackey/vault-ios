@@ -4,15 +4,11 @@ import OTPFeed
 import SwiftUI
 
 public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
-    @ObservedObject public var viewModel: CodeTimerViewModel<Updater>
+    var clock: EpochClock
+    var updater: Updater
+    var color: Color = .blue
 
-    private var color: Color
     @State private var currentFractionCompleted = 0.0
-
-    init(viewModel: CodeTimerViewModel<Updater>, color: Color = .blue) {
-        _viewModel = ObservedObject(wrappedValue: viewModel)
-        self.color = color
-    }
 
     public var body: some View {
         GeometryReader { proxy in
@@ -20,14 +16,14 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
                 fractionCompleted: $currentFractionCompleted,
                 color: color
             )
-            .onReceive(viewModel.timerPublisher()) { progress in
+            .onReceive(updater.timerProgressPublisher(currentTime: clock.makeCurrentTime)) { progress in
                 updateState(progress: progress)
             }
             .onAppear {
-                viewModel.recalculateTimer()
+                updater.recalculate()
             }
             .onChange(of: proxy.size) { _ in
-                viewModel.recalculateTimer()
+                updater.recalculate()
             }
         }
     }
@@ -56,12 +52,11 @@ private enum CodeTimerProgress {
     }
 }
 
-private extension CodeTimerViewModel {
+private extension CodeTimerUpdater {
     /// Maps timer state updates to events that can be rendered by the progress bar.
-    func timerPublisher() -> AnyPublisher<CodeTimerProgress, Never> {
-        $timer.map { state in
-            guard let state else { return .freeze(fraction: 1) }
-            let time = self.currentTime
+    func timerProgressPublisher(currentTime: @escaping () -> Double) -> AnyPublisher<CodeTimerProgress, Never> {
+        timerUpdatedPublisher().map { state in
+            let time = currentTime()
             let completed = state.fractionCompleted(at: time)
             let remainingTime = state.remainingTime(at: time)
             return .startAnimating(startFraction: 1 - completed, duration: remainingTime)
@@ -73,7 +68,7 @@ private extension CodeTimerViewModel {
 
 struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     static var previews: some View {
-        CodeTimerHorizontalBarView<MockCodeTimerUpdater>(viewModel: viewModel(clock: clock))
+        CodeTimerHorizontalBarView<MockCodeTimerUpdater>(clock: clock, updater: updater)
             .frame(width: 250, height: 20)
             .previewLayout(.fixed(width: 300, height: 300))
             .onAppear {
@@ -82,10 +77,6 @@ struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     }
 
     // MARK: - Helpers
-
-    static func viewModel(clock: EpochClock) -> CodeTimerViewModel<MockCodeTimerUpdater> {
-        CodeTimerViewModel(updater: updater, clock: clock)
-    }
 
     private static let updater: MockCodeTimerUpdater = .init()
 
