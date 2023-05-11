@@ -19,4 +19,11 @@
    <FileRef
       location = "group:Modules/CryptoDocumentExporter">
    </FileRef>
+   <Group
+      location = "group:TestPlans"
+      name = "TestPlans">
+      <FileRef
+         location = "group:iOS_AllTests.xctestplan">
+      </FileRef>
+   </Group>
 </Workspace>
