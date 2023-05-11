@@ -13,7 +13,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:../../CodeManager/TestPlans/iOS_AllTests.xctestplan"
+            reference = "container:../../TestPlans/iOS_AllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
