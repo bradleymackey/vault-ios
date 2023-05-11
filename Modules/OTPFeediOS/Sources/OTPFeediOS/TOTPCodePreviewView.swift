@@ -136,11 +136,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         )
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
-            timerView: CodeTimerHorizontalBarView(
-                clock: clock,
-                updater: updater,
-                color: .blue
-            ),
+            timerView: Color.red,
             hideCode: hideCode
         )
         .frame(width: 250, height: 100)
