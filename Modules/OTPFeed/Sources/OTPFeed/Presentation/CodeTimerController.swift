@@ -5,6 +5,7 @@ import OTPCore
 public protocol CodeTimerUpdater {
     func recalculate()
     func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never>
+    var lastState: OTPTimerState { get }
 }
 
 /// Controller for producing timers for a given code, according to a clock.
@@ -27,7 +28,11 @@ public final class CodeTimerController<Timer: IntervalTimer>: CodeTimerUpdater {
 
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
     public func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
-        timerStateSubject.eraseToAnyPublisher()
+        timerStateSubject.print().eraseToAnyPublisher()
+    }
+
+    public var lastState: OTPTimerState {
+        timerStateSubject.value
     }
 
     public func recalculate() {

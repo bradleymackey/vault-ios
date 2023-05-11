@@ -9,6 +9,8 @@ final class MockCodeTimerUpdater: CodeTimerUpdater {
         subject.eraseToAnyPublisher()
     }
 
+    var lastState: OTPTimerState = .init(startTime: 0, endTime: 0)
+
     func recalculate() {
         recalculateCallCount += 1
     }

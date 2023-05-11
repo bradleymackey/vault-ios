@@ -47,7 +47,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     }
 }
 
-private enum CodeTimerProgress {
+private enum CodeTimerProgress: Equatable {
     case freeze(fraction: Double)
     case startAnimating(startFraction: Double, duration: Double)
 
@@ -59,15 +59,21 @@ private enum CodeTimerProgress {
     }
 }
 
+private extension OTPTimerState {
+    func codeTimerProgress(currentTime time: Double) -> CodeTimerProgress {
+        let completed = fractionCompleted(at: time)
+        let remainingTime = remainingTime(at: time)
+        return .startAnimating(startFraction: 1 - completed, duration: remainingTime)
+    }
+}
+
 private extension CodeTimerUpdater {
     /// Maps timer state updates to events that can be rendered by the progress bar.
     func timerProgressPublisher(currentTime: @escaping () -> Double) -> AnyPublisher<CodeTimerProgress, Never> {
         timerUpdatedPublisher().map { state in
-            let time = currentTime()
-            let completed = state.fractionCompleted(at: time)
-            let remainingTime = state.remainingTime(at: time)
-            return .startAnimating(startFraction: 1 - completed, duration: remainingTime)
+            state.codeTimerProgress(currentTime: currentTime())
         }
+        .removeDuplicates()
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
     }
