@@ -5,6 +5,24 @@ import XCTest
 @testable import OTPFeed
 
 final class ManagedOTPCodeEncoderTests: XCTestCase {
+    private var persistentContainer: NSPersistentContainer!
+
+    override func setUpWithError() throws {
+        super.setUp()
+
+        persistentContainer = try NSPersistentContainer.load(
+            name: CoreDataCodeStore.modelName,
+            model: XCTUnwrap(CoreDataCodeStore.model),
+            url: inMemoryStoreURL()
+        )
+    }
+
+    override func tearDown() {
+        persistentContainer = nil
+
+        super.tearDown()
+    }
+
     func test_encodeExisting_retainsExistingUUID() {
         let sut = makeSUT()
 
@@ -158,8 +176,7 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeSUT() -> ManagedOTPCodeEncoder {
-        let anyContext = NSManagedObjectContext(concurrencyType: .mainQueueConcurrencyType)
-        return ManagedOTPCodeEncoder(context: anyContext)
+        ManagedOTPCodeEncoder(context: anyContext())
     }
 
     private func makeCode(
@@ -178,5 +195,14 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
             accountName: accountName,
             issuer: issuer
         )
+    }
+
+    private func anyContext() -> NSManagedObjectContext {
+        persistentContainer.viewContext
+    }
+
+    private func inMemoryStoreURL() -> URL {
+        URL(fileURLWithPath: "/dev/null")
+            .appendingPathComponent("\(type(of: self)).store")
     }
 }
