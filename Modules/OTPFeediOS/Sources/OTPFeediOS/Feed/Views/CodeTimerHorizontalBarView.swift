@@ -35,7 +35,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
         }
     }
 
-    private func updateState(progress: CodeTimerProgress) {
+    private func updateState(progress: CodeTimerAnimationState) {
         withAnimation(.linear(duration: 0.15)) {
             currentFractionCompleted = progress.initialFraction
         }
@@ -47,7 +47,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     }
 }
 
-private enum CodeTimerProgress {
+private enum CodeTimerAnimationState {
     case freeze(fraction: Double)
     case startAnimating(startFraction: Double, duration: Double)
 
@@ -61,7 +61,7 @@ private enum CodeTimerProgress {
 
 private extension CodeTimerUpdater {
     /// Maps timer state updates to events that can be rendered by the progress bar.
-    func timerProgressPublisher(currentTime: @escaping () -> Double) -> AnyPublisher<CodeTimerProgress, Never> {
+    func timerProgressPublisher(currentTime: @escaping () -> Double) -> AnyPublisher<CodeTimerAnimationState, Never> {
         timerUpdatedPublisher().map { state in
             let time = currentTime()
             let completed = state.fractionCompleted(at: time)
