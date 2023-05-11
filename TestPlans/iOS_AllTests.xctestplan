@@ -2,9 +2,16 @@
   "configurations" : [
     {
       "id" : "6E280D70-B6E5-4314-A68C-AE447A84D4F3",
-      "name" : "Test Scheme Action",
+      "name" : "Default",
       "options" : {
 
+      }
+    },
+    {
+      "id" : "2B44142F-E8BF-4566-9965-BDC655B045D7",
+      "name" : "TSAN",
+      "options" : {
+        "threadSanitizerEnabled" : true
       }
     }
   ],
