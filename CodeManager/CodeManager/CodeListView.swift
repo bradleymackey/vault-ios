@@ -11,8 +11,9 @@ import OTPFeediOS
 import SwiftUI
 
 @MainActor
-struct CodeListView<Store: OTPCodeStoreReader>: View {
+struct CodeListView<Store: OTPCodeStoreReader, TOTPGenerator: TOTPViewGenerator>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
+    var generator: TOTPGenerator
 
     @State private var isEditing = false
     @State private var modal: Modal?
@@ -69,7 +70,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
             CodeDetailView(
                 feedViewModel: feedViewModel,
                 code: code,
-                preview: totpGenerator().makeTOTPView(period: period, code: code)
+                preview: generator.makeTOTPView(period: period, code: code)
             )
         case let .hotp(counter):
             CodeDetailView(
@@ -80,17 +81,9 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         }
     }
 
-    func totpGenerator(hideCodes: Bool = false) -> some TOTPViewGenerator {
-        TOTPPreviewViewGenerator(
-            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer(),
-            hideCodes: hideCodes
-        )
-    }
-
-    func totpEditingGenerator(hideCodes: Bool) -> some TOTPViewGenerator {
+    func totpEditingGenerator(hideCodes _: Bool) -> some TOTPViewGenerator {
         TOTPOnTapDecoratorViewGenerator(
-            generator: totpGenerator(hideCodes: hideCodes),
+            generator: generator,
             isTapEnabled: isEditing,
             onTap: { code in
                 modal = .detail(UUID(), code)
