@@ -37,7 +37,6 @@
 		1CDA9C9B2A057A8C00555E7A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1CDA9CA12A057A8C00555E7A /* CodeManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDA9CA52A057A8C00555E7A /* CodeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeManagerTests.swift; sourceTree = "<group>"; };
-		1CE682E62A090997009FB3A1 /* OTPFeediOS */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = OTPFeediOS; path = ../Modules/OTPFeediOS; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -70,7 +69,6 @@
 		1CDA9C882A057A8B00555E7A = {
 			isa = PBXGroup;
 			children = (
-				1CDA9CBE2A057AA900555E7A /* Packages */,
 				1CDA9C932A057A8B00555E7A /* CodeManager */,
 				1CDA9CA42A057A8C00555E7A /* CodeManagerTests */,
 				1CDA9C922A057A8B00555E7A /* Products */,
@@ -114,14 +112,6 @@
 				1CDA9CA52A057A8C00555E7A /* CodeManagerTests.swift */,
 			);
 			path = CodeManagerTests;
-			sourceTree = "<group>";
-		};
-		1CDA9CBE2A057AA900555E7A /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				1CE682E62A090997009FB3A1 /* OTPFeediOS */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		1CDA9CC12A057ADC00555E7A /* Frameworks */ = {
