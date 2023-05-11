@@ -1,0 +1,68 @@
+{
+  "configurations" : [
+    {
+      "id" : "6E280D70-B6E5-4314-A68C-AE447A84D4F3",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "testExecutionOrdering" : "random",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/OTPFeed",
+        "identifier" : "OTPFeedTests",
+        "name" : "OTPFeedTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/OTPFeediOS",
+        "identifier" : "OTPFeediOSTests",
+        "name" : "OTPFeediOSTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/OTPCore",
+        "identifier" : "OTPCoreTests",
+        "name" : "OTPCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CryptoEngineTests",
+        "name" : "CryptoEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/CryptoDocumentExporter",
+        "identifier" : "CryptoDocumentExporterTests",
+        "name" : "CryptoDocumentExporterTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/CryptoDocumentExporter",
+        "identifier" : "CryptoDocumentExporterSnapshotTests",
+        "name" : "CryptoDocumentExporterSnapshotTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/..\/CodeManager\/CodeManager.xcodeproj",
+        "identifier" : "1CDA9CA02A057A8C00555E7A",
+        "name" : "CodeManagerTests"
+      }
+    }
+  ],
+  "version" : 1
+}

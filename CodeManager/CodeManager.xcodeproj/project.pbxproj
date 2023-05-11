@@ -28,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		1C4BE66E2A0D92F300D52CEA /* iOS_AllTests.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = iOS_AllTests.xctestplan; sourceTree = "<group>"; };
 		1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDetailView.swift; sourceTree = "<group>"; };
 		1C58F2892A07E212005A7DF5 /* MockCodeStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockCodeStore.swift; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* CodeManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +59,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		1C4BE66F2A0D933700D52CEA /* TestPlans */ = {
+			isa = PBXGroup;
+			children = (
+				1C4BE66E2A0D92F300D52CEA /* iOS_AllTests.xctestplan */,
+			);
+			path = TestPlans;
+			sourceTree = "<group>";
+		};
 		1C58F2882A07E20B005A7DF5 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
@@ -69,6 +78,7 @@
 		1CDA9C882A057A8B00555E7A = {
 			isa = PBXGroup;
 			children = (
+				1C4BE66F2A0D933700D52CEA /* TestPlans */,
 				1CDA9C932A057A8B00555E7A /* CodeManager */,
 				1CDA9CA42A057A8C00555E7A /* CodeManagerTests */,
 				1CDA9C922A057A8B00555E7A /* Products */,
