@@ -3,6 +3,8 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
+// There's still a hell of a lot of core animation commits being made (see Instruments).
+// Can we reduce this somehow?
 public struct CodeTimerHorizontalBarView: View {
     @ObservedObject var codeTimerProgressState: CodeTimerProgressState
     var color: Color = .blue
