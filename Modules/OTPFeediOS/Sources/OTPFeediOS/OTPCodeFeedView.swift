@@ -26,18 +26,37 @@ public struct OTPCodeFeedView<
     }
 
     public var body: some View {
-        LazyVGrid(columns: columns, alignment: .trailing, spacing: gridSpacing) {
-            ForEach(viewModel.codes) { storedCode in
-                switch storedCode.code.type {
-                case let .totp(period):
-                    totpGenerator.makeTOTPView(period: period, code: storedCode.code)
-                case let .hotp(counter):
-                    hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
+        List {
+            ForEach(viewModel.codePairs) { codePair in
+                HStack(alignment: .top) {
+                    ForEach(codePair.codes) { code in
+                        codeView(storedCode: code)
+                    }
                 }
+                .buttonStyle(.borderless)
+                .frame(maxWidth: .infinity)
             }
+            .listRowSeparator(.hidden)
+            .listRowInsets(.init(
+                top: gridSpacing / 2,
+                leading: gridSpacing,
+                bottom: gridSpacing / 2,
+                trailing: gridSpacing
+            ))
         }
+        .listStyle(.plain)
         .task {
             await viewModel.reloadData()
+        }
+    }
+
+    @ViewBuilder
+    private func codeView(storedCode: StoredOTPCode) -> some View {
+        switch storedCode.code.type {
+        case let .totp(period):
+            totpGenerator.makeTOTPView(period: period, code: storedCode.code)
+        case let .hotp(counter):
+            hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
         }
     }
 
