@@ -16,7 +16,7 @@ public struct CodeTimerHorizontalBarView: View {
     public var body: some View {
         GeometryReader { reader in
             HorizontalTimerProgressBarView(
-                fractionCompleted: $fractionCompleted,
+                fractionCompleted: fractionCompleted,
                 color: color,
                 backgroundColor: backgroundColor
             )
