@@ -30,15 +30,12 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
 
     var body: some View {
         NavigationView {
-            ScrollView(.vertical) {
-                OTPCodeFeedView(
-                    viewModel: feedViewModel,
-                    totpGenerator: totpEditingGenerator(hideCodes: isEditing),
-                    hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
-                    gridSpacing: 12
-                )
-                .padding(16)
-            }
+            OTPCodeFeedView(
+                viewModel: feedViewModel,
+                totpGenerator: totpEditingGenerator(hideCodes: isEditing),
+                hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
+                gridSpacing: 12
+            )
             .navigationTitle(Text(feedViewModel.title))
             .navigationBarTitleDisplayMode(.large)
             .toolbar {
