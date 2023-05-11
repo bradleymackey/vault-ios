@@ -24,6 +24,8 @@ final class CodeTimerProgressState: ObservableObject {
     }
 }
 
+// FIXME: 'startAnimating' state should use real time (not just a relative 'duration' value) so if the animation is interrupted we can restart the animation at an accurate time.
+// e.g. `case startAnimating(startTime: Double, endTime: Double)`
 enum CodeTimerProgress: Equatable {
     case freeze(fraction: Double)
     case startAnimating(startFraction: Double, duration: Double)
