@@ -25,5 +25,8 @@
       <FileRef
          location = "group:iOS_AllTests.xctestplan">
       </FileRef>
+      <FileRef
+         location = "group:macOS_AllTests.xctestplan">
+      </FileRef>
    </Group>
 </Workspace>
