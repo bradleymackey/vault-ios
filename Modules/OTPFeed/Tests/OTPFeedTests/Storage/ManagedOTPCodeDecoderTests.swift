@@ -10,11 +10,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
     override func setUpWithError() throws {
         super.setUp()
 
-        persistentContainer = try NSPersistentContainer.load(
-            name: CoreDataCodeStore.modelName,
-            model: XCTUnwrap(CoreDataCodeStore.model),
-            url: inMemoryStoreURL()
-        )
+        persistentContainer = try NSPersistentContainer.testContainer(storeName: String(describing: self))
     }
 
     override func tearDown() {
@@ -196,10 +192,5 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
 
     private func anyContext() -> NSManagedObjectContext {
         persistentContainer.viewContext
-    }
-
-    private func inMemoryStoreURL() -> URL {
-        URL(fileURLWithPath: "/dev/null")
-            .appendingPathComponent("\(type(of: self)).store")
     }
 }
