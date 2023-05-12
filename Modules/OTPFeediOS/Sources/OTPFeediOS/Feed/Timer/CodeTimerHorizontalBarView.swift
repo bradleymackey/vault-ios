@@ -20,28 +20,32 @@ public struct CodeTimerHorizontalBarView: View {
                 backgroundColor: backgroundColor
             )
             .onChange(of: proxy.size) { _ in
-                resetAnimation(timerState: timerState.state)
+                // the size of the viewport has changed
+                resetAnimation(timerState: timerState.state, animatedReset: false)
             }
         }
         .onChange(of: timerState.state) { timerState in
-            resetAnimation(timerState: timerState)
+            // the time parameters have updated, the timer is likely restarting
+            resetAnimation(timerState: timerState, animatedReset: true)
         }
         .onAppear {
-            resetAnimation(timerState: timerState.state)
+            // we have just appeared onscreen
+            resetAnimation(timerState: timerState.state, animatedReset: false)
         }
         .onChange(of: scenePhase) { newScenePhase in
+            // we have appeared from background
             if newScenePhase == .active {
-                resetAnimation(timerState: timerState.state)
+                resetAnimation(timerState: timerState.state, animatedReset: false)
             }
         }
     }
 
-    private func resetAnimation(timerState: OTPTimerState?) {
+    private func resetAnimation(timerState: OTPTimerState?, animatedReset: Bool) {
         let animationState = CodeTimerAnimationState.countdownFrom(
             timerState: timerState,
             currentTime: clock.currentTime
         )
-        withAnimation(.linear(duration: 0.15)) {
+        withAnimation(.linear(duration: animatedReset ? 0.15 : 0)) {
             currentFractionCompleted = animationState.initialFraction
         }
         if case let .animate(_, duration) = animationState {
