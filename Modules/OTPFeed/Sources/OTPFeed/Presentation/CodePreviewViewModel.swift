@@ -2,26 +2,6 @@ import Combine
 import Foundation
 import OTPCore
 
-public enum OTPCodeState: Equatable {
-    case notReady
-    case finished
-    case visible(String)
-    case error(PresentationError, digits: Int)
-
-    public var allowsNextCodeToBeGenerated: Bool {
-        isVisible
-    }
-
-    public var isVisible: Bool {
-        switch self {
-        case .visible:
-            return true
-        default:
-            return false
-        }
-    }
-}
-
 /// A preview of an OTP code.
 @MainActor
 public final class CodePreviewViewModel: ObservableObject {
