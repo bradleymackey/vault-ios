@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import OTPFeed
 
 /// Tracks the state for a given timer period.
 ///
@@ -10,5 +9,13 @@ import OTPFeed
 final class CodeTimerPeriodState: ObservableObject {
     @Published private(set) var state: OTPTimerState?
 
-    init() {}
+    private var stateCancellable: AnyCancellable?
+
+    init(statePublisher: AnyPublisher<OTPTimerState, Never>) {
+        stateCancellable = statePublisher
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] state in
+                self?.state = state
+            }
+    }
 }
