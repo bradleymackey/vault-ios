@@ -14,4 +14,10 @@ final class CodeTimerAnimationStateTests: XCTestCase {
 
         XCTAssertEqual(sut.initialFraction, 0.68, accuracy: .ulpOfOne)
     }
+
+    func test_initFromTimerState_nilCreatesFrozenAtZero() {
+        let sut = CodeTimerAnimationState(timerState: nil)
+
+        XCTAssertEqual(sut, .freeze(fraction: 0))
+    }
 }
