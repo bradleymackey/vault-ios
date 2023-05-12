@@ -6,7 +6,7 @@ import XCTest
 final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     func test_layout_empty() {
         let view = HorizontalTimerProgressBarView(
-            fractionCompleted: .constant(0),
+            fractionCompleted: 0,
             color: .blue
         ).frame(width: 150, height: 20)
 
@@ -15,7 +15,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
 
     func test_layout_halfFull() {
         let view = HorizontalTimerProgressBarView(
-            fractionCompleted: .constant(0.5),
+            fractionCompleted: 0.5,
             color: .blue
         ).frame(width: 150, height: 20)
 
@@ -24,7 +24,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
 
     func test_layout_full() {
         let view = HorizontalTimerProgressBarView(
-            fractionCompleted: .constant(1),
+            fractionCompleted: 1,
             color: .blue
         ).frame(width: 150, height: 20)
 
@@ -33,7 +33,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
 
     func test_layout_setsBackgroundColor() {
         let view = HorizontalTimerProgressBarView(
-            fractionCompleted: .constant(0.5),
+            fractionCompleted: 0.5,
             color: .blue,
             backgroundColor: .red
         ).frame(width: 150, height: 20)
@@ -43,7 +43,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
 
     func test_redactedPlaceholder_showsEmptyProgressBar() {
         let view = HorizontalTimerProgressBarView(
-            fractionCompleted: .constant(0.5),
+            fractionCompleted: 0.5,
             color: .blue,
             backgroundColor: .gray
         )
@@ -54,7 +54,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     }
 
     func test_redactedPrivacy_showsProgressStill() {
-        let view = HorizontalTimerProgressBarView(fractionCompleted: .constant(0.5), color: .blue)
+        let view = HorizontalTimerProgressBarView(fractionCompleted: 0.5, color: .blue)
             .redacted(reason: .privacy)
             .frame(width: 150, height: 20)
 
