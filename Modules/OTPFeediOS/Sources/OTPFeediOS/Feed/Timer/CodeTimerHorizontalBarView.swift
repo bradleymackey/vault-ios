@@ -39,7 +39,7 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
         withAnimation(.linear(duration: 0.15)) {
             currentFractionCompleted = progress.initialFraction
         }
-        if case let .startAnimating(_, duration) = progress {
+        if case let .animate(_, duration) = progress {
             withAnimation(.linear(duration: duration)) {
                 currentFractionCompleted = 0
             }
@@ -54,7 +54,7 @@ private extension CodeTimerUpdater {
             let time = currentTime()
             let completed = state.fractionCompleted(at: time)
             let remainingTime = state.remainingTime(at: time)
-            return .startAnimating(startFraction: 1 - completed, duration: remainingTime)
+            return .animate(startFraction: 1 - completed, duration: remainingTime)
         }
         .receive(on: DispatchQueue.main)
         .eraseToAnyPublisher()
