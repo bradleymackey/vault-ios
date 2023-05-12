@@ -16,7 +16,6 @@
     }
   ],
   "defaultOptions" : {
-    "codeCoverage" : false,
     "testExecutionOrdering" : "random",
     "testTimeoutsEnabled" : true
   },
