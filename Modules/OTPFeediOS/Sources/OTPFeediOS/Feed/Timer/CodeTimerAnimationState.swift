@@ -14,7 +14,10 @@ enum CodeTimerAnimationState: Equatable {
 }
 
 extension CodeTimerAnimationState {
-    init(timerState _: OTPTimerState?) {
-        self = .freeze(fraction: 0)
+    static func countdownFrom(timerState: OTPTimerState?, currentTime: Double) -> CodeTimerAnimationState {
+        guard let timerState else { return .freeze(fraction: 0) }
+        let completed = timerState.fractionCompleted(at: currentTime)
+        let remainingTime = timerState.remainingTime(at: currentTime)
+        return .animate(startFraction: 1 - completed, duration: remainingTime)
     }
 }
