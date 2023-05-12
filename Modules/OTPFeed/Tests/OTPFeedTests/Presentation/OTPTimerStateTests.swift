@@ -21,10 +21,10 @@ final class OTPTimerStateTests: XCTestCase {
         XCTAssertEqual(timeRemaining, 51, accuracy: .ulpOfOne)
     }
 
-    func test_remainingTime_isTimeRemainingNegative() {
+    func test_remainingTime_isTimeRemainingClampsToZero() {
         let sut = OTPTimerState(startTime: 350, endTime: 450)
         let timeRemaining = sut.remainingTime(at: 461)
-        XCTAssertEqual(timeRemaining, -11, accuracy: .ulpOfOne)
+        XCTAssertEqual(timeRemaining, 0, accuracy: .ulpOfOne)
     }
 
     func test_fractionCompleted_isFractionOfRangeCompleted() {

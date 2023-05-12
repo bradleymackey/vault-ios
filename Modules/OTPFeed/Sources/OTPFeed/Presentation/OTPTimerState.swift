@@ -17,7 +17,7 @@ public struct OTPTimerState: Equatable {
     }
 
     public func remainingTime(at epoch: Double) -> Double {
-        endTime - epoch
+        max(0, endTime - epoch)
     }
 
     public func fractionCompleted(at epoch: Double) -> Double {
