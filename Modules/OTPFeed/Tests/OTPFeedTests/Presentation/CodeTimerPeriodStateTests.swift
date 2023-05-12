@@ -1,7 +1,7 @@
 import Combine
 import Foundation
+import OTPFeed
 import XCTest
-@testable import OTPFeed
 
 @MainActor
 final class CodeTimerPeriodStateTests: XCTestCase {
