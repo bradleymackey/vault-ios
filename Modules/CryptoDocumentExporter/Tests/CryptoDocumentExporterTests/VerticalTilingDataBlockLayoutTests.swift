@@ -172,7 +172,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     }
 
     private func expectFirstColumn(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
-        let columnIndexes: [UInt] = [0, sut.tilesPerRow, sut.tilesPerRow * 2]
+        let columnIndexes: [UInt] = Array(0 ..< sut.tilesPerRow).map { $0 * sut.tilesPerRow }
         for (index, columnIndex) in columnIndexes.enumerated() {
             let point = sut.rect(atIndex: columnIndex)
             XCTAssertEqual(point?.size, sizes[index])
