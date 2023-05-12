@@ -47,18 +47,6 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     }
 }
 
-private enum CodeTimerAnimationState {
-    case freeze(fraction: Double)
-    case startAnimating(startFraction: Double, duration: Double)
-
-    var initialFraction: Double {
-        switch self {
-        case let .freeze(fraction), let .startAnimating(fraction, _):
-            return fraction
-        }
-    }
-}
-
 private extension CodeTimerUpdater {
     /// Maps timer state updates to events that can be rendered by the progress bar.
     func timerProgressPublisher(currentTime: @escaping () -> Double) -> AnyPublisher<CodeTimerAnimationState, Never> {
