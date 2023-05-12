@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import OTPCore
 import OTPFeed
 import XCTest
 
@@ -32,6 +33,6 @@ final class CodeTimerPeriodStateTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeSUT(pub: AnyPublisher<OTPTimerState, Never>) -> CodeTimerPeriodState {
-        CodeTimerPeriodState(statePublisher: pub)
+        CodeTimerPeriodState(clock: EpochClock(makeCurrentTime: { 100 }), statePublisher: pub)
     }
 }
