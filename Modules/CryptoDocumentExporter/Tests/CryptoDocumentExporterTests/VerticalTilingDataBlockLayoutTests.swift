@@ -23,12 +23,12 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     func test_rect_laysOutGridEvenly() {
         let sut = makeSUT(size: .square(90), tilesPerRow: 3)
 
-        expectRow(
+        expectFirstRow(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [.zero, CGPoint(x: 30, y: 0), CGPoint(x: 60, y: 0)]
         )
-        expectColumn(
+        expectFirstColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [.zero, CGPoint(x: 0, y: 30), CGPoint(x: 0, y: 60)]
@@ -38,12 +38,12 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     func test_rect_layoutSizesToRespectMargin() {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
 
-        expectRow(
+        expectFirstRow(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [CGPoint(x: 5, y: 5), CGPoint(x: 35, y: 5), CGPoint(x: 65, y: 5)]
         )
-        expectColumn(
+        expectFirstColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [CGPoint(x: 5, y: 5), CGPoint(x: 5, y: 35), CGPoint(x: 5, y: 65)]
@@ -53,12 +53,12 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     func test_rect_escapesBoundsIfNegativeMargin() {
         let sut = makeSUT(size: .square(80), tilesPerRow: 3, margin: -5)
 
-        expectRow(
+        expectFirstRow(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [CGPoint(x: -5, y: -5), CGPoint(x: 25, y: -5), CGPoint(x: 55, y: -5)]
         )
-        expectColumn(
+        expectFirstColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [CGPoint(x: -5, y: -5), CGPoint(x: -5, y: 25), CGPoint(x: -5, y: 55)]
@@ -68,12 +68,12 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     func test_rect_layoutSizesToRespectSpacing() {
         let sut = makeSUT(size: .square(110), tilesPerRow: 3, spacing: 10)
 
-        expectRow(
+        expectFirstRow(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [.zero, CGPoint(x: 40, y: 0), CGPoint(x: 80, y: 0)]
         )
-        expectColumn(
+        expectFirstColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
             origins: [.zero, CGPoint(x: 0, y: 40), CGPoint(x: 0, y: 80)]
@@ -87,12 +87,12 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
             tilesPerRow: 4
         )
 
-        expectRow(
+        expectFirstRow(
             for: sut,
             sizes: [.square(25), .square(25), .square(25), .square(25)],
             origins: [CGPoint(x: 20, y: 20), CGPoint(x: 45, y: 20), CGPoint(x: 70, y: 20), CGPoint(x: 95, y: 20)]
         )
-        expectColumn(
+        expectFirstColumn(
             for: sut,
             sizes: [.square(25), .square(25), .square(25)],
             origins: [CGPoint(x: 20, y: 20), CGPoint(x: 20, y: 45), CGPoint(x: 20, y: 70)]
@@ -162,7 +162,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    private func expectRow(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
+    private func expectFirstRow(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
         let rowIndexes: [UInt] = Array(0 ..< sut.tilesPerRow)
         for (index, rowIndex) in rowIndexes.enumerated() {
             let point = sut.rect(atIndex: rowIndex)
@@ -171,7 +171,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         }
     }
 
-    private func expectColumn(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
+    private func expectFirstColumn(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
         let columnIndexes: [UInt] = [0, sut.tilesPerRow, sut.tilesPerRow * 2]
         for (index, columnIndex) in columnIndexes.enumerated() {
             let point = sut.rect(atIndex: columnIndex)
