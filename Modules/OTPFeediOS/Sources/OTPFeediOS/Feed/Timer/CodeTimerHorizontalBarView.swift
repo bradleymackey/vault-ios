@@ -5,7 +5,6 @@ import SwiftUI
 
 public struct CodeTimerHorizontalBarView: View {
     @ObservedObject var timerState: CodeTimerPeriodState
-    var clock: EpochClock
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
@@ -21,31 +20,28 @@ public struct CodeTimerHorizontalBarView: View {
             )
             .onChange(of: proxy.size) { _ in
                 // the size of the viewport has changed
-                resetAnimation(timerState: timerState.state, animatedReset: false)
+                resetAnimation(animateReset: false)
             }
         }
-        .onChange(of: timerState.state) { timerState in
+        .onChange(of: timerState.state) { _ in
             // the time parameters have updated, the timer is likely restarting
-            resetAnimation(timerState: timerState, animatedReset: true)
+            resetAnimation(animateReset: true)
         }
         .onAppear {
             // we have just appeared onscreen
-            resetAnimation(timerState: timerState.state, animatedReset: false)
+            resetAnimation(animateReset: false)
         }
         .onChange(of: scenePhase) { newScenePhase in
             // we have appeared from background
             if newScenePhase == .active {
-                resetAnimation(timerState: timerState.state, animatedReset: false)
+                resetAnimation(animateReset: false)
             }
         }
     }
 
-    private func resetAnimation(timerState: OTPTimerState?, animatedReset: Bool) {
-        let animationState = CodeTimerAnimationState.countdownFrom(
-            timerState: timerState,
-            currentTime: clock.currentTime
-        )
-        withAnimation(.linear(duration: animatedReset ? 0.15 : 0)) {
+    private func resetAnimation(animateReset: Bool) {
+        let animationState = timerState.countdownAnimation()
+        withAnimation(.linear(duration: animateReset ? 0.15 : 0)) {
             currentFractionCompleted = animationState.initialFraction
         }
         if case let .animate(_, duration) = animationState {
@@ -59,8 +55,7 @@ public struct CodeTimerHorizontalBarView: View {
 struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     static var previews: some View {
         CodeTimerHorizontalBarView(
-            timerState: CodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
-            clock: clock
+            timerState: CodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher())
         )
         .frame(width: 250, height: 20)
         .previewLayout(.fixed(width: 300, height: 300))

@@ -34,7 +34,10 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
             return controllers
         } else {
             let timerController = CodeTimerController(timer: timer, period: period, clock: clock)
-            let periodState = CodeTimerPeriodState(statePublisher: timerController.timerUpdatedPublisher())
+            let periodState = CodeTimerPeriodState(
+                clock: clock,
+                statePublisher: timerController.timerUpdatedPublisher()
+            )
             let cacheEntry = PeriodCachedObjects(timerController: timerController, periodState: periodState)
             periodCache[period] = cacheEntry
             return cacheEntry
@@ -53,8 +56,7 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
-                timerState: cachedObjects.periodState,
-                clock: clock
+                timerState: cachedObjects.periodState
             ),
             hideCode: hideCodes
         )
