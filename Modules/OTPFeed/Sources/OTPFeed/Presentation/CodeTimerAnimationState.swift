@@ -1,19 +1,18 @@
 import Foundation
-import OTPFeed
 
-enum CodeTimerAnimationState: Equatable {
+public enum CodeTimerAnimationState: Equatable {
     case freeze(fraction: Double)
     case animate(startFraction: Double, duration: Double)
+}
 
+public extension CodeTimerAnimationState {
     var initialFraction: Double {
         switch self {
         case let .freeze(fraction), let .animate(fraction, _):
             return fraction
         }
     }
-}
 
-extension CodeTimerAnimationState {
     static func countdownFrom(timerState: OTPTimerState?, currentTime: Double) -> CodeTimerAnimationState {
         guard let timerState else { return .freeze(fraction: 0) }
         let completed = timerState.fractionCompleted(at: currentTime)

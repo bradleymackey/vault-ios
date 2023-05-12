@@ -1,7 +1,6 @@
 import Foundation
 import OTPFeed
 import XCTest
-@testable import OTPFeediOS
 
 final class CodeTimerAnimationStateTests: XCTestCase {
     func test_initialFraction_freezeIsFraction() {
@@ -17,7 +16,7 @@ final class CodeTimerAnimationStateTests: XCTestCase {
     }
 
     func test_countdownFromTimerState_nilCreatesFrozenAtZero() {
-        let sut = CodeTimerAnimationState.countdownFrom(timerState: nil, currentTime: Date.now.timeIntervalSince1970)
+        let sut = CodeTimerAnimationState.countdownFrom(timerState: nil, currentTime: 100)
 
         XCTAssertEqual(sut, .freeze(fraction: 0))
     }
