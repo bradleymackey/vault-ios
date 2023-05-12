@@ -55,9 +55,7 @@ extension HOTPGenerator {
     private func truncatedHMAC(hmacCode: Data) throws -> UInt32 {
         let offset = Int((hmacCode.last ?? 0x00) & 0x0F)
         let truncatedHMAC = Array(hmacCode[offset ... offset + 3])
-        let int32HMAC = Data(
-            truncatedHMAC.reversed() // asType will interpret as opposite endian-ness
-        ).asType(UInt32.self)
+        let int32HMAC = Data(truncatedHMAC).asType(UInt32.self).bigEndian
         return int32HMAC & 0x7FFF_FFFF
     }
 
