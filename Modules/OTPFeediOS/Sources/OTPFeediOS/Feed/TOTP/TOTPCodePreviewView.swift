@@ -124,7 +124,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                 }
         }
         .onAppear {
-            updater.subject.send(.init(startTime: 15, endTime: 100))
+            subject.send(.init(startTime: 15, endTime: 100))
         }
     }
 
@@ -137,8 +137,8 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
+                timerState: CodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
                 clock: clock,
-                updater: updater,
                 color: .blue
             ),
             hideCode: hideCode
@@ -146,7 +146,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         .frame(width: 250, height: 100)
     }
 
-    private static let updater: MockCodeTimerUpdater = .init()
+    private static let subject: PassthroughSubject<OTPTimerState, Never> = .init()
 
     static let clock = EpochClock { 20 }
 }

@@ -3,9 +3,9 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
+public struct CodeTimerHorizontalBarView: View {
+    @ObservedObject var timerState: CodeTimerPeriodState
     var clock: EpochClock
-    var updater: Updater
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
@@ -20,26 +20,31 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
                 backgroundColor: backgroundColor
             )
             .onChange(of: proxy.size) { _ in
-                updater.recalculate()
+                resetAnimation(timerState: timerState.state)
             }
         }
-        .onReceive(updater.timerProgressPublisher(currentTime: clock.makeCurrentTime)) { progress in
-            updateState(progress: progress)
+        .onChange(of: timerState.state) { timerState in
+            resetAnimation(timerState: timerState)
         }
         .onAppear {
-            updater.recalculate()
+            resetAnimation(timerState: timerState.state)
         }
-        .onChange(of: scenePhase) { newPhase in
-            guard newPhase == .active else { return }
-            updater.recalculate()
+        .onChange(of: scenePhase) { newScenePhase in
+            if newScenePhase == .active {
+                resetAnimation(timerState: timerState.state)
+            }
         }
     }
 
-    private func updateState(progress: CodeTimerAnimationState) {
+    private func resetAnimation(timerState: OTPTimerState?) {
+        let animationState = CodeTimerAnimationState.countdownFrom(
+            timerState: timerState,
+            currentTime: clock.currentTime
+        )
         withAnimation(.linear(duration: 0.15)) {
-            currentFractionCompleted = progress.initialFraction
+            currentFractionCompleted = animationState.initialFraction
         }
-        if case let .animate(_, duration) = progress {
+        if case let .animate(_, duration) = animationState {
             withAnimation(.linear(duration: duration)) {
                 currentFractionCompleted = 0
             }
@@ -47,33 +52,22 @@ public struct CodeTimerHorizontalBarView<Updater: CodeTimerUpdater>: View {
     }
 }
 
-private extension CodeTimerUpdater {
-    /// Maps timer state updates to events that can be rendered by the progress bar.
-    func timerProgressPublisher(currentTime: @escaping () -> Double) -> AnyPublisher<CodeTimerAnimationState, Never> {
-        timerUpdatedPublisher().map { state in
-            let time = currentTime()
-            let completed = state.fractionCompleted(at: time)
-            let remainingTime = state.remainingTime(at: time)
-            return .animate(startFraction: 1 - completed, duration: remainingTime)
-        }
-        .receive(on: DispatchQueue.main)
-        .eraseToAnyPublisher()
-    }
-}
-
 struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     static var previews: some View {
-        CodeTimerHorizontalBarView<MockCodeTimerUpdater>(clock: clock, updater: updater)
-            .frame(width: 250, height: 20)
-            .previewLayout(.fixed(width: 300, height: 300))
-            .onAppear {
-                updater.subject.send(OTPTimerState(startTime: 15, endTime: 60))
-            }
+        CodeTimerHorizontalBarView(
+            timerState: CodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
+            clock: clock
+        )
+        .frame(width: 250, height: 20)
+        .previewLayout(.fixed(width: 300, height: 300))
+        .onAppear {
+            subject.send(OTPTimerState(startTime: 15, endTime: 60))
+        }
     }
 
     // MARK: - Helpers
 
-    private static let updater: MockCodeTimerUpdater = .init()
+    private static let subject: PassthroughSubject<OTPTimerState, Never> = .init()
 
     static let clock = EpochClock { 40 }
 }

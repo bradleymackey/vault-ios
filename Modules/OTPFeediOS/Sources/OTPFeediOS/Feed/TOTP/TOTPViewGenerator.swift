@@ -45,7 +45,10 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
         )
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
-            timerView: CodeTimerHorizontalBarView(clock: clock, updater: timerController),
+            timerView: CodeTimerHorizontalBarView(
+                timerState: CodeTimerPeriodState(statePublisher: timerController.timerUpdatedPublisher()),
+                clock: clock
+            ),
             hideCode: hideCodes
         )
     }
