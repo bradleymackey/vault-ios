@@ -29,34 +29,32 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     }
 
     var body: some View {
-        NavigationView {
-            OTPCodeFeedView(
-                viewModel: feedViewModel,
-                totpGenerator: totpEditingGenerator(hideCodes: isEditing),
-                hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
-                gridSpacing: 12
-            )
-            .navigationTitle(Text(feedViewModel.title))
-            .navigationBarTitleDisplayMode(.large)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isEditing.toggle()
-                        }
-                    } label: {
-                        Text(isEditing ? feedViewModel.doneEditingTitle : feedViewModel.editTitle)
-                            .fontWeight(isEditing ? .semibold : .regular)
-                            .animation(.none)
+        OTPCodeFeedView(
+            viewModel: feedViewModel,
+            totpGenerator: totpEditingGenerator(hideCodes: isEditing),
+            hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
+            gridSpacing: 12
+        )
+        .navigationTitle(Text(feedViewModel.title))
+        .navigationBarTitleDisplayMode(.large)
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    withAnimation(.easeInOut(duration: 0.2)) {
+                        isEditing.toggle()
                     }
+                } label: {
+                    Text(isEditing ? feedViewModel.doneEditingTitle : feedViewModel.editTitle)
+                        .fontWeight(isEditing ? .semibold : .regular)
+                        .animation(.none)
                 }
             }
-            .sheet(item: $modal) { visible in
-                switch visible {
-                case let .detail(_, code):
-                    NavigationView {
-                        detailView(code: code)
-                    }
+        }
+        .sheet(item: $modal) { visible in
+            switch visible {
+            case let .detail(_, code):
+                NavigationView {
+                    detailView(code: code)
                 }
             }
         }

@@ -15,10 +15,12 @@ struct CodeManagerApp: App {
     var body: some Scene {
         WindowGroup {
             TabView {
-                CodeListView(feedViewModel: feedViewModel)
-                    .tabItem {
-                        Label(feedViewModel.title, systemImage: "key.horizontal.fill")
-                    }
+                NavigationStack {
+                    CodeListView(feedViewModel: feedViewModel)
+                }
+                .tabItem {
+                    Label(feedViewModel.title, systemImage: "key.horizontal.fill")
+                }
             }
         }
     }
