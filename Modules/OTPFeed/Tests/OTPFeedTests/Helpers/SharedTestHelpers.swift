@@ -12,7 +12,11 @@ func uniqueCode() -> OTPAuthCode {
 }
 
 func uniqueStoredCode() -> StoredOTPCode {
-    StoredOTPCode(id: UUID(), code: uniqueCode())
+    StoredOTPCode(id: UUID(), created: Date(), updated: Date(), userDescription: "any", code: uniqueCode())
+}
+
+func uniqueWritableCode() -> StoredOTPCode.Write {
+    .init(userDescription: "any", code: uniqueCode())
 }
 
 func hotpRfcSecretData() -> Data {

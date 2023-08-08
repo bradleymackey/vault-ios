@@ -10,11 +10,23 @@ import OTPFeed
 
 struct CodeStoreFake: OTPCodeStoreReader {
     static func totpCode() -> StoredOTPCode {
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay"))
+        .init(
+            id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: "My Cool Code",
+            code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay")
+        )
     }
 
     static func hotpCode() -> StoredOTPCode {
-        .init(id: UUID(), code: .init(type: .hotp(), secret: .empty(), accountName: "HOTP test", issuer: "Authority"))
+        .init(
+            id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: "My Other Cool code",
+            code: .init(type: .hotp(), secret: .empty(), accountName: "HOTP test", issuer: "Authority")
+        )
     }
 
     static let codes: [StoredOTPCode] = {

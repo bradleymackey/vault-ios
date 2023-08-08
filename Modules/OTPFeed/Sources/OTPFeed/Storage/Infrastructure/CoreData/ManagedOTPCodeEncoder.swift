@@ -4,19 +4,28 @@ import OTPCore
 
 struct ManagedOTPCodeEncoder {
     let context: NSManagedObjectContext
+    let currentDate: () -> Date
 
-    func encode(code: OTPAuthCode, into existing: ManagedOTPCode? = nil) -> ManagedOTPCode {
+    init(context: NSManagedObjectContext, currentDate: @escaping () -> Date = { Date() }) {
+        self.context = context
+        self.currentDate = currentDate
+    }
+
+    func encode(code value: StoredOTPCode.Write, into existing: ManagedOTPCode? = nil) -> ManagedOTPCode {
         let managed = existing ?? ManagedOTPCode(context: context)
         managed.id = existing?.id ?? UUID()
-        managed.digits = code.digits.rawValue as NSNumber
-        managed.accountName = code.accountName
-        managed.issuer = code.issuer
-        managed.authType = authTypeString(authType: code.type)
-        managed.period = authTypePeriod(authType: code.type)
-        managed.counter = authTypeCounter(authType: code.type)
-        managed.algorithm = encoded(algorithm: code.algorithm)
-        managed.secretFormat = encoded(secretFormat: code.secret.format)
-        managed.secretData = code.secret.data
+        managed.digits = value.code.digits.rawValue as NSNumber
+        managed.accountName = value.code.accountName
+        managed.issuer = value.code.issuer
+        managed.authType = authTypeString(authType: value.code.type)
+        managed.period = authTypePeriod(authType: value.code.type)
+        managed.counter = authTypeCounter(authType: value.code.type)
+        managed.algorithm = encoded(algorithm: value.code.algorithm)
+        managed.secretFormat = encoded(secretFormat: value.code.secret.format)
+        managed.secretData = value.code.secret.data
+        managed.createdDate = existing?.createdDate ?? currentDate()
+        managed.updatedDate = currentDate()
+        managed.userDescription = value.userDescription
         return managed
     }
 

@@ -13,10 +13,10 @@ public protocol OTPCodeStoreWriter {
     ///
     /// - Returns: The underlying ID of the entry in the store.
     @discardableResult
-    func insert(code: OTPAuthCode) async throws -> UUID
+    func insert(code: StoredOTPCode.Write) async throws -> UUID
 
     /// Update the code at the given ID.
-    func update(id: UUID, code: OTPAuthCode) async throws
+    func update(id: UUID, code: StoredOTPCode.Write) async throws
 
     /// Delete the code with the specific `id`.
     /// Has no effect if the code does not exist.

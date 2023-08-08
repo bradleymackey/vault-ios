@@ -13,6 +13,9 @@ final class ManagedOTPCode: NSManagedObject {
     @NSManaged var digits: NSNumber
     @NSManaged var accountName: String
     @NSManaged var issuer: String?
+    @NSManaged var createdDate: Date
+    @NSManaged var updatedDate: Date
+    @NSManaged var userDescription: String?
 }
 
 extension ManagedOTPCode {

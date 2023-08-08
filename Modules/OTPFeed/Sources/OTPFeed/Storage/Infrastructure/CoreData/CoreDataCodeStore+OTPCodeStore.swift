@@ -8,7 +8,13 @@ extension CoreDataCodeStore: OTPCodeStoreReader {
             let decoder = ManagedOTPCodeDecoder()
             return try results.map { managedCode in
                 let code = try decoder.decode(code: managedCode)
-                return StoredOTPCode(id: managedCode.id, code: code)
+                return StoredOTPCode(
+                    id: managedCode.id,
+                    created: managedCode.createdDate,
+                    updated: managedCode.updatedDate,
+                    userDescription: managedCode.userDescription,
+                    code: code
+                )
             }
         }
     }
@@ -16,7 +22,7 @@ extension CoreDataCodeStore: OTPCodeStoreReader {
 
 extension CoreDataCodeStore: OTPCodeStoreWriter {
     @discardableResult
-    public func insert(code: OTPAuthCode) async throws -> UUID {
+    public func insert(code: StoredOTPCode.Write) async throws -> UUID {
         try await asyncPerform { context in
             do {
                 let encoder = ManagedOTPCodeEncoder(context: context)
@@ -35,7 +41,7 @@ extension CoreDataCodeStore: OTPCodeStoreWriter {
         case entityNotFound
     }
 
-    public func update(id: UUID, code: OTPAuthCode) async throws {
+    public func update(id: UUID, code: StoredOTPCode.Write) async throws {
         try await asyncPerform { context in
             do {
                 guard let existingCode = try ManagedOTPCode.first(withID: id, in: context) else {

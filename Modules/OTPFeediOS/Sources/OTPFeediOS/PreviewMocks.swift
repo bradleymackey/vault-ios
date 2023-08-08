@@ -27,10 +27,23 @@ func forceRunLoopAdvance() {
 
 struct CodeStoreFake: OTPCodeStoreReader {
     let codes: [StoredOTPCode] = [
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "test@example.com", issuer: "Ebay")),
-        .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com")),
         .init(
             id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: "",
+            code: .init(secret: .empty(), accountName: "test@example.com", issuer: "Ebay")
+        ),
+        .init(
+            id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: "",
+            code: .init(secret: .empty(), accountName: "example@example.com")
+        ),
+        .init(
+            id: UUID(),
+            created: Date(), updated: Date(), userDescription: "",
             code: .init(type: .hotp(counter: 0), secret: .empty(), accountName: "win@ein.com", issuer: "Google")
         ),
     ]
