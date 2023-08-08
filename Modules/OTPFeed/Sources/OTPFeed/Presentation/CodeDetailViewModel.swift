@@ -10,7 +10,7 @@ public final class CodeDetailViewModel: ObservableObject {
         self.code = code
     }
 
-    public var menuItems: [CodeDetailMenuItem] {
+    public var detailMenuItems: [CodeDetailMenuItem] {
         let details = CodeDetailMenuItem(
             id: "detail",
             title: localized(key: "codeDetail.listSection.details.title"),

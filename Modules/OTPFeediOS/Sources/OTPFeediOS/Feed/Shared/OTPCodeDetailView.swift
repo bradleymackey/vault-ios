@@ -19,7 +19,7 @@ public struct OTPCodeDetailView<Preview: View>: View {
 
     private var section: some View {
         Section {
-            ForEach(viewModel.menuItems) { item in
+            ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
                         Label {
