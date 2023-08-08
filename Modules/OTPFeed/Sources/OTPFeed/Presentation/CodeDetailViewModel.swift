@@ -5,17 +5,19 @@ import OTPCore
 @MainActor
 public final class CodeDetailViewModel: ObservableObject {
     private let code: OTPAuthCode
-    /// Detail entries about the code, in order, ready for presentation.
-    public let entries: [DetailEntry]
 
     public init(code: OTPAuthCode) {
         self.code = code
-        entries = Self.makeEntries(code)
+    }
+
+    public var menuItems: [CodeDetailMenuItem] {
+        let details = CodeDetailMenuItem(id: "detail", title: "Details", entries: Self.makeInfoEntries(code))
+        return [details]
     }
 }
 
 extension CodeDetailViewModel {
-    private static func makeEntries(_ code: OTPAuthCode) -> [DetailEntry] {
+    private static func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
         let formatter = CodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
         entries.append(
