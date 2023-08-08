@@ -10,7 +10,7 @@ import SwiftUI
 
 @main
 struct CodeManagerApp: App {
-    @StateObject var feedViewModel = FeedViewModel(store: MockCodeStore())
+    @StateObject var feedViewModel = FeedViewModel(store: CodeStoreFake())
 
     var body: some Scene {
         WindowGroup {

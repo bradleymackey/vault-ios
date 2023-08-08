@@ -25,7 +25,7 @@ func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date())
 }
 
-struct MockCodeStore: OTPCodeStoreReader {
+struct CodeStoreFake: OTPCodeStoreReader {
     let codes: [StoredOTPCode] = [
         .init(id: UUID(), code: .init(secret: .empty(), accountName: "test@example.com", issuer: "Ebay")),
         .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com")),

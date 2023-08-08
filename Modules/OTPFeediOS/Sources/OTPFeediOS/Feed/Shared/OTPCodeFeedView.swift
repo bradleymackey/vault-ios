@@ -68,7 +68,7 @@ public struct OTPCodeFeedView<
 struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
-            viewModel: .init(store: MockCodeStore()),
+            viewModel: .init(store: CodeStoreFake()),
             totpGenerator: totpGenerator(),
             hotpGenerator: hotpGenerator()
         )

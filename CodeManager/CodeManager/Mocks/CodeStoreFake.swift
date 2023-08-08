@@ -1,5 +1,5 @@
 //
-//  MockCodeStore.swift
+//  CodeStoreFake.swift
 //  CodeManager
 //
 //  Created by Bradley Mackey on 07/05/2023.
@@ -8,7 +8,7 @@
 import Foundation
 import OTPFeed
 
-struct MockCodeStore: OTPCodeStoreReader {
+struct CodeStoreFake: OTPCodeStoreReader {
     static func totpCode() -> StoredOTPCode {
         .init(id: UUID(), code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay"))
     }
