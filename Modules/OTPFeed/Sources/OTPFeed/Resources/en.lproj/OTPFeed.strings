@@ -14,6 +14,8 @@
 "codeDetail.typeName.totp" = "Timer (TOTP)";
 "codeDetail.typeName.hotp" = "Counter (HOTP)";
 
+"codeDetail.listSection.created.title" = "Created";
+"codeDetail.listSection.updated.title" = "Updated";
 "codeDetail.listSection.details.title" = "Details";
 "codeDetail.listSection.type.title" = "Type";
 "codeDetail.listSection.period.title" = "Period";

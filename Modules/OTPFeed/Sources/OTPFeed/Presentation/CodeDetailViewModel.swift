@@ -19,6 +19,22 @@ public final class CodeDetailViewModel: ObservableObject {
         )
         return [details]
     }
+
+    public var createdDateTitle: String {
+        localized(key: "codeDetail.listSection.created.title")
+    }
+
+    public var createdDateValue: String {
+        storedCode.created.formatted(date: .abbreviated, time: .omitted)
+    }
+
+    public var updatedDateTitle: String {
+        localized(key: "codeDetail.listSection.updated.title")
+    }
+
+    public var updatedDateValue: String {
+        storedCode.updated.formatted(date: .abbreviated, time: .omitted)
+    }
 }
 
 extension CodeDetailViewModel {

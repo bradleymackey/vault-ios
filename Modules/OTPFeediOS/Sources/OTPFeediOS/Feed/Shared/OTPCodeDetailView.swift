@@ -19,6 +19,20 @@ public struct OTPCodeDetailView<Preview: View>: View {
 
     private var section: some View {
         Section {
+            Label {
+                LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
+            } icon: {
+                Image(systemName: "clock")
+                    .foregroundColor(.primary)
+            }
+
+            Label {
+                LabeledContent(viewModel.updatedDateTitle, value: viewModel.updatedDateValue)
+            } icon: {
+                Image(systemName: "clock")
+                    .foregroundColor(.primary)
+            }
+
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
