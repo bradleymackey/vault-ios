@@ -18,7 +18,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     @State private var modal: Modal?
 
     enum Modal: Identifiable {
-        case detail(UUID, OTPAuthCode)
+        case detail(UUID, StoredOTPCode)
 
         var id: some Hashable {
             switch self {
@@ -52,28 +52,28 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         }
         .sheet(item: $modal) { visible in
             switch visible {
-            case let .detail(_, code):
+            case let .detail(_, storedCode):
                 NavigationView {
-                    detailView(code: code)
+                    detailView(storedCode: storedCode)
                 }
             }
         }
     }
 
     @ViewBuilder
-    private func detailView(code: OTPAuthCode) -> some View {
-        switch code.type {
+    private func detailView(storedCode: StoredOTPCode) -> some View {
+        switch storedCode.code.type {
         case let .totp(period):
             CodeDetailView(
                 feedViewModel: feedViewModel,
-                code: code,
-                preview: totpGenerator().makeTOTPView(period: period, code: code)
+                storedCode: storedCode,
+                preview: totpGenerator().makeTOTPView(period: period, code: storedCode)
             )
         case let .hotp(counter):
             CodeDetailView(
                 feedViewModel: feedViewModel,
-                code: code,
-                preview: hotpGenerator().makeHOTPView(counter: counter, code: code)
+                storedCode: storedCode,
+                preview: hotpGenerator().makeHOTPView(counter: counter, code: storedCode)
             )
         }
     }
@@ -114,9 +114,9 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
 struct TOTPOnTapDecoratorViewGenerator<Generator: TOTPViewGenerator>: TOTPViewGenerator {
     let generator: Generator
     let isTapEnabled: Bool
-    let onTap: (OTPAuthCode) -> Void
+    let onTap: (StoredOTPCode) -> Void
 
-    func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
+    func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
         generator.makeTOTPView(period: period, code: code)
             .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
                 onTap(code)
@@ -127,9 +127,9 @@ struct TOTPOnTapDecoratorViewGenerator<Generator: TOTPViewGenerator>: TOTPViewGe
 struct HOTPOnTapDecoratorViewGenerator<Generator: HOTPViewGenerator>: HOTPViewGenerator {
     let generator: Generator
     let isTapEnabled: Bool
-    let onTap: (OTPAuthCode) -> Void
+    let onTap: (StoredOTPCode) -> Void
 
-    func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> some View {
+    func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
         generator.makeHOTPView(counter: counter, code: code)
             .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
                 onTap(code)

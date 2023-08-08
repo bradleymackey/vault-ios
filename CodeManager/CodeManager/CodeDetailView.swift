@@ -15,13 +15,13 @@ struct CodeDetailView<Store: OTPCodeStoreReader, Preview: View>: View {
     @Environment(\.dismiss) var dismiss
 
     @ObservedObject var feedViewModel: FeedViewModel<Store>
-    let code: OTPAuthCode
+    let storedCode: StoredOTPCode
     var preview: Preview
 
     var body: some View {
         OTPCodeDetailView(
             preview: preview,
-            viewModel: .init(code: code)
+            viewModel: .init(storedCode: storedCode)
         )
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {

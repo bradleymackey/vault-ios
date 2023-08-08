@@ -54,9 +54,9 @@ public struct OTPCodeFeedView<
     private func codeView(storedCode: StoredOTPCode) -> some View {
         switch storedCode.code.type {
         case let .totp(period):
-            totpGenerator.makeTOTPView(period: period, code: storedCode.code)
+            totpGenerator.makeTOTPView(period: period, code: storedCode)
         case let .hotp(counter):
-            hotpGenerator.makeHOTPView(counter: counter, code: storedCode.code)
+            hotpGenerator.makeHOTPView(counter: counter, code: storedCode)
         }
     }
 

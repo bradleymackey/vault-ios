@@ -4,10 +4,10 @@ import OTPCore
 
 @MainActor
 public final class CodeDetailViewModel: ObservableObject {
-    private let code: OTPAuthCode
+    private let storedCode: StoredOTPCode
 
-    public init(code: OTPAuthCode) {
-        self.code = code
+    public init(storedCode: StoredOTPCode) {
+        self.storedCode = storedCode
     }
 
     public var detailMenuItems: [CodeDetailMenuItem] {
@@ -15,7 +15,7 @@ public final class CodeDetailViewModel: ObservableObject {
             id: "detail",
             title: localized(key: "codeDetail.listSection.details.title"),
             systemIconName: "books.vertical.fill",
-            entries: Self.makeInfoEntries(code)
+            entries: Self.makeInfoEntries(storedCode.code)
         )
         return [details]
     }

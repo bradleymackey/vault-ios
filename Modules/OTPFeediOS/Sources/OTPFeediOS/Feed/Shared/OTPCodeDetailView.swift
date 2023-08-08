@@ -54,7 +54,15 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeDetailView(
             preview: code,
-            viewModel: CodeDetailViewModel(code: .init(secret: .empty(), accountName: "Test"))
+            viewModel: CodeDetailViewModel(
+                storedCode: .init(
+                    id: UUID(),
+                    created: Date(),
+                    updated: Date(),
+                    userDescription: "Description",
+                    code: .init(secret: .empty(), accountName: "Test")
+                )
+            )
         )
     }
 

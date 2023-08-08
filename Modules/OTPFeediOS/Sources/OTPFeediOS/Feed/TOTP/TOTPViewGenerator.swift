@@ -7,7 +7,7 @@ import SwiftUI
 @MainActor
 public protocol TOTPViewGenerator {
     associatedtype CodeView: View
-    func makeTOTPView(period: UInt64, code: OTPAuthCode) -> CodeView
+    func makeTOTPView(period: UInt64, code: StoredOTPCode) -> CodeView
 }
 
 @MainActor
@@ -44,13 +44,13 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
         }
     }
 
-    public func makeTOTPView(period: UInt64, code: OTPAuthCode) -> some View {
+    public func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
         let cachedObjects = makeControllersForPeriod(period: period)
-        let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: period)
+        let totpGenerator = TOTPGenerator(generator: code.code.hotpGenerator(), timeInterval: period)
         let renderer = TOTPCodeRenderer(timer: cachedObjects.timerController, totpGenerator: totpGenerator)
         let previewViewModel = CodePreviewViewModel(
-            accountName: code.accountName,
-            issuer: code.issuer,
+            accountName: code.code.accountName,
+            issuer: code.code.issuer,
             renderer: renderer
         )
         return TOTPCodePreviewView(

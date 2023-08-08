@@ -6,7 +6,7 @@ import SwiftUI
 @MainActor
 public protocol HOTPViewGenerator {
     associatedtype CodeView: View
-    func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> CodeView
+    func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> CodeView
 }
 
 @MainActor
@@ -19,11 +19,11 @@ public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
         self.hideCodes = hideCodes
     }
 
-    public func makeHOTPView(counter: UInt64, code: OTPAuthCode) -> some View {
-        let renderer = HOTPCodeRenderer(hotpGenerator: code.hotpGenerator(), initialCounter: counter)
+    public func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
+        let renderer = HOTPCodeRenderer(hotpGenerator: code.code.hotpGenerator(), initialCounter: counter)
         let previewViewModel = CodePreviewViewModel(
-            accountName: code.accountName,
-            issuer: code.issuer,
+            accountName: code.code.accountName,
+            issuer: code.code.issuer,
             renderer: renderer
         )
         let incrementerViewModel = CodeIncrementerViewModel(
