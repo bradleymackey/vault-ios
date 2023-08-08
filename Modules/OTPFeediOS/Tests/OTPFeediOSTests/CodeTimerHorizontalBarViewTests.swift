@@ -18,8 +18,8 @@ final class CodeTimerHorizontalBarViewTests: XCTestCase {
     ) -> (PassthroughSubject<OTPTimerState, Never>, CodeTimerHorizontalBarView) {
         let clock = EpochClock(makeCurrentTime: { currentTime })
         let updater = PassthroughSubject<OTPTimerState, Never>()
-        let state = CodeTimerPeriodState(statePublisher: updater.eraseToAnyPublisher())
-        let view = CodeTimerHorizontalBarView(timerState: state, clock: clock)
+        let state = CodeTimerPeriodState(clock: clock, statePublisher: updater.eraseToAnyPublisher())
+        let view = CodeTimerHorizontalBarView(timerState: state)
         trackForMemoryLeaks(clock, file: file, line: line)
         return (updater, view)
     }
