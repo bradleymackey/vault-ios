@@ -22,10 +22,20 @@ public struct OTPCodeDetailView<Preview: View>: View {
             ForEach(viewModel.menuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
-                        LabeledContent(entry.title, value: entry.detail)
+                        Label {
+                            LabeledContent(entry.title, value: entry.detail)
+                        } icon: {
+                            Image(systemName: entry.systemIconName)
+                                .foregroundColor(.primary)
+                        }
                     }
                 } label: {
-                    Text("Details")
+                    Label {
+                        Text(item.title)
+                    } icon: {
+                        Image(systemName: item.systemIconName)
+                            .foregroundColor(.primary)
+                    }
                 }
             }
         } header: {
