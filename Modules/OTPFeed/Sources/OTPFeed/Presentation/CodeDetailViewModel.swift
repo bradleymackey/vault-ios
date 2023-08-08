@@ -13,7 +13,7 @@ public final class CodeDetailViewModel: ObservableObject {
     public var menuItems: [CodeDetailMenuItem] {
         let details = CodeDetailMenuItem(
             id: "detail",
-            title: localized(key: "detail.listSection.details.title"),
+            title: localized(key: "codeDetail.listSection.details.title"),
             systemIconName: "books.vertical.fill",
             entries: Self.makeInfoEntries(code)
         )
@@ -26,21 +26,41 @@ extension CodeDetailViewModel {
         let formatter = CodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
         entries.append(
-            DetailEntry(title: "Type", detail: formatter.typeName, systemIconName: "tag.fill")
+            DetailEntry(
+                title: localized(key: "codeDetail.listSection.type.title"),
+                detail: formatter.typeName,
+                systemIconName: "tag.fill"
+            )
         )
         if let period = formatter.period {
             entries.append(
-                DetailEntry(title: "Period", detail: period, systemIconName: "clock.fill")
+                DetailEntry(
+                    title: localized(key: "codeDetail.listSection.period.title"),
+                    detail: period,
+                    systemIconName: "clock.fill"
+                )
             )
         }
         entries.append(
-            DetailEntry(title: "Digits", detail: formatter.digits, systemIconName: "number")
+            DetailEntry(
+                title: localized(key: "codeDetail.listSection.digits.title"),
+                detail: formatter.digits,
+                systemIconName: "number"
+            )
         )
         entries.append(
-            DetailEntry(title: "Algorithm", detail: formatter.algorithm, systemIconName: "lock.laptopcomputer")
+            DetailEntry(
+                title: localized(key: "codeDetail.listSection.algorithm.title"),
+                detail: formatter.algorithm,
+                systemIconName: "lock.laptopcomputer"
+            )
         )
         entries.append(
-            DetailEntry(title: "Secret Format", detail: formatter.secretType, systemIconName: "lock.fill")
+            DetailEntry(
+                title: localized(key: "codeDetail.listSection.secretFormat.title"),
+                detail: formatter.secretType,
+                systemIconName: "lock.fill"
+            )
         )
         return entries
     }
