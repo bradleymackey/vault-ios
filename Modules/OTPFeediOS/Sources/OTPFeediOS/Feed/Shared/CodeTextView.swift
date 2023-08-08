@@ -8,7 +8,7 @@ public struct CodeTextView: View {
 
     public var body: some View {
         switch codeState {
-        case .notReady, .finished:
+        case .notReady, .finished, .editing:
             placeholderCode(digits: 6)
         case let .error(_, digits):
             placeholderCode(digits: digits)

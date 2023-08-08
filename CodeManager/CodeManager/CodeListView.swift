@@ -160,7 +160,7 @@ struct OTPCardViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .padding(8)
-            .background(isSelectable ? .blue.opacity(0.2) : Color(UIColor.secondarySystemBackground))
+            .background(Color(UIColor.secondarySystemBackground))
             .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 }

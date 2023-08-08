@@ -48,7 +48,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var effectiveCodeState: OTPCodeState {
         if hideCode {
-            return .finished
+            return .editing
         } else {
             return previewViewModel.code
         }
@@ -64,6 +64,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             switch effectiveCodeState {
             case let .error(err, _):
                 LoadingBarLabel(text: err.userTitle)
+            case .editing:
+                LoadingBarLabel(text: localized(key: "action.tapToEdit"))
             case .finished, .visible, .notReady:
                 EmptyView()
             }
@@ -79,17 +81,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             timerView.redacted(reason: .placeholder)
         case .error:
             Color.red
-        }
-    }
-
-    private struct LoadingBarLabel: View {
-        var text: String
-        var body: some View {
-            Text(text)
-                .textCase(.uppercase)
-                .font(.system(size: 10, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 8)
+        case .editing:
+            Color.blue
         }
     }
 }

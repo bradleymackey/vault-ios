@@ -55,7 +55,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
         let sut = try makeSUT(password: password, salt: salt, parameters: .fastForTesting)
         let expected = Data(hex: "fa09cf2f564fb137")
-        let keys = [try await sut.key(), try await sut.key(), try await sut.key()]
+        let keys = try await [sut.key(), sut.key(), sut.key()]
         XCTAssertEqual(keys, [expected, expected, expected])
     }
 

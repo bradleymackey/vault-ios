@@ -3,6 +3,7 @@ import Foundation
 public enum OTPCodeState: Equatable {
     case notReady
     case finished
+    case editing
     case visible(String)
     case error(PresentationError, digits: Int)
 }

@@ -11,6 +11,20 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             titleRow
             codeText
+            if hideCode {
+                editLabel
+            }
+        }
+    }
+
+    private var editLabel: some View {
+        ZStack(alignment: .leading) {
+            Color.blue
+                .frame(height: 20)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+
+            LoadingBarLabel(text: localized(key: "action.tapToEdit"))
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
     }
 
