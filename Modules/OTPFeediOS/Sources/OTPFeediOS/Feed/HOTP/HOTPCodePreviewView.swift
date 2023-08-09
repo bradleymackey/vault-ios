@@ -11,9 +11,38 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             titleRow
             codeText
-            if hideCode {
-                editLabel
+            timerSection
+        }
+        .animation(.none, value: hideCode)
+    }
+
+    @ViewBuilder
+    private var timerSection: some View {
+        ZStack(alignment: .leading) {
+            activeTimerView
+                .frame(height: 20)
+                .clipShape(RoundedRectangle(cornerRadius: 20))
+
+            switch effectiveCodeState {
+            case let .error(err, _):
+                LoadingBarLabel(text: err.userTitle)
+            case .editing:
+                LoadingBarLabel(text: localized(key: "action.tapToEdit"))
+            case .finished, .visible, .notReady:
+                EmptyView()
             }
+        }
+    }
+
+    @ViewBuilder
+    private var activeTimerView: some View {
+        switch effectiveCodeState {
+        case .visible, .editing:
+            Color.blue
+        case .notReady:
+            Color.gray
+        case .error, .finished:
+            Color.red
         }
     }
 
@@ -32,26 +61,33 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         HStack(alignment: .center) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
-            if case .error = previewViewModel.code {
+            if case .error = effectiveCodeState {
                 CodeErrorIcon()
                     .font(.title)
-            } else if !hideCode {
-                buttonView
-                    .font(canLoadNextCode ? .title.bold() : .title)
-                    .disabled(!canLoadNextCode)
             }
+
+            buttonView
+                .font(canLoadNextCode ? .title.bold() : .title)
+                .disabled(!canLoadNextCode)
+        }
+    }
+
+    private var effectiveCodeState: OTPCodeState {
+        if hideCode {
+            return .editing
+        } else {
+            return previewViewModel.code
         }
     }
 
     private var codeText: some View {
-        CodeTextView(codeState: previewViewModel.code)
+        CodeTextView(codeState: effectiveCodeState)
             .font(.system(.largeTitle, design: .monospaced))
             .fontWeight(.bold)
-            .redacted(reason: hideCode ? .placeholder : [])
     }
 
     var canLoadNextCode: Bool {
-        previewViewModel.code.allowsNextCodeToBeGenerated && !hideCode
+        effectiveCodeState.allowsNextCodeToBeGenerated && !hideCode
     }
 }
 

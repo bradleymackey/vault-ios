@@ -19,8 +19,7 @@ public struct CodeTextView: View {
     }
 
     private func placeholderCode(digits: Int) -> some View {
-        makeCodeView(text: String(repeating: "0", count: digits))
-            .redacted(reason: .placeholder)
+        Text(String(repeating: "•", count: digits))
     }
 
     private func makeCodeView(text: String) -> some View {

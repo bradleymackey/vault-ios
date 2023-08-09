@@ -14,6 +14,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             codeSection
         }
         .frame(maxWidth: .infinity)
+        .animation(.none, value: hideCode)
     }
 
     private var labelsStack: some View {
@@ -55,7 +56,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     }
 
     private var timerHeight: Double {
-        hideCode ? 20 : 8
+        20
     }
 
     @ViewBuilder
