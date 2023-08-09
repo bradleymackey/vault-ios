@@ -8,10 +8,10 @@ struct OTPCodeLabels: View {
         VStack(alignment: .leading, spacing: 0) {
             if let issuer {
                 Text(issuer)
-                    .font(.subheadline.bold())
+                    .font(.headline.bold())
                     .foregroundColor(.primary)
                     .lineLimit(1)
-                    .minimumScaleFactor(0.7)
+                    .minimumScaleFactor(0.5)
             }
             Text(accountName)
                 .font(issuer != nil ? .footnote : .footnote.weight(.semibold))

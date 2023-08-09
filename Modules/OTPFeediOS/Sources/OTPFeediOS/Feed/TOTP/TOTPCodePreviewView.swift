@@ -54,12 +54,16 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         }
     }
 
+    private var timerHeight: Double {
+        hideCode ? 20 : 8
+    }
+
     @ViewBuilder
     private var timerSection: some View {
         ZStack(alignment: .leading) {
             activeTimerView
-                .frame(height: 20)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
+                .frame(height: timerHeight)
+                .clipShape(RoundedRectangle(cornerRadius: timerHeight))
 
             switch effectiveCodeState {
             case let .error(err, _):
