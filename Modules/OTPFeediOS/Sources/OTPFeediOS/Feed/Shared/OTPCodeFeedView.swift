@@ -26,23 +26,13 @@ public struct OTPCodeFeedView<
     }
 
     public var body: some View {
-        List {
-            ForEach(viewModel.codePairs) { codePair in
-                HStack(alignment: .top) {
-                    ForEach(codePair.codes) { code in
-                        codeView(storedCode: code)
-                    }
+        ScrollView {
+            LazyVGrid(columns: columns, content: {
+                ForEach(viewModel.codes) { code in
+                    codeView(storedCode: code)
                 }
-                .buttonStyle(.borderless)
-                .frame(maxWidth: .infinity)
-            }
-            .listRowSeparator(.hidden)
-            .listRowInsets(.init(
-                top: gridSpacing / 2,
-                leading: gridSpacing,
-                bottom: gridSpacing / 2,
-                trailing: gridSpacing
-            ))
+            })
+            .padding()
         }
         .listStyle(.plain)
         .task {
@@ -61,7 +51,7 @@ public struct OTPCodeFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 150, maximum: 400), spacing: gridSpacing, alignment: .top)]
+        [GridItem(.adaptive(minimum: 200), spacing: gridSpacing, alignment: .top)]
     }
 }
 
