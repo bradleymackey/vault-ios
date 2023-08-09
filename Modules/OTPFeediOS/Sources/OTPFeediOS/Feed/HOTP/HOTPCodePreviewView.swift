@@ -21,17 +21,19 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         ZStack(alignment: .leading) {
             activeTimerView
                 .frame(height: 20)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
 
             switch effectiveCodeState {
             case let .error(err, _):
                 LoadingBarLabel(text: err.userTitle)
             case .editing:
                 LoadingBarLabel(text: localized(key: "action.tapToEdit"))
+                    .shimmering()
             case .finished, .visible, .notReady:
                 EmptyView()
             }
         }
+        .animation(.easeOut, value: hideCode)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
     @ViewBuilder
@@ -39,6 +41,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         switch effectiveCodeState {
         case .visible, .editing:
             Color.blue
+                .opacity(0.75)
+                .transition(.move(edge: .leading))
         case .notReady:
             Color.gray
         case .error, .finished:

@@ -64,17 +64,19 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         ZStack(alignment: .leading) {
             activeTimerView
                 .frame(height: timerHeight)
-                .clipShape(RoundedRectangle(cornerRadius: timerHeight))
 
             switch effectiveCodeState {
             case let .error(err, _):
                 LoadingBarLabel(text: err.userTitle)
             case .editing:
                 LoadingBarLabel(text: localized(key: "action.tapToEdit"))
+                    .shimmering()
             case .finished, .visible, .notReady:
                 EmptyView()
             }
         }
+        .animation(.easeOut, value: hideCode)
+        .clipShape(RoundedRectangle(cornerRadius: timerHeight))
     }
 
     @ViewBuilder
@@ -88,6 +90,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             Color.red
         case .editing:
             Color.blue
+                .opacity(0.75)
+                .transition(.move(edge: .leading))
         }
     }
 }
