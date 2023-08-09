@@ -26,6 +26,20 @@ struct CodeManagerApp: App {
                 .tabItem {
                     Label(feedViewModel.title, systemImage: "key.horizontal.fill")
                 }
+
+                NavigationStack {
+                    CodeAddView()
+                }
+                .tabItem {
+                    Label("Add", systemImage: "plus")
+                }
+
+                NavigationStack {
+                    CodeSettingsView()
+                }
+                .tabItem {
+                    Label("Settings", systemImage: "gear")
+                }
             }
         }
     }

@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */; };
 		1C58F28A2A07E212005A7DF5 /* CodeStoreFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2892A07E212005A7DF5 /* CodeStoreFake.swift */; };
+		1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB991292A845999002D24A7 /* CodeAddView.swift */; };
+		1CB9912C2A8459F2002D24A7 /* CodeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */; };
 		1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */; };
 		1CDA9C972A057A8B00555E7A /* CodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C962A057A8B00555E7A /* CodeListView.swift */; };
 		1CDA9C992A057A8C00555E7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CDA9C982A057A8C00555E7A /* Assets.xcassets */; };
@@ -30,6 +32,8 @@
 /* Begin PBXFileReference section */
 		1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDetailView.swift; sourceTree = "<group>"; };
 		1C58F2892A07E212005A7DF5 /* CodeStoreFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeStoreFake.swift; sourceTree = "<group>"; };
+		1CB991292A845999002D24A7 /* CodeAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeAddView.swift; sourceTree = "<group>"; };
+		1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeSettingsView.swift; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* CodeManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeManagerApp.swift; sourceTree = "<group>"; };
 		1CDA9C962A057A8B00555E7A /* CodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeListView.swift; sourceTree = "<group>"; };
@@ -90,6 +94,8 @@
 			children = (
 				1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */,
 				1CDA9C962A057A8B00555E7A /* CodeListView.swift */,
+				1CB991292A845999002D24A7 /* CodeAddView.swift */,
+				1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */,
 				1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */,
 				1C58F2882A07E20B005A7DF5 /* Mocks */,
 				1CDA9C982A057A8C00555E7A /* Assets.xcassets */,
@@ -225,7 +231,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				1C58F28A2A07E212005A7DF5 /* CodeStoreFake.swift in Sources */,
+				1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */,
 				1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */,
+				1CB9912C2A8459F2002D24A7 /* CodeSettingsView.swift in Sources */,
 				1CDA9C972A057A8B00555E7A /* CodeListView.swift in Sources */,
 				1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */,
 			);
