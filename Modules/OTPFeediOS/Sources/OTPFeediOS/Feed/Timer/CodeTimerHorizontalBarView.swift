@@ -8,7 +8,7 @@ public struct CodeTimerHorizontalBarView: View {
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
-    @State private var currentFractionCompleted = 0.0
+    @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
 
     public var body: some View {
@@ -23,9 +23,13 @@ public struct CodeTimerHorizontalBarView: View {
                 resetAnimation(animateReset: false)
             }
         }
-        .onChange(of: timerState.state) { _ in
+        .onChange(of: timerState.state) { [oldState = timerState.state] newState in
             // the time parameters have updated, the timer is likely restarting
-            resetAnimation(animateReset: true)
+            if let oldState, let newState {
+                resetAnimation(animateReset: oldState.endTime < newState.endTime)
+            } else {
+                resetAnimation(animateReset: false)
+            }
         }
         .onAppear {
             // we have just appeared onscreen
