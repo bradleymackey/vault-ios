@@ -24,7 +24,9 @@ public struct ThirdPartyView: View {
     public var section: some View {
         Section {
             ForEach(libraries) { library in
-                Text(library.name)
+                Link(destination: library.url) {
+                    ThirdPartyLibraryRowView(library: library)
+                }
             }
         } footer: {
             Text("Thank you to all third-party software developers!")
