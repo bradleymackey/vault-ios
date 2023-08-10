@@ -14,10 +14,10 @@ struct CodeSettingsView: View {
             NavigationLink {
                 ThirdPartyView()
             } label: {
-                Label("Third Party Licences", systemImage: "text.book.closed")
+                Label("Libraries", systemImage: "text.book.closed")
             }
         }
         .navigationTitle("Settings")
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.automatic)
     }
 }

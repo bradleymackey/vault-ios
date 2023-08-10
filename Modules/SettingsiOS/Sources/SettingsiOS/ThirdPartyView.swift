@@ -9,6 +9,8 @@ public struct ThirdPartyView: View {
         List(libraries) { library in
             Text(library.name)
         }
+        .navigationTitle("Libraries")
+        .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
                 let attribution = try Attribution.parse()
