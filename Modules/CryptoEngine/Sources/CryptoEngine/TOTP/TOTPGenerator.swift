@@ -6,7 +6,7 @@ import Foundation
 /// current time as a source of uniqueness.
 ///
 /// https://en.wikipedia.org/wiki/Time-based_one-time_password
-public struct TOTPGenerator: OTPGenerator {
+public struct TOTPGenerator {
     private let generator: HOTPGenerator
     public let timeInterval: UInt64
     public var digits: Int {
