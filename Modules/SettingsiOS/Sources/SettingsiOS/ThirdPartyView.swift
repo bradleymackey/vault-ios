@@ -3,11 +3,16 @@ import SwiftUI
 
 public struct ThirdPartyView: View {
     @State private var libraries = [ThirdPartyLibrary]()
+    @State private var loadingError = false
     public init() {}
 
     public var body: some View {
         List {
-            section
+            if loadingError {
+                errorSection
+            } else {
+                listSection
+            }
         }
         .navigationTitle("Libraries")
         .navigationBarTitleDisplayMode(.inline)
@@ -16,12 +21,12 @@ public struct ThirdPartyView: View {
                 let attribution = try Attribution.parse()
                 libraries = attribution.libraries
             } catch {
-                // TODO: handle
+                loadingError = true
             }
         }
     }
 
-    public var section: some View {
+    private var listSection: some View {
         Section {
             ForEach(libraries) { library in
                 DisclosureGroup {
@@ -38,6 +43,12 @@ public struct ThirdPartyView: View {
             }
         } footer: {
             Text("Thank you to all third-party software developers!")
+        }
+    }
+
+    private var errorSection: some View {
+        Section {
+            Text("Error loading")
         }
     }
 }
