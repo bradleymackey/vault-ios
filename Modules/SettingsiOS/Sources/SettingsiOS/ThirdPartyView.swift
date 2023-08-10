@@ -24,7 +24,15 @@ public struct ThirdPartyView: View {
     public var section: some View {
         Section {
             ForEach(libraries) { library in
-                Link(destination: library.url) {
+                DisclosureGroup {
+                    Link(destination: library.url) {
+                        Text("View Source")
+                            .font(.callout.bold())
+                    }
+                    Text(library.licence)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                } label: {
                     ThirdPartyLibraryRowView(library: library)
                 }
             }
