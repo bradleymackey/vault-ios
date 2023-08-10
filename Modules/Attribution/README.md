@@ -1,3 +1,3 @@
 # Attribution
 
-A description of this package.
+Helpers relating to providing attribution to third parties!
