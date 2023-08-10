@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1C439C3A2A84D8E30045143A /* Attribution in Frameworks */ = {isa = PBXBuildFile; productRef = 1C439C392A84D8E30045143A /* Attribution */; };
 		1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */; };
 		1C58F28A2A07E212005A7DF5 /* CodeStoreFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2892A07E212005A7DF5 /* CodeStoreFake.swift */; };
 		1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB991292A845999002D24A7 /* CodeAddView.swift */; };
@@ -48,6 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C439C3A2A84D8E30045143A /* Attribution in Frameworks */,
 				1CE682E82A0909A2009FB3A1 /* OTPFeediOS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -145,6 +147,7 @@
 			name = CodeManager;
 			packageProductDependencies = (
 				1CE682E72A0909A2009FB3A1 /* OTPFeediOS */,
+				1C439C392A84D8E30045143A /* Attribution */,
 			);
 			productName = CodeManager;
 			productReference = 1CDA9C912A057A8B00555E7A /* CodeManager.app */;
@@ -503,6 +506,10 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1C439C392A84D8E30045143A /* Attribution */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Attribution;
+		};
 		1CE682E72A0909A2009FB3A1 /* OTPFeediOS */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = OTPFeediOS;
