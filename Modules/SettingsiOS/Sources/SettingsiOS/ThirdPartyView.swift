@@ -6,8 +6,8 @@ public struct ThirdPartyView: View {
     public init() {}
 
     public var body: some View {
-        List(libraries) { library in
-            Text(library.name)
+        List {
+            section
         }
         .navigationTitle("Libraries")
         .navigationBarTitleDisplayMode(.inline)
@@ -18,6 +18,16 @@ public struct ThirdPartyView: View {
             } catch {
                 // TODO: handle
             }
+        }
+    }
+
+    public var section: some View {
+        Section {
+            ForEach(libraries) { library in
+                Text(library.name)
+            }
+        } footer: {
+            Text("Thank you to all third-party software developers!")
         }
     }
 }
