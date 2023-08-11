@@ -5,7 +5,7 @@ import SwiftUI
 struct HOTPCodePreviewView<ButtonView: View>: View {
     var buttonView: ButtonView
     @ObservedObject var previewViewModel: CodePreviewViewModel
-    var hideCode: Bool
+    var isEditing: Bool
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -14,22 +14,22 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             PreviewTimerBarWithText(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
-                isEditing: hideCode
+                isEditing: isEditing
             )
         }
-        .animation(.none, value: hideCode)
+        .animation(.none, value: isEditing)
     }
 
     @ViewBuilder
     private var activeTimerView: some View {
-        if hideCode {
+        if isEditing {
             Color.blue
                 .transition(.identity)
         } else {
             switch previewViewModel.code {
             case .visible:
                 Color.blue
-                .transition(.identity)
+                    .transition(.identity)
             case .notReady:
                 Color.gray
             case .error, .finished:
@@ -65,13 +65,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     private var codeText: some View {
-        CodeTextView(codeState: hideCode ? .notReady : previewViewModel.code)
+        CodeTextView(codeState: isEditing ? .notReady : previewViewModel.code)
             .font(.system(.largeTitle, design: .monospaced))
             .fontWeight(.bold)
     }
 
     var canLoadNextCode: Bool {
-        previewViewModel.code.allowsNextCodeToBeGenerated && !hideCode
+        previewViewModel.code.allowsNextCodeToBeGenerated && !isEditing
     }
 }
 
@@ -123,7 +123,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                 )
             ),
             previewViewModel: previewViewModel,
-            hideCode: hideCode
+            isEditing: hideCode
         )
         .frame(width: 250, height: 100)
     }

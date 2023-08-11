@@ -31,8 +31,8 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
-            totpGenerator: totpEditingGenerator(hideCodes: isEditing),
-            hotpGenerator: hotpEditingGenerator(hideCodes: isEditing),
+            totpGenerator: totpEditingGenerator(),
+            hotpGenerator: hotpEditingGenerator(),
             gridSpacing: 12
         )
         .navigationTitle(Text(feedViewModel.title))
@@ -78,17 +78,17 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         }
     }
 
-    func totpGenerator(hideCodes: Bool = false) -> some TOTPViewGenerator {
+    func totpGenerator() -> some TOTPViewGenerator {
         TOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
             timer: LiveIntervalTimer(),
-            hideCodes: hideCodes
+            isEditing: isEditing
         )
     }
 
-    func totpEditingGenerator(hideCodes: Bool) -> some TOTPViewGenerator {
+    func totpEditingGenerator() -> some TOTPViewGenerator {
         TOTPOnTapDecoratorViewGenerator(
-            generator: totpGenerator(hideCodes: hideCodes),
+            generator: totpGenerator(),
             isTapEnabled: isEditing,
             onTap: { code in
                 modal = .detail(UUID(), code)
@@ -96,13 +96,13 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         )
     }
 
-    func hotpGenerator(hideCodes: Bool = false) -> some HOTPViewGenerator {
-        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), hideCodes: hideCodes)
+    func hotpGenerator() -> some HOTPViewGenerator {
+        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), isEditing: isEditing)
     }
 
-    func hotpEditingGenerator(hideCodes: Bool) -> some HOTPViewGenerator {
+    func hotpEditingGenerator() -> some HOTPViewGenerator {
         HOTPOnTapDecoratorViewGenerator(
-            generator: hotpGenerator(hideCodes: hideCodes),
+            generator: hotpGenerator(),
             isTapEnabled: isEditing,
             onTap: { code in
                 modal = .detail(UUID(), code)

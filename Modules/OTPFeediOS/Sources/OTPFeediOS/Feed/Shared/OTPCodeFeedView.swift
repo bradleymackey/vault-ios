@@ -68,11 +68,11 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
         TOTPPreviewViewGenerator(
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
             timer: LiveIntervalTimer(),
-            hideCodes: false
+            isEditing: false
         )
     }
 
     private static func hotpGenerator() -> HOTPPreviewViewGenerator {
-        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), hideCodes: false)
+        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), isEditing: false)
     }
 }

@@ -14,7 +14,7 @@ public protocol TOTPViewGenerator {
 public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer
-    let hideCodes: Bool
+    let isEditing: Bool
 
     private struct PeriodCachedObjects {
         let timerController: CodeTimerController<LiveIntervalTimer>
@@ -23,10 +23,10 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
 
     private var periodCache = [UInt64: PeriodCachedObjects]()
 
-    public init(clock: EpochClock, timer: LiveIntervalTimer, hideCodes: Bool) {
+    public init(clock: EpochClock, timer: LiveIntervalTimer, isEditing: Bool) {
         self.clock = clock
         self.timer = timer
-        self.hideCodes = hideCodes
+        self.isEditing = isEditing
     }
 
     private func makeControllersForPeriod(period: UInt64) -> PeriodCachedObjects {
@@ -59,7 +59,7 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
                 timerState: cachedObjects.periodState,
                 color: .blue
             ),
-            hideCode: hideCodes
+            hideCode: isEditing
         )
     }
 }

@@ -92,7 +92,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 initialCounter: 0
             ), timer: LiveIntervalTimer(), initialCounter: 0)),
             previewViewModel: previewViewModel,
-            hideCode: false
+            isEditing: false
         )
         .frame(width: 250, height: 100)
         .onAppear {

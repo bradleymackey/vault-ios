@@ -12,11 +12,11 @@ public protocol HOTPViewGenerator {
 @MainActor
 public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
     let timer: LiveIntervalTimer
-    var hideCodes: Bool
+    var isEditing: Bool
 
-    public init(timer: LiveIntervalTimer, hideCodes: Bool) {
+    public init(timer: LiveIntervalTimer, isEditing: Bool) {
         self.timer = timer
-        self.hideCodes = hideCodes
+        self.isEditing = isEditing
     }
 
     public func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
@@ -34,7 +34,7 @@ public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
         return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: incrementerViewModel),
             previewViewModel: previewViewModel,
-            hideCode: hideCodes
+            isEditing: isEditing
         )
     }
 }
