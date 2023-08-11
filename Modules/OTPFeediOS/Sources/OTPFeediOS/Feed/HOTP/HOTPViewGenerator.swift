@@ -26,6 +26,7 @@ public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
             issuer: code.code.issuer,
             renderer: renderer
         )
+        previewViewModel.hideCodeUntilNextUpdate()
         let incrementerViewModel = CodeIncrementerViewModel(
             hotpRenderer: renderer,
             timer: timer,
