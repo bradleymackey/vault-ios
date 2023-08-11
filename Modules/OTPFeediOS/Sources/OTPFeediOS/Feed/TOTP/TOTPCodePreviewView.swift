@@ -21,7 +21,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         HStack(alignment: .center) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
-            if case .error = effectiveCodeState {
+            if case .error = previewViewModel.code {
                 CodeErrorIcon()
                     .font(.title)
             }
@@ -34,44 +34,38 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             Button {
                 previewViewModel.didTapCode()
             } label: {
-                CodeTextView(codeState: effectiveCodeState)
+                CodeTextView(codeState: hideCode ? .notReady : previewViewModel.code)
                     .font(.system(.largeTitle, design: .monospaced))
                     .fontWeight(.bold)
                     .padding(.horizontal, 2)
             }
             .foregroundColor(.primary)
-            .disabled(!effectiveCodeState.isVisible || !previewViewModel.allowsCodeTapAction)
+            .disabled(!previewViewModel.code.isVisible || !previewViewModel.allowsCodeTapAction)
 
-            PreviewTimerBarWithText(timerView: activeTimerView, codeState: effectiveCodeState)
+            PreviewTimerBarWithText(
+                timerView: activeTimerView,
+                codeState: previewViewModel.code,
+                isEditing: hideCode
+            )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    private var effectiveCodeState: OTPCodeState {
-        if hideCode {
-            return .editing
-        } else {
-            return previewViewModel.code
-        }
-    }
-
-    private var timerHeight: Double {
-        20
-    }
-
     @ViewBuilder
     private var activeTimerView: some View {
-        switch effectiveCodeState {
-        case .visible:
-            timerView
-                .transition(.opacity)
-        case .finished, .notReady:
-            timerView.redacted(reason: .placeholder)
-        case .error:
-            Color.red
-        case .editing:
+        if hideCode {
             Color.blue
                 .transition(.move(edge: .leading))
+        } else {
+            switch previewViewModel.code {
+            case .visible:
+                timerView
+                    .transition(.opacity)
+            case .finished, .notReady:
+                timerView.redacted(reason: .placeholder)
+            case .error:
+                Color.red
+            }
         }
     }
 }

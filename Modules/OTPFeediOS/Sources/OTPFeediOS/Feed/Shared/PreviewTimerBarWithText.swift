@@ -5,23 +5,21 @@ import SwiftUI
 struct PreviewTimerBarWithText<Timer: View>: View {
     var timerView: Timer
     var codeState: OTPCodeState
+    var isEditing: Bool
 
     var body: some View {
         ZStack(alignment: .leading) {
             timerView
                 .frame(height: 20)
 
-            switch codeState {
-            case let .error(err, _):
-                LoadingBarLabel(text: err.userTitle)
-            case .editing:
+            if isEditing {
                 LoadingBarLabel(text: localized(key: "action.tapToEdit"))
                     .shimmering()
-            case .finished, .visible, .notReady:
-                EmptyView()
+            } else if case let .error(err, _) = codeState {
+                LoadingBarLabel(text: err.userTitle)
             }
         }
-        .animation(.easeOut, value: codeState)
+        .animation(.easeOut, value: isEditing)
         .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }

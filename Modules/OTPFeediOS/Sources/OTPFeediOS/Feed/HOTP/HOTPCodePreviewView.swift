@@ -11,23 +11,29 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             titleRow
             codeText
-            PreviewTimerBarWithText(timerView: activeTimerView, codeState: effectiveCodeState)
+            PreviewTimerBarWithText(
+                timerView: activeTimerView,
+                codeState: previewViewModel.code,
+                isEditing: hideCode
+            )
         }
         .animation(.none, value: hideCode)
     }
 
     @ViewBuilder
     private var activeTimerView: some View {
-        switch effectiveCodeState {
-        case .editing:
+        if hideCode {
             Color.blue
                 .transition(.move(edge: .leading))
-        case .visible:
-            Color.blue
-        case .notReady:
-            Color.gray
-        case .error, .finished:
-            Color.red
+        } else {
+            switch previewViewModel.code {
+            case .visible:
+                Color.blue
+            case .notReady:
+                Color.gray
+            case .error, .finished:
+                Color.red
+            }
         }
     }
 
@@ -46,7 +52,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         HStack(alignment: .center) {
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
-            if case .error = effectiveCodeState {
+            if case .error = previewViewModel.code {
                 CodeErrorIcon()
                     .font(.title)
             }
@@ -57,22 +63,14 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         }
     }
 
-    private var effectiveCodeState: OTPCodeState {
-        if hideCode {
-            return .editing
-        } else {
-            return previewViewModel.code
-        }
-    }
-
     private var codeText: some View {
-        CodeTextView(codeState: effectiveCodeState)
+        CodeTextView(codeState: hideCode ? .notReady : previewViewModel.code)
             .font(.system(.largeTitle, design: .monospaced))
             .fontWeight(.bold)
     }
 
     var canLoadNextCode: Bool {
-        effectiveCodeState.allowsNextCodeToBeGenerated && !hideCode
+        previewViewModel.code.allowsNextCodeToBeGenerated && !hideCode
     }
 }
 
