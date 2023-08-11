@@ -24,11 +24,12 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     private var activeTimerView: some View {
         if hideCode {
             Color.blue
-                .transition(.move(edge: .leading))
+                .transition(.identity)
         } else {
             switch previewViewModel.code {
             case .visible:
                 Color.blue
+                .transition(.identity)
             case .notReady:
                 Color.gray
             case .error, .finished:
