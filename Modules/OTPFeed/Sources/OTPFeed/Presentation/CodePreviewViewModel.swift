@@ -7,7 +7,7 @@ import OTPCore
 public final class CodePreviewViewModel: ObservableObject {
     public let accountName: String
     public let issuer: String?
-    @Published public private(set) var code: OTPCodeState = .notReady
+    @Published public private(set) var code: OTPCodeState = .obfuscated
 
     private let onCodeTap: ((OTPCodeState) -> Void)?
     private var cancellables = Set<AnyCancellable>()

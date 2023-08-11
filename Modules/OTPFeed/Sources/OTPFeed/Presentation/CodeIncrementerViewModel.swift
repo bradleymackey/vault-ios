@@ -15,7 +15,6 @@ public final class CodeIncrementerViewModel<Timer: IntervalTimer>: ObservableObj
         self.timer = timer
         self.hotpRenderer = hotpRenderer
         counter = initialCounter
-        hotpRenderer.set(counter: initialCounter)
     }
 
     public func incrementCounter() {
