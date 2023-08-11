@@ -20,7 +20,7 @@ public struct HOTPPreviewViewGenerator: HOTPViewGenerator {
     }
 
     public func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
-        let renderer = HOTPCodeRenderer(hotpGenerator: code.code.hotpGenerator(), initialCounter: counter)
+        let renderer = HOTPCodeRenderer(hotpGenerator: code.code.hotpGenerator())
         let previewViewModel = CodePreviewViewModel(
             accountName: code.code.accountName,
             issuer: code.code.issuer,

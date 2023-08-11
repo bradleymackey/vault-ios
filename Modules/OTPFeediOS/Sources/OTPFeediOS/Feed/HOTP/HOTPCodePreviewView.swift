@@ -122,8 +122,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
             buttonView: CodeButtonView(
                 viewModel: .init(
                     hotpRenderer: .init(
-                        hotpGenerator: .init(secret: Data()),
-                        initialCounter: 0
+                        hotpGenerator: .init(secret: Data())
                     ),
                     timer: LiveIntervalTimer(),
                     initialCounter: 0

@@ -44,11 +44,11 @@ public final class TOTPCodeRenderer<Timer: CodeTimerUpdater>: OTPCodeRenderer {
 
 public final class HOTPCodeRenderer: OTPCodeRenderer {
     private let hotpGenerator: HOTPGenerator
-    private let counterSubject: CurrentValueSubject<UInt64, Never>
+    private let counterSubject: PassthroughSubject<UInt64, Never>
 
-    public init(hotpGenerator: HOTPGenerator, initialCounter: UInt64) {
+    public init(hotpGenerator: HOTPGenerator) {
         self.hotpGenerator = hotpGenerator
-        counterSubject = CurrentValueSubject(initialCounter)
+        counterSubject = PassthroughSubject()
     }
 
     /// Update the current value of the counter.
