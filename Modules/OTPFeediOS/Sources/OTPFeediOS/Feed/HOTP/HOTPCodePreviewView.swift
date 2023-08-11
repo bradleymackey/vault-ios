@@ -39,10 +39,11 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     @ViewBuilder
     private var activeTimerView: some View {
         switch effectiveCodeState {
-        case .visible, .editing:
+        case .editing:
             Color.blue
-                .opacity(0.75)
                 .transition(.move(edge: .leading))
+        case .visible:
+            Color.blue
         case .notReady:
             Color.gray
         case .error, .finished:

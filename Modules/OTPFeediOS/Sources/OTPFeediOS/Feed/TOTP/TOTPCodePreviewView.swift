@@ -84,13 +84,13 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         switch effectiveCodeState {
         case .visible:
             timerView
+                .transition(.opacity)
         case .finished, .notReady:
             timerView.redacted(reason: .placeholder)
         case .error:
             Color.red
         case .editing:
             Color.blue
-                .opacity(0.75)
                 .transition(.move(edge: .leading))
         }
     }

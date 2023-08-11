@@ -56,7 +56,8 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
-                timerState: cachedObjects.periodState
+                timerState: cachedObjects.periodState,
+                color: .blue
             ),
             hideCode: hideCodes
         )
