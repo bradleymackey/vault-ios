@@ -17,6 +17,8 @@ struct PreviewTimerBarWithText<Timer: View>: View {
                     .shimmering()
             } else if case let .error(err, _) = codeState {
                 LoadingBarLabel(text: err.userTitle)
+            } else if case .obfuscated = codeState {
+                LoadingBarLabel(text: localized(key: "code.updateRequired"))
             }
         }
         .animation(.easeOut, value: isEditing)

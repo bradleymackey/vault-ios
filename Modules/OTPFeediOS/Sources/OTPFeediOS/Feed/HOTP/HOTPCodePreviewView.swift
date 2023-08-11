@@ -7,6 +7,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     @ObservedObject var previewViewModel: CodePreviewViewModel
     var isEditing: Bool
 
+    @Environment(\.scenePhase) private var scenePhase
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             titleRow
@@ -18,6 +20,11 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             )
         }
         .animation(.none, value: isEditing)
+        .onChange(of: scenePhase) { newValue in
+            if newValue == .background {
+                previewViewModel.hideCodeUntilNextUpdate()
+            }
+        }
     }
 
     @ViewBuilder
@@ -30,7 +37,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             case .visible:
                 Color.blue
                     .transition(.identity)
-            case .notReady:
+            case .notReady, .obfuscated:
                 Color.gray
             case .error, .finished:
                 Color.red

@@ -61,7 +61,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             case .visible:
                 timerView
                     .transition(.opacity)
-            case .finished, .notReady:
+            case .finished, .notReady, .obfuscated:
                 timerView.redacted(reason: .placeholder)
             case .error:
                 Color.red

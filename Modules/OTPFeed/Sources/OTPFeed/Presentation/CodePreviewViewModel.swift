@@ -63,4 +63,8 @@ public final class CodePreviewViewModel: ObservableObject {
     public func didTapCode() {
         onCodeTap?(code)
     }
+
+    public func hideCodeUntilNextUpdate() {
+        code = .obfuscated
+    }
 }
