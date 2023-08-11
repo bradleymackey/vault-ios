@@ -10,8 +10,11 @@ public protocol TOTPViewGenerator {
     func makeTOTPView(period: UInt64, code: StoredOTPCode) -> CodeView
 }
 
+/// An efficient generator of preview views for TOTP codes.
+///
+/// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
+public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator {
     let clock: EpochClock
     let timer: LiveIntervalTimer
     let isEditing: Bool
@@ -22,6 +25,8 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
     }
 
     private var periodCache = [UInt64: PeriodCachedObjects]()
+
+    private var viewModelCache = [UUID: CodePreviewViewModel]()
 
     public init(clock: EpochClock, timer: LiveIntervalTimer, isEditing: Bool) {
         self.clock = clock
@@ -44,14 +49,32 @@ public final class TOTPPreviewViewGenerator: TOTPViewGenerator {
         }
     }
 
+    private func makeViewModelForCode(
+        period: UInt64,
+        code: StoredOTPCode,
+        timerController: CodeTimerController<LiveIntervalTimer>
+    ) -> CodePreviewViewModel {
+        if let viewModel = viewModelCache[code.id] {
+            return viewModel
+        } else {
+            let totpGenerator = TOTPGenerator(generator: code.code.hotpGenerator(), timeInterval: period)
+            let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
+            let viewModel = CodePreviewViewModel(
+                accountName: code.code.accountName,
+                issuer: code.code.issuer,
+                renderer: renderer
+            )
+            viewModelCache[code.id] = viewModel
+            return viewModel
+        }
+    }
+
     public func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
         let cachedObjects = makeControllersForPeriod(period: period)
-        let totpGenerator = TOTPGenerator(generator: code.code.hotpGenerator(), timeInterval: period)
-        let renderer = TOTPCodeRenderer(timer: cachedObjects.timerController, totpGenerator: totpGenerator)
-        let previewViewModel = CodePreviewViewModel(
-            accountName: code.code.accountName,
-            issuer: code.code.issuer,
-            renderer: renderer
+        let previewViewModel = makeViewModelForCode(
+            period: period,
+            code: code,
+            timerController: cachedObjects.timerController
         )
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
