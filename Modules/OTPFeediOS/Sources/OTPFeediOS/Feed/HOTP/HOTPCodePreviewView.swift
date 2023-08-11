@@ -11,29 +11,9 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             titleRow
             codeText
-            timerSection
+            PreviewTimerBarWithText(timerView: activeTimerView, codeState: effectiveCodeState)
         }
         .animation(.none, value: hideCode)
-    }
-
-    @ViewBuilder
-    private var timerSection: some View {
-        ZStack(alignment: .leading) {
-            activeTimerView
-                .frame(height: 20)
-
-            switch effectiveCodeState {
-            case let .error(err, _):
-                LoadingBarLabel(text: err.userTitle)
-            case .editing:
-                LoadingBarLabel(text: localized(key: "action.tapToEdit"))
-                    .shimmering()
-            case .finished, .visible, .notReady:
-                EmptyView()
-            }
-        }
-        .animation(.easeOut, value: hideCode)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 
     @ViewBuilder

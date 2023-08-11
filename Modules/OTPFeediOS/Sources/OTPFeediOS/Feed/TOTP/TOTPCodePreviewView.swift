@@ -42,7 +42,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             .foregroundColor(.primary)
             .disabled(!effectiveCodeState.isVisible || !previewViewModel.allowsCodeTapAction)
 
-            timerSection
+            PreviewTimerBarWithText(timerView: activeTimerView, codeState: effectiveCodeState)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
     }
@@ -57,26 +57,6 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var timerHeight: Double {
         20
-    }
-
-    @ViewBuilder
-    private var timerSection: some View {
-        ZStack(alignment: .leading) {
-            activeTimerView
-                .frame(height: timerHeight)
-
-            switch effectiveCodeState {
-            case let .error(err, _):
-                LoadingBarLabel(text: err.userTitle)
-            case .editing:
-                LoadingBarLabel(text: localized(key: "action.tapToEdit"))
-                    .shimmering()
-            case .finished, .visible, .notReady:
-                EmptyView()
-            }
-        }
-        .animation(.easeOut, value: hideCode)
-        .clipShape(RoundedRectangle(cornerRadius: timerHeight))
     }
 
     @ViewBuilder
