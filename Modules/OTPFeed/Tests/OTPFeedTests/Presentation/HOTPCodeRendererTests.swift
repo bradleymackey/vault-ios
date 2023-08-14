@@ -5,26 +5,25 @@ import XCTest
 @testable import OTPFeed
 
 final class HOTPCodeRendererTests: XCTestCase {
-    func test_renderedCodePublisher_publishesInitialCodeImmediately() async throws {
+    func test_renderedCodePublisher_doesNotPublishesInitialCodeImmediately() async throws {
         let sut = makeSUT()
         let publisher = sut.renderedCodePublisher().collectFirst(1)
 
-        let values = try await awaitPublisher(publisher, when: {
+        await awaitNoPublish(publisher: publisher, when: {
             // noop
         })
-        XCTAssertEqual(values, ["84755224"])
     }
 
-    func test_renderedCodePublisher_publishesCodesOnCounterChange() async throws {
+    func test_renderedCodePublisher_publishesCodesOnCounterChangeOnly() async throws {
         let sut = makeSUT()
 
-        let publisher = sut.renderedCodePublisher().collectFirst(3)
+        let publisher = sut.renderedCodePublisher().collectFirst(2)
 
         let values = try await awaitPublisher(publisher, when: {
             sut.set(counter: 1)
             sut.set(counter: 2)
         })
-        XCTAssertEqual(values, ["84755224", "94287082", "37359152"])
+        XCTAssertEqual(values, ["94287082", "37359152"])
     }
 
     // MARK: - Helpers

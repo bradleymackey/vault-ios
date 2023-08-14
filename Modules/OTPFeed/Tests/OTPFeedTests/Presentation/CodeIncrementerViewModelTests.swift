@@ -61,7 +61,6 @@ final class CodeIncrementerViewModelTests: XCTestCase {
     func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
         let (renderer, _, sut) = makeSUT()
         let publisher = renderer.counterIncrementedPublisher()
-            .dropFirst() // the renderer publishes the first value right away, so ignore that
             .collectFirst(1)
 
         let incrementOperations: [Void] = try await awaitPublisher(publisher) {
