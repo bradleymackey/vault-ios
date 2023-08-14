@@ -13,6 +13,8 @@ import SwiftUI
 @MainActor
 struct CodeListView<Store: OTPCodeStoreReader>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
+    @ObservedObject var totpPreviewGenerator: TOTPPreviewViewGenerator
+    @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator
 
     @State private var isEditing = false
     @State private var modal: Modal?
@@ -83,10 +85,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
 
     func totpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<TOTPPreviewViewGenerator> {
         OTPOnTapDecoratorViewGenerator(
-            generator: TOTPPreviewViewGenerator(
-                clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-                timer: LiveIntervalTimer()
-            ),
+            generator: totpPreviewGenerator,
             isTapEnabled: isEditing,
             onTap: { id in
                 guard let code = feedViewModel.code(id: id) else { return }
@@ -97,7 +96,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
 
     func hotpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator> {
         OTPOnTapDecoratorViewGenerator(
-            generator: HOTPPreviewViewGenerator(timer: LiveIntervalTimer()),
+            generator: hotpPreviewGenerator,
             isTapEnabled: isEditing,
             onTap: { id in
                 guard let code = feedViewModel.code(id: id) else { return }
