@@ -8,16 +8,14 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
     public typealias Code = HOTPAuthCode
 
     let timer: any IntervalTimer
-    var isEditing: Bool
 
     private var viewModelCache = [UUID: CachedViewModels]()
 
-    public init(timer: any IntervalTimer, isEditing: Bool) {
+    public init(timer: any IntervalTimer) {
         self.timer = timer
-        self.isEditing = isEditing
     }
 
-    public func makeOTPView(id: UUID, code: Code) -> some View {
+    public func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
         let viewModels = makeViewModelForCode(id: id, code: code)
         return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: viewModels.incrementer),

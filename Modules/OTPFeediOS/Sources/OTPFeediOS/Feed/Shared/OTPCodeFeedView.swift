@@ -11,15 +11,18 @@ public struct OTPCodeFeedView<
 {
     @ObservedObject public var viewModel: FeedViewModel<Store>
     public var viewGenerator: ViewGenerator
+    @Binding public var isEditing: Bool
     public var gridSpacing: Double
 
     public init(
         viewModel: FeedViewModel<Store>,
         viewGenerator: ViewGenerator,
+        isEditing: Binding<Bool>,
         gridSpacing: Double = 8
     ) {
         _viewModel = ObservedObject(initialValue: viewModel)
         self.viewGenerator = viewGenerator
+        _isEditing = Binding(projectedValue: isEditing)
         self.gridSpacing = gridSpacing
     }
 
@@ -27,7 +30,7 @@ public struct OTPCodeFeedView<
         ScrollView {
             LazyVGrid(columns: columns, content: {
                 ForEach(viewModel.codes) { code in
-                    viewGenerator.makeOTPView(id: code.id, code: code.code)
+                    viewGenerator.makeOTPView(id: code.id, code: code.code, isEditing: isEditing)
                 }
             })
             .padding()
@@ -47,12 +50,13 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
             viewModel: .init(store: CodeStoreFake()),
-            viewGenerator: GenericGenerator()
+            viewGenerator: GenericGenerator(),
+            isEditing: .constant(false)
         )
     }
 
     struct GenericGenerator: OTPViewGenerator {
-        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode) -> some View {
+        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode, isEditing _: Bool) -> some View {
             Text("Code")
         }
     }

@@ -13,19 +13,17 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 
     let clock: EpochClock
     let timer: any IntervalTimer
-    let isEditing: Bool
 
     private var periodCache = [UInt64: PeriodCachedObjects]()
 
     private var viewModelCache = [UUID: CodePreviewViewModel]()
 
-    public init(clock: EpochClock, timer: any IntervalTimer, isEditing: Bool) {
+    public init(clock: EpochClock, timer: any IntervalTimer) {
         self.clock = clock
         self.timer = timer
-        self.isEditing = isEditing
     }
 
-    public func makeOTPView(id: UUID, code: Code) -> some View {
+    public func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
         let cachedObjects = makeControllersForPeriod(period: code.period)
         let previewViewModel = makeViewModelForCode(
             id: id,

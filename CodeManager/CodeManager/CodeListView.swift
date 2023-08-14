@@ -35,6 +35,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                 totpGenerator: totpEditingGenerator(),
                 hotpGenerator: hotpEditingGenerator()
             ),
+            isEditing: $isEditing,
             gridSpacing: 12
         )
         .navigationTitle(Text(feedViewModel.title))
@@ -84,8 +85,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         OTPOnTapDecoratorViewGenerator(
             generator: TOTPPreviewViewGenerator(
                 clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-                timer: LiveIntervalTimer(),
-                isEditing: isEditing
+                timer: LiveIntervalTimer()
             ),
             isTapEnabled: isEditing,
             onTap: { id in
@@ -97,7 +97,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
 
     func hotpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator> {
         OTPOnTapDecoratorViewGenerator(
-            generator: HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), isEditing: isEditing),
+            generator: HOTPPreviewViewGenerator(timer: LiveIntervalTimer()),
             isTapEnabled: isEditing,
             onTap: { id in
                 guard let code = feedViewModel.code(id: id) else { return }
@@ -119,11 +119,11 @@ struct GenericGenerator<TOTP, HOTP>: OTPViewGenerator where
     let hotpGenerator: HOTP
 
     @ViewBuilder
-    func makeOTPView(id: UUID, code: Code) -> some View {
+    func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
         if let totp = TOTPAuthCode(generic: code) {
-            totpGenerator.makeOTPView(id: id, code: totp)
+            totpGenerator.makeOTPView(id: id, code: totp, isEditing: isEditing)
         } else if let hotp = HOTPAuthCode(generic: code) {
-            hotpGenerator.makeOTPView(id: id, code: hotp)
+            hotpGenerator.makeOTPView(id: id, code: hotp, isEditing: isEditing)
         } else {
             Text("Unsupported code")
         }
@@ -136,8 +136,8 @@ struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGener
     let isTapEnabled: Bool
     let onTap: (UUID) -> Void
 
-    func makeOTPView(id: UUID, code: Code) -> some View {
-        generator.makeOTPView(id: id, code: code)
+    func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
+        generator.makeOTPView(id: id, code: code, isEditing: isEditing)
             .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
                 onTap(id)
             }))
