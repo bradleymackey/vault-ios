@@ -19,11 +19,6 @@ public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator
     let timer: LiveIntervalTimer
     let isEditing: Bool
 
-    private struct PeriodCachedObjects {
-        let timerController: CodeTimerController<LiveIntervalTimer>
-        let periodState: CodeTimerPeriodState
-    }
-
     private var periodCache = [UInt64: PeriodCachedObjects]()
 
     private var viewModelCache = [UUID: CodePreviewViewModel]()
@@ -32,6 +27,32 @@ public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator
         self.clock = clock
         self.timer = timer
         self.isEditing = isEditing
+    }
+
+    public func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
+        let cachedObjects = makeControllersForPeriod(period: period)
+        let previewViewModel = makeViewModelForCode(
+            period: period,
+            code: code,
+            timerController: cachedObjects.timerController
+        )
+        return TOTPCodePreviewView(
+            previewViewModel: previewViewModel,
+            timerView: CodeTimerHorizontalBarView(
+                timerState: cachedObjects.periodState,
+                color: .blue
+            ),
+            hideCode: isEditing
+        )
+    }
+}
+
+// MARK: - Caching
+
+extension TOTPPreviewViewGenerator {
+    private struct PeriodCachedObjects {
+        let timerController: CodeTimerController<LiveIntervalTimer>
+        let periodState: CodeTimerPeriodState
     }
 
     private func makeControllersForPeriod(period: UInt64) -> PeriodCachedObjects {
@@ -67,22 +88,5 @@ public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator
             viewModelCache[code.id] = viewModel
             return viewModel
         }
-    }
-
-    public func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
-        let cachedObjects = makeControllersForPeriod(period: period)
-        let previewViewModel = makeViewModelForCode(
-            period: period,
-            code: code,
-            timerController: cachedObjects.timerController
-        )
-        return TOTPCodePreviewView(
-            previewViewModel: previewViewModel,
-            timerView: CodeTimerHorizontalBarView(
-                timerState: cachedObjects.periodState,
-                color: .blue
-            ),
-            hideCode: isEditing
-        )
     }
 }

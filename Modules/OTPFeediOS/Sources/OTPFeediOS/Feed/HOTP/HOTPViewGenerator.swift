@@ -14,16 +14,29 @@ public final class HOTPPreviewViewGenerator: HOTPViewGenerator {
     let timer: LiveIntervalTimer
     var isEditing: Bool
 
-    private struct CachedViewModels {
-        var preview: CodePreviewViewModel
-        var incrementer: CodeIncrementerViewModel<LiveIntervalTimer>
-    }
-
     private var viewModelCache = [UUID: CachedViewModels]()
 
     public init(timer: LiveIntervalTimer, isEditing: Bool) {
         self.timer = timer
         self.isEditing = isEditing
+    }
+
+    public func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
+        let viewModels = makeViewModelForCode(counter: counter, code: code)
+        return HOTPCodePreviewView(
+            buttonView: CodeButtonView(viewModel: viewModels.incrementer),
+            previewViewModel: viewModels.preview,
+            isEditing: isEditing
+        )
+    }
+}
+
+// MARK: - Caching
+
+extension HOTPPreviewViewGenerator {
+    private struct CachedViewModels {
+        var preview: CodePreviewViewModel
+        var incrementer: CodeIncrementerViewModel<LiveIntervalTimer>
     }
 
     private func makeViewModelForCode(
@@ -49,14 +62,5 @@ public final class HOTPPreviewViewGenerator: HOTPViewGenerator {
             viewModelCache[code.id] = cached
             return cached
         }
-    }
-
-    public func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
-        let viewModels = makeViewModelForCode(counter: counter, code: code)
-        return HOTPCodePreviewView(
-            buttonView: CodeButtonView(viewModel: viewModels.incrementer),
-            previewViewModel: viewModels.preview,
-            isEditing: isEditing
-        )
     }
 }
