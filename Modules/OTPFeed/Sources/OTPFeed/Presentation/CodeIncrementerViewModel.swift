@@ -3,15 +3,15 @@ import Foundation
 import OTPCore
 
 @MainActor
-public final class CodeIncrementerViewModel<Timer: IntervalTimer>: ObservableObject {
+public final class CodeIncrementerViewModel: ObservableObject {
     @Published public private(set) var isButtonEnabled = true
 
-    private let timer: Timer
+    private let timer: any IntervalTimer
     private let hotpRenderer: HOTPCodeRenderer
     private var counter: UInt64
     private var timerCancellable: AnyCancellable?
 
-    public init(hotpRenderer: HOTPCodeRenderer, timer: Timer, initialCounter: UInt64) {
+    public init(hotpRenderer: HOTPCodeRenderer, timer: any IntervalTimer, initialCounter: UInt64) {
         self.timer = timer
         self.hotpRenderer = hotpRenderer
         counter = initialCounter

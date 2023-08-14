@@ -8,14 +8,14 @@ public protocol CodeTimerUpdater {
 }
 
 /// Controller for producing timers for a given code, according to a clock.
-public final class CodeTimerController<Timer: IntervalTimer>: CodeTimerUpdater {
+public final class CodeTimerController: CodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
     private let period: UInt64
     private var timerPublisher: AnyCancellable?
-    private let timer: Timer
+    private let timer: any IntervalTimer
     private let clock: EpochClock
 
-    public init(timer: Timer, period: UInt64, clock: EpochClock) {
+    public init(timer: any IntervalTimer, period: UInt64, clock: EpochClock) {
         self.period = period
         self.timer = timer
         self.clock = clock

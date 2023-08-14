@@ -16,14 +16,14 @@ public protocol TOTPViewGenerator {
 @MainActor
 public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator {
     let clock: EpochClock
-    let timer: LiveIntervalTimer
+    let timer: any IntervalTimer
     let isEditing: Bool
 
     private var periodCache = [UInt64: PeriodCachedObjects]()
 
     private var viewModelCache = [UUID: CodePreviewViewModel]()
 
-    public init(clock: EpochClock, timer: LiveIntervalTimer, isEditing: Bool) {
+    public init(clock: EpochClock, timer: any IntervalTimer, isEditing: Bool) {
         self.clock = clock
         self.timer = timer
         self.isEditing = isEditing
@@ -51,7 +51,7 @@ public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator
 
 extension TOTPPreviewViewGenerator {
     private struct PeriodCachedObjects {
-        let timerController: CodeTimerController<LiveIntervalTimer>
+        let timerController: CodeTimerController
         let periodState: CodeTimerPeriodState
     }
 
@@ -73,7 +73,7 @@ extension TOTPPreviewViewGenerator {
     private func makeViewModelForCode(
         period: UInt64,
         code: StoredOTPCode,
-        timerController: CodeTimerController<LiveIntervalTimer>
+        timerController: CodeTimerController
     ) -> CodePreviewViewModel {
         if let viewModel = viewModelCache[code.id] {
             return viewModel

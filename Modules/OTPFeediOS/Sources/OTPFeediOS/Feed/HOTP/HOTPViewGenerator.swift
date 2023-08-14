@@ -11,12 +11,12 @@ public protocol HOTPViewGenerator {
 
 @MainActor
 public final class HOTPPreviewViewGenerator: HOTPViewGenerator {
-    let timer: LiveIntervalTimer
+    let timer: any IntervalTimer
     var isEditing: Bool
 
     private var viewModelCache = [UUID: CachedViewModels]()
 
-    public init(timer: LiveIntervalTimer, isEditing: Bool) {
+    public init(timer: any IntervalTimer, isEditing: Bool) {
         self.timer = timer
         self.isEditing = isEditing
     }
@@ -36,7 +36,7 @@ public final class HOTPPreviewViewGenerator: HOTPViewGenerator {
 extension HOTPPreviewViewGenerator {
     private struct CachedViewModels {
         var preview: CodePreviewViewModel
-        var incrementer: CodeIncrementerViewModel<LiveIntervalTimer>
+        var incrementer: CodeIncrementerViewModel
     }
 
     private func makeViewModelForCode(
