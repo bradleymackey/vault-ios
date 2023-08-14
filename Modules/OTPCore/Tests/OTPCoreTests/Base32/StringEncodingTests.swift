@@ -1,5 +1,5 @@
 //
-//  StringExtensionTests.swift
+//  StringEncodingTests.swift
 //  Base32
 //
 //  Created by 野村 憲男 on 2/7/15.

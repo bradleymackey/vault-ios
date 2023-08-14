@@ -69,7 +69,7 @@ extension FloatingPoint {
     /// Rescales self and other to give meaningful results when one of them
     /// is infinite. We also handle NaN here so that the fast path doesn't
     /// need to worry about it.
-    internal func rescaledAlmostEqual(to other: Self, tolerance: Self) -> Bool {
+    func rescaledAlmostEqual(to other: Self, tolerance: Self) -> Bool {
         // NaN is considered to be not approximately equal to anything, not even
         // itself.
         if isNaN || other.isNaN { return false }
