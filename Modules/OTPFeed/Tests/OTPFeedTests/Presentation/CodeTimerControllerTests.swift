@@ -75,7 +75,7 @@ final class CodeTimerControllerTests: XCTestCase {
         period: UInt64,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (EpochClock, MockIntervalTimer, CodeTimerController<MockIntervalTimer>) {
+    ) -> (EpochClock, MockIntervalTimer, CodeTimerController) {
         let timer = MockIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { clockTime })
         let sut = CodeTimerController(timer: timer, period: period, clock: clock)

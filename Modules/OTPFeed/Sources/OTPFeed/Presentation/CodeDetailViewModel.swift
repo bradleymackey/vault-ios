@@ -38,7 +38,7 @@ public final class CodeDetailViewModel: ObservableObject {
 }
 
 extension CodeDetailViewModel {
-    private static func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
+    private static func makeInfoEntries(_ code: GenericOTPAuthCode) -> [DetailEntry] {
         let formatter = CodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
         entries.append(

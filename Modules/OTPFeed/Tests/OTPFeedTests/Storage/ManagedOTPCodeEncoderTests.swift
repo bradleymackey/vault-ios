@@ -215,7 +215,7 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
 
     private func makeWritable(
         userDescription: String? = nil,
-        code: OTPAuthCode
+        code: GenericOTPAuthCode
     ) -> StoredOTPCode.Write {
         StoredOTPCode.Write(userDescription: userDescription, code: code)
     }
@@ -227,8 +227,8 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
         digits: OTPAuthDigits = .six,
         accountName: String = "any",
         issuer: String? = nil
-    ) -> OTPAuthCode {
-        OTPAuthCode(
+    ) -> GenericOTPAuthCode {
+        GenericOTPAuthCode(
             type: type,
             secret: secret,
             algorithm: algorithm,

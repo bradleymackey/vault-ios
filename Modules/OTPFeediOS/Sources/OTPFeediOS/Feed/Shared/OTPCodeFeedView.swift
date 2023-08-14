@@ -5,23 +5,21 @@ import SwiftUI
 
 public struct OTPCodeFeedView<
     Store: OTPCodeStoreReader,
-    TOTPView: TOTPViewGenerator,
-    HOTPView: HOTPViewGenerator
->: View {
+    ViewGenerator: OTPViewGenerator
+>: View where
+    ViewGenerator.Code == GenericOTPAuthCode
+{
     @ObservedObject public var viewModel: FeedViewModel<Store>
-    public var totpGenerator: TOTPView
-    public var hotpGenerator: HOTPView
+    public var viewGenerator: ViewGenerator
     public var gridSpacing: Double
 
     public init(
         viewModel: FeedViewModel<Store>,
-        totpGenerator: TOTPView,
-        hotpGenerator: HOTPView,
+        viewGenerator: ViewGenerator,
         gridSpacing: Double = 8
     ) {
         _viewModel = ObservedObject(initialValue: viewModel)
-        self.totpGenerator = totpGenerator
-        self.hotpGenerator = hotpGenerator
+        self.viewGenerator = viewGenerator
         self.gridSpacing = gridSpacing
     }
 
@@ -29,7 +27,7 @@ public struct OTPCodeFeedView<
         ScrollView {
             LazyVGrid(columns: columns, content: {
                 ForEach(viewModel.codes) { code in
-                    codeView(storedCode: code)
+                    viewGenerator.makeOTPView(id: code.id, code: code.code)
                 }
             })
             .padding()
@@ -37,16 +35,6 @@ public struct OTPCodeFeedView<
         .listStyle(.plain)
         .task {
             await viewModel.reloadData()
-        }
-    }
-
-    @ViewBuilder
-    private func codeView(storedCode: StoredOTPCode) -> some View {
-        switch storedCode.code.type {
-        case let .totp(period):
-            totpGenerator.makeTOTPView(period: period, code: storedCode)
-        case let .hotp(counter):
-            hotpGenerator.makeHOTPView(counter: counter, code: storedCode)
         }
     }
 
@@ -59,20 +47,13 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
             viewModel: .init(store: CodeStoreFake()),
-            totpGenerator: totpGenerator(),
-            hotpGenerator: hotpGenerator()
+            viewGenerator: GenericGenerator()
         )
     }
 
-    private static func totpGenerator() -> TOTPPreviewViewGenerator {
-        TOTPPreviewViewGenerator(
-            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer(),
-            isEditing: false
-        )
-    }
-
-    private static func hotpGenerator() -> HOTPPreviewViewGenerator {
-        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), isEditing: false)
+    struct GenericGenerator: OTPViewGenerator {
+        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode) -> some View {
+            Text("Code")
+        }
     }
 }

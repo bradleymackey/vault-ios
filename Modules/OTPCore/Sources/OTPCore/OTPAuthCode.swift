@@ -1,7 +1,17 @@
 import Foundation
 
-public struct OTPAuthCode: Equatable {
-    public var type: OTPAuthType
+public protocol OTPAuthCode {
+    var secret: OTPAuthSecret { get }
+    var algorithm: OTPAuthAlgorithm { get }
+    var digits: OTPAuthDigits { get }
+    var accountName: String { get }
+    var issuer: String? { get }
+
+    func toGenericCode() -> GenericOTPAuthCode
+}
+
+public struct TOTPAuthCode: OTPAuthCode {
+    public var period: UInt64
     public var secret: OTPAuthSecret
     public var algorithm: OTPAuthAlgorithm
     public var digits: OTPAuthDigits
@@ -9,19 +19,90 @@ public struct OTPAuthCode: Equatable {
     public var issuer: String?
 
     public init(
-        type: OTPAuthType = .totp(period: 30),
+        period: UInt64 = 30,
         secret: OTPAuthSecret,
-        algorithm: OTPAuthAlgorithm = .sha1,
-        digits: OTPAuthDigits = .six,
+        algorithm: OTPAuthAlgorithm,
+        digits: OTPAuthDigits,
         accountName: String,
         issuer: String? = nil
     ) {
-        self.type = type
+        self.period = period
         self.secret = secret
         self.algorithm = algorithm
         self.digits = digits
         self.accountName = accountName
         self.issuer = issuer
+    }
+
+    public init?(generic: GenericOTPAuthCode) {
+        guard case let .totp(period) = generic.type else {
+            return nil
+        }
+        self.period = period
+        secret = generic.secret
+        algorithm = generic.algorithm
+        digits = generic.digits
+        accountName = generic.accountName
+        issuer = generic.issuer
+    }
+
+    public func toGenericCode() -> GenericOTPAuthCode {
+        GenericOTPAuthCode(
+            type: .totp(period: period),
+            secret: secret,
+            algorithm: algorithm,
+            digits: digits,
+            accountName: accountName,
+            issuer: issuer
+        )
+    }
+}
+
+public struct HOTPAuthCode: OTPAuthCode {
+    public var counter: UInt64 = 0
+    public var secret: OTPAuthSecret
+    public var algorithm: OTPAuthAlgorithm
+    public var digits: OTPAuthDigits
+    public var accountName: String
+    public var issuer: String?
+
+    public init(
+        counter: UInt64 = 0,
+        secret: OTPAuthSecret,
+        algorithm: OTPAuthAlgorithm,
+        digits: OTPAuthDigits,
+        accountName: String,
+        issuer: String? = nil
+    ) {
+        self.counter = counter
+        self.secret = secret
+        self.algorithm = algorithm
+        self.digits = digits
+        self.accountName = accountName
+        self.issuer = issuer
+    }
+
+    public init?(generic: GenericOTPAuthCode) {
+        guard case let .hotp(counter) = generic.type else {
+            return nil
+        }
+        self.counter = counter
+        secret = generic.secret
+        algorithm = generic.algorithm
+        digits = generic.digits
+        accountName = generic.accountName
+        issuer = generic.issuer
+    }
+
+    public func toGenericCode() -> GenericOTPAuthCode {
+        GenericOTPAuthCode(
+            type: .hotp(counter: counter),
+            secret: secret,
+            algorithm: algorithm,
+            digits: digits,
+            accountName: accountName,
+            issuer: issuer
+        )
     }
 }
 

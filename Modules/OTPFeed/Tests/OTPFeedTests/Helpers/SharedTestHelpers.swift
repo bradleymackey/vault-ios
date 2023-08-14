@@ -6,9 +6,13 @@ func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)
 }
 
-func uniqueCode() -> OTPAuthCode {
+func uniqueCode() -> GenericOTPAuthCode {
     let randomData = Data.random(count: 50)
-    return OTPAuthCode(secret: .init(data: randomData, format: .base32), accountName: "Some Account")
+    return GenericOTPAuthCode(
+        type: .totp(),
+        secret: .init(data: randomData, format: .base32),
+        accountName: "Some Account"
+    )
 }
 
 func uniqueStoredCode() -> StoredOTPCode {

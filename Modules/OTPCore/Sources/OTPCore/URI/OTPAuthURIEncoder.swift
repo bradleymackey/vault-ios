@@ -10,7 +10,7 @@ public struct OTPAuthURIEncoder {
 
     public init() {}
 
-    public func encode(code: OTPAuthCode) throws -> OTPAuthURI {
+    public func encode(code: GenericOTPAuthCode) throws -> OTPAuthURI {
         var components = URLComponents()
         components.scheme = OTPAuthURI.otpAuthScheme
         components.host = makeFormatted(type: code.type)
@@ -26,11 +26,11 @@ public struct OTPAuthURIEncoder {
 // MARK: - Helpers
 
 extension OTPAuthURIEncoder {
-    private func makePath(code: OTPAuthCode) -> String {
+    private func makePath(code: GenericOTPAuthCode) -> String {
         "/" + makeFormattedLabel(code: code)
     }
 
-    private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
+    private func makeQueryParameters(code: GenericOTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
             .otpAuth(.secret, value: makeFormatted(secret: code.secret))
@@ -63,7 +63,7 @@ extension OTPAuthURIEncoder {
         base32Encode(secret.data)
     }
 
-    private func makeFormattedLabel(code: OTPAuthCode) -> String {
+    private func makeFormattedLabel(code: GenericOTPAuthCode) -> String {
         if let issuer = code.issuer {
             return "\(issuer):\(code.accountName)"
         } else {

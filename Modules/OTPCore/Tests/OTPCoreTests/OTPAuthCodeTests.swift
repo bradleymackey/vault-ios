@@ -47,8 +47,8 @@ final class OTPAuthCodeTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeCode(algorithm: OTPAuthAlgorithm = .sha1, digits: OTPAuthDigits = .six) -> OTPAuthCode {
-        OTPAuthCode(secret: rfcSecret, algorithm: algorithm, digits: digits, accountName: "any")
+    private func makeCode(algorithm: OTPAuthAlgorithm = .sha1, digits: OTPAuthDigits = .six) -> GenericOTPAuthCode {
+        GenericOTPAuthCode(type: .totp(), secret: rfcSecret, algorithm: algorithm, digits: digits, accountName: "any")
     }
 
     var rfcSecret: OTPAuthSecret {

@@ -12,6 +12,10 @@ public final class FeedViewModel<Store: OTPCodeStoreReader>: ObservableObject {
         self.store = store
     }
 
+    public func code(id: UUID) -> StoredOTPCode? {
+        codes.first(where: { $0.id == id })
+    }
+
     public func reloadData() async {
         do {
             codes = try await store.retrieve()

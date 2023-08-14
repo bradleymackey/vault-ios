@@ -2,14 +2,14 @@ import Foundation
 import OTPCore
 
 public struct CodeDetailFormatter {
-    private let code: OTPAuthCode
+    private let code: GenericOTPAuthCode
     private let measurementFormatter: MeasurementFormatter = {
         let formatter = MeasurementFormatter()
         formatter.unitStyle = .medium
         return formatter
     }()
 
-    public init(code: OTPAuthCode) {
+    public init(code: GenericOTPAuthCode) {
         self.code = code
     }
 

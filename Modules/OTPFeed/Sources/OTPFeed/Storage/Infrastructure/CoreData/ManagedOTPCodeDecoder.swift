@@ -2,8 +2,8 @@ import Foundation
 import OTPCore
 
 struct ManagedOTPCodeDecoder {
-    func decode(code: ManagedOTPCode) throws -> OTPAuthCode {
-        try OTPAuthCode(
+    func decode(code: ManagedOTPCode) throws -> GenericOTPAuthCode {
+        try GenericOTPAuthCode(
             type: decodeType(code: code),
             secret: .init(data: code.secretData, format: decodeSecretFormat(value: code.secretFormat)),
             algorithm: decodeAlgorithm(value: code.algorithm),

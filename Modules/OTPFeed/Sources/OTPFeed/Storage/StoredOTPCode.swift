@@ -14,9 +14,9 @@ public struct StoredOTPCode: Equatable, Identifiable {
     /// User-provided description about the code.
     public var userDescription: String?
     /// The stored code value.
-    public var code: OTPAuthCode
+    public var code: GenericOTPAuthCode
 
-    public init(id: UUID, created: Date, updated: Date, userDescription: String?, code: OTPAuthCode) {
+    public init(id: UUID, created: Date, updated: Date, userDescription: String?, code: GenericOTPAuthCode) {
         self.id = id
         self.created = created
         self.updated = updated
@@ -34,9 +34,9 @@ public extension StoredOTPCode {
     /// Model used for creating or updating a new `StoredOTPCode`, where the `id` is predetermined/generated randomly.
     struct Write {
         public var userDescription: String?
-        public var code: OTPAuthCode
+        public var code: GenericOTPAuthCode
 
-        public init(userDescription: String? = nil, code: OTPAuthCode) {
+        public init(userDescription: String? = nil, code: GenericOTPAuthCode) {
             self.userDescription = userDescription
             self.code = code
         }

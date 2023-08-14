@@ -4,17 +4,13 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-@MainActor
-public protocol TOTPViewGenerator {
-    associatedtype CodeView: View
-    func makeTOTPView(period: UInt64, code: StoredOTPCode) -> CodeView
-}
-
 /// An efficient generator of preview views for TOTP codes.
 ///
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator {
+public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator {
+    public typealias Code = TOTPAuthCode
+
     let clock: EpochClock
     let timer: any IntervalTimer
     let isEditing: Bool
@@ -29,10 +25,10 @@ public final class TOTPPreviewViewGenerator: ObservableObject, TOTPViewGenerator
         self.isEditing = isEditing
     }
 
-    public func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
-        let cachedObjects = makeControllersForPeriod(period: period)
+    public func makeOTPView(id: UUID, code: Code) -> some View {
+        let cachedObjects = makeControllersForPeriod(period: code.period)
         let previewViewModel = makeViewModelForCode(
-            period: period,
+            id: id,
             code: code,
             timerController: cachedObjects.timerController
         )
@@ -71,21 +67,21 @@ extension TOTPPreviewViewGenerator {
     }
 
     private func makeViewModelForCode(
-        period: UInt64,
-        code: StoredOTPCode,
+        id: UUID,
+        code: TOTPAuthCode,
         timerController: CodeTimerController
     ) -> CodePreviewViewModel {
-        if let viewModel = viewModelCache[code.id] {
+        if let viewModel = viewModelCache[id] {
             return viewModel
         } else {
-            let totpGenerator = TOTPGenerator(generator: code.code.hotpGenerator(), timeInterval: period)
+            let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: code.period)
             let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
             let viewModel = CodePreviewViewModel(
-                accountName: code.code.accountName,
-                issuer: code.code.issuer,
+                accountName: code.accountName,
+                issuer: code.issuer,
                 renderer: renderer
             )
-            viewModelCache[code.id] = viewModel
+            viewModelCache[id] = viewModel
             return viewModel
         }
     }

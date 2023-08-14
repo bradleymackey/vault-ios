@@ -15,7 +15,7 @@ struct CodeStoreFake: OTPCodeStoreReader {
             created: Date(),
             updated: Date(),
             userDescription: "My Cool Code",
-            code: .init(secret: .empty(), accountName: "example@example.com", issuer: "Ebay")
+            code: .init(type: .totp(), secret: .empty(), accountName: "example@example.com", issuer: "Ebay")
         )
     }
 

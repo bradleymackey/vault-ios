@@ -72,7 +72,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         return HOTPCodePreviewView(
             buttonView: CodeButtonIcon(),
             previewViewModel: preview,
-            hideCode: hideCode
+            isEditing: hideCode
         )
         .frame(width: 250, height: 150)
     }

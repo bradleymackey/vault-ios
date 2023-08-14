@@ -296,7 +296,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 }
 
 private extension OTPAuthURIDecoder {
-    func decode(_ testCaseValue: String) throws -> OTPAuthCode {
+    func decode(_ testCaseValue: String) throws -> GenericOTPAuthCode {
         let uri = try XCTUnwrap(OTPAuthURI(string: testCaseValue), "Not a valid url.")
         return try decode(uri: uri)
     }

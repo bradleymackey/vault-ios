@@ -4,13 +4,9 @@ import OTPFeed
 import SwiftUI
 
 @MainActor
-public protocol HOTPViewGenerator {
-    associatedtype CodeView: View
-    func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> CodeView
-}
+public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator {
+    public typealias Code = HOTPAuthCode
 
-@MainActor
-public final class HOTPPreviewViewGenerator: HOTPViewGenerator {
     let timer: any IntervalTimer
     var isEditing: Bool
 
@@ -21,8 +17,8 @@ public final class HOTPPreviewViewGenerator: HOTPViewGenerator {
         self.isEditing = isEditing
     }
 
-    public func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
-        let viewModels = makeViewModelForCode(counter: counter, code: code)
+    public func makeOTPView(id: UUID, code: Code) -> some View {
+        let viewModels = makeViewModelForCode(id: id, code: code)
         return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: viewModels.incrementer),
             previewViewModel: viewModels.preview,
@@ -40,26 +36,26 @@ extension HOTPPreviewViewGenerator {
     }
 
     private func makeViewModelForCode(
-        counter: UInt64,
-        code: StoredOTPCode
+        id: UUID,
+        code: HOTPAuthCode
     ) -> CachedViewModels {
-        if let viewModel = viewModelCache[code.id] {
+        if let viewModel = viewModelCache[id] {
             return viewModel
         } else {
-            let renderer = HOTPCodeRenderer(hotpGenerator: code.code.hotpGenerator())
+            let renderer = HOTPCodeRenderer(hotpGenerator: code.hotpGenerator())
             let previewViewModel = CodePreviewViewModel(
-                accountName: code.code.accountName,
-                issuer: code.code.issuer,
+                accountName: code.accountName,
+                issuer: code.issuer,
                 renderer: renderer
             )
             previewViewModel.hideCodeUntilNextUpdate()
             let incrementerViewModel = CodeIncrementerViewModel(
                 hotpRenderer: renderer,
                 timer: timer,
-                initialCounter: counter
+                initialCounter: code.counter
             )
             let cached = CachedViewModels(preview: previewViewModel, incrementer: incrementerViewModel)
-            viewModelCache[code.id] = cached
+            viewModelCache[id] = cached
             return cached
         }
     }

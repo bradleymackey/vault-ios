@@ -31,8 +31,10 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
-            totpGenerator: totpEditingGenerator(),
-            hotpGenerator: hotpEditingGenerator(),
+            viewGenerator: GenericGenerator(
+                totpGenerator: totpEditingGenerator(),
+                hotpGenerator: hotpEditingGenerator()
+            ),
             gridSpacing: 12
         )
         .navigationTitle(Text(feedViewModel.title))
@@ -63,76 +65,81 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     @ViewBuilder
     private func detailView(storedCode: StoredOTPCode) -> some View {
         switch storedCode.code.type {
-        case let .totp(period):
+        case .totp:
             CodeDetailView(
                 feedViewModel: feedViewModel,
                 storedCode: storedCode,
-                preview: totpGenerator().makeTOTPView(period: period, code: storedCode)
+                preview: Text("TOTP")
             )
-        case let .hotp(counter):
+        case .hotp:
             CodeDetailView(
                 feedViewModel: feedViewModel,
                 storedCode: storedCode,
-                preview: hotpGenerator().makeHOTPView(counter: counter, code: storedCode)
+                preview: Text("HOTP")
             )
         }
     }
 
-    func totpGenerator() -> some TOTPViewGenerator {
-        TOTPPreviewViewGenerator(
-            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer(),
-            isEditing: isEditing
-        )
-    }
-
-    func totpEditingGenerator() -> some TOTPViewGenerator {
-        TOTPOnTapDecoratorViewGenerator(
-            generator: totpGenerator(),
+    func totpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<TOTPPreviewViewGenerator> {
+        OTPOnTapDecoratorViewGenerator(
+            generator: TOTPPreviewViewGenerator(
+                clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
+                timer: LiveIntervalTimer(),
+                isEditing: isEditing
+            ),
             isTapEnabled: isEditing,
-            onTap: { code in
-                modal = .detail(UUID(), code)
+            onTap: { id in
+                guard let code = feedViewModel.code(id: id) else { return }
+                modal = .detail(id, code)
             }
         )
     }
 
-    func hotpGenerator() -> some HOTPViewGenerator {
-        HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), isEditing: isEditing)
-    }
-
-    func hotpEditingGenerator() -> some HOTPViewGenerator {
-        HOTPOnTapDecoratorViewGenerator(
-            generator: hotpGenerator(),
+    func hotpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator> {
+        OTPOnTapDecoratorViewGenerator(
+            generator: HOTPPreviewViewGenerator(timer: LiveIntervalTimer(), isEditing: isEditing),
             isTapEnabled: isEditing,
-            onTap: { code in
-                modal = .detail(UUID(), code)
+            onTap: { id in
+                guard let code = feedViewModel.code(id: id) else { return }
+                modal = .detail(id, code)
             }
         )
     }
 }
 
-struct TOTPOnTapDecoratorViewGenerator<Generator: TOTPViewGenerator>: TOTPViewGenerator {
-    let generator: Generator
-    let isTapEnabled: Bool
-    let onTap: (StoredOTPCode) -> Void
+struct GenericGenerator<TOTP, HOTP>: OTPViewGenerator where
+    TOTP: OTPViewGenerator,
+    TOTP.Code == TOTPAuthCode,
+    HOTP: OTPViewGenerator,
+    HOTP.Code == HOTPAuthCode
+{
+    typealias Code = GenericOTPAuthCode
 
-    func makeTOTPView(period: UInt64, code: StoredOTPCode) -> some View {
-        generator.makeTOTPView(period: period, code: code)
-            .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
-                onTap(code)
-            }))
+    let totpGenerator: TOTP
+    let hotpGenerator: HOTP
+
+    @ViewBuilder
+    func makeOTPView(id: UUID, code: Code) -> some View {
+        if let totp = TOTPAuthCode(generic: code) {
+            totpGenerator.makeOTPView(id: id, code: totp)
+        } else if let hotp = HOTPAuthCode(generic: code) {
+            hotpGenerator.makeOTPView(id: id, code: hotp)
+        } else {
+            Text("Unsupported code")
+        }
     }
 }
 
-struct HOTPOnTapDecoratorViewGenerator<Generator: HOTPViewGenerator>: HOTPViewGenerator {
+struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGenerator {
+    typealias Code = Generator.Code
     let generator: Generator
     let isTapEnabled: Bool
-    let onTap: (StoredOTPCode) -> Void
+    let onTap: (UUID) -> Void
 
-    func makeHOTPView(counter: UInt64, code: StoredOTPCode) -> some View {
-        generator.makeHOTPView(counter: counter, code: code)
+    func makeOTPView(id: UUID, code: Code) -> some View {
+        generator.makeOTPView(id: id, code: code)
             .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
-                onTap(code)
+                onTap(id)
             }))
     }
 }

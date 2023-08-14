@@ -85,8 +85,8 @@ final class CodeIncrementerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, CodeIncrementerViewModel<MockIntervalTimer>) {
-        let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()), initialCounter: 0)
+    private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, CodeIncrementerViewModel) {
+        let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()))
         let timer = MockIntervalTimer()
         let sut = CodeIncrementerViewModel(
             hotpRenderer: renderer,
