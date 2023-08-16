@@ -50,7 +50,8 @@ public struct OTPCodeDetailView: View {
 
     private var descriptionSection: some View {
         Section {
-            TextField("Description", text: $description)
+            TextEditor(text: $description)
+                .frame(height: 200)
         } header: {
             Text(localized(key: "codeDetail.description.title"))
         }
