@@ -43,18 +43,6 @@ public struct TOTPAuthCode: OTPAuthCode {
         issuer = code.issuer
     }
 
-    public init?(generic: GenericOTPAuthCode) {
-        guard case let .totp(period) = generic.type else {
-            return nil
-        }
-        self.period = period
-        secret = generic.secret
-        algorithm = generic.algorithm
-        digits = generic.digits
-        accountName = generic.accountName
-        issuer = generic.issuer
-    }
-
     public func toGenericCode() -> GenericOTPAuthCode {
         GenericOTPAuthCode(
             type: .totp(period: period),
@@ -98,18 +86,6 @@ public struct HOTPAuthCode: OTPAuthCode {
         digits = code.digits
         accountName = code.accountName
         issuer = code.issuer
-    }
-
-    public init?(generic: GenericOTPAuthCode) {
-        guard case let .hotp(counter) = generic.type else {
-            return nil
-        }
-        self.counter = counter
-        secret = generic.secret
-        algorithm = generic.algorithm
-        digits = generic.digits
-        accountName = generic.accountName
-        issuer = generic.issuer
     }
 
     public func toGenericCode() -> GenericOTPAuthCode {
