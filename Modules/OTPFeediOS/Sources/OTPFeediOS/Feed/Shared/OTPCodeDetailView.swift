@@ -23,10 +23,28 @@ public struct OTPCodeDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
 
+    private var iconHeader: some View {
+        HStack {
+            Spacer()
+            ZStack {
+                Color.gray
+                Image(systemName: "key.horizontal.fill")
+                    .foregroundColor(.white)
+                    .font(.system(size: 22))
+            }
+            .frame(width: 50, height: 50)
+            .clipShape(Circle())
+            Spacer()
+        }
+        .padding()
+    }
+
     private var codeDetailSection: some View {
         Section {
             TextField("Site Name", text: $siteName)
             TextField("Account Name", text: $accountName)
+        } header: {
+            iconHeader
         }
     }
 
