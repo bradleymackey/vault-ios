@@ -126,12 +126,11 @@ struct GenericGenerator<TOTP, HOTP>: OTPViewGenerator where
 
     @ViewBuilder
     func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
-        if let totp = TOTPAuthCode(generic: code) {
-            totpGenerator.makeOTPView(id: id, code: totp, isEditing: isEditing)
-        } else if let hotp = HOTPAuthCode(generic: code) {
-            hotpGenerator.makeOTPView(id: id, code: hotp, isEditing: isEditing)
-        } else {
-            Text("Unsupported code")
+        switch code.type {
+        case let .totp(period):
+            totpGenerator.makeOTPView(id: id, code: .init(period: period, code: code), isEditing: isEditing)
+        case let .hotp(counter):
+            hotpGenerator.makeOTPView(id: id, code: .init(counter: counter, code: code), isEditing: isEditing)
         }
     }
 }
