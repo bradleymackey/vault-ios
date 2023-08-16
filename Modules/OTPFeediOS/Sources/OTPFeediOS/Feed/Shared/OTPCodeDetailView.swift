@@ -13,6 +13,8 @@ public struct OTPCodeDetailView: View {
         Form {
             section
         }
+        .navigationTitle(localized(key: "codeDetail.title"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var section: some View {

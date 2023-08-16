@@ -4,3 +4,5 @@
 
 "code.updateRequired" = "Code expired";
 "code.copyied" = "Copied";
+
+"codeDetail.title" = "Code";
