@@ -34,10 +34,22 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
-            viewGenerator: GenericOTPViewGenerator(
-                totpGenerator: totpEditingGenerator(),
-                hotpGenerator: hotpEditingGenerator()
-            ),
+            viewGenerator: GenericOTPViewGenerator { id, code, isEditing in
+                switch code.type {
+                case let .totp(period):
+                    totpEditingGenerator().makeOTPView(
+                        id: id,
+                        code: .init(period: period, code: code),
+                        isEditing: isEditing
+                    )
+                case let .hotp(counter):
+                    hotpEditingGenerator().makeOTPView(
+                        id: id,
+                        code: .init(counter: counter, code: code),
+                        isEditing: isEditing
+                    )
+                }
+            },
             isEditing: $isEditing,
             gridSpacing: 12
         )
