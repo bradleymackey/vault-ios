@@ -5,19 +5,40 @@ import SwiftUI
 public struct OTPCodeDetailView: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
+    @State private var siteName: String = "Site name"
+    @State private var accountName: String = "Account name"
+    @State private var description: String = "Description"
+
     public init(viewModel: CodeDetailViewModel) {
         _viewModel = ObservedObject(initialValue: viewModel)
     }
 
     public var body: some View {
         Form {
-            section
+            codeDetailSection
+            descriptionSection
+            metadataSection
         }
         .navigationTitle(localized(key: "codeDetail.title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
-    private var section: some View {
+    private var codeDetailSection: some View {
+        Section {
+            TextField("Site Name", text: $siteName)
+            TextField("Account Name", text: $accountName)
+        }
+    }
+
+    private var descriptionSection: some View {
+        Section {
+            TextField("Description", text: $description)
+        } header: {
+            Text(localized(key: "codeDetail.description.title"))
+        }
+    }
+
+    private var metadataSection: some View {
         Section {
             Label {
                 LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
@@ -52,6 +73,8 @@ public struct OTPCodeDetailView: View {
                     }
                 }
             }
+        } header: {
+            Text(localized(key: "codeDetail.metadata.title"))
         }
     }
 }

@@ -6,3 +6,5 @@
 "code.copyied" = "Copied";
 
 "codeDetail.title" = "Code";
+"codeDetail.description.title" = "Description";
+"codeDetail.metadata.title" = "Metadata";
