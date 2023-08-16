@@ -23,6 +23,12 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
             isEditing: isEditing
         )
     }
+
+    /// Get the current visible code for a given generated code.
+    public func currentCode(id: UUID) -> String? {
+        guard let cached = viewModelCache[id] else { return nil }
+        return cached.preview.code.visibleCode
+    }
 }
 
 // MARK: - Caching

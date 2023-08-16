@@ -39,6 +39,12 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
             hideCode: isEditing
         )
     }
+
+    /// Get the current visible code for a given generated code.
+    public func currentCode(id: UUID) -> String? {
+        guard let viewModel = viewModelCache[id] else { return nil }
+        return viewModel.code.visibleCode
+    }
 }
 
 // MARK: - Caching

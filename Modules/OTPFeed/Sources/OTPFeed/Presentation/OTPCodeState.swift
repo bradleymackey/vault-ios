@@ -26,4 +26,13 @@ public extension OTPCodeState {
             return false
         }
     }
+
+    var visibleCode: String? {
+        switch self {
+        case let .visible(code):
+            return code
+        default:
+            return nil
+        }
+    }
 }

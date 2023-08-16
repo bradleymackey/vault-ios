@@ -91,8 +91,8 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                 if isEditing {
                     guard let code = feedViewModel.code(id: id) else { return }
                     modal = .detail(id, code)
-                } else {
-                    pasteboard.copy("test")
+                } else if let code = totpPreviewGenerator.currentCode(id: id) {
+                    pasteboard.copy(code)
                 }
             }
         )
@@ -105,8 +105,8 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                 if isEditing {
                     guard let code = feedViewModel.code(id: id) else { return }
                     modal = .detail(id, code)
-                } else {
-                    pasteboard.copy("test")
+                } else if let code = hotpPreviewGenerator.currentCode(id: id) {
+                    pasteboard.copy(code)
                 }
             }
         )
