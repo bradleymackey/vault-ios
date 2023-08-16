@@ -15,6 +15,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
     @ObservedObject var totpPreviewGenerator: TOTPPreviewViewGenerator
     @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator
+    @Binding var isShowingCopyPaste: Bool
 
     @State private var isEditing = false
     @State private var modal: Modal?
@@ -86,10 +87,13 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     func totpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<TOTPPreviewViewGenerator> {
         OTPOnTapDecoratorViewGenerator(
             generator: totpPreviewGenerator,
-            isTapEnabled: isEditing,
             onTap: { id in
-                guard let code = feedViewModel.code(id: id) else { return }
-                modal = .detail(id, code)
+                if isEditing {
+                    guard let code = feedViewModel.code(id: id) else { return }
+                    modal = .detail(id, code)
+                } else {
+                    isShowingCopyPaste = true
+                }
             }
         )
     }
@@ -97,10 +101,13 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     func hotpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator> {
         OTPOnTapDecoratorViewGenerator(
             generator: hotpPreviewGenerator,
-            isTapEnabled: isEditing,
             onTap: { id in
-                guard let code = feedViewModel.code(id: id) else { return }
-                modal = .detail(id, code)
+                if isEditing {
+                    guard let code = feedViewModel.code(id: id) else { return }
+                    modal = .detail(id, code)
+                } else {
+                    isShowingCopyPaste = true
+                }
             }
         )
     }
@@ -132,35 +139,29 @@ struct GenericGenerator<TOTP, HOTP>: OTPViewGenerator where
 struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGenerator {
     typealias Code = Generator.Code
     let generator: Generator
-    let isTapEnabled: Bool
     let onTap: (UUID) -> Void
 
     func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
         generator.makeOTPView(id: id, code: code, isEditing: isEditing)
-            .modifier(OnTapOverrideButtonModifier(isTapEnabled: isTapEnabled, onTap: {
+            .modifier(OnTapOverrideButtonModifier(onTap: {
                 onTap(id)
             }))
     }
 }
 
 struct OnTapOverrideButtonModifier: ViewModifier {
-    let isTapEnabled: Bool
     let onTap: () -> Void
 
     func body(content: Content) -> some View {
         content
-            .modifier(OTPCardViewModifier(isSelectable: isTapEnabled))
-            .disabled(isTapEnabled)
+            .modifier(OTPCardViewModifier())
             .onTapGesture {
-                guard isTapEnabled else { return }
                 onTap()
             }
     }
 }
 
 struct OTPCardViewModifier: ViewModifier {
-    var isSelectable: Bool
-
     func body(content: Content) -> some View {
         content
             .padding(8)

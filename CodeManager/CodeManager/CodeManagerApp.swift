@@ -18,6 +18,7 @@ struct CodeManagerApp: App {
         timer: LiveIntervalTimer()
     )
     @StateObject private var hotpPreviewGenerator = HOTPPreviewViewGenerator(timer: LiveIntervalTimer())
+    @State private var isShowingCopyPaste = false
 
     var body: some Scene {
         WindowGroup {
@@ -26,7 +27,8 @@ struct CodeManagerApp: App {
                     CodeListView(
                         feedViewModel: feedViewModel,
                         totpPreviewGenerator: totpPreviewGenerator,
-                        hotpPreviewGenerator: hotpPreviewGenerator
+                        hotpPreviewGenerator: hotpPreviewGenerator,
+                        isShowingCopyPaste: $isShowingCopyPaste
                     )
                 }
                 .tabItem {
@@ -46,6 +48,9 @@ struct CodeManagerApp: App {
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+            }
+            .toast(isPresenting: $isShowingCopyPaste, offsetY: 20) {
+                .copiedToClipboard()
             }
         }
     }
