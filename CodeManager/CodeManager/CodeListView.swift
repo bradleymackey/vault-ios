@@ -15,8 +15,8 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
     @ObservedObject var totpPreviewGenerator: TOTPPreviewViewGenerator
     @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator
-    @Binding var isShowingCopyPaste: Bool
 
+    @EnvironmentObject var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
 
@@ -92,7 +92,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                     guard let code = feedViewModel.code(id: id) else { return }
                     modal = .detail(id, code)
                 } else {
-                    isShowingCopyPaste = true
+                    pasteboard.copy("test")
                 }
             }
         )
@@ -106,7 +106,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                     guard let code = feedViewModel.code(id: id) else { return }
                     modal = .detail(id, code)
                 } else {
-                    isShowingCopyPaste = true
+                    pasteboard.copy("test")
                 }
             }
         )

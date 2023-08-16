@@ -18,6 +18,7 @@ struct CodeManagerApp: App {
         timer: LiveIntervalTimer()
     )
     @StateObject private var hotpPreviewGenerator = HOTPPreviewViewGenerator(timer: LiveIntervalTimer())
+    @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
     @State private var isShowingCopyPaste = false
 
     var body: some Scene {
@@ -27,9 +28,9 @@ struct CodeManagerApp: App {
                     CodeListView(
                         feedViewModel: feedViewModel,
                         totpPreviewGenerator: totpPreviewGenerator,
-                        hotpPreviewGenerator: hotpPreviewGenerator,
-                        isShowingCopyPaste: $isShowingCopyPaste
+                        hotpPreviewGenerator: hotpPreviewGenerator
                     )
+                    .environmentObject(pasteboard)
                 }
                 .tabItem {
                     Label(feedViewModel.title, systemImage: "key.horizontal.fill")
@@ -48,6 +49,9 @@ struct CodeManagerApp: App {
                 .tabItem {
                     Label("Settings", systemImage: "gear")
                 }
+            }
+            .onReceive(pasteboard.objectWillChange) {
+                isShowingCopyPaste = true
             }
             .toast(isPresenting: $isShowingCopyPaste, offsetY: 20) {
                 .copiedToClipboard()
