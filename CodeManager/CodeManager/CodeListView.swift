@@ -34,7 +34,7 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
-            viewGenerator: GenericGenerator(
+            viewGenerator: GenericOTPViewGenerator(
                 totpGenerator: totpEditingGenerator(),
                 hotpGenerator: hotpEditingGenerator()
             ),
@@ -110,28 +110,6 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
                 }
             }
         )
-    }
-}
-
-struct GenericGenerator<TOTP, HOTP>: OTPViewGenerator where
-    TOTP: OTPViewGenerator,
-    TOTP.Code == TOTPAuthCode,
-    HOTP: OTPViewGenerator,
-    HOTP.Code == HOTPAuthCode
-{
-    typealias Code = GenericOTPAuthCode
-
-    let totpGenerator: TOTP
-    let hotpGenerator: HOTP
-
-    @ViewBuilder
-    func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
-        switch code.type {
-        case let .totp(period):
-            totpGenerator.makeOTPView(id: id, code: .init(period: period, code: code), isEditing: isEditing)
-        case let .hotp(counter):
-            hotpGenerator.makeOTPView(id: id, code: .init(counter: counter, code: code), isEditing: isEditing)
-        }
     }
 }
 
