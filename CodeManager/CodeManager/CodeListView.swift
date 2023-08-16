@@ -84,14 +84,12 @@ struct CodeListView<Store: OTPCodeStoreReader>: View {
         case .totp:
             CodeDetailView(
                 feedViewModel: feedViewModel,
-                storedCode: storedCode,
-                preview: Text("TOTP")
+                storedCode: storedCode
             )
         case .hotp:
             CodeDetailView(
                 feedViewModel: feedViewModel,
-                storedCode: storedCode,
-                preview: Text("HOTP")
+                storedCode: storedCode
             )
         }
     }

@@ -11,16 +11,14 @@ import OTPFeed
 import OTPFeediOS
 import SwiftUI
 
-struct CodeDetailView<Store: OTPCodeStoreReader, Preview: View>: View {
+struct CodeDetailView<Store: OTPCodeStoreReader>: View {
     @Environment(\.dismiss) var dismiss
 
     @ObservedObject var feedViewModel: FeedViewModel<Store>
     let storedCode: StoredOTPCode
-    var preview: Preview
 
     var body: some View {
         OTPCodeDetailView(
-            preview: preview,
             viewModel: .init(storedCode: storedCode)
         )
         .toolbar {

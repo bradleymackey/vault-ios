@@ -2,12 +2,10 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct OTPCodeDetailView<Preview: View>: View {
-    public var preview: Preview
+public struct OTPCodeDetailView: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
-    public init(preview: Preview, viewModel: CodeDetailViewModel) {
-        self.preview = preview
+    public init(viewModel: CodeDetailViewModel) {
         _viewModel = ObservedObject(initialValue: viewModel)
     }
 
@@ -52,12 +50,6 @@ public struct OTPCodeDetailView<Preview: View>: View {
                     }
                 }
             }
-        } header: {
-            preview
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding()
-                .textCase(nil)
-                .foregroundColor(.primary)
         }
     }
 }
@@ -67,7 +59,6 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     static var previews: some View {
         OTPCodeDetailView(
-            preview: code,
             viewModel: CodeDetailViewModel(
                 storedCode: .init(
                     id: UUID(),
@@ -78,24 +69,5 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 )
             )
         )
-    }
-
-    static var code: some View {
-        let previewViewModel = CodePreviewViewModel(
-            accountName: "test@test.com",
-            issuer: "Authority",
-            renderer: codeRenderer
-        )
-        return HOTPCodePreviewView(
-            buttonView: CodeButtonView(viewModel: .init(hotpRenderer: .init(
-                hotpGenerator: .init(secret: Data())
-            ), timer: LiveIntervalTimer(), initialCounter: 0)),
-            previewViewModel: previewViewModel,
-            isEditing: false
-        )
-        .frame(width: 250, height: 100)
-        .onAppear {
-            codeRenderer.subject.send("123456")
-        }
     }
 }
