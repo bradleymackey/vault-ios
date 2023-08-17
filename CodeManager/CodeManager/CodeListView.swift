@@ -56,15 +56,17 @@ struct CodeListView<Store: OTPCodeStore>: View {
         .navigationTitle(Text(feedViewModel.title))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Button {
-                    withAnimation(.easeInOut(duration: 0.2)) {
-                        isEditing.toggle()
+            if !feedViewModel.codes.isEmpty {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            isEditing.toggle()
+                        }
+                    } label: {
+                        Text(isEditing ? feedViewModel.doneEditingTitle : feedViewModel.editTitle)
+                            .fontWeight(isEditing ? .semibold : .regular)
+                            .animation(.none)
                     }
-                } label: {
-                    Text(isEditing ? feedViewModel.doneEditingTitle : feedViewModel.editTitle)
-                        .fontWeight(isEditing ? .semibold : .regular)
-                        .animation(.none)
                 }
             }
         }

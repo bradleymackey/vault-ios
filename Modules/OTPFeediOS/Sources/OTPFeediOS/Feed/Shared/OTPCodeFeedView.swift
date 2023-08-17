@@ -27,6 +27,30 @@ public struct OTPCodeFeedView<
     }
 
     public var body: some View {
+        Group {
+            if viewModel.codes.isEmpty {
+                noCodesView
+            } else {
+                listOfCodesView
+            }
+        }
+        .task {
+            await viewModel.reloadData()
+        }
+    }
+
+    private var noCodesView: some View {
+        VStack(alignment: .center, spacing: 12) {
+            Image(systemName: "key.viewfinder")
+                .font(.largeTitle)
+            Text(localized(key: "codeFeed.noCodes.title"))
+                .font(.headline.bold())
+        }
+        .foregroundColor(.secondary)
+        .padding()
+    }
+
+    private var listOfCodesView: some View {
         ScrollView {
             LazyVGrid(columns: columns, content: {
                 ForEach(viewModel.codes) { code in
@@ -34,10 +58,6 @@ public struct OTPCodeFeedView<
                 }
             })
             .padding()
-        }
-        .listStyle(.plain)
-        .task {
-            await viewModel.reloadData()
         }
     }
 
