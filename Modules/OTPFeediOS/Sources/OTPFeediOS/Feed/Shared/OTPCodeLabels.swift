@@ -3,6 +3,7 @@ import SwiftUI
 struct OTPCodeLabels: View {
     var accountName: String
     var issuer: String?
+    var showAccountName = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -13,11 +14,13 @@ struct OTPCodeLabels: View {
                     .lineLimit(1)
                     .minimumScaleFactor(0.5)
             }
-            Text(accountName)
-                .font(issuer != nil ? .footnote : .footnote.weight(.semibold))
-                .foregroundColor(issuer != nil ? .secondary : .primary)
-                .lineLimit(1)
-                .minimumScaleFactor(0.7)
+            if showAccountName {
+                Text(accountName)
+                    .font(issuer != nil ? .footnote : .footnote.weight(.semibold))
+                    .foregroundColor(issuer != nil ? .secondary : .primary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
         }
     }
 }

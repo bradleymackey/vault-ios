@@ -19,6 +19,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var labelsStack: some View {
         HStack(alignment: .center) {
+            CodeIconPlaceholderView(iconFontSize: 8)
+                .clipShape(Circle())
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
             if case .error = previewViewModel.code {

@@ -58,6 +58,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     private var titleRow: some View {
         HStack(alignment: .center) {
+            CodeIconPlaceholderView(iconFontSize: 8)
+                .clipShape(Circle())
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
             if case .error = previewViewModel.code {
