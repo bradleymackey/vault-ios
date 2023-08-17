@@ -14,7 +14,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             codeSection
         }
         .frame(maxWidth: .infinity)
-        .animation(.none, value: hideCode)
+        .animation(.easeOut, value: hideCode)
     }
 
     private var labelsStack: some View {
@@ -57,16 +57,19 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     private var activeTimerView: some View {
         if hideCode {
             Color.blue
-                .transition(.move(edge: .leading))
+                .transition(.opacity)
         } else {
             switch previewViewModel.code {
             case .visible:
                 timerView
                     .transition(.opacity)
             case .finished, .notReady, .obfuscated:
-                timerView.redacted(reason: .placeholder)
+                Color.gray
+                    .redacted(reason: .placeholder)
+                    .transition(.opacity)
             case .error:
                 Color.red
+                    .transition(.opacity)
             }
         }
     }

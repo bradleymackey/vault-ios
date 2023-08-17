@@ -19,7 +19,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
                 isEditing: isEditing
             )
         }
-        .animation(.none, value: isEditing)
+        .animation(.easeOut, value: isEditing)
         .onChange(of: scenePhase) { newValue in
             if newValue == .background {
                 previewViewModel.hideCodeUntilNextUpdate()

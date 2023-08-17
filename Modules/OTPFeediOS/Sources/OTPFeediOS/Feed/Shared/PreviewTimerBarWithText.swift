@@ -10,18 +10,39 @@ struct PreviewTimerBarWithText<Timer: View>: View {
     var body: some View {
         ZStack(alignment: .leading) {
             timerView
-                .frame(height: 20)
+                .frame(height: barHeight)
 
-            if isEditing {
-                LoadingBarLabel(text: localized(key: "action.tapToEdit"))
-                    .shimmering()
-            } else if case let .error(err, _) = codeState {
-                LoadingBarLabel(text: err.userTitle)
-            } else if case .obfuscated = codeState {
-                LoadingBarLabel(text: localized(key: "code.updateRequired"))
+            if let textToDisplay {
+                LoadingBarLabel(text: textToDisplay)
+                    .shimmering(active: isShimmering)
             }
         }
         .animation(.easeOut, value: isEditing)
-        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .animation(.easeOut, value: barHeight)
+        .clipShape(RoundedRectangle(cornerRadius: barHeight))
+    }
+
+    private var barHeight: Double {
+        if textToDisplay != nil {
+            return 20
+        } else {
+            return 12
+        }
+    }
+
+    private var isShimmering: Bool {
+        isEditing
+    }
+
+    private var textToDisplay: String? {
+        if isEditing {
+            return localized(key: "action.tapToEdit")
+        } else if case let .error(err, _) = codeState {
+            return err.userTitle
+        } else if case .obfuscated = codeState {
+            return localized(key: "code.updateRequired")
+        } else {
+            return nil
+        }
     }
 }
