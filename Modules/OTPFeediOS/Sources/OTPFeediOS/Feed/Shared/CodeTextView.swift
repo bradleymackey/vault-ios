@@ -20,6 +20,9 @@ public struct CodeTextView: View {
 
     private func placeholderCode(digits: Int) -> some View {
         Text(String(repeating: "•", count: digits))
+            .lineLimit(1)
+            .minimumScaleFactor(0.1)
+            .multilineTextAlignment(.leading)
     }
 
     private func makeCodeView(text: String) -> some View {
