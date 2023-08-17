@@ -138,7 +138,10 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                     created: Date(),
                     updated: Date(),
                     userDescription: "Description",
-                    code: .init(type: .totp(), secret: .empty(), accountName: "Test")
+                    code: .init(
+                        type: .totp(),
+                        data: .init(secret: .empty(), accountName: "Test")
+                    )
                 )
             )
         )

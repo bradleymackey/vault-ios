@@ -33,15 +33,15 @@ extension OTPAuthURIEncoder {
     private func makeQueryParameters(code: GenericOTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
-            .otpAuth(.secret, value: makeFormatted(secret: code.secret))
+            .otpAuth(.secret, value: makeFormatted(secret: code.data.secret))
         )
         queryItems.append(
-            .otpAuth(.algorithm, value: formatted(algorithm: code.algorithm))
+            .otpAuth(.algorithm, value: formatted(algorithm: code.data.algorithm))
         )
         queryItems.append(
-            .otpAuth(.digits, value: "\(code.digits.rawValue)")
+            .otpAuth(.digits, value: "\(code.data.digits.rawValue)")
         )
-        if let issuer = code.issuer {
+        if let issuer = code.data.issuer {
             queryItems.append(
                 .otpAuth(.issuer, value: issuer)
             )
@@ -64,10 +64,10 @@ extension OTPAuthURIEncoder {
     }
 
     private func makeFormattedLabel(code: GenericOTPAuthCode) -> String {
-        if let issuer = code.issuer {
-            return "\(issuer):\(code.accountName)"
+        if let issuer = code.data.issuer {
+            return "\(issuer):\(code.data.accountName)"
         } else {
-            return code.accountName
+            return code.data.accountName
         }
     }
 

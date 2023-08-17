@@ -5,11 +5,13 @@ struct ManagedOTPCodeDecoder {
     func decode(code: ManagedOTPCode) throws -> GenericOTPAuthCode {
         try GenericOTPAuthCode(
             type: decodeType(code: code),
-            secret: .init(data: code.secretData, format: decodeSecretFormat(value: code.secretFormat)),
-            algorithm: decodeAlgorithm(value: code.algorithm),
-            digits: decode(digits: code.digits),
-            accountName: code.accountName,
-            issuer: code.issuer
+            data: .init(
+                secret: .init(data: code.secretData, format: decodeSecretFormat(value: code.secretFormat)),
+                algorithm: decodeAlgorithm(value: code.algorithm),
+                digits: decode(digits: code.digits),
+                accountName: code.accountName,
+                issuer: code.issuer
+            )
         )
     }
 

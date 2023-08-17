@@ -20,11 +20,12 @@ public struct OTPAuthURIDecoder {
         let label = try decodeLabel(uri: uri)
         return try GenericOTPAuthCode(
             type: decodeType(uri: uri),
-            secret: decodeSecret(uri: uri),
-            algorithm: decodeAlgorithm(uri: uri),
-            digits: decodeDigits(uri: uri),
-            accountName: label.accountName,
-            issuer: label.issuer
+            data: OTPAuthCodeData(
+                secret: decodeSecret(uri: uri),
+                algorithm: decodeAlgorithm(uri: uri),
+                accountName: label.accountName,
+                issuer: label.issuer
+            )
         )
     }
 }

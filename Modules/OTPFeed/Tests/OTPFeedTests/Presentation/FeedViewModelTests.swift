@@ -76,7 +76,7 @@ final class FeedViewModelTests: XCTestCase {
         return sut
     }
 
-    private struct StubStore: OTPCodeStoreReader {
+    private struct StubStore: OTPCodeStoreReader, OTPCodeStoreWriter {
         var codes = [StoredOTPCode]()
         func retrieve() async throws -> [StoredOTPCode] {
             codes
@@ -85,11 +85,35 @@ final class FeedViewModelTests: XCTestCase {
         static var empty: StubStore {
             .init(codes: [])
         }
+
+        func insert(code _: OTPFeed.StoredOTPCode.Write) async throws -> UUID {
+            UUID()
+        }
+
+        func update(id _: UUID, code _: OTPFeed.StoredOTPCode.Write) async throws {
+            // noop
+        }
+
+        func delete(id _: UUID) async throws {
+            // noop
+        }
     }
 
-    private struct ErrorStubStore: OTPCodeStoreReader {
+    private struct ErrorStubStore: OTPCodeStoreReader, OTPCodeStoreWriter {
         var error: Error
         func retrieve() async throws -> [StoredOTPCode] {
+            throw error
+        }
+
+        func insert(code _: OTPFeed.StoredOTPCode.Write) async throws -> UUID {
+            throw error
+        }
+
+        func update(id _: UUID, code _: OTPFeed.StoredOTPCode.Write) async throws {
+            throw error
+        }
+
+        func delete(id _: UUID) async throws {
             throw error
         }
     }

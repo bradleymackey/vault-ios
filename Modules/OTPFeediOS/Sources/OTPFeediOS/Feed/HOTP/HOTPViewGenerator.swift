@@ -46,10 +46,10 @@ extension HOTPPreviewViewGenerator {
         if let viewModel = viewModelCache[id] {
             return viewModel
         } else {
-            let renderer = HOTPCodeRenderer(hotpGenerator: code.hotpGenerator())
+            let renderer = HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
             let previewViewModel = CodePreviewViewModel(
-                accountName: code.accountName,
-                issuer: code.issuer,
+                accountName: code.data.accountName,
+                issuer: code.data.issuer,
                 renderer: renderer
             )
             previewViewModel.hideCodeUntilNextUpdate()

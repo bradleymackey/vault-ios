@@ -1,7 +1,7 @@
 import CryptoEngine
 import Foundation
 
-extension OTPAuthCode {
+extension OTPAuthCodeData {
     /// Create an `HOTPGenerator` from this code, initalized with the current parameters of the code.
     public func hotpGenerator() -> HOTPGenerator {
         HOTPGenerator(secret: secret.data, digits: hotpDigits, algorithm: hotpAlgorithm)

@@ -39,13 +39,13 @@ struct CodeListView<Store: OTPCodeStore>: View {
                 case let .totp(period):
                     totpEditingGenerator().makeOTPView(
                         id: id,
-                        code: .init(period: period, code: code),
+                        code: .init(period: period, data: code.data),
                         isEditing: isEditing
                     )
                 case let .hotp(counter):
                     hotpEditingGenerator().makeOTPView(
                         id: id,
-                        code: .init(counter: counter, code: code),
+                        code: .init(counter: counter, data: code.data),
                         isEditing: isEditing
                     )
                 }

@@ -10,8 +10,10 @@ func uniqueCode() -> GenericOTPAuthCode {
     let randomData = Data.random(count: 50)
     return GenericOTPAuthCode(
         type: .totp(),
-        secret: .init(data: randomData, format: .base32),
-        accountName: "Some Account"
+        data: .init(
+            secret: .init(data: randomData, format: .base32),
+            accountName: "Some Account"
+        )
     )
 }
 

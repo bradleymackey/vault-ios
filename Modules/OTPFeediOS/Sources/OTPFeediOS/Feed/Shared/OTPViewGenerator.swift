@@ -4,7 +4,7 @@ import SwiftUI
 
 @MainActor
 public protocol OTPViewGenerator {
-    associatedtype Code: OTPAuthCode
+    associatedtype Code
     associatedtype CodeView: View
     func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> CodeView
 }

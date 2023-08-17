@@ -78,11 +78,11 @@ extension TOTPPreviewViewGenerator {
         if let viewModel = viewModelCache[id] {
             return viewModel
         } else {
-            let totpGenerator = TOTPGenerator(generator: code.hotpGenerator(), timeInterval: code.period)
+            let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
             let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
             let viewModel = CodePreviewViewModel(
-                accountName: code.accountName,
-                issuer: code.issuer,
+                accountName: code.data.accountName,
+                issuer: code.data.issuer,
                 renderer: renderer
             )
             viewModelCache[id] = viewModel

@@ -30,7 +30,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
             let code = makeManagedCode(digits: value)
 
             let decoded = try sut.decode(code: code)
-            XCTAssertEqual(decoded.digits, digits)
+            XCTAssertEqual(decoded.data.digits, digits)
         }
     }
 
@@ -50,7 +50,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.accountName, accountName)
+        XCTAssertEqual(decoded.data.accountName, accountName)
     }
 
     func test_decodeIssuer_decodesValueIfExists() throws {
@@ -59,7 +59,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.issuer, issuerName)
+        XCTAssertEqual(decoded.data.issuer, issuerName)
     }
 
     func test_decodeIssuer_decodesNilIfDoesNotExist() throws {
@@ -67,7 +67,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let decoded = try sut.decode(code: code)
-        XCTAssertNil(decoded.issuer)
+        XCTAssertNil(decoded.data.issuer)
     }
 
     func test_decodeType_decodesTOTPWithPeriod() throws {
@@ -111,7 +111,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
             let sut = makeSUT()
 
             let decoded = try sut.decode(code: code)
-            XCTAssertEqual(decoded.algorithm, algo)
+            XCTAssertEqual(decoded.data.algorithm, algo)
         }
     }
 
@@ -131,7 +131,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
             let sut = makeSUT()
 
             let decoded = try sut.decode(code: code)
-            XCTAssertEqual(decoded.secret.format, format)
+            XCTAssertEqual(decoded.data.secret.format, format)
         }
     }
 
@@ -147,7 +147,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.secret.data, Data())
+        XCTAssertEqual(decoded.data.secret.data, Data())
     }
 
     func test_decodeSecret_decodesExistingData() throws {
@@ -156,7 +156,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.secret.data, data)
+        XCTAssertEqual(decoded.data.secret.data, data)
     }
 
     // MARK: - Helpers

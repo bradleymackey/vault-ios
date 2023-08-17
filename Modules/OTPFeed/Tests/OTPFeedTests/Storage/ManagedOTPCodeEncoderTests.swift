@@ -230,11 +230,13 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
     ) -> GenericOTPAuthCode {
         GenericOTPAuthCode(
             type: type,
-            secret: secret,
-            algorithm: algorithm,
-            digits: digits,
-            accountName: accountName,
-            issuer: issuer
+            data: .init(
+                secret: secret,
+                algorithm: algorithm,
+                digits: digits,
+                accountName: accountName,
+                issuer: issuer
+            )
         )
     }
 

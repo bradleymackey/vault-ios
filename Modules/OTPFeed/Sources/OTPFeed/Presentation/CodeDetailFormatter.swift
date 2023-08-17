@@ -14,7 +14,7 @@ public struct CodeDetailFormatter {
     }
 
     public var algorithm: String {
-        switch code.algorithm {
+        switch code.data.algorithm {
         case .sha1:
             return "SHA1"
         case .sha256:
@@ -25,7 +25,7 @@ public struct CodeDetailFormatter {
     }
 
     public var secretType: String {
-        switch code.secret.format {
+        switch code.data.secret.format {
         case .base32:
             return localized(key: "codeDetail.secretType.base32")
         }
@@ -51,6 +51,6 @@ public struct CodeDetailFormatter {
     }
 
     public var digits: String {
-        "\(code.digits.rawValue)"
+        "\(code.data.digits.rawValue)"
     }
 }
