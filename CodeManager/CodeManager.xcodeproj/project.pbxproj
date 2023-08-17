@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		1C439C3A2A84D8E30045143A /* Attribution in Frameworks */ = {isa = PBXBuildFile; productRef = 1C439C392A84D8E30045143A /* Attribution */; };
 		1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */; };
-		1C58F28A2A07E212005A7DF5 /* CodeStoreFake.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2892A07E212005A7DF5 /* CodeStoreFake.swift */; };
+		1C58F28A2A07E212005A7DF5 /* DemoCodeFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2892A07E212005A7DF5 /* DemoCodeFactory.swift */; };
 		1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB991292A845999002D24A7 /* CodeAddView.swift */; };
 		1CB9912C2A8459F2002D24A7 /* CodeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */; };
 		1CCC0B7B2A84E6F200B8B728 /* SettingsiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1CCC0B7A2A84E6F200B8B728 /* SettingsiOS */; };
@@ -33,7 +33,7 @@
 
 /* Begin PBXFileReference section */
 		1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDetailView.swift; sourceTree = "<group>"; };
-		1C58F2892A07E212005A7DF5 /* CodeStoreFake.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeStoreFake.swift; sourceTree = "<group>"; };
+		1C58F2892A07E212005A7DF5 /* DemoCodeFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCodeFactory.swift; sourceTree = "<group>"; };
 		1CB991292A845999002D24A7 /* CodeAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeAddView.swift; sourceTree = "<group>"; };
 		1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeSettingsView.swift; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* CodeManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -69,7 +69,7 @@
 		1C58F2882A07E20B005A7DF5 /* Mocks */ = {
 			isa = PBXGroup;
 			children = (
-				1C58F2892A07E212005A7DF5 /* CodeStoreFake.swift */,
+				1C58F2892A07E212005A7DF5 /* DemoCodeFactory.swift */,
 			);
 			path = Mocks;
 			sourceTree = "<group>";
@@ -236,7 +236,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C58F28A2A07E212005A7DF5 /* CodeStoreFake.swift in Sources */,
+				1C58F28A2A07E212005A7DF5 /* DemoCodeFactory.swift in Sources */,
 				1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */,
 				1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */,
 				1CB9912C2A8459F2002D24A7 /* CodeSettingsView.swift in Sources */,

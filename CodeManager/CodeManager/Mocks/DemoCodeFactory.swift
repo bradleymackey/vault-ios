@@ -1,5 +1,5 @@
 //
-//  CodeStoreFake.swift
+//  DemoCodeFactory.swift
 //  CodeManager
 //
 //  Created by Bradley Mackey on 07/05/2023.
@@ -8,8 +8,8 @@
 import Foundation
 import OTPFeed
 
-struct CodeStoreFake: OTPCodeStoreReader {
-    static func totpCode() -> StoredOTPCode {
+enum DemoCodeFactory {
+    static func totpCode(issuer: String = "Ebay") -> StoredOTPCode {
         .init(
             id: UUID(),
             created: Date(),
@@ -20,13 +20,13 @@ struct CodeStoreFake: OTPCodeStoreReader {
                 data: .init(
                     secret: .empty(),
                     accountName: "example@example.com",
-                    issuer: "Ebay"
+                    issuer: issuer
                 )
             )
         )
     }
 
-    static func hotpCode() -> StoredOTPCode {
+    static func hotpCode(issuer: String = "Ebay") -> StoredOTPCode {
         .init(
             id: UUID(),
             created: Date(),
@@ -37,24 +37,9 @@ struct CodeStoreFake: OTPCodeStoreReader {
                 data: .init(
                     secret: .empty(),
                     accountName: "HOTP test",
-                    issuer: "Authority"
+                    issuer: issuer
                 )
             )
         )
-    }
-
-    static let codes: [StoredOTPCode] = {
-        var result = [StoredOTPCode]()
-        for _ in 0 ..< 50 {
-            result.append(totpCode())
-        }
-        for _ in 0 ..< 50 {
-            result.append(hotpCode())
-        }
-        return result
-    }()
-
-    func retrieve() async throws -> [OTPFeed.StoredOTPCode] {
-        Self.codes
     }
 }

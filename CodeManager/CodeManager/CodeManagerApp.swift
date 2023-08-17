@@ -12,7 +12,12 @@ import SwiftUI
 
 @main
 struct CodeManagerApp: App {
-    @StateObject var feedViewModel = FeedViewModel(store: InMemoryCodeStore(codes: []))
+    @StateObject private var feedViewModel = FeedViewModel(store: InMemoryCodeStore(codes: [
+        DemoCodeFactory.totpCode(issuer: "I1"),
+        DemoCodeFactory.totpCode(issuer: "Cloudflare"),
+        DemoCodeFactory.hotpCode(issuer: "Tommy Tobes"),
+        DemoCodeFactory.hotpCode(issuer: "Ranner"),
+    ]))
     @StateObject private var totpPreviewGenerator = TOTPPreviewViewGenerator(
         clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
         timer: LiveIntervalTimer()

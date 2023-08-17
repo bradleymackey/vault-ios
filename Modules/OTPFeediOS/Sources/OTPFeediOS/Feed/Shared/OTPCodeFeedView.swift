@@ -69,7 +69,22 @@ public struct OTPCodeFeedView<
 struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
-            viewModel: .init(store: InMemoryCodeStore(codes: [])),
+            viewModel: .init(store: InMemoryCodeStore(codes: [
+                .init(
+                    id: UUID(),
+                    created: Date(),
+                    updated: Date(),
+                    userDescription: "My Cool Code",
+                    code: .init(
+                        type: .totp(),
+                        data: .init(
+                            secret: .empty(),
+                            accountName: "example@example.com",
+                            issuer: "i"
+                        )
+                    )
+                ),
+            ])),
             viewGenerator: GenericGenerator(),
             isEditing: .constant(false)
         )
