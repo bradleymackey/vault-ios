@@ -53,7 +53,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     private var activeTimerView: some View {
         if hideCode {
             Color.blue
-                .transition(.opacity)
+                .transition(.move(edge: .leading))
         } else {
             switch previewViewModel.code {
             case .visible:

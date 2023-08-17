@@ -45,17 +45,6 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         }
     }
 
-    private var editLabel: some View {
-        ZStack(alignment: .leading) {
-            Color.blue
-                .frame(height: 20)
-                .clipShape(RoundedRectangle(cornerRadius: 20))
-
-            LoadingBarLabel(text: localized(key: "action.tapToEdit"))
-                .frame(maxWidth: .infinity, alignment: .leading)
-        }
-    }
-
     private var titleRow: some View {
         HStack(alignment: .center) {
             if case .error = previewViewModel.code {

@@ -11,6 +11,8 @@ struct PreviewTimerBarWithText<Timer: View>: View {
         ZStack(alignment: .leading) {
             timerView
                 .frame(height: barHeight)
+                .clipShape(RoundedRectangle(cornerRadius: barHeight))
+                .frame(height: containerHeight)
 
             if let textToDisplay {
                 LoadingBarLabel(text: textToDisplay)
@@ -18,8 +20,11 @@ struct PreviewTimerBarWithText<Timer: View>: View {
             }
         }
         .animation(.easeOut, value: isEditing)
-        .animation(.easeOut, value: barHeight)
-        .clipShape(RoundedRectangle(cornerRadius: barHeight))
+        .clipShape(RoundedRectangle(cornerRadius: containerHeight))
+    }
+
+    private var containerHeight: Double {
+        24
     }
 
     private var barHeight: Double {
