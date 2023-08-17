@@ -26,14 +26,8 @@ public struct OTPCodeDetailView: View {
     private var iconHeader: some View {
         HStack {
             Spacer()
-            ZStack {
-                Color.gray
-                Image(systemName: "key.horizontal.fill")
-                    .foregroundColor(.white)
-                    .font(.system(size: 22))
-            }
-            .frame(width: 50, height: 50)
-            .clipShape(Circle())
+            CodeIconPlaceholderView(iconFontSize: 22)
+                .clipShape(Circle())
             Spacer()
         }
         .padding()
