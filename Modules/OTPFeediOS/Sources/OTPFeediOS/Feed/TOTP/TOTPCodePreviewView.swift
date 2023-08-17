@@ -34,16 +34,11 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var codeSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            Button {
-                previewViewModel.didTapCode()
-            } label: {
-                CodeTextView(codeState: hideCode ? .notReady : previewViewModel.code)
-                    .font(.system(.largeTitle, design: .monospaced))
-                    .fontWeight(.bold)
-                    .padding(.horizontal, 2)
-            }
-            .foregroundColor(.primary)
-            .disabled(!previewViewModel.code.isVisible || !previewViewModel.allowsCodeTapAction)
+            CodeTextView(codeState: hideCode ? .notReady : previewViewModel.code)
+                .font(.system(.largeTitle, design: .monospaced))
+                .fontWeight(.bold)
+                .padding(.horizontal, 2)
+                .foregroundColor(.primary)
 
             PreviewTimerBarWithText(
                 timerView: activeTimerView,
