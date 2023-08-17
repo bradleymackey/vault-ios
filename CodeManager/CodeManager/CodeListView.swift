@@ -139,12 +139,3 @@ struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGener
         }
     }
 }
-
-struct OTPCardViewModifier: ViewModifier {
-    func body(content: Content) -> some View {
-        content
-            .padding(8)
-            .background(Color(UIColor.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
-    }
-}

@@ -80,6 +80,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 40) {
             makePreview(issuer: "Working Example", renderer: codeRenderer)
+                .modifier(OTPCardViewModifier())
                 .onAppear {
                     codeRenderer.subject.send("1234567")
                 }
@@ -87,6 +88,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
             makePreview(issuer: nil, renderer: codeRenderer)
 
             makePreview(issuer: "Code Error Example", renderer: errorRenderer)
+                .modifier(OTPCardViewModifier())
                 .onAppear {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
                 }
