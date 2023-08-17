@@ -20,14 +20,14 @@ public struct OTPCodeFeedView<
         isEditing: Binding<Bool>,
         gridSpacing: Double = 8
     ) {
-        _viewModel = ObservedObject(initialValue: viewModel)
+        self.viewModel = viewModel
         self.viewGenerator = viewGenerator
         _isEditing = Binding(projectedValue: isEditing)
         self.gridSpacing = gridSpacing
     }
 
     public var body: some View {
-        Group {
+        VStack {
             if viewModel.codes.isEmpty {
                 noCodesView
             } else {
