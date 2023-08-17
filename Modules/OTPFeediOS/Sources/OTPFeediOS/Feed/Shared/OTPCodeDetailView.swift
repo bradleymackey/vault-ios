@@ -58,13 +58,6 @@ public struct OTPCodeDetailView: View {
                     .foregroundColor(.primary)
             }
 
-            Label {
-                LabeledContent(viewModel.updatedDateTitle, value: viewModel.updatedDateValue)
-            } icon: {
-                Image(systemName: "clock")
-                    .foregroundColor(.primary)
-            }
-
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
