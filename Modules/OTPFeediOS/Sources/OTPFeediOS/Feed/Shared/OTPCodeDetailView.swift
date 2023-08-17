@@ -21,6 +21,7 @@ public struct OTPCodeDetailView: View {
         .navigationTitle(localized(key: "codeDetail.title"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(editingModel.isDirty)
+        .scrollDismissesKeyboard(.interactively)
         .toolbar {
             if editingModel.isDirty {
                 ToolbarItem(placement: .cancellationAction) {
@@ -69,12 +70,16 @@ public struct OTPCodeDetailView: View {
         } header: {
             iconHeader
         }
+        .keyboardType(.default)
+        .textInputAutocapitalization(.words)
+        .submitLabel(.done)
     }
 
     private var descriptionSection: some View {
         Section {
             TextEditor(text: $editingModel.detail.description)
                 .frame(height: 200)
+                .keyboardType(.default)
         } header: {
             DetailSubtitleView(
                 title: localized(key: "codeDetail.description.title"),
