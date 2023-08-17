@@ -76,7 +76,11 @@ public struct OTPCodeDetailView: View {
             TextEditor(text: $editingModel.detail.description)
                 .frame(height: 200)
         } header: {
-            Text(localized(key: "codeDetail.description.title"))
+            DetailSubtitleView(
+                title: localized(key: "codeDetail.description.title"),
+                subtitle: localized(key: "codeDetail.description.subtitle")
+            )
+            .textCase(.none)
         }
     }
 
@@ -109,7 +113,11 @@ public struct OTPCodeDetailView: View {
                 }
             }
         } header: {
-            Text(localized(key: "codeDetail.metadata.title"))
+            DetailSubtitleView(
+                title: localized(key: "codeDetail.metadata.title"),
+                subtitle: localized(key: "codeDetail.metadata.subtitle")
+            )
+            .textCase(.none)
         }
     }
 }

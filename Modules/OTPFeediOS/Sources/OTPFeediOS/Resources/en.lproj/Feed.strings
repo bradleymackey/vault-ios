@@ -7,4 +7,6 @@
 
 "codeDetail.title" = "Code";
 "codeDetail.description.title" = "Description";
+"codeDetail.description.subtitle" = "Custom notes about this code";
 "codeDetail.metadata.title" = "Metadata";
+"codeDetail.metadata.subtitle" = "Technical information about this code";
