@@ -32,7 +32,7 @@ public struct StoredOTPCode: Equatable, Identifiable {
 
 public extension StoredOTPCode {
     /// Model used for creating or updating a new `StoredOTPCode`, where the `id` is predetermined/generated randomly.
-    struct Write {
+    struct Write: Equatable {
         public var userDescription: String?
         public var code: GenericOTPAuthCode
 
