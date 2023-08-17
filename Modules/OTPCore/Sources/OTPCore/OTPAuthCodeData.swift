@@ -1,7 +1,7 @@
 import Foundation
 
 /// Common internal data used by OTP codes.
-public struct OTPAuthCodeData: Equatable {
+public struct OTPAuthCodeData: Equatable, Hashable {
     public var secret: OTPAuthSecret
     public var algorithm: OTPAuthAlgorithm
     public var digits: OTPAuthDigits
@@ -23,12 +23,12 @@ public struct OTPAuthCodeData: Equatable {
     }
 }
 
-public struct OTPAuthSecret: Equatable {
+public struct OTPAuthSecret: Equatable, Hashable {
     public var data: Data
     /// The format that the secret was stored in.
     public var format: Format
 
-    public enum Format: Equatable {
+    public enum Format: Equatable, Hashable {
         case base32
     }
 
@@ -42,7 +42,7 @@ public struct OTPAuthSecret: Equatable {
     }
 }
 
-public enum OTPAuthDigits: Int, Equatable {
+public enum OTPAuthDigits: Int, Equatable, Hashable {
     case six = 6
     case seven = 7
     case eight = 8
@@ -50,7 +50,7 @@ public enum OTPAuthDigits: Int, Equatable {
     public static var `default`: OTPAuthDigits { .six }
 }
 
-public enum OTPAuthAlgorithm: Equatable {
+public enum OTPAuthAlgorithm: Equatable, Hashable {
     case sha1
     case sha256
     case sha512
@@ -58,7 +58,7 @@ public enum OTPAuthAlgorithm: Equatable {
     public static var `default`: OTPAuthAlgorithm { .sha1 }
 }
 
-public enum OTPAuthType: Equatable {
+public enum OTPAuthType: Equatable, Hashable {
     case totp(period: UInt64 = 30)
     case hotp(counter: UInt64 = 0)
 
