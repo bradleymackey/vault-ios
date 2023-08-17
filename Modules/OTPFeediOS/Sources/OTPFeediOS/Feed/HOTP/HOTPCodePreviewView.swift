@@ -78,6 +78,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         CodeTextView(codeState: isEditing ? .notReady : previewViewModel.code)
             .font(.system(.largeTitle, design: .monospaced))
             .fontWeight(.bold)
+            .foregroundColor(.primary)
     }
 
     var canLoadNextCode: Bool {

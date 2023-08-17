@@ -129,22 +129,12 @@ struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGener
     let onTap: (UUID) -> Void
 
     func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
-        generator.makeOTPView(id: id, code: code, isEditing: isEditing)
-            .modifier(OnTapOverrideButtonModifier(onTap: {
-                onTap(id)
-            }))
-    }
-}
-
-struct OnTapOverrideButtonModifier: ViewModifier {
-    let onTap: () -> Void
-
-    func body(content: Content) -> some View {
-        content
-            .modifier(OTPCardViewModifier())
-            .onTapGesture {
-                onTap()
-            }
+        Button {
+            onTap(id)
+        } label: {
+            generator.makeOTPView(id: id, code: code, isEditing: isEditing)
+                .modifier(OTPCardViewModifier())
+        }
     }
 }
 
