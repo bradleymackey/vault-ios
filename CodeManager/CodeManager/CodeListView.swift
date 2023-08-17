@@ -11,7 +11,7 @@ import OTPFeediOS
 import SwiftUI
 
 @MainActor
-struct CodeListView<Store: OTPCodeStoreReader>: View {
+struct CodeListView<Store: OTPCodeStore>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
     @ObservedObject var totpPreviewGenerator: TOTPPreviewViewGenerator
     @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator

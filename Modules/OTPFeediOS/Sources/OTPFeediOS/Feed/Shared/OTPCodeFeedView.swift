@@ -4,7 +4,7 @@ import OTPFeed
 import SwiftUI
 
 public struct OTPCodeFeedView<
-    Store: OTPCodeStoreReader,
+    Store: OTPCodeStore,
     ViewGenerator: OTPViewGenerator
 >: View where
     ViewGenerator.Code == GenericOTPAuthCode
@@ -49,7 +49,7 @@ public struct OTPCodeFeedView<
 struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
-            viewModel: .init(store: CodeStoreFake()),
+            viewModel: .init(store: InMemoryCodeStore(codes: [])),
             viewGenerator: GenericGenerator(),
             isEditing: .constant(false)
         )

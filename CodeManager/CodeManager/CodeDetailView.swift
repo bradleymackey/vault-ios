@@ -11,7 +11,7 @@ import OTPFeed
 import OTPFeediOS
 import SwiftUI
 
-struct CodeDetailView<Store: OTPCodeStoreReader>: View {
+struct CodeDetailView<Store: OTPCodeStore>: View {
     @Environment(\.dismiss) var dismiss
 
     @ObservedObject var feedViewModel: FeedViewModel<Store>
