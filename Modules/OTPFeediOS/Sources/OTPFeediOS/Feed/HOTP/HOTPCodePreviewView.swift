@@ -11,7 +11,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
-            titleRow
+            labelsStack
             codeText
             PreviewTimerBarWithText(
                 timerView: activeTimerView,
@@ -45,8 +45,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         }
     }
 
-    private var titleRow: some View {
-        HStack(alignment: .center) {
+    private var labelsStack: some View {
+        HStack(alignment: .center, spacing: 6) {
             if case .error = previewViewModel.code {
                 CodeErrorIcon()
                     .font(.callout)
@@ -56,18 +56,22 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             }
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
+        }
+        .padding(.horizontal, 2)
+        .padding(.top, 6)
+    }
 
+    private var codeText: some View {
+        HStack(alignment: .center) {
+            CodeTextView(codeState: isEditing ? .notReady : previewViewModel.code)
+                .font(.system(.largeTitle, design: .monospaced))
+                .fontWeight(.bold)
+                .foregroundColor(.primary)
+            Spacer()
             buttonView
                 .font(canLoadNextCode ? .title.bold() : .title)
                 .disabled(!canLoadNextCode)
         }
-    }
-
-    private var codeText: some View {
-        CodeTextView(codeState: isEditing ? .notReady : previewViewModel.code)
-            .font(.system(.largeTitle, design: .monospaced))
-            .fontWeight(.bold)
-            .foregroundColor(.primary)
     }
 
     var canLoadNextCode: Bool {
@@ -83,11 +87,13 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             makePreviewView(accountName: "Normal", renderer: codeRenderer)
+                .modifier(OTPCardViewModifier())
                 .onAppear {
                     codeRenderer.subject.send("123456")
                 }
 
             makePreviewView(accountName: "Finished", renderer: finishedRenderer)
+                .modifier(OTPCardViewModifier())
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }

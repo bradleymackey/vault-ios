@@ -18,7 +18,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     }
 
     private var labelsStack: some View {
-        HStack(alignment: .center) {
+        HStack(alignment: .center, spacing: 6) {
             if case .error = previewViewModel.code {
                 CodeErrorIcon()
                     .font(.callout)
@@ -30,7 +30,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             Spacer()
         }
         .padding(.horizontal, 2)
-        .padding(.vertical, 4)
+        .padding(.top, 6)
     }
 
     private var codeSection: some View {
