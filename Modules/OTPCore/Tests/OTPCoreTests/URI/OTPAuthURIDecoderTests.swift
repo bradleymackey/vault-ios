@@ -100,7 +100,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.accountName, "Hello World")
+        XCTAssertEqual(code.data.accountName, "Hello World")
     }
 
     func test_decodeLabel_decodesAccountNameWithIssuerFromLabel() throws {
@@ -108,7 +108,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.accountName, "Hello World")
+        XCTAssertEqual(code.data.accountName, "Hello World")
     }
 
     func test_decodeLabel_decodesAccountNameWithIssuerFromLabelWithInvalidExtraColons() throws {
@@ -116,7 +116,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.accountName, "Hello World")
+        XCTAssertEqual(code.data.accountName, "Hello World")
     }
 
     func test_decodeLabel_decodesAccountNameTrimmingWhitespace() throws {
@@ -124,7 +124,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.accountName, "Hello World")
+        XCTAssertEqual(code.data.accountName, "Hello World")
     }
 
     func test_decodeIssuer_decodesNoIssuerIfNotPresent() throws {
@@ -132,7 +132,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertNil(code.issuer)
+        XCTAssertNil(code.data.issuer)
     }
 
     func test_decodeIssuer_decodesIssuerFromLabelIfNoParameter() throws {
@@ -140,7 +140,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.issuer, "Some Issuer")
+        XCTAssertEqual(code.data.issuer, "Some Issuer")
     }
 
     func test_decodeIssuer_decodesIssuerFromParameterIfNoLabel() throws {
@@ -148,7 +148,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.issuer, "Some Issuer")
+        XCTAssertEqual(code.data.issuer, "Some Issuer")
     }
 
     func test_decodeIssuer_decodesIssuerFromParameterWhenBothLabelAndParameter() throws {
@@ -156,7 +156,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.issuer, "Preferred")
+        XCTAssertEqual(code.data.issuer, "Preferred")
     }
 
     func test_decodeAlgorithm_defaultsToSHA1() throws {
@@ -164,7 +164,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.algorithm, .sha1)
+        XCTAssertEqual(code.data.algorithm, .sha1)
     }
 
     func test_decodeAlgorithm_setsToSHA1() throws {
@@ -172,7 +172,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.algorithm, .sha1)
+        XCTAssertEqual(code.data.algorithm, .sha1)
     }
 
     func test_decodeAlgorithm_setsToSHA256() throws {
@@ -180,7 +180,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.algorithm, .sha256)
+        XCTAssertEqual(code.data.algorithm, .sha256)
     }
 
     func test_decodeAlgorithm_setsToSHA512() throws {
@@ -188,7 +188,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.algorithm, .sha512)
+        XCTAssertEqual(code.data.algorithm, .sha512)
     }
 
     func test_decodeAlgorithm_throwsForInvalidAlgorithm() throws {
@@ -203,7 +203,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.digits, .six)
+        XCTAssertEqual(code.data.digits, .six)
     }
 
     func test_decodeDigits_setsToSix() throws {
@@ -211,7 +211,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.digits, .six)
+        XCTAssertEqual(code.data.digits, .six)
     }
 
     func test_decodeDigits_setsToSeven() throws {
@@ -219,7 +219,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.digits, .seven)
+        XCTAssertEqual(code.data.digits, .seven)
     }
 
     func test_decodeDigits_setsToEight() throws {
@@ -227,7 +227,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.digits, .eight)
+        XCTAssertEqual(code.data.digits, .eight)
     }
 
     func test_decodeSecret_defaultsToEmptySecretBase32() throws {
@@ -235,8 +235,8 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.secret.data, Data())
-        XCTAssertEqual(code.secret.format, .base32)
+        XCTAssertEqual(code.data.secret.data, Data())
+        XCTAssertEqual(code.data.secret.format, .base32)
     }
 
     func test_decodeSecret_decodesBase32Secret() throws {
@@ -245,8 +245,8 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
         let code = try sut.decode(value)
         let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22]
-        XCTAssertEqual(code.secret.data, Data(expectedBytes))
-        XCTAssertEqual(code.secret.format, .base32)
+        XCTAssertEqual(code.data.secret.data, Data(expectedBytes))
+        XCTAssertEqual(code.data.secret.format, .base32)
     }
 
     func test_decodeSecret_decodesBase32SecretWithPadding() throws {
@@ -255,8 +255,8 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
         let code = try sut.decode(value)
         let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22, 0xFF, 0xEE]
-        XCTAssertEqual(code.secret.data, Data(expectedBytes))
-        XCTAssertEqual(code.secret.format, .base32)
+        XCTAssertEqual(code.data.secret.data, Data(expectedBytes))
+        XCTAssertEqual(code.data.secret.format, .base32)
     }
 
     func test_decodeSecret_invalidBase32ReturnsNoDataInSecret() throws {
@@ -264,8 +264,8 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.secret.data, Data())
-        XCTAssertEqual(code.secret.format, .base32)
+        XCTAssertEqual(code.data.secret.data, Data())
+        XCTAssertEqual(code.data.secret.format, .base32)
     }
 
     func test_decode_decodesAllParameters() throws {
@@ -274,12 +274,12 @@ final class OTPAuthURIDecoderTests: XCTestCase {
 
         let code = try sut.decode(value)
         let expectedBytes: [UInt8] = [0xEE, 0xFF, 0xAA, 0x11, 0x22]
-        XCTAssertEqual(code.secret.data, Data(expectedBytes))
-        XCTAssertEqual(code.secret.format, .base32)
-        XCTAssertEqual(code.algorithm, .sha512)
-        XCTAssertEqual(code.digits, .eight)
-        XCTAssertEqual(code.issuer, "Issuer")
-        XCTAssertEqual(code.accountName, "Account")
+        XCTAssertEqual(code.data.secret.data, Data(expectedBytes))
+        XCTAssertEqual(code.data.secret.format, .base32)
+        XCTAssertEqual(code.data.algorithm, .sha512)
+        XCTAssertEqual(code.data.digits, .eight)
+        XCTAssertEqual(code.data.issuer, "Issuer")
+        XCTAssertEqual(code.data.accountName, "Account")
         switch code.type {
         case let .totp(period):
             XCTAssertEqual(period, 69)
