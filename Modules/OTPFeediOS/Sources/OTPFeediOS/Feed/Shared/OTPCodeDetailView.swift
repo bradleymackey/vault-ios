@@ -5,9 +5,7 @@ import SwiftUI
 public struct OTPCodeDetailView: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
-    @State private var siteName: String = "Site name"
-    @State private var accountName: String = "Account name"
-    @State private var description: String = "Description"
+    @StateObject private var editingModel = CodeDetailEditingModel()
 
     public init(viewModel: CodeDetailViewModel) {
         _viewModel = ObservedObject(initialValue: viewModel)
@@ -35,8 +33,8 @@ public struct OTPCodeDetailView: View {
 
     private var codeDetailSection: some View {
         Section {
-            TextField("Site Name", text: $siteName)
-            TextField("Account Name", text: $accountName)
+            TextField("Site Name", text: $editingModel.detail.issuerTitle)
+            TextField("Account Name", text: $editingModel.detail.accountNameTitle)
         } header: {
             iconHeader
         }
@@ -44,7 +42,7 @@ public struct OTPCodeDetailView: View {
 
     private var descriptionSection: some View {
         Section {
-            TextEditor(text: $description)
+            TextEditor(text: $editingModel.detail.description)
                 .frame(height: 200)
         } header: {
             Text(localized(key: "codeDetail.description.title"))
