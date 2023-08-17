@@ -12,11 +12,11 @@ struct CodeButtonView: View {
             viewModel.incrementCounter()
         } label: {
             CodeButtonIcon()
-                .font(.system(size: 30, weight: isDisabled ? .light : .bold))
+                .font(.system(size: 22, weight: isDisabled ? .light : .bold))
         }
         .foregroundColor(.accentColor)
         .disabled(isDisabled)
-        .frame(width: 44, height: 44)
+        .frame(width: 33, height: 33)
     }
 
     var isDisabled: Bool {
