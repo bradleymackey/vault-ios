@@ -94,8 +94,8 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
         expectFirstColumn(
             for: sut,
-            sizes: [.square(25), .square(25), .square(25)],
-            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 20, y: 45), CGPoint(x: 20, y: 70)]
+            sizes: [.square(25), .square(25), .square(25), .square(25)],
+            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 20, y: 45), CGPoint(x: 20, y: 70), CGPoint(x: 20, y: 95)]
         )
     }
 
