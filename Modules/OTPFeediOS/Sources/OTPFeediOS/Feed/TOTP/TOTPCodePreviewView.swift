@@ -30,6 +30,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             Spacer()
         }
         .padding(.horizontal, 2)
+        .padding(.vertical, 4)
     }
 
     private var codeSection: some View {
