@@ -21,14 +21,5 @@ struct CodeDetailView<Store: OTPCodeStoreReader>: View {
         OTPCodeDetailView(
             viewModel: .init(storedCode: storedCode)
         )
-        .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    dismiss()
-                } label: {
-                    Text(feedViewModel.doneEditingTitle)
-                }
-            }
-        }
     }
 }

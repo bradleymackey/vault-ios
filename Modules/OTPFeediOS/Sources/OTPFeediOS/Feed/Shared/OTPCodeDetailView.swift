@@ -6,6 +6,7 @@ public struct OTPCodeDetailView: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
     @StateObject private var editingModel = CodeDetailEditingModel()
+    @Environment(\.dismiss) var dismiss
 
     public init(viewModel: CodeDetailViewModel) {
         _viewModel = ObservedObject(initialValue: viewModel)
@@ -19,6 +20,36 @@ public struct OTPCodeDetailView: View {
         }
         .navigationTitle(localized(key: "codeDetail.title"))
         .navigationBarTitleDisplayMode(.inline)
+        .interactiveDismissDisabled(editingModel.isDirty)
+        .toolbar {
+            if editingModel.isDirty {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text(viewModel.cancelEditsTitle)
+                            .tint(.red)
+                    }
+                }
+            }
+            ToolbarItem(placement: .confirmationAction) {
+                if editingModel.isDirty {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text(viewModel.saveEditsTitle)
+                            .tint(.accentColor)
+                    }
+                } else {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text(viewModel.doneEditingTitle)
+                            .tint(.accentColor)
+                    }
+                }
+            }
+        }
     }
 
     private var iconHeader: some View {

@@ -35,6 +35,18 @@ public final class CodeDetailViewModel: ObservableObject {
     public var updatedDateValue: String {
         storedCode.updated.formatted(date: .abbreviated, time: .omitted)
     }
+
+    public var doneEditingTitle: String {
+        localized(key: "feedViewModel.doneEditing.title")
+    }
+
+    public var saveEditsTitle: String {
+        localized(key: "feedViewModel.saveEdits.title")
+    }
+
+    public var cancelEditsTitle: String {
+        localized(key: "feedViewModel.cancelEdits.title")
+    }
 }
 
 extension CodeDetailViewModel {
