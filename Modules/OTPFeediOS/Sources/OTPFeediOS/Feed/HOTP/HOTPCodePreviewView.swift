@@ -58,14 +58,15 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     private var titleRow: some View {
         HStack(alignment: .center) {
-            CodeIconPlaceholderView(iconFontSize: 8)
-                .clipShape(Circle())
-            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
-            Spacer()
             if case .error = previewViewModel.code {
                 CodeErrorIcon()
-                    .font(.title)
+                    .font(.callout)
+            } else {
+                CodeIconPlaceholderView(iconFontSize: 8)
+                    .clipShape(Circle())
             }
+            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
+            Spacer()
 
             buttonView
                 .font(canLoadNextCode ? .title.bold() : .title)
