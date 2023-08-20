@@ -23,7 +23,7 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
         self.timer = timer
     }
 
-    public func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
+    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
         let cachedObjects = makeControllersForPeriod(period: code.period)
         let previewViewModel = makeViewModelForCode(
             id: id,
@@ -36,7 +36,7 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
                 timerState: cachedObjects.periodState,
                 color: .blue
             ),
-            hideCode: isEditing
+            behaviour: behaviour
         )
     }
 

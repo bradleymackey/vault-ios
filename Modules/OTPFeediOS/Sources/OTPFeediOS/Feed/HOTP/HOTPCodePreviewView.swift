@@ -5,7 +5,7 @@ import SwiftUI
 struct HOTPCodePreviewView<ButtonView: View>: View {
     var buttonView: ButtonView
     @ObservedObject var previewViewModel: CodePreviewViewModel
-    var isEditing: Bool
+    var behaviour: OTPViewBehaviour?
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -16,10 +16,10 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             PreviewTimerBarWithText(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
-                isEditing: isEditing
+                behaviour: behaviour
             )
         }
-        .animation(.easeOut, value: isEditing)
+        .animation(.easeOut, value: behaviour)
         .onChange(of: scenePhase) { newValue in
             if newValue == .background {
                 previewViewModel.hideCodeUntilNextUpdate()
@@ -29,7 +29,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     @ViewBuilder
     private var activeTimerView: some View {
-        if isEditing {
+        if behaviour != nil {
             Color.blue
                 .transition(.identity)
         } else {
@@ -63,7 +63,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     private var codeText: some View {
         HStack(alignment: .center) {
-            CodeTextView(codeState: isEditing ? .notReady : previewViewModel.code)
+            CodeTextView(codeState: behaviour != nil ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
@@ -75,7 +75,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     var canLoadNextCode: Bool {
-        previewViewModel.code.allowsNextCodeToBeGenerated && !isEditing
+        previewViewModel.code.allowsNextCodeToBeGenerated && behaviour == nil
     }
 }
 
@@ -103,14 +103,16 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
                 }
 
-            makePreviewView(accountName: "Hidden", renderer: codeRenderer, hideCode: true)
+            makePreviewView(accountName: "Editing", renderer: codeRenderer, behaviour: .editing)
+
+            makePreviewView(accountName: "Reordering", renderer: codeRenderer, behaviour: .reordering)
         }
     }
 
     private static func makePreviewView(
         accountName: String,
         renderer: OTPCodeRendererMock,
-        hideCode: Bool = false
+        behaviour: OTPViewBehaviour? = nil
     ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: accountName,
@@ -128,7 +130,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                 )
             ),
             previewViewModel: previewViewModel,
-            isEditing: hideCode
+            behaviour: behaviour
         )
         .frame(width: 250, height: 100)
     }

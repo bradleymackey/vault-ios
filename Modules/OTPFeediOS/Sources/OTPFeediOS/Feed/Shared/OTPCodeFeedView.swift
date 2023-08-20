@@ -52,11 +52,21 @@ public struct OTPCodeFeedView<
         .padding()
     }
 
+    private var currentBehaviour: OTPViewBehaviour? {
+        if isEditing {
+            return .editing
+        } else if isReordering {
+            return .reordering
+        } else {
+            return nil
+        }
+    }
+
     private var listOfCodesView: some View {
         ScrollView {
             LazyVGrid(columns: columns, content: {
                 ReorderableForEach(items: viewModel.codes, isDragging: $isReordering) { code in
-                    viewGenerator.makeOTPView(id: code.id, code: code.code, isEditing: isEditing || isReordering)
+                    viewGenerator.makeOTPView(id: code.id, code: code.code, behaviour: currentBehaviour)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
@@ -95,7 +105,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     }
 
     struct GenericGenerator: OTPViewGenerator {
-        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode, isEditing _: Bool) -> some View {
+        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode, behaviour _: OTPViewBehaviour?) -> some View {
             Text("Code")
         }
     }

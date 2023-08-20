@@ -6,7 +6,7 @@ import SwiftUI
 public struct TOTPCodePreviewView<TimerBar: View>: View {
     @ObservedObject var previewViewModel: CodePreviewViewModel
     var timerView: TimerBar
-    var hideCode: Bool
+    var behaviour: OTPViewBehaviour?
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -14,7 +14,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             codeSection
         }
         .frame(maxWidth: .infinity)
-        .animation(.easeOut, value: hideCode)
+        .animation(.easeOut, value: behaviour)
     }
 
     private var labelsStack: some View {
@@ -35,7 +35,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var codeSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            CodeTextView(codeState: hideCode ? .notReady : previewViewModel.code)
+            CodeTextView(codeState: behaviour != nil ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .padding(.horizontal, 2)
@@ -44,7 +44,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             PreviewTimerBarWithText(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
-                isEditing: hideCode
+                behaviour: behaviour
             )
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -52,7 +52,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     @ViewBuilder
     private var activeTimerView: some View {
-        if hideCode {
+        if behaviour != nil {
             Color.blue
                 .transition(.move(edge: .leading))
         } else {
@@ -98,7 +98,12 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                     finishedRenderer.subject.send(completion: .finished)
                 }
 
-            makePreview(issuer: "Details Hidden", renderer: codeRenderer, hideCode: true)
+            makePreview(issuer: "Editing", renderer: codeRenderer, behaviour: .editing)
+                .onAppear {
+                    finishedRenderer.subject.send(completion: .finished)
+                }
+
+            makePreview(issuer: "Reordering", renderer: codeRenderer, behaviour: .reordering)
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }
@@ -108,7 +113,11 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         }
     }
 
-    static func makePreview(issuer: String?, renderer: OTPCodeRendererMock, hideCode: Bool = false) -> some View {
+    static func makePreview(
+        issuer: String?,
+        renderer: OTPCodeRendererMock,
+        behaviour: OTPViewBehaviour? = nil
+    ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: "test@example.com",
             issuer: issuer,
@@ -120,7 +129,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                 timerState: CodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher()),
                 color: .blue
             ),
-            hideCode: hideCode
+            behaviour: behaviour
         )
         .frame(width: 250, height: 100)
     }

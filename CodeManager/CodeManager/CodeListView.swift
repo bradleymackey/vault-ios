@@ -34,19 +34,19 @@ struct CodeListView<Store: OTPCodeStore>: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
-            viewGenerator: GenericOTPViewGenerator { id, code, isEditing in
+            viewGenerator: GenericOTPViewGenerator { id, code, behaviour in
                 switch code.type {
                 case let .totp(period):
                     totpEditingGenerator().makeOTPView(
                         id: id,
                         code: .init(period: period, data: code.data),
-                        isEditing: isEditing
+                        behaviour: behaviour
                     )
                 case let .hotp(counter):
                     hotpEditingGenerator().makeOTPView(
                         id: id,
                         code: .init(counter: counter, data: code.data),
-                        isEditing: isEditing
+                        behaviour: behaviour
                     )
                 }
             },
@@ -130,11 +130,11 @@ struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGener
     let generator: Generator
     let onTap: (UUID) -> Void
 
-    func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
+    func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
         Button {
             onTap(id)
         } label: {
-            generator.makeOTPView(id: id, code: code, isEditing: isEditing)
+            generator.makeOTPView(id: id, code: code, behaviour: behaviour)
                 .modifier(OTPCardViewModifier())
         }
     }

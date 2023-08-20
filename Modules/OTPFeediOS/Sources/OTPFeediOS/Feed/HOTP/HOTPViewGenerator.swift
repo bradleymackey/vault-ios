@@ -15,12 +15,12 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
         self.timer = timer
     }
 
-    public func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
+    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
         let viewModels = makeViewModelForCode(id: id, code: code)
         return HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: viewModels.incrementer),
             previewViewModel: viewModels.preview,
-            isEditing: isEditing
+            behaviour: behaviour
         )
     }
 

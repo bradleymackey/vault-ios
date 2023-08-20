@@ -5,7 +5,7 @@ import SwiftUI
 struct PreviewTimerBarWithText<Timer: View>: View {
     var timerView: Timer
     var codeState: OTPCodeState
-    var isEditing: Bool
+    var behaviour: OTPViewBehaviour?
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -19,7 +19,7 @@ struct PreviewTimerBarWithText<Timer: View>: View {
                     .shimmering(active: isShimmering)
             }
         }
-        .animation(.easeOut, value: isEditing)
+        .animation(.easeOut, value: behaviour)
         .clipShape(RoundedRectangle(cornerRadius: containerHeight))
     }
 
@@ -36,18 +36,23 @@ struct PreviewTimerBarWithText<Timer: View>: View {
     }
 
     private var isShimmering: Bool {
-        isEditing
+        behaviour != nil
     }
 
     private var textToDisplay: String? {
-        if isEditing {
+        switch behaviour {
+        case .editing:
             return localized(key: "action.tapToEdit")
-        } else if case let .error(err, _) = codeState {
-            return err.userTitle
-        } else if case .obfuscated = codeState {
-            return localized(key: "code.updateRequired")
-        } else {
+        case .reordering:
             return nil
+        case nil:
+            if case let .error(err, _) = codeState {
+                return err.userTitle
+            } else if case .obfuscated = codeState {
+                return localized(key: "code.updateRequired")
+            } else {
+                return nil
+            }
         }
     }
 }

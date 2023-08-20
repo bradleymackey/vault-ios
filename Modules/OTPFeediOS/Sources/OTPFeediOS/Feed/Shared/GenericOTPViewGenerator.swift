@@ -6,14 +6,14 @@ import SwiftUI
 public struct GenericOTPViewGenerator<BodyView: View>: OTPViewGenerator {
     public typealias Code = GenericOTPAuthCode
 
-    private let view: (UUID, GenericOTPAuthCode, Bool) -> BodyView
+    private let view: (UUID, GenericOTPAuthCode, OTPViewBehaviour?) -> BodyView
 
-    public init(@ViewBuilder view: @escaping (UUID, GenericOTPAuthCode, Bool) -> BodyView) {
+    public init(@ViewBuilder view: @escaping (UUID, GenericOTPAuthCode, OTPViewBehaviour?) -> BodyView) {
         self.view = view
     }
 
     @ViewBuilder
-    public func makeOTPView(id: UUID, code: Code, isEditing: Bool) -> some View {
-        view(id, code, isEditing)
+    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
+        view(id, code, behaviour)
     }
 }
