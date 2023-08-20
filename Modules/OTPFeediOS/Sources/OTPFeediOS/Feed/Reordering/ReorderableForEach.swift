@@ -8,6 +8,7 @@ import UniformTypeIdentifiers
 struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiable & Equatable>: View {
     let items: [Item]
     @Binding var isDragging: Bool
+    var isEnabled: Bool
     let content: (Item) -> Content
     let previewContent: (Item) -> PreviewContent
     let moveAction: (IndexSet, Int) -> Void
@@ -15,12 +16,14 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     init(
         items: [Item],
         isDragging: Binding<Bool>,
+        isEnabled: Bool,
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder previewContent: @escaping (Item) -> PreviewContent,
         moveAction: @escaping (IndexSet, Int) -> Void
     ) {
         self.items = items
         _isDragging = isDragging
+        self.isEnabled = isEnabled
         self.content = content
         self.previewContent = previewContent
         self.moveAction = moveAction
@@ -35,15 +38,17 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
                 .overlay(
                     Color.white
                         .opacity(draggingItem == item ? 0.8 : 0)
-                        .animation(.easeOut)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                        .animation(.easeOut, value: draggingItem)
                 )
-                .onDrag({
-                    draggingItem = item
-                    draggingItemCache = item
+                .onDrag {
+                    // Clears the drag cache if not enabled!
+                    draggingItem = isEnabled ? item : nil
+                    draggingItemCache = isEnabled ? item : nil
                     return NSItemProvider(object: "\(item.id)" as NSString)
-                }, preview: {
+                } preview: {
                     previewContent(item)
-                })
+                }
                 .onDrop(
                     of: [UTType.text],
                     delegate: DragRelocateDelegate(

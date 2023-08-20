@@ -69,7 +69,7 @@ public struct OTPCodeFeedView<
     private var listOfCodesView: some View {
         ScrollView {
             LazyVGrid(columns: columns, content: {
-                ReorderableForEach(items: viewModel.codes, isDragging: $isReordering) { code in
+                ReorderableForEach(items: viewModel.codes, isDragging: $isReordering, isEnabled: isEditing) { code in
                     viewGenerator.makeOTPView(id: code.id, code: code.code, behaviour: currentBehaviour)
                 } previewContent: { code in
                     viewGenerator.makeOTPView(id: code.id, code: code.code, behaviour: reorderingBehaviour)
