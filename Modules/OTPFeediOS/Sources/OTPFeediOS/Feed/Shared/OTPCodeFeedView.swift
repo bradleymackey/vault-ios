@@ -53,8 +53,10 @@ public struct OTPCodeFeedView<
     private var listOfCodesView: some View {
         ScrollView {
             LazyVGrid(columns: columns, content: {
-                ForEach(viewModel.codes) { code in
+                ReorderableForEach(items: viewModel.codes) { code in
                     viewGenerator.makeOTPView(id: code.id, code: code.code, isEditing: isEditing)
+                } moveAction: { from, to in
+                    viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
             })
             .padding()

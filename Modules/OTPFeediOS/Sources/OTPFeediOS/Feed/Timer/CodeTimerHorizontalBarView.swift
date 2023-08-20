@@ -2,6 +2,7 @@ import Combine
 import OTPCore
 import OTPFeed
 import SwiftUI
+import UniformTypeIdentifiers
 
 public struct CodeTimerHorizontalBarView: View {
     @ObservedObject var timerState: CodeTimerPeriodState

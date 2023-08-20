@@ -3,7 +3,7 @@ import Foundation
 
 @MainActor
 public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
-    @Published public private(set) var codes = [StoredOTPCode]()
+    @Published public var codes = [StoredOTPCode]()
     @Published public private(set) var retrievalError: PresentationError?
 
     private let store: Store
