@@ -7,7 +7,7 @@ import UniformTypeIdentifiers
 /// https://stackoverflow.com/a/68963988/3261161
 struct ReorderableForEach<Content: View, Item: Identifiable & Equatable>: View {
     let items: [Item]
-    let isEnabled: Bool
+    @Binding var isDragging: Bool
     let content: (Item) -> Content
     let moveAction: (IndexSet, Int) -> Void
 
@@ -18,12 +18,12 @@ struct ReorderableForEach<Content: View, Item: Identifiable & Equatable>: View {
 
     init(
         items: [Item],
-        isEnabled: Bool,
+        isDragging: Binding<Bool>,
         @ViewBuilder content: @escaping (Item) -> Content,
         moveAction: @escaping (IndexSet, Int) -> Void
     ) {
         self.items = items
-        self.isEnabled = isEnabled
+        _isDragging = isDragging
         self.content = content
         self.moveAction = moveAction
     }
@@ -53,6 +53,9 @@ struct ReorderableForEach<Content: View, Item: Identifiable & Equatable>: View {
                         }
                     }
                 )
+                .onChange(of: draggingItem) { currentlyDragging in
+                    isDragging = currentlyDragging != nil
+                }
         }
     }
 }

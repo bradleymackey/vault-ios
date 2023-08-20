@@ -14,6 +14,8 @@ public struct OTPCodeFeedView<
     @Binding public var isEditing: Bool
     public var gridSpacing: Double
 
+    @State private var isReordering = false
+
     public init(
         viewModel: FeedViewModel<Store>,
         viewGenerator: ViewGenerator,
@@ -53,8 +55,8 @@ public struct OTPCodeFeedView<
     private var listOfCodesView: some View {
         ScrollView {
             LazyVGrid(columns: columns, content: {
-                ReorderableForEach(items: viewModel.codes, isEnabled: isEditing) { code in
-                    viewGenerator.makeOTPView(id: code.id, code: code.code, isEditing: isEditing)
+                ReorderableForEach(items: viewModel.codes, isDragging: $isReordering) { code in
+                    viewGenerator.makeOTPView(id: code.id, code: code.code, isEditing: isEditing || isReordering)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
