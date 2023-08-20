@@ -7,7 +7,12 @@ public struct OTPCardViewModifier: ViewModifier {
         content
             .padding(8)
             .background(Color(UIColor.secondarySystemBackground))
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .clipShape(clipShape())
+            .contentShape([.dragPreview], clipShape())
+    }
+
+    private func clipShape() -> some Shape {
+        RoundedRectangle(cornerRadius: 8)
     }
 }
 
