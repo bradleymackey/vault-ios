@@ -32,20 +32,26 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_layout_hideCodeOption() {
-        let sut = makeSUT(state: .visible("123456"), hideCode: true)
+    func test_layout_obfuscateWithoutMessage() {
+        let sut = makeSUT(state: .visible("123456"), behaviour: .obfuscate(message: nil))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_textWrapping_longIssuerStaysOnASingleLine() {
-        let sut = makeSUT(issuer: "This is a very long issuer which should be long because it is so long")
+    func test_layout_obfuscateWithMessage() {
+        let sut = makeSUT(state: .visible("123456"), behaviour: .obfuscate(message: "Custom message"))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_textWrapping_longAccountNameStaysOnASingleLine() {
-        let sut = makeSUT(accountName: "This is a very long account name which should be long because it is so long")
+    func test_layout_obfuscateWithLongMessage() {
+        let sut = makeSUT(state: .visible("123456"), behaviour: .obfuscate(message: longMessage()))
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
+    func test_textWrapping_longIssuerStaysOnTwoLines() {
+        let sut = makeSUT(issuer: longMessage())
 
         assertSnapshot(matching: sut, as: .image)
     }
@@ -66,14 +72,22 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         accountName: String = "Test",
         issuer: String = "Issuer",
         state: OTPCodeState = .visible("123456"),
-        hideCode: Bool = false
+        behaviour: OTPViewBehaviour? = nil
     ) -> some View {
         let preview = CodePreviewViewModel(accountName: accountName, issuer: issuer, fixedCodeState: state)
         return HOTPCodePreviewView(
             buttonView: CodeButtonIcon(),
             previewViewModel: preview,
-            isEditing: hideCode
+            behaviour: behaviour
         )
         .frame(width: 250, height: 150)
+    }
+
+    private func longMessage() -> String {
+        """
+        This is a very long string which should be long because it is so long \
+        This is a very long string which should be long because it is so long \
+        This is a very long string which should be long because it is so long
+        """
     }
 }
