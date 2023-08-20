@@ -5,10 +5,11 @@ import UniformTypeIdentifiers
 /// `ForEach` that supports reordering from a given source.
 ///
 /// https://stackoverflow.com/a/68963988/3261161
-struct ReorderableForEach<Content: View, Item: Identifiable & Equatable>: View {
+struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiable & Equatable>: View {
     let items: [Item]
     @Binding var isDragging: Bool
     let content: (Item) -> Content
+    let previewContent: (Item) -> PreviewContent
     let moveAction: (IndexSet, Int) -> Void
 
     // A little hack that is needed in order to make view back opaque
@@ -20,11 +21,13 @@ struct ReorderableForEach<Content: View, Item: Identifiable & Equatable>: View {
         items: [Item],
         isDragging: Binding<Bool>,
         @ViewBuilder content: @escaping (Item) -> Content,
+        @ViewBuilder previewContent: @escaping (Item) -> PreviewContent,
         moveAction: @escaping (IndexSet, Int) -> Void
     ) {
         self.items = items
         _isDragging = isDragging
         self.content = content
+        self.previewContent = previewContent
         self.moveAction = moveAction
     }
 
@@ -38,7 +41,7 @@ struct ReorderableForEach<Content: View, Item: Identifiable & Equatable>: View {
                     draggingItem = item
                     return NSItemProvider(object: "\(item.id)" as NSString)
                 }, preview: {
-                    content(item)
+                    previewContent(item)
                 })
                 .onDrop(
                     of: [UTType.text],

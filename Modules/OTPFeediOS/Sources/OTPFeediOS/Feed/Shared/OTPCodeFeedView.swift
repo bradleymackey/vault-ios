@@ -52,11 +52,15 @@ public struct OTPCodeFeedView<
         .padding()
     }
 
+    private var reorderingBehaviour: OTPViewBehaviour {
+        .obfuscate(message: nil)
+    }
+
     private var currentBehaviour: OTPViewBehaviour? {
         if isEditing {
             return .obfuscate(message: localized(key: "action.tapToEdit"))
         } else if isReordering {
-            return .obfuscate(message: nil)
+            return reorderingBehaviour
         } else {
             return nil
         }
@@ -67,6 +71,8 @@ public struct OTPCodeFeedView<
             LazyVGrid(columns: columns, content: {
                 ReorderableForEach(items: viewModel.codes, isDragging: $isReordering) { code in
                     viewGenerator.makeOTPView(id: code.id, code: code.code, behaviour: currentBehaviour)
+                } previewContent: { code in
+                    viewGenerator.makeOTPView(id: code.id, code: code.code, behaviour: reorderingBehaviour)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
