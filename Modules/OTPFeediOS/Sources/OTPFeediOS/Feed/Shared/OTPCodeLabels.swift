@@ -11,7 +11,9 @@ struct OTPCodeLabels: View {
                 Text(issuer)
                     .font(.headline.bold())
                     .foregroundColor(.primary)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .multilineTextAlignment(.leading)
+                    .truncationMode(.tail)
                     .minimumScaleFactor(0.5)
             }
             if showAccountName {
