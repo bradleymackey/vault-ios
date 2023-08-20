@@ -103,9 +103,13 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
                 }
 
-            makePreviewView(accountName: "Editing", renderer: codeRenderer, behaviour: .editing)
+            makePreviewView(accountName: "Obfuscate", renderer: codeRenderer, behaviour: .obfuscate(message: "editing"))
 
-            makePreviewView(accountName: "Reordering", renderer: codeRenderer, behaviour: .reordering)
+            makePreviewView(
+                accountName: "Obfuscate (no msg)",
+                renderer: codeRenderer,
+                behaviour: .obfuscate(message: nil)
+            )
         }
     }
 

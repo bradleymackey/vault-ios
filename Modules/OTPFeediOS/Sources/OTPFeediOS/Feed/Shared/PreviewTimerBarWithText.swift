@@ -41,10 +41,8 @@ struct PreviewTimerBarWithText<Timer: View>: View {
 
     private var textToDisplay: String? {
         switch behaviour {
-        case .editing:
-            return localized(key: "action.tapToEdit")
-        case .reordering:
-            return nil
+        case let .obfuscate(message):
+            return message
         case nil:
             if case let .error(err, _) = codeState {
                 return err.userTitle

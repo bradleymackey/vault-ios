@@ -98,12 +98,12 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                     finishedRenderer.subject.send(completion: .finished)
                 }
 
-            makePreview(issuer: "Editing", renderer: codeRenderer, behaviour: .editing)
+            makePreview(issuer: "Obfuscated", renderer: codeRenderer, behaviour: .obfuscate(message: "Editing..."))
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }
 
-            makePreview(issuer: "Reordering", renderer: codeRenderer, behaviour: .reordering)
+            makePreview(issuer: "Obfuscated (no msg)", renderer: codeRenderer, behaviour: .obfuscate(message: nil))
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }
