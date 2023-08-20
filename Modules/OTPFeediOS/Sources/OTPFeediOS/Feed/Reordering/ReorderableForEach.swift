@@ -32,7 +32,11 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     var body: some View {
         ForEach(items) { item in
             content(item)
-                .overlay(draggingItem == item ? Color.white.opacity(0.8) : Color.clear)
+                .overlay(
+                    Color.white
+                        .opacity(draggingItem == item ? 0.8 : 0)
+                        .animation(.easeOut)
+                )
                 .onDrag({
                     draggingItem = item
                     draggingItemCache = item
