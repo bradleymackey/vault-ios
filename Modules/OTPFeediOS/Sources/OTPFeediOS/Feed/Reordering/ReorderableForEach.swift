@@ -12,11 +12,6 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     let previewContent: (Item) -> PreviewContent
     let moveAction: (IndexSet, Int) -> Void
 
-    // A little hack that is needed in order to make view back opaque
-    // if the drag and drop hasn't ever changed the position
-    // Without this hack the item remains semi-transparent
-    @State private var hasChangedLocation: Bool = false
-
     init(
         items: [Item],
         isDragging: Binding<Bool>,
@@ -36,7 +31,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     var body: some View {
         ForEach(items) { item in
             content(item)
-                .overlay(draggingItem == item && hasChangedLocation ? Color.white.opacity(0.8) : Color.clear)
+                .overlay(draggingItem == item ? Color.white.opacity(0.8) : Color.clear)
                 .onDrag({
                     draggingItem = item
                     return NSItemProvider(object: "\(item.id)" as NSString)
@@ -48,8 +43,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
                     delegate: DragRelocateDelegate(
                         item: item,
                         listData: items,
-                        current: $draggingItem,
-                        hasChangedLocation: $hasChangedLocation
+                        current: $draggingItem
                     ) { from, to in
                         withAnimation {
                             moveAction(from, to)
