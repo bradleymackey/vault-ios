@@ -27,6 +27,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     }
 
     @State private var draggingItem: Item?
+    @State private var draggingItemCache: Item?
 
     var body: some View {
         ForEach(items) { item in
@@ -34,6 +35,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
                 .overlay(draggingItem == item ? Color.white.opacity(0.8) : Color.clear)
                 .onDrag({
                     draggingItem = item
+                    draggingItemCache = item
                     return NSItemProvider(object: "\(item.id)" as NSString)
                 }, preview: {
                     previewContent(item)
@@ -43,7 +45,8 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
                     delegate: DragRelocateDelegate(
                         item: item,
                         listData: items,
-                        current: $draggingItem
+                        current: $draggingItem,
+                        currentItemCache: $draggingItemCache
                     ) { from, to in
                         withAnimation {
                             moveAction(from, to)
