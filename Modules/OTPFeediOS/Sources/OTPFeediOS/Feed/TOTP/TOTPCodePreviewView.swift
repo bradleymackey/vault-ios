@@ -85,6 +85,12 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                     codeRenderer.subject.send("1234567")
                 }
 
+            makePreview(issuer: "Working Example with Very long title and stuff", renderer: codeRenderer)
+                .modifier(OTPCardViewModifier())
+                .onAppear {
+                    codeRenderer.subject.send("1234567")
+                }
+
             makePreview(issuer: nil, renderer: codeRenderer)
 
             makePreview(issuer: "Code Error Example", renderer: errorRenderer)
