@@ -18,7 +18,7 @@
 
 "codeDetail.listSection.created.title" = "Created";
 "codeDetail.listSection.updated.title" = "Updated";
-"codeDetail.listSection.details.title" = "Details";
+"codeDetail.listSection.details.title" = "Code Information";
 "codeDetail.listSection.type.title" = "Type";
 "codeDetail.listSection.period.title" = "Period";
 "codeDetail.listSection.digits.title" = "Digits";
