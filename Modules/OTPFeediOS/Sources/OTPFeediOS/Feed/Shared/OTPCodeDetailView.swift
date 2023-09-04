@@ -8,6 +8,14 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     private var editor: Editor
     @StateObject private var editingModel: CodeDetailEditingModel
     @Environment(\.dismiss) var dismiss
+    @State private var isSaving = false
+    @State private var isSaveError = false
+
+    private struct SaveError: Error, LocalizedError {
+        var errorDescription: String? {
+            localized(key: "codeDetail.action.save.error.title")
+        }
+    }
 
     public init(viewModel: CodeDetailViewModel, editor: Editor) {
         _viewModel = ObservedObject(initialValue: viewModel)
@@ -39,10 +47,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             ToolbarItem(placement: .confirmationAction) {
                 if editingModel.isDirty {
                     Button {
-                        Task {
-                            await saveChanges()
-                            dismiss()
-                        }
+                        Task { await saveChanges() }
                     } label: {
                         Text(viewModel.saveEditsTitle)
                             .tint(.accentColor)
@@ -57,13 +62,22 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 }
             }
         }
+        .alert(isPresented: $isSaveError, error: SaveError(), actions: { _ in
+            Button("OK", role: .cancel) {}
+        }, message: { _ in
+            Text(localized(key: "codeDetail.action.save.error.description"))
+        })
     }
 
     private func saveChanges() async {
+        guard !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
         do {
             try await editor.update(code: viewModel.storedCode, edits: editingModel.detail)
+            dismiss()
         } catch {
-            // TODO: handle error
+            isSaveError = true
         }
     }
 

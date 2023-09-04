@@ -16,4 +16,7 @@
 "codeDetail.field.siteName.title" = "Site Name";
 "codeDetail.field.accountName.title" = "Account Name";
 
+"codeDetail.action.save.error.title" = "Can't Save";
+"codeDetail.action.save.error.description" = "There was an error saving the current code. You might need to remove and re-add it.";
+
 "codeFeed.noCodes.title" = "No Codes";
