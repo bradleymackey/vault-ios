@@ -7,6 +7,11 @@ import XCTest
 
 @MainActor
 final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        isRecording = false
+    }
+
     func test_layout_codeVisible() {
         let sut = makeSUT(state: .visible("123456"))
 
@@ -50,12 +55,6 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
-    func test_textWrapping_longIssuerStaysOnTwoLines() {
-        let sut = makeSUT(issuer: longMessage())
-
-        assertSnapshot(matching: sut, as: .image)
-    }
-
     func test_textWrapping_longCodeMaintainsSameSizeForAllDigits() {
         let digits = [6, 7, 8, 20]
         for count in digits {
@@ -64,6 +63,18 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
 
             assertSnapshot(matching: sut, as: .image, named: "\(count)-digits")
         }
+    }
+
+    func test_textWrapping_longIssuerStaysOnOneLine() {
+        let sut = makeSUT(issuer: longMessage())
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
+    func test_textWrapping_longAccountNameStaysOnOneLine() {
+        let sut = makeSUT(accountName: longMessage())
+
+        assertSnapshot(matching: sut, as: .image)
     }
 
     // MARK: - Helpers
