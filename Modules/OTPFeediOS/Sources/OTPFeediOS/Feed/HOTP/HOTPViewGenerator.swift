@@ -29,6 +29,12 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
         guard let cached = viewModelCache[id] else { return nil }
         return cached.preview.code.visibleCode
     }
+
+    public func hideAllCodesUntilNextUpdate() {
+        for (_, viewModel) in viewModelCache {
+            viewModel.preview.hideCodeUntilNextUpdate()
+        }
+    }
 }
 
 // MARK: - Caching

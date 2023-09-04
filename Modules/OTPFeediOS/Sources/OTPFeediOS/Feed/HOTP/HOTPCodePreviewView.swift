@@ -7,8 +7,6 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     @ObservedObject var previewViewModel: CodePreviewViewModel
     var behaviour: OTPViewBehaviour?
 
-    @Environment(\.scenePhase) private var scenePhase
-
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
@@ -20,11 +18,6 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             )
         }
         .animation(.easeOut, value: behaviour)
-        .onChange(of: scenePhase) { newValue in
-            if newValue == .background {
-                previewViewModel.hideCodeUntilNextUpdate()
-            }
-        }
     }
 
     @ViewBuilder

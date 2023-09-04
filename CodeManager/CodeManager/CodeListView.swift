@@ -19,6 +19,7 @@ struct CodeListView<Store: OTPCodeStore>: View {
     @EnvironmentObject var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
+    @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Identifiable {
         case detail(UUID, StoredOTPCode)
@@ -76,6 +77,11 @@ struct CodeListView<Store: OTPCodeStore>: View {
                 NavigationView {
                     detailView(storedCode: storedCode)
                 }
+            }
+        }
+        .onChange(of: scenePhase) { newValue in
+            if newValue == .background {
+                hotpPreviewGenerator.hideAllCodesUntilNextUpdate()
             }
         }
     }
