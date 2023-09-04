@@ -64,6 +64,53 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(values.count, 1)
     }
 
+    func test_updateCode_updatesStore() async throws {
+        var store = StubStore()
+        let exp = expectation(description: "Wait for store update")
+        store.updateStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try await sut.updateCode(id: UUID(), code: uniqueWritableCode())
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_updateCode_reloadsAfterUpdate() async throws {
+        var store = StubStore()
+        let exp = expectation(description: "Wait for store retrieve")
+        store.retrieveStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try await sut.updateCode(id: UUID(), code: uniqueWritableCode())
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_updateCode_doesNotReloadOnFailure() async throws {
+        var store = ErrorStubStore(error: anyNSError())
+        let exp = expectation(description: "Wait for store not retrieve")
+        exp.isInverted = true
+        store.retrieveStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        do {
+            try await sut.updateCode(id: UUID(), code: uniqueWritableCode())
+        } catch {
+            // ignore
+        }
+
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
     // MARK: - Helpers
 
     private func makeSUT<T: OTPCodeStoreReader>(
@@ -78,8 +125,10 @@ final class FeedViewModelTests: XCTestCase {
 
     private struct StubStore: OTPCodeStoreReader, OTPCodeStoreWriter {
         var codes = [StoredOTPCode]()
+        var retrieveStoreCalled: () -> Void = {}
         func retrieve() async throws -> [StoredOTPCode] {
-            codes
+            retrieveStoreCalled()
+            return codes
         }
 
         static var empty: StubStore {
@@ -90,8 +139,9 @@ final class FeedViewModelTests: XCTestCase {
             UUID()
         }
 
+        var updateStoreCalled: () -> Void = {}
         func update(id _: UUID, code _: OTPFeed.StoredOTPCode.Write) async throws {
-            // noop
+            updateStoreCalled()
         }
 
         func delete(id _: UUID) async throws {
@@ -101,7 +151,9 @@ final class FeedViewModelTests: XCTestCase {
 
     private struct ErrorStubStore: OTPCodeStoreReader, OTPCodeStoreWriter {
         var error: Error
+        var retrieveStoreCalled: () -> Void = {}
         func retrieve() async throws -> [StoredOTPCode] {
+            retrieveStoreCalled()
             throw error
         }
 

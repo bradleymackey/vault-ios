@@ -28,6 +28,11 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
         }
     }
 
+    public func updateCode(id: UUID, code: StoredOTPCode.Write) async throws {
+        try await store.update(id: id, code: code)
+        await reloadData()
+    }
+
     public var title: String {
         localized(key: "feedViewModel.list.title")
     }
