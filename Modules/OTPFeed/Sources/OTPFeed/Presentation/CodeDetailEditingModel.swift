@@ -3,16 +3,10 @@ import Foundation
 
 @MainActor
 public final class CodeDetailEditingModel: ObservableObject {
-    public struct Detail: Equatable {
-        public var issuerTitle: String = ""
-        public var accountNameTitle: String = ""
-        public var description: String = ""
-    }
+    @Published public var detail: CodeDetailEdits
+    public let initialDetail: CodeDetailEdits
 
-    @Published public var detail: Detail
-    public let initialDetail: Detail
-
-    public init(detail: Detail) {
+    public init(detail: CodeDetailEdits) {
         initialDetail = detail
         self.detail = detail
     }
