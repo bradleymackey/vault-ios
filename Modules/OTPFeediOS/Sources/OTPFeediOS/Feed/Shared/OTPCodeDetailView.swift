@@ -65,8 +65,14 @@ public struct OTPCodeDetailView: View {
 
     private var codeDetailSection: some View {
         Section {
-            TextField("Site Name", text: $editingModel.detail.issuerTitle)
-            TextField("Account Name", text: $editingModel.detail.accountNameTitle)
+            TextField(
+                localized(key: "codeDetail.field.siteName.title"),
+                text: $editingModel.detail.issuerTitle
+            )
+            TextField(
+                localized(key: "codeDetail.field.accountName.title"),
+                text: $editingModel.detail.accountNameTitle
+            )
         } header: {
             iconHeader
         }

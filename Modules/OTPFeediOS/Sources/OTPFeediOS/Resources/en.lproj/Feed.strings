@@ -13,4 +13,7 @@
 "codeDetail.metadata.title" = "Metadata";
 "codeDetail.metadata.subtitle" = "Technical information about this code";
 
+"codeDetail.field.siteName.title" = "Site Name";
+"codeDetail.field.accountName.title" = "Account Name";
+
 "codeFeed.noCodes.title" = "No Codes";
