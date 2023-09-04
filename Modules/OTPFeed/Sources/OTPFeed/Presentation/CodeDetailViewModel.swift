@@ -20,6 +20,14 @@ public final class CodeDetailViewModel: ObservableObject {
         return [details]
     }
 
+    public func makeEditingViewModel() -> CodeDetailEditingModel {
+        CodeDetailEditingModel(detail: .init(
+            issuerTitle: storedCode.code.data.issuer ?? "",
+            accountNameTitle: storedCode.code.data.accountName,
+            description: storedCode.userDescription ?? ""
+        ))
+    }
+
     public var createdDateTitle: String {
         localized(key: "codeDetail.listSection.created.title")
     }

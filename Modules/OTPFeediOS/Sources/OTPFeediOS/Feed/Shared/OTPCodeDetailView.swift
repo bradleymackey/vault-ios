@@ -5,11 +5,12 @@ import SwiftUI
 public struct OTPCodeDetailView: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
-    @StateObject private var editingModel = CodeDetailEditingModel()
+    @StateObject private var editingModel: CodeDetailEditingModel
     @Environment(\.dismiss) var dismiss
 
     public init(viewModel: CodeDetailViewModel) {
         _viewModel = ObservedObject(initialValue: viewModel)
+        _editingModel = StateObject(wrappedValue: viewModel.makeEditingViewModel())
     }
 
     public var body: some View {

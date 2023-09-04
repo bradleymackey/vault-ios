@@ -9,10 +9,13 @@ public final class CodeDetailEditingModel: ObservableObject {
         public var description: String = ""
     }
 
-    @Published public var detail = Detail()
-    public let initialDetail = Detail()
+    @Published public var detail: Detail
+    public let initialDetail: Detail
 
-    public init() {}
+    public init(detail: Detail) {
+        initialDetail = detail
+        self.detail = detail
+    }
 
     public var isDirty: Bool {
         detail != initialDetail
