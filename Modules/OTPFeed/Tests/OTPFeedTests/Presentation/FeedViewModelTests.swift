@@ -111,16 +111,36 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    func test_updateCode_invalidatesCaches() async throws {
+        let cache1 = StubCodeCache()
+        let cache2 = StubCodeCache()
+        let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
+
+        let invalidateId = UUID()
+        try await sut.update(id: invalidateId, code: uniqueWritableCode())
+
+        XCTAssertEqual(cache1.calledInvalidate, [invalidateId])
+        XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT<T: OTPCodeStoreReader>(
         store: T,
+        caches: [any CodeDetailCache] = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> FeedViewModel<T> {
-        let sut = FeedViewModel(store: store)
+        let sut = FeedViewModel(store: store, caches: caches)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
+    }
+
+    private final class StubCodeCache: CodeDetailCache {
+        var calledInvalidate = [UUID]()
+        func invalidateCache(id: UUID) {
+            calledInvalidate.append(id)
+        }
     }
 
     private struct StubStore: OTPCodeStoreReader, OTPCodeStoreWriter {

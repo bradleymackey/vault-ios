@@ -7,9 +7,11 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject, CodeFee
     @Published public private(set) var retrievalError: PresentationError?
 
     private let store: Store
+    private let caches: [any CodeDetailCache]
 
-    public init(store: Store) {
+    public init(store: Store, caches: [any CodeDetailCache] = []) {
         self.store = store
+        self.caches = caches
     }
 
     public func code(id: UUID) -> StoredOTPCode? {
@@ -30,7 +32,14 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject, CodeFee
 
     public func update(id: UUID, code: StoredOTPCode.Write) async throws {
         try await store.update(id: id, code: code)
+        invalidateCaches(id: id)
         await reloadData()
+    }
+
+    private func invalidateCaches(id: UUID) {
+        for cache in caches {
+            cache.invalidateCache(id: id)
+        }
     }
 
     public var title: String {

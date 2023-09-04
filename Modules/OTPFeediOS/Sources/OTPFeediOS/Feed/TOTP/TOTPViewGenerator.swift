@@ -49,7 +49,11 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 
 // MARK: - Caching
 
-extension TOTPPreviewViewGenerator {
+extension TOTPPreviewViewGenerator: CodeDetailCache {
+    public func invalidateCache(id: UUID) {
+        viewModelCache[id] = nil
+    }
+
     private struct PeriodCachedObjects {
         let timerController: CodeTimerController
         let periodState: CodeTimerPeriodState

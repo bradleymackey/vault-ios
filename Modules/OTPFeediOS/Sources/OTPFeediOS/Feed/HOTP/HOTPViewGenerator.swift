@@ -39,7 +39,11 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 
 // MARK: - Caching
 
-extension HOTPPreviewViewGenerator {
+extension HOTPPreviewViewGenerator: CodeDetailCache {
+    public func invalidateCache(id: UUID) {
+        viewModelCache[id] = nil
+    }
+
     private struct CachedViewModels {
         var preview: CodePreviewViewModel
         var incrementer: CodeIncrementerViewModel
