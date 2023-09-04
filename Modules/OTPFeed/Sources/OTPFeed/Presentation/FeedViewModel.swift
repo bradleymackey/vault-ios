@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 @MainActor
-public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
+public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject, CodeFeed {
     @Published public var codes = [StoredOTPCode]()
     @Published public private(set) var retrievalError: PresentationError?
 
@@ -28,7 +28,7 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
         }
     }
 
-    public func updateCode(id: UUID, code: StoredOTPCode.Write) async throws {
+    public func update(id: UUID, code: StoredOTPCode.Write) async throws {
         try await store.update(id: id, code: code)
         await reloadData()
     }

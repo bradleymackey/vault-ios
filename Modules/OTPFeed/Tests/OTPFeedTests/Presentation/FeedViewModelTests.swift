@@ -73,7 +73,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.updateCode(id: UUID(), code: uniqueWritableCode())
+        try await sut.update(id: UUID(), code: uniqueWritableCode())
 
         await fulfillment(of: [exp])
     }
@@ -87,7 +87,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.updateCode(id: UUID(), code: uniqueWritableCode())
+        try await sut.update(id: UUID(), code: uniqueWritableCode())
 
         await fulfillment(of: [exp])
     }
@@ -103,7 +103,7 @@ final class FeedViewModelTests: XCTestCase {
         let sut = makeSUT(store: store)
 
         do {
-            try await sut.updateCode(id: UUID(), code: uniqueWritableCode())
+            try await sut.update(id: UUID(), code: uniqueWritableCode())
         } catch {
             // ignore
         }

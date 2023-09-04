@@ -4,7 +4,7 @@ import OTPCore
 
 @MainActor
 public final class CodeDetailViewModel: ObservableObject {
-    private let storedCode: StoredOTPCode
+    public let storedCode: StoredOTPCode
 
     public init(storedCode: StoredOTPCode) {
         self.storedCode = storedCode

@@ -2,15 +2,17 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
-public struct OTPCodeDetailView: View {
+public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
+    private var editor: Editor
     @StateObject private var editingModel: CodeDetailEditingModel
     @Environment(\.dismiss) var dismiss
 
-    public init(viewModel: CodeDetailViewModel) {
+    public init(viewModel: CodeDetailViewModel, editor: Editor) {
         _viewModel = ObservedObject(initialValue: viewModel)
         _editingModel = StateObject(wrappedValue: viewModel.makeEditingViewModel())
+        self.editor = editor
     }
 
     public var body: some View {
@@ -37,7 +39,10 @@ public struct OTPCodeDetailView: View {
             ToolbarItem(placement: .confirmationAction) {
                 if editingModel.isDirty {
                     Button {
-                        dismiss()
+                        Task {
+                            await saveChanges()
+                            dismiss()
+                        }
                     } label: {
                         Text(viewModel.saveEditsTitle)
                             .tint(.accentColor)
@@ -51,6 +56,14 @@ public struct OTPCodeDetailView: View {
                     }
                 }
             }
+        }
+    }
+
+    private func saveChanges() async {
+        do {
+            try await editor.update(code: viewModel.storedCode, edits: editingModel.detail)
+        } catch {
+            // TODO: handle error
         }
     }
 
@@ -150,7 +163,14 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                         data: .init(secret: .empty(), accountName: "Test")
                     )
                 )
-            )
+            ),
+            editor: StubEditor()
         )
+    }
+
+    class StubEditor: ObservableObject, CodeDetailEditor {
+        func update(code _: StoredOTPCode, edits _: CodeDetailEdits) async throws {
+            // noop
+        }
     }
 }
