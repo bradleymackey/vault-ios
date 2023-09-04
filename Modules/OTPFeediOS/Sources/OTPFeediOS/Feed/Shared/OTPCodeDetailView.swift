@@ -120,6 +120,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 subtitle: localized(key: "codeDetail.description.subtitle")
             )
             .textCase(.none)
+            .padding(.vertical, 8)
         }
     }
 
@@ -157,6 +158,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 subtitle: localized(key: "codeDetail.metadata.subtitle")
             )
             .textCase(.none)
+            .padding(.vertical, 8)
         } footer: {
             HStack {
                 Spacer()
