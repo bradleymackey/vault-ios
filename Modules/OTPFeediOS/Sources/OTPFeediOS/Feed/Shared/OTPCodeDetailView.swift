@@ -11,6 +11,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     @State private var isSaving = false
     @State private var isSaveError = false
     @State private var isInEditMode = false
+    @State private var isShowingDeleteConfirmation = false
 
     private struct SaveError: Error, LocalizedError {
         var errorDescription: String? {
@@ -37,6 +38,17 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         .interactiveDismissDisabled(editingModel.isDirty)
         .scrollDismissesKeyboard(.interactively)
         .animation(.easeOut, value: isInEditMode)
+        .confirmationDialog(
+            localized(key: "codeDetail.action.delete.confirm.title"),
+            isPresented: $isShowingDeleteConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button(localized(key: "codeDetail.action.delete.entity.title"), role: .destructive, action: {
+                // TODO:
+            })
+        } message: {
+            Text(localized(key: "codeDetail.action.delete.confirm.subtitle"))
+        }
         .toolbar {
             if editingModel.isDirty {
                 ToolbarItem(placement: .cancellationAction) {
@@ -231,7 +243,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
 
     private var deleteButton: some View {
         Button {
-            // TODO: delete the code
+            isShowingDeleteConfirmation = true
         } label: {
             CodeDeleteLabel()
         }

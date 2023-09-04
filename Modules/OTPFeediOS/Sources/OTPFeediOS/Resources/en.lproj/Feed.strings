@@ -19,5 +19,8 @@
 "codeDetail.action.save.error.title" = "Can't Save";
 "codeDetail.action.save.error.description" = "There was an error saving the current code. You might need to remove and re-add it.";
 "codeDetail.action.delete.title" = "Delete";
+"codeDetail.action.delete.entity.title" = "Delete This Code Forever";
+"codeDetail.action.delete.confirm.title" = "Delete Code?";
+"codeDetail.action.delete.confirm.subtitle" = "This will permenantly delete this code. Unless you have made a backup, you may not be able to login on this site.";
 
 "codeFeed.noCodes.title" = "No Codes";
