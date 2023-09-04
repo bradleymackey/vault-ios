@@ -18,19 +18,25 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     }
 
     private var labelsStack: some View {
-        HStack(alignment: .center, spacing: 6) {
-            if case .error = previewViewModel.code {
-                CodeErrorIcon()
-                    .font(.callout)
-            } else {
-                CodeIconPlaceholderView(iconFontSize: 8)
-                    .clipShape(Circle())
-            }
+        HStack(alignment: .top, spacing: 6) {
+            icon
+                .padding(.top, 2)
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
             Spacer()
         }
         .padding(.horizontal, 2)
         .padding(.top, 6)
+    }
+
+    @ViewBuilder
+    private var icon: some View {
+        if case .error = previewViewModel.code {
+            CodeErrorIcon()
+                .font(.callout)
+        } else {
+            CodeIconPlaceholderView(iconFontSize: 8)
+                .clipShape(Circle())
+        }
     }
 
     private var codeSection: some View {
