@@ -27,25 +27,28 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     public var body: some View {
         Form {
             codeDetailSection
-            descriptionSection
+            if isInEditMode {
+                descriptionSection
+            }
             metadataSection
         }
         .navigationTitle(localized(key: "codeDetail.title"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(editingModel.isDirty)
         .scrollDismissesKeyboard(.interactively)
+        .animation(.easeOut, value: isInEditMode)
         .toolbar {
             if editingModel.isDirty {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        dismiss()
+                        doneButtonPressed()
                     } label: {
                         Text(viewModel.cancelEditsTitle)
                             .tint(.red)
                     }
                 }
             } else if !isInEditMode {
-                ToolbarItem(placement: .confirmationAction) {
+                ToolbarItem(placement: .cancellationAction) {
                     Button {
                         isInEditMode = true
                     } label: {
@@ -65,7 +68,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                     }
                 } else {
                     Button {
-                        dismiss()
+                        doneButtonPressed()
                     } label: {
                         Text(viewModel.doneEditingTitle)
                             .tint(.accentColor)
@@ -78,6 +81,14 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         }, message: { _ in
             Text(localized(key: "codeDetail.action.save.error.description"))
         })
+    }
+
+    private func doneButtonPressed() {
+        if isInEditMode {
+            isInEditMode = false
+        } else {
+            dismiss()
+        }
     }
 
     private func saveChanges() async {
@@ -99,38 +110,60 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 .clipShape(Circle())
             Spacer()
         }
-        .padding()
     }
 
     private var codeDetailSection: some View {
         Section {
             if isInEditMode {
-                TextField(
-                    localized(key: "codeDetail.field.siteName.title"),
-                    text: $editingModel.detail.issuerTitle
-                )
-                TextField(
-                    localized(key: "codeDetail.field.accountName.title"),
-                    text: $editingModel.detail.accountNameTitle
-                )
+                codeDetailContentEditing
             } else {
-                VStack(alignment: .center) {
-                    if !editingModel.detail.issuerTitle.isEmpty {
-                        Text(editingModel.detail.issuerTitle)
-                            .font(.title.bold())
-                    }
-                    Text(editingModel.detail.accountNameTitle)
-                        .font(.subheadline)
-                        .foregroundColor(.secondary)
-                }
-                .frame(maxWidth: .infinity)
+                codeDetailContent
             }
         } header: {
             iconHeader
+                .padding(.vertical, isInEditMode ? 16 : 0)
         }
         .keyboardType(.default)
         .textInputAutocapitalization(.words)
         .submitLabel(.done)
+    }
+
+    @ViewBuilder
+    private var codeDetailContent: some View {
+        VStack(alignment: .center) {
+            if !editingModel.detail.issuerTitle.isEmpty {
+                Text(editingModel.detail.issuerTitle)
+                    .font(.title.bold())
+            }
+            Text(editingModel.detail.accountNameTitle)
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+        }
+        .frame(maxWidth: .infinity)
+        .listRowInsets(.none)
+        .listRowBackground(EmptyView())
+        .listRowSeparator(.hidden)
+
+        if !editingModel.detail.description.isEmpty {
+            VStack(alignment: .center) {
+                Text(editingModel.detail.description)
+            }
+            .frame(maxWidth: .infinity)
+            .listRowBackground(EmptyView())
+            .listRowSeparator(.hidden)
+        }
+    }
+
+    @ViewBuilder
+    private var codeDetailContentEditing: some View {
+        TextField(
+            localized(key: "codeDetail.field.siteName.title"),
+            text: $editingModel.detail.issuerTitle
+        )
+        TextField(
+            localized(key: "codeDetail.field.accountName.title"),
+            text: $editingModel.detail.accountNameTitle
+        )
     }
 
     private var descriptionSection: some View {
@@ -186,7 +219,9 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         } footer: {
             HStack {
                 Spacer()
-                deleteButton
+                if isInEditMode {
+                    deleteButton
+                }
                 Spacer()
             }
             .padding()
