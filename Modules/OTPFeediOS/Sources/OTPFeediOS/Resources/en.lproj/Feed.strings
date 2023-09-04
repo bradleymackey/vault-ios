@@ -5,7 +5,7 @@
 "code.updateRequired" = "Code expired";
 "code.copyied" = "Copied";
 "code.issuerPlaceholder" = "Code";
-"code.accountNamePlaceholder" = "No account information";
+"code.accountNamePlaceholder" = "No account";
 
 "codeDetail.title" = "Code";
 "codeDetail.description.title" = "Description";
