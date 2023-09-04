@@ -18,5 +18,6 @@
 
 "codeDetail.action.save.error.title" = "Can't Save";
 "codeDetail.action.save.error.description" = "There was an error saving the current code. You might need to remove and re-add it.";
+"codeDetail.action.delete.title" = "Delete";
 
 "codeFeed.noCodes.title" = "No Codes";

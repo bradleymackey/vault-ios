@@ -157,6 +157,22 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 subtitle: localized(key: "codeDetail.metadata.subtitle")
             )
             .textCase(.none)
+        } footer: {
+            HStack {
+                Spacer()
+                deleteButton
+                Spacer()
+            }
+            .padding()
+            .padding(.vertical, 16)
+        }
+    }
+
+    private var deleteButton: some View {
+        Button {
+            // TODO: delete the code
+        } label: {
+            CodeDeleteLabel()
         }
     }
 }
