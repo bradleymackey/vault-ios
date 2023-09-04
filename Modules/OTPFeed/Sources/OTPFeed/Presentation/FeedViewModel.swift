@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 @MainActor
-public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject, CodeFeed {
+public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
     @Published public var codes = [StoredOTPCode]()
     @Published public private(set) var retrievalError: PresentationError?
 
@@ -18,6 +18,22 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject, CodeFee
         codes.first(where: { $0.id == id })
     }
 
+    public var title: String {
+        localized(key: "feedViewModel.list.title")
+    }
+
+    public var editTitle: String {
+        localized(key: "feedViewModel.edit.title")
+    }
+
+    public var doneEditingTitle: String {
+        localized(key: "feedViewModel.doneEditing.title")
+    }
+}
+
+// MARK: - Feed
+
+extension FeedViewModel: CodeFeed {
     public func reloadData() async {
         do {
             codes = try await store.retrieve()
@@ -39,26 +55,6 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject, CodeFee
     private func invalidateCaches(id: UUID) {
         for cache in caches {
             cache.invalidateCache(id: id)
-        }
-    }
-
-    public var title: String {
-        localized(key: "feedViewModel.list.title")
-    }
-
-    public var editTitle: String {
-        localized(key: "feedViewModel.edit.title")
-    }
-
-    public var doneEditingTitle: String {
-        localized(key: "feedViewModel.doneEditing.title")
-    }
-}
-
-extension Array {
-    func chunked(into size: Int) -> [[Element]] {
-        stride(from: 0, to: count, by: size).map {
-            Array(self[$0 ..< Swift.min($0 + size, count)])
         }
     }
 }
