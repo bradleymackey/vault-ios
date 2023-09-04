@@ -10,6 +10,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     @Environment(\.dismiss) var dismiss
     @State private var isSaving = false
     @State private var isSaveError = false
+    @State private var isInEditMode = false
 
     private struct SaveError: Error, LocalizedError {
         var errorDescription: String? {
@@ -43,7 +44,17 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                             .tint(.red)
                     }
                 }
+            } else if !isInEditMode {
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        isInEditMode = true
+                    } label: {
+                        Text(viewModel.startEditingTitle)
+                            .tint(.accentColor)
+                    }
+                }
             }
+
             ToolbarItem(placement: .confirmationAction) {
                 if editingModel.isDirty {
                     Button {
@@ -93,14 +104,27 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
 
     private var codeDetailSection: some View {
         Section {
-            TextField(
-                localized(key: "codeDetail.field.siteName.title"),
-                text: $editingModel.detail.issuerTitle
-            )
-            TextField(
-                localized(key: "codeDetail.field.accountName.title"),
-                text: $editingModel.detail.accountNameTitle
-            )
+            if isInEditMode {
+                TextField(
+                    localized(key: "codeDetail.field.siteName.title"),
+                    text: $editingModel.detail.issuerTitle
+                )
+                TextField(
+                    localized(key: "codeDetail.field.accountName.title"),
+                    text: $editingModel.detail.accountNameTitle
+                )
+            } else {
+                VStack(alignment: .center) {
+                    if !editingModel.detail.issuerTitle.isEmpty {
+                        Text(editingModel.detail.issuerTitle)
+                            .font(.title.bold())
+                    }
+                    Text(editingModel.detail.accountNameTitle)
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
+                .frame(maxWidth: .infinity)
+            }
         } header: {
             iconHeader
         }

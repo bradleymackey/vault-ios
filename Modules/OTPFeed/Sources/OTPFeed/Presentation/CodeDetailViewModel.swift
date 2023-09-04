@@ -55,6 +55,10 @@ public final class CodeDetailViewModel: ObservableObject {
     public var cancelEditsTitle: String {
         localized(key: "feedViewModel.cancelEdits.title")
     }
+
+    public var startEditingTitle: String {
+        localized(key: "feedViewModel.edit.title")
+    }
 }
 
 extension CodeDetailViewModel {
