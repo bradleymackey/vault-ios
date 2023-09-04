@@ -1,6 +1,6 @@
 "TEST_KEY_DONT_CHANGE" = "TEST_VALUE_DONT_CHANGE";
 
-"action.tapToEdit" = "Tap to Edit";
+"action.tapToView" = "Tap to View";
 
 "code.updateRequired" = "Code expired";
 "code.copyied" = "Copied";

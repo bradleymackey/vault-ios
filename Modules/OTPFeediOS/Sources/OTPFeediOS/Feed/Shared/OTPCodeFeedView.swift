@@ -58,7 +58,7 @@ public struct OTPCodeFeedView<
 
     private var currentBehaviour: OTPViewBehaviour? {
         if isEditing {
-            return .obfuscate(message: localized(key: "action.tapToEdit"))
+            return .obfuscate(message: localized(key: "action.tapToView"))
         } else if isReordering {
             return reorderingBehaviour
         } else {
