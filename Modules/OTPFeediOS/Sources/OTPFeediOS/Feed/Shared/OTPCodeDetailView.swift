@@ -3,6 +3,7 @@ import OTPFeed
 import SwiftUI
 
 public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
+    // TODO: move more logic to the view model, and test it!
     @ObservedObject public var viewModel: CodeDetailViewModel
 
     private var editor: Editor

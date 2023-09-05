@@ -4,6 +4,12 @@ import XCTest
 
 @MainActor
 final class CodeDetailViewModelTests: XCTestCase {
+    func test_detailMenuItems_hasOneExpectedItem() {
+        let sut = makeSUT()
+
+        XCTAssertEqual(sut.detailMenuItems.count, 1)
+    }
+
     func test_makeEditingViewModel_initialStateUsesData() {
         var code = uniqueStoredCode()
         code.code.data.accountName = "account name test"
