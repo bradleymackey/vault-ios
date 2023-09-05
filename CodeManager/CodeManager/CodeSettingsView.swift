@@ -7,6 +7,7 @@
 
 import SettingsiOS
 import SwiftUI
+import UICore
 
 struct CodeSettingsView: View {
     var body: some View {
@@ -14,8 +15,14 @@ struct CodeSettingsView: View {
             NavigationLink {
                 ThirdPartyView()
             } label: {
-                Label("Libraries", systemImage: "text.book.closed")
+                Label {
+                    Text("Libraries")
+                } icon: {
+                    RowIcon(icon: Image(systemName: "text.book.closed.fill"), color: .blue)
+                        .foregroundColor(.white)
+                }
             }
+            .padding(.vertical, 2)
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
