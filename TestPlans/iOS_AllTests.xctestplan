@@ -68,6 +68,13 @@
         "identifier" : "1CDA9CA02A057A8C00555E7A",
         "name" : "CodeManagerTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/UICore",
+        "identifier" : "UICoreTests",
+        "name" : "UICoreTests"
+      }
     }
   ],
   "version" : 1
