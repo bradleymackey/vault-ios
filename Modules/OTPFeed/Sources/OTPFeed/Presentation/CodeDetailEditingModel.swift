@@ -4,7 +4,7 @@ import Foundation
 @MainActor
 public final class CodeDetailEditingModel: ObservableObject {
     @Published public var detail: CodeDetailEdits
-    public let initialDetail: CodeDetailEdits
+    public private(set) var initialDetail: CodeDetailEdits
 
     public init(detail: CodeDetailEdits) {
         initialDetail = detail
@@ -13,5 +13,13 @@ public final class CodeDetailEditingModel: ObservableObject {
 
     public var isDirty: Bool {
         detail != initialDetail
+    }
+
+    public func restoreInitialState() {
+        detail = initialDetail
+    }
+
+    public func didPersist() {
+        initialDetail = detail
     }
 }

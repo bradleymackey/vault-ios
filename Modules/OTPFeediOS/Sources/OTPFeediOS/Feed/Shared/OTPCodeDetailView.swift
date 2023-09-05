@@ -71,7 +71,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             if editingModel.isDirty {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        doneButtonPressed()
+                        cancelButtonPressed()
                     } label: {
                         Text(viewModel.cancelEditsTitle)
                             .tint(.red)
@@ -108,6 +108,11 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         }
     }
 
+    private func cancelButtonPressed() {
+        isInEditMode = false
+        editingModel.restoreInitialState()
+    }
+
     private func doneButtonPressed() {
         if isInEditMode {
             isInEditMode = false
@@ -122,7 +127,8 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         defer { isSaving = false }
         do {
             try await editor.update(code: viewModel.storedCode, edits: editingModel.detail)
-            dismiss()
+            isInEditMode = false
+            editingModel.didPersist()
         } catch {
             currentError = .save
             isError = true
