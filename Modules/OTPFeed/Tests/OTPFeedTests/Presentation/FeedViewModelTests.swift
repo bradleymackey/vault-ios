@@ -102,11 +102,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        do {
-            try await sut.update(id: UUID(), code: uniqueWritableCode())
-        } catch {
-            // ignore
-        }
+        try? await sut.update(id: UUID(), code: uniqueWritableCode())
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
