@@ -5,6 +5,8 @@ import PackageDescription
 
 let package = Package(
     name: "UICore",
+    defaultLocalization: "en",
+    platforms: [.iOS(.v16)],
     products: [
         .library(
             name: "UICore",
