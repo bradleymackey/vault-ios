@@ -12,8 +12,12 @@ public struct RowIcon: View {
 
     public var body: some View {
         icon
-            .padding(6)
-            .background(color)
-            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .imageScale(.medium)
+            .padding(4)
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .aspectRatio(1.0, contentMode: .fill)
+                    .foregroundColor(color)
+            )
     }
 }
