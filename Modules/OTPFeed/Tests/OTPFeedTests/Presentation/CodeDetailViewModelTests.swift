@@ -40,7 +40,13 @@ final class CodeDetailViewModelTests: XCTestCase {
 }
 
 extension CodeDetailViewModelTests {
-    private func makeSUT(code: StoredOTPCode = uniqueStoredCode()) -> CodeDetailViewModel {
-        CodeDetailViewModel(storedCode: code)
+    private func makeSUT(
+        code: StoredOTPCode = uniqueStoredCode(),
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> CodeDetailViewModel {
+        let sut = CodeDetailViewModel(storedCode: code)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
     }
 }
