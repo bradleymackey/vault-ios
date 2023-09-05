@@ -52,6 +52,12 @@ extension FeedViewModel: CodeFeed {
         await reloadData()
     }
 
+    public func delete(id: UUID) async throws {
+        try await store.delete(id: id)
+        invalidateCaches(id: id)
+        await reloadData()
+    }
+
     private func invalidateCaches(id: UUID) {
         for cache in caches {
             cache.invalidateCache(id: id)

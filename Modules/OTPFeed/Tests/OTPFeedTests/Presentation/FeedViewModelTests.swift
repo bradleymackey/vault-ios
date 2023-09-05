@@ -123,6 +123,61 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
     }
 
+    func test_deleteCode_removesFromStore() async throws {
+        var store = StubStore()
+        let exp = expectation(description: "Wait for store delete")
+        store.deleteStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try await sut.delete(id: UUID())
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_deleteCode_reloadsAfterDelete() async throws {
+        var store = StubStore()
+        let exp = expectation(description: "Wait for store retrieve")
+        store.retrieveStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try await sut.delete(id: UUID())
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_deleteCode_doesNotReloadOnFailure() async throws {
+        var store = ErrorStubStore(error: anyNSError())
+        let exp = expectation(description: "Wait for store not retrieve")
+        exp.isInverted = true
+        store.retrieveStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try? await sut.delete(id: UUID())
+
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
+    func test_deleteCode_invalidatesCaches() async throws {
+        let cache1 = StubCodeCache()
+        let cache2 = StubCodeCache()
+        let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
+
+        let invalidateId = UUID()
+        try await sut.delete(id: invalidateId)
+
+        XCTAssertEqual(cache1.calledInvalidate, [invalidateId])
+        XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT<T: OTPCodeStoreReader>(
@@ -164,8 +219,9 @@ final class FeedViewModelTests: XCTestCase {
             updateStoreCalled()
         }
 
+        var deleteStoreCalled: () -> Void = {}
         func delete(id _: UUID) async throws {
-            // noop
+            deleteStoreCalled()
         }
     }
 

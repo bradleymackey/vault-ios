@@ -16,11 +16,13 @@
 "codeDetail.field.siteName.title" = "Site Name";
 "codeDetail.field.accountName.title" = "Account Name";
 
-"codeDetail.action.save.error.title" = "Can't Save";
+"codeDetail.action.error.title" = "Error";
+"codeDetail.action.error.confirm.title" = "OK";
 "codeDetail.action.save.error.description" = "There was an error saving the current code. You might need to remove and re-add it.";
 "codeDetail.action.delete.title" = "Delete";
 "codeDetail.action.delete.entity.title" = "Delete This Code Forever";
 "codeDetail.action.delete.confirm.title" = "Delete Code?";
-"codeDetail.action.delete.confirm.subtitle" = "This will permenantly delete this code. Unless you have made a backup, you may not be able to login on this site.";
+"codeDetail.action.delete.confirm.subtitle" = "This will permanently delete this code. Unless you have made a backup, you may not be able to login on this site.";
+"codeDetail.action.delete.error.description" = "There was an error deleting the current code. Please try again later.";
 
 "codeFeed.noCodes.title" = "No Codes";

@@ -3,6 +3,7 @@ import Foundation
 /// Used by `OTPCodeDetailView` for performing actions.
 public protocol CodeDetailEditor {
     func update(code: StoredOTPCode, edits: CodeDetailEdits) async throws
+    func deleteCode(id: UUID) async throws
 }
 
 /// A `CodeDetailEditor` that uses a feed for updating after a given edit.
@@ -18,5 +19,9 @@ public struct CodeFeedCodeDetailEditorAdapter: CodeDetailEditor {
         storedCode.code.data.accountName = edits.accountNameTitle
         storedCode.code.data.issuer = edits.issuerTitle
         try await codeFeed.update(id: code.id, code: storedCode.asWritable)
+    }
+
+    public func deleteCode(id: UUID) async throws {
+        try await codeFeed.delete(id: id)
     }
 }

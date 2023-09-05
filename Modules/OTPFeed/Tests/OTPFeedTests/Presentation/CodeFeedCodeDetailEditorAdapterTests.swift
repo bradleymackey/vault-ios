@@ -37,6 +37,23 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
 
         await fulfillment(of: [exp])
     }
+
+    func test_delete_deletesFromFeed() async throws {
+        let feed = StubCodeFeed()
+        let sut = makeSUT(feed: feed)
+
+        let id = UUID()
+
+        let exp = expectation(description: "Wait for delete")
+        feed.deleteCalled = { actualID in
+            XCTAssertEqual(id, actualID)
+            exp.fulfill()
+        }
+
+        try await sut.deleteCode(id: id)
+
+        await fulfillment(of: [exp])
+    }
 }
 
 extension CodeFeedCodeDetailEditorAdapterTests {
@@ -55,6 +72,12 @@ extension CodeFeedCodeDetailEditorAdapterTests {
         func update(id: UUID, code: OTPFeed.StoredOTPCode.Write) async throws {
             calls.append("\(#function)")
             updateCalled(id, code)
+        }
+
+        var deleteCalled: (UUID) -> Void = { _ in }
+        func delete(id: UUID) async throws {
+            calls.append(#function)
+            deleteCalled(id)
         }
     }
 }

@@ -9,13 +9,26 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     @StateObject private var editingModel: CodeDetailEditingModel
     @Environment(\.dismiss) var dismiss
     @State private var isSaving = false
-    @State private var isSaveError = false
+    @State private var isError = false
+    @State private var currentError: OperationError?
     @State private var isInEditMode = false
     @State private var isShowingDeleteConfirmation = false
 
-    private struct SaveError: Error, LocalizedError {
-        var errorDescription: String? {
-            localized(key: "codeDetail.action.save.error.title")
+    enum OperationError: String, Identifiable {
+        case save
+        case delete
+
+        var description: String {
+            switch self {
+            case .save:
+                return localized(key: "codeDetail.action.save.error.description")
+            case .delete:
+                return localized(key: "codeDetail.action.delete.error.description")
+            }
+        }
+
+        var id: some Hashable {
+            rawValue
         }
     }
 
@@ -43,11 +56,16 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             isPresented: $isShowingDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            Button(localized(key: "codeDetail.action.delete.entity.title"), role: .destructive, action: {
-                // TODO:
-            })
+            Button(localized(key: "codeDetail.action.delete.entity.title"), role: .destructive) {
+                Task { await deleteCode() }
+            }
         } message: {
             Text(localized(key: "codeDetail.action.delete.confirm.subtitle"))
+        }
+        .alert(localized(key: "codeDetail.action.error.title"), isPresented: $isError, presenting: currentError) { _ in
+            Button(localized(key: "codeDetail.action.error.confirm.title"), role: .cancel) {}
+        } message: { error in
+            Text(error.description)
         }
         .toolbar {
             if editingModel.isDirty {
@@ -88,11 +106,6 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 }
             }
         }
-        .alert(isPresented: $isSaveError, error: SaveError(), actions: { _ in
-            Button("OK", role: .cancel) {}
-        }, message: { _ in
-            Text(localized(key: "codeDetail.action.save.error.description"))
-        })
     }
 
     private func doneButtonPressed() {
@@ -111,7 +124,21 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             try await editor.update(code: viewModel.storedCode, edits: editingModel.detail)
             dismiss()
         } catch {
-            isSaveError = true
+            currentError = .save
+            isError = true
+        }
+    }
+
+    private func deleteCode() async {
+        guard !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
+        do {
+            try await editor.deleteCode(id: viewModel.storedCode.id)
+            dismiss()
+        } catch {
+            currentError = .delete
+            isError = true
         }
     }
 
@@ -273,6 +300,10 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     class StubEditor: ObservableObject, CodeDetailEditor {
         func update(code _: StoredOTPCode, edits _: CodeDetailEdits) async throws {
+            // noop
+        }
+
+        func deleteCode(id _: UUID) async throws {
             // noop
         }
     }
