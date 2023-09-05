@@ -185,6 +185,9 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
+        .lineLimit(2)
+        .multilineTextAlignment(.center)
+
         .frame(maxWidth: .infinity)
         .listRowInsets(.none)
         .listRowBackground(EmptyView())
@@ -197,6 +200,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             .frame(maxWidth: .infinity)
             .listRowBackground(EmptyView())
             .listRowSeparator(.hidden)
+            .multilineTextAlignment(.center)
         }
     }
 
