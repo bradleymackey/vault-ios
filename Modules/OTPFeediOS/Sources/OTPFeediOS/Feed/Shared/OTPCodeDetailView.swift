@@ -176,7 +176,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
 
     @ViewBuilder
     private var codeDetailContent: some View {
-        VStack(alignment: .center) {
+        VStack(alignment: .center, spacing: 4) {
             if !editingModel.detail.issuerTitle.isEmpty {
                 Text(editingModel.detail.issuerTitle)
                     .font(.title.bold())
