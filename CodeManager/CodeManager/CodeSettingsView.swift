@@ -15,7 +15,6 @@ struct CodeSettingsView: View {
             aboutSection
             exportSection
             policySection
-            noticesSection
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
@@ -92,22 +91,6 @@ struct CodeSettingsView: View {
             }
 
             NavigationLink {
-                Text("Open Standards")
-            } label: {
-                FormRow(
-                    title: "Open Standards",
-                    image: Image(systemName: "doc.text.fill"),
-                    color: .purple
-                )
-            }
-        } header: {
-            Text("Policy")
-        }
-    }
-
-    private var noticesSection: some View {
-        Section {
-            NavigationLink {
                 ThirdPartyView()
             } label: {
                 FormRow(
@@ -117,7 +100,7 @@ struct CodeSettingsView: View {
                 )
             }
         } header: {
-            Text("Notices and Thanks")
+            Text("Policy and Legal")
         }
     }
 }
