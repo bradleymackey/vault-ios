@@ -99,6 +99,26 @@ struct CodeSettingsView: View {
                     color: .blue
                 )
             }
+
+            NavigationLink {
+                Text("Privacy Policy")
+            } label: {
+                FormRow(
+                    title: "Privacy Policy",
+                    image: Image(systemName: "lock.fill"),
+                    color: .red
+                )
+            }
+
+            NavigationLink {
+                Text("Terms of Use")
+            } label: {
+                FormRow(
+                    title: "Terms of Use",
+                    image: Image(systemName: "person.fill.checkmark"),
+                    color: .green
+                )
+            }
         } header: {
             Text("Policy and Legal")
         }
