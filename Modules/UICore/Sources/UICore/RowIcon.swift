@@ -6,7 +6,7 @@ public struct RowIcon: View {
     public var color: Color
     public var size: Double
 
-    public init(icon: Image, color: Color, size: Double = 32) {
+    public init(icon: Image, color: Color, size: Double = 28) {
         self.icon = icon
         self.color = color
         self.size = size
