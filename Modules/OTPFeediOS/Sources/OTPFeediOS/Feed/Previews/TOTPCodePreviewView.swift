@@ -47,7 +47,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 .padding(.horizontal, 2)
                 .foregroundColor(.primary)
 
-            PreviewTimerBarWithText(
+            CodeStateTimerBarView(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
                 behaviour: behaviour

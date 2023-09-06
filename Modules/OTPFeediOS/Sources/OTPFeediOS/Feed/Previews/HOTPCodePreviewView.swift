@@ -11,7 +11,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
             codeText
-            PreviewTimerBarWithText(
+            CodeStateTimerBarView(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
                 behaviour: behaviour

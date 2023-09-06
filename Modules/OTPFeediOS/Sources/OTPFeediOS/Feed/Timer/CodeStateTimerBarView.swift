@@ -2,7 +2,7 @@ import Foundation
 import OTPFeed
 import SwiftUI
 
-struct PreviewTimerBarWithText<Timer: View>: View {
+struct CodeStateTimerBarView<Timer: View>: View {
     var timerView: Timer
     var codeState: OTPCodeState
     var behaviour: OTPViewBehaviour?
