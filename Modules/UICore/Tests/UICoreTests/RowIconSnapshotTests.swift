@@ -7,15 +7,13 @@ final class RowIconSnapshotTests: XCTestCase {
     func test_layout_smallFontSize() {
         let view = RowIcon(icon: Image(systemName: "book"), color: .blue)
             .font(.footnote)
-            .frame(width: 100, height: 100)
 
         assertSnapshot(matching: view, as: .image)
     }
 
     func test_layout_mediumFontSize() {
-        let view = RowIcon(icon: Image(systemName: "book"), color: .blue)
+        let view = RowIcon(icon: Image(systemName: "book"), color: .blue, size: 100)
             .font(.headline)
-            .frame(width: 100, height: 100)
 
         assertSnapshot(matching: view, as: .image)
     }
@@ -24,7 +22,6 @@ final class RowIconSnapshotTests: XCTestCase {
         let view = RowIcon(icon: Image(systemName: "eraser"), color: .blue)
             .font(.headline)
             .foregroundColor(.white)
-            .frame(width: 100, height: 100)
 
         assertSnapshot(matching: view, as: .image)
     }
