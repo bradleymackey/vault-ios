@@ -12,19 +12,38 @@ import UICore
 struct CodeSettingsView: View {
     var body: some View {
         Form {
-            NavigationLink {
-                ThirdPartyView()
-            } label: {
-                Label {
-                    Text("Libraries")
-                } icon: {
-                    RowIcon(icon: Image(systemName: "text.book.closed.fill"), color: .blue)
-                        .foregroundColor(.white)
-                }
-            }
-            .padding(.vertical, 2)
+            aboutSection
+            exportSection
         }
         .navigationTitle("Settings")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var aboutSection: some View {
+        Section {
+            NavigationLink {
+                ThirdPartyView()
+            } label: {
+                FormRow(
+                    title: "Libraries",
+                    image: Image(systemName: "text.book.closed.fill"),
+                    color: .blue
+                )
+            }
+        }
+    }
+
+    private var exportSection: some View {
+        Section {
+            NavigationLink {
+                Text("Export")
+            } label: {
+                FormRow(
+                    title: "Save Backup",
+                    image: Image(systemName: "square.and.arrow.up.on.square.fill"),
+                    color: .red
+                )
+            }
+        }
     }
 }
