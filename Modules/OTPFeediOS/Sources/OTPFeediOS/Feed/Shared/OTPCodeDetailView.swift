@@ -1,6 +1,7 @@
 import OTPCore
 import OTPFeed
 import SwiftUI
+import UICore
 
 public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     // TODO: move more logic to the view model, and test it!
@@ -236,9 +237,10 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             Label {
                 LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
             } icon: {
-                Image(systemName: "clock")
-                    .foregroundColor(.primary)
+                RowIcon(icon: Image(systemName: "clock.fill"), color: .green)
+                    .foregroundColor(.white)
             }
+            .padding(.vertical, 2)
 
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
@@ -246,19 +248,20 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                         Label {
                             LabeledContent(entry.title, value: entry.detail)
                         } icon: {
-                            Image(systemName: entry.systemIconName)
-                                .foregroundColor(.primary)
+                            RowIcon(icon: Image(systemName: entry.systemIconName), color: .red)
+                                .foregroundColor(.white)
                         }
                     }
                 } label: {
                     Label {
                         Text(item.title)
                     } icon: {
-                        Image(systemName: item.systemIconName)
-                            .foregroundColor(.primary)
+                        RowIcon(icon: Image(systemName: item.systemIconName), color: .blue)
+                            .foregroundColor(.white)
                     }
                 }
             }
+            .padding(.vertical, 2)
         } header: {
             DetailSubtitleView(
                 title: localized(key: "codeDetail.metadata.title"),

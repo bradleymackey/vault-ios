@@ -15,6 +15,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "OTPFeed", path: "../OTPFeed"),
+        .package(name: "UICore", path: "../UICore"),
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.11.0"),
         .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.6"),
         .package(url: "https://github.com/elai950/AlertToast", from: "1.3.9"),
@@ -22,7 +23,7 @@ let package = Package(
     targets: [
         .target(
             name: "OTPFeediOS",
-            dependencies: ["OTPFeed", "AlertToast"]
+            dependencies: ["OTPFeed", "AlertToast", "UICore"]
         ),
         .testTarget(
             name: "OTPFeediOSTests",
