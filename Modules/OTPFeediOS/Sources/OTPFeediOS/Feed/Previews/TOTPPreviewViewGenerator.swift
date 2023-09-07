@@ -1,4 +1,5 @@
 import Combine
+import CoreModels
 import CryptoEngine
 import OTPCore
 import OTPFeed
@@ -14,9 +15,8 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
     let clock: EpochClock
     let timer: any IntervalTimer
 
-    private var periodCache = [UInt64: PeriodCachedObjects]()
-
-    private var viewModelCache = [UUID: CodePreviewViewModel]()
+    private var periodCache = Cache<UInt64, PeriodCachedObjects>()
+    private var viewModelCache = Cache<UUID, CodePreviewViewModel>()
 
     public init(clock: EpochClock, timer: any IntervalTimer) {
         self.clock = clock
@@ -51,7 +51,7 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 
 extension TOTPPreviewViewGenerator: CodeDetailCache {
     public func invalidateCache(id: UUID) {
-        viewModelCache[id] = nil
+        viewModelCache.remove(key: id)
     }
 
     private struct PeriodCachedObjects {
@@ -60,16 +60,13 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
     }
 
     private func makeControllersForPeriod(period: UInt64) -> PeriodCachedObjects {
-        if let controllers = periodCache[period] {
-            return controllers
-        } else {
+        periodCache.get(key: period) {
             let timerController = CodeTimerController(timer: timer, period: period, clock: clock)
             let periodState = CodeTimerPeriodState(
                 clock: clock,
                 statePublisher: timerController.timerUpdatedPublisher()
             )
             let cacheEntry = PeriodCachedObjects(timerController: timerController, periodState: periodState)
-            periodCache[period] = cacheEntry
             return cacheEntry
         }
     }
@@ -79,9 +76,7 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
         code: TOTPAuthCode,
         timerController: CodeTimerController
     ) -> CodePreviewViewModel {
-        if let viewModel = viewModelCache[id] {
-            return viewModel
-        } else {
+        viewModelCache.get(key: id) {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
             let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
             let viewModel = CodePreviewViewModel(
@@ -89,7 +84,6 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
                 issuer: code.data.issuer,
                 renderer: renderer
             )
-            viewModelCache[id] = viewModel
             return viewModel
         }
     }

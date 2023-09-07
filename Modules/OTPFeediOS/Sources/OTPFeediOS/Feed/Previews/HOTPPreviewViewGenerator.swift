@@ -1,3 +1,4 @@
+import CoreModels
 import CryptoEngine
 import OTPCore
 import OTPFeed
@@ -9,7 +10,7 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 
     let timer: any IntervalTimer
 
-    private var viewModelCache = [UUID: CachedViewModels]()
+    private var viewModelCache = Cache<UUID, CachedViewModels>()
 
     public init(timer: any IntervalTimer) {
         self.timer = timer
@@ -31,7 +32,7 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
     }
 
     public func hideAllCodesUntilNextUpdate() {
-        for (_, viewModel) in viewModelCache {
+        for viewModel in viewModelCache.values {
             viewModel.preview.hideCodeUntilNextUpdate()
         }
     }
@@ -41,7 +42,7 @@ public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 
 extension HOTPPreviewViewGenerator: CodeDetailCache {
     public func invalidateCache(id: UUID) {
-        viewModelCache[id] = nil
+        viewModelCache.remove(key: id)
     }
 
     private struct CachedViewModels {
@@ -53,9 +54,7 @@ extension HOTPPreviewViewGenerator: CodeDetailCache {
         id: UUID,
         code: HOTPAuthCode
     ) -> CachedViewModels {
-        if let viewModel = viewModelCache[id] {
-            return viewModel
-        } else {
+        viewModelCache.get(key: id) {
             let renderer = HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
             let previewViewModel = CodePreviewViewModel(
                 accountName: code.data.accountName,
@@ -68,9 +67,7 @@ extension HOTPPreviewViewGenerator: CodeDetailCache {
                 timer: timer,
                 initialCounter: code.counter
             )
-            let cached = CachedViewModels(preview: previewViewModel, incrementer: incrementerViewModel)
-            viewModelCache[id] = cached
-            return cached
+            return CachedViewModels(preview: previewViewModel, incrementer: incrementerViewModel)
         }
     }
 }
