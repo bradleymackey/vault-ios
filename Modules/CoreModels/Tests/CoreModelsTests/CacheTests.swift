@@ -70,6 +70,25 @@ final class CacheTests: XCTestCase {
 
         XCTAssertEqual(sut.count, 0)
     }
+
+    func test_subscript_returnsNilIfItemNotPresent() {
+        let sut = makeSUT()
+
+        let result = sut["key1"]
+
+        XCTAssertNil(result)
+    }
+
+    func test_subscript_returnsItemIfItemPresent() {
+        var sut = makeSUT()
+
+        _ = sut.get(key: "key1", otherwise: {
+            "value1"
+        })
+        let result = sut["key1"]
+
+        XCTAssertEqual(result, "value1")
+    }
 }
 
 extension CacheTests {

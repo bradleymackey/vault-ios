@@ -3,6 +3,10 @@ public struct Cache<Key: Hashable, Value> {
 
     public init() {}
 
+    public subscript(key: Key) -> Value? {
+        cacheStorage[key]
+    }
+
     public var count: Int {
         cacheStorage.count
     }
