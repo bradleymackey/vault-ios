@@ -46,6 +46,12 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
         guard let viewModel = viewModelCache[id] else { return nil }
         return viewModel.code.visibleCode
     }
+
+    public func recalculateAllTimers() {
+        for object in periodCache.values {
+            object.timerController.recalculate()
+        }
+    }
 }
 
 // MARK: - Caching

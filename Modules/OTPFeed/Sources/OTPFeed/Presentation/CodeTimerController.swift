@@ -30,6 +30,7 @@ public final class CodeTimerController: CodeTimerUpdater {
         timerStateSubject.eraseToAnyPublisher()
     }
 
+    /// Forces the timer to recalculate it's current state and republish.
     public func recalculate() {
         let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)

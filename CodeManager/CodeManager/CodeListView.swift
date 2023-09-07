@@ -83,6 +83,13 @@ struct CodeListView<Store: OTPCodeStore>: View {
             if newValue == .background {
                 hotpPreviewGenerator.hideAllCodesUntilNextUpdate()
             }
+
+            if newValue == .active {
+                totpPreviewGenerator.recalculateAllTimers()
+            }
+        }
+        .onAppear {
+            totpPreviewGenerator.recalculateAllTimers()
         }
     }
 
