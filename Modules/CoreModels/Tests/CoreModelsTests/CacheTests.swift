@@ -11,7 +11,7 @@ final class CacheTests: XCTestCase {
     func test_count_isNumberOfElementsInCache() {
         var sut = makeSUT()
 
-        _ = sut.get(key: "key1") {
+        _ = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
 
@@ -21,7 +21,7 @@ final class CacheTests: XCTestCase {
     func test_removeAll_clearsCache() {
         var sut = makeSUT()
 
-        _ = sut.get(key: "key1") {
+        _ = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
         sut.removeAll()
@@ -29,23 +29,23 @@ final class CacheTests: XCTestCase {
         XCTAssertEqual(sut.count, 0)
     }
 
-    func test_get_createsObjectIfNotInCache() {
+    func test_getOrCreate_createsObjectIfNotInCache() {
         var sut = makeSUT()
 
-        let result = sut.get(key: "key1") {
+        let result = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
 
         XCTAssertEqual(result, "value1")
     }
 
-    func test_get_returnsCachedIfAlreadyCached() {
+    func test_getOrCreate_returnsCachedIfAlreadyCached() {
         var sut = makeSUT()
 
-        _ = sut.get(key: "key1") {
+        _ = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
-        let result = sut.get(key: "key1") {
+        let result = sut.getOrCreateValue(for: "key1") {
             "value2"
         }
 
@@ -63,7 +63,7 @@ final class CacheTests: XCTestCase {
     func test_remove_removesItemIfInCache() {
         var sut = makeSUT()
 
-        _ = sut.get(key: "key1") {
+        _ = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
         sut.remove(key: "key1")
@@ -82,7 +82,7 @@ final class CacheTests: XCTestCase {
     func test_subscript_returnsItemIfItemPresent() {
         var sut = makeSUT()
 
-        _ = sut.get(key: "key1", otherwise: {
+        _ = sut.getOrCreateValue(for: "key1", otherwise: {
             "value1"
         })
         let result = sut["key1"]
@@ -93,10 +93,10 @@ final class CacheTests: XCTestCase {
     func test_values_returnsAllValuesInTheCache() {
         var sut = makeSUT()
 
-        _ = sut.get(key: "key1", otherwise: {
+        _ = sut.getOrCreateValue(for: "key1", otherwise: {
             "value1"
         })
-        _ = sut.get(key: "key2", otherwise: {
+        _ = sut.getOrCreateValue(for: "key2", otherwise: {
             "value2"
         })
         let result = sut.values

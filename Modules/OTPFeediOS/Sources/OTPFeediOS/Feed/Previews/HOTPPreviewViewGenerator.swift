@@ -54,7 +54,7 @@ extension HOTPPreviewViewGenerator: CodeDetailCache {
         id: UUID,
         code: HOTPAuthCode
     ) -> CachedViewModels {
-        viewModelCache.get(key: id) {
+        viewModelCache.getOrCreateValue(for: id) {
             let renderer = HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
             let previewViewModel = CodePreviewViewModel(
                 accountName: code.data.accountName,

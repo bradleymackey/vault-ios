@@ -60,14 +60,13 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
     }
 
     private func makeControllersForPeriod(period: UInt64) -> PeriodCachedObjects {
-        periodCache.get(key: period) {
+        periodCache.getOrCreateValue(for: period) {
             let timerController = CodeTimerController(timer: timer, period: period, clock: clock)
             let periodState = CodeTimerPeriodState(
                 clock: clock,
                 statePublisher: timerController.timerUpdatedPublisher()
             )
-            let cacheEntry = PeriodCachedObjects(timerController: timerController, periodState: periodState)
-            return cacheEntry
+            return PeriodCachedObjects(timerController: timerController, periodState: periodState)
         }
     }
 
@@ -76,15 +75,14 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
         code: TOTPAuthCode,
         timerController: CodeTimerController
     ) -> CodePreviewViewModel {
-        viewModelCache.get(key: id) {
+        viewModelCache.getOrCreateValue(for: id) {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
             let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
-            let viewModel = CodePreviewViewModel(
+            return CodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 renderer: renderer
             )
-            return viewModel
         }
     }
 }

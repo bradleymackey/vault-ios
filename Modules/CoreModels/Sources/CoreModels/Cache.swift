@@ -24,7 +24,7 @@ public struct Cache<Key: Hashable, Value> {
     }
 
     /// Get a given item from the cache, otherwise create it using the given closure.
-    public mutating func get(key: Key, otherwise generate: () throws -> Value) rethrows -> Value {
+    public mutating func getOrCreateValue(for key: Key, otherwise generate: () throws -> Value) rethrows -> Value {
         if let existing = cacheStorage[key] {
             return existing
         } else {
