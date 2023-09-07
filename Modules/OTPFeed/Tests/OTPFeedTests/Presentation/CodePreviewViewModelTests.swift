@@ -46,6 +46,18 @@ final class CodePreviewViewModelTests: XCTestCase {
         XCTAssertEqual(kind, ["other", "error"])
     }
 
+    func test_hideCodeUntilNextUpdate_obfuscatesCode() async throws {
+        let (renderer, sut) = makeSUT()
+        let publisher = sut.$code.collectNext(2)
+
+        let output = try await awaitPublisher(publisher) {
+            renderer.subject.send("hi")
+            sut.hideCodeUntilNextUpdate()
+        }
+
+        XCTAssertEqual(output, [.visible("hi"), .obfuscated])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
