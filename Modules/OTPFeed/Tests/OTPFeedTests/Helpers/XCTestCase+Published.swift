@@ -3,39 +3,12 @@ import Foundation
 import XCTest
 
 extension XCTestCase {
-    func awaitNoPublish(
-        publisher: some Publisher,
-        timeout: Double = 1.0,
-        when perform: () async throws -> Void
-    ) async rethrows {
-        var isFulfilled = false
-        let expectation = expectation(description: "Wait for no publish")
-        expectation.isInverted = true
-        func fulfill() {
-            if !isFulfilled {
-                isFulfilled = true
-                expectation.fulfill()
-            }
-        }
-        let cancellable = publisher.sink(receiveCompletion: { _ in
-            fulfill()
-        }, receiveValue: { _ in
-            fulfill()
-        })
-
-        try await perform()
-
-        await fulfillment(of: [expectation], timeout: timeout)
-        cancellable.cancel()
-    }
-}
-
-extension XCTestCase {
+    /// Asserts that the given publisher completes before continuing.
     func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 1,
         when perform: () async throws -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> T.Output {
         var result: Result<T.Output, Error>?
@@ -70,6 +43,33 @@ extension XCTestCase {
         )
 
         return try unwrappedResult.get()
+    }
+
+    /// Asserts that the given publisher does not output any values.
+    func awaitNoPublish(
+        publisher: some Publisher,
+        timeout: Double = 1.0,
+        when perform: () async throws -> Void
+    ) async rethrows {
+        var isFulfilled = false
+        let expectation = expectation(description: "Wait for no publish")
+        expectation.isInverted = true
+        func fulfill() {
+            if !isFulfilled {
+                isFulfilled = true
+                expectation.fulfill()
+            }
+        }
+        let cancellable = publisher.sink(receiveCompletion: { _ in
+            fulfill()
+        }, receiveValue: { _ in
+            fulfill()
+        })
+
+        try await perform()
+
+        await fulfillment(of: [expectation], timeout: timeout)
+        cancellable.cancel()
     }
 }
 
