@@ -52,6 +52,7 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
 extension TOTPPreviewViewGenerator: CodeDetailCache {
     public func invalidateCache(id: UUID) {
         viewModelCache.remove(key: id)
+        // don't invalidate period caches, as they are independant of the code detail
     }
 
     private struct PeriodCachedObjects {
