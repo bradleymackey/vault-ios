@@ -6,6 +6,7 @@ import SwiftUI
 
 @MainActor
 public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator {
+    // TODO: inject more of this logic to make it more testable
     public typealias Code = HOTPAuthCode
 
     let timer: any IntervalTimer

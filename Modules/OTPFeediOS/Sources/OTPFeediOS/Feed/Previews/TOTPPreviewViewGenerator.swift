@@ -10,6 +10,7 @@ import SwiftUI
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
 public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator {
+    // TODO: inject more of this logic to make it more testable
     public typealias Code = TOTPAuthCode
 
     let clock: EpochClock
