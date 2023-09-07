@@ -89,6 +89,20 @@ final class CacheTests: XCTestCase {
 
         XCTAssertEqual(result, "value1")
     }
+
+    func test_values_returnsAllValuesInTheCache() {
+        var sut = makeSUT()
+
+        _ = sut.get(key: "key1", otherwise: {
+            "value1"
+        })
+        _ = sut.get(key: "key2", otherwise: {
+            "value2"
+        })
+        let result = sut.values
+
+        XCTAssertEqual(result.sorted(), ["value1", "value2"])
+    }
 }
 
 extension CacheTests {

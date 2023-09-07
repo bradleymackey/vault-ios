@@ -7,6 +7,10 @@ public struct Cache<Key: Hashable, Value> {
         cacheStorage[key]
     }
 
+    public var values: some Collection<Value> {
+        cacheStorage.values
+    }
+
     public var count: Int {
         cacheStorage.count
     }
