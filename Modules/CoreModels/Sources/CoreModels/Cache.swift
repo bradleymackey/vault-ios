@@ -22,4 +22,9 @@ public struct Cache<Key: Hashable, Value> {
             return created
         }
     }
+
+    /// Removes the item with this key from the cache.
+    public mutating func remove(key: Key) {
+        cacheStorage[key] = nil
+    }
 }

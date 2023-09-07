@@ -51,6 +51,25 @@ final class CacheTests: XCTestCase {
 
         XCTAssertEqual(result, "value1")
     }
+
+    func test_remove_hasNoEffectIfItemNotInCache() {
+        var sut = makeSUT()
+
+        sut.remove(key: "key1")
+
+        XCTAssertEqual(sut.count, 0)
+    }
+
+    func test_remove_removesItemIfInCache() {
+        var sut = makeSUT()
+
+        _ = sut.get(key: "key1") {
+            "value1"
+        }
+        sut.remove(key: "key1")
+
+        XCTAssertEqual(sut.count, 0)
+    }
 }
 
 extension CacheTests {
