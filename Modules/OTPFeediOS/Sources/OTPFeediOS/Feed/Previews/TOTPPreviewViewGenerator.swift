@@ -16,7 +16,8 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
     let clock: EpochClock
     let timer: any IntervalTimer
 
-    private var periodCache = Cache<UInt64, PeriodCachedObjects>()
+    private var timerControllerCache = Cache<UInt64, CodeTimerController>()
+    private var timerPeriodStateCache = Cache<UInt64, CodeTimerPeriodState>()
     private var viewModelCache = Cache<UUID, CodePreviewViewModel>()
 
     public init(viewFactory: Factory, clock: EpochClock, timer: any IntervalTimer) {
@@ -26,15 +27,9 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
     }
 
     public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
-        let cachedObjects = makeControllersForPeriod(period: code.period)
-        let previewViewModel = makeViewModelForCode(
-            id: id,
-            code: code,
-            timerController: cachedObjects.timerController
-        )
-        return viewFactory.makeTOTPView(
-            viewModel: previewViewModel,
-            periodState: cachedObjects.periodState,
+        viewFactory.makeTOTPView(
+            viewModel: makeViewModelForCode(id: id, code: code),
+            periodState: makeTimerPeriodState(period: code.period),
             behaviour: behaviour
         )
     }
@@ -46,8 +41,8 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
     }
 
     public func recalculateAllTimers() {
-        for object in periodCache.values {
-            object.timerController.recalculate()
+        for timerController in timerControllerCache.values {
+            timerController.recalculate()
         }
     }
 }
@@ -60,30 +55,29 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
         // don't invalidate period caches, as they are independant of the code detail
     }
 
-    private struct PeriodCachedObjects {
-        let timerController: CodeTimerController
-        let periodState: CodeTimerPeriodState
+    private func makeTimerController(period: UInt64) -> CodeTimerController {
+        timerControllerCache.getOrCreateValue(for: period) {
+            CodeTimerController(timer: timer, period: period, clock: clock)
+        }
     }
 
-    private func makeControllersForPeriod(period: UInt64) -> PeriodCachedObjects {
-        periodCache.getOrCreateValue(for: period) {
-            let timerController = CodeTimerController(timer: timer, period: period, clock: clock)
-            let periodState = CodeTimerPeriodState(
-                clock: clock,
-                statePublisher: timerController.timerUpdatedPublisher()
-            )
-            return PeriodCachedObjects(timerController: timerController, periodState: periodState)
+    private func makeTimerPeriodState(period: UInt64) -> CodeTimerPeriodState {
+        timerPeriodStateCache.getOrCreateValue(for: period) {
+            let timerController = makeTimerController(period: period)
+            return CodeTimerPeriodState(clock: clock, statePublisher: timerController.timerUpdatedPublisher())
         }
     }
 
     private func makeViewModelForCode(
         id: UUID,
-        code: TOTPAuthCode,
-        timerController: CodeTimerController
+        code: TOTPAuthCode
     ) -> CodePreviewViewModel {
         viewModelCache.getOrCreateValue(for: id) {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
-            let renderer = TOTPCodeRenderer(timer: timerController, totpGenerator: totpGenerator)
+            let renderer = TOTPCodeRenderer(
+                timer: makeTimerController(period: code.period),
+                totpGenerator: totpGenerator
+            )
             return CodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
