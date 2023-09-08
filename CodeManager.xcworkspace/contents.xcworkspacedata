@@ -31,6 +31,9 @@
    <FileRef
       location = "group:Modules/Attribution">
    </FileRef>
+   <FileRef
+      location = "group:Modules/TestHelpers">
+   </FileRef>
    <Group
       location = "group:TestPlans"
       name = "TestPlans">
