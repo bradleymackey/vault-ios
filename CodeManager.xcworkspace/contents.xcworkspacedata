@@ -8,7 +8,7 @@
       location = "group:Modules/CoreModels">
    </FileRef>
    <FileRef
-      location = "group:Modules/UICore">
+      location = "group:Modules/CoreUI">
    </FileRef>
    <FileRef
       location = "group:Modules/SettingsiOS">

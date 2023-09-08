@@ -1,5 +1,5 @@
+import CoreUI
 import SwiftUI
-import UICore
 
 public struct SettingsHomeView: View {
     public init() {}

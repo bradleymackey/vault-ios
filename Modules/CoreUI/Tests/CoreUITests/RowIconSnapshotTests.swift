@@ -1,7 +1,7 @@
 import SnapshotTesting
 import SwiftUI
 import XCTest
-@testable import UICore
+@testable import CoreUI
 
 final class RowIconSnapshotTests: XCTestCase {
     func test_layout_smallFontSize() {

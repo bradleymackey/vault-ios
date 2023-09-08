@@ -85,9 +85,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/UICore",
-        "identifier" : "UICoreTests",
-        "name" : "UICoreTests"
+        "containerPath" : "container:..\/CoreUI",
+        "identifier" : "CoreUITests",
+        "name" : "CoreUITests"
       }
     }
   ],

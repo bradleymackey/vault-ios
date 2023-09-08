@@ -1,7 +1,7 @@
+import CoreUI
 import OTPCore
 import OTPFeed
 import SwiftUI
-import UICore
 
 public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     // TODO: move more logic to the view model, and test it!

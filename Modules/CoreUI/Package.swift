@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "UICore",
+    name: "CoreUI",
     defaultLocalization: "en",
     platforms: [.iOS(.v16)],
     products: [
         .library(
-            name: "UICore",
-            targets: ["UICore"]
+            name: "CoreUI",
+            targets: ["CoreUI"]
         ),
     ],
     dependencies: [
@@ -18,13 +18,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "UICore",
+            name: "CoreUI",
             dependencies: []
         ),
         .testTarget(
-            name: "UICoreTests",
+            name: "CoreUITests",
             dependencies: [
-                "UICore",
+                "CoreUI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ]
         ),

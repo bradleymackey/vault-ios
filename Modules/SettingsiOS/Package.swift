@@ -14,11 +14,12 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "Attribution", path: "../Attribution"),
+        .package(name: "CoreUI", path: "../CoreUI"),
     ],
     targets: [
         .target(
             name: "SettingsiOS",
-            dependencies: ["Attribution"]
+            dependencies: ["Attribution", "CoreUI"]
         ),
         .testTarget(
             name: "SettingsiOSTests",

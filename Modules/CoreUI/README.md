@@ -1,3 +1,3 @@
-# UICore
+# CoreUI
 
 Core view components.
