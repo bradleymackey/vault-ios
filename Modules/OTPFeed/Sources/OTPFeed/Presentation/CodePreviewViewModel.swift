@@ -51,6 +51,10 @@ public final class CodePreviewViewModel: ObservableObject {
             .store(in: &cancellables)
     }
 
+    public func update(code: OTPCodeState) {
+        self.code = code
+    }
+
     public func hideCodeUntilNextUpdate() {
         code = .obfuscated
     }

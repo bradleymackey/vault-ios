@@ -24,6 +24,28 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(string, "Hello, world")
     }
 
+    func test_makeOTPView_viewModelsAreInitiallyObfuscated() {
+        let (sut, _, factory) = makeSUT()
+        var viewModels = [CodePreviewViewModel]()
+
+        let group = DispatchGroup()
+        factory.makeHOTPViewExecuted = { viewModel, _, _ in
+            viewModels.append(viewModel)
+            group.leave()
+        }
+
+        let id = UUID()
+        group.enter()
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+        group.enter()
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        XCTAssertEqual(viewModels.count, 2)
+        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
+    }
+
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
         var viewModels = [CodePreviewViewModel]()
@@ -82,6 +104,35 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let code = sut.currentCode(id: UUID())
 
         XCTAssertNil(code)
+    }
+
+    func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {
+        let (sut, _, factory) = makeSUT()
+        var viewModels = [CodePreviewViewModel]()
+
+        let group = DispatchGroup()
+        factory.makeHOTPViewExecuted = { viewModel, _, _ in
+            viewModels.append(viewModel)
+            group.leave()
+        }
+
+        let id = UUID()
+        group.enter()
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+        group.enter()
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        for viewModel in viewModels {
+            viewModel.update(code: .visible("1234"))
+        }
+
+        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated })
+
+        sut.hideAllCodesUntilNextUpdate()
+
+        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
     }
 }
 
