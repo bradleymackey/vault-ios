@@ -11,6 +11,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        /* CoreModels should not have any dependencies */
     ],
     targets: [
         .target(
