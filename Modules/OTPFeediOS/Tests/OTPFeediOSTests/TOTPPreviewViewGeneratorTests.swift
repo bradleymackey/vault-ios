@@ -16,6 +16,15 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(factory.makeTOTPViewExecutedCount, 0)
         XCTAssertEqual(timer.recordedWaitedIntervals, [])
     }
+
+    func test_makeOTPView_generatesViews() throws {
+        let sut = makeSUT()
+
+        let view = sut.makeOTPView(id: UUID(), code: anyTOTPCode(), behaviour: nil)
+
+        let foundText = try view.inspect().text().string()
+        XCTAssertEqual(foundText, "Hello, TOTP!")
+    }
 }
 
 extension TOTPPreviewViewGeneratorTests {
@@ -26,6 +35,11 @@ extension TOTPPreviewViewGeneratorTests {
         timer: MockIntervalTimer = MockIntervalTimer()
     ) -> SUT {
         SUT(viewFactory: factory, clock: clock, timer: timer)
+    }
+
+    private func anyTOTPCode() -> TOTPAuthCode {
+        let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
+        return .init(data: codeData)
     }
 
     private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
