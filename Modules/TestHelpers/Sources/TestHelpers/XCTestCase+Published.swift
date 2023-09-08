@@ -2,7 +2,7 @@ import Combine
 import Foundation
 import XCTest
 
-extension XCTestCase {
+public extension XCTestCase {
     /// Asserts that the given publisher completes before continuing.
     func awaitPublisher<T: Publisher>(
         _ publisher: T,
@@ -73,7 +73,7 @@ extension XCTestCase {
     }
 }
 
-extension Published.Publisher {
+public extension Published.Publisher {
     /// Collect the next *n* elements that are output, ignoring the first result
     func collectNext(_ count: Int) -> AnyPublisher<[Output], Never> {
         dropFirst()
@@ -88,7 +88,7 @@ extension Published.Publisher {
     }
 }
 
-extension Publisher {
+public extension Publisher {
     /// Collects the first *n* elements that are output.
     func collectFirst(_ count: Int) -> AnyPublisher<[Output], Failure> {
         collect(count)

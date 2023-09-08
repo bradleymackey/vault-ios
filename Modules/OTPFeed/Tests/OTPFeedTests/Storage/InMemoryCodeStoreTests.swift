@@ -1,5 +1,6 @@
 import Foundation
 import OTPFeed
+import TestHelpers
 import XCTest
 
 final class InMemoryCodeStoreTests: XCTestCase {

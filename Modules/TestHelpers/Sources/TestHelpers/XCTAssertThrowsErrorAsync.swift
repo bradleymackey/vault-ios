@@ -22,7 +22,7 @@ import XCTest
 ///   - line: The line number where the failure occurs.
 ///     The default is the line number where you call this function.
 ///   - errorHandler: An optional handler for errors that expression throws.
-func XCTAssertThrowsError(
+public func XCTAssertThrowsError(
     _ expression: @autoclosure () async throws -> some Any,
     _ message: @autoclosure () -> String = "",
     file: StaticString = #filePath,
