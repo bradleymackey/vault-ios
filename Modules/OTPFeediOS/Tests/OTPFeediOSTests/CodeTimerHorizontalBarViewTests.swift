@@ -4,7 +4,6 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 import TestHelpers
-import ViewInspector
 import XCTest
 @testable import OTPFeediOS
 

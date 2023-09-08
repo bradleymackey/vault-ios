@@ -18,7 +18,6 @@ let package = Package(
         .package(name: "CoreUI", path: "../CoreUI"),
         .package(name: "CoreModels", path: "../CoreModels"),
         .package(name: "TestHelpers", path: "../TestHelpers"),
-        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.6"),
         .package(url: "https://github.com/elai950/AlertToast", from: "1.3.9"),
     ],
     targets: [
@@ -31,7 +30,6 @@ let package = Package(
             dependencies: [
                 "OTPFeediOS",
                 "TestHelpers",
-                .product(name: "ViewInspector", package: "ViewInspector"),
             ]
         ),
     ]
