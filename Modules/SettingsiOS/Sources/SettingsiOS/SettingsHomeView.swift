@@ -10,17 +10,17 @@ public struct SettingsHomeView: View {
             exportSection
             policySection
         }
-        .navigationTitle("Settings")
+        .navigationTitle(localized(key: "home.title"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private var aboutSection: some View {
         Section {
             NavigationLink {
-                Text("About")
+                Text(localized(key: "about.title"))
             } label: {
                 FormRow(
-                    title: "About",
+                    title: localized(key: "about.title"),
                     image: Image(systemName: "key.fill"),
                     color: .blue
                 )
@@ -52,7 +52,7 @@ public struct SettingsHomeView: View {
                 Text("Restore")
             } label: {
                 FormRow(
-                    title: "Restore from Backup",
+                    title: localized(key: "restoreBackup.title"),
                     image: Image(systemName: "square.and.arrow.down.fill"),
                     color: .green
                 )
@@ -62,13 +62,13 @@ public struct SettingsHomeView: View {
                 Text("Export")
             } label: {
                 FormRow(
-                    title: "Save Backup",
+                    title: localized(key: "saveBackup.title"),
                     image: Image(systemName: "square.and.arrow.up.on.square.fill"),
                     color: .purple
                 )
             }
         } header: {
-            Text("Export")
+            Text(localized(key: "home.header.export.title"))
         }
     }
 
@@ -78,7 +78,7 @@ public struct SettingsHomeView: View {
                 Text("Info about Open Source, on GitHub")
             } label: {
                 FormRow(
-                    title: "Open Source",
+                    title: localized(key: "openSource.title"),
                     image: Image(systemName: "figure.2.arms.open"),
                     color: .purple
                 )
@@ -88,7 +88,7 @@ public struct SettingsHomeView: View {
                 ThirdPartyView()
             } label: {
                 FormRow(
-                    title: "Third-Party Libraries",
+                    title: localized(key: "thirdPartyLibraries.title"),
                     image: Image(systemName: "text.book.closed.fill"),
                     color: .blue
                 )
@@ -98,7 +98,7 @@ public struct SettingsHomeView: View {
                 Text("Privacy Policy")
             } label: {
                 FormRow(
-                    title: "Privacy Policy",
+                    title: localized(key: "privacyPolicy.title"),
                     image: Image(systemName: "lock.fill"),
                     color: .red
                 )
@@ -108,13 +108,13 @@ public struct SettingsHomeView: View {
                 Text("Terms of Use")
             } label: {
                 FormRow(
-                    title: "Terms of Use",
+                    title: localized(key: "termsOfUse.title"),
                     image: Image(systemName: "person.fill.checkmark"),
                     color: .green
                 )
             }
         } header: {
-            Text("Policy and Legal")
+            Text(localized(key: "home.header.policyAndLegal.title"))
         }
     }
 }

@@ -1,1 +1,19 @@
 "TEST_KEY_DONT_CHANGE" = "TEST_VALUE_DONT_CHANGE";
+
+"home.title" = "Settings";
+"home.header.export.title" = "Export";
+"home.header.policyAndLegal.title" = "Policy and Legal";
+
+"about.title" = "About";
+
+"saveBackup.title" = "Save Backup";
+
+"restoreBackup.title" = "Restore from Backup";
+
+"openSource.title" = "Open Source";
+
+"thirdPartyLibraries.title" = "Third-Party Libraries";
+
+"privacyPolicy.title" = "Privacy Policy";
+
+"termsOfUse.title" = "Terms of Use";
