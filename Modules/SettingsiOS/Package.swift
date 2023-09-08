@@ -15,6 +15,7 @@ let package = Package(
     dependencies: [
         .package(name: "Attribution", path: "../Attribution"),
         .package(name: "CoreUI", path: "../CoreUI"),
+        .package(name: "TestHelpers", path: "../TestHelpers"),
     ],
     targets: [
         .target(
@@ -23,7 +24,7 @@ let package = Package(
         ),
         .testTarget(
             name: "SettingsiOSTests",
-            dependencies: ["SettingsiOS"]
+            dependencies: ["SettingsiOS", "TestHelpers"]
         ),
     ]
 )
