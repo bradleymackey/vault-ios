@@ -20,9 +20,8 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let view = sut.makeOTPView(id: UUID(), code: anyHOTPCode(), behaviour: nil)
 
-        let foundText = try view.inspect().text()
-        let string = try foundText.string()
-        XCTAssertEqual(string, "Hello, world")
+        let foundText = try view.inspect().text().string()
+        XCTAssertEqual(foundText, "Hello, HOTP!")
     }
 
     func test_makeOTPView_viewModelsAreInitiallyObfuscated() {
@@ -124,7 +123,7 @@ extension HOTPPreviewViewGeneratorTests {
         ) -> some View {
             makeHOTPViewExecutedCount += 1
             makeHOTPViewExecuted(viewModel, incrementer, behaviour)
-            return Text("Hello, world")
+            return Text("Hello, HOTP!")
         }
     }
 
