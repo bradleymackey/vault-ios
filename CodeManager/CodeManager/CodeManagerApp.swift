@@ -13,7 +13,7 @@ import SwiftUI
 @main
 struct CodeManagerApp: App {
     @StateObject private var feedViewModel: FeedViewModel<InMemoryCodeStore>
-    @StateObject private var totpPreviewGenerator: TOTPPreviewViewGenerator
+    @StateObject private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @StateObject private var hotpPreviewGenerator: HOTPPreviewViewGenerator
     @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
     @State private var isShowingCopyPaste = false
@@ -26,6 +26,7 @@ struct CodeManagerApp: App {
             DemoCodeFactory.hotpCode(issuer: "Ranner"),
         ])
         let totp = TOTPPreviewViewGenerator(
+            viewFactory: RealTOTPPreviewViewFactory(),
             clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
             timer: LiveIntervalTimer()
         )

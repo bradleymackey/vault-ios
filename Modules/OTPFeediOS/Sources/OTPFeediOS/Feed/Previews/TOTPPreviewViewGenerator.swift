@@ -9,17 +9,18 @@ import SwiftUI
 ///
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator {
-    // TODO: inject more of this logic to make it more testable
+public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: ObservableObject, OTPViewGenerator {
     public typealias Code = TOTPAuthCode
 
+    let viewFactory: Factory
     let clock: EpochClock
     let timer: any IntervalTimer
 
     private var periodCache = Cache<UInt64, PeriodCachedObjects>()
     private var viewModelCache = Cache<UUID, CodePreviewViewModel>()
 
-    public init(clock: EpochClock, timer: any IntervalTimer) {
+    public init(viewFactory: Factory, clock: EpochClock, timer: any IntervalTimer) {
+        self.viewFactory = viewFactory
         self.clock = clock
         self.timer = timer
     }
@@ -31,12 +32,9 @@ public final class TOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator 
             code: code,
             timerController: cachedObjects.timerController
         )
-        return TOTPCodePreviewView(
-            previewViewModel: previewViewModel,
-            timerView: CodeTimerHorizontalBarView(
-                timerState: cachedObjects.periodState,
-                color: .blue
-            ),
+        return viewFactory.makeTOTPView(
+            viewModel: previewViewModel,
+            periodState: cachedObjects.periodState,
             behaviour: behaviour
         )
     }
