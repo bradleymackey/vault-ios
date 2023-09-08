@@ -1,6 +1,8 @@
 import Foundation
 import OTPCore
+import OTPFeed
 import OTPFeediOS
+import SwiftUI
 import XCTest
 
 @MainActor
@@ -37,14 +39,26 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 }
 
 extension HOTPPreviewViewGeneratorTests {
-    private func makeSUT() -> (HOTPPreviewViewGenerator, MockIntervalTimer) {
+    private typealias SUT = HOTPPreviewViewGenerator<MockHOTPViewFactory>
+    private func makeSUT() -> (SUT, MockIntervalTimer) {
+        let factory = MockHOTPViewFactory()
         let timer = MockIntervalTimer()
-        let sut = HOTPPreviewViewGenerator(timer: timer)
+        let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer)
         return (sut, timer)
     }
 
     private func anyHOTPCode() -> HOTPAuthCode {
         let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
         return .init(data: codeData)
+    }
+
+    private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
+        func makeHOTPView(
+            viewModel _: CodePreviewViewModel,
+            incrementer _: CodeIncrementerViewModel,
+            behaviour _: OTPViewBehaviour?
+        ) -> some View {
+            Text("Hello")
+        }
     }
 }

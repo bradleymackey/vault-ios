@@ -5,23 +5,24 @@ import OTPFeed
 import SwiftUI
 
 @MainActor
-public final class HOTPPreviewViewGenerator: ObservableObject, OTPViewGenerator {
-    // TODO: inject more of this logic to make it more testable
+public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: ObservableObject, OTPViewGenerator {
     public typealias Code = HOTPAuthCode
 
+    let viewFactory: Factory
     let timer: any IntervalTimer
 
     private var viewModelCache = Cache<UUID, CachedViewModels>()
 
-    public init(timer: any IntervalTimer) {
+    public init(viewFactory: Factory, timer: any IntervalTimer) {
+        self.viewFactory = viewFactory
         self.timer = timer
     }
 
     public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
         let viewModels = makeViewModelForCode(id: id, code: code)
-        return HOTPCodePreviewView(
-            buttonView: CodeButtonView(viewModel: viewModels.incrementer),
-            previewViewModel: viewModels.preview,
+        return viewFactory.makeHOTPView(
+            viewModel: viewModels.preview,
+            incrementer: viewModels.incrementer,
             behaviour: behaviour
         )
     }

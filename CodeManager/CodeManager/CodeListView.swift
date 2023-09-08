@@ -14,7 +14,7 @@ import SwiftUI
 struct CodeListView<Store: OTPCodeStore>: View {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
     @ObservedObject var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
-    @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator
+    @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
 
     @EnvironmentObject var pasteboard: Pasteboard
     @State private var isEditing = false
@@ -125,7 +125,9 @@ struct CodeListView<Store: OTPCodeStore>: View {
         )
     }
 
-    func hotpEditingGenerator() -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator> {
+    func hotpEditingGenerator()
+        -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>>
+    {
         OTPOnTapDecoratorViewGenerator(
             generator: hotpPreviewGenerator,
             onTap: { id in
