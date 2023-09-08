@@ -11,7 +11,9 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Ob
     let viewFactory: Factory
     let timer: any IntervalTimer
 
-    private var viewModelCache = Cache<UUID, CachedViewModels>()
+    private var rendererCache = Cache<UUID, HOTPCodeRenderer>()
+    private var previewViewModelCache = Cache<UUID, CodePreviewViewModel>()
+    private var incrementerViewModelCache = Cache<UUID, CodeIncrementerViewModel>()
 
     public init(viewFactory: Factory, timer: any IntervalTimer) {
         self.viewFactory = viewFactory
@@ -19,23 +21,22 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Ob
     }
 
     public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
-        let viewModels = makeViewModelForCode(id: id, code: code)
-        return viewFactory.makeHOTPView(
-            viewModel: viewModels.preview,
-            incrementer: viewModels.incrementer,
+        viewFactory.makeHOTPView(
+            viewModel: makePreviewViewModel(id: id, code: code),
+            incrementer: makeIncrementerViewModel(id: id, code: code),
             behaviour: behaviour
         )
     }
 
     /// Get the current visible code for a given generated code.
     public func currentCode(id: UUID) -> String? {
-        guard let cached = viewModelCache[id] else { return nil }
-        return cached.preview.code.visibleCode
+        guard let cached = previewViewModelCache[id] else { return nil }
+        return cached.code.visibleCode
     }
 
     public func hideAllCodesUntilNextUpdate() {
-        for viewModel in viewModelCache.values {
-            viewModel.preview.hideCodeUntilNextUpdate()
+        for viewModel in previewViewModelCache.values {
+            viewModel.hideCodeUntilNextUpdate()
         }
     }
 }
@@ -44,32 +45,36 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Ob
 
 extension HOTPPreviewViewGenerator: CodeDetailCache {
     public func invalidateCache(id: UUID) {
-        viewModelCache.remove(key: id)
+        rendererCache.remove(key: id)
+        previewViewModelCache.remove(key: id)
+        incrementerViewModelCache.remove(key: id)
     }
 
-    private struct CachedViewModels {
-        var preview: CodePreviewViewModel
-        var incrementer: CodeIncrementerViewModel
+    private func makeRenderer(id: UUID, code: HOTPAuthCode) -> HOTPCodeRenderer {
+        rendererCache.getOrCreateValue(for: id) {
+            HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
+        }
     }
 
-    private func makeViewModelForCode(
-        id: UUID,
-        code: HOTPAuthCode
-    ) -> CachedViewModels {
-        viewModelCache.getOrCreateValue(for: id) {
-            let renderer = HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
-            let previewViewModel = CodePreviewViewModel(
-                accountName: code.data.accountName,
-                issuer: code.data.issuer,
-                renderer: renderer
-            )
-            previewViewModel.hideCodeUntilNextUpdate()
-            let incrementerViewModel = CodeIncrementerViewModel(
-                hotpRenderer: renderer,
+    private func makeIncrementerViewModel(id: UUID, code: HOTPAuthCode) -> CodeIncrementerViewModel {
+        incrementerViewModelCache.getOrCreateValue(for: id) {
+            CodeIncrementerViewModel(
+                hotpRenderer: makeRenderer(id: id, code: code),
                 timer: timer,
                 initialCounter: code.counter
             )
-            return CachedViewModels(preview: previewViewModel, incrementer: incrementerViewModel)
+        }
+    }
+
+    private func makePreviewViewModel(id: UUID, code: HOTPAuthCode) -> CodePreviewViewModel {
+        previewViewModelCache.getOrCreateValue(for: id) {
+            let viewModel = CodePreviewViewModel(
+                accountName: code.data.accountName,
+                issuer: code.data.issuer,
+                renderer: makeRenderer(id: id, code: code)
+            )
+            viewModel.hideCodeUntilNextUpdate()
+            return viewModel
         }
     }
 }
