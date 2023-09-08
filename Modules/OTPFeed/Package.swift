@@ -16,6 +16,7 @@ let package = Package(
     dependencies: [
         .package(name: "OTPCore", path: "../OTPCore"),
         .package(name: "CryptoEngine", path: "../CryptoEngine"),
+        .package(name: "TestHelpers", path: "../TestHelpers"),
     ],
     targets: [
         .target(
@@ -24,7 +25,7 @@ let package = Package(
         ),
         .testTarget(
             name: "OTPFeedTests",
-            dependencies: ["OTPFeed"]
+            dependencies: ["OTPFeed", "TestHelpers"]
         ),
     ]
 )
