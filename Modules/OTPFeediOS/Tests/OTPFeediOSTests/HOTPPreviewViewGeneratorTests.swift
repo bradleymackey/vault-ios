@@ -26,21 +26,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
     func test_makeOTPView_viewModelsAreInitiallyObfuscated() {
         let (sut, _, factory) = makeSUT()
-        var viewModels = [CodePreviewViewModel]()
-
-        let group = DispatchGroup()
-        factory.makeHOTPViewExecuted = { viewModel, _, _ in
-            viewModels.append(viewModel)
-            group.leave()
-        }
-
-        let id = UUID()
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-
-        _ = group.wait(timeout: .now() + .seconds(1))
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
 
         XCTAssertEqual(viewModels.count, 2)
         XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
@@ -48,21 +34,8 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
-        var viewModels = [CodePreviewViewModel]()
-
-        let group = DispatchGroup()
-        factory.makeHOTPViewExecuted = { viewModel, _, _ in
-            viewModels.append(viewModel)
-            group.leave()
-        }
-
-        let id = UUID()
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-
-        _ = group.wait(timeout: .now() + .seconds(1))
+        let sharedID = UUID()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
         XCTAssertEqual(viewModels.count, 2)
         expectAllIdentical(in: viewModels)
@@ -70,21 +43,8 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
     func test_makeOTPView_returnsSameIncrementerInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
-        var viewModels = [CodeIncrementerViewModel]()
-
-        let group = DispatchGroup()
-        factory.makeHOTPViewExecuted = { _, incrementer, _ in
-            viewModels.append(incrementer)
-            group.leave()
-        }
-
-        let id = UUID()
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-
-        _ = group.wait(timeout: .now() + .seconds(1))
+        let sharedID = UUID()
+        let viewModels = collectCodeIncrementerViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
         XCTAssertEqual(viewModels.count, 2)
         expectAllIdentical(in: viewModels)
@@ -108,21 +68,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
     func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {
         let (sut, _, factory) = makeSUT()
-        var viewModels = [CodePreviewViewModel]()
-
-        let group = DispatchGroup()
-        factory.makeHOTPViewExecuted = { viewModel, _, _ in
-            viewModels.append(viewModel)
-            group.leave()
-        }
-
-        let id = UUID()
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-        group.enter()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
-
-        _ = group.wait(timeout: .now() + .seconds(1))
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
 
         for viewModel in viewModels {
             viewModel.update(code: .visible("1234"))
@@ -161,6 +107,70 @@ extension HOTPPreviewViewGeneratorTests {
             makeHOTPViewExecuted(viewModel, incrementer, behaviour)
             return Text("Hello, world")
         }
+    }
+
+    private func collectCodePreviewViewModels(
+        sut: SUT,
+        factory: MockHOTPViewFactory,
+        ids: [UUID],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [CodePreviewViewModel] {
+        var viewModels = [CodePreviewViewModel]()
+
+        let group = DispatchGroup()
+        factory.makeHOTPViewExecuted = { viewModel, _, _ in
+            viewModels.append(viewModel)
+            group.leave()
+        }
+
+        for id in ids {
+            group.enter()
+            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+        }
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        XCTAssertEqual(
+            viewModels.count,
+            ids.count,
+            "Invariant failed, expected number of view models to match the number of IDs we requested",
+            file: file,
+            line: line
+        )
+        return viewModels
+    }
+
+    private func collectCodeIncrementerViewModels(
+        sut: SUT,
+        factory: MockHOTPViewFactory,
+        ids: [UUID],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [CodeIncrementerViewModel] {
+        var viewModels = [CodeIncrementerViewModel]()
+
+        let group = DispatchGroup()
+        factory.makeHOTPViewExecuted = { _, incrementer, _ in
+            viewModels.append(incrementer)
+            group.leave()
+        }
+
+        for id in ids {
+            group.enter()
+            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+        }
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        XCTAssertEqual(
+            viewModels.count,
+            ids.count,
+            "Invariant failed, expected number of view models to match the number of IDs we requested",
+            file: file,
+            line: line
+        )
+        return viewModels
     }
 
     private func expectAllIdentical(
