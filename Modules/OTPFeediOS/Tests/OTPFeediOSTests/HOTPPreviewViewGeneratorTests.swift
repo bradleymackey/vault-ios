@@ -9,8 +9,9 @@ import XCTest
 @MainActor
 final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_init_hasNoSideEffects() {
-        let (_, timer, _) = makeSUT()
+        let (_, timer, factory) = makeSUT()
 
+        XCTAssertEqual(factory.makeHOTPViewExecutedCount, 0)
         XCTAssertEqual(timer.recordedWaitedIntervals, [])
     }
 
@@ -97,6 +98,7 @@ extension HOTPPreviewViewGeneratorTests {
     }
 
     private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
+        var makeHOTPViewExecutedCount = 0
         var makeHOTPViewExecuted: (CodePreviewViewModel, CodeIncrementerViewModel, OTPViewBehaviour?)
             -> Void = { _, _, _ in }
         func makeHOTPView(
@@ -104,6 +106,7 @@ extension HOTPPreviewViewGeneratorTests {
             incrementer: CodeIncrementerViewModel,
             behaviour: OTPViewBehaviour?
         ) -> some View {
+            makeHOTPViewExecutedCount += 1
             makeHOTPViewExecuted(viewModel, incrementer, behaviour)
             return Text("Hello, world")
         }
