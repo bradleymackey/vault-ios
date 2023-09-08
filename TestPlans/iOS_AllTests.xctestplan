@@ -89,6 +89,13 @@
         "identifier" : "CoreUITests",
         "name" : "CoreUITests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/SettingsiOS",
+        "identifier" : "SettingsiOSTests",
+        "name" : "SettingsiOSTests"
+      }
     }
   ],
   "version" : 1
