@@ -71,7 +71,21 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/UICore",
+        "containerPath" : "container:..\/CoreModels",
+        "identifier" : "CoreModelsTests",
+        "name" : "CoreModelsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Attribution",
+        "identifier" : "AttributionTests",
+        "name" : "AttributionTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/UICore",
         "identifier" : "UICoreTests",
         "name" : "UICoreTests"
       }
