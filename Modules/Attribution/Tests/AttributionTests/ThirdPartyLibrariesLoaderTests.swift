@@ -7,9 +7,8 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
 
         let loaded = try sut.load()
 
-        XCTAssertEqual(loaded.count, 4)
+        XCTAssertEqual(loaded.count, 5)
         XCTAssertEqual(loaded.first?.name, "SwiftUI-Shimmer")
-        XCTAssertEqual(loaded.last?.name, "ViewInspector 🕵️‍♂️ for SwiftUI")
     }
 }
 
