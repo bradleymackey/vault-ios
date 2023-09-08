@@ -1,6 +1,6 @@
 import Foundation
 
-extension Data {
+public extension Data {
     static func random(count: Int) -> Data {
         var bytes = [UInt8]()
         bytes.reserveCapacity(count)
