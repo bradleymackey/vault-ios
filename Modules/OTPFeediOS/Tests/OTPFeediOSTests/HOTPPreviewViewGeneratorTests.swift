@@ -59,12 +59,28 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertNil(code)
     }
 
-    func test_currentCode_isValueIfCodeHasBeenGenerated() {
+    func test_currentCode_isNilWhenCodeIsObfuscated() {
         let (sut, _, _) = makeSUT()
 
-        let code = sut.currentCode(id: UUID())
+        let id = UUID()
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+        let code = sut.currentCode(id: id)
 
-        XCTAssertNil(code)
+        XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
+    }
+
+    func test_currentCode_isValueIfCodeHasBeenGenerated() {
+        let (sut, _, factory) = makeSUT()
+        let id = UUID()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .visible("123456"))
+        }
+
+        let code = sut.currentCode(id: id)
+
+        XCTAssertEqual(code, "123456")
     }
 
     func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {
