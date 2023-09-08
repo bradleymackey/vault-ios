@@ -147,7 +147,7 @@ struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGener
     let generator: Generator
     let onTap: (UUID) -> Void
 
-    func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
+    func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
         Button {
             onTap(id)
         } label: {

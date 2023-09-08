@@ -5,7 +5,7 @@ import SwiftUI
 struct HOTPCodePreviewView<ButtonView: View>: View {
     var buttonView: ButtonView
     @ObservedObject var previewViewModel: CodePreviewViewModel
-    var behaviour: OTPViewBehaviour?
+    var behaviour: OTPViewBehaviour
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -22,10 +22,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     @ViewBuilder
     private var activeTimerView: some View {
-        if behaviour != nil {
-            Color.blue
-                .transition(.identity)
-        } else {
+        switch behaviour {
+        case .normal:
             switch previewViewModel.code {
             case .visible:
                 Color.blue
@@ -35,6 +33,9 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             case .error, .finished:
                 Color.red
             }
+        case .obfuscate:
+            Color.blue
+                .transition(.identity)
         }
     }
 
@@ -62,7 +63,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     private var codeText: some View {
         HStack(alignment: .center) {
-            CodeTextView(codeState: behaviour != nil ? .notReady : previewViewModel.code)
+            CodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
@@ -74,7 +75,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     var canLoadNextCode: Bool {
-        previewViewModel.code.allowsNextCodeToBeGenerated && behaviour == nil
+        previewViewModel.code.allowsNextCodeToBeGenerated && behaviour == .normal
     }
 }
 
@@ -115,7 +116,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
     private static func makePreviewView(
         accountName: String,
         renderer: OTPCodeRendererMock,
-        behaviour: OTPViewBehaviour? = nil
+        behaviour: OTPViewBehaviour = .normal
     ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: accountName,

@@ -7,7 +7,7 @@ public protocol HOTPPreviewViewFactory {
     func makeHOTPView(
         viewModel: CodePreviewViewModel,
         incrementer: CodeIncrementerViewModel,
-        behaviour: OTPViewBehaviour?
+        behaviour: OTPViewBehaviour
     )
         -> HOTPView
 }
@@ -17,7 +17,7 @@ public struct RealHOTPPreviewViewFactory: HOTPPreviewViewFactory {
     public func makeHOTPView(
         viewModel: CodePreviewViewModel,
         incrementer: CodeIncrementerViewModel,
-        behaviour: OTPViewBehaviour?
+        behaviour: OTPViewBehaviour
     ) -> some View {
         HOTPCodePreviewView(
             buttonView: CodeButtonView(viewModel: incrementer),

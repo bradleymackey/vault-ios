@@ -5,7 +5,7 @@ import SwiftUI
 struct CodeStateTimerBarView<Timer: View>: View {
     var timerView: Timer
     var codeState: OTPCodeState
-    var behaviour: OTPViewBehaviour?
+    var behaviour: OTPViewBehaviour
 
     var body: some View {
         ZStack(alignment: .leading) {
@@ -36,14 +36,14 @@ struct CodeStateTimerBarView<Timer: View>: View {
     }
 
     private var isShimmering: Bool {
-        behaviour != nil
+        behaviour != .normal
     }
 
     private var textToDisplay: String? {
         switch behaviour {
         case let .obfuscate(message):
             return message
-        case nil:
+        case .normal:
             if case let .error(err, _) = codeState {
                 return err.userTitle
             } else if case .obfuscated = codeState {

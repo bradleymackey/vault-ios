@@ -6,7 +6,7 @@ import SwiftUI
 public struct TOTPCodePreviewView<TimerBar: View>: View {
     @ObservedObject var previewViewModel: CodePreviewViewModel
     var timerView: TimerBar
-    var behaviour: OTPViewBehaviour?
+    var behaviour: OTPViewBehaviour
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -41,7 +41,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var codeSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            CodeTextView(codeState: behaviour != nil ? .notReady : previewViewModel.code)
+            CodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .padding(.horizontal, 2)
@@ -58,10 +58,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     @ViewBuilder
     private var activeTimerView: some View {
-        if behaviour != nil {
-            Color.blue
-                .transition(.move(edge: .leading))
-        } else {
+        switch behaviour {
+        case .normal:
             switch previewViewModel.code {
             case .visible:
                 timerView
@@ -74,6 +72,9 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 Color.red
                     .transition(.opacity)
             }
+        case .obfuscate:
+            Color.blue
+                .transition(.move(edge: .leading))
         }
     }
 }
@@ -128,7 +129,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     static func makePreview(
         issuer: String?,
         renderer: OTPCodeRendererMock,
-        behaviour: OTPViewBehaviour? = nil
+        behaviour: OTPViewBehaviour = .normal
     ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: "test@example.com",

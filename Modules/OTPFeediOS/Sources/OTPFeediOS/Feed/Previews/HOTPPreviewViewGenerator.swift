@@ -20,7 +20,7 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Ob
         self.timer = timer
     }
 
-    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
+    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
         viewFactory.makeHOTPView(
             viewModel: makePreviewViewModel(id: id, code: code),
             incrementer: makeIncrementerViewModel(id: id, code: code),

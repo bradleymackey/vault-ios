@@ -83,7 +83,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         accountName: String = "Test",
         issuer: String = "Issuer",
         state: OTPCodeState = .visible("123456"),
-        behaviour: OTPViewBehaviour? = nil
+        behaviour: OTPViewBehaviour = .normal
     ) -> some View {
         let preview = CodePreviewViewModel(accountName: accountName, issuer: issuer, fixedCodeState: state)
         return HOTPCodePreviewView(

@@ -26,7 +26,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
         self.timer = timer
     }
 
-    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour?) -> some View {
+    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
         viewFactory.makeTOTPView(
             viewModel: makeViewModelForCode(id: id, code: code),
             periodState: makeTimerPeriodState(period: code.period),

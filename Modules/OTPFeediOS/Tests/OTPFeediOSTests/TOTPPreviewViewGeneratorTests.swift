@@ -20,7 +20,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let sut = makeSUT()
 
-        let view = sut.makeOTPView(id: UUID(), code: anyTOTPCode(), behaviour: nil)
+        let view = sut.makeOTPView(id: UUID(), code: anyTOTPCode(), behaviour: .normal)
 
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, TOTP!")
@@ -44,13 +44,13 @@ extension TOTPPreviewViewGeneratorTests {
 
     private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
         var makeTOTPViewExecutedCount = 0
-        var makeTOTPViewExecuted: (CodePreviewViewModel, CodeTimerPeriodState, OTPViewBehaviour?) -> Void = { _, _, _ in
+        var makeTOTPViewExecuted: (CodePreviewViewModel, CodeTimerPeriodState, OTPViewBehaviour) -> Void = { _, _, _ in
         }
 
         func makeTOTPView(
             viewModel: CodePreviewViewModel,
             periodState: CodeTimerPeriodState,
-            behaviour: OTPViewBehaviour?
+            behaviour: OTPViewBehaviour
         ) -> some View {
             makeTOTPViewExecutedCount += 1
             makeTOTPViewExecuted(viewModel, periodState, behaviour)

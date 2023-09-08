@@ -18,7 +18,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let (sut, _, _) = makeSUT()
 
-        let view = sut.makeOTPView(id: UUID(), code: anyHOTPCode(), behaviour: nil)
+        let view = sut.makeOTPView(id: UUID(), code: anyHOTPCode(), behaviour: .normal)
 
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, HOTP!")
@@ -62,7 +62,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let (sut, _, _) = makeSUT()
 
         let id = UUID()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
         let code = sut.currentCode(id: id)
 
         XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
@@ -114,12 +114,12 @@ extension HOTPPreviewViewGeneratorTests {
 
     private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
         var makeHOTPViewExecutedCount = 0
-        var makeHOTPViewExecuted: (CodePreviewViewModel, CodeIncrementerViewModel, OTPViewBehaviour?)
+        var makeHOTPViewExecuted: (CodePreviewViewModel, CodeIncrementerViewModel, OTPViewBehaviour)
             -> Void = { _, _, _ in }
         func makeHOTPView(
             viewModel: CodePreviewViewModel,
             incrementer: CodeIncrementerViewModel,
-            behaviour: OTPViewBehaviour?
+            behaviour: OTPViewBehaviour
         ) -> some View {
             makeHOTPViewExecutedCount += 1
             makeHOTPViewExecuted(viewModel, incrementer, behaviour)
@@ -144,7 +144,7 @@ extension HOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))
@@ -176,7 +176,7 @@ extension HOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: nil)
+            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))

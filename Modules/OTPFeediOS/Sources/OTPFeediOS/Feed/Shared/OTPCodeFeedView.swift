@@ -56,13 +56,13 @@ public struct OTPCodeFeedView<
         .obfuscate(message: nil)
     }
 
-    private var currentBehaviour: OTPViewBehaviour? {
+    private var currentBehaviour: OTPViewBehaviour {
         if isEditing {
             return .obfuscate(message: localized(key: "action.tapToView"))
         } else if isReordering {
             return reorderingBehaviour
         } else {
-            return nil
+            return .normal
         }
     }
 
@@ -111,7 +111,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     }
 
     struct GenericGenerator: OTPViewGenerator {
-        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode, behaviour _: OTPViewBehaviour?) -> some View {
+        func makeOTPView(id _: UUID, code _: GenericOTPAuthCode, behaviour _: OTPViewBehaviour) -> some View {
             Text("Code")
         }
     }
