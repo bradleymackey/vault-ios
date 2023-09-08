@@ -43,7 +43,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         _ = group.wait(timeout: .now() + .seconds(1))
 
         XCTAssertEqual(viewModels.count, 2)
-        XCTAssertTrue(viewModels.allSatisfy { $0 === viewModels.first })
+        expectAllIdentical(in: viewModels)
     }
 
     func test_makeOTPView_returnsSameIncrementerInstanceUsingCachedViewModels() {
@@ -65,7 +65,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         _ = group.wait(timeout: .now() + .seconds(1))
 
         XCTAssertEqual(viewModels.count, 2)
-        XCTAssertTrue(viewModels.allSatisfy { $0 === viewModels.first })
+        expectAllIdentical(in: viewModels)
     }
 
     func test_currentCode_isNilIfCacheEmpty() {
@@ -110,5 +110,18 @@ extension HOTPPreviewViewGeneratorTests {
             makeHOTPViewExecuted(viewModel, incrementer, behaviour)
             return Text("Hello, world")
         }
+    }
+
+    private func expectAllIdentical(
+        in array: [some AnyObject],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) {
+        XCTAssertTrue(
+            array.allSatisfy { $0 === array.first },
+            "All items are not identical instances",
+            file: file,
+            line: line
+        )
     }
 }
