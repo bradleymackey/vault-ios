@@ -140,19 +140,22 @@ extension TOTPPreviewViewGeneratorTests {
         }
     }
 
-    private func collectCodePreviewViewModels(
+    private func collectFactoryParameters(
         sut: SUT,
         factory: MockTOTPViewFactory,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [CodePreviewViewModel] {
-        var viewModels = [CodePreviewViewModel]()
+    ) -> [(CodePreviewViewModel, CodeTimerPeriodState, MockCodeTimerUpdater)] {
+        var models = [(CodePreviewViewModel, CodeTimerPeriodState, MockCodeTimerUpdater)]()
 
         let group = DispatchGroup()
-        factory.makeTOTPViewExecuted = { viewModel, _, _, _ in
-            viewModels.append(viewModel)
-            group.leave()
+        factory.makeTOTPViewExecuted = { viewModel, periodState, updater, _ in
+            defer { group.leave() }
+            guard let mockUpdater = updater as? MockCodeTimerUpdater else {
+                return
+            }
+            models.append((viewModel, periodState, mockUpdater))
         }
 
         for id in ids {
@@ -163,13 +166,24 @@ extension TOTPPreviewViewGeneratorTests {
         _ = group.wait(timeout: .now() + .seconds(1))
 
         XCTAssertEqual(
-            viewModels.count,
+            models.count,
             ids.count,
             "Invariant failed, expected number of view models to match the number of IDs we requested",
             file: file,
             line: line
         )
-        return viewModels
+        return models
+    }
+
+    private func collectCodePreviewViewModels(
+        sut: SUT,
+        factory: MockTOTPViewFactory,
+        ids: [UUID],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [CodePreviewViewModel] {
+        collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
+            .map(\.0)
     }
 
     private func collectCodeTimerPeriodState(
@@ -179,29 +193,8 @@ extension TOTPPreviewViewGeneratorTests {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [CodeTimerPeriodState] {
-        var models = [CodeTimerPeriodState]()
-
-        let group = DispatchGroup()
-        factory.makeTOTPViewExecuted = { _, state, _, _ in
-            models.append(state)
-            group.leave()
-        }
-
-        for id in ids {
-            group.enter()
-            _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
-        }
-
-        _ = group.wait(timeout: .now() + .seconds(1))
-
-        XCTAssertEqual(
-            models.count,
-            ids.count,
-            "Invariant failed, expected number of models to match the number of IDs we requested",
-            file: file,
-            line: line
-        )
-        return models
+        collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
+            .map(\.1)
     }
 
     private func collectCodeTimerUpdaters(
@@ -211,33 +204,8 @@ extension TOTPPreviewViewGeneratorTests {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [MockCodeTimerUpdater] {
-        var models = [MockCodeTimerUpdater]()
-
-        let group = DispatchGroup()
-        factory.makeTOTPViewExecuted = { _, _, updater, _ in
-            defer { group.leave() }
-            guard let mock = updater as? MockCodeTimerUpdater else {
-                return
-            }
-            models.append(mock)
-        }
-
-        for id in ids {
-            group.enter()
-            _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
-        }
-
-        _ = group.wait(timeout: .now() + .seconds(1))
-
-        XCTAssertEqual(
-            models.count,
-            ids.count,
-            "Invariant failed, expected number of models to match the number of IDs we requested",
-            file: file,
-            line: line
-        )
-
-        return models
+        collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
+            .map(\.2)
     }
 
     private final class MockCodeTimerUpdaterFactory: CodeTimerUpdaterFactory {
