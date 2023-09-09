@@ -7,6 +7,7 @@ public struct SettingsHomeView: View {
     public var body: some View {
         Form {
             aboutSection
+            viewOptionsSection
             exportSection
             policySection
         }
@@ -25,6 +26,22 @@ public struct SettingsHomeView: View {
                     color: .blue
                 )
             }
+        }
+    }
+
+    private var viewOptionsSection: some View {
+        Section {
+            NavigationLink {
+                Text("View Size")
+            } label: {
+                FormRow(
+                    title: localized(key: "viewOptions.previewSize.title"),
+                    image: Image(systemName: "rectangle.inset.filled"),
+                    color: .green
+                )
+            }
+        } header: {
+            Text(localized(key: "home.header.viewOptions.title"))
         }
     }
 

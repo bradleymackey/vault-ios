@@ -1,10 +1,13 @@
 "TEST_KEY_DONT_CHANGE" = "TEST_VALUE_DONT_CHANGE";
 
 "home.title" = "Settings";
+"home.header.viewOptions.title" = "View Options";
 "home.header.export.title" = "Export";
 "home.header.policyAndLegal.title" = "Policy and Legal";
 
 "about.title" = "About";
+
+"viewOptions.previewSize.title" = "Code Box Size";
 
 "saveBackup.title" = "Save Backup";
 
