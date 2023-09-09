@@ -44,7 +44,7 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Ob
 // MARK: - Caching
 
 extension HOTPPreviewViewGenerator: CodeDetailCache {
-    public func invalidateCache(id: UUID) {
+    public func invalidateCodeDetailCache(forCodeWithID id: UUID) {
         rendererCache.remove(key: id)
         previewViewModelCache.remove(key: id)
         incrementerViewModelCache.remove(key: id)

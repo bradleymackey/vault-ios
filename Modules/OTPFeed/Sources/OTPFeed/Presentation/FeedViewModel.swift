@@ -60,7 +60,7 @@ extension FeedViewModel: CodeFeed {
 
     private func invalidateCaches(id: UUID) {
         for cache in caches {
-            cache.invalidateCache(id: id)
+            cache.invalidateCodeDetailCache(forCodeWithID: id)
         }
     }
 }

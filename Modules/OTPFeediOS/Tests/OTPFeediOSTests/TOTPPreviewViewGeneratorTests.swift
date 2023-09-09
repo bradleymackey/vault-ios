@@ -82,7 +82,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(sut.cachedPeriodStateCount, 1)
         XCTAssertEqual(sut.cachedTimerControllerCount, 1)
 
-        sut.invalidateCache(id: id)
+        sut.invalidateCodeDetailCache(forCodeWithID: id)
 
         XCTAssertEqual(sut.cachedViewsCount, 0)
         XCTAssertEqual(sut.cachedPeriodStateCount, 1, "This is shared across codes, and should not be invalidated")

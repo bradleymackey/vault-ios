@@ -58,7 +58,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
 // MARK: - Caching
 
 extension TOTPPreviewViewGenerator: CodeDetailCache {
-    public func invalidateCache(id: UUID) {
+    public func invalidateCodeDetailCache(forCodeWithID id: UUID) {
         viewModelCache.remove(key: id)
         // don't invalidate period caches, as they are independant of the code detail
     }

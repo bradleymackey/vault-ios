@@ -189,7 +189,7 @@ final class FeedViewModelTests: XCTestCase {
 
     private final class StubCodeCache: CodeDetailCache {
         var calledInvalidate = [UUID]()
-        func invalidateCache(id: UUID) {
+        func invalidateCodeDetailCache(forCodeWithID id: UUID) {
             calledInvalidate.append(id)
         }
     }
