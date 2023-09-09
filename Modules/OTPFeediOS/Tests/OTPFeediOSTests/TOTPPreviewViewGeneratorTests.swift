@@ -35,6 +35,16 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(viewModels.count, 2)
         expectAllIdentical(in: viewModels)
     }
+
+    func test_makeOTPView_returnsSameTimerPeriodStateUsingCachedModels() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
+        let sharedID = UUID()
+        let models = collectCodeTimerPeriodState(sut: sut, factory: factory, ids: [sharedID, sharedID])
+
+        XCTAssertEqual(models.count, 2)
+        expectAllIdentical(in: models)
+    }
 }
 
 extension TOTPPreviewViewGeneratorTests {
@@ -98,5 +108,37 @@ extension TOTPPreviewViewGeneratorTests {
             line: line
         )
         return viewModels
+    }
+
+    private func collectCodeTimerPeriodState(
+        sut: SUT,
+        factory: MockTOTPViewFactory,
+        ids: [UUID],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [CodeTimerPeriodState] {
+        var models = [CodeTimerPeriodState]()
+
+        let group = DispatchGroup()
+        factory.makeTOTPViewExecuted = { _, state, _ in
+            models.append(state)
+            group.leave()
+        }
+
+        for id in ids {
+            group.enter()
+            _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
+        }
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        XCTAssertEqual(
+            models.count,
+            ids.count,
+            "Invariant failed, expected number of models to match the number of IDs we requested",
+            file: file,
+            line: line
+        )
+        return models
     }
 }
