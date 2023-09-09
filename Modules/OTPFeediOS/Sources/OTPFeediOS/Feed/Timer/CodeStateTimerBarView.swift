@@ -20,7 +20,7 @@ struct CodeStateTimerBarView<Timer: View>: View {
             }
         }
         .animation(.easeOut, value: behaviour)
-        .clipShape(RoundedRectangle(cornerRadius: containerHeight))
+        .clipShape(RoundedRectangle(cornerRadius: barHeight))
     }
 
     private var containerHeight: Double {

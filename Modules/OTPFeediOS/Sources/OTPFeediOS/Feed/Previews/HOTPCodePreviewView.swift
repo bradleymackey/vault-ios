@@ -7,6 +7,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     @ObservedObject var previewViewModel: CodePreviewViewModel
     var behaviour: OTPViewBehaviour
 
+    @Namespace private var codeTimerAnimation
+
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
@@ -27,15 +29,17 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             switch previewViewModel.code {
             case .visible:
                 Color.blue
-                    .transition(.identity)
+                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .notReady, .obfuscated:
                 Color.gray
+                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .error, .finished:
                 Color.red
+                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             }
         case .obfuscate:
             Color.blue
-                .transition(.identity)
+                .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
         }
     }
 

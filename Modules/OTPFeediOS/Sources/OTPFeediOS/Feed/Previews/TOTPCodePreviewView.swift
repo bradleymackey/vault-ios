@@ -8,6 +8,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     var timerView: TimerBar
     var behaviour: OTPViewBehaviour
 
+    @Namespace private var codeTimerAnimation
+
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
@@ -63,18 +65,18 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             switch previewViewModel.code {
             case .visible:
                 timerView
-                    .transition(.opacity)
+                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .finished, .notReady, .obfuscated:
                 Color.gray
                     .redacted(reason: .placeholder)
-                    .transition(.opacity)
+                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .error:
                 Color.red
-                    .transition(.opacity)
+                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             }
         case .obfuscate:
             Color.blue
-                .transition(.move(edge: .leading))
+                .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
         }
     }
 }
