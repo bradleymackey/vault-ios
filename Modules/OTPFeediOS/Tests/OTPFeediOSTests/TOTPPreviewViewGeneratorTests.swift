@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import OTPCore
 import OTPFeed
@@ -87,16 +88,33 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(sut.cachedPeriodStateCount, 1, "This is shared across codes, and should not be invalidated")
         XCTAssertEqual(sut.cachedTimerControllerCount, 1, "This is shared across codes, and should not be invalidated")
     }
+
+    func test_recalculateAllTimers_recalculatesAllCachedTimers() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
+        let updaters = collectCodeTimerUpdaters(sut: sut, factory: factory, ids: [UUID(), UUID(), UUID()])
+
+        for updater in updaters {
+            XCTAssertEqual(updater.recalculateCallCount, 0)
+        }
+
+        sut.recalculateAllTimers()
+
+        for updater in updaters {
+            XCTAssertEqual(updater.recalculateCallCount, 1)
+        }
+    }
 }
 
 extension TOTPPreviewViewGeneratorTests {
     private typealias SUT = TOTPPreviewViewGenerator<MockTOTPViewFactory>
     private func makeSUT(
         factory: MockTOTPViewFactory = MockTOTPViewFactory(),
+        updaterFactory: MockCodeTimerUpdaterFactory = MockCodeTimerUpdaterFactory(),
         clock: EpochClock = EpochClock { 100 },
         timer: MockIntervalTimer = MockIntervalTimer()
     ) -> SUT {
-        SUT(viewFactory: factory, clock: clock, timer: timer)
+        SUT(viewFactory: factory, updaterFactory: updaterFactory, clock: clock, timer: timer)
     }
 
     private func anyTOTPCode() -> TOTPAuthCode {
@@ -106,16 +124,18 @@ extension TOTPPreviewViewGeneratorTests {
 
     private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
         var makeTOTPViewExecutedCount = 0
-        var makeTOTPViewExecuted: (CodePreviewViewModel, CodeTimerPeriodState, OTPViewBehaviour) -> Void = { _, _, _ in
-        }
+        var makeTOTPViewExecuted: (CodePreviewViewModel, CodeTimerPeriodState, any CodeTimerUpdater, OTPViewBehaviour)
+            -> Void = { _, _, _, _ in
+            }
 
         func makeTOTPView(
             viewModel: CodePreviewViewModel,
             periodState: CodeTimerPeriodState,
+            updater: any CodeTimerUpdater,
             behaviour: OTPViewBehaviour
         ) -> some View {
             makeTOTPViewExecutedCount += 1
-            makeTOTPViewExecuted(viewModel, periodState, behaviour)
+            makeTOTPViewExecuted(viewModel, periodState, updater, behaviour)
             return Text("Hello, TOTP!")
         }
     }
@@ -130,7 +150,7 @@ extension TOTPPreviewViewGeneratorTests {
         var viewModels = [CodePreviewViewModel]()
 
         let group = DispatchGroup()
-        factory.makeTOTPViewExecuted = { viewModel, _, _ in
+        factory.makeTOTPViewExecuted = { viewModel, _, _, _ in
             viewModels.append(viewModel)
             group.leave()
         }
@@ -162,7 +182,7 @@ extension TOTPPreviewViewGeneratorTests {
         var models = [CodeTimerPeriodState]()
 
         let group = DispatchGroup()
-        factory.makeTOTPViewExecuted = { _, state, _ in
+        factory.makeTOTPViewExecuted = { _, state, _, _ in
             models.append(state)
             group.leave()
         }
@@ -182,5 +202,64 @@ extension TOTPPreviewViewGeneratorTests {
             line: line
         )
         return models
+    }
+
+    private func collectCodeTimerUpdaters(
+        sut: SUT,
+        factory: MockTOTPViewFactory,
+        ids: [UUID],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [MockCodeTimerUpdater] {
+        var models = [MockCodeTimerUpdater]()
+
+        let group = DispatchGroup()
+        factory.makeTOTPViewExecuted = { _, _, updater, _ in
+            defer { group.leave() }
+            guard let mock = updater as? MockCodeTimerUpdater else {
+                return
+            }
+            models.append(mock)
+        }
+
+        for id in ids {
+            group.enter()
+            _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
+        }
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        XCTAssertEqual(
+            models.count,
+            ids.count,
+            "Invariant failed, expected number of models to match the number of IDs we requested",
+            file: file,
+            line: line
+        )
+
+        return models
+    }
+
+    private final class MockCodeTimerUpdaterFactory: CodeTimerUpdaterFactory {
+        func makeUpdater(period: UInt64) -> CodeTimerUpdater {
+            MockCodeTimerUpdater(period: period)
+        }
+    }
+
+    private final class MockCodeTimerUpdater: CodeTimerUpdater {
+        let period: UInt64
+        init(period: UInt64) {
+            self.period = period
+        }
+
+        private(set) var recalculateCallCount = 0
+        func recalculate() {
+            recalculateCallCount += 1
+        }
+
+        let timerUpdatedPublisherSubject = PassthroughSubject<OTPFeed.OTPTimerState, Never>()
+        func timerUpdatedPublisher() -> AnyPublisher<OTPFeed.OTPTimerState, Never> {
+            timerUpdatedPublisherSubject.eraseToAnyPublisher()
+        }
     }
 }

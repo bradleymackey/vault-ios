@@ -17,11 +17,11 @@ extension Publisher where Output == UInt32 {
     }
 }
 
-public final class TOTPCodeRenderer<Timer: CodeTimerUpdater>: OTPCodeRenderer {
-    private let timer: Timer
+public final class TOTPCodeRenderer: OTPCodeRenderer {
+    private let timer: any CodeTimerUpdater
     private let totpGenerator: TOTPGenerator
 
-    public init(timer: Timer, totpGenerator: TOTPGenerator) {
+    public init(timer: any CodeTimerUpdater, totpGenerator: TOTPGenerator) {
         self.timer = timer
         self.totpGenerator = totpGenerator
     }

@@ -13,15 +13,22 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
     public typealias Code = TOTPAuthCode
 
     let viewFactory: Factory
+    let updaterFactory: any CodeTimerUpdaterFactory
     let clock: EpochClock
     let timer: any IntervalTimer
 
-    private var timerControllerCache = Cache<UInt64, CodeTimerController>()
+    private var timerUpdaterCache = Cache<UInt64, any CodeTimerUpdater>()
     private var timerPeriodStateCache = Cache<UInt64, CodeTimerPeriodState>()
     private var viewModelCache = Cache<UUID, CodePreviewViewModel>()
 
-    public init(viewFactory: Factory, clock: EpochClock, timer: any IntervalTimer) {
+    public init(
+        viewFactory: Factory,
+        updaterFactory: any CodeTimerUpdaterFactory,
+        clock: EpochClock,
+        timer: any IntervalTimer
+    ) {
         self.viewFactory = viewFactory
+        self.updaterFactory = updaterFactory
         self.clock = clock
         self.timer = timer
     }
@@ -30,6 +37,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
         viewFactory.makeTOTPView(
             viewModel: makeViewModelForCode(id: id, code: code),
             periodState: makeTimerPeriodState(period: code.period),
+            updater: makeTimerController(period: code.period),
             behaviour: behaviour
         )
     }
@@ -41,8 +49,8 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
     }
 
     public func recalculateAllTimers() {
-        for timerController in timerControllerCache.values {
-            timerController.recalculate()
+        for timerUpdater in timerUpdaterCache.values {
+            timerUpdater.recalculate()
         }
     }
 }
@@ -61,16 +69,16 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
     }
 
     var cachedTimerControllerCount: Int {
-        timerControllerCache.count
+        timerUpdaterCache.count
     }
 
     var cachedPeriodStateCount: Int {
         timerPeriodStateCache.count
     }
 
-    private func makeTimerController(period: UInt64) -> CodeTimerController {
-        timerControllerCache.getOrCreateValue(for: period) {
-            CodeTimerController(timer: timer, period: period, clock: clock)
+    private func makeTimerController(period: UInt64) -> any CodeTimerUpdater {
+        timerUpdaterCache.getOrCreateValue(for: period) {
+            updaterFactory.makeUpdater(period: period)
         }
     }
 

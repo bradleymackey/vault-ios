@@ -19,6 +19,8 @@ struct CodeManagerApp: App {
     @State private var isShowingCopyPaste = false
 
     init() {
+        let timer = LiveIntervalTimer()
+        let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
         let store = InMemoryCodeStore(codes: [
             DemoCodeFactory.totpCode(issuer: "I1"),
             DemoCodeFactory.totpCode(issuer: "Cloudflare"),
@@ -27,10 +29,11 @@ struct CodeManagerApp: App {
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: RealTOTPPreviewViewFactory(),
-            clock: EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 }),
-            timer: LiveIntervalTimer()
+            updaterFactory: CodeTimerControllerFactory(timer: timer, clock: clock),
+            clock: clock,
+            timer: timer
         )
-        let hotp = HOTPPreviewViewGenerator(viewFactory: RealHOTPPreviewViewFactory(), timer: LiveIntervalTimer())
+        let hotp = HOTPPreviewViewGenerator(viewFactory: RealHOTPPreviewViewFactory(), timer: timer)
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
 
         _totpPreviewGenerator = StateObject(wrappedValue: totp)
