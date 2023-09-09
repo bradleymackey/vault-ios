@@ -25,6 +25,16 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, TOTP!")
     }
+
+    func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
+        let sharedID = UUID()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
+
+        XCTAssertEqual(viewModels.count, 2)
+        expectAllIdentical(in: viewModels)
+    }
 }
 
 extension TOTPPreviewViewGeneratorTests {
@@ -56,5 +66,37 @@ extension TOTPPreviewViewGeneratorTests {
             makeTOTPViewExecuted(viewModel, periodState, behaviour)
             return Text("Hello, TOTP!")
         }
+    }
+
+    private func collectCodePreviewViewModels(
+        sut: SUT,
+        factory: MockTOTPViewFactory,
+        ids: [UUID],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> [CodePreviewViewModel] {
+        var viewModels = [CodePreviewViewModel]()
+
+        let group = DispatchGroup()
+        factory.makeTOTPViewExecuted = { viewModel, _, _ in
+            viewModels.append(viewModel)
+            group.leave()
+        }
+
+        for id in ids {
+            group.enter()
+            _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
+        }
+
+        _ = group.wait(timeout: .now() + .seconds(1))
+
+        XCTAssertEqual(
+            viewModels.count,
+            ids.count,
+            "Invariant failed, expected number of view models to match the number of IDs we requested",
+            file: file,
+            line: line
+        )
+        return viewModels
     }
 }
