@@ -50,6 +50,18 @@ extension HOTPPreviewViewGenerator: CodeDetailCache {
         incrementerViewModelCache.remove(key: id)
     }
 
+    var cachedViewsCount: Int {
+        previewViewModelCache.count
+    }
+
+    var cachedRendererCount: Int {
+        rendererCache.count
+    }
+
+    var cachedIncrementerCount: Int {
+        incrementerViewModelCache.count
+    }
+
     private func makeRenderer(id: UUID, code: HOTPAuthCode) -> HOTPCodeRenderer {
         rendererCache.getOrCreateValue(for: id) {
             HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())

@@ -1,10 +1,10 @@
 import Foundation
 import OTPCore
 import OTPFeed
-import OTPFeediOS
 import SwiftUI
 import TestHelpers
 import XCTest
+@testable import OTPFeediOS
 
 @MainActor
 final class TOTPPreviewViewGeneratorTests: XCTestCase {
@@ -32,6 +32,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let sharedID = UUID()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
+        XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(viewModels.count, 2)
         expectAllIdentical(in: viewModels)
     }
@@ -67,6 +68,24 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let code = sut.currentCode(id: id)
 
         XCTAssertEqual(code, "123456")
+    }
+
+    func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
+        let id = UUID()
+
+        _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
+
+        XCTAssertEqual(sut.cachedViewsCount, 1)
+        XCTAssertEqual(sut.cachedPeriodStateCount, 1)
+        XCTAssertEqual(sut.cachedTimerControllerCount, 1)
+
+        sut.invalidateCache(id: id)
+
+        XCTAssertEqual(sut.cachedViewsCount, 0)
+        XCTAssertEqual(sut.cachedPeriodStateCount, 1, "This is shared across codes, and should not be invalidated")
+        XCTAssertEqual(sut.cachedTimerControllerCount, 1, "This is shared across codes, and should not be invalidated")
     }
 }
 

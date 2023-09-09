@@ -55,6 +55,19 @@ extension TOTPPreviewViewGenerator: CodeDetailCache {
         // don't invalidate period caches, as they are independant of the code detail
     }
 
+    /// The number of views models that are currently held in cache.
+    var cachedViewsCount: Int {
+        viewModelCache.count
+    }
+
+    var cachedTimerControllerCount: Int {
+        timerControllerCache.count
+    }
+
+    var cachedPeriodStateCount: Int {
+        timerPeriodStateCache.count
+    }
+
     private func makeTimerController(period: UInt64) -> CodeTimerController {
         timerControllerCache.getOrCreateValue(for: period) {
             CodeTimerController(timer: timer, period: period, clock: clock)

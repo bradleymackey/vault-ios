@@ -1,10 +1,10 @@
 import Foundation
 import OTPCore
 import OTPFeed
-import OTPFeediOS
 import SwiftUI
 import TestHelpers
 import XCTest
+@testable import OTPFeediOS
 
 @MainActor
 final class HOTPPreviewViewGeneratorTests: XCTestCase {
@@ -37,6 +37,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let sharedID = UUID()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
+        XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(viewModels.count, 2)
         expectAllIdentical(in: viewModels)
     }
@@ -95,6 +96,24 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         sut.hideAllCodesUntilNextUpdate()
 
         XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
+    }
+
+    func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
+        let (sut, _, _) = makeSUT()
+
+        let id = UUID()
+
+        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
+
+        XCTAssertEqual(sut.cachedViewsCount, 1)
+        XCTAssertEqual(sut.cachedRendererCount, 1)
+        XCTAssertEqual(sut.cachedIncrementerCount, 1)
+
+        sut.invalidateCache(id: id)
+
+        XCTAssertEqual(sut.cachedViewsCount, 0)
+        XCTAssertEqual(sut.cachedRendererCount, 0)
+        XCTAssertEqual(sut.cachedIncrementerCount, 0)
     }
 }
 
