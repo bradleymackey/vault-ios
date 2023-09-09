@@ -6,27 +6,12 @@ public struct SettingsHomeView: View {
 
     public var body: some View {
         Form {
-            aboutSection
             viewOptionsSection
             exportSection
             policySection
         }
         .navigationTitle(localized(key: "home.title"))
         .navigationBarTitleDisplayMode(.inline)
-    }
-
-    private var aboutSection: some View {
-        Section {
-            NavigationLink {
-                Text(localized(key: "about.title"))
-            } label: {
-                FormRow(
-                    title: localized(key: "about.title"),
-                    image: Image(systemName: "key.fill"),
-                    color: .blue
-                )
-            }
-        }
     }
 
     private var viewOptionsSection: some View {
@@ -40,8 +25,6 @@ public struct SettingsHomeView: View {
                     color: .green
                 )
             }
-        } header: {
-            Text(localized(key: "home.header.viewOptions.title"))
         }
     }
 
@@ -91,6 +74,16 @@ public struct SettingsHomeView: View {
 
     private var policySection: some View {
         Section {
+            NavigationLink {
+                Text(localized(key: "about.title"))
+            } label: {
+                FormRow(
+                    title: localized(key: "about.title"),
+                    image: Image(systemName: "key.fill"),
+                    color: .blue
+                )
+            }
+
             NavigationLink {
                 Text("Info about Open Source, on GitHub")
             } label: {
