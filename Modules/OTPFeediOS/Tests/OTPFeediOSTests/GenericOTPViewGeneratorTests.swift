@@ -1,0 +1,127 @@
+import Foundation
+import OTPCore
+import OTPFeediOS
+import SwiftUI
+import TestHelpers
+import XCTest
+
+@MainActor
+final class GenericOTPViewGeneratorTests: XCTestCase {
+    func test_init_hasNoSideEffects() {
+        let totp = MockTOTPGenerator()
+        let hotp = MockHOTPGenerator()
+        _ = makeSUT(totp: totp, hotp: hotp)
+
+        XCTAssertEqual(totp.calledMethods, [])
+        XCTAssertEqual(hotp.calledMethods, [])
+    }
+
+    func test_makeOTPView_makesTOTPViewForTOTP() throws {
+        let totp = MockTOTPGenerator()
+        let hotp = MockHOTPGenerator()
+        let sut = makeSUT(totp: totp, hotp: hotp)
+
+        let code = GenericOTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
+        let view = sut.makeOTPView(id: UUID(), code: code, behaviour: .normal)
+
+        let text = try view.inspect().text().string()
+        XCTAssertEqual(text, "TOTP")
+    }
+
+    func test_makeOTPView_makesHOTPViewForHOTP() throws {
+        let totp = MockTOTPGenerator()
+        let hotp = MockHOTPGenerator()
+        let sut = makeSUT(totp: totp, hotp: hotp)
+
+        let code = GenericOTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
+        let view = sut.makeOTPView(id: UUID(), code: code, behaviour: .normal)
+
+        let text = try view.inspect().text().string()
+        XCTAssertEqual(text, "HOTP")
+    }
+
+    func test_scenePhaseDidChange_callsOnAllCollaborators() {
+        let totp = MockTOTPGenerator()
+        let hotp = MockHOTPGenerator()
+        let sut = makeSUT(totp: totp, hotp: hotp)
+
+        sut.scenePhaseDidChange(to: .active)
+
+        XCTAssertEqual(totp.calledMethods, ["scenePhaseDidChange(to:)"])
+        XCTAssertEqual(hotp.calledMethods, ["scenePhaseDidChange(to:)"])
+    }
+
+    func test_didAppear_callsOnAllCollaborators() {
+        let totp = MockTOTPGenerator()
+        let hotp = MockHOTPGenerator()
+        let sut = makeSUT(totp: totp, hotp: hotp)
+
+        sut.didAppear()
+
+        XCTAssertEqual(totp.calledMethods, ["didAppear()"])
+        XCTAssertEqual(hotp.calledMethods, ["didAppear()"])
+    }
+}
+
+extension GenericOTPViewGeneratorTests {
+    private typealias SUT = GenericOTPViewGenerator<MockTOTPGenerator, MockHOTPGenerator>
+    private func makeSUT(
+        totp: MockTOTPGenerator,
+        hotp: MockHOTPGenerator
+    ) -> SUT {
+        GenericOTPViewGenerator(
+            totpGenerator: totp,
+            hotpGenerator: hotp
+        )
+    }
+
+    private class MockHOTPGenerator: OTPViewGenerator, OTPCodeProvider {
+        typealias Code = HOTPAuthCode
+        private(set) var calledMethods = [String]()
+
+        @MainActor
+        init() {}
+
+        func makeOTPView(id _: UUID, code _: Code, behaviour _: OTPViewBehaviour) -> some View {
+            Text("HOTP")
+        }
+
+        func scenePhaseDidChange(to _: ScenePhase) {
+            calledMethods.append(#function)
+        }
+
+        func didAppear() {
+            calledMethods.append(#function)
+        }
+
+        func currentVisibleCode(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return "some code"
+        }
+    }
+
+    private class MockTOTPGenerator: OTPViewGenerator, OTPCodeProvider {
+        typealias Code = TOTPAuthCode
+        private(set) var calledMethods = [String]()
+
+        @MainActor
+        init() {}
+
+        func makeOTPView(id _: UUID, code _: Code, behaviour _: OTPViewBehaviour) -> some View {
+            Text("TOTP")
+        }
+
+        func scenePhaseDidChange(to _: ScenePhase) {
+            calledMethods.append(#function)
+        }
+
+        func didAppear() {
+            calledMethods.append(#function)
+        }
+
+        func currentVisibleCode(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return "some code"
+        }
+    }
+}
