@@ -92,16 +92,27 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_recalculateAllTimers_recalculatesAllCachedTimers() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
-        let updaters = collectCodeTimerUpdaters(sut: sut, factory: factory, ids: [UUID(), UUID(), UUID()])
 
-        for updater in updaters {
-            XCTAssertEqual(updater.recalculateCallCount, 0)
+        expectRecalculatesCachedTimers(sut: sut, factory: factory) {
+            sut.recalculateAllTimers()
         }
+    }
 
-        sut.recalculateAllTimers()
+    func test_scenePhaseDidChange_activeRecalculatesAllCachedTimers() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
 
-        for updater in updaters {
-            XCTAssertEqual(updater.recalculateCallCount, 1)
+        expectRecalculatesCachedTimers(sut: sut, factory: factory) {
+            sut.scenePhaseDidChange(to: .active)
+        }
+    }
+
+    func test_didAppear_recalculatesAllCachedTimers() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
+
+        expectRecalculatesCachedTimers(sut: sut, factory: factory) {
+            sut.didAppear()
         }
     }
 }
@@ -120,6 +131,20 @@ extension TOTPPreviewViewGeneratorTests {
     private func anyTOTPCode() -> TOTPAuthCode {
         let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
         return .init(data: codeData)
+    }
+
+    private func expectRecalculatesCachedTimers(sut: SUT, factory: MockTOTPViewFactory, when action: () -> Void) {
+        let updaters = collectCodeTimerUpdaters(sut: sut, factory: factory, ids: [UUID(), UUID(), UUID()])
+
+        for updater in updaters {
+            XCTAssertEqual(updater.recalculateCallCount, 0)
+        }
+
+        action()
+
+        for updater in updaters {
+            XCTAssertEqual(updater.recalculateCallCount, 1)
+        }
     }
 
     private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
