@@ -28,16 +28,29 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Ob
         )
     }
 
-    /// Get the current visible code for a given generated code.
-    public func currentCode(id: UUID) -> String? {
-        guard let cached = previewViewModelCache[id] else { return nil }
-        return cached.code.visibleCode
+    public func scenePhaseDidChange(to scene: ScenePhase) {
+        if scene == .background {
+            hideAllCodesUntilNextUpdate()
+        }
     }
 
-    public func hideAllCodesUntilNextUpdate() {
+    public func didAppear() {
+        // noop
+    }
+}
+
+public extension HOTPPreviewViewGenerator {
+    func hideAllCodesUntilNextUpdate() {
         for viewModel in previewViewModelCache.values {
             viewModel.hideCodeUntilNextUpdate()
         }
+    }
+}
+
+extension HOTPPreviewViewGenerator: OTPCodeProvider {
+    public func currentVisibleCode(id: UUID) -> String? {
+        guard let cached = previewViewModelCache[id] else { return nil }
+        return cached.code.visibleCode
     }
 }
 

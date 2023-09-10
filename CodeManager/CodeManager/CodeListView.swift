@@ -11,10 +11,11 @@ import OTPFeediOS
 import SwiftUI
 
 @MainActor
-struct CodeListView<Store: OTPCodeStore>: View {
+struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodeProvider>: View
+    where Generator.Code == GenericOTPAuthCode
+{
     @ObservedObject var feedViewModel: FeedViewModel<Store>
-    @ObservedObject var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
-    @ObservedObject var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
+    var viewGenerator: Generator
 
     @EnvironmentObject var pasteboard: Pasteboard
     @State private var isEditing = false
@@ -35,22 +36,7 @@ struct CodeListView<Store: OTPCodeStore>: View {
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
-            viewGenerator: GenericOTPViewGenerator { id, code, behaviour in
-                switch code.type {
-                case let .totp(period):
-                    totpEditingGenerator().makeOTPView(
-                        id: id,
-                        code: .init(period: period, data: code.data),
-                        behaviour: behaviour
-                    )
-                case let .hotp(counter):
-                    hotpEditingGenerator().makeOTPView(
-                        id: id,
-                        code: .init(counter: counter, data: code.data),
-                        behaviour: behaviour
-                    )
-                }
-            },
+            viewGenerator: interactableViewGenerator(),
             isEditing: $isEditing,
             gridSpacing: 12
         )
@@ -79,17 +65,11 @@ struct CodeListView<Store: OTPCodeStore>: View {
                 }
             }
         }
-        .onChange(of: scenePhase) { newValue in
-            if newValue == .background {
-                hotpPreviewGenerator.hideAllCodesUntilNextUpdate()
-            }
-
-            if newValue == .active {
-                totpPreviewGenerator.recalculateAllTimers()
-            }
+        .onChange(of: scenePhase) { _ in
+            viewGenerator.scenePhaseDidChange(to: scenePhase)
         }
         .onAppear {
-            totpPreviewGenerator.recalculateAllTimers()
+            viewGenerator.didAppear()
         }
     }
 
@@ -109,50 +89,16 @@ struct CodeListView<Store: OTPCodeStore>: View {
         }
     }
 
-    func totpEditingGenerator()
-        -> OTPOnTapDecoratorViewGenerator<TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>>
+    func interactableViewGenerator()
+        -> OTPOnTapDecoratorViewGenerator<Generator>
     {
-        OTPOnTapDecoratorViewGenerator(
-            generator: totpPreviewGenerator,
-            onTap: { id in
-                if isEditing {
-                    guard let code = feedViewModel.code(id: id) else { return }
-                    modal = .detail(id, code)
-                } else if let code = totpPreviewGenerator.currentCode(id: id) {
-                    pasteboard.copy(code)
-                }
+        OTPOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
+            if isEditing {
+                guard let code = feedViewModel.code(id: id) else { return }
+                modal = .detail(id, code)
+            } else if let code = viewGenerator.currentVisibleCode(id: id) {
+                pasteboard.copy(code)
             }
-        )
-    }
-
-    func hotpEditingGenerator()
-        -> OTPOnTapDecoratorViewGenerator<HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>>
-    {
-        OTPOnTapDecoratorViewGenerator(
-            generator: hotpPreviewGenerator,
-            onTap: { id in
-                if isEditing {
-                    guard let code = feedViewModel.code(id: id) else { return }
-                    modal = .detail(id, code)
-                } else if let code = hotpPreviewGenerator.currentCode(id: id) {
-                    pasteboard.copy(code)
-                }
-            }
-        )
-    }
-}
-
-struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGenerator {
-    typealias Code = Generator.Code
-    let generator: Generator
-    let onTap: (UUID) -> Void
-
-    func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
-        Button {
-            onTap(id)
-        } label: {
-            generator.makeOTPView(id: id, code: code, behaviour: behaviour)
-                .modifier(OTPCardViewModifier())
         }
     }
 }

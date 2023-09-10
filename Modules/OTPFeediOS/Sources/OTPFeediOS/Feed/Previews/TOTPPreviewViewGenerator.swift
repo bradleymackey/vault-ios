@@ -42,16 +42,29 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Ob
         )
     }
 
-    /// Get the current visible code for a given generated code.
-    public func currentCode(id: UUID) -> String? {
-        guard let viewModel = viewModelCache[id] else { return nil }
-        return viewModel.code.visibleCode
+    public func scenePhaseDidChange(to scene: ScenePhase) {
+        if scene == .active {
+            recalculateAllTimers()
+        }
     }
 
-    public func recalculateAllTimers() {
+    public func didAppear() {
+        recalculateAllTimers()
+    }
+}
+
+public extension TOTPPreviewViewGenerator {
+    func recalculateAllTimers() {
         for timerUpdater in timerUpdaterCache.values {
             timerUpdater.recalculate()
         }
+    }
+}
+
+extension TOTPPreviewViewGenerator: OTPCodeProvider {
+    public func currentVisibleCode(id: UUID) -> String? {
+        guard let viewModel = viewModelCache[id] else { return nil }
+        return viewModel.code.visibleCode
     }
 }
 

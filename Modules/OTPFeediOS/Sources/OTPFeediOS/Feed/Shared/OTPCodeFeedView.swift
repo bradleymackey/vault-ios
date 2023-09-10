@@ -114,5 +114,13 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
         func makeOTPView(id _: UUID, code _: GenericOTPAuthCode, behaviour _: OTPViewBehaviour) -> some View {
             Text("Code")
         }
+
+        func scenePhaseDidChange(to _: ScenePhase) {
+            // noop
+        }
+
+        func didAppear() {
+            // noop
+        }
     }
 }

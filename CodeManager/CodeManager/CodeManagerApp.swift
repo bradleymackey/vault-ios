@@ -33,12 +33,15 @@ struct CodeManagerApp: App {
             clock: clock,
             timer: timer
         )
-        let hotp = HOTPPreviewViewGenerator(viewFactory: RealHOTPPreviewViewFactory(), timer: timer)
+        let hotp = HOTPPreviewViewGenerator(
+            viewFactory: RealHOTPPreviewViewFactory(),
+            timer: timer
+        )
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
 
+        _feedViewModel = StateObject(wrappedValue: feed)
         _totpPreviewGenerator = StateObject(wrappedValue: totp)
         _hotpPreviewGenerator = StateObject(wrappedValue: hotp)
-        _feedViewModel = StateObject(wrappedValue: feed)
     }
 
     var body: some Scene {
@@ -47,8 +50,10 @@ struct CodeManagerApp: App {
                 NavigationStack {
                     CodeListView(
                         feedViewModel: feedViewModel,
-                        totpPreviewGenerator: totpPreviewGenerator,
-                        hotpPreviewGenerator: hotpPreviewGenerator
+                        viewGenerator: GenericOTPViewGenerator(
+                            totpGenerator: totpPreviewGenerator,
+                            hotpGenerator: hotpPreviewGenerator
+                        )
                     )
                     .environmentObject(pasteboard)
                 }
