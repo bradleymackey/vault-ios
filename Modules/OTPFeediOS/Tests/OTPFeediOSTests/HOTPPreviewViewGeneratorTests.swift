@@ -85,17 +85,18 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
     func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {
         let (sut, _, factory) = makeSUT()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
 
-        for viewModel in viewModels {
-            viewModel.update(code: .visible("1234"))
+        expectHidesAllCodesUntilNextUpdate(sut: sut, factory: factory) {
+            sut.hideAllCodesUntilNextUpdate()
         }
+    }
 
-        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated })
+    func test_scenePhaseDidChange_backgroundHidesAllCodesUntilNextUpdate() {
+        let (sut, _, factory) = makeSUT()
 
-        sut.hideAllCodesUntilNextUpdate()
-
-        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
+        expectHidesAllCodesUntilNextUpdate(sut: sut, factory: factory) {
+            sut.scenePhaseDidChange(to: .background)
+        }
     }
 
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
@@ -129,6 +130,20 @@ extension HOTPPreviewViewGeneratorTests {
     private func anyHOTPCode() -> HOTPAuthCode {
         let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
         return .init(data: codeData)
+    }
+
+    private func expectHidesAllCodesUntilNextUpdate(sut: SUT, factory: MockHOTPViewFactory, when action: () -> Void) {
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .visible("1234"))
+        }
+
+        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated })
+
+        action()
+
+        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
     }
 
     private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
