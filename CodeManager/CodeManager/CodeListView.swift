@@ -61,7 +61,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
             switch visible {
             case let .detail(_, storedCode):
                 NavigationView {
-                    detailView(storedCode: storedCode)
+                    CodeDetailView(feedViewModel: feedViewModel, storedCode: storedCode)
                 }
             }
         }
@@ -70,22 +70,6 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
         }
         .onAppear {
             viewGenerator.didAppear()
-        }
-    }
-
-    @ViewBuilder
-    private func detailView(storedCode: StoredOTPCode) -> some View {
-        switch storedCode.code.type {
-        case .totp:
-            CodeDetailView(
-                feedViewModel: feedViewModel,
-                storedCode: storedCode
-            )
-        case .hotp:
-            CodeDetailView(
-                feedViewModel: feedViewModel,
-                storedCode: storedCode
-            )
         }
     }
 
