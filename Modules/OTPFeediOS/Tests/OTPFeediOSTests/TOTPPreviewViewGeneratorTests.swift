@@ -48,15 +48,15 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: models)
     }
 
-    func test_currentCode_isNilIfCacheEmpty() {
+    func test_currentVisibleCode_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
-        let code = sut.currentCode(id: UUID())
+        let code = sut.currentVisibleCode(id: UUID())
 
         XCTAssertNil(code)
     }
 
-    func test_currentCode_isValueIfCodeHasBeenGenerated() {
+    func test_currentVisibleCode_isValueIfCodeHasBeenGenerated() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
         let id = UUID()
@@ -66,7 +66,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
             viewModel.update(code: .visible("123456"))
         }
 
-        let code = sut.currentCode(id: id)
+        let code = sut.currentVisibleCode(id: id)
 
         XCTAssertEqual(code, "123456")
     }
