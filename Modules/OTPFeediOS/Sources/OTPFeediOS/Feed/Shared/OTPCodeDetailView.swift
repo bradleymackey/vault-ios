@@ -248,8 +248,8 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                         Label {
                             LabeledContent(entry.title, value: entry.detail)
                         } icon: {
-                            RowIcon(icon: Image(systemName: entry.systemIconName), color: .red)
-                                .foregroundColor(.white)
+                            Image(systemName: entry.systemIconName)
+                                .foregroundColor(.primary)
                         }
                     }
                 } label: {
