@@ -75,7 +75,7 @@ public struct SettingsHomeView: View {
     private var policySection: some View {
         Section {
             NavigationLink {
-                Text(localized(key: "about.title"))
+                AboutView()
             } label: {
                 FormRow(
                     title: localized(key: "about.title"),
