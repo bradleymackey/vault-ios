@@ -19,7 +19,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA1SixDigitCodesForZeroSeed() throws {
-        let sut = makeSUT(secret: zeroSecret, digits: .six, algorithm: .sha1)
+        let sut = makeSUT(secret: zeroSecret, digits: 6, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 328_482)
         try XCTAssertEqual(sut.code(counter: 1), 812_658)
@@ -35,7 +35,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA1SixDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .six, algorithm: .sha1)
+        let sut = makeSUT(secret: rfcSecret, digits: 6, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 755_224)
         try XCTAssertEqual(sut.code(counter: 1), 287_082)
@@ -51,7 +51,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA1SevenDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .seven, algorithm: .sha1)
+        let sut = makeSUT(secret: rfcSecret, digits: 7, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_755_224)
         try XCTAssertEqual(sut.code(counter: 1), 4_287_082)
@@ -67,7 +67,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA1EightDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .eight, algorithm: .sha1)
+        let sut = makeSUT(secret: rfcSecret, digits: 8, algorithm: .sha1)
 
         try XCTAssertEqual(sut.code(counter: 0), 84_755_224)
         try XCTAssertEqual(sut.code(counter: 1), 94_287_082)
@@ -83,7 +83,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA256SixDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .six, algorithm: .sha256)
+        let sut = makeSUT(secret: rfcSecret, digits: 6, algorithm: .sha256)
 
         try XCTAssertEqual(sut.code(counter: 0), 875_740)
         try XCTAssertEqual(sut.code(counter: 1), 247_374)
@@ -99,7 +99,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA256SevenDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .seven, algorithm: .sha256)
+        let sut = makeSUT(secret: rfcSecret, digits: 7, algorithm: .sha256)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_875_740)
         try XCTAssertEqual(sut.code(counter: 1), 2_247_374)
@@ -115,7 +115,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA256EightDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .eight, algorithm: .sha256)
+        let sut = makeSUT(secret: rfcSecret, digits: 8, algorithm: .sha256)
 
         try XCTAssertEqual(sut.code(counter: 0), 74_875_740)
         try XCTAssertEqual(sut.code(counter: 1), 32_247_374)
@@ -131,7 +131,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA512SixDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .six, algorithm: .sha512)
+        let sut = makeSUT(secret: rfcSecret, digits: 6, algorithm: .sha512)
 
         try XCTAssertEqual(sut.code(counter: 0), 125_165)
         try XCTAssertEqual(sut.code(counter: 1), 342_147)
@@ -147,7 +147,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA512SevenDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .seven, algorithm: .sha512)
+        let sut = makeSUT(secret: rfcSecret, digits: 7, algorithm: .sha512)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_125_165)
         try XCTAssertEqual(sut.code(counter: 1), 9_342_147)
@@ -163,7 +163,7 @@ final class HOTPGeneratorTests: XCTestCase {
     }
 
     func test_code_generatesSHA512EightDigitCodes() throws {
-        let sut = makeSUT(secret: rfcSecret, digits: .eight, algorithm: .sha512)
+        let sut = makeSUT(secret: rfcSecret, digits: 8, algorithm: .sha512)
 
         try XCTAssertEqual(sut.code(counter: 0), 4_125_165)
         try XCTAssertEqual(sut.code(counter: 1), 69_342_147)
@@ -182,7 +182,7 @@ final class HOTPGeneratorTests: XCTestCase {
 
     private func makeSUT(
         secret: Data,
-        digits: HOTPGenerator.Digits = .six,
+        digits: UInt16 = 6,
         algorithm: HOTPGenerator.Algorithm = .sha1
     ) -> HOTPGenerator {
         HOTPGenerator(secret: secret, digits: digits, algorithm: algorithm)

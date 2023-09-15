@@ -51,6 +51,6 @@ public struct CodeDetailFormatter {
     }
 
     public var digits: String {
-        "\(code.data.digits.rawValue)"
+        "\(code.data.digits)"
     }
 }

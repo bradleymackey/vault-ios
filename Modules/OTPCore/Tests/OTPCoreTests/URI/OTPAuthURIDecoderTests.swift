@@ -203,7 +203,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.data.digits, .six)
+        XCTAssertEqual(code.data.digits.value, 6)
     }
 
     func test_decodeDigits_setsToSix() throws {
@@ -211,15 +211,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.data.digits, .six)
-    }
-
-    func test_decodeDigits_setsToSeven() throws {
-        let value = "otpauth://totp/any?digits=7"
-        let sut = makeSUT()
-
-        let code = try sut.decode(value)
-        XCTAssertEqual(code.data.digits, .seven)
+        XCTAssertEqual(code.data.digits.value, 6)
     }
 
     func test_decodeDigits_setsToEight() throws {
@@ -227,7 +219,29 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertEqual(code.data.digits, .eight)
+        XCTAssertEqual(code.data.digits.value, 8)
+    }
+
+    func test_decodeDigits_setsTo12() throws {
+        let value = "otpauth://totp/any?digits=12"
+        let sut = makeSUT()
+
+        let code = try sut.decode(value)
+        XCTAssertEqual(code.data.digits.value, 12)
+    }
+
+    func test_decodeDigits_throwsForNegativeNumber() throws {
+        let value = "otpauth://totp/any?digits=-10"
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(value))
+    }
+
+    func test_decodeDigits_throwsForTooLargeNumber() throws {
+        let value = "otpauth://totp/any?digits=80000"
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(value))
     }
 
     func test_decodeSecret_defaultsToEmptySecretBase32() throws {
@@ -277,7 +291,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         XCTAssertEqual(code.data.secret.data, Data(expectedBytes))
         XCTAssertEqual(code.data.secret.format, .base32)
         XCTAssertEqual(code.data.algorithm, .sha512)
-        XCTAssertEqual(code.data.digits, .eight)
+        XCTAssertEqual(code.data.digits.value, 8)
         XCTAssertEqual(code.data.issuer, "Issuer")
         XCTAssertEqual(code.data.accountName, "Account")
         switch code.type {

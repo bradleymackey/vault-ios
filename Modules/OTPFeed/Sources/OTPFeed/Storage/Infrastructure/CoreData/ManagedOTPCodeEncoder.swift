@@ -14,7 +14,7 @@ struct ManagedOTPCodeEncoder {
     func encode(code value: StoredOTPCode.Write, into existing: ManagedOTPCode? = nil) -> ManagedOTPCode {
         let managed = existing ?? ManagedOTPCode(context: context)
         managed.id = existing?.id ?? UUID()
-        managed.digits = value.code.data.digits.rawValue as NSNumber
+        managed.digits = value.code.data.digits.value as NSNumber
         managed.accountName = value.code.data.accountName
         managed.issuer = value.code.data.issuer
         managed.authType = authTypeString(authType: value.code.type)

@@ -21,9 +21,12 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
 
     func test_decodeDigits_decodesToCorrectValue() throws {
         let samples: [OTPAuthDigits: NSNumber] = [
-            .six: 6,
-            .seven: 7,
-            .eight: 8,
+            OTPAuthDigits(value: 0): 0,
+            OTPAuthDigits(value: 6): 6,
+            OTPAuthDigits(value: 7): 7,
+            OTPAuthDigits(value: 8): 8,
+            OTPAuthDigits(value: 100): 100,
+            OTPAuthDigits(value: 1024): 1024,
         ]
         for (digits, value) in samples {
             let sut = makeSUT()
@@ -35,7 +38,7 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
     }
 
     func test_decodeDigits_throwsForInvalidDigits() throws {
-        let unsupported: [NSNumber] = [-33, 2, 100, 333_333]
+        let unsupported: [NSNumber] = [-33, 333_333]
         for value in unsupported {
             let sut = makeSUT()
             let code = makeManagedCode(digits: value)

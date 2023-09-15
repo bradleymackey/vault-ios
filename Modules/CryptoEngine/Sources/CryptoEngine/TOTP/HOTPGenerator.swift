@@ -1,3 +1,4 @@
+import BigInt
 import CryptoSwift
 import Foundation
 
@@ -13,18 +14,12 @@ public struct HOTPGenerator {
         case sha512
     }
 
-    public enum Digits: Int {
-        case six = 6
-        case seven = 7
-        case eight = 8
-    }
-
     public let secret: Data
-    public let digits: Digits
+    public let digits: UInt16
     public let algorithm: Algorithm
     private let hmac: HMAC
 
-    public init(secret: Data, digits: Digits = .six, algorithm: Algorithm = .sha1) {
+    public init(secret: Data, digits: UInt16 = 6, algorithm: Algorithm = .sha1) {
         self.secret = secret
         self.digits = digits
         self.algorithm = algorithm
@@ -34,16 +29,19 @@ public struct HOTPGenerator {
     /// Generate the HOTP code using the current counter value.
     ///
     /// - Throws: only if an internal authentication error occurs.
-    public func code(counter: UInt64) throws -> UInt32 {
+    public func code(counter: UInt64) throws -> BigUInt {
+        // truncate(MAC) = extract31(MAC, MAC[(19 × 8 + 4):(19 × 8 + 7)])
         let code = try hmacCode(counter: counter)
-        let value = try truncatedHMAC(hmacCode: code)
-        return value % digits.moduloValue
+        // HOTP(K, C) = truncate(HMACH(K, C))
+        let value = try BigUInt(truncatedHMAC(hmacCode: code))
+        // HOTP value = HOTP(K, C) mod 10^d
+        return value % BigUInt(10).power(Int(digits))
     }
 
     /// Verify that the provided `value` is expected for the given `counter` value.
     ///
     /// - Throws: only if an an internal authentication error occurs.
-    public func verify(counter: UInt64, value: UInt32) throws -> Bool {
+    public func verify(counter: UInt64, value: BigUInt) throws -> Bool {
         let expectedValue = try code(counter: counter)
         return value == expectedValue
     }
@@ -76,15 +74,5 @@ private extension HOTPGenerator.Algorithm {
         case .sha512:
             return .sha2(.sha512)
         }
-    }
-}
-
-private extension HOTPGenerator.Digits {
-    var floatValue: Float {
-        Float(rawValue)
-    }
-
-    var moduloValue: UInt32 {
-        UInt32(pow(10, floatValue))
     }
 }

@@ -1,3 +1,4 @@
+import BigInt
 import Foundation
 
 /// # Time-based one-time password
@@ -9,8 +10,8 @@ import Foundation
 public struct TOTPGenerator {
     private let generator: HOTPGenerator
     public let timeInterval: UInt64
-    public var digits: Int {
-        generator.digits.rawValue
+    public var digits: UInt16 {
+        generator.digits
     }
 
     public init(generator: HOTPGenerator, timeInterval: UInt64 = 30) {
@@ -21,12 +22,12 @@ public struct TOTPGenerator {
     /// Generate the TOTP code using the number of seconds since the UNIX epoch.
     ///
     /// - Throws: only if an internal authentication error occurs.
-    public func code(epochSeconds: UInt64) throws -> UInt32 {
+    public func code(epochSeconds: UInt64) throws -> BigUInt {
         let counter = epochSeconds / timeInterval
         return try generator.code(counter: counter)
     }
 
-    public func verify(epochSeconds: UInt64, value: UInt32) throws -> Bool {
+    public func verify(epochSeconds: UInt64, value: BigUInt) throws -> Bool {
         let expected = try code(epochSeconds: epochSeconds)
         return expected == value
     }

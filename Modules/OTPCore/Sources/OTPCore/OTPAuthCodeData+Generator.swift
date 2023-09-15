@@ -4,18 +4,7 @@ import Foundation
 extension OTPAuthCodeData {
     /// Create an `HOTPGenerator` from this code, initalized with the current parameters of the code.
     public func hotpGenerator() -> HOTPGenerator {
-        HOTPGenerator(secret: secret.data, digits: hotpDigits, algorithm: hotpAlgorithm)
-    }
-
-    private var hotpDigits: HOTPGenerator.Digits {
-        switch digits {
-        case .six:
-            return .six
-        case .seven:
-            return .seven
-        case .eight:
-            return .eight
-        }
+        HOTPGenerator(secret: secret.data, digits: digits.value, algorithm: hotpAlgorithm)
     }
 
     private var hotpAlgorithm: HOTPGenerator.Algorithm {

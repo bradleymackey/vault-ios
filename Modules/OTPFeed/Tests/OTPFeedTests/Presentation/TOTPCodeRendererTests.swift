@@ -8,7 +8,7 @@ import XCTest
 
 final class TOTPCodeRendererTests: XCTestCase {
     func test_renderedCodePublisher_publishesCodesOnEpochSecondsTick() async throws {
-        let (timer, sut) = makeSUT()
+        let (timer, sut) = makeSUT(digits: 8)
 
         let publisher = sut.renderedCodePublisher().collectFirst(3)
 
@@ -24,20 +24,51 @@ final class TOTPCodeRendererTests: XCTestCase {
         ])
     }
 
+    func test_renderedCodePublisher_rendersZeroLengthCodes() async throws {
+        let (timer, sut) = makeSUT(digits: 0)
+
+        let publisher = sut.renderedCodePublisher().collectFirst(2)
+
+        let values = try await awaitPublisher(publisher, when: {
+            timer.subject.send(OTPTimerState(startTime: 1_111_111_109, endTime: 1_111_111_109 + 1))
+            timer.subject.send(OTPTimerState(startTime: 1_111_111_111, endTime: 1_111_111_111 + 1))
+        })
+        XCTAssertEqual(values, [
+            "",
+            "",
+        ])
+    }
+
+    func test_renderedCodePublisher_rendersCodesWithLeadingZeros() async throws {
+        let (timer, sut) = makeSUT(digits: 20)
+
+        let publisher = sut.renderedCodePublisher().collectFirst(2)
+
+        let values = try await awaitPublisher(publisher, when: {
+            timer.subject.send(OTPTimerState(startTime: 1_111_111_109, endTime: 1_111_111_109 + 1))
+            timer.subject.send(OTPTimerState(startTime: 1_111_111_111, endTime: 1_111_111_111 + 1))
+        })
+        XCTAssertEqual(values, [
+            "00000000000907081804",
+            "00000000000414050471",
+        ])
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
+        digits: UInt16,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (MockCodeTimerUpdater, some OTPCodeRenderer) {
         let timer = MockCodeTimerUpdater()
-        let sut = TOTPCodeRenderer(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30))
+        let sut = TOTPCodeRenderer(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30, digits: digits))
         trackForMemoryLeaks(sut, file: file, line: line)
         return (timer, sut)
     }
 
-    private func fixedGenerator(timeInterval: UInt64) -> TOTPGenerator {
-        let hotpGenerator = HOTPGenerator(secret: hotpRfcSecretData(), digits: .eight, algorithm: .sha1)
+    private func fixedGenerator(timeInterval: UInt64, digits: UInt16) -> TOTPGenerator {
+        let hotpGenerator = HOTPGenerator(secret: hotpRfcSecretData(), digits: digits, algorithm: .sha1)
         return TOTPGenerator(generator: hotpGenerator, timeInterval: timeInterval)
     }
 }

@@ -39,7 +39,7 @@ extension OTPAuthURIEncoder {
             .otpAuth(.algorithm, value: formatted(algorithm: code.data.algorithm))
         )
         queryItems.append(
-            .otpAuth(.digits, value: "\(code.data.digits.rawValue)")
+            .otpAuth(.digits, value: "\(code.data.digits.value)")
         )
         if let issuer = code.data.issuer {
             queryItems.append(

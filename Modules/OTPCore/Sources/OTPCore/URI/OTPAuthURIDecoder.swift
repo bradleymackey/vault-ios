@@ -9,6 +9,7 @@ public struct OTPAuthURIDecoder {
         case invalidType
         case invalidLabel
         case invalidAlgorithm
+        case invalidValue
     }
 
     public init() {}
@@ -42,10 +43,13 @@ extension OTPAuthURIDecoder {
     }
 
     private func decodeDigits(uri: URL) throws -> OTPAuthDigits {
-        guard let digits = uri.otpParameter(.digits), let value = Int(digits) else {
+        guard let digits = uri.otpParameter(.digits) else {
             return .default
         }
-        return OTPAuthDigits(rawValue: value) ?? .default
+        guard let value = UInt16(digits) else {
+            throw URIDecodingError.invalidValue
+        }
+        return OTPAuthDigits(value: value)
     }
 
     private func decodeAlgorithm(uri: URL) throws -> OTPAuthAlgorithm {

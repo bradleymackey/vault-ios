@@ -8,7 +8,7 @@ public protocol OTPCodeRenderer {
     func renderedCodePublisher() -> AnyPublisher<String, Error>
 }
 
-extension Publisher where Output == UInt32 {
+extension Publisher where Output == BigUInt {
     func digitsRenderer(digits: Int) -> AnyPublisher<String, Failure> {
         map { codeNumber in
             String(codeNumber).leftPadding(toLength: digits, withPad: "0")
@@ -28,10 +28,10 @@ public final class TOTPCodeRenderer: OTPCodeRenderer {
 
     public func renderedCodePublisher() -> AnyPublisher<String, Error> {
         codeValuePublisher()
-            .digitsRenderer(digits: totpGenerator.digits)
+            .digitsRenderer(digits: Int(totpGenerator.digits))
     }
 
-    private func codeValuePublisher() -> AnyPublisher<UInt32, Error> {
+    private func codeValuePublisher() -> AnyPublisher<BigUInt, Error> {
         let generator = totpGenerator
         return timer.timerUpdatedPublisher()
             .setFailureType(to: Error.self)
@@ -58,10 +58,10 @@ public final class HOTPCodeRenderer: OTPCodeRenderer {
 
     public func renderedCodePublisher() -> AnyPublisher<String, Error> {
         codeValuePublisher()
-            .digitsRenderer(digits: hotpGenerator.digits.rawValue)
+            .digitsRenderer(digits: Int(hotpGenerator.digits))
     }
 
-    private func codeValuePublisher() -> AnyPublisher<UInt32, Error> {
+    private func codeValuePublisher() -> AnyPublisher<BigUInt, Error> {
         let generator = hotpGenerator
         return counterSubject
             .setFailureType(to: Error.self)

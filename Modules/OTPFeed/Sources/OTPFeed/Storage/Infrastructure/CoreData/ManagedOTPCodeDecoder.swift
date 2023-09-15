@@ -25,11 +25,11 @@ struct ManagedOTPCodeDecoder {
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
-        if let digits = OTPAuthDigits(rawValue: digits.intValue) {
-            return digits
-        } else {
+        let value = digits.int32Value
+        guard (Int32(UInt16.min) ... Int32(UInt16.max)).contains(value) else {
             throw DecodingError.badDigits(digits)
         }
+        return OTPAuthDigits(value: UInt16(value))
     }
 
     private func decodeType(code: ManagedOTPCode) throws -> OTPAuthType {

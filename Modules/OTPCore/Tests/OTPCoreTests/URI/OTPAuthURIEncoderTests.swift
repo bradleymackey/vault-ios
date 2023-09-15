@@ -88,9 +88,10 @@ final class OTPAuthURIEncoderTests: XCTestCase {
 
     func test_encodeDigits_includesInParameters() throws {
         let expected: [OTPAuthDigits: String] = [
-            .six: "6",
-            .seven: "7",
-            .eight: "8",
+            OTPAuthDigits(value: 6): "6",
+            OTPAuthDigits(value: 7): "7",
+            OTPAuthDigits(value: 8): "8",
+            OTPAuthDigits(value: 120): "120",
         ]
 
         for (digits, string) in expected {
@@ -169,7 +170,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
             accountName: "Account",
             issuer: "Issuer",
             algorithm: .sha512,
-            digits: .eight,
+            digits: .init(value: 8),
             secret: secret
         )
 
@@ -198,8 +199,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         type: OTPAuthType = .totp(),
         accountName: String = "any",
         issuer: String? = nil,
-        algorithm: OTPAuthAlgorithm = .sha1,
-        digits: OTPAuthDigits = .six,
+        algorithm: OTPAuthAlgorithm = .default,
+        digits: OTPAuthDigits = .default,
         secret: OTPAuthSecret = .init(data: Data(), format: .base32)
     ) -> GenericOTPAuthCode {
         GenericOTPAuthCode(

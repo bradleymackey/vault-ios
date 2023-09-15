@@ -10,8 +10,8 @@ public struct OTPAuthCodeData: Equatable, Hashable {
 
     public init(
         secret: OTPAuthSecret,
-        algorithm: OTPAuthAlgorithm = .sha1,
-        digits: OTPAuthDigits = .six,
+        algorithm: OTPAuthAlgorithm = .default,
+        digits: OTPAuthDigits = .default,
         accountName: String,
         issuer: String? = nil
     ) {
@@ -42,12 +42,16 @@ public struct OTPAuthSecret: Equatable, Hashable {
     }
 }
 
-public enum OTPAuthDigits: Int, Equatable, Hashable {
-    case six = 6
-    case seven = 7
-    case eight = 8
+public struct OTPAuthDigits: Equatable, Hashable {
+    public var value: UInt16
 
-    public static var `default`: OTPAuthDigits { .six }
+    public init(value: UInt16) {
+        self.value = value
+    }
+}
+
+public extension OTPAuthDigits {
+    static var `default`: OTPAuthDigits { .init(value: 6) }
 }
 
 public enum OTPAuthAlgorithm: Equatable, Hashable {

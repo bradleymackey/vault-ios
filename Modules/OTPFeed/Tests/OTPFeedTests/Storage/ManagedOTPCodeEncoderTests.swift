@@ -64,9 +64,11 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
 
     func test_encodeDigits_encodesToNSNumber() {
         let samples: [OTPAuthDigits: NSNumber] = [
-            .six: 6,
-            .seven: 7,
-            .eight: 8,
+            OTPAuthDigits(value: 6): 6,
+            OTPAuthDigits(value: 7): 7,
+            OTPAuthDigits(value: 8): 8,
+            OTPAuthDigits(value: 12): 12,
+            OTPAuthDigits(value: 100): 100,
         ]
         for (digits, value) in samples {
             let sut = makeSUT()
@@ -223,8 +225,8 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
     private func makeCodeValue(
         type: OTPAuthType = .totp(),
         secret: OTPAuthSecret = .empty(),
-        algorithm: OTPAuthAlgorithm = .sha1,
-        digits: OTPAuthDigits = .six,
+        algorithm: OTPAuthAlgorithm = .default,
+        digits: OTPAuthDigits = .default,
         accountName: String = "any",
         issuer: String? = nil
     ) -> GenericOTPAuthCode {
