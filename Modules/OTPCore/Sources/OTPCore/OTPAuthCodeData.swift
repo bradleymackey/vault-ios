@@ -42,11 +42,15 @@ public struct OTPAuthSecret: Equatable, Hashable {
     }
 }
 
-public struct OTPAuthDigits: Equatable, Hashable {
+public struct OTPAuthDigits: Equatable, Hashable, CustomStringConvertible {
     public var value: UInt16
 
     public init(value: UInt16) {
         self.value = value
+    }
+
+    public var description: String {
+        "\(value)"
     }
 }
 
