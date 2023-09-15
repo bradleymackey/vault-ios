@@ -14,6 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
+        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.7.0"),
     ],
     targets: [
@@ -21,7 +22,7 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "CryptoEngine",
-            dependencies: ["CryptoSwift"]
+            dependencies: ["CryptoSwift", "BigInt"]
         ),
         .testTarget(
             name: "CryptoEngineTests",
