@@ -16,7 +16,7 @@ let package = Package(
     dependencies: [
         .package(name: "Attribution", path: "../Attribution"),
         .package(name: "OTPFeed", path: "../OTPFeed"),
-        .package(name: "CoreUI", path: "../CoreUI"),
+        .package(name: "OTPUI", path: "../OTPUI"),
         .package(name: "OTPModels", path: "../OTPModels"),
         .package(name: "TestHelpers", path: "../TestHelpers"),
         .package(url: "https://github.com/elai950/AlertToast", from: "1.3.9"),
@@ -24,7 +24,7 @@ let package = Package(
     targets: [
         .target(
             name: "OTPFeediOS",
-            dependencies: ["OTPFeed", "AlertToast", "CoreUI", "OTPModels", "Attribution"]
+            dependencies: ["OTPFeed", "AlertToast", "OTPUI", "OTPModels", "Attribution"]
         ),
         .testTarget(
             name: "OTPFeediOSTests",

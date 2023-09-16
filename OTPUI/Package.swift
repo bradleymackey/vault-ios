@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "CoreUI",
+    name: "OTPUI",
     defaultLocalization: "en",
     platforms: [.iOS(.v16)],
     products: [
         .library(
-            name: "CoreUI",
-            targets: ["CoreUI"]
+            name: "OTPUI",
+            targets: ["OTPUI"]
         ),
     ],
     dependencies: [
@@ -18,13 +18,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "CoreUI",
+            name: "OTPUI",
             dependencies: []
         ),
         .testTarget(
-            name: "CoreUITests",
+            name: "OTPUITests",
             dependencies: [
-                "CoreUI",
+                "OTPUI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ]
         ),

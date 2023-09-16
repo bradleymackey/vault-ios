@@ -78,16 +78,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/CoreUI",
-        "identifier" : "CoreUITests",
-        "name" : "CoreUITests"
+        "containerPath" : "container:..\/OTPModels",
+        "identifier" : "OTPModelsTests",
+        "name" : "OTPModelsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/OTPModels",
-        "identifier" : "OTPModelsTests",
-        "name" : "OTPModelsTests"
+        "containerPath" : "container:..\/..\/OTPUI",
+        "identifier" : "OTPUITests",
+        "name" : "OTPUITests"
       }
     }
   ],

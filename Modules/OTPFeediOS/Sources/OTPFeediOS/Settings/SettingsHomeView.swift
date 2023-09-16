@@ -1,4 +1,4 @@
-import CoreUI
+import OTPUI
 import SwiftUI
 
 public struct SettingsHomeView: View {

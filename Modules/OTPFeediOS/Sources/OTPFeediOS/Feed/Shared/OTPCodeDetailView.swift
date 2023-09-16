@@ -1,6 +1,6 @@
-import CoreUI
 import OTPCore
 import OTPFeed
+import OTPUI
 import SwiftUI
 
 public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
