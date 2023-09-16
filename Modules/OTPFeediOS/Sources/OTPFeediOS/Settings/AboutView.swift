@@ -8,7 +8,7 @@ struct AboutView: View {
             backupSection
             dataPrivacySection
         }
-        .navigationTitle(Text(localized(key: "about.title")))
+        .navigationTitle(Text(localizedSettings(key: "about.title")))
     }
 }
 

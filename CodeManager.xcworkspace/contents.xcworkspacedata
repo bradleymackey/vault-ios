@@ -11,9 +11,6 @@
       location = "group:Modules/CoreUI">
    </FileRef>
    <FileRef
-      location = "group:Modules/SettingsiOS">
-   </FileRef>
-   <FileRef
       location = "group:Modules/OTPFeediOS">
    </FileRef>
    <FileRef
