@@ -1,5 +1,5 @@
-import Attribution
 import Foundation
+import OTPAttribution
 import SwiftUI
 
 struct ThirdPartyDetailView: View {

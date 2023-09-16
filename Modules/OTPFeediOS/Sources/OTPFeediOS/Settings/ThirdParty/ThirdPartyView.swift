@@ -1,4 +1,4 @@
-import Attribution
+import OTPAttribution
 import SwiftUI
 
 public struct ThirdPartyView: View {

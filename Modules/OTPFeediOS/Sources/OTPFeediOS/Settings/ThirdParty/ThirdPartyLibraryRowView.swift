@@ -1,4 +1,4 @@
-import Attribution
+import OTPAttribution
 import SwiftUI
 
 struct ThirdPartyLibraryRowView: View {

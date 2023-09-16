@@ -1,5 +1,5 @@
 import XCTest
-@testable import Attribution
+@testable import OTPAttribution
 
 final class ThirdPartyLibrariesLoaderTests: XCTestCase {
     func test_load_loadsLibraries() throws {

@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(name: "Attribution", path: "../Attribution"),
+        .package(name: "OTPAttribution", path: "../OTPAttribution"),
         .package(name: "OTPFeed", path: "../OTPFeed"),
         .package(name: "OTPUI", path: "../OTPUI"),
         .package(name: "OTPModels", path: "../OTPModels"),
@@ -24,7 +24,7 @@ let package = Package(
     targets: [
         .target(
             name: "OTPFeediOS",
-            dependencies: ["OTPFeed", "AlertToast", "OTPUI", "OTPModels", "Attribution"]
+            dependencies: ["OTPFeed", "AlertToast", "OTPUI", "OTPModels", "OTPAttribution"]
         ),
         .testTarget(
             name: "OTPFeediOSTests",

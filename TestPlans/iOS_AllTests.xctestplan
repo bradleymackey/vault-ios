@@ -71,13 +71,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Attribution",
-        "identifier" : "AttributionTests",
-        "name" : "AttributionTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/OTPModels",
         "identifier" : "OTPModelsTests",
         "name" : "OTPModelsTests"
@@ -88,6 +81,13 @@
         "containerPath" : "container:..\/..\/OTPUI",
         "identifier" : "OTPUITests",
         "name" : "OTPUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/OTPAttribution",
+        "identifier" : "OTPAttributionTests",
+        "name" : "OTPAttributionTests"
       }
     }
   ],
