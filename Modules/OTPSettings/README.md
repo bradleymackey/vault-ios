@@ -1,3 +1,3 @@
 # OTPSettings
 
-A description of this package.
+Model-level settings constructs for managing OTP codes.
