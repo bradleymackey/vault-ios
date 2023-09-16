@@ -3,25 +3,25 @@
 import PackageDescription
 
 let package = Package(
-    name: "CoreModels",
+    name: "OTPModels",
     platforms: [.iOS(.v13), .macOS(.v11)],
     products: [
         .library(
-            name: "CoreModels",
-            targets: ["CoreModels"]
+            name: "OTPModels",
+            targets: ["OTPModels"]
         ),
     ],
     dependencies: [
-        /* CoreModels should not have any dependencies */
+        /* OTPModels should not have any dependencies */
     ],
     targets: [
         .target(
-            name: "CoreModels",
+            name: "OTPModels",
             dependencies: []
         ),
         .testTarget(
-            name: "CoreModelsTests",
-            dependencies: ["CoreModels"]
+            name: "OTPModelsTests",
+            dependencies: ["OTPModels"]
         ),
     ]
 )

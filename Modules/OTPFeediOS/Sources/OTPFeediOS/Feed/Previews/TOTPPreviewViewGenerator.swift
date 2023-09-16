@@ -1,8 +1,8 @@
 import Combine
-import CoreModels
 import CryptoEngine
 import OTPCore
 import OTPFeed
+import OTPModels
 import SwiftUI
 
 /// An efficient generator of preview views for TOTP codes.

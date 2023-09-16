@@ -1,4 +1,4 @@
-import CoreModels
+import OTPModels
 import XCTest
 
 final class CacheTests: XCTestCase {

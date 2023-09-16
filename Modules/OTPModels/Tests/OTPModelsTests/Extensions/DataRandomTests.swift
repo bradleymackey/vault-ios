@@ -1,5 +1,5 @@
-import CoreModels
 import Foundation
+import OTPModels
 import XCTest
 
 final class DataRandomTests: XCTestCase {

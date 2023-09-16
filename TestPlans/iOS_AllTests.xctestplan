@@ -71,13 +71,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/CoreModels",
-        "identifier" : "CoreModelsTests",
-        "name" : "CoreModelsTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/Attribution",
         "identifier" : "AttributionTests",
         "name" : "AttributionTests"
@@ -92,9 +85,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/SettingsiOS",
-        "identifier" : "SettingsiOSTests",
-        "name" : "SettingsiOSTests"
+        "containerPath" : "container:..\/Modules\/OTPModels",
+        "identifier" : "OTPModelsTests",
+        "name" : "OTPModelsTests"
       }
     }
   ],

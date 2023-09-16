@@ -1,7 +1,7 @@
-import CoreModels
 import Foundation
 import OTPCore
 import OTPFeed
+import OTPModels
 
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)

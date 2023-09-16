@@ -5,10 +5,10 @@
       location = "group:CodeManager/CodeManager.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Modules/OTPSettings">
+      location = "group:Modules/OTPModels">
    </FileRef>
    <FileRef
-      location = "group:Modules/CoreModels">
+      location = "group:Modules/OTPSettings">
    </FileRef>
    <FileRef
       location = "group:Modules/CoreUI">
