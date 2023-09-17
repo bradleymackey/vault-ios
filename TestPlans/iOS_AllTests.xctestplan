@@ -89,6 +89,13 @@
         "identifier" : "OTPAttributionTests",
         "name" : "OTPAttributionTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/OTPSettings",
+        "identifier" : "OTPSettingsTests",
+        "name" : "OTPSettingsTests"
+      }
     }
   ],
   "version" : 1
