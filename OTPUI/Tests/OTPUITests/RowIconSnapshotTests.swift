@@ -4,6 +4,11 @@ import XCTest
 @testable import OTPUI
 
 final class RowIconSnapshotTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        isRecording = false
+    }
+
     func test_layout_smallFontSize() {
         let view = RowIcon(icon: Image(systemName: "book"), color: .blue)
             .font(.footnote)
