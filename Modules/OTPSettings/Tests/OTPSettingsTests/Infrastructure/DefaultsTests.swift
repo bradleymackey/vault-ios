@@ -30,7 +30,8 @@ final class DefaultsKitTests: XCTestCase {
 
     override func setUpWithError() throws {
         try super.setUpWithError()
-        let ephemeralDefaults = try XCTUnwrap(UserDefaults(suiteName: "test suite"))
+        let ephemeralDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
+        ephemeralDefaults.removePersistentDomain(forName: #file)
         defaults = Defaults(userDefaults: ephemeralDefaults)
     }
 
