@@ -1,8 +1,13 @@
+import OTPSettings
 import OTPUI
 import SwiftUI
 
 public struct SettingsHomeView: View {
-    public init() {}
+    @ObservedObject private var localSettings: LocalSettings
+
+    public init(localSettings: LocalSettings) {
+        _localSettings = ObservedObject(wrappedValue: localSettings)
+    }
 
     public var body: some View {
         Form {
@@ -16,8 +21,11 @@ public struct SettingsHomeView: View {
 
     private var viewOptionsSection: some View {
         Section {
-            NavigationLink {
-                Text("View Size")
+            Picker(selection: $localSettings.state.previewSize) {
+                ForEach(PreviewSize.allCases) { previewSize in
+                    Text(previewSize.rawValue)
+                        .tag(previewSize)
+                }
             } label: {
                 FormRow(
                     title: localizedSettings(key: "viewOptions.previewSize.title"),

@@ -6,10 +6,13 @@
 //
 
 import OTPFeediOS
+import OTPSettings
 import SwiftUI
 
 struct CodeSettingsView: View {
+    @ObservedObject var localSettings: LocalSettings
+
     var body: some View {
-        SettingsHomeView()
+        SettingsHomeView(localSettings: localSettings)
     }
 }

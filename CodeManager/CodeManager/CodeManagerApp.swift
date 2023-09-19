@@ -8,6 +8,7 @@
 import OTPCore
 import OTPFeed
 import OTPFeediOS
+import OTPSettings
 import SwiftUI
 
 @main
@@ -16,9 +17,12 @@ struct CodeManagerApp: App {
     @StateObject private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @StateObject private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
     @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
+    @StateObject private var localSettings: LocalSettings
     @State private var isShowingCopyPaste = false
 
     init() {
+        let defaults = Defaults(userDefaults: .standard)
+        let localSettings = LocalSettings(defaults: defaults)
         let timer = LiveIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
         let store = InMemoryCodeStore(codes: [
@@ -42,6 +46,7 @@ struct CodeManagerApp: App {
         _feedViewModel = StateObject(wrappedValue: feed)
         _totpPreviewGenerator = StateObject(wrappedValue: totp)
         _hotpPreviewGenerator = StateObject(wrappedValue: hotp)
+        _localSettings = StateObject(wrappedValue: localSettings)
     }
 
     var body: some Scene {
@@ -69,7 +74,7 @@ struct CodeManagerApp: App {
                 }
 
                 NavigationStack {
-                    CodeSettingsView()
+                    CodeSettingsView(localSettings: localSettings)
                 }
                 .tabItem {
                     Label("Settings", systemImage: "gear")
