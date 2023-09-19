@@ -22,6 +22,7 @@
 //  SOFTWARE.
 //
 
+import TestHelpers
 import XCTest
 @testable import OTPSettings
 
@@ -178,6 +179,42 @@ final class DefaultsKitTests: XCTestCase {
         XCTAssertEqual(savedPerson?.age, 80)
         XCTAssertEqual(savedPerson?.children.first?.name, "Anne Greenwell")
         XCTAssertEqual(savedPerson?.children.first?.age, 30)
+    }
+
+    func test_clear_didChangeDefaults() async throws {
+        let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
+
+        let values: [Void] = try await awaitPublisher(publisher) {
+            defaults.clear(Key<String>("test1"))
+            defaults.clear(Key<String>("test2"))
+            defaults.clear(Key<String>("test3"))
+        }
+
+        XCTAssertEqual(values.count, 3)
+    }
+
+    func test_removeAll_didChangeDefaults() async throws {
+        let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
+
+        let values: [Void] = try await awaitPublisher(publisher) {
+            defaults.removeAll()
+            defaults.removeAll()
+            defaults.removeAll()
+        }
+
+        XCTAssertEqual(values.count, 3)
+    }
+
+    func test_set_didChangeDefaults() async throws {
+        let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
+
+        let values: [Void] = try await awaitPublisher(publisher) {
+            try defaults.set("test1", for: Key<String>.init("test1"))
+            try defaults.set("test1", for: Key<String>.init("test1"))
+            try defaults.set("test1", for: Key<String>.init("test1"))
+        }
+
+        XCTAssertEqual(values.count, 3)
     }
 }
 

@@ -22,6 +22,7 @@
 //  SOFTWARE.
 //
 
+import Combine
 import Foundation
 
 public class DefaultsKey {}
@@ -44,6 +45,7 @@ public final class Key<ValueType: Codable>: DefaultsKey {
 /// the application or the user's security and privacy.
 public final class Defaults {
     private var userDefaults: UserDefaults
+    private let defaultsDidChangeSubject = PassthroughSubject<Void, Never>()
 
     /// An instance of `Defaults` with the specified `UserDefaults` instance.
     ///
@@ -58,6 +60,7 @@ public final class Defaults {
     public func clear(_ key: Key<some Any>) {
         userDefaults.set(nil, forKey: key.storageName)
         userDefaults.synchronize()
+        defaultsDidChangeSubject.send(())
     }
 
     /// Checks if there is a value associated with the specified key.
@@ -101,6 +104,12 @@ public final class Defaults {
             userDefaults.set(encoded, forKey: key.storageName)
             userDefaults.synchronize()
         }
+        defaultsDidChangeSubject.send(())
+    }
+
+    /// Publishes when the defaults were changed.
+    public func defaultsDidChangePublisher() -> AnyPublisher<Void, Never> {
+        defaultsDidChangeSubject.eraseToAnyPublisher()
     }
 
     /// Removes given bundle's persistent domain
@@ -109,6 +118,7 @@ public final class Defaults {
     public func removeAll(bundle: Bundle = Bundle.main) {
         guard let name = bundle.bundleIdentifier else { return }
         userDefaults.removePersistentDomain(forName: name)
+        defaultsDidChangeSubject.send(())
     }
 
     /// Checks if the specified type is a Codable from the Swift standard library.

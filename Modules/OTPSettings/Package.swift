@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "OTPSettings",
+    platforms: [.iOS(.v13)],
     products: [
         .library(
             name: "OTPSettings",
@@ -11,7 +12,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(name: "TestHelpers", path: "../TestHelpers"),
     ],
     targets: [
         .target(
@@ -20,7 +21,7 @@ let package = Package(
         ),
         .testTarget(
             name: "OTPSettingsTests",
-            dependencies: ["OTPSettings"]
+            dependencies: ["OTPSettings", "TestHelpers"]
         ),
     ]
 )
