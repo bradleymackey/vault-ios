@@ -16,3 +16,14 @@ extension PreviewSize: Identifiable {
         rawValue
     }
 }
+
+public extension PreviewSize {
+    var localizedName: String {
+        switch self {
+        case .medium:
+            return localized(key: "previewSize.medium")
+        case .large:
+            return localized(key: "previewSize.large")
+        }
+    }
+}

@@ -4,6 +4,7 @@ import PackageDescription
 
 let package = Package(
     name: "OTPSettings",
+    defaultLocalization: "en",
     platforms: [.iOS(.v13)],
     products: [
         .library(

@@ -23,7 +23,7 @@ public struct SettingsHomeView: View {
         Section {
             Picker(selection: $localSettings.state.previewSize) {
                 ForEach(PreviewSize.allCases) { previewSize in
-                    Text(previewSize.rawValue)
+                    Text(previewSize.localizedName)
                         .tag(previewSize)
                 }
             } label: {
