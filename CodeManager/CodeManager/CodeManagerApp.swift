@@ -55,6 +55,7 @@ struct CodeManagerApp: App {
                 NavigationStack {
                     CodeListView(
                         feedViewModel: feedViewModel,
+                        localSettings: localSettings,
                         viewGenerator: GenericOTPViewGenerator(
                             totpGenerator: totpPreviewGenerator,
                             hotpGenerator: hotpPreviewGenerator

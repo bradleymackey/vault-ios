@@ -8,6 +8,7 @@
 import OTPCore
 import OTPFeed
 import OTPFeediOS
+import OTPSettings
 import SwiftUI
 
 @MainActor
@@ -15,6 +16,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
     where Generator.Code == GenericOTPAuthCode
 {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
+    @ObservedObject var localSettings: LocalSettings
     var viewGenerator: Generator
 
     @EnvironmentObject var pasteboard: Pasteboard
@@ -36,6 +38,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
     var body: some View {
         OTPCodeFeedView(
             viewModel: feedViewModel,
+            localSettings: localSettings,
             viewGenerator: interactableViewGenerator(),
             isEditing: $isEditing,
             gridSpacing: 12

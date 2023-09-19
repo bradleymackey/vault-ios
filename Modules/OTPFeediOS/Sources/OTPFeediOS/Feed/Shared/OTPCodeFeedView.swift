@@ -1,6 +1,7 @@
 import CryptoEngine
 import OTPCore
 import OTPFeed
+import OTPSettings
 import SwiftUI
 
 public struct OTPCodeFeedView<
@@ -10,6 +11,7 @@ public struct OTPCodeFeedView<
     ViewGenerator.Code == GenericOTPAuthCode
 {
     @ObservedObject public var viewModel: FeedViewModel<Store>
+    @ObservedObject public var localSettings: LocalSettings
     public var viewGenerator: ViewGenerator
     @Binding public var isEditing: Bool
     public var gridSpacing: Double
@@ -18,11 +20,13 @@ public struct OTPCodeFeedView<
 
     public init(
         viewModel: FeedViewModel<Store>,
+        localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
         isEditing: Binding<Bool>,
         gridSpacing: Double = 8
     ) {
         self.viewModel = viewModel
+        self.localSettings = localSettings
         self.viewGenerator = viewGenerator
         _isEditing = Binding(projectedValue: isEditing)
         self.gridSpacing = gridSpacing
@@ -82,7 +86,16 @@ public struct OTPCodeFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: 150), spacing: gridSpacing, alignment: .top)]
+        [GridItem(.adaptive(minimum: minimumGridSize), spacing: gridSpacing, alignment: .top)]
+    }
+
+    private var minimumGridSize: Double {
+        switch localSettings.state.previewSize {
+        case .medium:
+            return 150
+        case .large:
+            return 250
+        }
     }
 }
 
@@ -105,6 +118,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
                     )
                 ),
             ])),
+            localSettings: .init(defaults: .init(userDefaults: .standard)),
             viewGenerator: GenericGenerator(),
             isEditing: .constant(false)
         )
