@@ -41,7 +41,7 @@ public struct OTPCodeFeedView<
             }
         }
         .task {
-            await viewModel.reloadData()
+            await viewModel.onAppear()
         }
     }
 

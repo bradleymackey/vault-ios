@@ -1,0 +1,46 @@
+import Foundation
+import OTPCore
+import OTPFeed
+import OTPSettings
+import SwiftUI
+
+func anyNSError() -> NSError {
+    NSError(domain: "any", code: 100)
+}
+
+func uniqueCode() -> GenericOTPAuthCode {
+    let randomData = Data.random(count: 50)
+    return GenericOTPAuthCode(
+        type: .totp(),
+        data: .init(
+            secret: .init(data: randomData, format: .base32),
+            accountName: "Some Account"
+        )
+    )
+}
+
+func uniqueStoredCode() -> StoredOTPCode {
+    StoredOTPCode(id: UUID(), created: Date(), updated: Date(), userDescription: "any", code: uniqueCode())
+}
+
+func uniqueWritableCode() -> StoredOTPCode.Write {
+    .init(userDescription: "any", code: uniqueCode())
+}
+
+func forceRunLoopAdvance() {
+    RunLoop.main.run(until: Date().addingTimeInterval(0.1))
+}
+
+func nonPersistentDefaults() -> Defaults {
+    let name = UUID().uuidString
+    let user = UserDefaults(suiteName: name)
+    user?.removePersistentDomain(forName: name)
+    return Defaults(userDefaults: user!)
+}
+
+extension View {
+    func framedToTestDeviceSize() -> some View {
+        // iPhone 14 size
+        frame(width: 390, height: 844)
+    }
+}

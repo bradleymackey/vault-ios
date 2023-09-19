@@ -34,6 +34,10 @@ public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
 // MARK: - Feed
 
 extension FeedViewModel: CodeFeed {
+    public func onAppear() async {
+        await reloadData()
+    }
+
     public func reloadData() async {
         do {
             codes = try await store.retrieve()
