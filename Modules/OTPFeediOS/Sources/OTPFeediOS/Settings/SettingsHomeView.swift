@@ -95,7 +95,7 @@ public struct SettingsHomeView: View {
             }
 
             NavigationLink {
-                Text("Info about Open Source, on GitHub")
+                OpenSourceView()
             } label: {
                 FormRow(
                     title: viewModel.openSourceTitle,
