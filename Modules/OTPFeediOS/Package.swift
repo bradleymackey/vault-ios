@@ -20,12 +20,12 @@ let package = Package(
         .package(name: "OTPModels", path: "../OTPModels"),
         .package(name: "OTPSettings", path: "../OTPSettings"),
         .package(name: "TestHelpers", path: "../TestHelpers"),
-        .package(url: "https://github.com/elai950/AlertToast", from: "1.3.9"),
+        .package(url: "https://github.com/sanzaru/SimpleToast.git", from: "0.8.0"),
     ],
     targets: [
         .target(
             name: "OTPFeediOS",
-            dependencies: ["OTPFeed", "AlertToast", "OTPUI", "OTPModels", "OTPSettings", "OTPAttribution"]
+            dependencies: ["OTPFeed", "SimpleToast", "OTPUI", "OTPModels", "OTPSettings", "OTPAttribution"]
         ),
         .testTarget(
             name: "OTPFeediOSTests",

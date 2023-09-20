@@ -20,6 +20,12 @@ struct CodeManagerApp: App {
     @StateObject private var localSettings: LocalSettings
     @State private var isShowingCopyPaste = false
 
+    private let toastOptions = SimpleToastOptions(
+        hideAfter: 1.5,
+        animation: .spring,
+        modifierType: .slide
+    )
+
     init() {
         let defaults = Defaults(userDefaults: .standard)
         let localSettings = LocalSettings(defaults: defaults)
@@ -84,8 +90,9 @@ struct CodeManagerApp: App {
             .onReceive(pasteboard.objectWillChange) {
                 isShowingCopyPaste = true
             }
-            .toast(isPresenting: $isShowingCopyPaste, offsetY: 20) {
-                .copiedToClipboard()
+            .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions) {
+                ToastAlertMessageView.copiedToClipboard()
+                    .padding(.top, 24)
             }
         }
     }

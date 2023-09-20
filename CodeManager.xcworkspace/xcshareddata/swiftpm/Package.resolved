@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "alerttoast",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/elai950/AlertToast",
-      "state" : {
-        "revision" : "b39252eacd159904afd7d718bba0afabb87f2f2f",
-        "version" : "1.3.9"
-      }
-    },
-    {
       "identity" : "bigint",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/attaswift/BigInt.git",
@@ -25,6 +16,15 @@
       "state" : {
         "revision" : "eee9ad754926c40a0f7e73f152357d37b119b7fa",
         "version" : "1.7.1"
+      }
+    },
+    {
+      "identity" : "simpletoast",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/sanzaru/SimpleToast.git",
+      "state" : {
+        "revision" : "6637b95dfc49d3d688ad2d7b6e0655c0f6862f83",
+        "version" : "0.8.0"
       }
     },
     {

@@ -1,11 +1,27 @@
-@_exported import AlertToast
+@_exported import SimpleToast
+import SwiftUI
 
-public extension AlertToast {
-    static func copiedToClipboard() -> AlertToast {
-        AlertToast(
-            displayMode: .hud,
-            type: .systemImage("doc.on.doc.fill", .primary),
-            title: localized(key: "code.copyied")
-        )
+public struct ToastAlertMessageView: View {
+    public var title: String
+    public var image: Image
+
+    public var body: some View {
+        Label {
+            Text(title)
+        } icon: {
+            image
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(Color.blue)
+        .foregroundColor(Color.white)
+        .clipShape(Capsule())
+        .font(.callout)
+    }
+}
+
+public extension ToastAlertMessageView {
+    static func copiedToClipboard() -> ToastAlertMessageView {
+        .init(title: localized(key: "code.copyied"), image: Image(systemName: "doc.on.doc.fill"))
     }
 }
