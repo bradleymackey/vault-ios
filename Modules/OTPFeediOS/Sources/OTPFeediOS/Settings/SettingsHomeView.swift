@@ -15,7 +15,7 @@ public struct SettingsHomeView: View {
             exportSection
             policySection
         }
-        .navigationTitle(localizedSettings(key: "home.title"))
+        .navigationTitle(SettingsViewModel.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 

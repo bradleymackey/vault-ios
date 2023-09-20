@@ -84,7 +84,7 @@ struct CodeManagerApp: App {
                     CodeSettingsView(localSettings: localSettings)
                 }
                 .tabItem {
-                    Label("Settings", systemImage: "gear")
+                    Label(SettingsViewModel.title, systemImage: "gear")
                 }
             }
             .onReceive(pasteboard.objectWillChange) {
