@@ -16,7 +16,7 @@ public struct RowIcon: View {
         ZStack {
             color
             icon
-                .font(.system(size: size / 2))
+                .font(.system(size: size / 2.5))
         }
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .frame(width: size, height: size)
