@@ -3,9 +3,11 @@ import OTPUI
 import SwiftUI
 
 public struct SettingsHomeView: View {
+    @ObservedObject private var viewModel: SettingsViewModel
     @ObservedObject private var localSettings: LocalSettings
 
-    public init(localSettings: LocalSettings) {
+    public init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
+        _viewModel = ObservedObject(wrappedValue: viewModel)
         _localSettings = ObservedObject(wrappedValue: localSettings)
     }
 
@@ -15,7 +17,7 @@ public struct SettingsHomeView: View {
             exportSection
             policySection
         }
-        .navigationTitle(SettingsViewModel.title)
+        .navigationTitle(viewModel.title)
         .navigationBarTitleDisplayMode(.inline)
     }
 
@@ -28,7 +30,7 @@ public struct SettingsHomeView: View {
                 }
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "viewOptions.previewSize.title"),
+                    title: viewModel.previewSizeTitle,
                     image: Image(systemName: "rectangle.inset.filled"),
                     color: .green
                 )
@@ -60,7 +62,7 @@ public struct SettingsHomeView: View {
                 Text("Restore")
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "restoreBackup.title"),
+                    title: viewModel.restoreBackupTitle,
                     image: Image(systemName: "square.and.arrow.down.fill"),
                     color: .green
                 )
@@ -70,23 +72,23 @@ public struct SettingsHomeView: View {
                 Text("Export")
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "saveBackup.title"),
+                    title: viewModel.saveBackupTitle,
                     image: Image(systemName: "square.and.arrow.up.on.square.fill"),
                     color: .purple
                 )
             }
         } header: {
-            Text(localizedSettings(key: "home.header.export.title"))
+            Text(viewModel.exportOptionsSectionTitle)
         }
     }
 
     private var policySection: some View {
         Section {
             NavigationLink {
-                AboutView()
+                AboutView(viewModel: viewModel)
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "about.title"),
+                    title: viewModel.aboutTitle,
                     image: Image(systemName: "key.fill"),
                     color: .blue
                 )
@@ -96,7 +98,7 @@ public struct SettingsHomeView: View {
                 Text("Info about Open Source, on GitHub")
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "openSource.title"),
+                    title: viewModel.openSourceTitle,
                     image: Image(systemName: "figure.2.arms.open"),
                     color: .purple
                 )
@@ -106,7 +108,7 @@ public struct SettingsHomeView: View {
                 ThirdPartyView()
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "thirdPartyLibraries.title"),
+                    title: viewModel.thirdPartyTitle,
                     image: Image(systemName: "text.book.closed.fill"),
                     color: .blue
                 )
@@ -116,7 +118,7 @@ public struct SettingsHomeView: View {
                 Text("Privacy Policy")
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "privacyPolicy.title"),
+                    title: viewModel.privacyPolicyTitle,
                     image: Image(systemName: "lock.fill"),
                     color: .red
                 )
@@ -126,13 +128,13 @@ public struct SettingsHomeView: View {
                 Text("Terms of Use")
             } label: {
                 FormRow(
-                    title: localizedSettings(key: "termsOfUse.title"),
+                    title: viewModel.termsOfUseTitle,
                     image: Image(systemName: "person.fill.checkmark"),
                     color: .green
                 )
             }
         } header: {
-            Text(localizedSettings(key: "home.header.policyAndLegal.title"))
+            Text(viewModel.policyAndLegacySectionTitle)
         }
     }
 }

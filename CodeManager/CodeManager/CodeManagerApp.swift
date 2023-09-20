@@ -18,6 +18,7 @@ struct CodeManagerApp: App {
     @StateObject private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
     @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
     @StateObject private var localSettings: LocalSettings
+    @StateObject private var settingsViewModel = SettingsViewModel()
     @State private var isShowingCopyPaste = false
 
     private let toastOptions = SimpleToastOptions(
@@ -81,10 +82,10 @@ struct CodeManagerApp: App {
                 }
 
                 NavigationStack {
-                    CodeSettingsView(localSettings: localSettings)
+                    CodeSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
                 }
                 .tabItem {
-                    Label(SettingsViewModel.title, systemImage: "gear")
+                    Label(settingsViewModel.title, systemImage: "gear")
                 }
             }
             .onReceive(pasteboard.objectWillChange) {

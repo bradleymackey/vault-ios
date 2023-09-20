@@ -10,9 +10,10 @@ import OTPSettings
 import SwiftUI
 
 struct CodeSettingsView: View {
+    @ObservedObject var viewModel: SettingsViewModel
     @ObservedObject var localSettings: LocalSettings
 
     var body: some View {
-        SettingsHomeView(localSettings: localSettings)
+        SettingsHomeView(viewModel: viewModel, localSettings: localSettings)
     }
 }

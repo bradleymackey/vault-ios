@@ -1,14 +1,17 @@
 import Foundation
+import OTPSettings
 import SwiftUI
 
 struct AboutView: View {
+    @ObservedObject var viewModel: SettingsViewModel
+
     var body: some View {
         Form {
             whatAreCodesSection
             backupSection
             dataPrivacySection
         }
-        .navigationTitle(Text(localizedSettings(key: "about.title")))
+        .navigationTitle(Text(viewModel.aboutTitle))
     }
 }
 

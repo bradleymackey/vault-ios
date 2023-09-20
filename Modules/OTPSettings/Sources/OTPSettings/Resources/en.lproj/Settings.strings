@@ -4,3 +4,23 @@
 
 "previewSize.medium" = "Medium";
 "previewSize.large" = "Large";
+
+"home.header.viewOptions.title" = "View Options";
+"home.header.export.title" = "Export";
+"home.header.policyAndLegal.title" = "Policy and Legal";
+
+"about.title" = "About";
+
+"viewOptions.previewSize.title" = "Preview Size";
+
+"saveBackup.title" = "Save Backup";
+
+"restoreBackup.title" = "Restore from Backup";
+
+"openSource.title" = "Open Source";
+
+"thirdPartyLibraries.title" = "Third-Party Libraries";
+
+"privacyPolicy.title" = "Privacy Policy";
+
+"termsOfUse.title" = "Terms of Use";

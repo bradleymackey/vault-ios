@@ -1,7 +1,58 @@
+import Combine
 import Foundation
 
-public enum SettingsViewModel {
-    public static var title: String {
+public final class SettingsViewModel: ObservableObject {
+    public init() {}
+}
+
+// MARK: - Strings
+
+public extension SettingsViewModel {
+    var title: String {
         localized(key: "home.title")
+    }
+
+    var viewOptionsSectionTitle: String {
+        localized(key: "home.header.viewOptions.title")
+    }
+
+    var exportOptionsSectionTitle: String {
+        localized(key: "home.header.export.title")
+    }
+
+    var policyAndLegacySectionTitle: String {
+        localized(key: "home.header.policyAndLegal.title")
+    }
+
+    var aboutTitle: String {
+        localized(key: "about.title")
+    }
+
+    var previewSizeTitle: String {
+        localized(key: "Preview Size")
+    }
+
+    var saveBackupTitle: String {
+        localized(key: "saveBackup.title")
+    }
+
+    var restoreBackupTitle: String {
+        localized(key: "restoreBackup.title")
+    }
+
+    var openSourceTitle: String {
+        localized(key: "openSource.title")
+    }
+
+    var thirdPartyTitle: String {
+        localized(key: "thirdPartyLibraries.title")
+    }
+
+    var privacyPolicyTitle: String {
+        localized(key: "privacyPolicy.title")
+    }
+
+    var termsOfUseTitle: String {
+        localized(key: "termsOfUse.title")
     }
 }
