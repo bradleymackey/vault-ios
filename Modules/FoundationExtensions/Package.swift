@@ -5,17 +5,21 @@ import PackageDescription
 
 let package = Package(
     name: "FoundationExtensions",
+    defaultLocalization: "en",
     platforms: [.iOS(.v13), .macOS(.v11)],
     products: [
         .library(
             name: "FoundationExtensions",
-            targets: ["FoundationExtensions"]),
+            targets: ["FoundationExtensions"]
+        ),
     ],
     targets: [
         .target(
-            name: "FoundationExtensions"),
+            name: "FoundationExtensions"
+        ),
         .testTarget(
             name: "FoundationExtensionsTests",
-            dependencies: ["FoundationExtensions"]),
+            dependencies: ["FoundationExtensions"]
+        ),
     ]
 )
