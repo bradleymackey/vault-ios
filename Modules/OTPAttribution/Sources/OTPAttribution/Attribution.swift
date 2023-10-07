@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 // For licence formatting:
 // https://gchq.github.io/CyberChef/#recipe=Escape_string('Minimal','Double',true,true,false)&input=TGljZW5jZSBoZXJl
@@ -11,9 +12,10 @@ public struct Attribution {
         self.libraries = libraries
     }
 
-    public static func parse() throws -> Attribution {
-        try Attribution(
-            libraries: ThirdPartyLibraryLoader().load()
+    public static func parse(resourceFetcher: LocalResourceFetcher) throws -> Attribution {
+        let loader = ThirdPartyLibraryLoader(resourceFetcher: resourceFetcher)
+        return try Attribution(
+            libraries: loader.load()
         )
     }
 }

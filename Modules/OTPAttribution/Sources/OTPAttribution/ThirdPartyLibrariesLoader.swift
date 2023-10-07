@@ -1,22 +1,23 @@
 import Foundation
+import FoundationExtensions
 
 struct ThirdPartyLibraryLoader {
-    enum LoadError: Error {
-        case invalidResourcePath
-    }
-
     private struct FileStructure: Decodable {
         var libraries: [ThirdPartyLibrary]
     }
 
+    private let resourceFetcher: LocalResourceFetcher
+
+    init(resourceFetcher: LocalResourceFetcher) {
+        self.resourceFetcher = resourceFetcher
+    }
+
     func load() throws -> [ThirdPartyLibrary] {
-        guard
-            let path = Bundle.module.path(forResource: "third-party-libraries", ofType: "json")
-        else {
-            throw LoadError.invalidResourcePath
-        }
-        let url = URL(fileURLWithPath: path)
-        let thirdPartyData = try Data(contentsOf: url)
+        let thirdPartyData = try resourceFetcher.fetchLocalResource(
+            fromBundle: .module,
+            fileName: "third-party-libraries",
+            fileExtension: "json"
+        )
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(FileStructure.self, from: thirdPartyData)
         return decoded.libraries

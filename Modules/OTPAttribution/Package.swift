@@ -13,12 +13,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        // .package(url: /* package url */, from: "1.0.0"),
+        .package(name: "FoundationExtensions", path: "../FoundationExtensions"),
     ],
     targets: [
         .target(
             name: "OTPAttribution",
-            dependencies: [],
+            dependencies: ["FoundationExtensions"],
             resources: [
                 .process("Resources"),
             ]

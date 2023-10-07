@@ -1,3 +1,4 @@
+import FoundationExtensions
 import OTPAttribution
 import SwiftUI
 
@@ -18,7 +19,8 @@ public struct ThirdPartyView: View {
         .navigationBarTitleDisplayMode(.inline)
         .task {
             do {
-                let attribution = try Attribution.parse()
+                let fetcher = FileSystemLocalResourceFetcher()
+                let attribution = try Attribution.parse(resourceFetcher: fetcher)
                 libraries = attribution.libraries
             } catch {
                 loadingError = true
