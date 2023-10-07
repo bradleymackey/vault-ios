@@ -32,7 +32,7 @@ final class StubLocalResourceFetcherTests: XCTestCase {
 // MARK: - Helpers
 
 extension StubLocalResourceFetcherTests {
-    private func makeSUT(data: Data) -> LocalResourceFetcher {
+    private func makeSUT(data: Data) -> any LocalResourceFetcher {
         StubLocalResourceFetcher(stubData: data)
     }
 }

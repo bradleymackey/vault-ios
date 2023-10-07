@@ -15,11 +15,23 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "FoundationExtensions"
+            name: "FoundationExtensions",
+            swiftSettings: [
+                .enableUpcomingFeature("ForwardTrailingClosures"),
+                .enableUpcomingFeature("BareSlashRegexLiterals"),
+                .enableUpcomingFeature("ConciseMagicFile"),
+                .enableUpcomingFeature("ExistentialAny"),
+            ]
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
-            dependencies: ["FoundationExtensions"]
+            dependencies: ["FoundationExtensions"],
+            swiftSettings: [
+                .enableUpcomingFeature("ForwardTrailingClosures"),
+                .enableUpcomingFeature("BareSlashRegexLiterals"),
+                .enableUpcomingFeature("ConciseMagicFile"),
+                .enableUpcomingFeature("ExistentialAny"),
+            ]
         ),
     ]
 )

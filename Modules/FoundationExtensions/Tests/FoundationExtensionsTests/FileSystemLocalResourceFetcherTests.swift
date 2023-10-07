@@ -48,7 +48,7 @@ final class FileSystemLocalResourceFetcherTests: XCTestCase {
 // MARK: - Helpers
 
 extension FileSystemLocalResourceFetcherTests {
-    private func makeSUT() -> LocalResourceFetcher {
+    private func makeSUT() -> any LocalResourceFetcher {
         FileSystemLocalResourceFetcher()
     }
 
