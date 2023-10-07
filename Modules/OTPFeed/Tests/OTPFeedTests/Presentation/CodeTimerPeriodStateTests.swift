@@ -27,6 +27,7 @@ final class CodeTimerPeriodStateTests: XCTestCase {
         handle.cancel()
     }
 
+    // TODO: fix flake!
     func test_state_isSetImmediatelyFromInitialValueOfPublisherOnInit() async throws {
         let initialState = OTPTimerState(startTime: 69, endTime: 420)
         // CurrentValueSubject publishes immediately on subscription.
