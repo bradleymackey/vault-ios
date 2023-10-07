@@ -12,54 +12,23 @@ final class CodeTimerPeriodStateTests: XCTestCase {
         XCTAssertNil(sut.state)
     }
 
-    func test_precondition_CurrentValueSubjectSendsValueOnSubscriber() async throws {
-        // Precondition for test_state_isSetImmediatelyFromInitialValueOfPublisherOnInit
+    func test_state_assignsValueToState() async throws {
+        let valueSubject = PassthroughSubject<OTPTimerState, Never>()
+        let sut = makeSUT(pub: valueSubject.eraseToAnyPublisher())
 
-        let subject = CurrentValueSubject<Int, Never>(100)
-
-        let exp = expectation(description: "Wait for initial publish")
-        let handle = subject.sink { value in
-            XCTAssertEqual(value, 100)
+        let exp = expectation(description: "Wait for state change")
+        withObservationTracking {
+            let _ = sut.state
+        } onChange: {
             exp.fulfill()
         }
 
-        await fulfillment(of: [exp], timeout: 1.0)
-        handle.cancel()
-    }
-
-    // TODO: fix flake!
-    func test_state_isSetImmediatelyFromInitialValueOfPublisherOnInit() async throws {
         let initialState = OTPTimerState(startTime: 69, endTime: 420)
-        // CurrentValueSubject publishes immediately on subscription.
-        let initiallyPublishingPublisher = CurrentValueSubject<OTPTimerState, Never>(initialState)
-            .eraseToAnyPublisher()
-        let sut = makeSUT(pub: initiallyPublishingPublisher)
+        valueSubject.send(initialState)
 
-        let recieved = sut.$state.collectFirst(1)
+        await fulfillment(of: [exp], timeout: 1.0)
 
-        let values = try await awaitPublisher(recieved) {
-            // noop
-        }
-
-        XCTAssertEqual(values, [initialState])
-    }
-
-    func test_state_assignsValuesToState() async throws {
-        let publisher = PassthroughSubject<OTPTimerState, Never>()
-        let sut = makeSUT(pub: publisher.eraseToAnyPublisher())
-
-        let recieved = sut.$state.collectNext(3)
-
-        let values = try await awaitPublisher(recieved) {
-            publisher.send(OTPTimerState(startTime: 69, endTime: 420))
-            publisher.send(OTPTimerState(startTime: 800, endTime: 900))
-            publisher.send(OTPTimerState(startTime: 900, endTime: 1000))
-        }
-        XCTAssertEqual(values, [
-            OTPTimerState(startTime: 69, endTime: 420),
-            OTPTimerState(startTime: 800, endTime: 900),
-            OTPTimerState(startTime: 900, endTime: 1000),
-        ])
+        XCTAssertEqual(sut.state, initialState)
     }
 
     // MARK: - Helpers

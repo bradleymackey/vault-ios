@@ -6,9 +6,9 @@ import OTPCore
 ///
 /// As all timers with the same period share the same state at any given time,
 /// they can refer to this single object for fetching the latest state.
-@MainActor
-public final class CodeTimerPeriodState: ObservableObject {
-    @Published public private(set) var state: OTPTimerState?
+@Observable
+public final class CodeTimerPeriodState {
+    public private(set) var state: OTPTimerState?
 
     private let clock: EpochClock
     private var stateCancellable: AnyCancellable?

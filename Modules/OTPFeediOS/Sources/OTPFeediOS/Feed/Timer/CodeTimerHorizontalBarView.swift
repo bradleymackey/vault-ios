@@ -5,7 +5,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 
 public struct CodeTimerHorizontalBarView: View {
-    @ObservedObject var timerState: CodeTimerPeriodState
+    var timerState: CodeTimerPeriodState
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
