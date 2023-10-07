@@ -90,15 +90,17 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 }
             }
 
-            ToolbarItem(placement: .confirmationAction) {
-                if editingModel.isDirty {
+            if editingModel.isDirty {
+                ToolbarItem(placement: .confirmationAction) {
                     Button {
                         Task { await saveChanges() }
                     } label: {
                         Text(viewModel.saveEditsTitle)
                             .tint(.accentColor)
                     }
-                } else {
+                }
+            } else {
+                ToolbarItem(placement: .confirmationAction) {
                     Button {
                         doneButtonPressed()
                     } label: {

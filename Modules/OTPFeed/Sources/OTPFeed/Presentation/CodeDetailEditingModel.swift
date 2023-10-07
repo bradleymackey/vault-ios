@@ -21,5 +21,6 @@ public final class CodeDetailEditingModel: ObservableObject {
 
     public func didPersist() {
         initialDetail = detail
+        detail = initialDetail
     }
 }
