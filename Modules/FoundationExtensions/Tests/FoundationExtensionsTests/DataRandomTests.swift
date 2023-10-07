@@ -1,5 +1,5 @@
 import Foundation
-import OTPModels
+import FoundationExtensions
 import XCTest
 
 final class DataRandomTests: XCTestCase {

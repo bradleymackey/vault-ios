@@ -71,13 +71,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPModels",
-        "identifier" : "OTPModelsTests",
-        "name" : "OTPModelsTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/..\/OTPUI",
         "identifier" : "OTPUITests",
         "name" : "OTPUITests"
@@ -95,6 +88,13 @@
         "containerPath" : "container:..\/OTPSettings",
         "identifier" : "OTPSettingsTests",
         "name" : "OTPSettingsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FoundationExtensionsTests",
+        "name" : "FoundationExtensionsTests"
       }
     }
   ],

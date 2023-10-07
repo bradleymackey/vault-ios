@@ -11,9 +11,6 @@
       location = "group:CodeManager/../OTPUI">
    </FileRef>
    <FileRef
-      location = "group:Modules/OTPModels">
-   </FileRef>
-   <FileRef
       location = "group:Modules/OTPSettings">
    </FileRef>
    <FileRef
