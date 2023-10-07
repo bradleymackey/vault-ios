@@ -8,7 +8,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     @ObservedObject public var viewModel: CodeDetailViewModel
 
     private var editor: Editor
-    @StateObject private var editingModel: CodeDetailEditingModel
+    @State private var editingModel: CodeDetailEditingModel
     @Environment(\.dismiss) var dismiss
     @State private var isSaving = false
     @State private var isError = false
@@ -36,7 +36,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
 
     public init(viewModel: CodeDetailViewModel, editor: Editor) {
         _viewModel = ObservedObject(initialValue: viewModel)
-        _editingModel = StateObject(wrappedValue: viewModel.makeEditingViewModel())
+        _editingModel = State(initialValue: viewModel.makeEditingViewModel())
         self.editor = editor
     }
 

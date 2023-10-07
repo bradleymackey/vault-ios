@@ -2,8 +2,9 @@ import Combine
 import Foundation
 
 @MainActor
-public final class CodeDetailEditingModel: ObservableObject {
-    @Published public var detail: CodeDetailEdits
+@Observable
+public final class CodeDetailEditingModel {
+    public var detail: CodeDetailEdits
     public private(set) var initialDetail: CodeDetailEdits
 
     public init(detail: CodeDetailEdits) {
@@ -21,6 +22,5 @@ public final class CodeDetailEditingModel: ObservableObject {
 
     public func didPersist() {
         initialDetail = detail
-        detail = initialDetail
     }
 }

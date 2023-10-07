@@ -11,22 +11,16 @@ final class CodeDetailEditingModelTests: XCTestCase {
         XCTAssertFalse(sut.isDirty)
     }
 
-    func test_didPersist_publishesUpdatedState() async throws {
+    func test_isDirty_resetsOncePersisted() async throws {
         let detail = CodeDetailEdits(
             issuerTitle: "hello"
         )
         let sut = makeSUT(detail: detail)
 
-        let publisher = sut.$detail.collectNext(2)
-        let values = try await awaitPublisher(publisher) {
-            sut.detail.issuerTitle = "next"
-            sut.didPersist()
-        }
-
-        XCTAssertEqual(values.map(\.issuerTitle), [
-            "next", // changed
-            "next", // didPersist
-        ])
+        sut.detail.issuerTitle = "next"
+        XCTAssertTrue(sut.isDirty)
+        sut.didPersist()
+        XCTAssertFalse(sut.isDirty)
     }
 }
 
