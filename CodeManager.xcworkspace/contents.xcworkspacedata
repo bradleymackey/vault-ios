@@ -5,6 +5,9 @@
       location = "group:CodeManager/CodeManager.xcodeproj">
    </FileRef>
    <FileRef
+      location = "group:Modules/FoundationExtensions">
+   </FileRef>
+   <FileRef
       location = "group:CodeManager/../OTPUI">
    </FileRef>
    <FileRef
