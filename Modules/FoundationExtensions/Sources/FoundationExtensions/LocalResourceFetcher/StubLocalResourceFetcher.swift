@@ -10,4 +10,8 @@ public struct StubLocalResourceFetcher: LocalResourceFetcher {
     public func fetchLocalResource(at _: URL) throws -> Data {
         stubData
     }
+
+    public func fetchLocalResource(fromBundle _: Bundle, fileName _: String, fileExtension _: String) throws -> Data {
+        stubData
+    }
 }

@@ -3,20 +3,45 @@ import XCTest
 @testable import FoundationExtensions
 
 final class FileSystemLocalResourceFetcherTests: XCTestCase {
-    func test_fetchLocalResource_throwsIfResourceIsNotPresentForFileURL() throws {
+    func test_fetchLocalResourceFromURL_throwsIfResourceIsNotPresentForFileURL() throws {
         let sut = makeSUT()
 
         let url = try XCTUnwrap(URL(string: "file:///doesnotexist"))
         XCTAssertThrowsError(try sut.fetchLocalResource(at: url))
     }
 
-    func test_fetchLocalResource_fetchesResourceFromModule() throws {
+    func test_fetchLocalResourceFromURL_fetchesResourceFromModule() throws {
         let sut = makeSUT()
 
-        let url = try makeURL(forBundleFile: "TestFile", fileExtension: "txt")
+        let path = try XCTUnwrap(Bundle.module.path(forResource: "TestFile", ofType: "txt"))
+        let url = URL(fileURLWithPath: path)
         let data = try sut.fetchLocalResource(at: url)
 
         XCTAssertEqual(data, Data("Test contents\n".utf8))
+    }
+
+    func test_fetchLocalResourceFromBundle_throwsIfFileNotPresentInBundle() throws {
+        let sut = makeSUT()
+
+        let bundlesToCheck: [Bundle] = [.main, .module]
+        for bundle in bundlesToCheck {
+            XCTAssertThrowsError(try sut.fetchLocalResource(
+                fromBundle: bundle,
+                fileName: "doesnotexist",
+                fileExtension: "any"
+            ))
+        }
+    }
+
+    func test_fetchLocalResourceFromBundle_fetchesDataFromBundle() throws {
+        let sut = makeSUT()
+
+        let response = try sut.fetchLocalResource(
+            fromBundle: .module,
+            fileName: "TestFile",
+            fileExtension: "txt"
+        )
+        XCTAssertEqual(response, Data("Test contents\n".utf8))
     }
 }
 

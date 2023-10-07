@@ -3,7 +3,7 @@ import XCTest
 @testable import FoundationExtensions
 
 final class StubLocalResourceFetcherTests: XCTestCase {
-    func test_fetchLocalResource_fetchesStubbedData() throws {
+    func test_fetchLocalResourceFromURL_fetchesStubbedData() throws {
         let stubData = Data("Hello world".utf8)
         let sut = makeSUT(data: stubData)
 
@@ -11,6 +11,21 @@ final class StubLocalResourceFetcherTests: XCTestCase {
         let response = try sut.fetchLocalResource(at: anyURL)
 
         XCTAssertEqual(response, stubData)
+    }
+
+    func test_fetchLocalResourceFromBundle_fetchesStubbedData() throws {
+        let stubData = Data("Hello world".utf8)
+        let sut = makeSUT(data: stubData)
+
+        let bundlesToCheck: [Bundle] = [.main, .module]
+        for bundle in bundlesToCheck {
+            let response = try sut.fetchLocalResource(
+                fromBundle: bundle,
+                fileName: "any",
+                fileExtension: "any"
+            )
+            XCTAssertEqual(response, stubData)
+        }
     }
 }
 
