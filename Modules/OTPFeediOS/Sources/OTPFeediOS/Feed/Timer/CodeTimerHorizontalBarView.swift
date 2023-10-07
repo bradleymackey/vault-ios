@@ -19,12 +19,12 @@ public struct CodeTimerHorizontalBarView: View {
                 color: color,
                 backgroundColor: backgroundColor
             )
-            .onChange(of: proxy.size) { _ in
+            .onChange(of: proxy.size) { _, _ in
                 // the size of the viewport has changed
                 resetAnimation(animateReset: false)
             }
         }
-        .onChange(of: timerState.state) { [oldState = timerState.state] newState in
+        .onChange(of: timerState.state) { oldState, newState in
             // the time parameters have updated, the timer is likely restarting
             if let oldState, let newState {
                 resetAnimation(animateReset: oldState.endTime < newState.endTime)
@@ -36,7 +36,7 @@ public struct CodeTimerHorizontalBarView: View {
             // we have just appeared onscreen
             resetAnimation(animateReset: false)
         }
-        .onChange(of: scenePhase) { newScenePhase in
+        .onChange(of: scenePhase) { _, newScenePhase in
             // we have appeared from background
             if newScenePhase == .active {
                 resetAnimation(animateReset: false)
