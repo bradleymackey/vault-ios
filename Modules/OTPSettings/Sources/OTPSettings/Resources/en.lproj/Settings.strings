@@ -27,3 +27,6 @@
 "privacyPolicy.title" = "Privacy Policy";
 
 "termsOfUse.title" = "Terms of Use";
+
+/* There was an error loading the contents of a settings file */
+"settings.errorLoadingDocument" = "Error loading content";

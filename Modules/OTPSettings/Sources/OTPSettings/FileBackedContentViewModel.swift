@@ -18,4 +18,8 @@ public extension FileBackedContentViewModel {
         }
         return String(data: contents, encoding: .utf8)
     }
+
+    var errorLoadingMessage: String {
+        localized(key: "settings.errorLoadingDocument")
+    }
 }

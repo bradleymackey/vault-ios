@@ -115,7 +115,7 @@ public struct SettingsHomeView: View {
             }
 
             NavigationLink {
-                Text("Privacy Policy")
+                SettingsDocumentView(title: viewModel.privacyPolicyTitle, viewModel: PrivacyPolicyViewModel())
             } label: {
                 FormRow(
                     title: viewModel.privacyPolicyTitle,
@@ -125,7 +125,7 @@ public struct SettingsHomeView: View {
             }
 
             NavigationLink {
-                Text("Terms of Use")
+                SettingsDocumentView(title: viewModel.termsOfUseTitle, viewModel: TermsOfServiceViewModel())
             } label: {
                 FormRow(
                     title: viewModel.termsOfUseTitle,
