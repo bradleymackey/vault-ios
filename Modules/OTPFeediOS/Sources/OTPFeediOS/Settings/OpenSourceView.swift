@@ -6,6 +6,7 @@ public struct OpenSourceView: View {
         GeometryReader { geometry in
             ScrollView {
                 container
+                    .padding(.vertical, 16)
                     .padding(24)
                     .frame(maxWidth: .infinity)
                     .frame(minHeight: geometry.size.height)
@@ -27,6 +28,7 @@ public struct OpenSourceView: View {
             Text("Open Source")
                 .font(.largeTitle.bold())
         }
+        .multilineTextAlignment(.center)
     }
 
     private var paragraphContent: some View {
