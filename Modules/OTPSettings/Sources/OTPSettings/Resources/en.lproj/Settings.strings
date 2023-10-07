@@ -18,6 +18,9 @@
 "restoreBackup.title" = "Restore from Backup";
 
 "openSource.title" = "Open Source";
+"openSource.aboutOpenSource" = "The source code for this app is available for anybody to view, modify, or compile on their own. This is known as open-source software (OSS).";
+"openSource.aboutPrivacy" = "When it comes to storing your senstive data, never take any company or individual at their word. You can audit the source code and build this app yourself if you are particularly security conscious.";
+"openSource.aboutLink" = "View the source code on GitHub";
 
 "thirdPartyLibraries.title" = "Third-Party Libraries";
 

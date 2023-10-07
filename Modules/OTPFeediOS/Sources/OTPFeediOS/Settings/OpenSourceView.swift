@@ -1,4 +1,5 @@
 import Foundation
+import OTPSettings
 import SwiftUI
 
 public struct OpenSourceView: View {
@@ -25,19 +26,23 @@ public struct OpenSourceView: View {
         VStack(alignment: .center, spacing: 8) {
             Image(systemName: "figure.2.arms.open")
                 .font(.largeTitle.bold())
-            Text("Open Source")
+            Text(OpenSourceViewModel.title)
                 .font(.largeTitle.bold())
         }
         .multilineTextAlignment(.center)
     }
 
     private var paragraphContent: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            Text("Please view the source code for this project")
-            Text(
-                "When it comes to storing your senstive data, never take anyone at their word. You can audit the source code and build this app yourself if you desire."
-            )
+        VStack(alignment: .leading, spacing: 8) {
+            Text(OpenSourceViewModel.aboutOpenSource)
+            Text(OpenSourceViewModel.aboutPrivacy)
+
+            Link(destination: URL(string: "https://google.com")!) {
+                Text(OpenSourceViewModel.aboutLink)
+            }
+            .foregroundStyle(.tint)
         }
+        .foregroundStyle(.secondary)
         .multilineTextAlignment(.leading)
     }
 }
