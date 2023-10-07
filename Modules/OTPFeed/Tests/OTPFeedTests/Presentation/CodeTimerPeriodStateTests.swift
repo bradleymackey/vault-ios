@@ -12,7 +12,38 @@ final class CodeTimerPeriodStateTests: XCTestCase {
         XCTAssertNil(sut.state)
     }
 
-    func test_recievePublish_assignsValuesToState() async throws {
+    func test_precondition_CurrentValueSubjectSendsValueOnSubscriber() async throws {
+        // Precondition for test_state_isSetImmediatelyFromInitialValueOfPublisherOnInit
+
+        let subject = CurrentValueSubject<Int, Never>(100)
+
+        let exp = expectation(description: "Wait for initial publish")
+        let handle = subject.sink { value in
+            XCTAssertEqual(value, 100)
+            exp.fulfill()
+        }
+
+        await fulfillment(of: [exp], timeout: 1.0)
+        handle.cancel()
+    }
+
+    func test_state_isSetImmediatelyFromInitialValueOfPublisherOnInit() async throws {
+        let initialState = OTPTimerState(startTime: 69, endTime: 420)
+        // CurrentValueSubject publishes immediately on subscription.
+        let initiallyPublishingPublisher = CurrentValueSubject<OTPTimerState, Never>(initialState)
+            .eraseToAnyPublisher()
+        let sut = makeSUT(pub: initiallyPublishingPublisher)
+
+        let recieved = sut.$state.collectFirst(1)
+
+        let values = try await awaitPublisher(recieved) {
+            // noop
+        }
+
+        XCTAssertEqual(values, [initialState])
+    }
+
+    func test_state_assignsValuesToState() async throws {
         let publisher = PassthroughSubject<OTPTimerState, Never>()
         let sut = makeSUT(pub: publisher.eraseToAnyPublisher())
 
