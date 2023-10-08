@@ -15,7 +15,6 @@ public final class CodeTimerPeriodState {
     public init(clock _: EpochClock, statePublisher: AnyPublisher<OTPTimerState, Never>) {
         stateCancellable = statePublisher
             .sink { [weak self] state in
-                print("NEW CodeTimerPeriodState.state:", state)
                 self?.animationState = .countdownFrom(timerState: state)
             }
     }
