@@ -11,7 +11,7 @@ public struct OTPCodeFeedView<
     ViewGenerator.Code == GenericOTPAuthCode
 {
     @ObservedObject public var viewModel: FeedViewModel<Store>
-    @ObservedObject public var localSettings: LocalSettings
+    public var localSettings: LocalSettings
     public var viewGenerator: ViewGenerator
     @Binding public var isEditing: Bool
     public var gridSpacing: Double

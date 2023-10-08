@@ -4,19 +4,29 @@ import TestHelpers
 import XCTest
 
 final class LocalSettingsTests: XCTestCase {
-    func test_objectWillChange_sendsOnValueChange() async throws {
+    func test_previewSize_sendsObservableChangeOnValueChange() async throws {
         let defaults = try makeDefaults()
         let sut = try makeSUT(defaults: defaults)
 
-        let publisher = sut.objectWillChange.collectFirst(3)
-
-        let results: [Void] = try await awaitPublisher(publisher) {
-            sut.state.previewSize = .large
-            sut.state.previewSize = .medium
-            sut.state.previewSize = .large
+        let exp1 = expectation(description: "Wait for first change")
+        withObservationTracking {
+            let _ = sut.state.previewSize
+        } onChange: {
+            exp1.fulfill()
         }
 
-        XCTAssertEqual(results.count, 3)
+        sut.state.previewSize = .large
+        await fulfillment(of: [exp1], timeout: 1.0)
+
+        let exp2 = expectation(description: "Wait for second change")
+        withObservationTracking {
+            let _ = sut.state.previewSize
+        } onChange: {
+            exp2.fulfill()
+        }
+
+        sut.state.previewSize = .medium
+        await fulfillment(of: [exp2], timeout: 1.0)
     }
 
     func test_previewSize_defaultsToDefaultValue() throws {

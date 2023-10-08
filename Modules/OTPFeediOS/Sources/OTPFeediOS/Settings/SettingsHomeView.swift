@@ -4,11 +4,11 @@ import SwiftUI
 
 public struct SettingsHomeView: View {
     @ObservedObject private var viewModel: SettingsViewModel
-    @ObservedObject private var localSettings: LocalSettings
+    @Bindable private var localSettings: LocalSettings
 
     public init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
         _viewModel = ObservedObject(wrappedValue: viewModel)
-        _localSettings = ObservedObject(wrappedValue: localSettings)
+        _localSettings = Bindable(wrappedValue: localSettings)
     }
 
     public var body: some View {

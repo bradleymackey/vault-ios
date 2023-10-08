@@ -1,14 +1,12 @@
 import Combine
 import Foundation
 
-public final class LocalSettings: ObservableObject {
+@Observable
+public final class LocalSettings {
     private let defaults: Defaults
 
     private static let localSettingsKey = Key<LocalSettingsState>("local_settings_v1")
     public var state: LocalSettingsState {
-        willSet {
-            objectWillChange.send()
-        }
         didSet {
             try? defaults.set(state, for: Self.localSettingsKey)
         }

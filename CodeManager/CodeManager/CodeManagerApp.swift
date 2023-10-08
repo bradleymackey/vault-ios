@@ -17,7 +17,7 @@ struct CodeManagerApp: App {
     @StateObject private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @StateObject private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
     @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
-    @StateObject private var localSettings: LocalSettings
+    @State private var localSettings: LocalSettings
     @StateObject private var settingsViewModel = SettingsViewModel()
     @StateObject private var clock: EpochClock
     @State private var isShowingCopyPaste = false
@@ -55,7 +55,7 @@ struct CodeManagerApp: App {
         _feedViewModel = StateObject(wrappedValue: feed)
         _totpPreviewGenerator = StateObject(wrappedValue: totp)
         _hotpPreviewGenerator = StateObject(wrappedValue: hotp)
-        _localSettings = StateObject(wrappedValue: localSettings)
+        _localSettings = State(wrappedValue: localSettings)
     }
 
     var body: some Scene {

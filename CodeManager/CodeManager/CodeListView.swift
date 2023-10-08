@@ -16,7 +16,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
     where Generator.Code == GenericOTPAuthCode
 {
     @ObservedObject var feedViewModel: FeedViewModel<Store>
-    @ObservedObject var localSettings: LocalSettings
+    var localSettings: LocalSettings
     var viewGenerator: Generator
 
     @EnvironmentObject var pasteboard: Pasteboard
