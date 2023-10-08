@@ -11,6 +11,7 @@ public struct CodeTimerHorizontalBarView: View {
 
     @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
+    @EnvironmentObject var clock: EpochClock
 
     public var body: some View {
         GeometryReader { proxy in
@@ -24,13 +25,8 @@ public struct CodeTimerHorizontalBarView: View {
                 resetAnimation(animateReset: false)
             }
         }
-        .onChange(of: timerState.state) { oldState, newState in
-            // the time parameters have updated, the timer is likely restarting
-            if let oldState, let newState {
-                resetAnimation(animateReset: oldState.endTime < newState.endTime)
-            } else {
-                resetAnimation(animateReset: false)
-            }
+        .onChange(of: timerState.animationState) { _, _ in
+            resetAnimation(animateReset: true)
         }
         .onAppear {
             // we have just appeared onscreen
@@ -45,15 +41,20 @@ public struct CodeTimerHorizontalBarView: View {
     }
 
     private func resetAnimation(animateReset: Bool) {
-        let animationState = timerState.countdownAnimation()
-        withAnimation(.linear(duration: animateReset ? 0.15 : 0)) {
-            currentFractionCompleted = animationState.initialFraction
-        }
-        if case let .animate(_, duration) = animationState {
-            withAnimation(.linear(duration: duration)) {
-                currentFractionCompleted = 0
+        let currentTime = clock.currentTime
+        withAnimation(
+            .linear(duration: animateReset ? 0.15 : 0),
+            {
+                currentFractionCompleted = timerState.animationState.initialFraction(currentTime: currentTime)
+            },
+            completion: {
+                if case let .animate(state) = timerState.animationState {
+                    withAnimation(.linear(duration: state.remainingTime(at: currentTime))) {
+                        currentFractionCompleted = 0
+                    }
+                }
             }
-        }
+        )
     }
 }
 

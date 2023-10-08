@@ -6,19 +6,19 @@ import XCTest
 
 @MainActor
 final class CodeTimerPeriodStateTests: XCTestCase {
-    func test_init_initialStateIsNil() {
+    func test_init_initialAnimationStateIsFrozen() {
         let sut = makeSUT(pub: PassthroughSubject().eraseToAnyPublisher())
 
-        XCTAssertNil(sut.state)
+        XCTAssertEqual(sut.animationState, .freeze(fraction: 0))
     }
 
-    func test_state_assignsValueToState() async throws {
+    func test_animationState_assignsValueToState() async throws {
         let valueSubject = PassthroughSubject<OTPTimerState, Never>()
         let sut = makeSUT(pub: valueSubject.eraseToAnyPublisher())
 
         let exp = expectation(description: "Wait for state change")
         withObservationTracking {
-            let _ = sut.state
+            let _ = sut.animationState
         } onChange: {
             exp.fulfill()
         }
@@ -28,7 +28,7 @@ final class CodeTimerPeriodStateTests: XCTestCase {
 
         await fulfillment(of: [exp], timeout: 1.0)
 
-        XCTAssertEqual(sut.state, initialState)
+        XCTAssertEqual(sut.animationState, .animate(initialState))
     }
 
     // MARK: - Helpers

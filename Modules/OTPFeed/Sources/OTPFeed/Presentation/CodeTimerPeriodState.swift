@@ -8,25 +8,15 @@ import OTPCore
 /// they can refer to this single object for fetching the latest state.
 @Observable
 public final class CodeTimerPeriodState {
-    public private(set) var state: OTPTimerState?
+    public private(set) var animationState: CodeTimerAnimationState = .freeze(fraction: 0)
 
-    private let clock: EpochClock
     private var stateCancellable: AnyCancellable?
 
-    public init(clock: EpochClock, statePublisher: AnyPublisher<OTPTimerState, Never>) {
-        self.clock = clock
+    public init(clock _: EpochClock, statePublisher: AnyPublisher<OTPTimerState, Never>) {
         stateCancellable = statePublisher
-            .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
-                self?.state = state
+                print("NEW CodeTimerPeriodState.state:", state)
+                self?.animationState = .countdownFrom(timerState: state)
             }
-    }
-
-    /// Creates a countdown animation from the current state of the timer.
-    public func countdownAnimation() -> CodeTimerAnimationState {
-        CodeTimerAnimationState.countdownFrom(
-            timerState: state,
-            currentTime: clock.currentTime
-        )
     }
 }

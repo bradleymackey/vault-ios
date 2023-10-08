@@ -2,21 +2,21 @@ import Foundation
 
 public enum CodeTimerAnimationState: Equatable {
     case freeze(fraction: Double)
-    case animate(startFraction: Double, duration: Double)
+    case animate(OTPTimerState)
 }
 
 public extension CodeTimerAnimationState {
-    var initialFraction: Double {
+    func initialFraction(currentTime: Double) -> Double {
         switch self {
-        case let .freeze(fraction), let .animate(fraction, _):
+        case let .freeze(fraction):
             return fraction
+        case let .animate(state):
+            return 1 - state.fractionCompleted(at: currentTime)
         }
     }
 
-    static func countdownFrom(timerState: OTPTimerState?, currentTime: Double) -> CodeTimerAnimationState {
+    static func countdownFrom(timerState: OTPTimerState?) -> CodeTimerAnimationState {
         guard let timerState else { return .freeze(fraction: 0) }
-        let completed = timerState.fractionCompleted(at: currentTime)
-        let remainingTime = timerState.remainingTime(at: currentTime)
-        return .animate(startFraction: 1 - completed, duration: remainingTime)
+        return .animate(timerState)
     }
 }
