@@ -92,7 +92,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:",
+        "containerPath" : "container:..\/FoundationExtensions",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
       }
