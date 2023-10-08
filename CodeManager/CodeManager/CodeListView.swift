@@ -68,8 +68,8 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
                 }
             }
         }
-        .onChange(of: scenePhase) { _ in
-            viewGenerator.scenePhaseDidChange(to: scenePhase)
+        .onChange(of: scenePhase) { _, newValue in
+            viewGenerator.scenePhaseDidChange(to: newValue)
         }
         .onAppear {
             viewGenerator.didAppear()
