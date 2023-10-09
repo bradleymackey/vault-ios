@@ -2,6 +2,13 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
+]
+
 let package = Package(
     name: "OTPSettings",
     defaultLocalization: "en",
@@ -18,11 +25,13 @@ let package = Package(
     targets: [
         .target(
             name: "OTPSettings",
-            dependencies: []
+            dependencies: [],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "OTPSettingsTests",
-            dependencies: ["OTPSettings", "TestHelpers"]
+            dependencies: ["OTPSettings", "TestHelpers"],
+            swiftSettings: swiftSettings
         ),
     ]
 )
