@@ -5,8 +5,8 @@ public extension XCTestCase {
     func expectSingleMutation<T: Observable>(
         observable object: T,
         keyPath: KeyPath<T, some Any>,
-        when action: () -> Void
-    ) async {
+        when action: () async throws -> Void
+    ) async rethrows {
         let exp = expectation(description: "Wait for expectation")
         withObservationTracking {
             _ = object[keyPath: keyPath]
@@ -15,7 +15,7 @@ public extension XCTestCase {
             exp.fulfill()
         }
 
-        action()
+        try await action()
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
