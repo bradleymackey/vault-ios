@@ -16,10 +16,6 @@ public extension SettingsViewModel {
         localized(key: "home.header.viewOptions.title")
     }
 
-    var exportOptionsSectionTitle: String {
-        localized(key: "home.header.export.title")
-    }
-
     var policyAndLegacySectionTitle: String {
         localized(key: "home.header.policyAndLegal.title")
     }

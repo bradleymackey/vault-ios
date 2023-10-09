@@ -41,18 +41,24 @@ public struct SettingsHomeView: View {
     private var exportSection: some View {
         Section {
             NavigationLink {
-                Text("Backup history")
+                BackupView()
             } label: {
                 VStack(alignment: .center) {
-                    Text("Last backed up")
+                    Text("Last Backup")
                         .foregroundColor(.secondary)
                         .font(.footnote)
                     Text("23 days ago")
                         .foregroundColor(.primary)
                         .font(.title)
-                    Text("2 codes not backed up")
+                    Text("iCloud is storing the most recent backup")
                         .foregroundColor(.secondary)
                         .font(.footnote)
+                    Text("12 codes backed up")
+                        .foregroundColor(.secondary)
+                        .font(.footnote)
+                    Text("2 codes not yet backed up")
+                        .foregroundColor(.red)
+                        .font(.footnote.bold())
                 }
                 .frame(maxWidth: .infinity)
                 .padding()
@@ -64,21 +70,9 @@ public struct SettingsHomeView: View {
                 FormRow(
                     title: viewModel.restoreBackupTitle,
                     image: Image(systemName: "square.and.arrow.down.fill"),
-                    color: .green
+                    color: .blue
                 )
             }
-
-            NavigationLink {
-                Text("Export")
-            } label: {
-                FormRow(
-                    title: viewModel.saveBackupTitle,
-                    image: Image(systemName: "square.and.arrow.up.on.square.fill"),
-                    color: .purple
-                )
-            }
-        } header: {
-            Text(viewModel.exportOptionsSectionTitle)
         }
     }
 
