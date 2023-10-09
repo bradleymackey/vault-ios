@@ -4,10 +4,11 @@ import OTPCore
 
 /// A preview of an OTP code.
 @MainActor
-public final class CodePreviewViewModel: ObservableObject {
+@Observable
+public final class CodePreviewViewModel {
     public let accountName: String
     public let issuer: String?
-    @Published public private(set) var code: OTPCodeState = .notReady
+    public private(set) var code: OTPCodeState = .notReady
 
     private var cancellables = Set<AnyCancellable>()
 

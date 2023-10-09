@@ -3,8 +3,9 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
+@MainActor
 public struct TOTPCodePreviewView<TimerBar: View>: View {
-    @ObservedObject var previewViewModel: CodePreviewViewModel
+    var previewViewModel: CodePreviewViewModel
     var timerView: TimerBar
     var behaviour: OTPViewBehaviour
 

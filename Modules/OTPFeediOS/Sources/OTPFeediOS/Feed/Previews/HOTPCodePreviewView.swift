@@ -2,9 +2,10 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
+@MainActor
 struct HOTPCodePreviewView<ButtonView: View>: View {
     var buttonView: ButtonView
-    @ObservedObject var previewViewModel: CodePreviewViewModel
+    var previewViewModel: CodePreviewViewModel
     var behaviour: OTPViewBehaviour
 
     @Namespace private var codeTimerAnimation

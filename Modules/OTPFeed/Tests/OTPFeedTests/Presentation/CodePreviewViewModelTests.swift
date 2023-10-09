@@ -1,61 +1,62 @@
 import Combine
 import Foundation
 import OTPFeed
+import TestHelpers
 import XCTest
 
 @MainActor
 final class CodePreviewViewModelTests: XCTestCase {
     func test_code_updatesWithCodes() async throws {
         let (renderer, sut) = makeSUT()
-        let publisher = sut.$code.collectNext(2)
 
-        let output = try await awaitPublisher(publisher) {
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
             renderer.subject.send("hello")
+        }
+        XCTAssertEqual(sut.code, .visible("hello"))
+
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
             renderer.subject.send("world")
         }
-        XCTAssertEqual(output, [.visible("hello"), .visible("world")])
+        XCTAssertEqual(sut.code, .visible("world"))
     }
 
     func test_code_goesToNoMoreCodesWhenFinished() async throws {
         let (renderer, sut) = makeSUT()
-        let publisher = sut.$code.collectNext(2)
 
-        let output = try await awaitPublisher(publisher) {
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
             renderer.subject.send("hi")
+        }
+        XCTAssertEqual(sut.code, .visible("hi"))
+
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
             renderer.subject.send(completion: .finished)
         }
-        XCTAssertEqual(output, [.visible("hi"), .finished])
+        XCTAssertEqual(sut.code, .finished)
     }
 
     func test_code_goesToErrorWhenErrors() async throws {
         let (renderer, sut) = makeSUT()
-        let publisher = sut.$code.collectNext(2)
 
-        let output = try await awaitPublisher(publisher) {
-            renderer.subject.send("hi")
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
             renderer.subject.send(completion: .failure(anyNSError()))
         }
-        let kind: [String] = output.map {
-            switch $0 {
-            case .error:
-                return "error"
-            default:
-                return "other"
-            }
+
+        switch sut.code {
+        case .error:
+            break
+        default:
+            XCTFail("Unexpected output")
         }
-        XCTAssertEqual(kind, ["other", "error"])
     }
 
     func test_hideCodeUntilNextUpdate_obfuscatesCode() async throws {
-        let (renderer, sut) = makeSUT()
-        let publisher = sut.$code.collectNext(2)
+        let (_, sut) = makeSUT()
 
-        let output = try await awaitPublisher(publisher) {
-            renderer.subject.send("hi")
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
             sut.hideCodeUntilNextUpdate()
         }
 
-        XCTAssertEqual(output, [.visible("hi"), .obfuscated])
+        XCTAssertEqual(sut.code, .obfuscated)
     }
 
     // MARK: - Helpers
