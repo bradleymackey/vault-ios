@@ -1,4 +1,5 @@
 import Foundation
+import OTPUI
 import SwiftUI
 
 struct RestoreBackupView: View {
@@ -31,23 +32,29 @@ struct RestoreBackupView: View {
             Button {
                 print("merge")
             } label: {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Merge with existing codes")
-                    Text("Recommended")
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
+                FormRow(image: Image(systemName: "doc.on.doc.fill"), color: .green) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Merge with existing codes")
+                        Text("Recommended")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
+                .padding(.vertical, 2)
             }
 
             Button {
                 print("override")
             } label: {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Override existing codes")
-                    Text("Danger")
-                        .font(.footnote.bold())
-                        .foregroundStyle(.red)
+                FormRow(image: Image(systemName: "doc.fill"), color: .red) {
+                    VStack(alignment: .leading, spacing: 2) {
+                        Text("Override existing codes")
+                        Text("Danger")
+                            .font(.footnote.bold())
+                            .foregroundStyle(.red)
+                    }
                 }
+                .padding(.vertical, 2)
             }
         } footer: {
             Text("You have some existing codes. What would you like to do?")
