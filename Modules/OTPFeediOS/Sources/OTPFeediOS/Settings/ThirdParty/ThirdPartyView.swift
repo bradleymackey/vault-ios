@@ -35,6 +35,7 @@ public struct ThirdPartyView: View {
                     ThirdPartyDetailView(library: library)
                 } label: {
                     ThirdPartyLibraryRowView(library: library)
+                        .padding(.vertical, 1)
                 }
             }
         } footer: {
