@@ -9,7 +9,7 @@ import SwiftUI
 ///
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: ObservableObject, OTPViewGenerator {
+public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: OTPViewGenerator {
     public typealias Code = TOTPAuthCode
 
     let viewFactory: Factory

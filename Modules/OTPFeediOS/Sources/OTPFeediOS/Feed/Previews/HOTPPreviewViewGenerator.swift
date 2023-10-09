@@ -5,7 +5,7 @@ import OTPFeed
 import SwiftUI
 
 @MainActor
-public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: ObservableObject, OTPViewGenerator {
+public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: OTPViewGenerator {
     public typealias Code = HOTPAuthCode
 
     let viewFactory: Factory
