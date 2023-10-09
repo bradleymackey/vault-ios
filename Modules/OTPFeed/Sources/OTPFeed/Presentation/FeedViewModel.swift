@@ -2,9 +2,10 @@ import Combine
 import Foundation
 
 @MainActor
-public final class FeedViewModel<Store: OTPCodeStore>: ObservableObject {
-    @Published public var codes = [StoredOTPCode]()
-    @Published public private(set) var retrievalError: PresentationError?
+@Observable
+public final class FeedViewModel<Store: OTPCodeStore> {
+    public var codes = [StoredOTPCode]()
+    public private(set) var retrievalError: PresentationError?
 
     private let store: Store
     private let caches: [any CodeDetailCache]

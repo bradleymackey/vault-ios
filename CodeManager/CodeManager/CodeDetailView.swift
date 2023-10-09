@@ -14,7 +14,7 @@ import SwiftUI
 struct CodeDetailView<Store: OTPCodeStore>: View {
     @Environment(\.dismiss) var dismiss
 
-    @ObservedObject var feedViewModel: FeedViewModel<Store>
+    var feedViewModel: FeedViewModel<Store>
     let storedCode: StoredOTPCode
 
     var body: some View {

@@ -4,13 +4,14 @@ import OTPFeed
 import OTPSettings
 import SwiftUI
 
+@MainActor
 public struct OTPCodeFeedView<
     Store: OTPCodeStore,
     ViewGenerator: OTPViewGenerator
 >: View where
     ViewGenerator.Code == GenericOTPAuthCode
 {
-    @ObservedObject public var viewModel: FeedViewModel<Store>
+    public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
     public var viewGenerator: ViewGenerator
     @Binding public var isEditing: Bool

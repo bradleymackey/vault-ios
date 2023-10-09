@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import OTPFeed
+import TestHelpers
 import XCTest
 
 @MainActor
@@ -18,50 +19,49 @@ final class FeedViewModelTests: XCTestCase {
 
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
         let sut = makeSUT(store: StubStore.empty)
-        let getCodes = sut.$codes.collectNext(1)
 
-        let codes = try await awaitPublisher(getCodes, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.codes) {
             await sut.reloadData()
-        })
-        XCTAssertEqual(codes, [[]])
+        }
+        XCTAssertEqual(sut.codes, [])
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
         let sut = makeSUT(store: StubStore.empty)
 
-        await awaitNoPublish(publisher: sut.$retrievalError.nextElements(), when: {
+        await expectNoMutation(observable: sut, keyPath: \.retrievalError) {
             await sut.reloadData()
-        })
+        }
+        XCTAssertNil(sut.retrievalError)
     }
 
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = makeSUT(store: store)
-        let publisher = sut.$codes.collectNext(1)
 
-        let codes = try await awaitPublisher(publisher, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.codes) {
             await sut.reloadData()
-        })
-        XCTAssertEqual(codes, [store.codes])
+        }
+        XCTAssertEqual(sut.codes, store.codes)
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
         let sut = makeSUT(store: store)
 
-        await awaitNoPublish(publisher: sut.$retrievalError.nextElements(), when: {
+        await expectNoMutation(observable: sut, keyPath: \.retrievalError) {
             await sut.reloadData()
-        })
+        }
+        XCTAssertNil(sut.retrievalError)
     }
 
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
         let sut = makeSUT(store: ErrorStubStore(error: anyNSError()))
-        let publisher = sut.$retrievalError.collectNext(1)
 
-        let values = try await awaitPublisher(publisher, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.retrievalError) {
             await sut.reloadData()
-        })
-        XCTAssertEqual(values.count, 1)
+        }
+        XCTAssertNotNil(sut.retrievalError)
     }
 
     func test_updateCode_updatesStore() async throws {

@@ -13,7 +13,7 @@ import SwiftUI
 
 @main
 struct CodeManagerApp: App {
-    @StateObject private var feedViewModel: FeedViewModel<InMemoryCodeStore>
+    @State private var feedViewModel: FeedViewModel<InMemoryCodeStore>
     @StateObject private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @StateObject private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
     @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
@@ -52,7 +52,7 @@ struct CodeManagerApp: App {
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
 
         _clock = StateObject(wrappedValue: clock)
-        _feedViewModel = StateObject(wrappedValue: feed)
+        _feedViewModel = State(wrappedValue: feed)
         _totpPreviewGenerator = StateObject(wrappedValue: totp)
         _hotpPreviewGenerator = StateObject(wrappedValue: hotp)
         _localSettings = State(wrappedValue: localSettings)

@@ -15,7 +15,7 @@ import SwiftUI
 struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodeProvider>: View
     where Generator.Code == GenericOTPAuthCode
 {
-    @ObservedObject var feedViewModel: FeedViewModel<Store>
+    var feedViewModel: FeedViewModel<Store>
     var localSettings: LocalSettings
     var viewGenerator: Generator
 
