@@ -3,6 +3,13 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
+]
+
 let package = Package(
     name: "OTPUI",
     defaultLocalization: "en",
@@ -19,14 +26,16 @@ let package = Package(
     targets: [
         .target(
             name: "OTPUI",
-            dependencies: []
+            dependencies: [],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "OTPUITests",
             dependencies: [
                 "OTPUI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
     ]
 )

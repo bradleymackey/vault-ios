@@ -3,6 +3,13 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
+]
+
 let package = Package(
     name: "FoundationExtensions",
     defaultLocalization: "en",
@@ -16,22 +23,12 @@ let package = Package(
     targets: [
         .target(
             name: "FoundationExtensions",
-            swiftSettings: [
-                .enableUpcomingFeature("ForwardTrailingClosures"),
-                .enableUpcomingFeature("BareSlashRegexLiterals"),
-                .enableUpcomingFeature("ConciseMagicFile"),
-                .enableUpcomingFeature("ExistentialAny"),
-            ]
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions"],
-            swiftSettings: [
-                .enableUpcomingFeature("ForwardTrailingClosures"),
-                .enableUpcomingFeature("BareSlashRegexLiterals"),
-                .enableUpcomingFeature("ConciseMagicFile"),
-                .enableUpcomingFeature("ExistentialAny"),
-            ]
+            swiftSettings: swiftSettings
         ),
     ]
 )
