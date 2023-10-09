@@ -3,9 +3,10 @@ import OTPFeed
 import OTPUI
 import SwiftUI
 
+@MainActor
 public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     // TODO: move more logic to the view model, and test it!
-    @ObservedObject public var viewModel: CodeDetailViewModel
+    public var viewModel: CodeDetailViewModel
 
     private var editor: Editor
     @State private var editingModel: CodeDetailEditingModel
@@ -35,8 +36,8 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     }
 
     public init(viewModel: CodeDetailViewModel, editor: Editor) {
-        _viewModel = ObservedObject(initialValue: viewModel)
         _editingModel = State(initialValue: viewModel.makeEditingViewModel())
+        self.viewModel = viewModel
         self.editor = editor
     }
 
