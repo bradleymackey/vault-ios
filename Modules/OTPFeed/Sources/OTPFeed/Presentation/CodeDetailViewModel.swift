@@ -6,9 +6,23 @@ import OTPCore
 @Observable
 public final class CodeDetailViewModel {
     public let storedCode: StoredOTPCode
+    public var editingModel: CodeDetailEditingModel
 
-    public init(storedCode: StoredOTPCode) {
+    public private(set) var isSaving = false
+    public private(set) var isInEditMode = false
+
+    private let editor: any CodeDetailEditor
+    private let didEncounterErrorSubject = PassthroughSubject<Error, Never>()
+    private let isFinishedSubject = PassthroughSubject<Void, Never>()
+
+    public init(storedCode: StoredOTPCode, editor: any CodeDetailEditor) {
         self.storedCode = storedCode
+        self.editor = editor
+        editingModel = CodeDetailEditingModel(detail: .init(
+            issuerTitle: storedCode.code.data.issuer ?? "",
+            accountNameTitle: storedCode.code.data.accountName,
+            description: storedCode.userDescription ?? ""
+        ))
     }
 
     public var detailMenuItems: [CodeDetailMenuItem] {
@@ -21,12 +35,83 @@ public final class CodeDetailViewModel {
         return [details]
     }
 
-    public func makeEditingViewModel() -> CodeDetailEditingModel {
-        CodeDetailEditingModel(detail: .init(
-            issuerTitle: storedCode.code.data.issuer ?? "",
-            accountNameTitle: storedCode.code.data.accountName,
-            description: storedCode.userDescription ?? ""
-        ))
+    public func didEncounterErrorPublisher() -> AnyPublisher<Error, Never> {
+        didEncounterErrorSubject.eraseToAnyPublisher()
+    }
+
+    /// Publishes when we are done looking at a given code, and should dismiss.
+    public func isFinishedPublisher() -> AnyPublisher<Void, Never> {
+        isFinishedSubject.eraseToAnyPublisher()
+    }
+
+    public func startEditing() {
+        isInEditMode = true
+    }
+
+    public func saveChanges() async {
+        guard !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
+        do {
+            try await editor.update(code: storedCode, edits: editingModel.detail)
+            isInEditMode = false
+            editingModel.didPersist()
+        } catch {
+            let error = OperationError.save
+            didEncounterErrorSubject.send(error)
+        }
+    }
+
+    public func deleteCode() async {
+        guard !isSaving else { return }
+        isSaving = true
+        defer { isSaving = false }
+        do {
+            try await editor.deleteCode(id: storedCode.id)
+            isFinishedSubject.send()
+        } catch {
+            let error = OperationError.delete
+            didEncounterErrorSubject.send(error)
+        }
+    }
+
+    public func done() {
+        if isInEditMode {
+            isInEditMode = false
+        } else {
+            isFinishedSubject.send()
+        }
+    }
+
+    public func cancel() {
+        isInEditMode = false
+        editingModel.restoreInitialState()
+    }
+}
+
+// MARK: - Error
+
+public extension CodeDetailViewModel {
+    enum OperationError: String, Error, Identifiable, LocalizedError {
+        case save
+        case delete
+
+        public var description: String {
+            switch self {
+            case .save:
+                return localized(key: "codeDetail.action.save.error.description")
+            case .delete:
+                return localized(key: "codeDetail.action.delete.error.description")
+            }
+        }
+
+        public var errorDescription: String? {
+            description
+        }
+
+        public var id: some Hashable {
+            rawValue
+        }
     }
 }
 

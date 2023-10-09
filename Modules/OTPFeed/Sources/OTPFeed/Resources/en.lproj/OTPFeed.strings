@@ -24,3 +24,6 @@
 "codeDetail.listSection.digits.title" = "Digits";
 "codeDetail.listSection.algorithm.title" = "Algorithm";
 "codeDetail.listSection.secretFormat.title" = "Secret Format";
+
+"codeDetail.action.save.error.description" = "There was an error saving the current code. You might need to remove and re-add it.";
+"codeDetail.action.delete.error.description" = "There was an error deleting the current code. Please try again later.";

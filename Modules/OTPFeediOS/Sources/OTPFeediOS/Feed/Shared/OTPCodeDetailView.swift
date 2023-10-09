@@ -4,63 +4,45 @@ import OTPUI
 import SwiftUI
 
 @MainActor
-public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
-    // TODO: move more logic to the view model, and test it!
-    public var viewModel: CodeDetailViewModel
+public struct OTPCodeDetailView: View {
+    @Bindable public var viewModel: CodeDetailViewModel
 
-    private var editor: Editor
-    @State private var editingModel: CodeDetailEditingModel
     @Environment(\.dismiss) var dismiss
-    @State private var isSaving = false
     @State private var isError = false
-    @State private var currentError: OperationError?
-    @State private var isInEditMode = false
+    @State private var currentError: Error?
     @State private var isShowingDeleteConfirmation = false
 
-    enum OperationError: String, Identifiable {
-        case save
-        case delete
-
-        var description: String {
-            switch self {
-            case .save:
-                return localized(key: "codeDetail.action.save.error.description")
-            case .delete:
-                return localized(key: "codeDetail.action.delete.error.description")
-            }
-        }
-
-        var id: some Hashable {
-            rawValue
-        }
-    }
-
-    public init(viewModel: CodeDetailViewModel, editor: Editor) {
-        _editingModel = State(initialValue: viewModel.makeEditingViewModel())
+    public init(viewModel: CodeDetailViewModel) {
         self.viewModel = viewModel
-        self.editor = editor
     }
 
     public var body: some View {
         Form {
             codeDetailSection
-            if isInEditMode {
+            if viewModel.isInEditMode {
                 descriptionSection
             }
             metadataSection
         }
         .navigationTitle(localized(key: "codeDetail.title"))
         .navigationBarTitleDisplayMode(.inline)
-        .interactiveDismissDisabled(editingModel.isDirty)
+        .interactiveDismissDisabled(viewModel.editingModel.isDirty)
         .scrollDismissesKeyboard(.interactively)
-        .animation(.easeOut, value: isInEditMode)
+        .animation(.easeOut, value: viewModel.isInEditMode)
+        .onReceive(viewModel.isFinishedPublisher()) {
+            dismiss()
+        }
+        .onReceive(viewModel.didEncounterErrorPublisher()) { error in
+            currentError = error
+            isError = true
+        }
         .confirmationDialog(
             localized(key: "codeDetail.action.delete.confirm.title"),
             isPresented: $isShowingDeleteConfirmation,
             titleVisibility: .visible
         ) {
             Button(localized(key: "codeDetail.action.delete.entity.title"), role: .destructive) {
-                Task { await deleteCode() }
+                Task { await viewModel.deleteCode() }
             }
         } message: {
             Text(localized(key: "codeDetail.action.delete.confirm.subtitle"))
@@ -68,22 +50,22 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         .alert(localized(key: "codeDetail.action.error.title"), isPresented: $isError, presenting: currentError) { _ in
             Button(localized(key: "codeDetail.action.error.confirm.title"), role: .cancel) {}
         } message: { error in
-            Text(error.description)
+            Text(error.localizedDescription)
         }
         .toolbar {
-            if editingModel.isDirty {
+            if viewModel.editingModel.isDirty {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        cancelButtonPressed()
+                        viewModel.cancel()
                     } label: {
                         Text(viewModel.cancelEditsTitle)
                             .tint(.red)
                     }
                 }
-            } else if !isInEditMode {
+            } else if !viewModel.isInEditMode {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        isInEditMode = true
+                        viewModel.startEditing()
                     } label: {
                         Text(viewModel.startEditingTitle)
                             .tint(.accentColor)
@@ -91,10 +73,10 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
                 }
             }
 
-            if editingModel.isDirty {
+            if viewModel.editingModel.isDirty {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        Task { await saveChanges() }
+                        Task { await viewModel.saveChanges() }
                     } label: {
                         Text(viewModel.saveEditsTitle)
                             .tint(.accentColor)
@@ -103,53 +85,13 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
             } else {
                 ToolbarItem(placement: .confirmationAction) {
                     Button {
-                        doneButtonPressed()
+                        viewModel.done()
                     } label: {
                         Text(viewModel.doneEditingTitle)
                             .tint(.accentColor)
                     }
                 }
             }
-        }
-    }
-
-    private func cancelButtonPressed() {
-        isInEditMode = false
-        editingModel.restoreInitialState()
-    }
-
-    private func doneButtonPressed() {
-        if isInEditMode {
-            isInEditMode = false
-        } else {
-            dismiss()
-        }
-    }
-
-    private func saveChanges() async {
-        guard !isSaving else { return }
-        isSaving = true
-        defer { isSaving = false }
-        do {
-            try await editor.update(code: viewModel.storedCode, edits: editingModel.detail)
-            isInEditMode = false
-            editingModel.didPersist()
-        } catch {
-            currentError = .save
-            isError = true
-        }
-    }
-
-    private func deleteCode() async {
-        guard !isSaving else { return }
-        isSaving = true
-        defer { isSaving = false }
-        do {
-            try await editor.deleteCode(id: viewModel.storedCode.id)
-            dismiss()
-        } catch {
-            currentError = .delete
-            isError = true
         }
     }
 
@@ -164,14 +106,14 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
 
     private var codeDetailSection: some View {
         Section {
-            if isInEditMode {
+            if viewModel.isInEditMode {
                 codeDetailContentEditing
             } else {
                 codeDetailContent
             }
         } header: {
             iconHeader
-                .padding(.vertical, isInEditMode ? 16 : 0)
+                .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
         }
         .keyboardType(.default)
         .textInputAutocapitalization(.words)
@@ -181,11 +123,11 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     @ViewBuilder
     private var codeDetailContent: some View {
         VStack(alignment: .center, spacing: 4) {
-            if !editingModel.detail.issuerTitle.isEmpty {
-                Text(editingModel.detail.issuerTitle)
+            if !viewModel.editingModel.detail.issuerTitle.isEmpty {
+                Text(viewModel.editingModel.detail.issuerTitle)
                     .font(.title.bold())
             }
-            Text(editingModel.detail.accountNameTitle)
+            Text(viewModel.editingModel.detail.accountNameTitle)
                 .font(.subheadline)
                 .foregroundColor(.secondary)
         }
@@ -197,9 +139,9 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         .listRowBackground(EmptyView())
         .listRowSeparator(.hidden)
 
-        if !editingModel.detail.description.isEmpty {
+        if !viewModel.editingModel.detail.description.isEmpty {
             VStack(alignment: .center) {
-                Text(editingModel.detail.description)
+                Text(viewModel.editingModel.detail.description)
             }
             .frame(maxWidth: .infinity)
             .listRowBackground(EmptyView())
@@ -212,17 +154,17 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
     private var codeDetailContentEditing: some View {
         TextField(
             localized(key: "codeDetail.field.siteName.title"),
-            text: $editingModel.detail.issuerTitle
+            text: $viewModel.editingModel.detail.issuerTitle
         )
         TextField(
             localized(key: "codeDetail.field.accountName.title"),
-            text: $editingModel.detail.accountNameTitle
+            text: $viewModel.editingModel.detail.accountNameTitle
         )
     }
 
     private var descriptionSection: some View {
         Section {
-            TextEditor(text: $editingModel.detail.description)
+            TextEditor(text: $viewModel.editingModel.detail.description)
                 .frame(height: 200)
                 .keyboardType(.default)
         } header: {
@@ -275,7 +217,7 @@ public struct OTPCodeDetailView<Editor: CodeDetailEditor>: View {
         } footer: {
             HStack {
                 Spacer()
-                if isInEditMode {
+                if viewModel.isInEditMode {
                     deleteButton
                 }
                 Spacer()
@@ -309,9 +251,9 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                         type: .totp(),
                         data: .init(secret: .empty(), accountName: "Test")
                     )
-                )
-            ),
-            editor: StubEditor()
+                ),
+                editor: StubEditor()
+            )
         )
     }
 

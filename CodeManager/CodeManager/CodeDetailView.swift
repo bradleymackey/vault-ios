@@ -19,8 +19,7 @@ struct CodeDetailView<Store: OTPCodeStore>: View {
 
     var body: some View {
         OTPCodeDetailView(
-            viewModel: .init(storedCode: storedCode),
-            editor: CodeFeedCodeDetailEditorAdapter(codeFeed: feedViewModel)
+            viewModel: .init(storedCode: storedCode, editor: CodeFeedCodeDetailEditorAdapter(codeFeed: feedViewModel))
         )
     }
 }
