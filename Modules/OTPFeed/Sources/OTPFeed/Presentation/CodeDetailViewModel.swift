@@ -3,6 +3,7 @@ import Foundation
 import OTPCore
 
 @MainActor
+@Observable
 public final class CodeDetailViewModel {
     public let storedCode: StoredOTPCode
 
