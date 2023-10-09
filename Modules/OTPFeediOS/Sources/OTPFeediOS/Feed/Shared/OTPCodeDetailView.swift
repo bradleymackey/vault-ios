@@ -314,7 +314,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
         )
     }
 
-    class StubEditor: ObservableObject, CodeDetailEditor {
+    class StubEditor: CodeDetailEditor {
         func update(code _: StoredOTPCode, edits _: CodeDetailEdits) async throws {
             // noop
         }
