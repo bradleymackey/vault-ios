@@ -19,7 +19,7 @@ struct CodeManagerApp: App {
     @State private var pasteboard = Pasteboard(LiveSystemPasteboard())
     @State private var localSettings: LocalSettings
     @StateObject private var settingsViewModel = SettingsViewModel()
-    @StateObject private var clock: EpochClock
+    @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
 
     private let toastOptions = SimpleToastOptions(
@@ -51,7 +51,7 @@ struct CodeManagerApp: App {
         )
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
 
-        _clock = StateObject(wrappedValue: clock)
+        _clock = State(wrappedValue: clock)
         _feedViewModel = State(wrappedValue: feed)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
@@ -71,7 +71,7 @@ struct CodeManagerApp: App {
                         )
                     )
                     .environment(pasteboard)
-                    .environmentObject(clock)
+                    .environment(clock)
                 }
                 .tabItem {
                     Label(feedViewModel.title, systemImage: "key.horizontal.fill")

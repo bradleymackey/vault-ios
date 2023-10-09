@@ -11,7 +11,7 @@ public struct CodeTimerHorizontalBarView: View {
 
     @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
-    @EnvironmentObject var clock: EpochClock
+    @Environment(EpochClock.self) var clock
 
     public var body: some View {
         GeometryReader { proxy in
