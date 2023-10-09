@@ -30,10 +30,11 @@ public struct SettingsHomeView: View {
                 }
             } label: {
                 FormRow(
-                    title: viewModel.previewSizeTitle,
                     image: Image(systemName: "rectangle.inset.filled"),
                     color: .green
-                )
+                ) {
+                    Text(viewModel.previewSizeTitle)
+                }
             }
         }
     }
@@ -68,10 +69,11 @@ public struct SettingsHomeView: View {
                 RestoreBackupView()
             } label: {
                 FormRow(
-                    title: viewModel.restoreBackupTitle,
                     image: Image(systemName: "square.and.arrow.down.fill"),
                     color: .blue
-                )
+                ) {
+                    Text(viewModel.restoreBackupTitle)
+                }
             }
         }
     }
@@ -82,50 +84,55 @@ public struct SettingsHomeView: View {
                 AboutView(viewModel: viewModel)
             } label: {
                 FormRow(
-                    title: viewModel.aboutTitle,
                     image: Image(systemName: "key.fill"),
                     color: .blue
-                )
+                ) {
+                    Text(viewModel.aboutTitle)
+                }
             }
 
             NavigationLink {
                 OpenSourceView()
             } label: {
                 FormRow(
-                    title: viewModel.openSourceTitle,
                     image: Image(systemName: "figure.2.arms.open"),
                     color: .purple
-                )
+                ) {
+                    Text(viewModel.openSourceTitle)
+                }
             }
 
             NavigationLink {
                 ThirdPartyView()
             } label: {
                 FormRow(
-                    title: viewModel.thirdPartyTitle,
                     image: Image(systemName: "text.book.closed.fill"),
                     color: .blue
-                )
+                ) {
+                    Text(viewModel.thirdPartyTitle)
+                }
             }
 
             NavigationLink {
                 SettingsDocumentView(title: viewModel.privacyPolicyTitle, viewModel: PrivacyPolicyViewModel())
             } label: {
                 FormRow(
-                    title: viewModel.privacyPolicyTitle,
                     image: Image(systemName: "lock.fill"),
                     color: .red
-                )
+                ) {
+                    Text(viewModel.privacyPolicyTitle)
+                }
             }
 
             NavigationLink {
                 SettingsDocumentView(title: viewModel.termsOfUseTitle, viewModel: TermsOfServiceViewModel())
             } label: {
                 FormRow(
-                    title: viewModel.termsOfUseTitle,
                     image: Image(systemName: "person.fill.checkmark"),
                     color: .green
-                )
+                ) {
+                    Text(viewModel.termsOfUseTitle)
+                }
             }
         } header: {
             Text(viewModel.policyAndLegacySectionTitle)
