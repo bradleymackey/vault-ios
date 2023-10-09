@@ -2,8 +2,9 @@ import OTPCore
 import OTPFeed
 import SwiftUI
 
+@MainActor
 struct CodeButtonView: View {
-    @ObservedObject var viewModel: CodeIncrementerViewModel
+    var viewModel: CodeIncrementerViewModel
 
     @Environment(\.isEnabled) private var isEnabled
 

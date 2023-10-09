@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import OTPFeed
+import TestHelpers
 import XCTest
 
 @MainActor
@@ -13,49 +14,57 @@ final class CodeIncrementerViewModelTests: XCTestCase {
 
     func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
         let (_, _, sut) = makeSUT()
-        let publisher = sut.$isButtonEnabled.collectNext(1)
 
-        let values = try await awaitPublisher(publisher, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             sut.incrementCounter()
-        })
-        XCTAssertEqual(values, [false])
+        }
+
+        XCTAssertEqual(sut.isButtonEnabled, false)
     }
 
     func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
         let (_, _, sut) = makeSUT()
-        let publisher = sut.$isButtonEnabled.collectNext(2) // there should only be 1 event
 
-        await awaitNoPublish(publisher: publisher, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             sut.incrementCounter()
+        }
+
+        // No mutation now!
+        await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
             sut.incrementCounter()
-            sut.incrementCounter()
-            sut.incrementCounter()
-        })
+        }
     }
 
     func test_isButtonEnabled_enablesAfterTimerCompletion() async throws {
         let (_, timer, sut) = makeSUT()
-        let publisher = sut.$isButtonEnabled.collectNext(2)
 
-        let values = try await awaitPublisher(publisher, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             sut.incrementCounter()
+        }
+        XCTAssertEqual(sut.isButtonEnabled, false)
+
+        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             timer.finishTimer()
-        })
-        XCTAssertEqual(values, [false, true])
+        }
+        XCTAssertEqual(sut.isButtonEnabled, true)
     }
 
     func test_isButtonEnabled_timerCompletingMultipleTimesHasNoEffect() async throws {
         let (_, timer, sut) = makeSUT()
-        let publisher = sut.$isButtonEnabled.collectNext(3) // there should only be 2 events
 
-        await awaitNoPublish(publisher: publisher, when: {
+        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             sut.incrementCounter()
+        }
+        XCTAssertEqual(sut.isButtonEnabled, false)
+
+        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             timer.finishTimer()
+        }
+        XCTAssertEqual(sut.isButtonEnabled, true)
+
+        await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
             timer.finishTimer()
-            timer.finishTimer()
-            timer.finishTimer()
-            timer.finishTimer()
-        })
+        }
     }
 
     func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {

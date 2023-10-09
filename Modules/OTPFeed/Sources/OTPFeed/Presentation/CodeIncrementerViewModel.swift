@@ -3,8 +3,9 @@ import Foundation
 import OTPCore
 
 @MainActor
-public final class CodeIncrementerViewModel: ObservableObject {
-    @Published public private(set) var isButtonEnabled = true
+@Observable
+public final class CodeIncrementerViewModel {
+    public private(set) var isButtonEnabled = true
 
     private let timer: any IntervalTimer
     private let hotpRenderer: HOTPCodeRenderer
