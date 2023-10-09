@@ -18,7 +18,7 @@ final class CodeTimerPeriodStateTests: XCTestCase {
         let sut = makeSUT(pub: valueSubject.eraseToAnyPublisher())
 
         let initialState = OTPTimerState(startTime: 69, endTime: 420)
-        await expectSingleObservableAccess(on: sut, keyPath: \.animationState) {
+        await expectSingleMutation(observable: sut, keyPath: \.animationState) {
             valueSubject.send(initialState)
         }
 

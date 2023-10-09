@@ -8,11 +8,11 @@ final class LocalSettingsTests: XCTestCase {
         let defaults = try makeDefaults()
         let sut = try makeSUT(defaults: defaults)
 
-        await expectSingleObservableAccess(on: sut, keyPath: \.state.previewSize) {
+        await expectSingleMutation(observable: sut, keyPath: \.state.previewSize) {
             sut.state.previewSize = .large
         }
 
-        await expectSingleObservableAccess(on: sut, keyPath: \.state.previewSize) {
+        await expectSingleMutation(observable: sut, keyPath: \.state.previewSize) {
             sut.state.previewSize = .medium
         }
     }

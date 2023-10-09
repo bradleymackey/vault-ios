@@ -2,8 +2,8 @@ import Foundation
 import XCTest
 
 public extension XCTestCase {
-    func expectSingleObservableAccess<T: Observable>(
-        on object: T,
+    func expectSingleMutation<T: Observable>(
+        observable object: T,
         keyPath: KeyPath<T, some Any>,
         when action: () -> Void
     ) async {
