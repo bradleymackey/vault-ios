@@ -3,11 +3,11 @@ import OTPUI
 import SwiftUI
 
 public struct SettingsHomeView: View {
-    @ObservedObject private var viewModel: SettingsViewModel
+    private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 
     public init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
-        _viewModel = ObservedObject(wrappedValue: viewModel)
+        self.viewModel = viewModel
         _localSettings = Bindable(wrappedValue: localSettings)
     }
 

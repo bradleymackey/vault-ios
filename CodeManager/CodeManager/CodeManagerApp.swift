@@ -11,6 +11,7 @@ import OTPFeediOS
 import OTPSettings
 import SwiftUI
 
+@MainActor
 @main
 struct CodeManagerApp: App {
     @State private var feedViewModel: FeedViewModel<InMemoryCodeStore>
@@ -18,7 +19,7 @@ struct CodeManagerApp: App {
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
     @State private var pasteboard = Pasteboard(LiveSystemPasteboard())
     @State private var localSettings: LocalSettings
-    @StateObject private var settingsViewModel = SettingsViewModel()
+    @State private var settingsViewModel = SettingsViewModel()
     @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
 

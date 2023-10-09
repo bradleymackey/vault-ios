@@ -1,7 +1,7 @@
 import Combine
 import Foundation
 
-public final class SettingsViewModel: ObservableObject {
+public final class SettingsViewModel {
     public init() {}
 }
 

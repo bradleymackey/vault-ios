@@ -3,7 +3,7 @@ import OTPSettings
 import SwiftUI
 
 struct AboutView: View {
-    @ObservedObject var viewModel: SettingsViewModel
+    var viewModel: SettingsViewModel
 
     var body: some View {
         Form {
