@@ -8,25 +8,13 @@ final class LocalSettingsTests: XCTestCase {
         let defaults = try makeDefaults()
         let sut = try makeSUT(defaults: defaults)
 
-        let exp1 = expectation(description: "Wait for first change")
-        withObservationTracking {
-            let _ = sut.state.previewSize
-        } onChange: {
-            exp1.fulfill()
+        await expectSingleObservableAccess(on: sut, keyPath: \.state.previewSize) {
+            sut.state.previewSize = .large
         }
 
-        sut.state.previewSize = .large
-        await fulfillment(of: [exp1], timeout: 1.0)
-
-        let exp2 = expectation(description: "Wait for second change")
-        withObservationTracking {
-            let _ = sut.state.previewSize
-        } onChange: {
-            exp2.fulfill()
+        await expectSingleObservableAccess(on: sut, keyPath: \.state.previewSize) {
+            sut.state.previewSize = .medium
         }
-
-        sut.state.previewSize = .medium
-        await fulfillment(of: [exp2], timeout: 1.0)
     }
 
     func test_previewSize_defaultsToDefaultValue() throws {

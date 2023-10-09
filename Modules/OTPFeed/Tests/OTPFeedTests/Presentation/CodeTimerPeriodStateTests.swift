@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import OTPCore
 import OTPFeed
+import TestHelpers
 import XCTest
 
 @MainActor
@@ -16,17 +17,10 @@ final class CodeTimerPeriodStateTests: XCTestCase {
         let valueSubject = PassthroughSubject<OTPTimerState, Never>()
         let sut = makeSUT(pub: valueSubject.eraseToAnyPublisher())
 
-        let exp = expectation(description: "Wait for state change")
-        withObservationTracking {
-            let _ = sut.animationState
-        } onChange: {
-            exp.fulfill()
-        }
-
         let initialState = OTPTimerState(startTime: 69, endTime: 420)
-        valueSubject.send(initialState)
-
-        await fulfillment(of: [exp], timeout: 1.0)
+        await expectSingleObservableAccess(on: sut, keyPath: \.animationState) {
+            valueSubject.send(initialState)
+        }
 
         XCTAssertEqual(sut.animationState, .animate(initialState))
     }
