@@ -28,36 +28,40 @@ public final class CodeDetailViewModel {
             description: storedCode.userDescription ?? ""
         ))
     }
+}
 
-    public var createdDateTitle: String {
+// MARK: - Titles
+
+public extension CodeDetailViewModel {
+    var createdDateTitle: String {
         localized(key: "codeDetail.listSection.created.title")
     }
 
-    public var createdDateValue: String {
+    var createdDateValue: String {
         storedCode.created.formatted(date: .abbreviated, time: .omitted)
     }
 
-    public var updatedDateTitle: String {
+    var updatedDateTitle: String {
         localized(key: "codeDetail.listSection.updated.title")
     }
 
-    public var updatedDateValue: String {
+    var updatedDateValue: String {
         storedCode.updated.formatted(date: .abbreviated, time: .omitted)
     }
 
-    public var doneEditingTitle: String {
+    var doneEditingTitle: String {
         localized(key: "feedViewModel.doneEditing.title")
     }
 
-    public var saveEditsTitle: String {
+    var saveEditsTitle: String {
         localized(key: "feedViewModel.saveEdits.title")
     }
 
-    public var cancelEditsTitle: String {
+    var cancelEditsTitle: String {
         localized(key: "feedViewModel.cancelEdits.title")
     }
 
-    public var startEditingTitle: String {
+    var startEditingTitle: String {
         localized(key: "feedViewModel.edit.title")
     }
 }
