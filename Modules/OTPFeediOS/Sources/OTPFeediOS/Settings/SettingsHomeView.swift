@@ -65,7 +65,7 @@ public struct SettingsHomeView: View {
             }
 
             NavigationLink {
-                Text("Restore")
+                RestoreBackupView()
             } label: {
                 FormRow(
                     title: viewModel.restoreBackupTitle,
