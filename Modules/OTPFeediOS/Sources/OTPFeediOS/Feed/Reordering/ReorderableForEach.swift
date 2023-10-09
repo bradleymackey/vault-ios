@@ -62,8 +62,8 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
                         }
                     }
                 )
-                .onChange(of: draggingItem) { currentlyDragging in
-                    isDragging = currentlyDragging != nil
+                .onChange(of: draggingItem) { _, newValue in
+                    isDragging = newValue != nil
                 }
         }
     }
