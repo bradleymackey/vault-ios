@@ -16,7 +16,7 @@ struct CodeManagerApp: App {
     @State private var feedViewModel: FeedViewModel<InMemoryCodeStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
-    @StateObject private var pasteboard = Pasteboard(LiveSystemPasteboard())
+    @State private var pasteboard = Pasteboard(LiveSystemPasteboard())
     @State private var localSettings: LocalSettings
     @StateObject private var settingsViewModel = SettingsViewModel()
     @StateObject private var clock: EpochClock
@@ -70,7 +70,7 @@ struct CodeManagerApp: App {
                             hotpGenerator: hotpPreviewGenerator
                         )
                     )
-                    .environmentObject(pasteboard)
+                    .environment(pasteboard)
                     .environmentObject(clock)
                 }
                 .tabItem {
@@ -91,7 +91,7 @@ struct CodeManagerApp: App {
                     Label(settingsViewModel.title, systemImage: "gear")
                 }
             }
-            .onReceive(pasteboard.objectWillChange) {
+            .onReceive(pasteboard.didPaste()) {
                 isShowingCopyPaste = true
             }
             .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions) {

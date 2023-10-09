@@ -19,7 +19,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
     var localSettings: LocalSettings
     var viewGenerator: Generator
 
-    @EnvironmentObject var pasteboard: Pasteboard
+    @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
     @Environment(\.scenePhase) private var scenePhase

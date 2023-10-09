@@ -6,14 +6,21 @@ import UIKit
 ///
 /// Publishes when a copy is performed to the pasteboard.
 @MainActor
-public final class Pasteboard: ObservableObject {
+@Observable
+public final class Pasteboard {
     private let systemPasteboard: any SystemPasteboard
+    private let didPasteSubject = PassthroughSubject<Void, Never>()
+
     public init(_ systemPasteboard: any SystemPasteboard) {
         self.systemPasteboard = systemPasteboard
     }
 
     public func copy(_ string: String) {
         systemPasteboard.copy(string: string)
-        objectWillChange.send()
+        didPasteSubject.send()
+    }
+
+    public func didPaste() -> AnyPublisher<Void, Never> {
+        didPasteSubject.eraseToAnyPublisher()
     }
 }
