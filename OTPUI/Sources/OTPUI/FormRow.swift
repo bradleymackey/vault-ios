@@ -13,11 +13,10 @@ public struct FormRow<Content: View>: View {
     }
 
     public var body: some View {
-        Label {
-            content()
-        } icon: {
+        HStack(alignment: .center, spacing: 16) {
             RowIcon(icon: image, color: color)
                 .foregroundColor(.white)
+            content()
         }
     }
 }
