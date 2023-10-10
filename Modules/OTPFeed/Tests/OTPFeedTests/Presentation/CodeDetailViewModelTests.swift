@@ -1,5 +1,6 @@
 import Foundation
 import OTPFeed
+import TestHelpers
 import XCTest
 
 @MainActor
@@ -8,6 +9,22 @@ final class CodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT()
 
         XCTAssertEqual(sut.detailMenuItems.count, 1)
+    }
+
+    func test_isInEditMode_initiallyFalse() {
+        let sut = makeSUT()
+
+        XCTAssertFalse(sut.isInEditMode)
+    }
+
+    func test_startEditing_setsEditModeTrue() async throws {
+        let sut = makeSUT()
+
+        await expectSingleMutation(observable: sut, keyPath: \.isInEditMode) {
+            sut.startEditing()
+        }
+
+        XCTAssertTrue(sut.isInEditMode)
     }
 
     func test_editingModel_initialStateUsesData() {
