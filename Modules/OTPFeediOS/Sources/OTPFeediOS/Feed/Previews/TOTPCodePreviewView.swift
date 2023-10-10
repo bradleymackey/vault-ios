@@ -7,7 +7,7 @@ import SwiftUI
 public struct TOTPCodePreviewView<TimerBar: View>: View {
     var previewViewModel: CodePreviewViewModel
     var timerView: TimerBar
-    var behaviour: OTPViewBehaviour
+    var behaviour: VaultItemViewBehaviour
 
     @Namespace private var codeTimerAnimation
 
@@ -132,7 +132,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     static func makePreview(
         issuer: String?,
         renderer: OTPCodeRendererMock,
-        behaviour: OTPViewBehaviour = .normal
+        behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: "test@example.com",

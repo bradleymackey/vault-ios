@@ -2,8 +2,8 @@ import Foundation
 import OTPFeed
 import SwiftUI
 
-public struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPViewGenerator {
-    public typealias Code = Generator.Code
+public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGenerator>: VaultItemPreviewViewGenerator {
+    public typealias VaultItem = Generator.VaultItem
     public let generator: Generator
     public let onTap: (UUID) -> Void
 
@@ -12,11 +12,11 @@ public struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPVi
         self.onTap = onTap
     }
 
-    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
+    public func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> some View {
         Button {
             onTap(id)
         } label: {
-            generator.makeOTPView(id: id, code: code, behaviour: behaviour)
+            generator.makeVaultPreviewView(id: id, code: code, behaviour: behaviour)
                 .modifier(OTPCardViewModifier())
         }
     }
@@ -30,8 +30,8 @@ public struct OTPOnTapDecoratorViewGenerator<Generator: OTPViewGenerator>: OTPVi
     }
 }
 
-extension OTPOnTapDecoratorViewGenerator: OTPCodeProvider where Generator: OTPCodeProvider {
-    public func currentVisibleCode(id: UUID) -> String? {
-        generator.currentVisibleCode(id: id)
+extension OTPOnTapDecoratorViewGenerator: VaultItemCopyTextProvider where Generator: VaultItemCopyTextProvider {
+    public func currentCopyableText(id: UUID) -> String? {
+        generator.currentCopyableText(id: id)
     }
 }

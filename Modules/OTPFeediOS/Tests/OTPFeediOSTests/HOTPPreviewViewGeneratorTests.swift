@@ -18,7 +18,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let (sut, _, _) = makeSUT()
 
-        let view = sut.makeOTPView(id: UUID(), code: anyHOTPCode(), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(id: UUID(), code: anyHOTPCode(), behaviour: .normal)
 
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, HOTP!")
@@ -54,7 +54,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_currentVisibleCode_isNilIfCacheEmpty() {
         let (sut, _, _) = makeSUT()
 
-        let code = sut.currentVisibleCode(id: UUID())
+        let code = sut.currentCopyableText(id: UUID())
 
         XCTAssertNil(code)
     }
@@ -63,8 +63,8 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let (sut, _, _) = makeSUT()
 
         let id = UUID()
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
-        let code = sut.currentVisibleCode(id: id)
+        _ = sut.makeVaultPreviewView(id: id, code: anyHOTPCode(), behaviour: .normal)
+        let code = sut.currentCopyableText(id: id)
 
         XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
     }
@@ -78,7 +78,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
             viewModel.update(code: .visible("123456"))
         }
 
-        let code = sut.currentVisibleCode(id: id)
+        let code = sut.currentCopyableText(id: id)
 
         XCTAssertEqual(code, "123456")
     }
@@ -104,7 +104,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let id = UUID()
 
-        _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
+        _ = sut.makeVaultPreviewView(id: id, code: anyHOTPCode(), behaviour: .normal)
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(sut.cachedRendererCount, 1)
@@ -148,12 +148,12 @@ extension HOTPPreviewViewGeneratorTests {
 
     private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
         var makeHOTPViewExecutedCount = 0
-        var makeHOTPViewExecuted: (CodePreviewViewModel, CodeIncrementerViewModel, OTPViewBehaviour)
+        var makeHOTPViewExecuted: (CodePreviewViewModel, CodeIncrementerViewModel, VaultItemViewBehaviour)
             -> Void = { _, _, _ in }
         func makeHOTPView(
             viewModel: CodePreviewViewModel,
             incrementer: CodeIncrementerViewModel,
-            behaviour: OTPViewBehaviour
+            behaviour: VaultItemViewBehaviour
         ) -> some View {
             makeHOTPViewExecutedCount += 1
             makeHOTPViewExecuted(viewModel, incrementer, behaviour)
@@ -178,7 +178,7 @@ extension HOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
+            _ = sut.makeVaultPreviewView(id: id, code: anyHOTPCode(), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))
@@ -210,7 +210,7 @@ extension HOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeOTPView(id: id, code: anyHOTPCode(), behaviour: .normal)
+            _ = sut.makeVaultPreviewView(id: id, code: anyHOTPCode(), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))

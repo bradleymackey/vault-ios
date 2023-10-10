@@ -6,7 +6,7 @@ import SwiftUI
 struct HOTPCodePreviewView<ButtonView: View>: View {
     var buttonView: ButtonView
     var previewViewModel: CodePreviewViewModel
-    var behaviour: OTPViewBehaviour
+    var behaviour: VaultItemViewBehaviour
 
     @Namespace private var codeTimerAnimation
 
@@ -121,7 +121,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
     private static func makePreviewView(
         accountName: String,
         renderer: OTPCodeRendererMock,
-        behaviour: OTPViewBehaviour = .normal
+        behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {
         let previewViewModel = CodePreviewViewModel(
             accountName: accountName,

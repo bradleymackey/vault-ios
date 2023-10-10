@@ -21,7 +21,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let sut = makeSUT()
 
-        let view = sut.makeOTPView(id: UUID(), code: anyTOTPCode(), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(id: UUID(), code: anyTOTPCode(), behaviour: .normal)
 
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, TOTP!")
@@ -51,7 +51,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_currentVisibleCode_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
-        let code = sut.currentVisibleCode(id: UUID())
+        let code = sut.currentCopyableText(id: UUID())
 
         XCTAssertNil(code)
     }
@@ -66,7 +66,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
             viewModel.update(code: .visible("123456"))
         }
 
-        let code = sut.currentVisibleCode(id: id)
+        let code = sut.currentCopyableText(id: id)
 
         XCTAssertEqual(code, "123456")
     }
@@ -76,7 +76,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let sut = makeSUT(factory: factory)
         let id = UUID()
 
-        _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
+        _ = sut.makeVaultPreviewView(id: id, code: anyTOTPCode(), behaviour: .normal)
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(sut.cachedPeriodStateCount, 1)
@@ -149,7 +149,12 @@ extension TOTPPreviewViewGeneratorTests {
 
     private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
         var makeTOTPViewExecutedCount = 0
-        var makeTOTPViewExecuted: (CodePreviewViewModel, CodeTimerPeriodState, any CodeTimerUpdater, OTPViewBehaviour)
+        var makeTOTPViewExecuted: (
+            CodePreviewViewModel,
+            CodeTimerPeriodState,
+            any CodeTimerUpdater,
+            VaultItemViewBehaviour
+        )
             -> Void = { _, _, _, _ in
             }
 
@@ -157,7 +162,7 @@ extension TOTPPreviewViewGeneratorTests {
             viewModel: CodePreviewViewModel,
             periodState: CodeTimerPeriodState,
             updater: any CodeTimerUpdater,
-            behaviour: OTPViewBehaviour
+            behaviour: VaultItemViewBehaviour
         ) -> some View {
             makeTOTPViewExecutedCount += 1
             makeTOTPViewExecuted(viewModel, periodState, updater, behaviour)
@@ -185,7 +190,7 @@ extension TOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeOTPView(id: id, code: anyTOTPCode(), behaviour: .normal)
+            _ = sut.makeVaultPreviewView(id: id, code: anyTOTPCode(), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))

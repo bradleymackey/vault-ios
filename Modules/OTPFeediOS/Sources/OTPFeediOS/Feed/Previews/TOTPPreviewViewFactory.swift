@@ -8,7 +8,7 @@ public protocol TOTPPreviewViewFactory {
         viewModel: CodePreviewViewModel,
         periodState: CodeTimerPeriodState,
         updater: any CodeTimerUpdater,
-        behaviour: OTPViewBehaviour
+        behaviour: VaultItemViewBehaviour
     )
         -> TOTPView
 }
@@ -19,7 +19,7 @@ public struct RealTOTPPreviewViewFactory: TOTPPreviewViewFactory {
         viewModel: CodePreviewViewModel,
         periodState: CodeTimerPeriodState,
         updater _: any CodeTimerUpdater,
-        behaviour: OTPViewBehaviour
+        behaviour: VaultItemViewBehaviour
     ) -> some View {
         TOTPCodePreviewView(
             previewViewModel: viewModel,

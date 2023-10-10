@@ -5,7 +5,7 @@ import SwiftUI
 struct CodeStateTimerBarView<Timer: View>: View {
     var timerView: Timer
     var codeState: OTPCodeState
-    var behaviour: OTPViewBehaviour
+    var behaviour: VaultItemViewBehaviour
 
     var body: some View {
         ZStack(alignment: .leading) {

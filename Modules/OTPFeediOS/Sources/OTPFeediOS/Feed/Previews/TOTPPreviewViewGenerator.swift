@@ -9,8 +9,8 @@ import SwiftUI
 ///
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: OTPViewGenerator {
-    public typealias Code = TOTPAuthCode
+public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
+    public typealias VaultItem = TOTPAuthCode
 
     let viewFactory: Factory
     let updaterFactory: any CodeTimerUpdaterFactory
@@ -33,7 +33,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: OT
         self.timer = timer
     }
 
-    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
+    public func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> some View {
         viewFactory.makeTOTPView(
             viewModel: makeViewModelForCode(id: id, code: code),
             periodState: makeTimerPeriodState(period: code.period),
@@ -61,8 +61,8 @@ public extension TOTPPreviewViewGenerator {
     }
 }
 
-extension TOTPPreviewViewGenerator: OTPCodeProvider {
-    public func currentVisibleCode(id: UUID) -> String? {
+extension TOTPPreviewViewGenerator: VaultItemCopyTextProvider {
+    public func currentCopyableText(id: UUID) -> String? {
         guard let viewModel = viewModelCache[id] else { return nil }
         return viewModel.code.visibleCode
     }

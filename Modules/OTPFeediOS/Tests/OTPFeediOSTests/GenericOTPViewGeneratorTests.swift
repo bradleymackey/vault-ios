@@ -22,7 +22,7 @@ final class GenericOTPViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp)
 
         let code = GenericOTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
-        let view = sut.makeOTPView(id: UUID(), code: code, behaviour: .normal)
+        let view = sut.makeVaultPreviewView(id: UUID(), code: code, behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "TOTP")
@@ -34,7 +34,7 @@ final class GenericOTPViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp)
 
         let code = GenericOTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
-        let view = sut.makeOTPView(id: UUID(), code: code, behaviour: .normal)
+        let view = sut.makeVaultPreviewView(id: UUID(), code: code, behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "HOTP")
@@ -64,25 +64,25 @@ final class GenericOTPViewGeneratorTests: XCTestCase {
 }
 
 extension GenericOTPViewGeneratorTests {
-    private typealias SUT = GenericOTPViewGenerator<MockTOTPGenerator, MockHOTPGenerator>
+    private typealias SUT = GenericVaultItemPreviewViewGenerator<MockTOTPGenerator, MockHOTPGenerator>
     private func makeSUT(
         totp: MockTOTPGenerator,
         hotp: MockHOTPGenerator
     ) -> SUT {
-        GenericOTPViewGenerator(
+        GenericVaultItemPreviewViewGenerator(
             totpGenerator: totp,
             hotpGenerator: hotp
         )
     }
 
-    private class MockHOTPGenerator: OTPViewGenerator, OTPCodeProvider {
-        typealias Code = HOTPAuthCode
+    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemCopyTextProvider {
+        typealias VaultItem = HOTPAuthCode
         private(set) var calledMethods = [String]()
 
         @MainActor
         init() {}
 
-        func makeOTPView(id _: UUID, code _: Code, behaviour _: OTPViewBehaviour) -> some View {
+        func makeVaultPreviewView(id _: UUID, code _: VaultItem, behaviour _: VaultItemViewBehaviour) -> some View {
             Text("HOTP")
         }
 
@@ -94,20 +94,20 @@ extension GenericOTPViewGeneratorTests {
             calledMethods.append(#function)
         }
 
-        func currentVisibleCode(id _: UUID) -> String? {
+        func currentCopyableText(id _: UUID) -> String? {
             calledMethods.append(#function)
             return "some code"
         }
     }
 
-    private class MockTOTPGenerator: OTPViewGenerator, OTPCodeProvider {
-        typealias Code = TOTPAuthCode
+    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemCopyTextProvider {
+        typealias VaultItem = TOTPAuthCode
         private(set) var calledMethods = [String]()
 
         @MainActor
         init() {}
 
-        func makeOTPView(id _: UUID, code _: Code, behaviour _: OTPViewBehaviour) -> some View {
+        func makeVaultPreviewView(id _: UUID, code _: VaultItem, behaviour _: VaultItemViewBehaviour) -> some View {
             Text("TOTP")
         }
 
@@ -119,7 +119,7 @@ extension GenericOTPViewGeneratorTests {
             calledMethods.append(#function)
         }
 
-        func currentVisibleCode(id _: UUID) -> String? {
+        func currentCopyableText(id _: UUID) -> String? {
             calledMethods.append(#function)
             return "some code"
         }

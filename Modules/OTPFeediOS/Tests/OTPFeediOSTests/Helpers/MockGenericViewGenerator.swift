@@ -3,10 +3,10 @@ import OTPCore
 import OTPFeediOS
 import SwiftUI
 
-final class MockGenericViewGenerator: OTPViewGenerator {
-    typealias Code = GenericOTPAuthCode
+final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
+    typealias VaultItem = GenericOTPAuthCode
 
-    func makeOTPView(id _: UUID, code _: Code, behaviour _: OTPViewBehaviour) -> some View {
+    func makeVaultPreviewView(id _: UUID, code _: VaultItem, behaviour _: VaultItemViewBehaviour) -> some View {
         ZStack {
             Color.blue
             Text("Code")

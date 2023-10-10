@@ -5,8 +5,8 @@ import OTPFeed
 import SwiftUI
 
 @MainActor
-public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: OTPViewGenerator {
-    public typealias Code = HOTPAuthCode
+public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
+    public typealias VaultItem = HOTPAuthCode
 
     let viewFactory: Factory
     let timer: any IntervalTimer
@@ -20,7 +20,7 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: OT
         self.timer = timer
     }
 
-    public func makeOTPView(id: UUID, code: Code, behaviour: OTPViewBehaviour) -> some View {
+    public func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> some View {
         viewFactory.makeHOTPView(
             viewModel: makePreviewViewModel(id: id, code: code),
             incrementer: makeIncrementerViewModel(id: id, code: code),
@@ -47,8 +47,8 @@ public extension HOTPPreviewViewGenerator {
     }
 }
 
-extension HOTPPreviewViewGenerator: OTPCodeProvider {
-    public func currentVisibleCode(id: UUID) -> String? {
+extension HOTPPreviewViewGenerator: VaultItemCopyTextProvider {
+    public func currentCopyableText(id: UUID) -> String? {
         guard let cached = previewViewModelCache[id] else { return nil }
         return cached.code.visibleCode
     }

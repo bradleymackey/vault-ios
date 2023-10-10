@@ -66,7 +66,7 @@ struct CodeManagerApp: App {
                     CodeListView(
                         feedViewModel: feedViewModel,
                         localSettings: localSettings,
-                        viewGenerator: GenericOTPViewGenerator(
+                        viewGenerator: GenericVaultItemPreviewViewGenerator(
                             totpGenerator: totpPreviewGenerator,
                             hotpGenerator: hotpPreviewGenerator
                         )

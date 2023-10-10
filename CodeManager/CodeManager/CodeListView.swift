@@ -12,8 +12,8 @@ import OTPSettings
 import SwiftUI
 
 @MainActor
-struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodeProvider>: View
-    where Generator.Code == GenericOTPAuthCode
+struct CodeListView<Store: OTPCodeStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
+    where Generator.VaultItem == GenericOTPAuthCode
 {
     var feedViewModel: FeedViewModel<Store>
     var localSettings: LocalSettings
@@ -83,7 +83,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: OTPViewGenerator & OTPCodePr
             if isEditing {
                 guard let code = feedViewModel.code(id: id) else { return }
                 modal = .detail(id, code)
-            } else if let code = viewGenerator.currentVisibleCode(id: id) {
+            } else if let code = viewGenerator.currentCopyableText(id: id) {
                 pasteboard.copy(code)
             }
         }
