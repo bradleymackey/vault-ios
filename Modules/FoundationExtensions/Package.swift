@@ -13,7 +13,7 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "FoundationExtensions",
     defaultLocalization: "en",
-    platforms: [.iOS(.v13), .macOS(.v11)],
+    platforms: [.iOS(.v16), .macOS(.v13)],
     products: [
         .library(
             name: "FoundationExtensions",
