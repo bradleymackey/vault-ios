@@ -194,6 +194,18 @@ final class CodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    func test_done_restoresInitialEditingStateIfInEditMode() async throws {
+        let sut = makeSUT()
+        sut.startEditing()
+
+        sut.editingModel.detail.accountNameTitle = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
+
+        sut.done()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
     func test_done_doesNotFinishIfInEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()

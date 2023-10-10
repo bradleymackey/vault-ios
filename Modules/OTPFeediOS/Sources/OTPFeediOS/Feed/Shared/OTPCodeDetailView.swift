@@ -56,7 +56,7 @@ public struct OTPCodeDetailView: View {
             if viewModel.editingModel.isDirty {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
-                        viewModel.cancel()
+                        viewModel.done()
                     } label: {
                         Text(viewModel.cancelEditsTitle)
                             .tint(.red)

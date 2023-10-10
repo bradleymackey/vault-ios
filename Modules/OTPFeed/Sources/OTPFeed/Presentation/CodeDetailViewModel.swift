@@ -78,14 +78,10 @@ public final class CodeDetailViewModel {
     public func done() {
         if isInEditMode {
             isInEditMode = false
+            editingModel.restoreInitialState()
         } else {
             isFinishedSubject.send()
         }
-    }
-
-    public func cancel() {
-        isInEditMode = false
-        editingModel.restoreInitialState()
     }
 }
 
