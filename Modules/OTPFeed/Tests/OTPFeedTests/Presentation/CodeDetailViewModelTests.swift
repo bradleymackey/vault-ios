@@ -130,6 +130,61 @@ final class CodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(output.count, 1)
     }
 
+    func test_deleteCode_setsIsSavingToTrue() async throws {
+        let completeDeleteSignal = PendingValue<Void>()
+        let editor = CodeDetailEditorMock()
+        editor.deleteCodeCalled = { _ in
+            try? await completeDeleteSignal.awaitValue()
+        }
+
+        let sut = makeSUT(editor: editor)
+
+        let exp = expectation(description: "Wait for save changes to start")
+        let task = Task {
+            exp.fulfill()
+            await sut.deleteCode()
+        }
+        await fulfillment(of: [exp], timeout: 1.0)
+
+        XCTAssertTrue(sut.isSaving)
+
+        // Cleanup
+        completeDeleteSignal.fulfill()
+        _ = await task.value
+    }
+
+    func test_deleteCode_setsBackToFalseAfterSuccessfulDelete() async throws {
+        let sut = makeSUT()
+
+        await sut.deleteCode()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    func test_deleteCode_sendsFinishSignalOnSuccessfulDeletion() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            await sut.deleteCode()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    func test_deleteCode_sendsErrorIfDeleteError() async throws {
+        let editor = CodeDetailEditorMock()
+        editor.deleteCodeResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.deleteCode()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
     func test_editingModel_initialStateUsesData() {
         var code = uniqueStoredCode()
         code.code.data.accountName = "account name test"
