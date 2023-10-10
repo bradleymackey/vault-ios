@@ -185,6 +185,36 @@ final class CodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(output.count, 1)
     }
 
+    func test_done_disablesEditModeIfInEditMode() async throws {
+        let sut = makeSUT()
+        sut.startEditing()
+
+        sut.done()
+
+        XCTAssertFalse(sut.isInEditMode)
+    }
+
+    func test_done_doesNotFinishIfInEditMode() async throws {
+        let sut = makeSUT()
+        sut.startEditing()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        await awaitNoPublish(publisher: publisher) {
+            sut.done()
+        }
+    }
+
+    func test_done_finishesIfNotInEditMode() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            sut.done()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
     func test_editingModel_initialStateUsesData() {
         var code = uniqueStoredCode()
         code.code.data.accountName = "account name test"
