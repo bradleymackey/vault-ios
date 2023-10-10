@@ -92,7 +92,7 @@ public final class CodeDetailViewModel {
 // MARK: - Error
 
 public extension CodeDetailViewModel {
-    enum OperationError: String, Error, Identifiable, LocalizedError {
+    enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
         case save
         case delete
 

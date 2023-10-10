@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import OTPFeed
 import TestHelpers
 import XCTest
@@ -25,6 +26,108 @@ final class CodeDetailViewModelTests: XCTestCase {
         }
 
         XCTAssertTrue(sut.isInEditMode)
+    }
+
+    func test_isSaving_initiallyFalse() {
+        let sut = makeSUT()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    func test_saveChanges_setsIsSavingToTrue() async throws {
+        let completeUpdateSignal = PendingValue<Void>()
+        let editor = CodeDetailEditorMock()
+        editor.updateCodeCalled = { _, _ in
+            try? await completeUpdateSignal.awaitValue()
+        }
+
+        let sut = makeSUT(editor: editor)
+
+        let exp = expectation(description: "Wait for save changes to start")
+        let task = Task {
+            exp.fulfill()
+            await sut.saveChanges()
+        }
+        await fulfillment(of: [exp], timeout: 1.0)
+
+        XCTAssertTrue(sut.isSaving)
+
+        // Cleanup
+        completeUpdateSignal.fulfill()
+        _ = await task.value
+    }
+
+    func test_saveChanges_setsBackToFalseAfterSuccessfulSave() async throws {
+        let sut = makeSUT()
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    func test_saveChanges_disablesEditModeIfSuccessful() async throws {
+        let sut = makeSUT()
+
+        sut.startEditing()
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.isInEditMode)
+    }
+
+    func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
+        let sut = makeSUT()
+        sut.editingModel.detail.accountNameTitle = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
+        let editor = CodeDetailEditorMock()
+        editor.updateCodeResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    func test_saveChanges_remainsInEditModeAfterSaveFailure() async throws {
+        let editor = CodeDetailEditorMock()
+        editor.updateCodeResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        sut.startEditing()
+        await sut.saveChanges()
+
+        XCTAssertTrue(sut.isInEditMode)
+    }
+
+    func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
+        let editor = CodeDetailEditorMock()
+        editor.updateCodeResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+        sut.editingModel.detail.accountNameTitle = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
+
+        await sut.saveChanges()
+
+        XCTAssertTrue(sut.editingModel.isDirty)
+    }
+
+    func test_saveChanges_sendsErrorIfSaveError() async throws {
+        let editor = CodeDetailEditorMock()
+        editor.updateCodeResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.saveChanges()
+        }
+
+        XCTAssertEqual(output.count, 1)
     }
 
     func test_editingModel_initialStateUsesData() {
@@ -70,14 +173,18 @@ extension CodeDetailViewModelTests {
     }
 
     private class CodeDetailEditorMock: CodeDetailEditor {
-        var updateCodeCalled: (StoredOTPCode, CodeDetailEdits) -> Void = { _, _ in }
+        var updateCodeResult: Result<Void, Error> = .success(())
+        var updateCodeCalled: (StoredOTPCode, CodeDetailEdits) async -> Void = { _, _ in }
         func update(code: StoredOTPCode, edits: CodeDetailEdits) async throws {
-            updateCodeCalled(code, edits)
+            await updateCodeCalled(code, edits)
+            try updateCodeResult.get()
         }
 
-        var deleteCodeCalled: (UUID) -> Void = { _ in }
+        var deleteCodeResult: Result<Void, Error> = .success(())
+        var deleteCodeCalled: (UUID) async -> Void = { _ in }
         func deleteCode(id: UUID) async throws {
-            deleteCodeCalled(id)
+            await deleteCodeCalled(id)
+            try deleteCodeResult.get()
         }
     }
 }
