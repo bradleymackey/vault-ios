@@ -45,7 +45,7 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
 }
 
 extension ThirdPartyLibrariesLoaderTests {
-    private func makeSUT(resourceFetcher: LocalResourceFetcher) -> ThirdPartyLibraryLoader {
+    private func makeSUT(resourceFetcher: any LocalResourceFetcher) -> ThirdPartyLibraryLoader {
         ThirdPartyLibraryLoader(resourceFetcher: resourceFetcher)
     }
 }
