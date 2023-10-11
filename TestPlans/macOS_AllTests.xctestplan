@@ -29,7 +29,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/OTPFeed",
+        "containerPath" : "container:..\/OTPFeed",
         "identifier" : "OTPFeedTests",
         "name" : "OTPFeedTests"
       }

@@ -1,6 +1,6 @@
-import VaultSettings
-import OTPUI
 import SwiftUI
+import VaultSettings
+import VaultUI
 
 public struct SettingsHomeView: View {
     private var viewModel: SettingsViewModel

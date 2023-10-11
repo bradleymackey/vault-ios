@@ -1,6 +1,6 @@
 import FoundationExtensions
-import VaultSettings
 import SwiftUI
+import VaultSettings
 
 public struct ThirdPartyView: View {
     @State private var libraries = [ThirdPartyLibrary]()

@@ -8,9 +8,6 @@
       location = "group:Modules/FoundationExtensions">
    </FileRef>
    <FileRef
-      location = "group:CodeManager/../OTPUI">
-   </FileRef>
-   <FileRef
       location = "group:Modules/OTPFeediOS">
    </FileRef>
    <FileRef
@@ -24,6 +21,9 @@
    </FileRef>
    <FileRef
       location = "group:Modules/CryptoDocumentExporter">
+   </FileRef>
+   <FileRef
+      location = "group:Modules/VaultUI">
    </FileRef>
    <FileRef
       location = "group:Modules/VaultCore">

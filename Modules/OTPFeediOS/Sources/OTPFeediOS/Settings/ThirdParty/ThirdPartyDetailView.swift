@@ -1,6 +1,6 @@
 import Foundation
-import VaultSettings
 import SwiftUI
+import VaultSettings
 
 struct ThirdPartyDetailView: View {
     let library: ThirdPartyLibrary

@@ -6,8 +6,8 @@
 //
 
 import OTPFeediOS
-import VaultSettings
 import SwiftUI
+import VaultSettings
 
 struct CodeSettingsView: View {
     var viewModel: SettingsViewModel

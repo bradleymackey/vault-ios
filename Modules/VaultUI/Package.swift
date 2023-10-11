@@ -11,13 +11,13 @@ let swiftSettings: [SwiftSetting] = [
 ]
 
 let package = Package(
-    name: "OTPUI",
+    name: "VaultUI",
     defaultLocalization: "en",
     platforms: [.iOS(.v17)],
     products: [
         .library(
-            name: "OTPUI",
-            targets: ["OTPUI"]
+            name: "VaultUI",
+            targets: ["VaultUI"]
         ),
     ],
     dependencies: [
@@ -25,14 +25,14 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "OTPUI",
+            name: "VaultUI",
             dependencies: [],
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "OTPUITests",
+            name: "VaultUITests",
             dependencies: [
-                "OTPUI",
+                "VaultUI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings

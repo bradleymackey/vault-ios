@@ -1,5 +1,5 @@
-import VaultSettings
 import SwiftUI
+import VaultSettings
 
 struct ThirdPartyLibraryRowView: View {
     var library: ThirdPartyLibrary

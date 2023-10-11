@@ -1,6 +1,6 @@
 import Foundation
-import VaultSettings
 import SwiftUI
+import VaultSettings
 
 struct AboutView: View {
     var viewModel: SettingsViewModel

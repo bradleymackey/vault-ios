@@ -1,6 +1,6 @@
 import Foundation
-import OTPUI
 import SwiftUI
+import VaultUI
 
 struct RestoreBackupView: View {
     @State private var hasAnyExistingCodes = true

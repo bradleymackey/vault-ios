@@ -50,13 +50,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/..\/OTPUI",
-        "identifier" : "OTPUITests",
-        "name" : "OTPUITests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/FoundationExtensions",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
@@ -71,21 +64,28 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/OTPFeed",
+        "containerPath" : "container:..\/OTPFeed",
         "identifier" : "OTPFeedTests",
         "name" : "OTPFeedTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/OTPFeediOS",
+        "containerPath" : "container:..\/OTPFeediOS",
         "identifier" : "OTPFeediOSTests",
         "name" : "OTPFeediOSTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultSettings",
+        "containerPath" : "container:..\/VaultUI",
+        "identifier" : "VaultUITests",
+        "name" : "VaultUITests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/VaultSettings",
         "identifier" : "VaultSettingsTests",
         "name" : "VaultSettingsTests"
       }

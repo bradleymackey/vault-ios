@@ -1,6 +1,6 @@
 import Foundation
-import VaultSettings
 import SwiftUI
+import VaultSettings
 
 public struct OpenSourceView: View {
     public var body: some View {

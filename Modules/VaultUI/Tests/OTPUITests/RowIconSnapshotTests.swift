@@ -1,7 +1,7 @@
 import SnapshotTesting
 import SwiftUI
 import XCTest
-@testable import OTPUI
+@testable import VaultUI
 
 final class RowIconSnapshotTests: XCTestCase {
     override func setUp() {

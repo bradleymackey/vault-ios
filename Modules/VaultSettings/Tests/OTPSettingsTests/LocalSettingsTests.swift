@@ -1,6 +1,6 @@
 import Foundation
-import VaultSettings
 import TestHelpers
+import VaultSettings
 import XCTest
 
 final class LocalSettingsTests: XCTestCase {

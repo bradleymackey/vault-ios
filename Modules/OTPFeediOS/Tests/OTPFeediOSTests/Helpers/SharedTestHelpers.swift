@@ -1,8 +1,8 @@
 import Foundation
 import OTPFeed
-import VaultSettings
 import SwiftUI
 import VaultCore
+import VaultSettings
 
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)
