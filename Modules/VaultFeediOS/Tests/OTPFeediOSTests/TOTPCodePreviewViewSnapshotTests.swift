@@ -1,7 +1,7 @@
 import Foundation
-import OTPFeed
 import SnapshotTesting
 import SwiftUI
+import VaultFeed
 import XCTest
 @testable import VaultFeediOS
 

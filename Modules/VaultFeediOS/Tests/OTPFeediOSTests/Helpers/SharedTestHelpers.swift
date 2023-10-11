@@ -1,7 +1,7 @@
 import Foundation
-import OTPFeed
 import SwiftUI
 import VaultCore
+import VaultFeed
 import VaultSettings
 
 func anyNSError() -> NSError {

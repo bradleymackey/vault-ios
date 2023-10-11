@@ -1,6 +1,6 @@
-import OTPFeed
 import SwiftUI
 import VaultCore
+import VaultFeed
 import VaultUI
 
 @MainActor

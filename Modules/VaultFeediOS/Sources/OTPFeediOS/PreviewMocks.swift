@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OTPFeed
+import VaultFeed
 
 final class MockCodeTimerUpdater: CodeTimerUpdater {
     var recalculateCallCount = 0
@@ -69,7 +69,7 @@ struct CodeStoreFake: VaultStoreReader {
         ),
     ]
 
-    func retrieve() async throws -> [OTPFeed.StoredVaultItem] {
+    func retrieve() async throws -> [VaultFeed.StoredVaultItem] {
         codes
     }
 }

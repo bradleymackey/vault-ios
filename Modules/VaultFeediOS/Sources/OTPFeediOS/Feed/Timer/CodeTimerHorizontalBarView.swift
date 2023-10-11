@@ -1,8 +1,8 @@
 import Combine
-import OTPFeed
 import SwiftUI
 import UniformTypeIdentifiers
 import VaultCore
+import VaultFeed
 
 public struct CodeTimerHorizontalBarView: View {
     var timerState: CodeTimerPeriodState

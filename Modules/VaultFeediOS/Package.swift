@@ -14,7 +14,7 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(name: "OTPFeed", path: "../OTPFeed"),
+        .package(name: "VaultFeed", path: "../VaultFeed"),
         .package(name: "VaultUI", path: "../VaultUI"),
         .package(name: "FoundationExtensions", path: "../FoundationExtensions"),
         .package(name: "VaultSettings", path: "../VaultSettings"),
@@ -24,7 +24,7 @@ let package = Package(
     targets: [
         .target(
             name: "VaultFeediOS",
-            dependencies: ["OTPFeed", "SimpleToast", "VaultUI", "FoundationExtensions", "VaultSettings"]
+            dependencies: ["VaultFeed", "SimpleToast", "VaultUI", "FoundationExtensions", "VaultSettings"]
         ),
         .testTarget(
             name: "VaultFeediOSTests",

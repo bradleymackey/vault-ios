@@ -1,7 +1,7 @@
 import Foundation
-import OTPFeed
 import SwiftUI
 import VaultCore
+import VaultFeed
 
 public struct GenericVaultItemPreviewViewGenerator<
     TOTP: VaultItemPreviewViewGenerator,

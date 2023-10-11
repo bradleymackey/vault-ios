@@ -1,9 +1,9 @@
 import Combine
 import Foundation
-import OTPFeed
 import SwiftUI
 import TestHelpers
 import VaultCore
+import VaultFeed
 import XCTest
 @testable import VaultFeediOS
 
@@ -255,8 +255,8 @@ extension TOTPPreviewViewGeneratorTests {
             recalculateCallCount += 1
         }
 
-        let timerUpdatedPublisherSubject = PassthroughSubject<OTPFeed.OTPTimerState, Never>()
-        func timerUpdatedPublisher() -> AnyPublisher<OTPFeed.OTPTimerState, Never> {
+        let timerUpdatedPublisherSubject = PassthroughSubject<VaultFeed.OTPTimerState, Never>()
+        func timerUpdatedPublisher() -> AnyPublisher<VaultFeed.OTPTimerState, Never> {
             timerUpdatedPublisherSubject.eraseToAnyPublisher()
         }
     }

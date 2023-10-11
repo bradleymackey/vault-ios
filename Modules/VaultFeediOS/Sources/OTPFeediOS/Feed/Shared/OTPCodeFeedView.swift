@@ -1,7 +1,7 @@
 import CryptoEngine
-import OTPFeed
 import SwiftUI
 import VaultCore
+import VaultFeed
 import VaultSettings
 
 @MainActor

@@ -1,6 +1,6 @@
 import Foundation
-import OTPFeed
 import SwiftUI
+import VaultFeed
 
 public protocol TOTPPreviewViewFactory {
     associatedtype TOTPView: View

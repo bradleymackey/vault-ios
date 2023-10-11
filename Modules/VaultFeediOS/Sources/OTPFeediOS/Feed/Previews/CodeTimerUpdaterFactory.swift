@@ -1,6 +1,6 @@
 import Foundation
-import OTPFeed
 import VaultCore
+import VaultFeed
 
 public protocol CodeTimerUpdaterFactory {
     func makeUpdater(period: UInt64) -> any CodeTimerUpdater

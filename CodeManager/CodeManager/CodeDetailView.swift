@@ -6,9 +6,9 @@
 //
 
 import Foundation
-import OTPFeed
 import SwiftUI
 import VaultCore
+import VaultFeed
 import VaultFeediOS
 
 struct CodeDetailView<Store: VaultStore>: View {

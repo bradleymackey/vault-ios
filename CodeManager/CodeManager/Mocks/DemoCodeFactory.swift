@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import OTPFeed
+import VaultFeed
 
 enum DemoCodeFactory {
     static func totpCode(issuer: String = "Ebay") -> StoredVaultItem {

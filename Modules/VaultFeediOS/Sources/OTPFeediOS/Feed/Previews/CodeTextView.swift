@@ -1,6 +1,6 @@
 import Combine
-import OTPFeed
 import SwiftUI
+import VaultFeed
 
 public struct CodeTextView: View {
     var codeState: OTPCodeState

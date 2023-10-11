@@ -1,6 +1,6 @@
 import Foundation
-import OTPFeed
 import SwiftUI
+import VaultFeed
 
 struct CodeStateTimerBarView<Timer: View>: View {
     var timerView: Timer

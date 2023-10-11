@@ -29,9 +29,9 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPFeed",
-        "identifier" : "OTPFeedTests",
-        "name" : "OTPFeedTests"
+        "containerPath" : "container:..\/Modules\/VaultFeed",
+        "identifier" : "VaultFeedTests",
+        "name" : "VaultFeedTests"
       }
     }
   ],

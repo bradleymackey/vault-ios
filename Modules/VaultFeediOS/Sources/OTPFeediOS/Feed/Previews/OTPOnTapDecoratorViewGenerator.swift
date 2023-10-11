@@ -1,6 +1,6 @@
 import Foundation
-import OTPFeed
 import SwiftUI
+import VaultFeed
 
 public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGenerator>: VaultItemPreviewViewGenerator {
     public typealias VaultItem = Generator.VaultItem
