@@ -1,4 +1,4 @@
-import OTPAttribution
+import OTPSettings
 import SwiftUI
 
 struct ThirdPartyLibraryRowView: View {

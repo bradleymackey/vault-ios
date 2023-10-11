@@ -71,13 +71,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPAttribution",
-        "identifier" : "OTPAttributionTests",
-        "name" : "OTPAttributionTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/FoundationExtensions",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
@@ -88,6 +81,13 @@
         "containerPath" : "container:..\/VaultCore",
         "identifier" : "VaultCoreTests",
         "name" : "VaultCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/OTPSettings",
+        "identifier" : "OTPSettingsTests",
+        "name" : "OTPSettingsTests"
       }
     }
   ],

@@ -20,9 +20,6 @@
       location = "group:Modules/OTPFeed">
    </FileRef>
    <FileRef
-      location = "group:Modules/OTPAttribution">
-   </FileRef>
-   <FileRef
       location = "group:Modules/CryptoEngine">
    </FileRef>
    <FileRef

@@ -14,7 +14,6 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(name: "OTPAttribution", path: "../OTPAttribution"),
         .package(name: "OTPFeed", path: "../OTPFeed"),
         .package(name: "OTPUI", path: "../OTPUI"),
         .package(name: "FoundationExtensions", path: "../FoundationExtensions"),
@@ -25,7 +24,7 @@ let package = Package(
     targets: [
         .target(
             name: "OTPFeediOS",
-            dependencies: ["OTPFeed", "SimpleToast", "OTPUI", "FoundationExtensions", "OTPSettings", "OTPAttribution"]
+            dependencies: ["OTPFeed", "SimpleToast", "OTPUI", "FoundationExtensions", "OTPSettings"]
         ),
         .testTarget(
             name: "OTPFeediOSTests",

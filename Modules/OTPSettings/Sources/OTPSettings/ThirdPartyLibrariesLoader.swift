@@ -6,9 +6,9 @@ struct ThirdPartyLibraryLoader {
         var libraries: [ThirdPartyLibrary]
     }
 
-    private let resourceFetcher: LocalResourceFetcher
+    private let resourceFetcher: any LocalResourceFetcher
 
-    init(resourceFetcher: LocalResourceFetcher) {
+    init(resourceFetcher: any LocalResourceFetcher) {
         self.resourceFetcher = resourceFetcher
     }
 

@@ -1,5 +1,5 @@
 import FoundationExtensions
-import OTPAttribution
+import OTPSettings
 import SwiftUI
 
 public struct ThirdPartyView: View {
