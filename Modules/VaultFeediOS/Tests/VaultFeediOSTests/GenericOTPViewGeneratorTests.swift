@@ -22,7 +22,7 @@ final class GenericOTPViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp)
 
         let code = GenericOTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
-        let view = sut.makeVaultPreviewView(id: UUID(), code: code, behaviour: .normal)
+        let view = sut.makeVaultPreviewView(id: UUID(), item: code, behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "TOTP")
@@ -34,7 +34,7 @@ final class GenericOTPViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp)
 
         let code = GenericOTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
-        let view = sut.makeVaultPreviewView(id: UUID(), code: code, behaviour: .normal)
+        let view = sut.makeVaultPreviewView(id: UUID(), item: code, behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "HOTP")
@@ -76,13 +76,13 @@ extension GenericOTPViewGeneratorTests {
     }
 
     private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemCopyTextProvider {
-        typealias VaultItem = HOTPAuthCode
+        typealias PreviewItem = HOTPAuthCode
         private(set) var calledMethods = [String]()
 
         @MainActor
         init() {}
 
-        func makeVaultPreviewView(id _: UUID, code _: VaultItem, behaviour _: VaultItemViewBehaviour) -> some View {
+        func makeVaultPreviewView(id _: UUID, item _: PreviewItem, behaviour _: VaultItemViewBehaviour) -> some View {
             Text("HOTP")
         }
 
@@ -101,13 +101,13 @@ extension GenericOTPViewGeneratorTests {
     }
 
     private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemCopyTextProvider {
-        typealias VaultItem = TOTPAuthCode
+        typealias PreviewItem = TOTPAuthCode
         private(set) var calledMethods = [String]()
 
         @MainActor
         init() {}
 
-        func makeVaultPreviewView(id _: UUID, code _: VaultItem, behaviour _: VaultItemViewBehaviour) -> some View {
+        func makeVaultPreviewView(id _: UUID, item _: PreviewItem, behaviour _: VaultItemViewBehaviour) -> some View {
             Text("TOTP")
         }
 

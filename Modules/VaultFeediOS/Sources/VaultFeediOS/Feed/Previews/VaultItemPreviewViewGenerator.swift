@@ -4,9 +4,9 @@ import VaultCore
 
 @MainActor
 public protocol VaultItemPreviewViewGenerator {
-    associatedtype VaultItem
+    associatedtype PreviewItem
     associatedtype PreviewView: View
-    func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> PreviewView
+    func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> PreviewView
     func scenePhaseDidChange(to scene: ScenePhase)
     func didAppear()
 }

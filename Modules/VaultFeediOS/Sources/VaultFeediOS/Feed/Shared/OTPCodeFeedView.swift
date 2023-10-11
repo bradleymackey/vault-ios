@@ -9,7 +9,7 @@ public struct OTPCodeFeedView<
     Store: VaultStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
-    ViewGenerator.VaultItem == GenericOTPAuthCode
+    ViewGenerator.PreviewItem == GenericOTPAuthCode
 {
     public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
@@ -75,9 +75,9 @@ public struct OTPCodeFeedView<
         ScrollView {
             LazyVGrid(columns: columns, content: {
                 ReorderableForEach(items: viewModel.codes, isDragging: $isReordering, isEnabled: isEditing) { code in
-                    viewGenerator.makeVaultPreviewView(id: code.id, code: code.code, behaviour: currentBehaviour)
+                    viewGenerator.makeVaultPreviewView(id: code.id, item: code.code, behaviour: currentBehaviour)
                 } previewContent: { code in
-                    viewGenerator.makeVaultPreviewView(id: code.id, code: code.code, behaviour: reorderingBehaviour)
+                    viewGenerator.makeVaultPreviewView(id: code.id, item: code.code, behaviour: reorderingBehaviour)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
@@ -128,7 +128,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     struct GenericGenerator: VaultItemPreviewViewGenerator {
         func makeVaultPreviewView(
             id _: UUID,
-            code _: GenericOTPAuthCode,
+            item _: GenericOTPAuthCode,
             behaviour _: VaultItemViewBehaviour
         ) -> some View {
             Text("Code")

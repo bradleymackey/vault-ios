@@ -10,7 +10,7 @@ import VaultFeed
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
 public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
-    public typealias VaultItem = TOTPAuthCode
+    public typealias PreviewItem = TOTPAuthCode
 
     let viewFactory: Factory
     let updaterFactory: any CodeTimerUpdaterFactory
@@ -33,11 +33,11 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
         self.timer = timer
     }
 
-    public func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
         viewFactory.makeTOTPView(
-            viewModel: makeViewModelForCode(id: id, code: code),
-            periodState: makeTimerPeriodState(period: code.period),
-            updater: makeTimerController(period: code.period),
+            viewModel: makeViewModelForCode(id: id, code: item),
+            periodState: makeTimerPeriodState(period: item.period),
+            updater: makeTimerController(period: item.period),
             behaviour: behaviour
         )
     }

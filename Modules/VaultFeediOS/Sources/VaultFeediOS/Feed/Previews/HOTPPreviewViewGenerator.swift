@@ -6,7 +6,7 @@ import VaultFeed
 
 @MainActor
 public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
-    public typealias VaultItem = HOTPAuthCode
+    public typealias PreviewItem = HOTPAuthCode
 
     let viewFactory: Factory
     let timer: any IntervalTimer
@@ -20,10 +20,10 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
         self.timer = timer
     }
 
-    public func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
         viewFactory.makeHOTPView(
-            viewModel: makePreviewViewModel(id: id, code: code),
-            incrementer: makeIncrementerViewModel(id: id, code: code),
+            viewModel: makePreviewViewModel(id: id, code: item),
+            incrementer: makeIncrementerViewModel(id: id, code: item),
             behaviour: behaviour
         )
     }

@@ -4,9 +4,9 @@ import VaultCore
 import VaultFeediOS
 
 final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
-    typealias VaultItem = GenericOTPAuthCode
+    typealias PreviewItem = GenericOTPAuthCode
 
-    func makeVaultPreviewView(id _: UUID, code _: VaultItem, behaviour _: VaultItemViewBehaviour) -> some View {
+    func makeVaultPreviewView(id _: UUID, item _: PreviewItem, behaviour _: VaultItemViewBehaviour) -> some View {
         ZStack {
             Color.blue
             Text("Code")

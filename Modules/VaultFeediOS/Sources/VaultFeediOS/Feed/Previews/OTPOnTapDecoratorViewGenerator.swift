@@ -3,7 +3,7 @@ import SwiftUI
 import VaultFeed
 
 public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGenerator>: VaultItemPreviewViewGenerator {
-    public typealias VaultItem = Generator.VaultItem
+    public typealias PreviewItem = Generator.PreviewItem
     public let generator: Generator
     public let onTap: (UUID) -> Void
 
@@ -12,11 +12,11 @@ public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGene
         self.onTap = onTap
     }
 
-    public func makeVaultPreviewView(id: UUID, code: VaultItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
         Button {
             onTap(id)
         } label: {
-            generator.makeVaultPreviewView(id: id, code: code, behaviour: behaviour)
+            generator.makeVaultPreviewView(id: id, item: item, behaviour: behaviour)
                 .modifier(OTPCardViewModifier())
         }
     }

@@ -6,7 +6,7 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
-    where Generator.VaultItem == GenericOTPAuthCode
+    where Generator.PreviewItem == GenericOTPAuthCode
 {
     var feedViewModel: FeedViewModel<Store>
     var localSettings: LocalSettings
