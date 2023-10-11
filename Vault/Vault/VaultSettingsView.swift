@@ -1,15 +1,8 @@
-//
-//  CodeSettingsView.swift
-//  CodeManager
-//
-//  Created by Bradley Mackey on 10/08/2023.
-//
-
 import SwiftUI
 import VaultFeediOS
 import VaultSettings
 
-struct CodeSettingsView: View {
+struct VaultSettingsView: View {
     var viewModel: SettingsViewModel
     var localSettings: LocalSettings
 

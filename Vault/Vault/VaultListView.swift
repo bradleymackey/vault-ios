@@ -1,10 +1,3 @@
-//
-//  CodeListView.swift
-//  CodeManager
-//
-//  Created by Bradley Mackey on 05/05/2023.
-//
-
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -12,7 +5,7 @@ import VaultFeediOS
 import VaultSettings
 
 @MainActor
-struct CodeListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
+struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
     where Generator.VaultItem == GenericOTPAuthCode
 {
     var feedViewModel: FeedViewModel<Store>
@@ -64,7 +57,7 @@ struct CodeListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator 
             switch visible {
             case let .detail(_, storedCode):
                 NavigationView {
-                    CodeDetailView(feedViewModel: feedViewModel, storedCode: storedCode)
+                    VaultDetailView(feedViewModel: feedViewModel, storedCode: storedCode)
                 }
             }
         }

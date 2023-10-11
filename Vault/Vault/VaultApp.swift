@@ -1,10 +1,3 @@
-//
-//  CodeManagerApp.swift
-//  CodeManager
-//
-//  Created by Bradley Mackey on 05/05/2023.
-//
-
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -13,7 +6,7 @@ import VaultSettings
 
 @MainActor
 @main
-struct CodeManagerApp: App {
+struct VaultApp: App {
     @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
@@ -63,7 +56,7 @@ struct CodeManagerApp: App {
         WindowGroup {
             TabView {
                 NavigationStack {
-                    CodeListView(
+                    VaultListView(
                         feedViewModel: feedViewModel,
                         localSettings: localSettings,
                         viewGenerator: GenericVaultItemPreviewViewGenerator(
@@ -86,7 +79,7 @@ struct CodeManagerApp: App {
                 }
 
                 NavigationStack {
-                    CodeSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
+                    VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
                 }
                 .tabItem {
                     Label(settingsViewModel.title, systemImage: "gear")

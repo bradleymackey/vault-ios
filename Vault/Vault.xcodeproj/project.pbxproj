@@ -7,16 +7,16 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		1C25E07D2AD6BF8300F52911 /* VaultFeediOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1C25E07C2AD6BF8300F52911 /* VaultFeediOS */; };
-		1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */; };
-		1C58F28A2A07E212005A7DF5 /* DemoCodeFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C58F2892A07E212005A7DF5 /* DemoCodeFactory.swift */; };
-		1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB991292A845999002D24A7 /* CodeAddView.swift */; };
-		1CB9912C2A8459F2002D24A7 /* CodeSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */; };
-		1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */; };
-		1CDA9C972A057A8B00555E7A /* CodeListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9C962A057A8B00555E7A /* CodeListView.swift */; };
-		1CDA9C992A057A8C00555E7A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CDA9C982A057A8C00555E7A /* Assets.xcassets */; };
-		1CDA9C9C2A057A8C00555E7A /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1CDA9C9B2A057A8C00555E7A /* Preview Assets.xcassets */; };
-		1CDA9CA62A057A8C00555E7A /* CodeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1CDA9CA52A057A8C00555E7A /* CodeManagerTests.swift */; };
+		1C1318042AD75008006F14F5 /* DemoCodeFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1317F82AD75008006F14F5 /* DemoCodeFactory.swift */; };
+		1C1318052AD75008006F14F5 /* VaultApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1317F92AD75008006F14F5 /* VaultApp.swift */; };
+		1C1318062AD75008006F14F5 /* CodeAddView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1317FA2AD75008006F14F5 /* CodeAddView.swift */; };
+		1C1318072AD75008006F14F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FB2AD75008006F14F5 /* Assets.xcassets */; };
+		1C1318082AD75008006F14F5 /* VaultListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1317FC2AD75008006F14F5 /* VaultListView.swift */; };
+		1C1318092AD75008006F14F5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */; };
+		1C13180A2AD75008006F14F5 /* VaultDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1317FF2AD75008006F14F5 /* VaultDetailView.swift */; };
+		1C13180B2AD75008006F14F5 /* VaultSettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1318002AD75008006F14F5 /* VaultSettingsView.swift */; };
+		1C13180E2AD7500F006F14F5 /* CodeManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C1318032AD75008006F14F5 /* CodeManagerTests.swift */; };
+		1C36CB9D2AD751CC00AC3BF7 /* VaultFeediOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1C36CB9C2AD751CC00AC3BF7 /* VaultFeediOS */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -30,18 +30,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		1C25E07B2AD6BF7A00F52911 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeDetailView.swift; sourceTree = "<group>"; };
-		1C58F2892A07E212005A7DF5 /* DemoCodeFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DemoCodeFactory.swift; sourceTree = "<group>"; };
-		1CB991292A845999002D24A7 /* CodeAddView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeAddView.swift; sourceTree = "<group>"; };
-		1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeSettingsView.swift; sourceTree = "<group>"; };
-		1CDA9C912A057A8B00555E7A /* CodeManager.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CodeManager.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeManagerApp.swift; sourceTree = "<group>"; };
-		1CDA9C962A057A8B00555E7A /* CodeListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeListView.swift; sourceTree = "<group>"; };
-		1CDA9C982A057A8C00555E7A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
-		1CDA9C9B2A057A8C00555E7A /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		1CDA9CA12A057A8C00555E7A /* CodeManagerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CodeManagerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		1CDA9CA52A057A8C00555E7A /* CodeManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodeManagerTests.swift; sourceTree = "<group>"; };
+		1C1317F82AD75008006F14F5 /* DemoCodeFactory.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DemoCodeFactory.swift; sourceTree = "<group>"; };
+		1C1317F92AD75008006F14F5 /* VaultApp.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VaultApp.swift; sourceTree = "<group>"; };
+		1C1317FA2AD75008006F14F5 /* CodeAddView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeAddView.swift; sourceTree = "<group>"; };
+		1C1317FB2AD75008006F14F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		1C1317FC2AD75008006F14F5 /* VaultListView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VaultListView.swift; sourceTree = "<group>"; };
+		1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		1C1317FF2AD75008006F14F5 /* VaultDetailView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VaultDetailView.swift; sourceTree = "<group>"; };
+		1C1318002AD75008006F14F5 /* VaultSettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VaultSettingsView.swift; sourceTree = "<group>"; };
+		1C1318012AD75008006F14F5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		1C1318032AD75008006F14F5 /* CodeManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeManagerTests.swift; sourceTree = "<group>"; };
+		1CDA9C912A057A8B00555E7A /* Vault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vault.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CDA9CA12A057A8C00555E7A /* VaultTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VaultTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,7 +49,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C25E07D2AD6BF8300F52911 /* VaultFeediOS in Frameworks */,
+				1C36CB9D2AD751CC00AC3BF7 /* VaultFeediOS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -63,19 +63,51 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C58F2882A07E20B005A7DF5 /* Mocks */ = {
+		1C1317F62AD75008006F14F5 /* Vault */ = {
 			isa = PBXGroup;
 			children = (
-				1C58F2892A07E212005A7DF5 /* DemoCodeFactory.swift */,
+				1C1317F72AD75008006F14F5 /* Mocks */,
+				1C1317F92AD75008006F14F5 /* VaultApp.swift */,
+				1C1317FA2AD75008006F14F5 /* CodeAddView.swift */,
+				1C1317FB2AD75008006F14F5 /* Assets.xcassets */,
+				1C1317FC2AD75008006F14F5 /* VaultListView.swift */,
+				1C1317FD2AD75008006F14F5 /* Preview Content */,
+				1C1317FF2AD75008006F14F5 /* VaultDetailView.swift */,
+				1C1318002AD75008006F14F5 /* VaultSettingsView.swift */,
+				1C1318012AD75008006F14F5 /* Info.plist */,
+			);
+			path = Vault;
+			sourceTree = "<group>";
+		};
+		1C1317F72AD75008006F14F5 /* Mocks */ = {
+			isa = PBXGroup;
+			children = (
+				1C1317F82AD75008006F14F5 /* DemoCodeFactory.swift */,
 			);
 			path = Mocks;
+			sourceTree = "<group>";
+		};
+		1C1317FD2AD75008006F14F5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		1C1318022AD75008006F14F5 /* VaultTests */ = {
+			isa = PBXGroup;
+			children = (
+				1C1318032AD75008006F14F5 /* CodeManagerTests.swift */,
+			);
+			path = VaultTests;
 			sourceTree = "<group>";
 		};
 		1CDA9C882A057A8B00555E7A = {
 			isa = PBXGroup;
 			children = (
-				1CDA9C932A057A8B00555E7A /* CodeManager */,
-				1CDA9CA42A057A8C00555E7A /* CodeManagerTests */,
+				1C1317F62AD75008006F14F5 /* Vault */,
+				1C1318022AD75008006F14F5 /* VaultTests */,
 				1CDA9C922A057A8B00555E7A /* Products */,
 				1CDA9CC12A057ADC00555E7A /* Frameworks */,
 			);
@@ -84,42 +116,10 @@
 		1CDA9C922A057A8B00555E7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1CDA9C912A057A8B00555E7A /* CodeManager.app */,
-				1CDA9CA12A057A8C00555E7A /* CodeManagerTests.xctest */,
+				1CDA9C912A057A8B00555E7A /* Vault.app */,
+				1CDA9CA12A057A8C00555E7A /* VaultTests.xctest */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		1CDA9C932A057A8B00555E7A /* CodeManager */ = {
-			isa = PBXGroup;
-			children = (
-				1C25E07B2AD6BF7A00F52911 /* Info.plist */,
-				1CDA9C942A057A8B00555E7A /* CodeManagerApp.swift */,
-				1CDA9C962A057A8B00555E7A /* CodeListView.swift */,
-				1CB991292A845999002D24A7 /* CodeAddView.swift */,
-				1CB9912B2A8459F2002D24A7 /* CodeSettingsView.swift */,
-				1C58F2862A07E0F3005A7DF5 /* CodeDetailView.swift */,
-				1C58F2882A07E20B005A7DF5 /* Mocks */,
-				1CDA9C982A057A8C00555E7A /* Assets.xcassets */,
-				1CDA9C9A2A057A8C00555E7A /* Preview Content */,
-			);
-			path = CodeManager;
-			sourceTree = "<group>";
-		};
-		1CDA9C9A2A057A8C00555E7A /* Preview Content */ = {
-			isa = PBXGroup;
-			children = (
-				1CDA9C9B2A057A8C00555E7A /* Preview Assets.xcassets */,
-			);
-			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		1CDA9CA42A057A8C00555E7A /* CodeManagerTests */ = {
-			isa = PBXGroup;
-			children = (
-				1CDA9CA52A057A8C00555E7A /* CodeManagerTests.swift */,
-			);
-			path = CodeManagerTests;
 			sourceTree = "<group>";
 		};
 		1CDA9CC12A057ADC00555E7A /* Frameworks */ = {
@@ -132,9 +132,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1CDA9C902A057A8B00555E7A /* CodeManager */ = {
+		1CDA9C902A057A8B00555E7A /* Vault */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "CodeManager" */;
+			buildConfigurationList = 1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "Vault" */;
 			buildPhases = (
 				1CDA9C8D2A057A8B00555E7A /* Sources */,
 				1CDA9C8E2A057A8B00555E7A /* Frameworks */,
@@ -144,17 +144,17 @@
 			);
 			dependencies = (
 			);
-			name = CodeManager;
+			name = Vault;
 			packageProductDependencies = (
-				1C25E07C2AD6BF8300F52911 /* VaultFeediOS */,
+				1C36CB9C2AD751CC00AC3BF7 /* VaultFeediOS */,
 			);
 			productName = CodeManager;
-			productReference = 1CDA9C912A057A8B00555E7A /* CodeManager.app */;
+			productReference = 1CDA9C912A057A8B00555E7A /* Vault.app */;
 			productType = "com.apple.product-type.application";
 		};
-		1CDA9CA02A057A8C00555E7A /* CodeManagerTests */ = {
+		1CDA9CA02A057A8C00555E7A /* VaultTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1CDA9CB82A057A8C00555E7A /* Build configuration list for PBXNativeTarget "CodeManagerTests" */;
+			buildConfigurationList = 1CDA9CB82A057A8C00555E7A /* Build configuration list for PBXNativeTarget "VaultTests" */;
 			buildPhases = (
 				1CDA9C9D2A057A8C00555E7A /* Sources */,
 				1CDA9C9E2A057A8C00555E7A /* Frameworks */,
@@ -165,9 +165,9 @@
 			dependencies = (
 				1CDA9CA32A057A8C00555E7A /* PBXTargetDependency */,
 			);
-			name = CodeManagerTests;
+			name = VaultTests;
 			productName = CodeManagerTests;
-			productReference = 1CDA9CA12A057A8C00555E7A /* CodeManagerTests.xctest */;
+			productReference = 1CDA9CA12A057A8C00555E7A /* VaultTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -189,7 +189,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "CodeManager" */;
+			buildConfigurationList = 1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "Vault" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -202,8 +202,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1CDA9C902A057A8B00555E7A /* CodeManager */,
-				1CDA9CA02A057A8C00555E7A /* CodeManagerTests */,
+				1CDA9C902A057A8B00555E7A /* Vault */,
+				1CDA9CA02A057A8C00555E7A /* VaultTests */,
 			);
 		};
 /* End PBXProject section */
@@ -213,8 +213,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CDA9C9C2A057A8C00555E7A /* Preview Assets.xcassets in Resources */,
-				1CDA9C992A057A8C00555E7A /* Assets.xcassets in Resources */,
+				1C1318092AD75008006F14F5 /* Preview Assets.xcassets in Resources */,
+				1C1318072AD75008006F14F5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -232,12 +232,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C58F28A2A07E212005A7DF5 /* DemoCodeFactory.swift in Sources */,
-				1CB9912A2A845999002D24A7 /* CodeAddView.swift in Sources */,
-				1C58F2872A07E0F3005A7DF5 /* CodeDetailView.swift in Sources */,
-				1CB9912C2A8459F2002D24A7 /* CodeSettingsView.swift in Sources */,
-				1CDA9C972A057A8B00555E7A /* CodeListView.swift in Sources */,
-				1CDA9C952A057A8B00555E7A /* CodeManagerApp.swift in Sources */,
+				1C1318052AD75008006F14F5 /* VaultApp.swift in Sources */,
+				1C1318042AD75008006F14F5 /* DemoCodeFactory.swift in Sources */,
+				1C13180B2AD75008006F14F5 /* VaultSettingsView.swift in Sources */,
+				1C1318062AD75008006F14F5 /* CodeAddView.swift in Sources */,
+				1C13180A2AD75008006F14F5 /* VaultDetailView.swift in Sources */,
+				1C1318082AD75008006F14F5 /* VaultListView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -245,7 +245,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1CDA9CA62A057A8C00555E7A /* CodeManagerTests.swift in Sources */,
+				1C13180E2AD7500F006F14F5 /* CodeManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -254,7 +254,7 @@
 /* Begin PBXTargetDependency section */
 		1CDA9CA32A057A8C00555E7A /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1CDA9C902A057A8B00555E7A /* CodeManager */;
+			target = 1CDA9C902A057A8B00555E7A /* Vault */;
 			targetProxy = 1CDA9CA22A057A8C00555E7A /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -385,11 +385,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"CodeManager/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "Vault/Preview\\ Content";
 				DEVELOPMENT_TEAM = U2GCDMVV7S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CodeManager/Info.plist;
+				INFOPLIST_FILE = Vault/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Vault;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -402,7 +402,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bradleymackey.CodeManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bradleymackey.vault;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -417,11 +417,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "\"CodeManager/Preview Content\"";
+				DEVELOPMENT_ASSET_PATHS = "Vault/Preview\\ Content";
 				DEVELOPMENT_TEAM = U2GCDMVV7S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = CodeManager/Info.plist;
+				INFOPLIST_FILE = Vault/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Vault;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -434,7 +434,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.bradleymackey.CodeManager;
+				PRODUCT_BUNDLE_IDENTIFIER = com.bradleymackey.vault;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -458,7 +458,7 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CodeManager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CodeManager";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Vault.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Vault";
 			};
 			name = Debug;
 		};
@@ -478,14 +478,14 @@
 				SWIFT_EMIT_LOC_STRINGS = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CodeManager.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/CodeManager";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Vault.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Vault";
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "CodeManager" */ = {
+		1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "Vault" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CDA9CB32A057A8C00555E7A /* Debug */,
@@ -494,7 +494,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "CodeManager" */ = {
+		1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "Vault" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CDA9CB62A057A8C00555E7A /* Debug */,
@@ -503,7 +503,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1CDA9CB82A057A8C00555E7A /* Build configuration list for PBXNativeTarget "CodeManagerTests" */ = {
+		1CDA9CB82A057A8C00555E7A /* Build configuration list for PBXNativeTarget "VaultTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CDA9CB92A057A8C00555E7A /* Debug */,
@@ -515,7 +515,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1C25E07C2AD6BF8300F52911 /* VaultFeediOS */ = {
+		1C36CB9C2AD751CC00AC3BF7 /* VaultFeediOS */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = VaultFeediOS;
 		};
