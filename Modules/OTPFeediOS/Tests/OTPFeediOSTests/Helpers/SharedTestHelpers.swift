@@ -1,6 +1,6 @@
 import Foundation
 import OTPFeed
-import OTPSettings
+import VaultSettings
 import SwiftUI
 import VaultCore
 

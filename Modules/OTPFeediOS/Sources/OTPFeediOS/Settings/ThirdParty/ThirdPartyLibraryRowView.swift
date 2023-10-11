@@ -1,4 +1,4 @@
-import OTPSettings
+import VaultSettings
 import SwiftUI
 
 struct ThirdPartyLibraryRowView: View {

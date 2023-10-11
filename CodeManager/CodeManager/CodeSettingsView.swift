@@ -6,7 +6,7 @@
 //
 
 import OTPFeediOS
-import OTPSettings
+import VaultSettings
 import SwiftUI
 
 struct CodeSettingsView: View {

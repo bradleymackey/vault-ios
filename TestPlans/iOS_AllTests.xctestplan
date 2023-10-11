@@ -22,20 +22,6 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/OTPFeed",
-        "identifier" : "OTPFeedTests",
-        "name" : "OTPFeedTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/OTPFeediOS",
-        "identifier" : "OTPFeediOSTests",
-        "name" : "OTPFeediOSTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:",
         "identifier" : "CryptoEngineTests",
         "name" : "CryptoEngineTests"
@@ -85,9 +71,23 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/OTPSettings",
-        "identifier" : "OTPSettingsTests",
-        "name" : "OTPSettingsTests"
+        "containerPath" : "container:..\/Modules\/OTPFeed",
+        "identifier" : "OTPFeedTests",
+        "name" : "OTPFeedTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/OTPFeediOS",
+        "identifier" : "OTPFeediOSTests",
+        "name" : "OTPFeediOSTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/VaultSettings",
+        "identifier" : "VaultSettingsTests",
+        "name" : "VaultSettingsTests"
       }
     }
   ],

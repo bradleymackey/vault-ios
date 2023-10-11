@@ -10,27 +10,28 @@ let swiftSettings: [SwiftSetting] = [
 ]
 
 let package = Package(
-    name: "OTPSettings",
+    name: "VaultSettings",
     defaultLocalization: "en",
     platforms: [.iOS(.v17)],
     products: [
         .library(
-            name: "OTPSettings",
-            targets: ["OTPSettings"]
+            name: "VaultSettings",
+            targets: ["VaultSettings"]
         ),
     ],
     dependencies: [
         .package(name: "TestHelpers", path: "../TestHelpers"),
+        .package(name: "FoundationExtensions", path: "../FoundationExtensions"),
     ],
     targets: [
         .target(
-            name: "OTPSettings",
-            dependencies: [],
+            name: "VaultSettings",
+            dependencies: ["FoundationExtensions"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "OTPSettingsTests",
-            dependencies: ["OTPSettings", "TestHelpers"],
+            name: "VaultSettingsTests",
+            dependencies: ["VaultSettings", "TestHelpers"],
             swiftSettings: swiftSettings
         ),
     ]

@@ -17,14 +17,14 @@ let package = Package(
         .package(name: "OTPFeed", path: "../OTPFeed"),
         .package(name: "OTPUI", path: "../OTPUI"),
         .package(name: "FoundationExtensions", path: "../FoundationExtensions"),
-        .package(name: "OTPSettings", path: "../OTPSettings"),
+        .package(name: "VaultSettings", path: "../VaultSettings"),
         .package(name: "TestHelpers", path: "../TestHelpers"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", from: "0.8.0"),
     ],
     targets: [
         .target(
             name: "OTPFeediOS",
-            dependencies: ["OTPFeed", "SimpleToast", "OTPUI", "FoundationExtensions", "OTPSettings"]
+            dependencies: ["OTPFeed", "SimpleToast", "OTPUI", "FoundationExtensions", "VaultSettings"]
         ),
         .testTarget(
             name: "OTPFeediOSTests",

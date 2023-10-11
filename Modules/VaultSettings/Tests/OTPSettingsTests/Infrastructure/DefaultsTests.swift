@@ -24,7 +24,7 @@
 
 import TestHelpers
 import XCTest
-@testable import OTPSettings
+@testable import VaultSettings
 
 final class DefaultsKitTests: XCTestCase {
     private var defaults: Defaults!

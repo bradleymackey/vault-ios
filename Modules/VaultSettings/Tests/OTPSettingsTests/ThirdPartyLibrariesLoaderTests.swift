@@ -1,6 +1,6 @@
 import FoundationExtensions
 import XCTest
-@testable import OTPSettings
+@testable import VaultSettings
 
 final class ThirdPartyLibrariesLoaderTests: XCTestCase {
     func test_load_loadsLibrariesFileFromRealDiskFile() throws {

@@ -1,6 +1,6 @@
 import CryptoEngine
 import OTPFeed
-import OTPSettings
+import VaultSettings
 import SwiftUI
 import VaultCore
 

@@ -11,13 +11,13 @@
       location = "group:CodeManager/../OTPUI">
    </FileRef>
    <FileRef
-      location = "group:Modules/OTPSettings">
-   </FileRef>
-   <FileRef
       location = "group:Modules/OTPFeediOS">
    </FileRef>
    <FileRef
       location = "group:Modules/OTPFeed">
+   </FileRef>
+   <FileRef
+      location = "group:Modules/VaultSettings">
    </FileRef>
    <FileRef
       location = "group:Modules/CryptoEngine">

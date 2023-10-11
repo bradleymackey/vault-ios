@@ -1,5 +1,5 @@
 import Foundation
-import OTPSettings
+import VaultSettings
 import SwiftUI
 
 struct AboutView: View {

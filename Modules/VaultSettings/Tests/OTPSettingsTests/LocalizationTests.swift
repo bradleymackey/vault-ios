@@ -1,7 +1,7 @@
 import Foundation
 import TestHelpers
 import XCTest
-@testable import OTPSettings
+@testable import VaultSettings
 
 final class LocalizationTests: XCTestCase {
     func test_localizedStrings_haveKeysAndValuesForAllSupportedLocalizations() {
