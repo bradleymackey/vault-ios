@@ -14,18 +14,22 @@ struct ManagedVaultItemEncoder {
     func encode(code value: StoredVaultItem.Write, into existing: ManagedVaultItem? = nil) -> ManagedVaultItem {
         let managed = existing ?? ManagedVaultItem(context: context)
         managed.id = existing?.id ?? UUID()
-        managed.digits = value.code.data.digits.value as NSNumber
-        managed.accountName = value.code.data.accountName
-        managed.issuer = value.code.data.issuer
-        managed.authType = authTypeString(authType: value.code.type)
-        managed.period = authTypePeriod(authType: value.code.type)
-        managed.counter = authTypeCounter(authType: value.code.type)
-        managed.algorithm = encoded(algorithm: value.code.data.algorithm)
-        managed.secretFormat = encoded(secretFormat: value.code.data.secret.format)
-        managed.secretData = value.code.data.secret.data
         managed.createdDate = existing?.createdDate ?? currentDate()
         managed.updatedDate = currentDate()
         managed.userDescription = value.userDescription
+
+        let otp = ManagedOTPDetails(context: context)
+        otp.digits = value.code.data.digits.value as NSNumber
+        otp.accountName = value.code.data.accountName
+        otp.issuer = value.code.data.issuer
+        otp.authType = authTypeString(authType: value.code.type)
+        otp.period = authTypePeriod(authType: value.code.type)
+        otp.counter = authTypeCounter(authType: value.code.type)
+        otp.algorithm = encoded(algorithm: value.code.data.algorithm)
+        otp.secretFormat = encoded(secretFormat: value.code.data.secret.format)
+        otp.secretData = value.code.data.secret.data
+
+        managed.otpDetails = otp
         return managed
     }
 

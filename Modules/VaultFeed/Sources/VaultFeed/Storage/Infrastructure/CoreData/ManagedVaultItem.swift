@@ -4,6 +4,16 @@ import VaultCore
 @objc(ManagedVaultItem)
 final class ManagedVaultItem: NSManagedObject {
     @NSManaged var id: UUID
+    @NSManaged var createdDate: Date
+    @NSManaged var updatedDate: Date
+    @NSManaged var userDescription: String?
+
+    /// If present, the item is an OTP code.
+    @NSManaged var otpDetails: ManagedOTPDetails?
+}
+
+@objc(ManagedOTPDetails)
+final class ManagedOTPDetails: NSManagedObject {
     @NSManaged var secretFormat: String
     @NSManaged var secretData: Data
     @NSManaged var authType: String
@@ -13,9 +23,9 @@ final class ManagedVaultItem: NSManagedObject {
     @NSManaged var digits: NSNumber
     @NSManaged var accountName: String
     @NSManaged var issuer: String?
-    @NSManaged var createdDate: Date
-    @NSManaged var updatedDate: Date
-    @NSManaged var userDescription: String?
+
+    // Relationship back to ManagedVaultItem
+    @NSManaged var vaultItem: ManagedVaultItem?
 }
 
 extension ManagedVaultItem {

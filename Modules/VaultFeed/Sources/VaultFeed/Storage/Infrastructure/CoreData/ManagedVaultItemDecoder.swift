@@ -3,14 +3,17 @@ import VaultCore
 
 struct ManagedVaultItemDecoder {
     func decode(code: ManagedVaultItem) throws -> GenericOTPAuthCode {
-        try GenericOTPAuthCode(
-            type: decodeType(code: code),
+        guard let otp = code.otpDetails else {
+            throw DecodingError.onlyOTPIsSupportedForNow
+        }
+        return try GenericOTPAuthCode(
+            type: decodeType(otp: otp),
             data: .init(
-                secret: .init(data: code.secretData, format: decodeSecretFormat(value: code.secretFormat)),
-                algorithm: decodeAlgorithm(value: code.algorithm),
-                digits: decode(digits: code.digits),
-                accountName: code.accountName,
-                issuer: code.issuer
+                secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),
+                algorithm: decodeAlgorithm(value: otp.algorithm),
+                digits: decode(digits: otp.digits),
+                accountName: otp.accountName,
+                issuer: otp.issuer
             )
         )
     }
@@ -22,6 +25,7 @@ struct ManagedVaultItemDecoder {
         case missingCounterForHOTP
         case invalidAlgorithm
         case invalidSecretFormat
+        case onlyOTPIsSupportedForNow
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
@@ -32,15 +36,15 @@ struct ManagedVaultItemDecoder {
         return OTPAuthDigits(value: UInt16(value))
     }
 
-    private func decodeType(code: ManagedVaultItem) throws -> OTPAuthType {
-        switch code.authType {
+    private func decodeType(otp: ManagedOTPDetails) throws -> OTPAuthType {
+        switch otp.authType {
         case "totp":
-            guard let period = code.period?.uint64Value else {
+            guard let period = otp.period?.uint64Value else {
                 throw DecodingError.missingPeriodForTOTP
             }
             return .totp(period: period)
         case "hotp":
-            guard let counter = code.counter?.uint64Value else {
+            guard let counter = otp.counter?.uint64Value else {
                 throw DecodingError.missingCounterForHOTP
             }
             return .hotp(counter: counter)

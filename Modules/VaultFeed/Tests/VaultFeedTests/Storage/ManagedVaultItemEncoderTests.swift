@@ -75,7 +75,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let code = makeWritable(code: makeCodeValue(digits: digits))
 
             let encoded = sut.encode(code: code)
-            XCTAssertEqual(encoded.digits, value)
+            XCTAssertEqual(encoded.otpDetails?.digits, value)
         }
     }
 
@@ -84,7 +84,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.authType, "totp")
+        XCTAssertEqual(encoded.otpDetails?.authType, "totp")
     }
 
     func test_encodeType_encodesKindHOTP() {
@@ -92,7 +92,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.authType, "hotp")
+        XCTAssertEqual(encoded.otpDetails?.authType, "hotp")
     }
 
     func test_encodePeriod_encodesPeriodForTOTP() {
@@ -100,7 +100,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(type: .totp(period: 69)))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.period, 69)
+        XCTAssertEqual(encoded.otpDetails?.period, 69)
     }
 
     func test_encodePeriod_doesNotEncodePeriodForHOTP() {
@@ -108,7 +108,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
         let encoded = sut.encode(code: code)
-        XCTAssertNil(encoded.period)
+        XCTAssertNil(encoded.otpDetails?.period)
     }
 
     func test_encodeCounter_encodesCounterForHOTP() {
@@ -116,7 +116,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(type: .hotp(counter: 69)))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.counter, 69)
+        XCTAssertEqual(encoded.otpDetails?.counter, 69)
     }
 
     func test_encodePeriod_doesNotEncodePeriodForTOTP() {
@@ -124,7 +124,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
         let encoded = sut.encode(code: code)
-        XCTAssertNil(encoded.counter)
+        XCTAssertNil(encoded.otpDetails?.counter)
     }
 
     func test_encodeAccountName_encodesCorrectAccountName() {
@@ -133,7 +133,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(accountName: accountName))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.accountName, accountName)
+        XCTAssertEqual(encoded.otpDetails?.accountName, accountName)
     }
 
     func test_encodeIssuer_encodesCorrectIssuerIfPresent() {
@@ -142,7 +142,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(issuer: issuer))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.issuer, issuer)
+        XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
     func test_encodeIssuer_encodesNilIfNotPresent() {
@@ -150,7 +150,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(issuer: nil))
 
         let encoded = sut.encode(code: code)
-        XCTAssertNil(encoded.issuer)
+        XCTAssertNil(encoded.otpDetails?.issuer)
     }
 
     func test_encodeAlgorithm_encodesToString() {
@@ -164,7 +164,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let code = makeWritable(code: makeCodeValue(algorithm: algo))
 
             let encoded = sut.encode(code: code)
-            XCTAssertEqual(encoded.algorithm, expected)
+            XCTAssertEqual(encoded.otpDetails?.algorithm, expected)
         }
     }
 
@@ -178,7 +178,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let code = makeWritable(code: makeCodeValue(secret: secret))
 
             let encoded = sut.encode(code: code)
-            XCTAssertEqual(encoded.secretFormat, expected)
+            XCTAssertEqual(encoded.otpDetails?.secretFormat, expected)
         }
     }
 
@@ -189,7 +189,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let code = makeWritable(code: makeCodeValue(secret: secret))
 
         let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.secretData, secretData)
+        XCTAssertEqual(encoded.otpDetails?.secretData, secretData)
     }
 
     func test_encodeUserDescription_encodesNil() {

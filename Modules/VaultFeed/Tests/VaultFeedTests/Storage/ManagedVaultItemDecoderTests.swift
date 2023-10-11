@@ -179,17 +179,22 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         secretData: Data = Data(),
         secretFormat: String = "BASE_32"
     ) -> ManagedVaultItem {
-        let code = ManagedVaultItem(context: anyContext())
+        let context = anyContext()
+        let code = ManagedVaultItem(context: context)
         code.id = UUID()
-        code.accountName = accountName
-        code.algorithm = algorithm
-        code.authType = authType
-        code.counter = counter
-        code.digits = digits
-        code.issuer = issuer
-        code.period = period
-        code.secretData = secretData
-        code.secretFormat = secretFormat
+
+        let otp = ManagedOTPDetails(context: context)
+        otp.accountName = accountName
+        otp.algorithm = algorithm
+        otp.authType = authType
+        otp.counter = counter
+        otp.digits = digits
+        otp.issuer = issuer
+        otp.period = period
+        otp.secretData = secretData
+        otp.secretFormat = secretFormat
+
+        code.otpDetails = otp
         return code
     }
 

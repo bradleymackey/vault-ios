@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="VaultStoreV1">
-    <entity name="ManagedVaultItem" representedClassName="ManagedVaultItem" syncable="YES">
-        <attribute name="accountName" attributeType="String"/>
+    <entity name="ManagedOTPDetails" representedClassName="ManagedOTPDetails" syncable="YES">
+        <attribute name="accountName" optional="YES" attributeType="String"/>
         <attribute name="algorithm" attributeType="String"/>
         <attribute name="authType" attributeType="String"/>
         <attribute name="counter" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="digits" attributeType="Integer 32" defaultValueString="0" usesScalarValueType="YES"/>
-        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="issuer" optional="YES" attributeType="String"/>
         <attribute name="period" optional="YES" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="secretData" attributeType="Binary"/>
         <attribute name="secretFormat" attributeType="String"/>
+        <relationship name="vaultItem" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ManagedVaultItem" inverseName="otpDetails" inverseEntity="ManagedVaultItem"/>
+    </entity>
+    <entity name="ManagedVaultItem" representedClassName="ManagedVaultItem" syncable="YES">
+        <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
+        <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="updatedDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="userDescription" optional="YES" attributeType="String"/>
+        <relationship name="otpDetails" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ManagedOTPDetails" inverseName="vaultItem" inverseEntity="ManagedOTPDetails"/>
     </entity>
 </model>
