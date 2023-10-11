@@ -29,7 +29,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultFeed",
+        "containerPath" : "container:..\/VaultFeed",
         "identifier" : "VaultFeedTests",
         "name" : "VaultFeedTests"
       }

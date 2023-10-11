@@ -43,13 +43,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/..\/CodeManager\/CodeManager.xcodeproj",
-        "identifier" : "1CDA9CA02A057A8C00555E7A",
-        "name" : "CodeManagerTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/FoundationExtensions",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
@@ -85,7 +78,7 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultFeed",
+        "containerPath" : "container:..\/VaultFeed",
         "identifier" : "VaultFeedTests",
         "name" : "VaultFeedTests"
       }
