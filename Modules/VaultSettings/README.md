@@ -1,3 +1,3 @@
 # VaultSettings
 
-Model-level settings constructs for managing OTP codes.
+Handles settings models and storage of settings.

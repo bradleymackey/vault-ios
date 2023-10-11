@@ -1,3 +1,3 @@
-# CoreUI
+# VaultUI
 
-Core view components.
+Common UI components used throughout other packages.
