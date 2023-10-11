@@ -12,7 +12,7 @@ import OTPSettings
 import SwiftUI
 
 @MainActor
-struct CodeListView<Store: OTPCodeStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
+struct CodeListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
     where Generator.VaultItem == GenericOTPAuthCode
 {
     var feedViewModel: FeedViewModel<Store>
@@ -25,7 +25,7 @@ struct CodeListView<Store: OTPCodeStore, Generator: VaultItemPreviewViewGenerato
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Identifiable {
-        case detail(UUID, StoredOTPCode)
+        case detail(UUID, StoredVaultItem)
 
         var id: some Hashable {
             switch self {

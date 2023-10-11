@@ -11,11 +11,11 @@ import OTPFeed
 import OTPFeediOS
 import SwiftUI
 
-struct CodeDetailView<Store: OTPCodeStore>: View {
+struct CodeDetailView<Store: VaultStore>: View {
     @Environment(\.dismiss) var dismiss
 
     var feedViewModel: FeedViewModel<Store>
-    let storedCode: StoredOTPCode
+    let storedCode: StoredVaultItem
 
     var body: some View {
         OTPCodeDetailView(

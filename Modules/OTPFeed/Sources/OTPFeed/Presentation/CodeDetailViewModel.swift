@@ -5,7 +5,7 @@ import OTPCore
 @MainActor
 @Observable
 public final class CodeDetailViewModel {
-    public let storedCode: StoredOTPCode
+    public let storedCode: StoredVaultItem
     public var editingModel: CodeDetailEditingModel
 
     public private(set) var isSaving = false
@@ -15,7 +15,7 @@ public final class CodeDetailViewModel {
     private let didEncounterErrorSubject = PassthroughSubject<Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
-    public init(storedCode: StoredOTPCode, editor: any CodeDetailEditor) {
+    public init(storedCode: StoredVaultItem, editor: any CodeDetailEditor) {
         self.storedCode = storedCode
         self.editor = editor
         editingModel = CodeDetailEditingModel(detail: .init(

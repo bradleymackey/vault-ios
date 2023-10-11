@@ -1,8 +1,8 @@
 import CoreData
 import OTPCore
 
-@objc(ManagedOTPCode)
-final class ManagedOTPCode: NSManagedObject {
+@objc(ManagedVaultItem)
+final class ManagedVaultItem: NSManagedObject {
     @NSManaged var id: UUID
     @NSManaged var secretFormat: String
     @NSManaged var secretData: Data
@@ -18,16 +18,16 @@ final class ManagedOTPCode: NSManagedObject {
     @NSManaged var userDescription: String?
 }
 
-extension ManagedOTPCode {
-    static func fetchAll(in context: NSManagedObjectContext) throws -> [ManagedOTPCode] {
-        let request = NSFetchRequest<ManagedOTPCode>(entityName: entity().name!)
+extension ManagedVaultItem {
+    static func fetchAll(in context: NSManagedObjectContext) throws -> [ManagedVaultItem] {
+        let request = NSFetchRequest<ManagedVaultItem>(entityName: entity().name!)
         request.returnsObjectsAsFaults = false
         return try context.fetch(request)
     }
 
-    static func first(withID id: UUID, in context: NSManagedObjectContext) throws -> ManagedOTPCode? {
-        let request = NSFetchRequest<ManagedOTPCode>(entityName: entity().name!)
-        request.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(ManagedOTPCode.id), id as NSUUID])
+    static func first(withID id: UUID, in context: NSManagedObjectContext) throws -> ManagedVaultItem? {
+        let request = NSFetchRequest<ManagedVaultItem>(entityName: entity().name!)
+        request.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(ManagedVaultItem.id), id as NSUUID])
         request.fetchLimit = 1
         request.returnsObjectsAsFaults = false
         return try context.fetch(request).first

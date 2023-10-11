@@ -3,8 +3,8 @@ import Foundation
 
 @MainActor
 @Observable
-public final class FeedViewModel<Store: OTPCodeStore> {
-    public var codes = [StoredOTPCode]()
+public final class FeedViewModel<Store: VaultStore> {
+    public var codes = [StoredVaultItem]()
     public private(set) var retrievalError: PresentationError?
 
     private let store: Store
@@ -15,7 +15,7 @@ public final class FeedViewModel<Store: OTPCodeStore> {
         self.caches = caches
     }
 
-    public func code(id: UUID) -> StoredOTPCode? {
+    public func code(id: UUID) -> StoredVaultItem? {
         codes.first(where: { $0.id == id })
     }
 
@@ -51,7 +51,7 @@ extension FeedViewModel: CodeFeed {
         }
     }
 
-    public func update(id: UUID, code: StoredOTPCode.Write) async throws {
+    public func update(id: UUID, code: StoredVaultItem.Write) async throws {
         try await store.update(id: id, code: code)
         invalidateCaches(id: id)
         await reloadData()

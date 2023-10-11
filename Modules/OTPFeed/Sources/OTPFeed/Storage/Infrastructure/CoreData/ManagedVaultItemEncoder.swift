@@ -2,7 +2,7 @@ import CoreData
 import Foundation
 import OTPCore
 
-struct ManagedOTPCodeEncoder {
+struct ManagedVaultItemEncoder {
     let context: NSManagedObjectContext
     let currentDate: () -> Date
 
@@ -11,8 +11,8 @@ struct ManagedOTPCodeEncoder {
         self.currentDate = currentDate
     }
 
-    func encode(code value: StoredOTPCode.Write, into existing: ManagedOTPCode? = nil) -> ManagedOTPCode {
-        let managed = existing ?? ManagedOTPCode(context: context)
+    func encode(code value: StoredVaultItem.Write, into existing: ManagedVaultItem? = nil) -> ManagedVaultItem {
+        let managed = existing ?? ManagedVaultItem(context: context)
         managed.id = existing?.id ?? UUID()
         managed.digits = value.code.data.digits.value as NSNumber
         managed.accountName = value.code.data.accountName

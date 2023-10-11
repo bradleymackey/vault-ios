@@ -3,12 +3,12 @@ import OTPFeed
 import TestHelpers
 import XCTest
 
-final class InMemoryCodeStoreTests: XCTestCase {
+final class InMemoryVaultStoreTests: XCTestCase {
     func test_retrieve_noCodesReturnsNone() async throws {
         let sut = makeSUT(codes: [])
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved, [StoredOTPCode]())
+        XCTAssertEqual(retrieved, [StoredVaultItem]())
     }
 
     func test_retrieve_codeReturned() async throws {
@@ -74,8 +74,8 @@ final class InMemoryCodeStoreTests: XCTestCase {
     }
 }
 
-extension InMemoryCodeStoreTests {
-    private func makeSUT(codes: [StoredOTPCode]) -> InMemoryCodeStore {
-        InMemoryCodeStore(codes: codes)
+extension InMemoryVaultStoreTests {
+    private func makeSUT(codes: [StoredVaultItem]) -> InMemoryVaultStore {
+        InMemoryVaultStore(codes: codes)
     }
 }

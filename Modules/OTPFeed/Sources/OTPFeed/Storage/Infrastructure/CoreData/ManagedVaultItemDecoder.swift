@@ -1,8 +1,8 @@
 import Foundation
 import OTPCore
 
-struct ManagedOTPCodeDecoder {
-    func decode(code: ManagedOTPCode) throws -> GenericOTPAuthCode {
+struct ManagedVaultItemDecoder {
+    func decode(code: ManagedVaultItem) throws -> GenericOTPAuthCode {
         try GenericOTPAuthCode(
             type: decodeType(code: code),
             data: .init(
@@ -32,7 +32,7 @@ struct ManagedOTPCodeDecoder {
         return OTPAuthDigits(value: UInt16(value))
     }
 
-    private func decodeType(code: ManagedOTPCode) throws -> OTPAuthType {
+    private func decodeType(code: ManagedVaultItem) throws -> OTPAuthType {
         switch code.authType {
         case "totp":
             guard let period = code.period?.uint64Value else {

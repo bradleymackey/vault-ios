@@ -2,7 +2,7 @@ import Foundation
 
 /// Used by `OTPCodeDetailView` for performing actions.
 public protocol CodeDetailEditor {
-    func update(code: StoredOTPCode, edits: CodeDetailEdits) async throws
+    func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws
     func deleteCode(id: UUID) async throws
 }
 
@@ -13,7 +13,7 @@ public struct CodeFeedCodeDetailEditorAdapter: CodeDetailEditor {
         self.codeFeed = codeFeed
     }
 
-    public func update(code: StoredOTPCode, edits: CodeDetailEdits) async throws {
+    public func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws {
         var storedCode = code
         storedCode.userDescription = edits.description
         storedCode.code.data.accountName = edits.accountNameTitle

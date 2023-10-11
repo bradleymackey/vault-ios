@@ -4,11 +4,11 @@ import XCTest
 @testable import OTPFeed
 
 extension NSPersistentContainer {
-    /// Create an in-memory container for testing, using the model store defined in `CoreDataCodeStore`.
+    /// Create an in-memory container for testing, using the model store defined in `CoreDataVaultStore`.
     static func testContainer(storeName: String) throws -> NSPersistentContainer {
         try NSPersistentContainer.load(
-            name: CoreDataCodeStore.modelName,
-            model: XCTUnwrap(CoreDataCodeStore.model),
+            name: CoreDataVaultStore.modelName,
+            model: XCTUnwrap(CoreDataVaultStore.model),
             url: inMemoryStoreURL(storeName: storeName)
         )
     }

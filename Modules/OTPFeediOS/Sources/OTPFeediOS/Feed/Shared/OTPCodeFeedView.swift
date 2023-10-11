@@ -6,7 +6,7 @@ import SwiftUI
 
 @MainActor
 public struct OTPCodeFeedView<
-    Store: OTPCodeStore,
+    Store: VaultStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.VaultItem == GenericOTPAuthCode
@@ -103,7 +103,7 @@ public struct OTPCodeFeedView<
 struct OTPCodeFeedView_Previews: PreviewProvider {
     static var previews: some View {
         OTPCodeFeedView(
-            viewModel: .init(store: InMemoryCodeStore(codes: [
+            viewModel: .init(store: InMemoryVaultStore(codes: [
                 .init(
                     id: UUID(),
                     created: Date(),

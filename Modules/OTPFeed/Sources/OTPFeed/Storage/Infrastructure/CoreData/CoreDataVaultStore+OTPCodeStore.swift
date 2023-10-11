@@ -1,14 +1,14 @@
 import Foundation
 import OTPCore
 
-extension CoreDataCodeStore: OTPCodeStoreReader {
-    public func retrieve() async throws -> [StoredOTPCode] {
+extension CoreDataVaultStore: VaultStoreReader {
+    public func retrieve() async throws -> [StoredVaultItem] {
         try await asyncPerform { context in
-            let results = try ManagedOTPCode.fetchAll(in: context)
-            let decoder = ManagedOTPCodeDecoder()
+            let results = try ManagedVaultItem.fetchAll(in: context)
+            let decoder = ManagedVaultItemDecoder()
             return try results.map { managedCode in
                 let code = try decoder.decode(code: managedCode)
-                return StoredOTPCode(
+                return StoredVaultItem(
                     id: managedCode.id,
                     created: managedCode.createdDate,
                     updated: managedCode.updatedDate,
@@ -20,12 +20,12 @@ extension CoreDataCodeStore: OTPCodeStoreReader {
     }
 }
 
-extension CoreDataCodeStore: OTPCodeStoreWriter {
+extension CoreDataVaultStore: VaultStoreWriter {
     @discardableResult
-    public func insert(code: StoredOTPCode.Write) async throws -> UUID {
+    public func insert(code: StoredVaultItem.Write) async throws -> UUID {
         try await asyncPerform { context in
             do {
-                let encoder = ManagedOTPCodeEncoder(context: context)
+                let encoder = ManagedVaultItemEncoder(context: context)
                 let encoded = encoder.encode(code: code)
 
                 try context.save()
@@ -37,17 +37,17 @@ extension CoreDataCodeStore: OTPCodeStoreWriter {
         }
     }
 
-    enum ManagedOTPCodeError: Error {
+    enum ManagedVaultItemError: Error {
         case entityNotFound
     }
 
-    public func update(id: UUID, code: StoredOTPCode.Write) async throws {
+    public func update(id: UUID, code: StoredVaultItem.Write) async throws {
         try await asyncPerform { context in
             do {
-                guard let existingCode = try ManagedOTPCode.first(withID: id, in: context) else {
-                    throw ManagedOTPCodeError.entityNotFound
+                guard let existingCode = try ManagedVaultItem.first(withID: id, in: context) else {
+                    throw ManagedVaultItemError.entityNotFound
                 }
-                let encoder = ManagedOTPCodeEncoder(context: context)
+                let encoder = ManagedVaultItemEncoder(context: context)
                 _ = encoder.encode(code: code, into: existingCode)
                 try context.save()
             } catch {
@@ -59,7 +59,7 @@ extension CoreDataCodeStore: OTPCodeStoreWriter {
 
     public func delete(id: UUID) async throws {
         try await asyncPerform { context in
-            let result = try ManagedOTPCode.first(withID: id, in: context)
+            let result = try ManagedVaultItem.first(withID: id, in: context)
             if let result {
                 context.delete(result)
                 try context.save()

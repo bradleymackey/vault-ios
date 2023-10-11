@@ -1,26 +1,26 @@
 import Foundation
 
-public final actor InMemoryCodeStore {
-    private var codes: [StoredOTPCode]
+public final actor InMemoryVaultStore {
+    private var codes: [StoredVaultItem]
 
-    public init(codes: [StoredOTPCode] = []) {
+    public init(codes: [StoredVaultItem] = []) {
         self.codes = codes
     }
 }
 
-extension InMemoryCodeStore: OTPCodeStoreReader {
-    public func retrieve() async throws -> [StoredOTPCode] {
+extension InMemoryVaultStore: VaultStoreReader {
+    public func retrieve() async throws -> [StoredVaultItem] {
         codes
     }
 }
 
-extension InMemoryCodeStore: OTPCodeStoreWriter {
+extension InMemoryVaultStore: VaultStoreWriter {
     /// Thrown if a code cannot be found for a given operation.
     struct CodeNotFound: Error {}
 
     @discardableResult
-    public func insert(code: StoredOTPCode.Write) async throws -> UUID {
-        let code = StoredOTPCode(
+    public func insert(code: StoredVaultItem.Write) async throws -> UUID {
+        let code = StoredVaultItem(
             id: UUID(),
             created: Date(),
             updated: Date(),
@@ -31,12 +31,12 @@ extension InMemoryCodeStore: OTPCodeStoreWriter {
         return code.id
     }
 
-    public func update(id: UUID, code: StoredOTPCode.Write) async throws {
+    public func update(id: UUID, code: StoredVaultItem.Write) async throws {
         guard let index = codes.firstIndex(where: { $0.id == id }) else {
             throw CodeNotFound()
         }
         let existingCode = codes[index]
-        let newCode = StoredOTPCode(
+        let newCode = StoredVaultItem(
             id: id,
             created: existingCode.created,
             updated: Date(),

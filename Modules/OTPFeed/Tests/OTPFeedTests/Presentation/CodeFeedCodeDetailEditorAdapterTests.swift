@@ -68,8 +68,8 @@ extension CodeFeedCodeDetailEditorAdapterTests {
             calls.append("\(#function)")
         }
 
-        var updateCalled: (UUID, OTPFeed.StoredOTPCode.Write) -> Void = { _, _ in }
-        func update(id: UUID, code: OTPFeed.StoredOTPCode.Write) async throws {
+        var updateCalled: (UUID, OTPFeed.StoredVaultItem.Write) -> Void = { _, _ in }
+        func update(id: UUID, code: OTPFeed.StoredVaultItem.Write) async throws {
             calls.append("\(#function)")
             updateCalled(id, code)
         }

@@ -14,7 +14,7 @@ import SwiftUI
 @MainActor
 @main
 struct CodeManagerApp: App {
-    @State private var feedViewModel: FeedViewModel<InMemoryCodeStore>
+    @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
     @State private var pasteboard = Pasteboard(LiveSystemPasteboard())
@@ -34,7 +34,7 @@ struct CodeManagerApp: App {
         let localSettings = LocalSettings(defaults: defaults)
         let timer = LiveIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
-        let store = InMemoryCodeStore(codes: [
+        let store = InMemoryVaultStore(codes: [
             DemoCodeFactory.totpCode(issuer: "I1"),
             DemoCodeFactory.totpCode(issuer: "Cloudflare"),
             DemoCodeFactory.hotpCode(issuer: "Tommy Tobes"),

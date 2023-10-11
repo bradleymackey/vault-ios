@@ -9,7 +9,7 @@ import Foundation
 import OTPFeed
 
 enum DemoCodeFactory {
-    static func totpCode(issuer: String = "Ebay") -> StoredOTPCode {
+    static func totpCode(issuer: String = "Ebay") -> StoredVaultItem {
         .init(
             id: UUID(),
             created: Date(),
@@ -26,7 +26,7 @@ enum DemoCodeFactory {
         )
     }
 
-    static func hotpCode(issuer: String = "Ebay") -> StoredOTPCode {
+    static func hotpCode(issuer: String = "Ebay") -> StoredVaultItem {
         .init(
             id: UUID(),
             created: Date(),

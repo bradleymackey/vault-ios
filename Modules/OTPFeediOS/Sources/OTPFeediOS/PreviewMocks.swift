@@ -25,8 +25,8 @@ func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date())
 }
 
-struct CodeStoreFake: OTPCodeStoreReader {
-    let codes: [StoredOTPCode] = [
+struct CodeStoreFake: VaultStoreReader {
+    let codes: [StoredVaultItem] = [
         .init(
             id: UUID(),
             created: Date(),
@@ -69,7 +69,7 @@ struct CodeStoreFake: OTPCodeStoreReader {
         ),
     ]
 
-    func retrieve() async throws -> [OTPFeed.StoredOTPCode] {
+    func retrieve() async throws -> [OTPFeed.StoredVaultItem] {
         codes
     }
 }

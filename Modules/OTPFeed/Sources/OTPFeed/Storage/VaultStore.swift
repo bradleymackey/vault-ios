@@ -1,22 +1,22 @@
 import Foundation
 import OTPCore
 
-public typealias OTPCodeStore = OTPCodeStoreReader & OTPCodeStoreWriter
+public typealias VaultStore = VaultStoreReader & VaultStoreWriter
 
-public protocol OTPCodeStoreReader {
+public protocol VaultStoreReader {
     /// Retrieve all stored codes from storage.
-    func retrieve() async throws -> [StoredOTPCode]
+    func retrieve() async throws -> [StoredVaultItem]
 }
 
-public protocol OTPCodeStoreWriter {
+public protocol VaultStoreWriter {
     /// Insert an `OTPAuthCode` with a unique `id`.
     ///
     /// - Returns: The underlying ID of the entry in the store.
     @discardableResult
-    func insert(code: StoredOTPCode.Write) async throws -> UUID
+    func insert(code: StoredVaultItem.Write) async throws -> UUID
 
     /// Update the code at the given ID.
-    func update(id: UUID, code: StoredOTPCode.Write) async throws
+    func update(id: UUID, code: StoredVaultItem.Write) async throws
 
     /// Delete the code with the specific `id`.
     /// Has no effect if the code does not exist.

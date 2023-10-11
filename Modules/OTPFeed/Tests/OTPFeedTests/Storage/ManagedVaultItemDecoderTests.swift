@@ -4,7 +4,7 @@ import OTPCore
 import XCTest
 @testable import OTPFeed
 
-final class ManagedOTPCodeDecoderTests: XCTestCase {
+final class ManagedVaultItemDecoderTests: XCTestCase {
     private var persistentContainer: NSPersistentContainer!
 
     override func setUpWithError() throws {
@@ -164,8 +164,8 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> ManagedOTPCodeDecoder {
-        ManagedOTPCodeDecoder()
+    private func makeSUT() -> ManagedVaultItemDecoder {
+        ManagedVaultItemDecoder()
     }
 
     private func makeManagedCode(
@@ -178,8 +178,8 @@ final class ManagedOTPCodeDecoderTests: XCTestCase {
         period: NSNumber? = UInt32(30) as NSNumber,
         secretData: Data = Data(),
         secretFormat: String = "BASE_32"
-    ) -> ManagedOTPCode {
-        let code = ManagedOTPCode(context: anyContext())
+    ) -> ManagedVaultItem {
+        let code = ManagedVaultItem(context: anyContext())
         code.id = UUID()
         code.accountName = accountName
         code.algorithm = algorithm

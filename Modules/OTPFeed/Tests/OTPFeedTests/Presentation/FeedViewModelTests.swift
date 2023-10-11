@@ -176,7 +176,7 @@ final class FeedViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT<T: OTPCodeStoreReader>(
+    private func makeSUT<T: VaultStoreReader>(
         store: T,
         caches: [any CodeDetailCache] = [],
         file: StaticString = #filePath,
@@ -194,10 +194,10 @@ final class FeedViewModelTests: XCTestCase {
         }
     }
 
-    private struct StubStore: OTPCodeStoreReader, OTPCodeStoreWriter {
-        var codes = [StoredOTPCode]()
+    private struct StubStore: VaultStoreReader, VaultStoreWriter {
+        var codes = [StoredVaultItem]()
         var retrieveStoreCalled: () -> Void = {}
-        func retrieve() async throws -> [StoredOTPCode] {
+        func retrieve() async throws -> [StoredVaultItem] {
             retrieveStoreCalled()
             return codes
         }
@@ -206,12 +206,12 @@ final class FeedViewModelTests: XCTestCase {
             .init(codes: [])
         }
 
-        func insert(code _: OTPFeed.StoredOTPCode.Write) async throws -> UUID {
+        func insert(code _: OTPFeed.StoredVaultItem.Write) async throws -> UUID {
             UUID()
         }
 
         var updateStoreCalled: () -> Void = {}
-        func update(id _: UUID, code _: OTPFeed.StoredOTPCode.Write) async throws {
+        func update(id _: UUID, code _: OTPFeed.StoredVaultItem.Write) async throws {
             updateStoreCalled()
         }
 
@@ -221,19 +221,19 @@ final class FeedViewModelTests: XCTestCase {
         }
     }
 
-    private struct ErrorStubStore: OTPCodeStoreReader, OTPCodeStoreWriter {
+    private struct ErrorStubStore: VaultStoreReader, VaultStoreWriter {
         var error: Error
         var retrieveStoreCalled: () -> Void = {}
-        func retrieve() async throws -> [StoredOTPCode] {
+        func retrieve() async throws -> [StoredVaultItem] {
             retrieveStoreCalled()
             throw error
         }
 
-        func insert(code _: OTPFeed.StoredOTPCode.Write) async throws -> UUID {
+        func insert(code _: OTPFeed.StoredVaultItem.Write) async throws -> UUID {
             throw error
         }
 
-        func update(id _: UUID, code _: OTPFeed.StoredOTPCode.Write) async throws {
+        func update(id _: UUID, code _: OTPFeed.StoredVaultItem.Write) async throws {
             throw error
         }
 

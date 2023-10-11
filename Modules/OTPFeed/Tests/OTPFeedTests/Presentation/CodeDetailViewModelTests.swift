@@ -258,7 +258,7 @@ final class CodeDetailViewModelTests: XCTestCase {
 
 extension CodeDetailViewModelTests {
     private func makeSUT(
-        code: StoredOTPCode = uniqueStoredCode(),
+        code: StoredVaultItem = uniqueStoredCode(),
         editor: CodeDetailEditorMock = CodeDetailEditorMock(),
         file: StaticString = #filePath,
         line: UInt = #line
@@ -271,8 +271,8 @@ extension CodeDetailViewModelTests {
 
     private class CodeDetailEditorMock: CodeDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
-        var updateCodeCalled: (StoredOTPCode, CodeDetailEdits) async -> Void = { _, _ in }
-        func update(code: StoredOTPCode, edits: CodeDetailEdits) async throws {
+        var updateCodeCalled: (StoredVaultItem, CodeDetailEdits) async -> Void = { _, _ in }
+        func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws {
             await updateCodeCalled(code, edits)
             try updateCodeResult.get()
         }

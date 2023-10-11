@@ -3,7 +3,7 @@ import OTPCore
 import OTPFeed
 import XCTest
 
-final class CoreDataCodeStoreTests: XCTestCase {
+final class CoreDataVaultStoreTests: XCTestCase {
     func test_retrieve_deliversEmptyOnEmptyStore() async throws {
         let sut = try makeSUT()
 
@@ -33,7 +33,7 @@ final class CoreDataCodeStoreTests: XCTestCase {
     func test_retrieve_deliversMultipleCodesOnNonEmptyStore() async throws {
         let sut = try makeSUT()
 
-        let codes: [StoredOTPCode.Write] = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let codes: [StoredVaultItem.Write] = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
         for code in codes {
             try await sut.insert(code: code)
         }
@@ -45,7 +45,7 @@ final class CoreDataCodeStoreTests: XCTestCase {
     func test_retrieve_hasNoSideEffectsOnNonEmptyStore() async throws {
         let sut = try makeSUT()
 
-        let codes: [StoredOTPCode.Write] = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let codes: [StoredVaultItem.Write] = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
         for code in codes {
             try await sut.insert(code: code)
         }
@@ -251,9 +251,9 @@ final class CoreDataCodeStoreTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension CoreDataCodeStoreTests {
-    private func makeSUT(file _: StaticString = #filePath, line _: UInt = #line) throws -> some OTPCodeStore {
-        let sut = try CoreDataCodeStore(storeURL: inMemoryStoreURL())
+extension CoreDataVaultStoreTests {
+    private func makeSUT(file _: StaticString = #filePath, line _: UInt = #line) throws -> some VaultStore {
+        let sut = try CoreDataVaultStore(storeURL: inMemoryStoreURL())
         return sut
     }
 

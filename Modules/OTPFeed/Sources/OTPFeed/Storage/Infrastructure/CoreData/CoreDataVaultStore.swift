@@ -1,8 +1,8 @@
 import CoreData
 import OTPCore
 
-public final actor CoreDataCodeStore {
-    public static let modelName = "OTPStore"
+public final actor CoreDataVaultStore {
+    public static let modelName = "VaultStore"
     public static let model = NSManagedObjectModel.with(name: modelName, in: .module)
 
     private let container: NSPersistentContainer
@@ -14,11 +14,11 @@ public final actor CoreDataCodeStore {
     }
 
     public init(storeURL: URL) throws {
-        guard let model = CoreDataCodeStore.model else {
+        guard let model = CoreDataVaultStore.model else {
             throw StoreError.modelNotFound
         }
         do {
-            container = try NSPersistentContainer.load(name: CoreDataCodeStore.modelName, model: model, url: storeURL)
+            container = try NSPersistentContainer.load(name: CoreDataVaultStore.modelName, model: model, url: storeURL)
             context = container.newBackgroundContext()
         } catch {
             throw StoreError.failedToLoadPersistentContainer

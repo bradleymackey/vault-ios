@@ -4,7 +4,7 @@ import OTPCore
 import XCTest
 @testable import OTPFeed
 
-final class ManagedOTPCodeEncoderTests: XCTestCase {
+final class ManagedVaultItemEncoderTests: XCTestCase {
     private var persistentContainer: NSPersistentContainer!
 
     override func setUpWithError() throws {
@@ -211,15 +211,15 @@ final class ManagedOTPCodeEncoderTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(currentDate: @escaping () -> Date = { Date() }) -> ManagedOTPCodeEncoder {
-        ManagedOTPCodeEncoder(context: anyContext(), currentDate: currentDate)
+    private func makeSUT(currentDate: @escaping () -> Date = { Date() }) -> ManagedVaultItemEncoder {
+        ManagedVaultItemEncoder(context: anyContext(), currentDate: currentDate)
     }
 
     private func makeWritable(
         userDescription: String? = nil,
         code: GenericOTPAuthCode
-    ) -> StoredOTPCode.Write {
-        StoredOTPCode.Write(userDescription: userDescription, code: code)
+    ) -> StoredVaultItem.Write {
+        StoredVaultItem.Write(userDescription: userDescription, code: code)
     }
 
     private func makeCodeValue(

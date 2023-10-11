@@ -2,11 +2,11 @@ import Foundation
 import OTPFeed
 import OTPFeediOS
 
-final class MockOTPCodeStore: OTPCodeStore {
+final class MockOTPCodeStore: VaultStore {
     init() {}
-    var codesToRetrieve = [StoredOTPCode]()
+    var codesToRetrieve = [StoredVaultItem]()
     var didRetrieveData: () -> Void = {}
-    func retrieve() async throws -> [StoredOTPCode] {
+    func retrieve() async throws -> [StoredVaultItem] {
         didRetrieveData()
         return codesToRetrieve
     }
@@ -15,11 +15,11 @@ final class MockOTPCodeStore: OTPCodeStore {
         // noop
     }
 
-    func insert(code _: StoredOTPCode.Write) async throws -> UUID {
+    func insert(code _: StoredVaultItem.Write) async throws -> UUID {
         UUID()
     }
 
-    func update(id _: UUID, code _: StoredOTPCode.Write) async throws {
+    func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
         // noop
     }
 }

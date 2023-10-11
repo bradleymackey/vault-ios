@@ -8,7 +8,7 @@ public protocol CodeFeed {
     /// An update was made to the given code.
     ///
     /// The feed should update this data and show the changes.
-    func update(id: UUID, code: StoredOTPCode.Write) async throws
+    func update(id: UUID, code: StoredVaultItem.Write) async throws
 
     func delete(id: UUID) async throws
 }
