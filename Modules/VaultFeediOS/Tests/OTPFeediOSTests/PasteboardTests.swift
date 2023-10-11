@@ -1,5 +1,5 @@
 import Foundation
-import OTPFeediOS
+import VaultFeediOS
 import XCTest
 
 @MainActor

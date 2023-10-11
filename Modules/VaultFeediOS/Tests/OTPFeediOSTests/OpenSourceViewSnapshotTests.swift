@@ -1,7 +1,7 @@
 import Foundation
 import SnapshotTesting
 import XCTest
-@testable import OTPFeediOS
+@testable import VaultFeediOS
 
 final class OpenSourceViewSnapshotTests: XCTestCase {
     func test_deviceSize() {

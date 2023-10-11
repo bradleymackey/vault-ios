@@ -8,7 +8,7 @@
       location = "group:Modules/FoundationExtensions">
    </FileRef>
    <FileRef
-      location = "group:Modules/OTPFeediOS">
+      location = "group:Modules/VaultFeediOS">
    </FileRef>
    <FileRef
       location = "group:Modules/OTPFeed">

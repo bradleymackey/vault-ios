@@ -7,9 +7,9 @@
 
 import Foundation
 import OTPFeed
-import OTPFeediOS
 import SwiftUI
 import VaultCore
+import VaultFeediOS
 
 struct CodeDetailView<Store: VaultStore>: View {
     @Environment(\.dismiss) var dismiss

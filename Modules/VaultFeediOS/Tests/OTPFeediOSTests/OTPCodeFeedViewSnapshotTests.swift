@@ -1,8 +1,8 @@
 import Foundation
 import OTPFeed
-import OTPFeediOS
 import SwiftUI
 import TestHelpers
+import VaultFeediOS
 import VaultSettings
 import XCTest
 

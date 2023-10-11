@@ -4,13 +4,13 @@
 import PackageDescription
 
 let package = Package(
-    name: "OTPFeediOS",
+    name: "VaultFeediOS",
     defaultLocalization: "en",
     platforms: [.iOS(.v17)],
     products: [
         .library(
-            name: "OTPFeediOS",
-            targets: ["OTPFeediOS"]
+            name: "VaultFeediOS",
+            targets: ["VaultFeediOS"]
         ),
     ],
     dependencies: [
@@ -23,13 +23,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "OTPFeediOS",
+            name: "VaultFeediOS",
             dependencies: ["OTPFeed", "SimpleToast", "VaultUI", "FoundationExtensions", "VaultSettings"]
         ),
         .testTarget(
-            name: "OTPFeediOSTests",
+            name: "VaultFeediOSTests",
             dependencies: [
-                "OTPFeediOS",
+                "VaultFeediOS",
                 "TestHelpers",
             ]
         ),

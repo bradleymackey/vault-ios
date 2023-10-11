@@ -71,13 +71,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPFeediOS",
-        "identifier" : "OTPFeediOSTests",
-        "name" : "OTPFeediOSTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:..\/VaultUI",
         "identifier" : "VaultUITests",
         "name" : "VaultUITests"
@@ -88,6 +81,13 @@
         "containerPath" : "container:..\/VaultSettings",
         "identifier" : "VaultSettingsTests",
         "name" : "VaultSettingsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/VaultFeediOS",
+        "identifier" : "VaultFeediOSTests",
+        "name" : "VaultFeediOSTests"
       }
     }
   ],

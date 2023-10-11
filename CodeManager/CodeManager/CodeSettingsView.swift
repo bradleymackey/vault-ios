@@ -5,8 +5,8 @@
 //  Created by Bradley Mackey on 10/08/2023.
 //
 
-import OTPFeediOS
 import SwiftUI
+import VaultFeediOS
 import VaultSettings
 
 struct CodeSettingsView: View {

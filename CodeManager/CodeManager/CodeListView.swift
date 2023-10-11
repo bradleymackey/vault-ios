@@ -6,9 +6,9 @@
 //
 
 import OTPFeed
-import OTPFeediOS
 import SwiftUI
 import VaultCore
+import VaultFeediOS
 import VaultSettings
 
 @MainActor

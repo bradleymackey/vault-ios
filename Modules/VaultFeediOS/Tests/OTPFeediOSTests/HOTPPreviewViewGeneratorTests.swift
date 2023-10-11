@@ -4,7 +4,7 @@ import SwiftUI
 import TestHelpers
 import VaultCore
 import XCTest
-@testable import OTPFeediOS
+@testable import VaultFeediOS
 
 @MainActor
 final class HOTPPreviewViewGeneratorTests: XCTestCase {

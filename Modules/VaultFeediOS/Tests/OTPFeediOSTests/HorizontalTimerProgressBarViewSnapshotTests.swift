@@ -1,7 +1,7 @@
 import Combine
 import SnapshotTesting
 import XCTest
-@testable import OTPFeediOS
+@testable import VaultFeediOS
 
 final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     func test_layout_empty() {
