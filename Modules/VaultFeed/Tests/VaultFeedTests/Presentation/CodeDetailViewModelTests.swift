@@ -228,11 +228,12 @@ final class CodeDetailViewModelTests: XCTestCase {
     }
 
     func test_editingModel_initialStateUsesData() {
-        var code = uniqueStoredCode()
-        code.code.data.accountName = "account name test"
-        code.code.data.issuer = "issuer test"
-        code.userDescription = "description test"
-        let sut = makeSUT(code: code)
+        var code = uniqueCode()
+        code.data.accountName = "account name test"
+        code.data.issuer = "issuer test"
+        var item = uniqueVaultItem(item: .otpCode(code))
+        item.userDescription = "description test"
+        let sut = makeSUT(item: item)
 
         let editing = sut.editingModel
 
@@ -242,11 +243,12 @@ final class CodeDetailViewModelTests: XCTestCase {
     }
 
     func test_editingModel_editingStateUsesData() {
-        var code = uniqueStoredCode()
-        code.code.data.accountName = "account name test"
-        code.code.data.issuer = "issuer test"
-        code.userDescription = "description test"
-        let sut = makeSUT(code: code)
+        var code = uniqueCode()
+        code.data.accountName = "account name test"
+        code.data.issuer = "issuer test"
+        var item = uniqueVaultItem(item: .otpCode(code))
+        item.userDescription = "description test"
+        let sut = makeSUT(item: item)
 
         let editing = sut.editingModel
 
@@ -258,18 +260,18 @@ final class CodeDetailViewModelTests: XCTestCase {
 
 extension CodeDetailViewModelTests {
     private func makeSUT(
-        code: StoredVaultItem = uniqueStoredCode(),
+        item: StoredVaultItem = uniqueStoredVaultItem(),
         editor: CodeDetailEditorMock = CodeDetailEditorMock(),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> CodeDetailViewModel {
-        let sut = CodeDetailViewModel(storedCode: code, editor: editor)
+        let sut = CodeDetailViewModel(storedCode: item, editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
     }
 
-    private class CodeDetailEditorMock: CodeDetailEditor {
+    private class CodeDetailEditorMock: VaultDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
         var updateCodeCalled: (StoredVaultItem, CodeDetailEdits) async -> Void = { _, _ in }
         func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws {

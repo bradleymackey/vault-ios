@@ -25,7 +25,7 @@ extension InMemoryVaultStore: VaultStoreWriter {
             created: Date(),
             updated: Date(),
             userDescription: code.userDescription,
-            code: code.code
+            item: code.item
         )
         codes.append(code)
         return code.id
@@ -41,7 +41,7 @@ extension InMemoryVaultStore: VaultStoreWriter {
             created: existingCode.created,
             updated: Date(),
             userDescription: code.userDescription,
-            code: code.code
+            item: code.item
         )
         codes[index] = newCode
     }

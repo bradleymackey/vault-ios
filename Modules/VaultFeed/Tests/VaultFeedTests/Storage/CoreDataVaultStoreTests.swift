@@ -23,37 +23,45 @@ final class CoreDataVaultStoreTests: XCTestCase {
     func test_retrieve_deliversSingleCodeOnNonEmptyStore() async throws {
         let sut = try makeSUT()
 
-        let code = uniqueWritableCode()
+        let code = uniqueWritableVaultItem()
         try await sut.insert(code: code)
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result.map(\.code), [code.code])
+        XCTAssertEqual(result.map(\.item.otpCode), [code.item.otpCode])
     }
 
     func test_retrieve_deliversMultipleCodesOnNonEmptyStore() async throws {
         let sut = try makeSUT()
 
-        let codes: [StoredVaultItem.Write] = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+        ]
         for code in codes {
             try await sut.insert(code: code)
         }
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result.map(\.code), codes.map(\.code))
+        XCTAssertEqual(result.map(\.item.otpCode), codes.map(\.item.otpCode))
     }
 
     func test_retrieve_hasNoSideEffectsOnNonEmptyStore() async throws {
         let sut = try makeSUT()
 
-        let codes: [StoredVaultItem.Write] = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+        ]
         for code in codes {
             try await sut.insert(code: code)
         }
 
         let result1 = try await sut.retrieve()
-        XCTAssertEqual(result1.map(\.code), codes.map(\.code))
+        XCTAssertEqual(result1.map(\.item.otpCode), codes.map(\.item.otpCode))
         let result2 = try await sut.retrieve()
-        XCTAssertEqual(result2.map(\.code), codes.map(\.code))
+        XCTAssertEqual(result2.map(\.item.otpCode), codes.map(\.item.otpCode))
     }
 
     func test_retrieve_deliversErrorOnRetrievalError() async throws {
@@ -70,30 +78,30 @@ final class CoreDataVaultStoreTests: XCTestCase {
     func test_insert_deliversNoErrorOnEmptyStore() async throws {
         let sut = try makeSUT()
 
-        try await sut.insert(code: uniqueWritableCode())
+        try await sut.insert(code: uniqueWritableVaultItem())
     }
 
     func test_insert_deliversNoErrorOnNonEmptyStore() async throws {
         let sut = try makeSUT()
 
-        try await sut.insert(code: uniqueWritableCode())
-        try await sut.insert(code: uniqueWritableCode())
+        try await sut.insert(code: uniqueWritableVaultItem())
+        try await sut.insert(code: uniqueWritableVaultItem())
     }
 
     func test_insert_doesNotOverrideExactSameEntryAsUsesNewIDToUnique() async throws {
         let sut = try makeSUT()
-        let code = uniqueWritableCode()
+        let code = uniqueWritableVaultItem()
 
         try await sut.insert(code: code)
         try await sut.insert(code: code)
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result.map(\.code), [code.code, code.code])
+        XCTAssertEqual(result.map(\.item.otpCode), [code.item.otpCode, code.item.otpCode])
     }
 
     func test_insert_returnsUniqueCodeIDAfterSuccessfulInsert() async throws {
         let sut = try makeSUT()
-        let code = uniqueWritableCode()
+        let code = uniqueWritableVaultItem()
 
         var ids = [UUID]()
         for _ in 0 ..< 5 {
@@ -111,7 +119,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
 
         let sut = try makeSUT()
         await expectThrows(nsError: anyNSError()) {
-            try await sut.insert(code: uniqueWritableCode())
+            try await sut.insert(code: uniqueWritableVaultItem())
         }
     }
 
@@ -120,7 +128,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
         stub.startIntercepting()
 
         let sut = try makeSUT()
-        _ = try? await sut.insert(code: uniqueWritableCode())
+        _ = try? await sut.insert(code: uniqueWritableVaultItem())
 
         let results = try await sut.retrieve()
         XCTAssertEqual(results, [])
@@ -137,7 +145,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
 
     func test_deleteByID_deletesSingleEntryMatchingID() async throws {
         let sut = try makeSUT()
-        let code = uniqueWritableCode()
+        let code = uniqueWritableVaultItem()
 
         let id = try await sut.insert(code: code)
 
@@ -150,7 +158,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
     func test_deleteByID_hasNoEffectOnNoMatchingCode() async throws {
         let sut = try makeSUT()
 
-        let otherCodes = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let otherCodes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
         for code in otherCodes {
             try await sut.insert(code: code)
         }
@@ -158,12 +166,12 @@ final class CoreDataVaultStoreTests: XCTestCase {
         try await sut.delete(id: UUID())
 
         let results = try await sut.retrieve()
-        XCTAssertEqual(results.map(\.code), otherCodes.map(\.code))
+        XCTAssertEqual(results.map(\.item.otpCode), otherCodes.map(\.item.otpCode))
     }
 
     func test_deleteByID_deliversErrorOnDeletionError() async throws {
         let sut = try makeSUT()
-        let id = try await sut.insert(code: uniqueWritableCode())
+        let id = try await sut.insert(code: uniqueWritableVaultItem())
 
         let stub = NSManagedObjectContext.alwaysFailingSaveStub()
         stub.startIntercepting()
@@ -177,7 +185,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
         let sut = try makeSUT()
 
         do {
-            try await sut.update(id: UUID(), code: uniqueWritableCode())
+            try await sut.update(id: UUID(), code: uniqueWritableVaultItem())
             XCTFail("Expected to throw error")
         } catch {
             // ignore
@@ -187,7 +195,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
     func test_updateByID_hasNoEffectOnEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
         let sut = try makeSUT()
 
-        try? await sut.update(id: UUID(), code: uniqueWritableCode())
+        try? await sut.update(id: UUID(), code: uniqueWritableVaultItem())
 
         let result = try await sut.retrieve()
         XCTAssertEqual(result, [])
@@ -195,56 +203,56 @@ final class CoreDataVaultStoreTests: XCTestCase {
 
     func test_updateByID_hasNoEffectOnNonEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
         let sut = try makeSUT()
-        let codes = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let codes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
         for code in codes {
             try await sut.insert(code: code)
         }
 
-        try? await sut.update(id: UUID(), code: uniqueWritableCode())
+        try? await sut.update(id: UUID(), code: uniqueWritableVaultItem())
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result.map(\.code), codes.map(\.code))
+        XCTAssertEqual(result.map(\.item.otpCode), codes.map(\.item.otpCode))
     }
 
     func test_updateByID_updatesDataForValidCode() async throws {
         let sut = try makeSUT()
-        let initialCode = uniqueWritableCode()
+        let initialCode = uniqueWritableVaultItem()
         let id = try await sut.insert(code: initialCode)
 
-        let newCode = uniqueWritableCode()
+        let newCode = uniqueWritableVaultItem()
         try await sut.update(id: id, code: newCode)
 
         let result = try await sut.retrieve()
-        XCTAssertNotEqual(result.map(\.code), [initialCode.code], "Should be different from old code.")
-        XCTAssertEqual(result.map(\.code), [newCode.code], "Should be the same as the new code.")
+        XCTAssertNotEqual(result.map(\.item.otpCode), [initialCode.item.otpCode], "Should be different from old code.")
+        XCTAssertEqual(result.map(\.item.otpCode), [newCode.item.otpCode], "Should be the same as the new code.")
     }
 
     func test_updateByID_hasNoSideEffectsOnOtherCodes() async throws {
         let sut = try makeSUT()
-        let initialCodes = [uniqueWritableCode(), uniqueWritableCode(), uniqueWritableCode()]
+        let initialCodes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
         for code in initialCodes {
             try await sut.insert(code: code)
         }
 
-        let id = try await sut.insert(code: uniqueWritableCode())
+        let id = try await sut.insert(code: uniqueWritableVaultItem())
 
-        let newCode = uniqueWritableCode()
+        let newCode = uniqueWritableVaultItem()
         try await sut.update(id: id, code: newCode)
 
         let result = try await sut.retrieve()
-        XCTAssertEqual(result.map(\.code), initialCodes.map(\.code) + [newCode.code])
+        XCTAssertEqual(result.map(\.item.otpCode), initialCodes.map(\.item.otpCode) + [newCode.item.otpCode])
     }
 
     func test_updateByID_deliversErrorOnUpdateError() async throws {
         let sut = try makeSUT()
 
-        let id = try await sut.insert(code: uniqueWritableCode())
+        let id = try await sut.insert(code: uniqueWritableVaultItem())
 
         let stub = NSManagedObjectContext.alwaysFailingSaveStub()
         stub.startIntercepting()
 
         await expectThrows(nsError: anyNSError()) {
-            try await sut.update(id: id, code: uniqueWritableCode())
+            try await sut.update(id: id, code: uniqueWritableVaultItem())
         }
     }
 }

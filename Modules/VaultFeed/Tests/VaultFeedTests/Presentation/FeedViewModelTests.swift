@@ -36,7 +36,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     func test_reloadData_populatesCodesFromStore() async throws {
-        let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
+        let store = StubStore(codes: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
         let sut = makeSUT(store: store)
 
         await expectSingleMutation(observable: sut, keyPath: \.codes) {
@@ -46,7 +46,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
-        let store = StubStore(codes: [uniqueStoredCode(), uniqueStoredCode()])
+        let store = StubStore(codes: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
         let sut = makeSUT(store: store)
 
         await expectNoMutation(observable: sut, keyPath: \.retrievalError) {
@@ -73,7 +73,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), code: uniqueWritableCode())
+        try await sut.update(id: UUID(), code: uniqueWritableVaultItem())
 
         await fulfillment(of: [exp])
     }
@@ -87,7 +87,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), code: uniqueWritableCode())
+        try await sut.update(id: UUID(), code: uniqueWritableVaultItem())
 
         await fulfillment(of: [exp])
     }
@@ -102,7 +102,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try? await sut.update(id: UUID(), code: uniqueWritableCode())
+        try? await sut.update(id: UUID(), code: uniqueWritableVaultItem())
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -113,7 +113,7 @@ final class FeedViewModelTests: XCTestCase {
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
-        try await sut.update(id: invalidateId, code: uniqueWritableCode())
+        try await sut.update(id: invalidateId, code: uniqueWritableVaultItem())
 
         XCTAssertEqual(cache1.calledInvalidate, [invalidateId])
         XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
@@ -206,12 +206,12 @@ final class FeedViewModelTests: XCTestCase {
             .init(codes: [])
         }
 
-        func insert(code _: VaultFeed.StoredVaultItem.Write) async throws -> UUID {
+        func insert(code _: StoredVaultItem.Write) async throws -> UUID {
             UUID()
         }
 
         var updateStoreCalled: () -> Void = {}
-        func update(id _: UUID, code _: VaultFeed.StoredVaultItem.Write) async throws {
+        func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
             updateStoreCalled()
         }
 
@@ -229,11 +229,11 @@ final class FeedViewModelTests: XCTestCase {
             throw error
         }
 
-        func insert(code _: VaultFeed.StoredVaultItem.Write) async throws -> UUID {
+        func insert(code _: StoredVaultItem.Write) async throws -> UUID {
             throw error
         }
 
-        func update(id _: UUID, code _: VaultFeed.StoredVaultItem.Write) async throws {
+        func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
             throw error
         }
 

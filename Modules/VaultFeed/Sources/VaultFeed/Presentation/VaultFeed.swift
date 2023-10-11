@@ -1,7 +1,7 @@
 import Foundation
 
 /// A feed of codes.
-public protocol CodeFeed {
+public protocol VaultFeed {
     /// The feed should load all initial data.
     func reloadData() async
 

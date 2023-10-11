@@ -34,7 +34,7 @@ public final class FeedViewModel<Store: VaultStore> {
 
 // MARK: - Feed
 
-extension FeedViewModel: CodeFeed {
+extension FeedViewModel: VaultFeed {
     public func onAppear() async {
         await reloadData()
     }

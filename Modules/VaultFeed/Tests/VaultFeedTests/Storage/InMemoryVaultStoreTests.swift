@@ -12,7 +12,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieve_codeReturned() async throws {
-        let code1 = uniqueStoredCode()
+        let code1 = uniqueStoredVaultItem()
         let sut = makeSUT(codes: [code1])
 
         let retrieved = try await sut.retrieve()
@@ -22,7 +22,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     func test_insert_addsNewCodeToRepository() async throws {
         let sut = makeSUT(codes: [])
 
-        let code1 = uniqueWritableCode()
+        let code1 = uniqueWritableVaultItem()
         let newID = try await sut.insert(code: code1)
 
         let retrieved = try await sut.retrieve()
@@ -36,23 +36,23 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [])
 
         // swiftformat:disable:next hoistAwait
-        await XCTAssertThrowsError(try await sut.update(id: UUID(), code: uniqueWritableCode()))
+        await XCTAssertThrowsError(try await sut.update(id: UUID(), code: uniqueWritableVaultItem()))
     }
 
     func test_update_updatesExistingCode() async throws {
-        let code1 = uniqueStoredCode()
+        let code1 = uniqueStoredVaultItem()
         let sut = makeSUT(codes: [code1])
 
         let newCode = uniqueCode()
         let newUserDescription = UUID().uuidString
-        try await sut.update(id: code1.id, code: .init(userDescription: newUserDescription, code: newCode))
+        try await sut.update(id: code1.id, code: .init(userDescription: newUserDescription, item: .otpCode(newCode)))
 
         let retrieved = try await sut.retrieve()
         XCTAssertEqual(retrieved.count, 1)
-        let code = try XCTUnwrap(retrieved.first)
-        XCTAssertEqual(code.id, code1.id)
-        XCTAssertEqual(code.userDescription, newUserDescription)
-        XCTAssertEqual(code.code, newCode)
+        let item = try XCTUnwrap(retrieved.first)
+        XCTAssertEqual(item.id, code1.id)
+        XCTAssertEqual(item.userDescription, newUserDescription)
+        XCTAssertEqual(item.item, .otpCode(newCode))
     }
 
     func test_delete_ignoresIfCodeDoesNotExist() async throws {
@@ -64,8 +64,8 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_delete_removesCode() async throws {
-        let code1 = uniqueStoredCode()
-        let code2 = uniqueStoredCode()
+        let code1 = uniqueStoredVaultItem()
+        let code2 = uniqueStoredVaultItem()
         let sut = makeSUT(codes: [code1, code2])
         try await sut.delete(id: code1.id)
 

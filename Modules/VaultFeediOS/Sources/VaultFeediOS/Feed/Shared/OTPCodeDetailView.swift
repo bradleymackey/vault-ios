@@ -247,17 +247,17 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                     created: Date(),
                     updated: Date(),
                     userDescription: "Description",
-                    code: .init(
+                    item: .otpCode(.init(
                         type: .totp(),
                         data: .init(secret: .empty(), accountName: "Test")
-                    )
+                    ))
                 ),
                 editor: StubEditor()
             )
         )
     }
 
-    class StubEditor: CodeDetailEditor {
+    class StubEditor: VaultDetailEditor {
         func update(code _: StoredVaultItem, edits _: CodeDetailEdits) async throws {
             // noop
         }

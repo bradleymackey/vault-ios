@@ -12,7 +12,7 @@ struct VaultDetailView<Store: VaultStore>: View {
 
     var body: some View {
         OTPCodeDetailView(
-            viewModel: .init(storedCode: storedCode, editor: CodeFeedCodeDetailEditorAdapter(codeFeed: feedViewModel))
+            viewModel: .init(storedCode: storedCode, editor: VaultFeedVaultDetailEditorAdapter(codeFeed: feedViewModel))
         )
     }
 }

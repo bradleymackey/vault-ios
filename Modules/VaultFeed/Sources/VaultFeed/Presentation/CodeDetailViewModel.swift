@@ -11,28 +11,34 @@ public final class CodeDetailViewModel {
     public private(set) var isSaving = false
     public private(set) var isInEditMode = false
 
-    private let editor: any CodeDetailEditor
+    private let editor: any VaultDetailEditor
     private let didEncounterErrorSubject = PassthroughSubject<Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
-    public init(storedCode: StoredVaultItem, editor: any CodeDetailEditor) {
+    public init(storedCode: StoredVaultItem, editor: any VaultDetailEditor) {
         self.storedCode = storedCode
         self.editor = editor
-        editingModel = CodeDetailEditingModel(detail: .init(
-            issuerTitle: storedCode.code.data.issuer ?? "",
-            accountNameTitle: storedCode.code.data.accountName,
-            description: storedCode.userDescription ?? ""
-        ))
+        switch storedCode.item {
+        case let .otpCode(otpCode):
+            editingModel = CodeDetailEditingModel(detail: .init(
+                issuerTitle: otpCode.data.issuer ?? "",
+                accountNameTitle: otpCode.data.accountName,
+                description: storedCode.userDescription ?? ""
+            ))
+        }
     }
 
     public var detailMenuItems: [CodeDetailMenuItem] {
-        let details = CodeDetailMenuItem(
-            id: "detail",
-            title: localized(key: "codeDetail.listSection.details.title"),
-            systemIconName: "books.vertical.fill",
-            entries: Self.makeInfoEntries(storedCode.code)
-        )
-        return [details]
+        switch storedCode.item {
+        case let .otpCode(otpCode):
+            let details = CodeDetailMenuItem(
+                id: "detail",
+                title: localized(key: "codeDetail.listSection.details.title"),
+                systemIconName: "books.vertical.fill",
+                entries: Self.makeInfoEntries(otpCode)
+            )
+            return [details]
+        }
     }
 
     public func didEncounterErrorPublisher() -> AnyPublisher<Error, Never> {

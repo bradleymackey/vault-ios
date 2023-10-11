@@ -255,8 +255,8 @@ extension TOTPPreviewViewGeneratorTests {
             recalculateCallCount += 1
         }
 
-        let timerUpdatedPublisherSubject = PassthroughSubject<VaultFeed.OTPTimerState, Never>()
-        func timerUpdatedPublisher() -> AnyPublisher<VaultFeed.OTPTimerState, Never> {
+        let timerUpdatedPublisherSubject = PassthroughSubject<OTPTimerState, Never>()
+        func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
             timerUpdatedPublisherSubject.eraseToAnyPublisher()
         }
     }

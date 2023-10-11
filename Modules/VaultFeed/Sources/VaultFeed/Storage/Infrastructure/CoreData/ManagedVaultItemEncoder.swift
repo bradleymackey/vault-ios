@@ -18,18 +18,22 @@ struct ManagedVaultItemEncoder {
         managed.updatedDate = currentDate()
         managed.userDescription = value.userDescription
 
-        let otp = ManagedOTPDetails(context: context)
-        otp.digits = value.code.data.digits.value as NSNumber
-        otp.accountName = value.code.data.accountName
-        otp.issuer = value.code.data.issuer
-        otp.authType = authTypeString(authType: value.code.type)
-        otp.period = authTypePeriod(authType: value.code.type)
-        otp.counter = authTypeCounter(authType: value.code.type)
-        otp.algorithm = encoded(algorithm: value.code.data.algorithm)
-        otp.secretFormat = encoded(secretFormat: value.code.data.secret.format)
-        otp.secretData = value.code.data.secret.data
+        switch value.item {
+        case let .otpCode(code):
+            let otp = ManagedOTPDetails(context: context)
+            otp.digits = code.data.digits.value as NSNumber
+            otp.accountName = code.data.accountName
+            otp.issuer = code.data.issuer
+            otp.authType = authTypeString(authType: code.type)
+            otp.period = authTypePeriod(authType: code.type)
+            otp.counter = authTypeCounter(authType: code.type)
+            otp.algorithm = encoded(algorithm: code.data.algorithm)
+            otp.secretFormat = encoded(secretFormat: code.data.secret.format)
+            otp.secretData = code.data.secret.data
 
-        managed.otpDetails = otp
+            managed.otpDetails = otp
+        }
+
         return managed
     }
 

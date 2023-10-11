@@ -1,23 +1,28 @@
 import Foundation
 
-/// Used by `OTPCodeDetailView` for performing actions.
-public protocol CodeDetailEditor {
+public protocol VaultDetailEditor {
     func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws
     func deleteCode(id: UUID) async throws
 }
 
-/// A `CodeDetailEditor` that uses a feed for updating after a given edit.
-public struct CodeFeedCodeDetailEditorAdapter: CodeDetailEditor {
-    private let codeFeed: any CodeFeed
-    public init(codeFeed: any CodeFeed) {
+/// A `VaultDetailEditor` that uses a feed for updating after a given edit.
+public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
+    private let codeFeed: any VaultFeed
+    public init(codeFeed: any VaultFeed) {
         self.codeFeed = codeFeed
     }
 
     public func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws {
         var storedCode = code
         storedCode.userDescription = edits.description
-        storedCode.code.data.accountName = edits.accountNameTitle
-        storedCode.code.data.issuer = edits.issuerTitle
+
+        switch code.item {
+        case var .otpCode(otpCode):
+            otpCode.data.accountName = edits.accountNameTitle
+            otpCode.data.issuer = edits.issuerTitle
+            storedCode.item = .otpCode(otpCode)
+        }
+
         try await codeFeed.update(id: code.id, code: storedCode.asWritable)
     }
 

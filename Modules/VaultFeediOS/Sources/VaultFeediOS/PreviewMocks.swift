@@ -32,12 +32,14 @@ struct CodeStoreFake: VaultStoreReader {
             created: Date(),
             updated: Date(),
             userDescription: "",
-            code: .init(
-                type: .totp(),
-                data: .init(
-                    secret: .empty(),
-                    accountName: "test@example.com",
-                    issuer: "Ebay"
+            item: .otpCode(
+                .init(
+                    type: .totp(),
+                    data: .init(
+                        secret: .empty(),
+                        accountName: "test@example.com",
+                        issuer: "Ebay"
+                    )
                 )
             )
         ),
@@ -46,30 +48,34 @@ struct CodeStoreFake: VaultStoreReader {
             created: Date(),
             updated: Date(),
             userDescription: "",
-            code: .init(
-                type: .totp(),
-                data: .init(
-                    secret: .empty(),
-                    accountName: "test@example.com",
-                    issuer: "Ebay"
+            item: .otpCode(
+                .init(
+                    type: .totp(),
+                    data: .init(
+                        secret: .empty(),
+                        accountName: "test@example.com",
+                        issuer: "Ebay"
+                    )
                 )
             )
         ),
         .init(
             id: UUID(),
             created: Date(), updated: Date(), userDescription: "",
-            code: .init(
-                type: .hotp(counter: 0),
-                data: .init(
-                    secret: .empty(),
-                    accountName: "test@example.com",
-                    issuer: "Ebay"
+            item: .otpCode(
+                .init(
+                    type: .hotp(counter: 0),
+                    data: .init(
+                        secret: .empty(),
+                        accountName: "test@example.com",
+                        issuer: "Ebay"
+                    )
                 )
             )
         ),
     ]
 
-    func retrieve() async throws -> [VaultFeed.StoredVaultItem] {
+    func retrieve() async throws -> [StoredVaultItem] {
         codes
     }
 }

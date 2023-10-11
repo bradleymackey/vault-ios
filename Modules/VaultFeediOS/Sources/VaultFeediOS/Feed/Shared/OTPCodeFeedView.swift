@@ -9,7 +9,7 @@ public struct OTPCodeFeedView<
     Store: VaultStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
-    ViewGenerator.PreviewItem == GenericOTPAuthCode
+    ViewGenerator.PreviewItem == VaultItem
 {
     public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
@@ -75,9 +75,9 @@ public struct OTPCodeFeedView<
         ScrollView {
             LazyVGrid(columns: columns, content: {
                 ReorderableForEach(items: viewModel.codes, isDragging: $isReordering, isEnabled: isEditing) { code in
-                    viewGenerator.makeVaultPreviewView(id: code.id, item: code.code, behaviour: currentBehaviour)
+                    viewGenerator.makeVaultPreviewView(id: code.id, item: code.item, behaviour: currentBehaviour)
                 } previewContent: { code in
-                    viewGenerator.makeVaultPreviewView(id: code.id, item: code.code, behaviour: reorderingBehaviour)
+                    viewGenerator.makeVaultPreviewView(id: code.id, item: code.item, behaviour: reorderingBehaviour)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
@@ -109,14 +109,14 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
                     created: Date(),
                     updated: Date(),
                     userDescription: "My Cool Code",
-                    code: .init(
+                    item: .otpCode(.init(
                         type: .totp(),
                         data: .init(
                             secret: .empty(),
                             accountName: "example@example.com",
                             issuer: "i"
                         )
-                    )
+                    ))
                 ),
             ])),
             localSettings: .init(defaults: .init(userDefaults: .standard)),
@@ -128,7 +128,7 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
     struct GenericGenerator: VaultItemPreviewViewGenerator {
         func makeVaultPreviewView(
             id _: UUID,
-            item _: GenericOTPAuthCode,
+            item _: VaultItem,
             behaviour _: VaultItemViewBehaviour
         ) -> some View {
             Text("Code")

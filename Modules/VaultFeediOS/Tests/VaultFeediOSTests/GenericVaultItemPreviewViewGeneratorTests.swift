@@ -6,7 +6,7 @@ import VaultFeediOS
 import XCTest
 
 @MainActor
-final class GenericOTPViewGeneratorTests: XCTestCase {
+final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -63,7 +63,7 @@ final class GenericOTPViewGeneratorTests: XCTestCase {
     }
 }
 
-extension GenericOTPViewGeneratorTests {
+extension GenericVaultItemPreviewViewGeneratorTests {
     private typealias SUT = GenericVaultItemPreviewViewGenerator<MockTOTPGenerator, MockHOTPGenerator>
     private func makeSUT(
         totp: MockTOTPGenerator,

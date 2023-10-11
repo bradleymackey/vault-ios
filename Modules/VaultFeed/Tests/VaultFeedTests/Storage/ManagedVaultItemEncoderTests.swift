@@ -22,31 +22,31 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
     func test_encodeExisting_retainsExistingUUID() {
         let sut = makeSUT()
 
-        let existing = sut.encode(code: uniqueWritableCode())
+        let existing = sut.encode(code: uniqueWritableVaultItem())
         let existingID = existing.id
 
-        let newCode = sut.encode(code: uniqueWritableCode(), into: existing)
+        let newCode = sut.encode(code: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.id, existingID, "ID should not change for update")
     }
 
     func test_encodeExisting_retainsCreatedDate() {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(code: uniqueWritableCode())
+        let existing = sut1.encode(code: uniqueWritableVaultItem())
         let existingCreatedDate = existing.createdDate
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(code: uniqueWritableCode(), into: existing)
+        let newCode = sut2.encode(code: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.createdDate, existingCreatedDate, "Date should not change for update")
     }
 
     func test_encodeExisting_updatesUpdatedDate() {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(code: uniqueWritableCode())
+        let existing = sut1.encode(code: uniqueWritableVaultItem())
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(code: uniqueWritableCode(), into: existing)
+        let newCode = sut2.encode(code: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should not change for update")
     }
 
@@ -219,7 +219,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         userDescription: String? = nil,
         code: GenericOTPAuthCode
     ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(userDescription: userDescription, code: code)
+        StoredVaultItem.Write(userDescription: userDescription, item: .otpCode(code))
     }
 
     private func makeCodeValue(

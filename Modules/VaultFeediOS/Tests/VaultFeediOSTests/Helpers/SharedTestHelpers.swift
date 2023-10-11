@@ -20,11 +20,11 @@ func uniqueCode() -> GenericOTPAuthCode {
 }
 
 func uniqueStoredCode() -> StoredVaultItem {
-    StoredVaultItem(id: UUID(), created: Date(), updated: Date(), userDescription: "any", code: uniqueCode())
+    StoredVaultItem(id: UUID(), created: Date(), updated: Date(), userDescription: "any", item: .otpCode(uniqueCode()))
 }
 
 func uniqueWritableCode() -> StoredVaultItem.Write {
-    .init(userDescription: "any", code: uniqueCode())
+    .init(userDescription: "any", item: .otpCode(uniqueCode()))
 }
 
 func forceRunLoopAdvance() {

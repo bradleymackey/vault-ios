@@ -14,10 +14,11 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         let feed = StubCodeFeed()
         let sut = makeSUT(feed: feed)
 
-        var storedCode = uniqueStoredCode()
-        storedCode.userDescription = "old description"
-        storedCode.code.data.accountName = "old account name"
-        storedCode.code.data.issuer = "old issuer name"
+        var code = uniqueCode()
+        code.data.accountName = "old account name"
+        code.data.issuer = "old issuer name"
+        var item = uniqueVaultItem(item: .otpCode(code))
+        item.userDescription = "old description"
 
         let edits = CodeDetailEdits(
             issuerTitle: "new issuer name",
@@ -28,12 +29,15 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
-            XCTAssertEqual(data.code.data.accountName, "new account name")
-            XCTAssertEqual(data.code.data.issuer, "new issuer name")
+            switch data.item {
+            case let .otpCode(otpCode):
+                XCTAssertEqual(otpCode.data.accountName, "new account name")
+                XCTAssertEqual(otpCode.data.issuer, "new issuer name")
+            }
             exp.fulfill()
         }
 
-        try await sut.update(code: storedCode, edits: edits)
+        try await sut.update(code: item, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -57,19 +61,19 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
 }
 
 extension CodeFeedCodeDetailEditorAdapterTests {
-    private func makeSUT(feed: any CodeFeed) -> CodeFeedCodeDetailEditorAdapter {
-        CodeFeedCodeDetailEditorAdapter(codeFeed: feed)
+    private func makeSUT(feed: any VaultFeed) -> VaultFeedVaultDetailEditorAdapter {
+        VaultFeedVaultDetailEditorAdapter(codeFeed: feed)
     }
 
-    private class StubCodeFeed: CodeFeed {
+    private class StubCodeFeed: VaultFeed {
         var calls = [String]()
 
         func reloadData() async {
             calls.append("\(#function)")
         }
 
-        var updateCalled: (UUID, VaultFeed.StoredVaultItem.Write) -> Void = { _, _ in }
-        func update(id: UUID, code: VaultFeed.StoredVaultItem.Write) async throws {
+        var updateCalled: (UUID, StoredVaultItem.Write) -> Void = { _, _ in }
+        func update(id: UUID, code: StoredVaultItem.Write) async throws {
             calls.append("\(#function)")
             updateCalled(id, code)
         }
