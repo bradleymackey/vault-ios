@@ -1,5 +1,5 @@
 import CoreData
-import OTPCore
+import VaultCore
 
 @objc(ManagedVaultItem)
 final class ManagedVaultItem: NSManagedObject {

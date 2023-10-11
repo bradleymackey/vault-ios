@@ -1,8 +1,8 @@
 import Combine
 import Foundation
-import OTPCore
 import OTPFeed
 import TestHelpers
+import VaultCore
 import XCTest
 
 final class CodeTimerControllerTests: XCTestCase {

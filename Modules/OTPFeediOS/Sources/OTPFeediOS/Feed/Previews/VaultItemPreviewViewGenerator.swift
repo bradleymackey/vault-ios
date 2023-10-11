@@ -1,6 +1,6 @@
 import Foundation
-import OTPCore
 import SwiftUI
+import VaultCore
 
 @MainActor
 public protocol VaultItemPreviewViewGenerator {

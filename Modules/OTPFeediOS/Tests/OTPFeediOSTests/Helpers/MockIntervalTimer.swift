@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OTPCore
+import VaultCore
 
 final class MockIntervalTimer: IntervalTimer {
     private let timerPublisher = PassthroughSubject<Void, Never>()

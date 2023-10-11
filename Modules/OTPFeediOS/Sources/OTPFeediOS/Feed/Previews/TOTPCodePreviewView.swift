@@ -1,7 +1,7 @@
 import Combine
-import OTPCore
 import OTPFeed
 import SwiftUI
+import VaultCore
 
 @MainActor
 public struct TOTPCodePreviewView<TimerBar: View>: View {

@@ -22,16 +22,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPCore",
-        "identifier" : "OTPCoreTests",
-        "name" : "OTPCoreTests"
+        "containerPath" : "container:..\/OTPFeed",
+        "identifier" : "OTPFeedTests",
+        "name" : "OTPFeedTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPFeed",
-        "identifier" : "OTPFeedTests",
-        "name" : "OTPFeedTests"
+        "containerPath" : "container:..\/VaultCore",
+        "identifier" : "VaultCoreTests",
+        "name" : "VaultCoreTests"
       }
     }
   ],

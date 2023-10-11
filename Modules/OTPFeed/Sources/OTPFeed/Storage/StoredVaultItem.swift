@@ -1,5 +1,5 @@
 import Foundation
-import OTPCore
+import VaultCore
 
 /// An `OTPAuthCode` retrieved from storage.
 ///

@@ -1,8 +1,8 @@
 import CryptoEngine
 import FoundationExtensions
-import OTPCore
 import OTPFeed
 import SwiftUI
+import VaultCore
 
 @MainActor
 public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {

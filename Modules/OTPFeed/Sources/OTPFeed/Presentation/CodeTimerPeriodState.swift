@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OTPCore
+import VaultCore
 
 /// Tracks the state for a given timer period.
 ///

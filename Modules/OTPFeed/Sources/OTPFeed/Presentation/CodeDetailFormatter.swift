@@ -1,5 +1,5 @@
 import Foundation
-import OTPCore
+import VaultCore
 
 public struct CodeDetailFormatter {
     private let code: GenericOTPAuthCode

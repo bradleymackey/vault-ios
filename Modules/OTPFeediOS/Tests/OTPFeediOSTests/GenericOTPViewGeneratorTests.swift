@@ -1,8 +1,8 @@
 import Foundation
-import OTPCore
 import OTPFeediOS
 import SwiftUI
 import TestHelpers
+import VaultCore
 import XCTest
 
 @MainActor

@@ -1,7 +1,7 @@
-import OTPCore
 import OTPFeed
 import OTPUI
 import SwiftUI
+import VaultCore
 
 @MainActor
 public struct OTPCodeDetailView: View {

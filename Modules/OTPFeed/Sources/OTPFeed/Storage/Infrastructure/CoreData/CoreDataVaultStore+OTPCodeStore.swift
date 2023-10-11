@@ -1,5 +1,5 @@
 import Foundation
-import OTPCore
+import VaultCore
 
 extension CoreDataVaultStore: VaultStoreReader {
     public func retrieve() async throws -> [StoredVaultItem] {

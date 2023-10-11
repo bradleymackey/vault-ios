@@ -1,5 +1,5 @@
 import Foundation
-import OTPCore
+import VaultCore
 import XCTest
 
 final class OTPAuthURIEncoderTests: XCTestCase {

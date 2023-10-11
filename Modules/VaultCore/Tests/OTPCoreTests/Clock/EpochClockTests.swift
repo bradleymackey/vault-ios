@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OTPCore
+import VaultCore
 import XCTest
 
 final class EpochClockTests: XCTestCase {

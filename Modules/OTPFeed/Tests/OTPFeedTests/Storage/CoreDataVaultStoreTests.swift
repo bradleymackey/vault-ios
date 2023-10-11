@@ -1,6 +1,6 @@
 import CoreData
-import OTPCore
 import OTPFeed
+import VaultCore
 import XCTest
 
 final class CoreDataVaultStoreTests: XCTestCase {

@@ -1,5 +1,5 @@
 import Foundation
-import OTPCore
+import VaultCore
 
 struct ManagedVaultItemDecoder {
     func decode(code: ManagedVaultItem) throws -> GenericOTPAuthCode {

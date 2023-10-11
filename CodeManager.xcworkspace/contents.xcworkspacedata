@@ -23,13 +23,13 @@
       location = "group:Modules/OTPAttribution">
    </FileRef>
    <FileRef
-      location = "group:Modules/OTPCore">
-   </FileRef>
-   <FileRef
       location = "group:Modules/CryptoEngine">
    </FileRef>
    <FileRef
       location = "group:Modules/CryptoDocumentExporter">
+   </FileRef>
+   <FileRef
+      location = "group:Modules/VaultCore">
    </FileRef>
    <FileRef
       location = "group:Modules/TestHelpers">

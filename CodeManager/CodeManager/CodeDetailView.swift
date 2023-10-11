@@ -6,10 +6,10 @@
 //
 
 import Foundation
-import OTPCore
 import OTPFeed
 import OTPFeediOS
 import SwiftUI
+import VaultCore
 
 struct CodeDetailView<Store: VaultStore>: View {
     @Environment(\.dismiss) var dismiss

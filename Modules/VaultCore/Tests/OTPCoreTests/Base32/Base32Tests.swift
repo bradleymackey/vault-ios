@@ -26,7 +26,7 @@
 
 import Foundation
 import XCTest
-@testable import OTPCore
+@testable import VaultCore
 
 final class Base32Tests: XCTestCase {
     let vectors: [(String, String, String)] = [

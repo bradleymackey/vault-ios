@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OTPCore
+import VaultCore
 
 public protocol CodeTimerUpdater {
     func recalculate()

@@ -3,12 +3,12 @@
 import PackageDescription
 
 let package = Package(
-    name: "OTPCore",
+    name: "VaultCore",
     platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
-            name: "OTPCore",
-            targets: ["OTPCore"]
+            name: "VaultCore",
+            targets: ["VaultCore"]
         ),
     ],
     dependencies: [
@@ -16,12 +16,12 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "OTPCore",
+            name: "VaultCore",
             dependencies: ["CryptoEngine"]
         ),
         .testTarget(
-            name: "OTPCoreTests",
-            dependencies: ["OTPCore"]
+            name: "VaultCoreTests",
+            dependencies: ["VaultCore"]
         ),
     ]
 )

@@ -1,7 +1,7 @@
 import Foundation
 import FoundationExtensions
-import OTPCore
 import OTPFeed
+import VaultCore
 
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)

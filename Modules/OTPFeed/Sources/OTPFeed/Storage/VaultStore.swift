@@ -1,5 +1,5 @@
 import Foundation
-import OTPCore
+import VaultCore
 
 public typealias VaultStore = VaultStoreReader & VaultStoreWriter
 

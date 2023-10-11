@@ -1,4 +1,4 @@
-# OTPCore
+# VaultCore
 
 Defines core models and encoding/decoding formats for OTP codes.
 

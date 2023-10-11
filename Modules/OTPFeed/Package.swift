@@ -15,14 +15,14 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "FoundationExtensions", path: "../FoundationExtensions"),
-        .package(name: "OTPCore", path: "../OTPCore"),
+        .package(name: "VaultCore", path: "../VaultCore"),
         .package(name: "CryptoEngine", path: "../CryptoEngine"),
         .package(name: "TestHelpers", path: "../TestHelpers"),
     ],
     targets: [
         .target(
             name: "OTPFeed",
-            dependencies: ["OTPCore", "CryptoEngine"]
+            dependencies: ["VaultCore", "CryptoEngine"]
         ),
         .testTarget(
             name: "OTPFeedTests",

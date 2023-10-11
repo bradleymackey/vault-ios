@@ -1,9 +1,9 @@
 import Combine
 import CryptoEngine
 import FoundationExtensions
-import OTPCore
 import OTPFeed
 import SwiftUI
+import VaultCore
 
 /// An efficient generator of preview views for TOTP codes.
 ///

@@ -1,6 +1,6 @@
-import OTPCore
 import OTPFeed
 import SwiftUI
+import VaultCore
 
 @MainActor
 struct CodeButtonView: View {

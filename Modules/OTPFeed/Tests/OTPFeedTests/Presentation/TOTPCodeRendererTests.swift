@@ -1,8 +1,8 @@
 import Combine
 import CryptoEngine
 import Foundation
-import OTPCore
 import TestHelpers
+import VaultCore
 import XCTest
 @testable import OTPFeed
 

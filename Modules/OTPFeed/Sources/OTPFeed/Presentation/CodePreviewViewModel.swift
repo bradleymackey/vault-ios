@@ -1,6 +1,6 @@
 import Combine
 import Foundation
-import OTPCore
+import VaultCore
 
 /// A preview of an OTP code.
 @MainActor

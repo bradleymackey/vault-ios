@@ -1,5 +1,5 @@
 import CoreData
-import OTPCore
+import VaultCore
 
 public final actor CoreDataVaultStore {
     public static let modelName = "VaultStore"

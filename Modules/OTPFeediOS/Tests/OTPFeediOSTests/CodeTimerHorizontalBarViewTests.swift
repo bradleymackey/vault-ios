@@ -1,9 +1,9 @@
 import Combine
 import Foundation
-import OTPCore
 import OTPFeed
 import SwiftUI
 import TestHelpers
+import VaultCore
 import XCTest
 @testable import OTPFeediOS
 

@@ -1,6 +1,6 @@
 import CoreData
 import Foundation
-import OTPCore
+import VaultCore
 import XCTest
 @testable import OTPFeed
 

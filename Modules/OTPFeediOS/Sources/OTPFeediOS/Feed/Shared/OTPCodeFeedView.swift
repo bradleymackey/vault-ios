@@ -1,8 +1,8 @@
 import CryptoEngine
-import OTPCore
 import OTPFeed
 import OTPSettings
 import SwiftUI
+import VaultCore
 
 @MainActor
 public struct OTPCodeFeedView<

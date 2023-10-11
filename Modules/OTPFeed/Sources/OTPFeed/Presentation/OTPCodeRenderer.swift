@@ -1,7 +1,7 @@
 import Combine
 import CryptoEngine
 import Foundation
-import OTPCore
+import VaultCore
 
 /// Renders the code to a visible state for the given `code`.
 public protocol OTPCodeRenderer {

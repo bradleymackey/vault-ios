@@ -36,13 +36,6 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPCore",
-        "identifier" : "OTPCoreTests",
-        "name" : "OTPCoreTests"
-      }
-    },
-    {
-      "target" : {
         "containerPath" : "container:",
         "identifier" : "CryptoEngineTests",
         "name" : "CryptoEngineTests"
@@ -85,16 +78,16 @@
     },
     {
       "target" : {
-        "containerPath" : "container:..\/OTPSettings",
-        "identifier" : "OTPSettingsTests",
-        "name" : "OTPSettingsTests"
+        "containerPath" : "container:..\/FoundationExtensions",
+        "identifier" : "FoundationExtensionsTests",
+        "name" : "FoundationExtensionsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/FoundationExtensions",
-        "identifier" : "FoundationExtensionsTests",
-        "name" : "FoundationExtensionsTests"
+        "containerPath" : "container:..\/VaultCore",
+        "identifier" : "VaultCoreTests",
+        "name" : "VaultCoreTests"
       }
     }
   ],

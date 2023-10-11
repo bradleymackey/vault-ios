@@ -5,11 +5,11 @@
 //  Created by Bradley Mackey on 05/05/2023.
 //
 
-import OTPCore
 import OTPFeed
 import OTPFeediOS
 import OTPSettings
 import SwiftUI
+import VaultCore
 
 @MainActor
 @main

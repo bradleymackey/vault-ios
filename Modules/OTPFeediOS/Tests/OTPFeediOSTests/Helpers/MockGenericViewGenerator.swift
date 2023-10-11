@@ -1,7 +1,7 @@
 import Foundation
-import OTPCore
 import OTPFeediOS
 import SwiftUI
+import VaultCore
 
 final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
     typealias VaultItem = GenericOTPAuthCode
