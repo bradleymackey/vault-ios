@@ -2,6 +2,10 @@
 
 "home.title" = "Settings";
 
+"pasteTTL.title" = "Copy Duration";
+"pasteTTL.none" = "No expiry";
+
+"previewSize.title" = "Preview Size";
 "previewSize.medium" = "Medium";
 "previewSize.large" = "Large";
 

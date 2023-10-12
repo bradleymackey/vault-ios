@@ -1,6 +1,7 @@
 import Foundation
 import UIKit
 import VaultCore
+import VaultSettings
 
 public protocol SystemPasteboard {
     /// Copy the given string to the pasteboard.

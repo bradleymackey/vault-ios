@@ -36,6 +36,17 @@ public struct SettingsHomeView: View {
                     Text(viewModel.previewSizeTitle)
                 }
             }
+
+            Picker(selection: $localSettings.state.pasteTimeToLive) {
+                ForEach(PasteTTL.defaultOptions) { option in
+                    Text(option.localizedName)
+                        .tag(option)
+                }
+            } label: {
+                FormRow(image: Image(systemName: "clock.fill"), color: .red) {
+                    Text(viewModel.pasteTTLTitle)
+                }
+            }
         }
     }
 

@@ -32,6 +32,35 @@ final class LocalSettingsTests: XCTestCase {
         let sutRetrieve = try makeSUT(defaults: defaults)
         XCTAssertEqual(sutRetrieve.state.previewSize, .large)
     }
+
+    func test_pasteTimeToLive_sendsObservableChangeOnValueChange() async throws {
+        let defaults = try makeDefaults()
+        let sut = try makeSUT(defaults: defaults)
+
+        await expectSingleMutation(observable: sut, keyPath: \.state.pasteTimeToLive) {
+            sut.state.pasteTimeToLive = .init(duration: 100)
+        }
+
+        await expectSingleMutation(observable: sut, keyPath: \.state.pasteTimeToLive) {
+            sut.state.pasteTimeToLive = .init(duration: 200)
+        }
+    }
+
+    func test_pasteTimeToLive_defaultsToDefaultValue() throws {
+        let defaults = try makeDefaults()
+        let sut = try makeSUT(defaults: defaults)
+
+        XCTAssertEqual(sut.state.pasteTimeToLive, .default)
+    }
+
+    func test_pasteTimeToLive_savesStateAfterStateChanged() throws {
+        let defaults = try makeDefaults()
+        let sutSave = try makeSUT(defaults: defaults)
+        sutSave.state.pasteTimeToLive = .init(duration: 1234)
+
+        let sutRetrieve = try makeSUT(defaults: defaults)
+        XCTAssertEqual(sutRetrieve.state.pasteTimeToLive, .init(duration: 1234))
+    }
 }
 
 // MARK: - Helpers

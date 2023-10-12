@@ -1,0 +1,41 @@
+import Foundation
+
+public struct PasteTTL: Equatable, Hashable, Codable {
+    public let duration: Double?
+
+    public init(duration: Double?) {
+        self.duration = duration
+    }
+}
+
+extension PasteTTL: Identifiable {
+    public var id: Double {
+        duration ?? -1
+    }
+}
+
+public extension PasteTTL {
+    static let `default`: PasteTTL = .init(duration: nil)
+
+    static let defaultOptions: [PasteTTL] = [
+        .init(duration: nil),
+        .init(duration: 30),
+        .init(duration: 60),
+        .init(duration: 60 * 2),
+        .init(duration: 60 * 5),
+        .init(duration: 60 * 10),
+        .init(duration: 60 * 30),
+    ]
+}
+
+public extension PasteTTL {
+    var localizedName: String {
+        guard let duration else {
+            return localized(key: "pasteTTL.none")
+        }
+        let formatter = DateComponentsFormatter()
+        formatter.unitsStyle = .abbreviated
+        formatter.allowedUnits = [.minute, .second]
+        return formatter.string(from: duration) ?? "?"
+    }
+}
