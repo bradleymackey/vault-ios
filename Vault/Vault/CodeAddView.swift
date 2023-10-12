@@ -6,7 +6,6 @@ struct CodeAddView: View {
         Form {
             itemSelectionSection
         }
-        .foregroundStyle(.primary)
     }
 
     private var itemSelectionSection: some View {
@@ -38,5 +37,6 @@ struct CodeAddView: View {
             Text("Store a new item securely on your device.")
                 .foregroundStyle(.secondary)
         }
+        .foregroundStyle(.primary)
     }
 }

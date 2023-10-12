@@ -18,12 +18,15 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Identifiable {
+        case addItem
         case detail(UUID, StoredVaultItem)
 
         var id: some Hashable {
             switch self {
+            case .addItem:
+                return "add"
             case let .detail(id, _):
-                return id
+                return id.uuidString
             }
         }
     }
@@ -39,8 +42,17 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
         .navigationTitle(Text(feedViewModel.title))
         .navigationBarTitleDisplayMode(.large)
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    modal = .addItem
+                } label: {
+                    Image(systemName: "plus")
+                }
+                .disabled(isEditing)
+            }
+
             if !feedViewModel.codes.isEmpty {
-                ToolbarItem(placement: .primaryAction) {
+                ToolbarItem(placement: .topBarLeading) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             isEditing.toggle()
@@ -55,6 +67,8 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
         }
         .sheet(item: $modal) { visible in
             switch visible {
+            case .addItem:
+                CodeAddView()
             case let .detail(_, storedCode):
                 NavigationView {
                     VaultDetailView(feedViewModel: feedViewModel, storedCode: storedCode)
