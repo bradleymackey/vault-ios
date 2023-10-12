@@ -9,7 +9,7 @@ struct CodeAddView: View {
             itemSelectionSection
         }
         .navigationTitle(Text("Add Item"))
-        .navigationBarTitleDisplayMode(.large)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
