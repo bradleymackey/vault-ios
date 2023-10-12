@@ -1,5 +1,6 @@
 import Foundation
 import VaultFeediOS
+import VaultSettings
 import XCTest
 
 @MainActor
@@ -9,7 +10,7 @@ final class PasteboardTests: XCTestCase {
 
         let exp = expectation(description: "Wait for pasteboard copy")
         exp.isInverted = true
-        pasteboard.copyCalled = { _ in
+        pasteboard.copyCalled = { _, _ in
             exp.fulfill()
         }
 
@@ -24,7 +25,7 @@ final class PasteboardTests: XCTestCase {
         let targetString = "hello world, this is my string"
 
         let exp = expectation(description: "Wait for pasteboard copy")
-        pasteboard.copyCalled = { copiedString in
+        pasteboard.copyCalled = { copiedString, _ in
             XCTAssertEqual(copiedString, targetString)
             exp.fulfill()
         }
@@ -44,19 +45,53 @@ final class PasteboardTests: XCTestCase {
             sut.copy("any")
         }
     }
+
+    func test_copy_usesTTLFromSettings() async throws {
+        let ttl = PasteTTL(duration: 1234)
+        let pasteboard = MockSystemPasteboard()
+        let defaults = try makeDefaults()
+        let settings = LocalSettings(defaults: defaults)
+        let sut = makeSUT(pasteboard: pasteboard, localSettings: settings)
+
+        settings.state.pasteTimeToLive = ttl
+
+        let exp = expectation(description: "Wait for pasteboard copy")
+        pasteboard.copyCalled = { _, actualTTL in
+            XCTAssertEqual(actualTTL, ttl.duration)
+            exp.fulfill()
+        }
+
+        sut.copy("some string")
+
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
 }
 
 // MARK: - Helpers
 
 extension PasteboardTests {
-    private func makeSUT(pasteboard: MockSystemPasteboard = MockSystemPasteboard()) -> Pasteboard {
-        Pasteboard(pasteboard)
+    private func makeSUT(
+        pasteboard: MockSystemPasteboard = MockSystemPasteboard(),
+        localSettings: LocalSettings = LocalSettings(defaults: .init(userDefaults: .standard)),
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> Pasteboard {
+        let pasteboard = Pasteboard(pasteboard, localSettings: localSettings)
+        trackForMemoryLeaks(pasteboard, file: file, line: line)
+        trackForMemoryLeaks(localSettings, file: file, line: line)
+        return pasteboard
     }
 
     private class MockSystemPasteboard: SystemPasteboard {
-        var copyCalled: (String) -> Void = { _ in }
-        func copy(string: String) {
-            copyCalled(string)
+        var copyCalled: (String, Double?) -> Void = { _, _ in }
+        func copy(string: String, ttl: Double?) {
+            copyCalled(string, ttl)
         }
+    }
+
+    private func makeDefaults() throws -> Defaults {
+        let userDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
+        userDefaults.removePersistentDomain(forName: #file)
+        return Defaults(userDefaults: userDefaults)
     }
 }

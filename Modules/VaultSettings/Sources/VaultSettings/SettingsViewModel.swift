@@ -25,7 +25,11 @@ public extension SettingsViewModel {
     }
 
     var previewSizeTitle: String {
-        localized(key: "Preview Size")
+        localized(key: "previewSize.title")
+    }
+
+    var pasteTTLTitle: String {
+        localized(key: "pasteTTL.title")
     }
 
     var saveBackupTitle: String {
