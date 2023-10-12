@@ -16,7 +16,7 @@ public final class Pasteboard {
     }
 
     public func copy(_ string: String) {
-        systemPasteboard.copy(string: string)
+        systemPasteboard.copy(string: string, ttl: nil)
         didPasteSubject.send()
     }
 

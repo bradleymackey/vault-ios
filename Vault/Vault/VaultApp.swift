@@ -10,7 +10,7 @@ struct VaultApp: App {
     @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
-    @State private var pasteboard = Pasteboard(LiveSystemPasteboard())
+    @State private var pasteboard: Pasteboard
     @State private var localSettings: LocalSettings
     @State private var settingsViewModel = SettingsViewModel()
     @State private var clock: EpochClock
@@ -44,7 +44,9 @@ struct VaultApp: App {
             timer: timer
         )
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
+        let pasteboard = Pasteboard(LiveSystemPasteboard(clock: clock))
 
+        _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
         _feedViewModel = State(wrappedValue: feed)
         _totpPreviewGenerator = State(wrappedValue: totp)

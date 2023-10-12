@@ -9,7 +9,7 @@ final class PasteboardTests: XCTestCase {
 
         let exp = expectation(description: "Wait for pasteboard copy")
         exp.isInverted = true
-        pasteboard.copyCalled = { _ in
+        pasteboard.copyCalled = { _, _ in
             exp.fulfill()
         }
 
@@ -24,7 +24,7 @@ final class PasteboardTests: XCTestCase {
         let targetString = "hello world, this is my string"
 
         let exp = expectation(description: "Wait for pasteboard copy")
-        pasteboard.copyCalled = { copiedString in
+        pasteboard.copyCalled = { copiedString, _ in
             XCTAssertEqual(copiedString, targetString)
             exp.fulfill()
         }
@@ -54,9 +54,9 @@ extension PasteboardTests {
     }
 
     private class MockSystemPasteboard: SystemPasteboard {
-        var copyCalled: (String) -> Void = { _ in }
-        func copy(string: String) {
-            copyCalled(string)
+        var copyCalled: (String, Double?) -> Void = { _, _ in }
+        func copy(string: String, ttl: Double?) {
+            copyCalled(string, ttl)
         }
     }
 }
