@@ -8,6 +8,8 @@ struct CodeAddView: View {
         Form {
             itemSelectionSection
         }
+        .navigationTitle(Text("Add Item"))
+        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
