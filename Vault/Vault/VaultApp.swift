@@ -74,13 +74,6 @@ struct VaultApp: App {
                 }
 
                 NavigationStack {
-                    CodeAddView()
-                }
-                .tabItem {
-                    Label("Add", systemImage: "plus")
-                }
-
-                NavigationStack {
                     VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
                 }
                 .tabItem {
