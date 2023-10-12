@@ -72,9 +72,14 @@ final class PasteboardTests: XCTestCase {
 extension PasteboardTests {
     private func makeSUT(
         pasteboard: MockSystemPasteboard = MockSystemPasteboard(),
-        localSettings: LocalSettings = LocalSettings(defaults: .init(userDefaults: .standard))
+        localSettings: LocalSettings = LocalSettings(defaults: .init(userDefaults: .standard)),
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) -> Pasteboard {
-        Pasteboard(pasteboard, localSettings: localSettings)
+        let pasteboard = Pasteboard(pasteboard, localSettings: localSettings)
+        trackForMemoryLeaks(pasteboard, file: file, line: line)
+        trackForMemoryLeaks(localSettings, file: file, line: line)
+        return pasteboard
     }
 
     private class MockSystemPasteboard: SystemPasteboard {
