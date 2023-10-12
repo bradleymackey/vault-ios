@@ -8,14 +8,14 @@ enum DemoCodeFactory {
             created: Date(),
             updated: Date(),
             userDescription: "My Cool Code",
-            code: .init(
+            item: .otpCode(.init(
                 type: .totp(),
                 data: .init(
                     secret: .empty(),
                     accountName: "example@example.com",
                     issuer: issuer
                 )
-            )
+            ))
         )
     }
 
@@ -25,14 +25,14 @@ enum DemoCodeFactory {
             created: Date(),
             updated: Date(),
             userDescription: "My Other Cool code",
-            code: .init(
+            item: .otpCode(.init(
                 type: .hotp(),
                 data: .init(
                     secret: .empty(),
                     accountName: "HOTP test",
                     issuer: issuer
                 )
-            )
+            ))
         )
     }
 }

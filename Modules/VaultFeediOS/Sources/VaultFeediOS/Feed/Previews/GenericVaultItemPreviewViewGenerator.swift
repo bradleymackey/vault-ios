@@ -10,7 +10,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     where TOTP.PreviewItem == TOTPAuthCode,
     HOTP.PreviewItem == HOTPAuthCode
 {
-    public typealias PreviewItem = GenericOTPAuthCode
+    public typealias PreviewItem = VaultItem
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
 
@@ -21,19 +21,22 @@ public struct GenericVaultItemPreviewViewGenerator<
 
     @ViewBuilder
     public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
-        switch item.type {
-        case let .totp(period):
-            totpGenerator.makeVaultPreviewView(
-                id: id,
-                item: .init(period: period, data: item.data),
-                behaviour: behaviour
-            )
-        case let .hotp(counter):
-            hotpGenerator.makeVaultPreviewView(
-                id: id,
-                item: .init(counter: counter, data: item.data),
-                behaviour: behaviour
-            )
+        switch item {
+        case let .otpCode(otpCode):
+            switch otpCode.type {
+            case let .totp(period):
+                totpGenerator.makeVaultPreviewView(
+                    id: id,
+                    item: .init(period: period, data: otpCode.data),
+                    behaviour: behaviour
+                )
+            case let .hotp(counter):
+                hotpGenerator.makeVaultPreviewView(
+                    id: id,
+                    item: .init(counter: counter, data: otpCode.data),
+                    behaviour: behaviour
+                )
+            }
         }
     }
 
