@@ -72,7 +72,7 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
                     CodeAddView()
                 }
             case let .detail(_, storedCode):
-                NavigationView {
+                NavigationStack {
                     VaultDetailView(feedViewModel: feedViewModel, storedCode: storedCode)
                 }
             }
