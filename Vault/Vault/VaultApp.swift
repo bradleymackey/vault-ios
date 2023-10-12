@@ -44,7 +44,7 @@ struct VaultApp: App {
             timer: timer
         )
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
-        let pasteboard = Pasteboard(LiveSystemPasteboard(clock: clock))
+        let pasteboard = Pasteboard(LiveSystemPasteboard(clock: clock), localSettings: localSettings)
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
