@@ -68,7 +68,9 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
         .sheet(item: $modal) { visible in
             switch visible {
             case .addItem:
-                CodeAddView()
+                NavigationStack {
+                    CodeAddView()
+                }
             case let .detail(_, storedCode):
                 NavigationView {
                     VaultDetailView(feedViewModel: feedViewModel, storedCode: storedCode)

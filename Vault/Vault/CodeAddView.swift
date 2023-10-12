@@ -2,9 +2,21 @@ import SwiftUI
 import VaultUI
 
 struct CodeAddView: View {
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
         Form {
             itemSelectionSection
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .foregroundStyle(.red)
+                }
+            }
         }
     }
 
