@@ -249,6 +249,26 @@ extension ManagedVaultItemDecoderTests {
         let decoded = try sut.decode(item: note)
         XCTAssertEqual(decoded.userDescription, description)
     }
+
+    func test_decodeNoteTitle_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let title = "this is my note title"
+        let note = makeManagedSecureNote(title: title)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.item.secureNote?.title, title)
+    }
+
+    func test_decodeNoteUserContents_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let contents = "this is my note contents"
+        let note = makeManagedSecureNote(contents: contents)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.item.secureNote?.contents, contents)
+    }
 }
 
 // MARK: - Helpers

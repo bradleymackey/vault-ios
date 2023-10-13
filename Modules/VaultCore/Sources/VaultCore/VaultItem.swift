@@ -15,4 +15,13 @@ public extension VaultItem {
             return nil
         }
     }
+
+    var secureNote: SecureNote? {
+        switch self {
+        case let .secureNote(note):
+            return note
+        default:
+            return nil
+        }
+    }
 }

@@ -13,12 +13,13 @@ struct ManagedVaultItemDecoder {
                 item: .otpCode(otpCode)
             )
         } else if let note = item.noteDetails {
+            let note = SecureNote(title: note.title, contents: note.rawContents ?? "")
             return StoredVaultItem(
                 id: item.id,
                 created: item.createdDate,
                 updated: item.updatedDate,
                 userDescription: item.userDescription,
-                item: .secureNote(.init(title: "", contents: ""))
+                item: .secureNote(note)
             )
         } else {
             // Not any kind of item that we recognise!
