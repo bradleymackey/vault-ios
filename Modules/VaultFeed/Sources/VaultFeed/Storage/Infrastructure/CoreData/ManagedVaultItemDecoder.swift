@@ -2,7 +2,7 @@ import Foundation
 import VaultCore
 
 struct ManagedVaultItemDecoder {
-    func decode(item: ManagedVaultItem) throws -> VaultItem {
+    func decode(item: ManagedVaultItem) throws -> StoredVaultItem {
         guard let otp = item.otpDetails else {
             throw DecodingError.onlyOTPIsSupportedForNow
         }
@@ -16,7 +16,13 @@ struct ManagedVaultItemDecoder {
                 issuer: otp.issuer
             )
         )
-        return .otpCode(otpCode)
+        return StoredVaultItem(
+            id: item.id,
+            created: item.createdDate,
+            updated: item.updatedDate,
+            userDescription: item.userDescription,
+            item: .otpCode(otpCode)
+        )
     }
 
     enum DecodingError: Error {
