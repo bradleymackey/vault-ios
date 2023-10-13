@@ -18,7 +18,11 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
 
         super.tearDown()
     }
+}
 
+// MARK: - OTP Code
+
+extension ManagedVaultItemDecoderTests {
     func test_decodeDigits_decodesToCorrectValue() throws {
         let samples: [OTPAuthDigits: NSNumber] = [
             OTPAuthDigits(value: 0): 0,
@@ -161,9 +165,11 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.data.secret.data, data)
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
+extension ManagedVaultItemDecoderTests {
     private func makeSUT() -> ManagedVaultItemDecoder {
         ManagedVaultItemDecoder()
     }
