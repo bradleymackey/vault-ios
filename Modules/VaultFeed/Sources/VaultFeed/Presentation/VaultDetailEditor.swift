@@ -21,6 +21,8 @@ public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
             otpCode.data.accountName = edits.accountNameTitle
             otpCode.data.issuer = edits.issuerTitle
             storedCode.item = .otpCode(otpCode)
+        case .secureNote:
+            break
         }
 
         try await codeFeed.update(id: code.id, code: storedCode.asWritable)

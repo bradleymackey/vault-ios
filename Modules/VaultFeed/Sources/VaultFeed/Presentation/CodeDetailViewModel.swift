@@ -25,6 +25,8 @@ public final class CodeDetailViewModel {
                 accountNameTitle: otpCode.data.accountName,
                 description: storedCode.userDescription ?? ""
             ))
+        case .secureNote:
+            editingModel = CodeDetailEditingModel(detail: .init())
         }
     }
 
@@ -38,6 +40,8 @@ public final class CodeDetailViewModel {
                 entries: Self.makeInfoEntries(otpCode)
             )
             return [details]
+        case .secureNote:
+            return []
         }
     }
 

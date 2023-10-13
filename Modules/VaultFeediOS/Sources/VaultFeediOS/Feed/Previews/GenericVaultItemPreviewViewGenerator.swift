@@ -37,6 +37,8 @@ public struct GenericVaultItemPreviewViewGenerator<
                     behaviour: behaviour
                 )
             }
+        case .secureNote:
+            Color.red
         }
     }
 
