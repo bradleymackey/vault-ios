@@ -26,31 +26,31 @@ extension ManagedVaultItemEncoderTests {
     func test_encodeExisting_retainsExistingUUID() {
         let sut = makeSUT()
 
-        let existing = sut.encode(code: uniqueWritableVaultItem())
+        let existing = sut.encode(item: uniqueWritableVaultItem())
         let existingID = existing.id
 
-        let newCode = sut.encode(code: uniqueWritableVaultItem(), into: existing)
+        let newCode = sut.encode(item: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.id, existingID, "ID should not change for update")
     }
 
     func test_encodeExisting_retainsCreatedDate() {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(code: uniqueWritableVaultItem())
+        let existing = sut1.encode(item: uniqueWritableVaultItem())
         let existingCreatedDate = existing.createdDate
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(code: uniqueWritableVaultItem(), into: existing)
+        let newCode = sut2.encode(item: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.createdDate, existingCreatedDate, "Date should not change for update")
     }
 
     func test_encodeExisting_updatesUpdatedDate() {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(code: uniqueWritableVaultItem())
+        let existing = sut1.encode(item: uniqueWritableVaultItem())
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(code: uniqueWritableVaultItem(), into: existing)
+        let newCode = sut2.encode(item: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should not change for update")
     }
 
@@ -60,7 +60,7 @@ extension ManagedVaultItemEncoderTests {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue())
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertFalse(seen.contains(encoded.id))
             seen.insert(encoded.id)
         }
@@ -70,7 +70,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(userDescription: nil, code: uniqueCode())
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.userDescription)
     }
 
@@ -79,7 +79,7 @@ extension ManagedVaultItemEncoderTests {
         let desc = UUID().uuidString
         let code = makeWritable(userDescription: desc, code: uniqueCode())
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.userDescription, desc)
     }
 }
@@ -99,7 +99,7 @@ extension ManagedVaultItemEncoderTests {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue(digits: digits))
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.digits, value)
         }
     }
@@ -108,7 +108,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.authType, "totp")
     }
 
@@ -116,7 +116,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.authType, "hotp")
     }
 
@@ -124,7 +124,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp(period: 69)))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.period, 69)
     }
 
@@ -132,7 +132,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.period)
     }
 
@@ -140,7 +140,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp(counter: 69)))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.counter, 69)
     }
 
@@ -148,7 +148,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.counter)
     }
 
@@ -157,7 +157,7 @@ extension ManagedVaultItemEncoderTests {
         let accountName = UUID().uuidString
         let code = makeWritable(code: makeCodeValue(accountName: accountName))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.accountName, accountName)
     }
 
@@ -166,7 +166,7 @@ extension ManagedVaultItemEncoderTests {
         let issuer = UUID().uuidString
         let code = makeWritable(code: makeCodeValue(issuer: issuer))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
@@ -174,7 +174,7 @@ extension ManagedVaultItemEncoderTests {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(issuer: nil))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.issuer)
     }
 
@@ -188,7 +188,7 @@ extension ManagedVaultItemEncoderTests {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue(algorithm: algo))
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.algorithm, expected)
         }
     }
@@ -202,7 +202,7 @@ extension ManagedVaultItemEncoderTests {
             let secret = OTPAuthSecret(data: Data(), format: format)
             let code = makeWritable(code: makeCodeValue(secret: secret))
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.secretFormat, expected)
         }
     }
@@ -213,7 +213,7 @@ extension ManagedVaultItemEncoderTests {
         let secret = OTPAuthSecret(data: secretData, format: .base32)
         let code = makeWritable(code: makeCodeValue(secret: secret))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.secretData, secretData)
     }
 }

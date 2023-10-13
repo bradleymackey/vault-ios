@@ -26,7 +26,7 @@ extension CoreDataVaultStore: VaultStoreWriter {
         try await asyncPerform { context in
             do {
                 let encoder = ManagedVaultItemEncoder(context: context)
-                let encoded = encoder.encode(code: item)
+                let encoded = encoder.encode(item: item)
 
                 try context.save()
                 return encoded.id
@@ -48,7 +48,7 @@ extension CoreDataVaultStore: VaultStoreWriter {
                     throw ManagedVaultItemError.entityNotFound
                 }
                 let encoder = ManagedVaultItemEncoder(context: context)
-                _ = encoder.encode(code: item, into: existingCode)
+                _ = encoder.encode(item: item, into: existingCode)
                 try context.save()
             } catch {
                 context.rollback()
