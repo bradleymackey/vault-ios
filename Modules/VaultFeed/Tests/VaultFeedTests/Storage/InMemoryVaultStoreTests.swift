@@ -23,7 +23,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [])
 
         let code1 = uniqueWritableVaultItem()
-        let newID = try await sut.insert(code: code1)
+        let newID = try await sut.insert(item: code1)
 
         let retrieved = try await sut.retrieve()
         XCTAssertEqual(retrieved.count, 1)
@@ -36,7 +36,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [])
 
         // swiftformat:disable:next hoistAwait
-        await XCTAssertThrowsError(try await sut.update(id: UUID(), code: uniqueWritableVaultItem()))
+        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: uniqueWritableVaultItem()))
     }
 
     func test_update_updatesExistingCode() async throws {
@@ -45,7 +45,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
 
         let newCode = uniqueCode()
         let newUserDescription = UUID().uuidString
-        try await sut.update(id: code1.id, code: .init(userDescription: newUserDescription, item: .otpCode(newCode)))
+        try await sut.update(id: code1.id, item: .init(userDescription: newUserDescription, item: .otpCode(newCode)))
 
         let retrieved = try await sut.retrieve()
         XCTAssertEqual(retrieved.count, 1)

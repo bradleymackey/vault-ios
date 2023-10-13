@@ -52,7 +52,7 @@ extension FeedViewModel: VaultFeed {
     }
 
     public func update(id: UUID, code: StoredVaultItem.Write) async throws {
-        try await store.update(id: id, code: code)
+        try await store.update(id: id, item: code)
         invalidateCaches(id: id)
         await reloadData()
     }

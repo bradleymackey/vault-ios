@@ -206,12 +206,12 @@ final class FeedViewModelTests: XCTestCase {
             .init(codes: [])
         }
 
-        func insert(code _: StoredVaultItem.Write) async throws -> UUID {
+        func insert(item _: StoredVaultItem.Write) async throws -> UUID {
             UUID()
         }
 
         var updateStoreCalled: () -> Void = {}
-        func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
+        func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
             updateStoreCalled()
         }
 
@@ -229,11 +229,11 @@ final class FeedViewModelTests: XCTestCase {
             throw error
         }
 
-        func insert(code _: StoredVaultItem.Write) async throws -> UUID {
+        func insert(item _: StoredVaultItem.Write) async throws -> UUID {
             throw error
         }
 
-        func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
+        func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
             throw error
         }
 

@@ -15,11 +15,11 @@ final class MockOTPCodeStore: VaultStore {
         // noop
     }
 
-    func insert(code _: StoredVaultItem.Write) async throws -> UUID {
+    func insert(item _: StoredVaultItem.Write) async throws -> UUID {
         UUID()
     }
 
-    func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
+    func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
         // noop
     }
 }
