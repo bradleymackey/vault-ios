@@ -8,8 +8,10 @@ final class ManagedVaultItem: NSManagedObject {
     @NSManaged var updatedDate: Date
     @NSManaged var userDescription: String?
 
-    /// If present, the item is an OTP code.
+    /// Details for an OTP code.
     @NSManaged var otpDetails: ManagedOTPDetails?
+    /// Details for a secure note
+    @NSManaged var noteDetails: ManagedNoteDetails?
 }
 
 @objc(ManagedOTPDetails)
@@ -24,7 +26,16 @@ final class ManagedOTPDetails: NSManagedObject {
     @NSManaged var accountName: String
     @NSManaged var issuer: String?
 
-    // Relationship back to ManagedVaultItem
+    /// Relationship back to ManagedVaultItem
+    @NSManaged var vaultItem: ManagedVaultItem?
+}
+
+@objc(ManagedNoteDetails)
+final class ManagedNoteDetails: NSManagedObject {
+    @NSManaged var title: String
+    @NSManaged var rawContents: String?
+
+    /// Relationship back to ManagedVaultItem
     @NSManaged var vaultItem: ManagedVaultItem?
 }
 
