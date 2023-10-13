@@ -32,8 +32,12 @@ struct ManagedVaultItemEncoder {
             otp.secretData = code.data.secret.data
 
             managed.otpDetails = otp
-        case .secureNote:
-            break
+        case let .secureNote(note):
+            let managedNote = ManagedNoteDetails(context: context)
+            managedNote.title = note.title
+            managedNote.rawContents = note.contents
+
+            managed.noteDetails = managedNote
         }
 
         return managed

@@ -218,6 +218,26 @@ extension ManagedVaultItemEncoderTests {
     }
 }
 
+// MARK: - Secure Note
+
+extension ManagedVaultItemEncoderTests {
+    func test_encodeNoteTitle_encodesToString() {
+        let sut = makeSUT()
+        let item = makeWritable(note: makeSecretNoteValue(title: "this is my title"))
+
+        let encoded = sut.encode(item: item)
+        XCTAssertEqual(encoded.noteDetails?.title, "this is my title")
+    }
+
+    func test_encodeNoteContents_encodesToString() {
+        let sut = makeSUT()
+        let item = makeWritable(note: makeSecretNoteValue(contents: "this is the note contents"))
+
+        let encoded = sut.encode(item: item)
+        XCTAssertEqual(encoded.noteDetails?.rawContents, "this is the note contents")
+    }
+}
+
 // MARK: - Helpers
 
 extension ManagedVaultItemEncoderTests {
@@ -250,6 +270,20 @@ extension ManagedVaultItemEncoderTests {
                 issuer: issuer
             )
         )
+    }
+
+    private func makeWritable(
+        userDescription: String? = nil,
+        note: SecureNote
+    ) -> StoredVaultItem.Write {
+        StoredVaultItem.Write(userDescription: userDescription, item: .secureNote(note))
+    }
+
+    private func makeSecretNoteValue(
+        title: String = "note title",
+        contents: String = "note contents"
+    ) -> SecureNote {
+        SecureNote(title: title, contents: contents)
     }
 
     private func anyContext() -> NSManagedObjectContext {
