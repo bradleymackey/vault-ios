@@ -64,7 +64,7 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
 
 extension CodeFeedCodeDetailEditorAdapterTests {
     private func makeSUT(feed: any VaultFeed) -> VaultFeedVaultDetailEditorAdapter {
-        VaultFeedVaultDetailEditorAdapter(codeFeed: feed)
+        VaultFeedVaultDetailEditorAdapter(vaultFeed: feed)
     }
 
     private class StubCodeFeed: VaultFeed {

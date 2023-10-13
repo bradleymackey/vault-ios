@@ -7,28 +7,28 @@ public protocol VaultDetailEditor {
 
 /// A `VaultDetailEditor` that uses a feed for updating after a given edit.
 public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
-    private let codeFeed: any VaultFeed
-    public init(codeFeed: any VaultFeed) {
-        self.codeFeed = codeFeed
+    private let vaultFeed: any VaultFeed
+    public init(vaultFeed: any VaultFeed) {
+        self.vaultFeed = vaultFeed
     }
 
     public func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
-        var storedCode = item
-        storedCode.userDescription = edits.description
+        var storedItem = item
+        storedItem.userDescription = edits.description
 
         switch item.item {
         case var .otpCode(otpCode):
             otpCode.data.accountName = edits.accountNameTitle
             otpCode.data.issuer = edits.issuerTitle
-            storedCode.item = .otpCode(otpCode)
+            storedItem.item = .otpCode(otpCode)
         case .secureNote:
             break
         }
 
-        try await codeFeed.update(id: item.id, item: storedCode.asWritable)
+        try await vaultFeed.update(id: item.id, item: storedItem.asWritable)
     }
 
     public func deleteCode(id: UUID) async throws {
-        try await codeFeed.delete(id: id)
+        try await vaultFeed.delete(id: id)
     }
 }
