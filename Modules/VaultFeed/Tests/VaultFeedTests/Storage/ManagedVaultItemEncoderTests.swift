@@ -18,7 +18,11 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
 
         super.tearDown()
     }
+}
 
+// MARK: - Shared
+
+extension ManagedVaultItemEncoderTests {
     func test_encodeExisting_retainsExistingUUID() {
         let sut = makeSUT()
 
@@ -62,6 +66,27 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         }
     }
 
+    func test_encodeUserDescription_encodesNil() {
+        let sut = makeSUT()
+        let code = makeWritable(userDescription: nil, code: uniqueCode())
+
+        let encoded = sut.encode(code: code)
+        XCTAssertNil(encoded.userDescription)
+    }
+
+    func test_encodeUserDescription_encodesString() {
+        let sut = makeSUT()
+        let desc = UUID().uuidString
+        let code = makeWritable(userDescription: desc, code: uniqueCode())
+
+        let encoded = sut.encode(code: code)
+        XCTAssertEqual(encoded.userDescription, desc)
+    }
+}
+
+// MARK: - OTP Code
+
+extension ManagedVaultItemEncoderTests {
     func test_encodeDigits_encodesToNSNumber() {
         let samples: [OTPAuthDigits: NSNumber] = [
             OTPAuthDigits(value: 6): 6,
@@ -191,26 +216,11 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let encoded = sut.encode(code: code)
         XCTAssertEqual(encoded.otpDetails?.secretData, secretData)
     }
+}
 
-    func test_encodeUserDescription_encodesNil() {
-        let sut = makeSUT()
-        let code = makeWritable(userDescription: nil, code: uniqueCode())
+// MARK: - Helpers
 
-        let encoded = sut.encode(code: code)
-        XCTAssertNil(encoded.userDescription)
-    }
-
-    func test_encodeUserDescription_encodesString() {
-        let sut = makeSUT()
-        let desc = UUID().uuidString
-        let code = makeWritable(userDescription: desc, code: uniqueCode())
-
-        let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.userDescription, desc)
-    }
-
-    // MARK: - Helpers
-
+extension ManagedVaultItemEncoderTests {
     private func makeSUT(currentDate: @escaping () -> Date = { Date() }) -> ManagedVaultItemEncoder {
         ManagedVaultItemEncoder(context: anyContext(), currentDate: currentDate)
     }
