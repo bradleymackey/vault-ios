@@ -35,4 +35,14 @@ enum DemoVaultFactory {
             ))
         )
     }
+
+    static func secureNote(title: String = "Title", contents: String = "Contents...") -> StoredVaultItem {
+        .init(
+            id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: "This is a secure note",
+            item: .secureNote(.init(title: title, contents: contents))
+        )
+    }
 }

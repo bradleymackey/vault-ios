@@ -32,6 +32,7 @@ struct VaultApp: App {
             DemoVaultFactory.totpCode(issuer: "Cloudflare"),
             DemoVaultFactory.hotpCode(issuer: "Cool Company"),
             DemoVaultFactory.hotpCode(issuer: "Other Company"),
+            DemoVaultFactory.secureNote(title: "Secure Note 1", contents: "This is the contents..."),
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: RealTOTPPreviewViewFactory(),
