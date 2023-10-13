@@ -25,7 +25,7 @@ public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
             break
         }
 
-        try await codeFeed.update(id: code.id, code: storedCode.asWritable)
+        try await codeFeed.update(id: code.id, item: storedCode.asWritable)
     }
 
     public func deleteCode(id: UUID) async throws {

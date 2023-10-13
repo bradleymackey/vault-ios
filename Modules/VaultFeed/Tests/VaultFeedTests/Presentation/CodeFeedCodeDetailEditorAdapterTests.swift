@@ -75,9 +75,9 @@ extension CodeFeedCodeDetailEditorAdapterTests {
         }
 
         var updateCalled: (UUID, StoredVaultItem.Write) -> Void = { _, _ in }
-        func update(id: UUID, code: StoredVaultItem.Write) async throws {
+        func update(id: UUID, item: StoredVaultItem.Write) async throws {
             calls.append("\(#function)")
-            updateCalled(id, code)
+            updateCalled(id, item)
         }
 
         var deleteCalled: (UUID) -> Void = { _ in }
