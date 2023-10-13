@@ -2,8 +2,8 @@ import Foundation
 import VaultCore
 
 struct ManagedVaultItemDecoder {
-    func decode(code: ManagedVaultItem) throws -> VaultItem {
-        guard let otp = code.otpDetails else {
+    func decode(item: ManagedVaultItem) throws -> VaultItem {
+        guard let otp = item.otpDetails else {
             throw DecodingError.onlyOTPIsSupportedForNow
         }
         let otpCode = try GenericOTPAuthCode(

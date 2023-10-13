@@ -32,7 +32,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeManagedCode(digits: value)
 
-            let decoded = try sut.decode(code: code)
+            let decoded = try sut.decode(item: code)
             XCTAssertEqual(decoded.otpCode?.data.digits, digits)
         }
     }
@@ -43,7 +43,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeManagedCode(digits: value)
 
-            XCTAssertThrowsError(try sut.decode(code: code))
+            XCTAssertThrowsError(try sut.decode(item: code))
         }
     }
 
@@ -52,7 +52,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(accountName: accountName)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.data.accountName, accountName)
     }
 
@@ -61,7 +61,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(issuer: issuerName)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.data.issuer, issuerName)
     }
 
@@ -69,7 +69,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(issuer: nil)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertNil(decoded.otpCode?.data.issuer)
     }
 
@@ -77,7 +77,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(authType: "totp", period: 69)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.type, .totp(period: 69))
     }
 
@@ -85,14 +85,14 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(authType: "totp", period: nil)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeType_decodesHOTPWithCounter() throws {
         let code = makeManagedCode(authType: "hotp", counter: 69)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.type, .hotp(counter: 69))
     }
 
@@ -100,7 +100,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(authType: "hotp", counter: nil)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeAlgorithm_decodesValidAlgorithm() throws {
@@ -113,7 +113,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let code = makeManagedCode(algorithm: string)
             let sut = makeSUT()
 
-            let decoded = try sut.decode(code: code)
+            let decoded = try sut.decode(item: code)
             XCTAssertEqual(decoded.otpCode?.data.algorithm, algo)
         }
     }
@@ -122,7 +122,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(algorithm: "OTHER")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeSecret_decodesFormat() throws {
@@ -133,7 +133,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let code = makeManagedCode(secretFormat: string)
             let sut = makeSUT()
 
-            let decoded = try sut.decode(code: code)
+            let decoded = try sut.decode(item: code)
             XCTAssertEqual(decoded.otpCode?.data.secret.format, format)
         }
     }
@@ -142,14 +142,14 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(secretFormat: "INVALID")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeSecret_decodesEmptyData() throws {
         let code = makeManagedCode(secretData: Data())
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.data.secret.data, Data())
     }
 
@@ -158,7 +158,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(secretData: data)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
+        let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.otpCode?.data.secret.data, data)
     }
 

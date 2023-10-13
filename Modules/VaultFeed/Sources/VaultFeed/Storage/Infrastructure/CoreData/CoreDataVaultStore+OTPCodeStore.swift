@@ -7,7 +7,7 @@ extension CoreDataVaultStore: VaultStoreReader {
             let results = try ManagedVaultItem.fetchAll(in: context)
             let decoder = ManagedVaultItemDecoder()
             return try results.map { managedCode in
-                let vaultItem = try decoder.decode(code: managedCode)
+                let vaultItem = try decoder.decode(item: managedCode)
                 return StoredVaultItem(
                     id: managedCode.id,
                     created: managedCode.createdDate,
