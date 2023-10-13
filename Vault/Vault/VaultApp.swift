@@ -28,10 +28,10 @@ struct VaultApp: App {
         let timer = LiveIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
         let store = InMemoryVaultStore(codes: [
-            DemoCodeFactory.totpCode(issuer: "I1"),
-            DemoCodeFactory.totpCode(issuer: "Cloudflare"),
-            DemoCodeFactory.hotpCode(issuer: "Tommy Tobes"),
-            DemoCodeFactory.hotpCode(issuer: "Ranner"),
+            DemoVaultFactory.totpCode(issuer: "Ebay"),
+            DemoVaultFactory.totpCode(issuer: "Cloudflare"),
+            DemoVaultFactory.hotpCode(issuer: "Cool Company"),
+            DemoVaultFactory.hotpCode(issuer: "Other Company"),
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: RealTOTPPreviewViewFactory(),

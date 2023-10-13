@@ -1,7 +1,7 @@
 import Foundation
 import VaultFeed
 
-enum DemoCodeFactory {
+enum DemoVaultFactory {
     static func totpCode(issuer: String = "Ebay") -> StoredVaultItem {
         .init(
             id: UUID(),
