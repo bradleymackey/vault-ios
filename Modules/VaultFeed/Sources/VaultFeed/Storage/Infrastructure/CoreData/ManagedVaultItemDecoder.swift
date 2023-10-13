@@ -3,10 +3,31 @@ import VaultCore
 
 struct ManagedVaultItemDecoder {
     func decode(item: ManagedVaultItem) throws -> StoredVaultItem {
-        guard let otp = item.otpDetails else {
-            throw DecodingError.onlyOTPIsSupportedForNow
+        if let otp = item.otpDetails {
+            let otpCode = try decodeOTPCode(details: otp)
+            return StoredVaultItem(
+                id: item.id,
+                created: item.createdDate,
+                updated: item.updatedDate,
+                userDescription: item.userDescription,
+                item: .otpCode(otpCode)
+            )
+        } else if let note = item.noteDetails {
+            return StoredVaultItem(
+                id: item.id,
+                created: item.createdDate,
+                updated: item.updatedDate,
+                userDescription: item.userDescription,
+                item: .secureNote(.init(title: "", contents: ""))
+            )
+        } else {
+            // Not any kind of item that we recognise!
+            throw DecodingError.missingDataInModel
         }
-        let otpCode = try GenericOTPAuthCode(
+    }
+
+    private func decodeOTPCode(details otp: ManagedOTPDetails) throws -> GenericOTPAuthCode {
+        try GenericOTPAuthCode(
             type: decodeType(otp: otp),
             data: .init(
                 secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),
@@ -15,13 +36,6 @@ struct ManagedVaultItemDecoder {
                 accountName: otp.accountName,
                 issuer: otp.issuer
             )
-        )
-        return StoredVaultItem(
-            id: item.id,
-            created: item.createdDate,
-            updated: item.updatedDate,
-            userDescription: item.userDescription,
-            item: .otpCode(otpCode)
         )
     }
 
@@ -32,7 +46,7 @@ struct ManagedVaultItemDecoder {
         case missingCounterForHOTP
         case invalidAlgorithm
         case invalidSecretFormat
-        case onlyOTPIsSupportedForNow
+        case missingDataInModel
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {

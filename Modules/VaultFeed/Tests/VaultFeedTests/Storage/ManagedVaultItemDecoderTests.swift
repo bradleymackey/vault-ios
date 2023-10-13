@@ -207,6 +207,50 @@ extension ManagedVaultItemDecoderTests {
     }
 }
 
+// MARK: - Secure Note
+
+extension ManagedVaultItemDecoderTests {
+    func test_decodeNoteID_isValidID() throws {
+        let sut = makeSUT()
+
+        let id = UUID()
+        let note = makeManagedSecureNote(id: id)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.id, id)
+    }
+
+    func test_decodeNoteCreatedDate_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let date = Date(timeIntervalSince1970: 123_456)
+        let note = makeManagedSecureNote(createdDate: date)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.created, date)
+    }
+
+    func test_decodeNoteUpdatedDate_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let date = Date(timeIntervalSince1970: 123_456)
+        let note = makeManagedSecureNote(updatedDate: date)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.updated, date)
+    }
+
+    func test_decodeNoteUserDescription_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let description = "this is my description \(UUID().uuidString)"
+        let note = makeManagedSecureNote(userDescription: description)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.userDescription, description)
+    }
+}
+
 // MARK: - Helpers
 
 extension ManagedVaultItemDecoderTests {
@@ -248,6 +292,29 @@ extension ManagedVaultItemDecoderTests {
         otp.secretFormat = secretFormat
 
         item.otpDetails = otp
+        return item
+    }
+
+    private func makeManagedSecureNote(
+        id: UUID = UUID(),
+        createdDate: Date = Date(),
+        updatedDate: Date = Date(),
+        userDescription: String? = "user description",
+        title: String = "my note title",
+        contents: String = "my note contents"
+    ) -> ManagedVaultItem {
+        let context = anyContext()
+        let item = ManagedVaultItem(context: context)
+        item.id = id
+        item.createdDate = createdDate
+        item.updatedDate = updatedDate
+        item.userDescription = userDescription
+
+        let note = ManagedNoteDetails(context: context)
+        note.title = title
+        note.rawContents = contents
+
+        item.noteDetails = note
         return item
     }
 
