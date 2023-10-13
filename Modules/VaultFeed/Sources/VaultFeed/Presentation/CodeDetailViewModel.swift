@@ -63,7 +63,7 @@ public final class CodeDetailViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
-            try await editor.update(code: storedCode, edits: editingModel.detail)
+            try await editor.update(item: storedCode, edits: editingModel.detail)
             isInEditMode = false
             editingModel.didPersist()
         } catch {

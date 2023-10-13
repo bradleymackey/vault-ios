@@ -1,7 +1,7 @@
 import Foundation
 
 public protocol VaultDetailEditor {
-    func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws
+    func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws
     func deleteCode(id: UUID) async throws
 }
 
@@ -12,11 +12,11 @@ public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
         self.codeFeed = codeFeed
     }
 
-    public func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws {
-        var storedCode = code
+    public func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
+        var storedCode = item
         storedCode.userDescription = edits.description
 
-        switch code.item {
+        switch item.item {
         case var .otpCode(otpCode):
             otpCode.data.accountName = edits.accountNameTitle
             otpCode.data.issuer = edits.issuerTitle
@@ -25,7 +25,7 @@ public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
             break
         }
 
-        try await codeFeed.update(id: code.id, item: storedCode.asWritable)
+        try await codeFeed.update(id: item.id, item: storedCode.asWritable)
     }
 
     public func deleteCode(id: UUID) async throws {

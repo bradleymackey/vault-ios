@@ -274,8 +274,8 @@ extension CodeDetailViewModelTests {
     private class CodeDetailEditorMock: VaultDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
         var updateCodeCalled: (StoredVaultItem, CodeDetailEdits) async -> Void = { _, _ in }
-        func update(code: StoredVaultItem, edits: CodeDetailEdits) async throws {
-            await updateCodeCalled(code, edits)
+        func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
+            await updateCodeCalled(item, edits)
             try updateCodeResult.get()
         }
 
