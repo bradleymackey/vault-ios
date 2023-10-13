@@ -17,9 +17,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "OTPCoreTests"
-               BuildableName = "OTPCoreTests"
-               BlueprintName = "OTPCoreTests"
+               BlueprintIdentifier = "VaultCoreTests"
+               BuildableName = "VaultCoreTests"
+               BlueprintName = "VaultCoreTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
