@@ -33,11 +33,13 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
             case let .otpCode(otpCode):
                 XCTAssertEqual(otpCode.data.accountName, "new account name")
                 XCTAssertEqual(otpCode.data.issuer, "new issuer name")
+            case .secureNote:
+                XCTFail("invalid kind")
             }
             exp.fulfill()
         }
 
-        try await sut.update(code: item, edits: edits)
+        try await sut.update(item: item, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -62,7 +64,7 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
 
 extension CodeFeedCodeDetailEditorAdapterTests {
     private func makeSUT(feed: any VaultFeed) -> VaultFeedVaultDetailEditorAdapter {
-        VaultFeedVaultDetailEditorAdapter(codeFeed: feed)
+        VaultFeedVaultDetailEditorAdapter(vaultFeed: feed)
     }
 
     private class StubCodeFeed: VaultFeed {
@@ -73,9 +75,9 @@ extension CodeFeedCodeDetailEditorAdapterTests {
         }
 
         var updateCalled: (UUID, StoredVaultItem.Write) -> Void = { _, _ in }
-        func update(id: UUID, code: StoredVaultItem.Write) async throws {
+        func update(id: UUID, item: StoredVaultItem.Write) async throws {
             calls.append("\(#function)")
-            updateCalled(id, code)
+            updateCalled(id, item)
         }
 
         var deleteCalled: (UUID) -> Void = { _ in }

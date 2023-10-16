@@ -19,19 +19,19 @@ extension InMemoryVaultStore: VaultStoreWriter {
     struct CodeNotFound: Error {}
 
     @discardableResult
-    public func insert(code: StoredVaultItem.Write) async throws -> UUID {
+    public func insert(item: StoredVaultItem.Write) async throws -> UUID {
         let code = StoredVaultItem(
             id: UUID(),
             created: Date(),
             updated: Date(),
-            userDescription: code.userDescription,
-            item: code.item
+            userDescription: item.userDescription,
+            item: item.item
         )
         codes.append(code)
         return code.id
     }
 
-    public func update(id: UUID, code: StoredVaultItem.Write) async throws {
+    public func update(id: UUID, item: StoredVaultItem.Write) async throws {
         guard let index = codes.firstIndex(where: { $0.id == id }) else {
             throw CodeNotFound()
         }
@@ -40,8 +40,8 @@ extension InMemoryVaultStore: VaultStoreWriter {
             id: id,
             created: existingCode.created,
             updated: Date(),
-            userDescription: code.userDescription,
-            item: code.item
+            userDescription: item.userDescription,
+            item: item.item
         )
         codes[index] = newCode
     }

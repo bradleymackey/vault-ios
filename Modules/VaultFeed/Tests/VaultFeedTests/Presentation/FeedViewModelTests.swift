@@ -73,7 +73,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), code: uniqueWritableVaultItem())
+        try await sut.update(id: UUID(), item: uniqueWritableVaultItem())
 
         await fulfillment(of: [exp])
     }
@@ -87,7 +87,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), code: uniqueWritableVaultItem())
+        try await sut.update(id: UUID(), item: uniqueWritableVaultItem())
 
         await fulfillment(of: [exp])
     }
@@ -102,7 +102,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try? await sut.update(id: UUID(), code: uniqueWritableVaultItem())
+        try? await sut.update(id: UUID(), item: uniqueWritableVaultItem())
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -113,7 +113,7 @@ final class FeedViewModelTests: XCTestCase {
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
-        try await sut.update(id: invalidateId, code: uniqueWritableVaultItem())
+        try await sut.update(id: invalidateId, item: uniqueWritableVaultItem())
 
         XCTAssertEqual(cache1.calledInvalidate, [invalidateId])
         XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
@@ -206,12 +206,12 @@ final class FeedViewModelTests: XCTestCase {
             .init(codes: [])
         }
 
-        func insert(code _: StoredVaultItem.Write) async throws -> UUID {
+        func insert(item _: StoredVaultItem.Write) async throws -> UUID {
             UUID()
         }
 
         var updateStoreCalled: () -> Void = {}
-        func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
+        func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
             updateStoreCalled()
         }
 
@@ -229,11 +229,11 @@ final class FeedViewModelTests: XCTestCase {
             throw error
         }
 
-        func insert(code _: StoredVaultItem.Write) async throws -> UUID {
+        func insert(item _: StoredVaultItem.Write) async throws -> UUID {
             throw error
         }
 
-        func update(id _: UUID, code _: StoredVaultItem.Write) async throws {
+        func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
             throw error
         }
 

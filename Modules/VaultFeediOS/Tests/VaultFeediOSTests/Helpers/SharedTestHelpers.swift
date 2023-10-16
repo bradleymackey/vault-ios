@@ -19,11 +19,11 @@ func uniqueCode() -> GenericOTPAuthCode {
     )
 }
 
-func uniqueStoredCode() -> StoredVaultItem {
+func uniqueStoredVaultItem() -> StoredVaultItem {
     StoredVaultItem(id: UUID(), created: Date(), updated: Date(), userDescription: "any", item: .otpCode(uniqueCode()))
 }
 
-func uniqueWritableCode() -> StoredVaultItem.Write {
+func uniqueWritableVaultItem() -> StoredVaultItem.Write {
     .init(userDescription: "any", item: .otpCode(uniqueCode()))
 }
 

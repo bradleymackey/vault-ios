@@ -25,6 +25,8 @@ public final class CodeDetailViewModel {
                 accountNameTitle: otpCode.data.accountName,
                 description: storedCode.userDescription ?? ""
             ))
+        case .secureNote:
+            editingModel = CodeDetailEditingModel(detail: .init())
         }
     }
 
@@ -38,6 +40,8 @@ public final class CodeDetailViewModel {
                 entries: Self.makeInfoEntries(otpCode)
             )
             return [details]
+        case .secureNote:
+            return []
         }
     }
 
@@ -59,7 +63,7 @@ public final class CodeDetailViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
-            try await editor.update(code: storedCode, edits: editingModel.detail)
+            try await editor.update(item: storedCode, edits: editingModel.detail)
             isInEditMode = false
             editingModel.didPersist()
         } catch {

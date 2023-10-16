@@ -18,6 +18,50 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
 
         super.tearDown()
     }
+}
+
+// MARK: - OTP Code
+
+extension ManagedVaultItemDecoderTests {
+    func test_decodeID_isValidID() throws {
+        let sut = makeSUT()
+
+        let id = UUID()
+        let code = makeManagedCode(id: id)
+
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.id, id)
+    }
+
+    func test_decodeCreatedDate_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let date = Date(timeIntervalSince1970: 123_456)
+        let code = makeManagedCode(createdDate: date)
+
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.created, date)
+    }
+
+    func test_decodeUpdatedDate_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let date = Date(timeIntervalSince1970: 123_456)
+        let code = makeManagedCode(updatedDate: date)
+
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.updated, date)
+    }
+
+    func test_decodeUserDescription_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let description = "this is my description \(UUID().uuidString)"
+        let code = makeManagedCode(userDescription: description)
+
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.userDescription, description)
+    }
 
     func test_decodeDigits_decodesToCorrectValue() throws {
         let samples: [OTPAuthDigits: NSNumber] = [
@@ -32,8 +76,8 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeManagedCode(digits: value)
 
-            let decoded = try sut.decode(code: code)
-            XCTAssertEqual(decoded.otpCode?.data.digits, digits)
+            let decoded = try sut.decode(item: code)
+            XCTAssertEqual(decoded.item.otpCode?.data.digits, digits)
         }
     }
 
@@ -43,7 +87,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeManagedCode(digits: value)
 
-            XCTAssertThrowsError(try sut.decode(code: code))
+            XCTAssertThrowsError(try sut.decode(item: code))
         }
     }
 
@@ -52,8 +96,8 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(accountName: accountName)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.otpCode?.data.accountName, accountName)
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.item.otpCode?.data.accountName, accountName)
     }
 
     func test_decodeIssuer_decodesValueIfExists() throws {
@@ -61,46 +105,46 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(issuer: issuerName)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.otpCode?.data.issuer, issuerName)
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.item.otpCode?.data.issuer, issuerName)
     }
 
     func test_decodeIssuer_decodesNilIfDoesNotExist() throws {
         let code = makeManagedCode(issuer: nil)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertNil(decoded.otpCode?.data.issuer)
+        let decoded = try sut.decode(item: code)
+        XCTAssertNil(decoded.item.otpCode?.data.issuer)
     }
 
     func test_decodeType_decodesTOTPWithPeriod() throws {
         let code = makeManagedCode(authType: "totp", period: 69)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.otpCode?.type, .totp(period: 69))
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.item.otpCode?.type, .totp(period: 69))
     }
 
     func test_decodeType_totpWithoutPeriodThrows() throws {
         let code = makeManagedCode(authType: "totp", period: nil)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeType_decodesHOTPWithCounter() throws {
         let code = makeManagedCode(authType: "hotp", counter: 69)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.otpCode?.type, .hotp(counter: 69))
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.item.otpCode?.type, .hotp(counter: 69))
     }
 
     func test_decodeType_hotpWithoutCounterThrows() throws {
         let code = makeManagedCode(authType: "hotp", counter: nil)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeAlgorithm_decodesValidAlgorithm() throws {
@@ -113,8 +157,8 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let code = makeManagedCode(algorithm: string)
             let sut = makeSUT()
 
-            let decoded = try sut.decode(code: code)
-            XCTAssertEqual(decoded.otpCode?.data.algorithm, algo)
+            let decoded = try sut.decode(item: code)
+            XCTAssertEqual(decoded.item.otpCode?.data.algorithm, algo)
         }
     }
 
@@ -122,7 +166,7 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(algorithm: "OTHER")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeSecret_decodesFormat() throws {
@@ -133,8 +177,8 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
             let code = makeManagedCode(secretFormat: string)
             let sut = makeSUT()
 
-            let decoded = try sut.decode(code: code)
-            XCTAssertEqual(decoded.otpCode?.data.secret.format, format)
+            let decoded = try sut.decode(item: code)
+            XCTAssertEqual(decoded.item.otpCode?.data.secret.format, format)
         }
     }
 
@@ -142,15 +186,15 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(secretFormat: "INVALID")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(code: code))
+        XCTAssertThrowsError(try sut.decode(item: code))
     }
 
     func test_decodeSecret_decodesEmptyData() throws {
         let code = makeManagedCode(secretData: Data())
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.otpCode?.data.secret.data, Data())
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.item.otpCode?.data.secret.data, Data())
     }
 
     func test_decodeSecret_decodesExistingData() throws {
@@ -158,17 +202,87 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         let code = makeManagedCode(secretData: data)
         let sut = makeSUT()
 
-        let decoded = try sut.decode(code: code)
-        XCTAssertEqual(decoded.otpCode?.data.secret.data, data)
+        let decoded = try sut.decode(item: code)
+        XCTAssertEqual(decoded.item.otpCode?.data.secret.data, data)
+    }
+}
+
+// MARK: - Secure Note
+
+extension ManagedVaultItemDecoderTests {
+    func test_decodeNoteID_isValidID() throws {
+        let sut = makeSUT()
+
+        let id = UUID()
+        let note = makeManagedSecureNote(id: id)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.id, id)
     }
 
-    // MARK: - Helpers
+    func test_decodeNoteCreatedDate_decodesToCorrectInput() throws {
+        let sut = makeSUT()
 
+        let date = Date(timeIntervalSince1970: 123_456)
+        let note = makeManagedSecureNote(createdDate: date)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.created, date)
+    }
+
+    func test_decodeNoteUpdatedDate_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let date = Date(timeIntervalSince1970: 123_456)
+        let note = makeManagedSecureNote(updatedDate: date)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.updated, date)
+    }
+
+    func test_decodeNoteUserDescription_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let description = "this is my description \(UUID().uuidString)"
+        let note = makeManagedSecureNote(userDescription: description)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.userDescription, description)
+    }
+
+    func test_decodeNoteTitle_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let title = "this is my note title"
+        let note = makeManagedSecureNote(title: title)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.item.secureNote?.title, title)
+    }
+
+    func test_decodeNoteUserContents_decodesToCorrectInput() throws {
+        let sut = makeSUT()
+
+        let contents = "this is my note contents"
+        let note = makeManagedSecureNote(contents: contents)
+
+        let decoded = try sut.decode(item: note)
+        XCTAssertEqual(decoded.item.secureNote?.contents, contents)
+    }
+}
+
+// MARK: - Helpers
+
+extension ManagedVaultItemDecoderTests {
     private func makeSUT() -> ManagedVaultItemDecoder {
         ManagedVaultItemDecoder()
     }
 
     private func makeManagedCode(
+        id: UUID = UUID(),
+        createdDate: Date = Date(),
+        updatedDate: Date = Date(),
+        userDescription: String? = "user description",
         accountName: String = "any",
         algorithm: String = "SHA1",
         authType: String = "totp",
@@ -180,8 +294,11 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         secretFormat: String = "BASE_32"
     ) -> ManagedVaultItem {
         let context = anyContext()
-        let code = ManagedVaultItem(context: context)
-        code.id = UUID()
+        let item = ManagedVaultItem(context: context)
+        item.id = id
+        item.createdDate = createdDate
+        item.updatedDate = updatedDate
+        item.userDescription = userDescription
 
         let otp = ManagedOTPDetails(context: context)
         otp.accountName = accountName
@@ -194,8 +311,31 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
         otp.secretData = secretData
         otp.secretFormat = secretFormat
 
-        code.otpDetails = otp
-        return code
+        item.otpDetails = otp
+        return item
+    }
+
+    private func makeManagedSecureNote(
+        id: UUID = UUID(),
+        createdDate: Date = Date(),
+        updatedDate: Date = Date(),
+        userDescription: String? = "user description",
+        title: String = "my note title",
+        contents: String = "my note contents"
+    ) -> ManagedVaultItem {
+        let context = anyContext()
+        let item = ManagedVaultItem(context: context)
+        item.id = id
+        item.createdDate = createdDate
+        item.updatedDate = updatedDate
+        item.userDescription = userDescription
+
+        let note = ManagedNoteDetails(context: context)
+        note.title = title
+        note.rawContents = contents
+
+        item.noteDetails = note
+        return item
     }
 
     private func anyContext() -> NSManagedObjectContext {

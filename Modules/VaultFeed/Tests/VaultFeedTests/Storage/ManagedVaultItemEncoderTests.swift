@@ -18,35 +18,39 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
 
         super.tearDown()
     }
+}
 
+// MARK: - Shared
+
+extension ManagedVaultItemEncoderTests {
     func test_encodeExisting_retainsExistingUUID() {
         let sut = makeSUT()
 
-        let existing = sut.encode(code: uniqueWritableVaultItem())
+        let existing = sut.encode(item: uniqueWritableVaultItem())
         let existingID = existing.id
 
-        let newCode = sut.encode(code: uniqueWritableVaultItem(), into: existing)
+        let newCode = sut.encode(item: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.id, existingID, "ID should not change for update")
     }
 
     func test_encodeExisting_retainsCreatedDate() {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(code: uniqueWritableVaultItem())
+        let existing = sut1.encode(item: uniqueWritableVaultItem())
         let existingCreatedDate = existing.createdDate
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(code: uniqueWritableVaultItem(), into: existing)
+        let newCode = sut2.encode(item: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.createdDate, existingCreatedDate, "Date should not change for update")
     }
 
     func test_encodeExisting_updatesUpdatedDate() {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(code: uniqueWritableVaultItem())
+        let existing = sut1.encode(item: uniqueWritableVaultItem())
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(code: uniqueWritableVaultItem(), into: existing)
+        let newCode = sut2.encode(item: uniqueWritableVaultItem(), into: existing)
         XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should not change for update")
     }
 
@@ -56,12 +60,33 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue())
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertFalse(seen.contains(encoded.id))
             seen.insert(encoded.id)
         }
     }
 
+    func test_encodeUserDescription_encodesNil() {
+        let sut = makeSUT()
+        let code = makeWritable(userDescription: nil, code: uniqueCode())
+
+        let encoded = sut.encode(item: code)
+        XCTAssertNil(encoded.userDescription)
+    }
+
+    func test_encodeUserDescription_encodesString() {
+        let sut = makeSUT()
+        let desc = UUID().uuidString
+        let code = makeWritable(userDescription: desc, code: uniqueCode())
+
+        let encoded = sut.encode(item: code)
+        XCTAssertEqual(encoded.userDescription, desc)
+    }
+}
+
+// MARK: - OTP Code
+
+extension ManagedVaultItemEncoderTests {
     func test_encodeDigits_encodesToNSNumber() {
         let samples: [OTPAuthDigits: NSNumber] = [
             OTPAuthDigits(value: 6): 6,
@@ -74,7 +99,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue(digits: digits))
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.digits, value)
         }
     }
@@ -83,7 +108,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.authType, "totp")
     }
 
@@ -91,7 +116,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.authType, "hotp")
     }
 
@@ -99,7 +124,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp(period: 69)))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.period, 69)
     }
 
@@ -107,7 +132,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.period)
     }
 
@@ -115,7 +140,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp(counter: 69)))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.counter, 69)
     }
 
@@ -123,7 +148,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.counter)
     }
 
@@ -132,7 +157,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let accountName = UUID().uuidString
         let code = makeWritable(code: makeCodeValue(accountName: accountName))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.accountName, accountName)
     }
 
@@ -141,7 +166,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let issuer = UUID().uuidString
         let code = makeWritable(code: makeCodeValue(issuer: issuer))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
@@ -149,7 +174,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(issuer: nil))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.issuer)
     }
 
@@ -163,7 +188,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue(algorithm: algo))
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.algorithm, expected)
         }
     }
@@ -177,7 +202,7 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
             let secret = OTPAuthSecret(data: Data(), format: format)
             let code = makeWritable(code: makeCodeValue(secret: secret))
 
-            let encoded = sut.encode(code: code)
+            let encoded = sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.secretFormat, expected)
         }
     }
@@ -188,29 +213,34 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
         let secret = OTPAuthSecret(data: secretData, format: .base32)
         let code = makeWritable(code: makeCodeValue(secret: secret))
 
-        let encoded = sut.encode(code: code)
+        let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.secretData, secretData)
     }
+}
 
-    func test_encodeUserDescription_encodesNil() {
+// MARK: - Secure Note
+
+extension ManagedVaultItemEncoderTests {
+    func test_encodeNoteTitle_encodesToString() {
         let sut = makeSUT()
-        let code = makeWritable(userDescription: nil, code: uniqueCode())
+        let item = makeWritable(note: makeSecretNoteValue(title: "this is my title"))
 
-        let encoded = sut.encode(code: code)
-        XCTAssertNil(encoded.userDescription)
+        let encoded = sut.encode(item: item)
+        XCTAssertEqual(encoded.noteDetails?.title, "this is my title")
     }
 
-    func test_encodeUserDescription_encodesString() {
+    func test_encodeNoteContents_encodesToString() {
         let sut = makeSUT()
-        let desc = UUID().uuidString
-        let code = makeWritable(userDescription: desc, code: uniqueCode())
+        let item = makeWritable(note: makeSecretNoteValue(contents: "this is the note contents"))
 
-        let encoded = sut.encode(code: code)
-        XCTAssertEqual(encoded.userDescription, desc)
+        let encoded = sut.encode(item: item)
+        XCTAssertEqual(encoded.noteDetails?.rawContents, "this is the note contents")
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
+extension ManagedVaultItemEncoderTests {
     private func makeSUT(currentDate: @escaping () -> Date = { Date() }) -> ManagedVaultItemEncoder {
         ManagedVaultItemEncoder(context: anyContext(), currentDate: currentDate)
     }
@@ -240,6 +270,20 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
                 issuer: issuer
             )
         )
+    }
+
+    private func makeWritable(
+        userDescription: String? = nil,
+        note: SecureNote
+    ) -> StoredVaultItem.Write {
+        StoredVaultItem.Write(userDescription: userDescription, item: .secureNote(note))
+    }
+
+    private func makeSecretNoteValue(
+        title: String = "note title",
+        contents: String = "note contents"
+    ) -> SecureNote {
+        SecureNote(title: title, contents: contents)
     }
 
     private func anyContext() -> NSManagedObjectContext {

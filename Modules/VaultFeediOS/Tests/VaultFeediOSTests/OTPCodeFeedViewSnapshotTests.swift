@@ -26,7 +26,7 @@ final class OTPCodeFeedViewSnapshotTests: XCTestCase {
 
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredCode()]
+        store.codesToRetrieve = [uniqueStoredVaultItem()]
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()
@@ -38,7 +38,7 @@ final class OTPCodeFeedViewSnapshotTests: XCTestCase {
 
     func test_layout_multipleCodesAtMediumSize() async throws {
         let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredCode(), uniqueStoredCode(), uniqueStoredCode()]
+        store.codesToRetrieve = [uniqueStoredVaultItem(), uniqueStoredVaultItem(), uniqueStoredVaultItem()]
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()
@@ -50,7 +50,7 @@ final class OTPCodeFeedViewSnapshotTests: XCTestCase {
 
     func test_layout_singleCodeAtLargeSize() async throws {
         let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredCode()]
+        store.codesToRetrieve = [uniqueStoredVaultItem()]
         let viewModel = FeedViewModel(store: store)
         let settings = LocalSettings(defaults: nonPersistentDefaults())
         settings.state.previewSize = .large
@@ -64,7 +64,7 @@ final class OTPCodeFeedViewSnapshotTests: XCTestCase {
 
     func test_layout_multipleCodesAtLargeSize() async throws {
         let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredCode(), uniqueStoredCode(), uniqueStoredCode()]
+        store.codesToRetrieve = [uniqueStoredVaultItem(), uniqueStoredVaultItem(), uniqueStoredVaultItem()]
         let viewModel = FeedViewModel(store: store)
         let settings = LocalSettings(defaults: nonPersistentDefaults())
         settings.state.previewSize = .large

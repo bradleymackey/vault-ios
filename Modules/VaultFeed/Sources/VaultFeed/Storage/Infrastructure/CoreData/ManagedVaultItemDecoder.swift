@@ -2,11 +2,33 @@ import Foundation
 import VaultCore
 
 struct ManagedVaultItemDecoder {
-    func decode(code: ManagedVaultItem) throws -> VaultItem {
-        guard let otp = code.otpDetails else {
-            throw DecodingError.onlyOTPIsSupportedForNow
+    func decode(item: ManagedVaultItem) throws -> StoredVaultItem {
+        if let otp = item.otpDetails {
+            let otpCode = try decodeOTPCode(details: otp)
+            return StoredVaultItem(
+                id: item.id,
+                created: item.createdDate,
+                updated: item.updatedDate,
+                userDescription: item.userDescription,
+                item: .otpCode(otpCode)
+            )
+        } else if let note = item.noteDetails {
+            let note = SecureNote(title: note.title, contents: note.rawContents ?? "")
+            return StoredVaultItem(
+                id: item.id,
+                created: item.createdDate,
+                updated: item.updatedDate,
+                userDescription: item.userDescription,
+                item: .secureNote(note)
+            )
+        } else {
+            // Not any kind of item that we recognise!
+            throw DecodingError.missingDataInModel
         }
-        let otpCode = try GenericOTPAuthCode(
+    }
+
+    private func decodeOTPCode(details otp: ManagedOTPDetails) throws -> GenericOTPAuthCode {
+        try GenericOTPAuthCode(
             type: decodeType(otp: otp),
             data: .init(
                 secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),
@@ -16,7 +38,6 @@ struct ManagedVaultItemDecoder {
                 issuer: otp.issuer
             )
         )
-        return .otpCode(otpCode)
     }
 
     enum DecodingError: Error {
@@ -26,7 +47,7 @@ struct ManagedVaultItemDecoder {
         case missingCounterForHOTP
         case invalidAlgorithm
         case invalidSecretFormat
-        case onlyOTPIsSupportedForNow
+        case missingDataInModel
     }
 
     private func decode(digits: NSNumber) throws -> OTPAuthDigits {
