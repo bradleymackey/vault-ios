@@ -2,7 +2,7 @@ import Foundation
 import VaultCore
 
 public protocol OTPCodeDetailEditor {
-    func update(id: UUID, item: GenericOTPAuthCode, edits: OTPCodeDetailEdits) async throws
+    func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws
     func deleteCode(id: UUID) async throws
 }
 
@@ -13,7 +13,7 @@ public struct VaultFeedOTPCodeDetailEditorAdapter: OTPCodeDetailEditor {
         self.vaultFeed = vaultFeed
     }
 
-    public func update(id: UUID, item: GenericOTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+    public func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
         var item = item
         item.data.accountName = edits.accountNameTitle
         item.data.issuer = edits.issuerTitle

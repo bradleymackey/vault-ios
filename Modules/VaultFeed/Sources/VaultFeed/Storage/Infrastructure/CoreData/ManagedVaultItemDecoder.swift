@@ -21,8 +21,8 @@ struct ManagedVaultItemDecoder {
         }
     }
 
-    private func decodeOTPCode(details otp: ManagedOTPDetails) throws -> GenericOTPAuthCode {
-        try GenericOTPAuthCode(
+    private func decodeOTPCode(details otp: ManagedOTPDetails) throws -> OTPAuthCode {
+        try OTPAuthCode(
             type: decodeType(otp: otp),
             data: .init(
                 secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),

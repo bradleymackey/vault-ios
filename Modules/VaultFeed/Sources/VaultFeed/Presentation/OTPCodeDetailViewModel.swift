@@ -5,7 +5,7 @@ import VaultCore
 @MainActor
 @Observable
 public final class OTPCodeDetailViewModel {
-    public let storedCode: GenericOTPAuthCode
+    public let storedCode: OTPAuthCode
     public let storedMetdata: StoredVaultItem.Metadata
     public var editingModel: OTPCodeDetailEditingModel
 
@@ -17,7 +17,7 @@ public final class OTPCodeDetailViewModel {
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
     public init(
-        storedCode: GenericOTPAuthCode,
+        storedCode: OTPAuthCode,
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor
     ) {
@@ -154,7 +154,7 @@ public extension OTPCodeDetailViewModel {
 }
 
 extension OTPCodeDetailViewModel {
-    private static func makeInfoEntries(_ code: GenericOTPAuthCode) -> [DetailEntry] {
+    private static func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
         let formatter = OTPCodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
         entries.append(

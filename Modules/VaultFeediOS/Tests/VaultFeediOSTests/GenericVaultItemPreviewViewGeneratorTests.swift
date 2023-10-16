@@ -21,7 +21,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let hotp = MockHOTPGenerator()
         let sut = makeSUT(totp: totp, hotp: hotp)
 
-        let code = GenericOTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
+        let code = OTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
         let view = sut.makeVaultPreviewView(id: UUID(), item: .otpCode(code), behaviour: .normal)
 
         let text = try view.inspect().text().string()
@@ -33,7 +33,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let hotp = MockHOTPGenerator()
         let sut = makeSUT(totp: totp, hotp: hotp)
 
-        let code = GenericOTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
+        let code = OTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
         let view = sut.makeVaultPreviewView(id: UUID(), item: .otpCode(code), behaviour: .normal)
 
         let text = try view.inspect().text().string()

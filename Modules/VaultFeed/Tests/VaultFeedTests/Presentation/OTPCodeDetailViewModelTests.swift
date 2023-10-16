@@ -261,7 +261,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
 extension OTPCodeDetailViewModelTests {
     private func makeSUT(
-        code: GenericOTPAuthCode = uniqueCode(),
+        code: OTPAuthCode = uniqueCode(),
         metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
         editor: CodeDetailEditorMock = CodeDetailEditorMock(),
         file: StaticString = #filePath,
@@ -275,8 +275,8 @@ extension OTPCodeDetailViewModelTests {
 
     private class CodeDetailEditorMock: OTPCodeDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
-        var updateCodeCalled: (UUID, GenericOTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
-        func update(id: UUID, item: GenericOTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+        var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
+        func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
             await updateCodeCalled(id, item, edits)
             try updateCodeResult.get()
         }

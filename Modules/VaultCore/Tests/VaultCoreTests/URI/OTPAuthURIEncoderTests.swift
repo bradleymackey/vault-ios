@@ -202,8 +202,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         secret: OTPAuthSecret = .init(data: Data(), format: .base32)
-    ) -> GenericOTPAuthCode {
-        GenericOTPAuthCode(
+    ) -> OTPAuthCode {
+        OTPAuthCode(
             type: type,
             data: .init(
                 secret: secret,

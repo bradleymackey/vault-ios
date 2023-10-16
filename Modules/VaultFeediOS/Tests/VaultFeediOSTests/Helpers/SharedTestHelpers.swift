@@ -8,9 +8,9 @@ func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)
 }
 
-func uniqueCode() -> GenericOTPAuthCode {
+func uniqueCode() -> OTPAuthCode {
     let randomData = Data.random(count: 50)
-    return GenericOTPAuthCode(
+    return OTPAuthCode(
         type: .totp(),
         data: .init(
             secret: .init(data: randomData, format: .base32),
