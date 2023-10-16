@@ -2,14 +2,14 @@ import Combine
 import Foundation
 import VaultCore
 
-public protocol CodeTimerUpdater {
+public protocol OTPCodeTimerUpdater {
     func recalculate()
-    func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never>
+    func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never>
 }
 
 /// Controller for producing timers for a given code, according to a clock.
-public final class CodeTimerController: CodeTimerUpdater {
-    private let timerStateSubject: CurrentValueSubject<OTPTimerState, Never>
+public final class OTPCodeTimerController: OTPCodeTimerUpdater {
+    private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
     private let period: UInt64
     private var timerPublisher: AnyCancellable?
     private let timer: any IntervalTimer
@@ -26,7 +26,7 @@ public final class CodeTimerController: CodeTimerUpdater {
     }
 
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
-    public func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
+    public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
         timerStateSubject.eraseToAnyPublisher()
     }
 
@@ -37,7 +37,7 @@ public final class CodeTimerController: CodeTimerUpdater {
     }
 }
 
-extension CodeTimerController {
+extension OTPCodeTimerController {
     private func scheduleNextClock() {
         let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
         timerPublisher = timer.wait(for: remaining)
@@ -47,11 +47,11 @@ extension CodeTimerController {
             }
     }
 
-    private static func timerState(currentTime: Double, period: UInt64) -> OTPTimerState {
+    private static func timerState(currentTime: Double, period: UInt64) -> OTPCodeTimerState {
         let currentCodeNumber = UInt64(currentTime) / period
         let nextCodeNumber = currentCodeNumber + 1
         let codeStart = currentCodeNumber * period
         let codeEnd = nextCodeNumber * period
-        return OTPTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
+        return OTPCodeTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
     }
 }

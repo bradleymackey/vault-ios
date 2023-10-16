@@ -5,7 +5,7 @@ import VaultFeed
 import XCTest
 
 @MainActor
-final class CodePreviewViewModelTests: XCTestCase {
+final class OTPCodePreviewViewModelTests: XCTestCase {
     func test_code_updatesWithCodes() async throws {
         let (renderer, sut) = makeSUT()
 
@@ -64,9 +64,9 @@ final class CodePreviewViewModelTests: XCTestCase {
     private func makeSUT(
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (MockCodeRenderer, CodePreviewViewModel) {
+    ) -> (MockCodeRenderer, OTPCodePreviewViewModel) {
         let renderer = MockCodeRenderer()
-        let viewModel = CodePreviewViewModel(
+        let viewModel = OTPCodePreviewViewModel(
             accountName: "any",
             issuer: "any",
             renderer: renderer

@@ -5,9 +5,9 @@ import VaultFeed
 public protocol TOTPPreviewViewFactory {
     associatedtype TOTPView: View
     func makeTOTPView(
-        viewModel: CodePreviewViewModel,
-        periodState: CodeTimerPeriodState,
-        updater: any CodeTimerUpdater,
+        viewModel: OTPCodePreviewViewModel,
+        periodState: OTPCodeTimerPeriodState,
+        updater: any OTPCodeTimerUpdater,
         behaviour: VaultItemViewBehaviour
     )
         -> TOTPView
@@ -16,9 +16,9 @@ public protocol TOTPPreviewViewFactory {
 public struct RealTOTPPreviewViewFactory: TOTPPreviewViewFactory {
     public init() {}
     public func makeTOTPView(
-        viewModel: CodePreviewViewModel,
-        periodState: CodeTimerPeriodState,
-        updater _: any CodeTimerUpdater,
+        viewModel: OTPCodePreviewViewModel,
+        periodState: OTPCodeTimerPeriodState,
+        updater _: any OTPCodeTimerUpdater,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         TOTPCodePreviewView(

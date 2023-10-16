@@ -4,7 +4,7 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class CodeIncrementerViewModel {
+public final class OTPCodeIncrementerViewModel {
     public private(set) var isButtonEnabled = true
 
     private let timer: any IntervalTimer

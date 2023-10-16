@@ -2,7 +2,7 @@ import Foundation
 import VaultFeed
 import XCTest
 
-final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
+final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let feed = StubCodeFeed()
         _ = makeSUT(feed: feed)
@@ -18,9 +18,9 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         code.data.accountName = "old account name"
         code.data.issuer = "old issuer name"
         var item = uniqueVaultItem(item: .otpCode(code))
-        item.userDescription = "old description"
+        item.metadata.userDescription = "old description"
 
-        let edits = CodeDetailEdits(
+        let edits = OTPCodeDetailEdits(
             issuerTitle: "new issuer name",
             accountNameTitle: "new account name",
             description: "new description"
@@ -39,7 +39,7 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
             exp.fulfill()
         }
 
-        try await sut.update(item: item, edits: edits)
+        try await sut.update(id: item.metadata.id, item: code, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -62,9 +62,9 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
     }
 }
 
-extension CodeFeedCodeDetailEditorAdapterTests {
-    private func makeSUT(feed: any VaultFeed) -> VaultFeedVaultDetailEditorAdapter {
-        VaultFeedVaultDetailEditorAdapter(vaultFeed: feed)
+extension OTPCodeFeedCodeDetailEditorAdapterTests {
+    private func makeSUT(feed: any VaultFeed) -> VaultFeedOTPCodeDetailEditorAdapter {
+        VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feed)
     }
 
     private class StubCodeFeed: VaultFeed {

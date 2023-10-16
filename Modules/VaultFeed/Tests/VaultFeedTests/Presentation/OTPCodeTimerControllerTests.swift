@@ -5,7 +5,7 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-final class CodeTimerControllerTests: XCTestCase {
+final class OTPCodeTimerControllerTests: XCTestCase {
     func test_timerUpdatedPublisher_publishesInitialValueImmediately() async throws {
         let (_, _, sut) = makeSUT(clock: 62, period: 30)
 
@@ -14,7 +14,7 @@ final class CodeTimerControllerTests: XCTestCase {
         let values = try await awaitPublisher(publisher, when: {
             // noop
         })
-        XCTAssertEqual(values, [OTPTimerState(startTime: 60, endTime: 90)])
+        XCTAssertEqual(values, [OTPCodeTimerState(startTime: 60, endTime: 90)])
     }
 
     func test_timerUpdatedPublisher_publishesStateForCurrentTimeOnTimerFinish() async throws {
@@ -29,9 +29,9 @@ final class CodeTimerControllerTests: XCTestCase {
             timer.finishTimer()
         })
         XCTAssertEqual(values, [
-            OTPTimerState(startTime: 30, endTime: 60), // initial time
-            OTPTimerState(startTime: 60, endTime: 90),
-            OTPTimerState(startTime: 90, endTime: 120),
+            OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
+            OTPCodeTimerState(startTime: 60, endTime: 90),
+            OTPCodeTimerState(startTime: 90, endTime: 120),
         ])
     }
 
@@ -47,9 +47,9 @@ final class CodeTimerControllerTests: XCTestCase {
             sut.recalculate()
         })
         XCTAssertEqual(values, [
-            OTPTimerState(startTime: 30, endTime: 60), // initial time
-            OTPTimerState(startTime: 300, endTime: 330),
-            OTPTimerState(startTime: 330, endTime: 360),
+            OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
+            OTPCodeTimerState(startTime: 300, endTime: 330),
+            OTPCodeTimerState(startTime: 330, endTime: 360),
         ])
     }
 
@@ -63,9 +63,9 @@ final class CodeTimerControllerTests: XCTestCase {
             sut.recalculate()
         })
         XCTAssertEqual(values, [
-            OTPTimerState(startTime: 30, endTime: 60), // initial time
-            OTPTimerState(startTime: 30, endTime: 60),
-            OTPTimerState(startTime: 30, endTime: 60),
+            OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
+            OTPCodeTimerState(startTime: 30, endTime: 60),
+            OTPCodeTimerState(startTime: 30, endTime: 60),
         ])
     }
 
@@ -76,10 +76,10 @@ final class CodeTimerControllerTests: XCTestCase {
         period: UInt64,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (EpochClock, MockIntervalTimer, CodeTimerController) {
+    ) -> (EpochClock, MockIntervalTimer, OTPCodeTimerController) {
         let timer = MockIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { clockTime })
-        let sut = CodeTimerController(timer: timer, period: period, clock: clock)
+        let sut = OTPCodeTimerController(timer: timer, period: period, clock: clock)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (clock, timer, sut)
     }

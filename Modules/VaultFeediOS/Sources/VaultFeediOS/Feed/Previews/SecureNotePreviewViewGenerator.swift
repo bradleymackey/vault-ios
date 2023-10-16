@@ -1,0 +1,33 @@
+import Foundation
+import SwiftUI
+import VaultCore
+import VaultFeed
+
+@MainActor
+public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory>: VaultItemPreviewViewGenerator {
+    public typealias PreviewItem = SecureNote
+
+    private let viewFactory: Factory
+
+    public init(
+        viewFactory: Factory
+    ) {
+        self.viewFactory = viewFactory
+    }
+
+    public func makeVaultPreviewView(id _: UUID, item: SecureNote, behaviour _: VaultItemViewBehaviour) -> some View {
+        let viewModel = SecureNotePreviewViewModel(
+            title: item.title,
+            description: "this should be the description, not the contents!"
+        )
+        return viewFactory.makeSecureNoteView(viewModel: viewModel)
+    }
+
+    public func scenePhaseDidChange(to _: ScenePhase) {
+        // noop
+    }
+
+    public func didAppear() {
+        // noop
+    }
+}

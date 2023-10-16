@@ -5,8 +5,8 @@ import VaultFeed
 public protocol HOTPPreviewViewFactory {
     associatedtype HOTPView: View
     func makeHOTPView(
-        viewModel: CodePreviewViewModel,
-        incrementer: CodeIncrementerViewModel,
+        viewModel: OTPCodePreviewViewModel,
+        incrementer: OTPCodeIncrementerViewModel,
         behaviour: VaultItemViewBehaviour
     )
         -> HOTPView
@@ -15,8 +15,8 @@ public protocol HOTPPreviewViewFactory {
 public struct RealHOTPPreviewViewFactory: HOTPPreviewViewFactory {
     public init() {}
     public func makeHOTPView(
-        viewModel: CodePreviewViewModel,
-        incrementer: CodeIncrementerViewModel,
+        viewModel: OTPCodePreviewViewModel,
+        incrementer: OTPCodeIncrementerViewModel,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         HOTPCodePreviewView(

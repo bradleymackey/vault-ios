@@ -247,7 +247,7 @@ extension ManagedVaultItemEncoderTests {
 
     private func makeWritable(
         userDescription: String? = nil,
-        code: GenericOTPAuthCode
+        code: OTPAuthCode
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(userDescription: userDescription, item: .otpCode(code))
     }
@@ -259,8 +259,8 @@ extension ManagedVaultItemEncoderTests {
         digits: OTPAuthDigits = .default,
         accountName: String = "any",
         issuer: String? = nil
-    ) -> GenericOTPAuthCode {
-        GenericOTPAuthCode(
+    ) -> OTPAuthCode {
+        OTPAuthCode(
             type: type,
             data: .init(
                 secret: secret,

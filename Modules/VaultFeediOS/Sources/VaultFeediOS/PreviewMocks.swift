@@ -2,10 +2,10 @@ import Combine
 import Foundation
 import VaultFeed
 
-final class MockCodeTimerUpdater: CodeTimerUpdater {
+final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
     var recalculateCallCount = 0
-    let subject = PassthroughSubject<OTPTimerState, Never>()
-    func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
+    let subject = PassthroughSubject<OTPCodeTimerState, Never>()
+    func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
         subject.eraseToAnyPublisher()
     }
 
@@ -28,10 +28,12 @@ func forceRunLoopAdvance() {
 struct CodeStoreFake: VaultStoreReader {
     let codes: [StoredVaultItem] = [
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: ""
+            ),
             item: .otpCode(
                 .init(
                     type: .totp(),
@@ -44,10 +46,12 @@ struct CodeStoreFake: VaultStoreReader {
             )
         ),
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: ""
+            ),
             item: .otpCode(
                 .init(
                     type: .totp(),
@@ -60,8 +64,12 @@ struct CodeStoreFake: VaultStoreReader {
             )
         ),
         .init(
-            id: UUID(),
-            created: Date(), updated: Date(), userDescription: "",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: ""
+            ),
             item: .otpCode(
                 .init(
                     type: .hotp(counter: 0),

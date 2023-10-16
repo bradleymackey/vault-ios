@@ -14,12 +14,12 @@ public struct OTPAuthURIDecoder {
 
     public init() {}
 
-    public func decode(uri: OTPAuthURI) throws -> GenericOTPAuthCode {
+    public func decode(uri: OTPAuthURI) throws -> OTPAuthCode {
         guard let scheme = uri.scheme, scheme == OTPAuthURI.otpAuthScheme else {
             throw URIDecodingError.invalidScheme
         }
         let label = try decodeLabel(uri: uri)
-        return try GenericOTPAuthCode(
+        return try OTPAuthCode(
             type: decodeType(uri: uri),
             data: OTPAuthCodeData(
                 secret: decodeSecret(uri: uri),

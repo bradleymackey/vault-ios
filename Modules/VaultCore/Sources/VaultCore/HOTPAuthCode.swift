@@ -12,8 +12,8 @@ public struct HOTPAuthCode {
         self.data = data
     }
 
-    public func toGenericCode() -> GenericOTPAuthCode {
-        GenericOTPAuthCode(
+    public func toGenericCode() -> OTPAuthCode {
+        OTPAuthCode(
             type: .hotp(counter: counter),
             data: data
         )

@@ -3,32 +3,26 @@ import VaultCore
 
 struct ManagedVaultItemDecoder {
     func decode(item: ManagedVaultItem) throws -> StoredVaultItem {
+        let metadata = StoredVaultItem.Metadata(
+            id: item.id,
+            created: item.createdDate,
+            updated: item.updatedDate,
+            userDescription: item.userDescription
+        )
         if let otp = item.otpDetails {
             let otpCode = try decodeOTPCode(details: otp)
-            return StoredVaultItem(
-                id: item.id,
-                created: item.createdDate,
-                updated: item.updatedDate,
-                userDescription: item.userDescription,
-                item: .otpCode(otpCode)
-            )
+            return StoredVaultItem(metadata: metadata, item: .otpCode(otpCode))
         } else if let note = item.noteDetails {
             let note = SecureNote(title: note.title, contents: note.rawContents ?? "")
-            return StoredVaultItem(
-                id: item.id,
-                created: item.createdDate,
-                updated: item.updatedDate,
-                userDescription: item.userDescription,
-                item: .secureNote(note)
-            )
+            return StoredVaultItem(metadata: metadata, item: .secureNote(note))
         } else {
             // Not any kind of item that we recognise!
             throw DecodingError.missingDataInModel
         }
     }
 
-    private func decodeOTPCode(details otp: ManagedOTPDetails) throws -> GenericOTPAuthCode {
-        try GenericOTPAuthCode(
+    private func decodeOTPCode(details otp: ManagedOTPDetails) throws -> OTPAuthCode {
+        try OTPAuthCode(
             type: decodeType(otp: otp),
             data: .init(
                 secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),

@@ -82,7 +82,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(sut.cachedPeriodStateCount, 1)
         XCTAssertEqual(sut.cachedTimerControllerCount, 1)
 
-        sut.invalidateCodeDetailCache(forCodeWithID: id)
+        sut.invalidateVaultItemDetailCache(forVaultItemWithID: id)
 
         XCTAssertEqual(sut.cachedViewsCount, 0)
         XCTAssertEqual(sut.cachedPeriodStateCount, 1, "This is shared across codes, and should not be invalidated")
@@ -150,18 +150,18 @@ extension TOTPPreviewViewGeneratorTests {
     private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
         var makeTOTPViewExecutedCount = 0
         var makeTOTPViewExecuted: (
-            CodePreviewViewModel,
-            CodeTimerPeriodState,
-            any CodeTimerUpdater,
+            OTPCodePreviewViewModel,
+            OTPCodeTimerPeriodState,
+            any OTPCodeTimerUpdater,
             VaultItemViewBehaviour
         )
             -> Void = { _, _, _, _ in
             }
 
         func makeTOTPView(
-            viewModel: CodePreviewViewModel,
-            periodState: CodeTimerPeriodState,
-            updater: any CodeTimerUpdater,
+            viewModel: OTPCodePreviewViewModel,
+            periodState: OTPCodeTimerPeriodState,
+            updater: any OTPCodeTimerUpdater,
             behaviour: VaultItemViewBehaviour
         ) -> some View {
             makeTOTPViewExecutedCount += 1
@@ -176,8 +176,8 @@ extension TOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [(CodePreviewViewModel, CodeTimerPeriodState, MockCodeTimerUpdater)] {
-        var models = [(CodePreviewViewModel, CodeTimerPeriodState, MockCodeTimerUpdater)]()
+    ) -> [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, MockCodeTimerUpdater)] {
+        var models = [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, MockCodeTimerUpdater)]()
 
         let group = DispatchGroup()
         factory.makeTOTPViewExecuted = { viewModel, periodState, updater, _ in
@@ -211,7 +211,7 @@ extension TOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [CodePreviewViewModel] {
+    ) -> [OTPCodePreviewViewModel] {
         collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
             .map(\.0)
     }
@@ -222,7 +222,7 @@ extension TOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [CodeTimerPeriodState] {
+    ) -> [OTPCodeTimerPeriodState] {
         collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
             .map(\.1)
     }
@@ -238,13 +238,13 @@ extension TOTPPreviewViewGeneratorTests {
             .map(\.2)
     }
 
-    private final class MockCodeTimerUpdaterFactory: CodeTimerUpdaterFactory {
-        func makeUpdater(period: UInt64) -> CodeTimerUpdater {
+    private final class MockCodeTimerUpdaterFactory: OTPCodeTimerUpdaterFactory {
+        func makeUpdater(period: UInt64) -> OTPCodeTimerUpdater {
             MockCodeTimerUpdater(period: period)
         }
     }
 
-    private final class MockCodeTimerUpdater: CodeTimerUpdater {
+    private final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
         let period: UInt64
         init(period: UInt64) {
             self.period = period
@@ -255,8 +255,8 @@ extension TOTPPreviewViewGeneratorTests {
             recalculateCallCount += 1
         }
 
-        let timerUpdatedPublisherSubject = PassthroughSubject<OTPTimerState, Never>()
-        func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
+        let timerUpdatedPublisherSubject = PassthroughSubject<OTPCodeTimerState, Never>()
+        func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
             timerUpdatedPublisherSubject.eraseToAnyPublisher()
         }
     }

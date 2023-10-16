@@ -20,11 +20,15 @@ extension InMemoryVaultStore: VaultStoreWriter {
 
     @discardableResult
     public func insert(item: StoredVaultItem.Write) async throws -> UUID {
-        let code = StoredVaultItem(
+        let currentDate = Date()
+        let metadata = StoredVaultItem.Metadata(
             id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: item.userDescription,
+            created: currentDate,
+            updated: currentDate,
+            userDescription: item.userDescription
+        )
+        let code = StoredVaultItem(
+            metadata: metadata,
             item: item.item
         )
         codes.append(code)
@@ -36,11 +40,14 @@ extension InMemoryVaultStore: VaultStoreWriter {
             throw CodeNotFound()
         }
         let existingCode = codes[index]
-        let newCode = StoredVaultItem(
+        let metadata = StoredVaultItem.Metadata(
             id: id,
-            created: existingCode.created,
+            created: existingCode.metadata.created,
             updated: Date(),
-            userDescription: item.userDescription,
+            userDescription: item.userDescription
+        )
+        let newCode = StoredVaultItem(
+            metadata: metadata,
             item: item.item
         )
         codes[index] = newCode

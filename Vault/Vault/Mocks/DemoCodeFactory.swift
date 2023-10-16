@@ -4,10 +4,12 @@ import VaultFeed
 enum DemoVaultFactory {
     static func totpCode(issuer: String = "Ebay") -> StoredVaultItem {
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "My Cool Code",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: "My Cool Code"
+            ),
             item: .otpCode(.init(
                 type: .totp(),
                 data: .init(
@@ -21,10 +23,12 @@ enum DemoVaultFactory {
 
     static func hotpCode(issuer: String = "Ebay") -> StoredVaultItem {
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "My Other Cool code",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: "My Other Cool code"
+            ),
             item: .otpCode(.init(
                 type: .hotp(),
                 data: .init(
@@ -38,10 +42,12 @@ enum DemoVaultFactory {
 
     static func secureNote(title: String = "Title", contents: String = "Contents...") -> StoredVaultItem {
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "This is a secure note",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: "This is a secure note"
+            ),
             item: .secureNote(.init(title: title, contents: contents))
         )
     }

@@ -3,11 +3,11 @@ import Foundation
 
 @MainActor
 @Observable
-public final class CodeDetailEditingModel {
-    public var detail: CodeDetailEdits
-    public private(set) var initialDetail: CodeDetailEdits
+public final class OTPCodeDetailEditingModel {
+    public var detail: OTPCodeDetailEdits
+    public private(set) var initialDetail: OTPCodeDetailEdits
 
-    public init(detail: CodeDetailEdits) {
+    public init(detail: OTPCodeDetailEdits) {
         initialDetail = detail
         self.detail = detail
     }

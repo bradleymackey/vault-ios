@@ -6,7 +6,7 @@ import VaultFeed
 import XCTest
 
 @MainActor
-final class CodeTimerPeriodStateTests: XCTestCase {
+final class OTPCodeTimerPeriodStateTests: XCTestCase {
     func test_init_initialAnimationStateIsFrozen() {
         let sut = makeSUT(pub: PassthroughSubject().eraseToAnyPublisher())
 
@@ -14,10 +14,10 @@ final class CodeTimerPeriodStateTests: XCTestCase {
     }
 
     func test_animationState_assignsValueToState() async throws {
-        let valueSubject = PassthroughSubject<OTPTimerState, Never>()
+        let valueSubject = PassthroughSubject<OTPCodeTimerState, Never>()
         let sut = makeSUT(pub: valueSubject.eraseToAnyPublisher())
 
-        let initialState = OTPTimerState(startTime: 69, endTime: 420)
+        let initialState = OTPCodeTimerState(startTime: 69, endTime: 420)
         await expectSingleMutation(observable: sut, keyPath: \.animationState) {
             valueSubject.send(initialState)
         }
@@ -27,7 +27,7 @@ final class CodeTimerPeriodStateTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(pub: AnyPublisher<OTPTimerState, Never>) -> CodeTimerPeriodState {
-        CodeTimerPeriodState(clock: EpochClock(makeCurrentTime: { 100 }), statePublisher: pub)
+    private func makeSUT(pub: AnyPublisher<OTPCodeTimerState, Never>) -> OTPCodeTimerPeriodState {
+        OTPCodeTimerPeriodState(clock: EpochClock(makeCurrentTime: { 100 }), statePublisher: pub)
     }
 }

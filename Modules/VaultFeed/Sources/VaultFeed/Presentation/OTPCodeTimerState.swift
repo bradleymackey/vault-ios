@@ -1,6 +1,6 @@
 import Foundation
 
-public struct OTPTimerState: Equatable {
+public struct OTPCodeTimerState: Equatable {
     /// The number of epoch seconds when the timer started.
     public var startTime: Double
     /// The number of epoch seconds when the timer will end.
@@ -12,7 +12,7 @@ public struct OTPTimerState: Equatable {
     }
 }
 
-public extension OTPTimerState {
+public extension OTPCodeTimerState {
     /// The duration for a full timer rotation.
     var totalTime: Double {
         endTime - startTime

@@ -11,11 +11,17 @@ struct VaultDetailView<Store: VaultStore>: View {
     let storedItem: StoredVaultItem
 
     var body: some View {
-        OTPCodeDetailView(
-            viewModel: .init(
-                storedCode: storedItem,
-                editor: VaultFeedVaultDetailEditorAdapter(vaultFeed: feedViewModel)
+        switch storedItem.item {
+        case let .otpCode(storedCode):
+            OTPCodeDetailView(
+                viewModel: .init(
+                    storedCode: storedCode,
+                    storedMetadata: storedItem.metadata,
+                    editor: VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feedViewModel)
+                )
             )
-        )
+        case .secureNote:
+            Text("Secure Note")
+        }
     }
 }

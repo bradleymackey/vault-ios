@@ -2,7 +2,7 @@ import Combine
 import SwiftUI
 import VaultFeed
 
-public struct CodeTextView: View {
+public struct OTPCodeTextView: View {
     var codeState: OTPCodeState
     var scaledDigitSpacing: Double = 10
 
@@ -86,31 +86,31 @@ private extension [Character] {
 struct CodeTextView_Previews: PreviewProvider {
     static var previews: some View {
         VStack {
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .visible("123456")
             )
 
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .visible("1234567")
             )
 
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .visible("12345678")
             )
 
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .visible("123456789")
             )
 
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .visible("1234567890")
             )
 
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .finished
             )
 
-            CodeTextView(
+            OTPCodeTextView(
                 codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6)
             )
         }

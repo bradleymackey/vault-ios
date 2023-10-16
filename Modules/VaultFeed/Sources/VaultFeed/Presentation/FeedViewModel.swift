@@ -8,9 +8,9 @@ public final class FeedViewModel<Store: VaultStore> {
     public private(set) var retrievalError: PresentationError?
 
     private let store: Store
-    private let caches: [any CodeDetailCache]
+    private let caches: [any VaultItemCache]
 
-    public init(store: Store, caches: [any CodeDetailCache] = []) {
+    public init(store: Store, caches: [any VaultItemCache] = []) {
         self.store = store
         self.caches = caches
     }
@@ -65,7 +65,7 @@ extension FeedViewModel: VaultFeed {
 
     private func invalidateCaches(id: UUID) {
         for cache in caches {
-            cache.invalidateCodeDetailCache(forCodeWithID: id)
+            cache.invalidateVaultItemDetailCache(forVaultItemWithID: id)
         }
     }
 }

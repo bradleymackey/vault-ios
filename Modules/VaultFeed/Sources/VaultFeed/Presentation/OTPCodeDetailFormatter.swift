@@ -1,15 +1,15 @@
 import Foundation
 import VaultCore
 
-public struct CodeDetailFormatter {
-    private let code: GenericOTPAuthCode
+public struct OTPCodeDetailFormatter {
+    private let code: OTPAuthCode
     private let measurementFormatter: MeasurementFormatter = {
         let formatter = MeasurementFormatter()
         formatter.unitStyle = .medium
         return formatter
     }()
 
-    public init(code: GenericOTPAuthCode) {
+    public init(code: OTPAuthCode) {
         self.code = code
     }
 

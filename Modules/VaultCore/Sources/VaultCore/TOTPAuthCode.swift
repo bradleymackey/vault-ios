@@ -12,8 +12,8 @@ public struct TOTPAuthCode {
         self.data = data
     }
 
-    public func toGenericCode() -> GenericOTPAuthCode {
-        GenericOTPAuthCode(
+    public func toGenericCode() -> OTPAuthCode {
+        OTPAuthCode(
             type: .totp(period: period),
             data: data
         )

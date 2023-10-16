@@ -20,10 +20,10 @@ final class ManagedVaultItemDecoderTests: XCTestCase {
     }
 }
 
-// MARK: - OTP Code
+// MARK: - Metadata
 
 extension ManagedVaultItemDecoderTests {
-    func test_decodeID_isValidID() throws {
+    func test_decodeMetadataID_decodesToCorrectInput() throws {
         let sut = makeSUT()
 
         let id = UUID()
@@ -33,36 +33,40 @@ extension ManagedVaultItemDecoderTests {
         XCTAssertEqual(decoded.id, id)
     }
 
-    func test_decodeCreatedDate_decodesToCorrectInput() throws {
+    func test_decodeMetadataCreatedDate_decodesToCorrectInput() throws {
         let sut = makeSUT()
 
         let date = Date(timeIntervalSince1970: 123_456)
         let code = makeManagedCode(createdDate: date)
 
         let decoded = try sut.decode(item: code)
-        XCTAssertEqual(decoded.created, date)
+        XCTAssertEqual(decoded.metadata.created, date)
     }
 
-    func test_decodeUpdatedDate_decodesToCorrectInput() throws {
+    func test_decodeMetadataUpdatedDate_decodesToCorrectInput() throws {
         let sut = makeSUT()
 
         let date = Date(timeIntervalSince1970: 123_456)
         let code = makeManagedCode(updatedDate: date)
 
         let decoded = try sut.decode(item: code)
-        XCTAssertEqual(decoded.updated, date)
+        XCTAssertEqual(decoded.metadata.updated, date)
     }
 
-    func test_decodeUserDescription_decodesToCorrectInput() throws {
+    func test_decodeMetadataUserDescription_decodesToCorrectInput() throws {
         let sut = makeSUT()
 
         let description = "this is my description \(UUID().uuidString)"
         let code = makeManagedCode(userDescription: description)
 
         let decoded = try sut.decode(item: code)
-        XCTAssertEqual(decoded.userDescription, description)
+        XCTAssertEqual(decoded.metadata.userDescription, description)
     }
+}
 
+// MARK: - OTP Code
+
+extension ManagedVaultItemDecoderTests {
     func test_decodeDigits_decodesToCorrectValue() throws {
         let samples: [OTPAuthDigits: NSNumber] = [
             OTPAuthDigits(value: 0): 0,
@@ -210,46 +214,6 @@ extension ManagedVaultItemDecoderTests {
 // MARK: - Secure Note
 
 extension ManagedVaultItemDecoderTests {
-    func test_decodeNoteID_isValidID() throws {
-        let sut = makeSUT()
-
-        let id = UUID()
-        let note = makeManagedSecureNote(id: id)
-
-        let decoded = try sut.decode(item: note)
-        XCTAssertEqual(decoded.id, id)
-    }
-
-    func test_decodeNoteCreatedDate_decodesToCorrectInput() throws {
-        let sut = makeSUT()
-
-        let date = Date(timeIntervalSince1970: 123_456)
-        let note = makeManagedSecureNote(createdDate: date)
-
-        let decoded = try sut.decode(item: note)
-        XCTAssertEqual(decoded.created, date)
-    }
-
-    func test_decodeNoteUpdatedDate_decodesToCorrectInput() throws {
-        let sut = makeSUT()
-
-        let date = Date(timeIntervalSince1970: 123_456)
-        let note = makeManagedSecureNote(updatedDate: date)
-
-        let decoded = try sut.decode(item: note)
-        XCTAssertEqual(decoded.updated, date)
-    }
-
-    func test_decodeNoteUserDescription_decodesToCorrectInput() throws {
-        let sut = makeSUT()
-
-        let description = "this is my description \(UUID().uuidString)"
-        let note = makeManagedSecureNote(userDescription: description)
-
-        let decoded = try sut.decode(item: note)
-        XCTAssertEqual(decoded.userDescription, description)
-    }
-
     func test_decodeNoteTitle_decodesToCorrectInput() throws {
         let sut = makeSUT()
 

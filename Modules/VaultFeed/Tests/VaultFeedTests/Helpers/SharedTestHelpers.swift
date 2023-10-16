@@ -7,9 +7,9 @@ func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)
 }
 
-func uniqueCode() -> GenericOTPAuthCode {
+func uniqueCode() -> OTPAuthCode {
     let randomData = Data.random(count: 50)
-    return GenericOTPAuthCode(
+    return OTPAuthCode(
         type: .totp(),
         data: .init(
             secret: .init(data: randomData, format: .base32),
@@ -18,12 +18,22 @@ func uniqueCode() -> GenericOTPAuthCode {
     )
 }
 
+func uniqueStoredMetadata() -> StoredVaultItem.Metadata {
+    .init(id: UUID(), created: Date(), updated: Date(), userDescription: "any")
+}
+
 func uniqueStoredVaultItem() -> StoredVaultItem {
-    StoredVaultItem(id: UUID(), created: Date(), updated: Date(), userDescription: "any", item: .otpCode(uniqueCode()))
+    StoredVaultItem(
+        metadata: uniqueStoredMetadata(),
+        item: .otpCode(uniqueCode())
+    )
 }
 
 func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
-    StoredVaultItem(id: UUID(), created: Date(), updated: Date(), userDescription: "any", item: item)
+    StoredVaultItem(
+        metadata: uniqueStoredMetadata(),
+        item: item
+    )
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {

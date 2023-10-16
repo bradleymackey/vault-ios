@@ -5,7 +5,7 @@ import VaultFeed
 
 @MainActor
 public struct TOTPCodePreviewView<TimerBar: View>: View {
-    var previewViewModel: CodePreviewViewModel
+    var previewViewModel: OTPCodePreviewViewModel
     var timerView: TimerBar
     var behaviour: VaultItemViewBehaviour
 
@@ -44,7 +44,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
 
     private var codeSection: some View {
         VStack(alignment: .leading, spacing: 4) {
-            CodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
+            OTPCodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .padding(.horizontal, 2)
@@ -134,7 +134,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         renderer: OTPCodeRendererMock,
         behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {
-        let previewViewModel = CodePreviewViewModel(
+        let previewViewModel = OTPCodePreviewViewModel(
             accountName: "test@example.com",
             issuer: issuer,
             renderer: renderer
@@ -142,7 +142,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
-                timerState: CodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher()),
+                timerState: OTPCodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher()),
                 color: .blue
             ),
             behaviour: behaviour
@@ -150,7 +150,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         .frame(width: 250, height: 100)
     }
 
-    private static let subject: PassthroughSubject<OTPTimerState, Never> = .init()
+    private static let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
 
     static let clock = EpochClock { 20 }
 }

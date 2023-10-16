@@ -12,8 +12,8 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
     let timer: any IntervalTimer
 
     private var rendererCache = Cache<UUID, HOTPCodeRenderer>()
-    private var previewViewModelCache = Cache<UUID, CodePreviewViewModel>()
-    private var incrementerViewModelCache = Cache<UUID, CodeIncrementerViewModel>()
+    private var previewViewModelCache = Cache<UUID, OTPCodePreviewViewModel>()
+    private var incrementerViewModelCache = Cache<UUID, OTPCodeIncrementerViewModel>()
 
     public init(viewFactory: Factory, timer: any IntervalTimer) {
         self.viewFactory = viewFactory
@@ -56,8 +56,8 @@ extension HOTPPreviewViewGenerator: VaultItemCopyTextProvider {
 
 // MARK: - Caching
 
-extension HOTPPreviewViewGenerator: CodeDetailCache {
-    public func invalidateCodeDetailCache(forCodeWithID id: UUID) {
+extension HOTPPreviewViewGenerator: VaultItemCache {
+    public func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
         rendererCache.remove(key: id)
         previewViewModelCache.remove(key: id)
         incrementerViewModelCache.remove(key: id)
@@ -81,9 +81,9 @@ extension HOTPPreviewViewGenerator: CodeDetailCache {
         }
     }
 
-    private func makeIncrementerViewModel(id: UUID, code: HOTPAuthCode) -> CodeIncrementerViewModel {
+    private func makeIncrementerViewModel(id: UUID, code: HOTPAuthCode) -> OTPCodeIncrementerViewModel {
         incrementerViewModelCache.getOrCreateValue(for: id) {
-            CodeIncrementerViewModel(
+            OTPCodeIncrementerViewModel(
                 hotpRenderer: makeRenderer(id: id, code: code),
                 timer: timer,
                 initialCounter: code.counter
@@ -91,9 +91,9 @@ extension HOTPPreviewViewGenerator: CodeDetailCache {
         }
     }
 
-    private func makePreviewViewModel(id: UUID, code: HOTPAuthCode) -> CodePreviewViewModel {
+    private func makePreviewViewModel(id: UUID, code: HOTPAuthCode) -> OTPCodePreviewViewModel {
         previewViewModelCache.getOrCreateValue(for: id) {
-            let viewModel = CodePreviewViewModel(
+            let viewModel = OTPCodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 renderer: makeRenderer(id: id, code: code)

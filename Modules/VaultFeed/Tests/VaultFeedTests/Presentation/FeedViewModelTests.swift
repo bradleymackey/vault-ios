@@ -178,7 +178,7 @@ final class FeedViewModelTests: XCTestCase {
 
     private func makeSUT<T: VaultStoreReader>(
         store: T,
-        caches: [any CodeDetailCache] = [],
+        caches: [any VaultItemCache] = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> FeedViewModel<T> {
@@ -187,9 +187,9 @@ final class FeedViewModelTests: XCTestCase {
         return sut
     }
 
-    private final class StubCodeCache: CodeDetailCache {
+    private final class StubCodeCache: VaultItemCache {
         var calledInvalidate = [UUID]()
-        func invalidateCodeDetailCache(forCodeWithID id: UUID) {
+        func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
             calledInvalidate.append(id)
         }
     }

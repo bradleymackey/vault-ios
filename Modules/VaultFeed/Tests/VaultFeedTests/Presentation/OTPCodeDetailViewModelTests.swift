@@ -1,11 +1,12 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import VaultCore
 import VaultFeed
 import XCTest
 
 @MainActor
-final class CodeDetailViewModelTests: XCTestCase {
+final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_detailMenuItems_hasOneExpectedItem() {
         let sut = makeSUT()
 
@@ -37,7 +38,7 @@ final class CodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_setsIsSavingToTrue() async throws {
         let completeUpdateSignal = PendingValue<Void>()
         let editor = CodeDetailEditorMock()
-        editor.updateCodeCalled = { _, _ in
+        editor.updateCodeCalled = { _, _, _ in
             try? await completeUpdateSignal.awaitValue()
         }
 
@@ -231,9 +232,9 @@ final class CodeDetailViewModelTests: XCTestCase {
         var code = uniqueCode()
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
-        var item = uniqueVaultItem(item: .otpCode(code))
-        item.userDescription = "description test"
-        let sut = makeSUT(item: item)
+        var metadata = uniqueStoredMetadata()
+        metadata.userDescription = "description test"
+        let sut = makeSUT(code: code, metadata: metadata)
 
         let editing = sut.editingModel
 
@@ -246,9 +247,9 @@ final class CodeDetailViewModelTests: XCTestCase {
         var code = uniqueCode()
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
-        var item = uniqueVaultItem(item: .otpCode(code))
-        item.userDescription = "description test"
-        let sut = makeSUT(item: item)
+        var metadata = uniqueStoredMetadata()
+        metadata.userDescription = "description test"
+        let sut = makeSUT(code: code, metadata: metadata)
 
         let editing = sut.editingModel
 
@@ -258,24 +259,25 @@ final class CodeDetailViewModelTests: XCTestCase {
     }
 }
 
-extension CodeDetailViewModelTests {
+extension OTPCodeDetailViewModelTests {
     private func makeSUT(
-        item: StoredVaultItem = uniqueStoredVaultItem(),
+        code: OTPAuthCode = uniqueCode(),
+        metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
         editor: CodeDetailEditorMock = CodeDetailEditorMock(),
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> CodeDetailViewModel {
-        let sut = CodeDetailViewModel(storedCode: item, editor: editor)
+    ) -> OTPCodeDetailViewModel {
+        let sut = OTPCodeDetailViewModel(storedCode: code, storedMetadata: metadata, editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
     }
 
-    private class CodeDetailEditorMock: VaultDetailEditor {
+    private class CodeDetailEditorMock: OTPCodeDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
-        var updateCodeCalled: (StoredVaultItem, CodeDetailEdits) async -> Void = { _, _ in }
-        func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
-            await updateCodeCalled(item, edits)
+        var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
+        func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+            await updateCodeCalled(id, item, edits)
             try updateCodeResult.get()
         }
 

@@ -4,45 +4,41 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class CodeDetailViewModel {
-    public let storedCode: StoredVaultItem
-    public var editingModel: CodeDetailEditingModel
+public final class OTPCodeDetailViewModel {
+    public let storedCode: OTPAuthCode
+    public let storedMetdata: StoredVaultItem.Metadata
+    public var editingModel: OTPCodeDetailEditingModel
 
     public private(set) var isSaving = false
     public private(set) var isInEditMode = false
 
-    private let editor: any VaultDetailEditor
+    private let editor: any OTPCodeDetailEditor
     private let didEncounterErrorSubject = PassthroughSubject<Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
-    public init(storedCode: StoredVaultItem, editor: any VaultDetailEditor) {
+    public init(
+        storedCode: OTPAuthCode,
+        storedMetadata: StoredVaultItem.Metadata,
+        editor: any OTPCodeDetailEditor
+    ) {
         self.storedCode = storedCode
+        storedMetdata = storedMetadata
         self.editor = editor
-        switch storedCode.item {
-        case let .otpCode(otpCode):
-            editingModel = CodeDetailEditingModel(detail: .init(
-                issuerTitle: otpCode.data.issuer ?? "",
-                accountNameTitle: otpCode.data.accountName,
-                description: storedCode.userDescription ?? ""
-            ))
-        case .secureNote:
-            editingModel = CodeDetailEditingModel(detail: .init())
-        }
+        editingModel = OTPCodeDetailEditingModel(detail: .init(
+            issuerTitle: storedCode.data.issuer ?? "",
+            accountNameTitle: storedCode.data.accountName,
+            description: storedMetadata.userDescription ?? ""
+        ))
     }
 
-    public var detailMenuItems: [CodeDetailMenuItem] {
-        switch storedCode.item {
-        case let .otpCode(otpCode):
-            let details = CodeDetailMenuItem(
-                id: "detail",
-                title: localized(key: "codeDetail.listSection.details.title"),
-                systemIconName: "books.vertical.fill",
-                entries: Self.makeInfoEntries(otpCode)
-            )
-            return [details]
-        case .secureNote:
-            return []
-        }
+    public var detailMenuItems: [OTPCodeDetailMenuItem] {
+        let details = OTPCodeDetailMenuItem(
+            id: "detail",
+            title: localized(key: "codeDetail.listSection.details.title"),
+            systemIconName: "books.vertical.fill",
+            entries: Self.makeInfoEntries(storedCode)
+        )
+        return [details]
     }
 
     public func didEncounterErrorPublisher() -> AnyPublisher<Error, Never> {
@@ -63,7 +59,7 @@ public final class CodeDetailViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
-            try await editor.update(item: storedCode, edits: editingModel.detail)
+            try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
             isInEditMode = false
             editingModel.didPersist()
         } catch {
@@ -77,7 +73,7 @@ public final class CodeDetailViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
-            try await editor.deleteCode(id: storedCode.id)
+            try await editor.deleteCode(id: storedMetdata.id)
             isFinishedSubject.send()
         } catch {
             let error = OperationError.delete
@@ -97,7 +93,7 @@ public final class CodeDetailViewModel {
 
 // MARK: - Error
 
-public extension CodeDetailViewModel {
+public extension OTPCodeDetailViewModel {
     enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
         case save
         case delete
@@ -123,13 +119,13 @@ public extension CodeDetailViewModel {
 
 // MARK: - Titles
 
-public extension CodeDetailViewModel {
+public extension OTPCodeDetailViewModel {
     var createdDateTitle: String {
         localized(key: "codeDetail.listSection.created.title")
     }
 
     var createdDateValue: String {
-        storedCode.created.formatted(date: .abbreviated, time: .omitted)
+        storedMetdata.created.formatted(date: .abbreviated, time: .omitted)
     }
 
     var updatedDateTitle: String {
@@ -137,7 +133,7 @@ public extension CodeDetailViewModel {
     }
 
     var updatedDateValue: String {
-        storedCode.updated.formatted(date: .abbreviated, time: .omitted)
+        storedMetdata.updated.formatted(date: .abbreviated, time: .omitted)
     }
 
     var doneEditingTitle: String {
@@ -157,9 +153,9 @@ public extension CodeDetailViewModel {
     }
 }
 
-extension CodeDetailViewModel {
-    private static func makeInfoEntries(_ code: GenericOTPAuthCode) -> [DetailEntry] {
-        let formatter = CodeDetailFormatter(code: code)
+extension OTPCodeDetailViewModel {
+    private static func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
+        let formatter = OTPCodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
         entries.append(
             DetailEntry(
