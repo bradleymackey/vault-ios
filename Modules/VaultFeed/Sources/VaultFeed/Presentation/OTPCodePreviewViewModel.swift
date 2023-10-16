@@ -5,7 +5,7 @@ import VaultCore
 /// A preview of an OTP code.
 @MainActor
 @Observable
-public final class CodePreviewViewModel {
+public final class OTPCodePreviewViewModel {
     public let accountName: String
     public let issuer: String?
     public private(set) var code: OTPCodeState = .notReady

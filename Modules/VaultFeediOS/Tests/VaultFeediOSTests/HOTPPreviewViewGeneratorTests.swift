@@ -148,11 +148,11 @@ extension HOTPPreviewViewGeneratorTests {
 
     private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
         var makeHOTPViewExecutedCount = 0
-        var makeHOTPViewExecuted: (CodePreviewViewModel, CodeIncrementerViewModel, VaultItemViewBehaviour)
+        var makeHOTPViewExecuted: (OTPCodePreviewViewModel, OTPCodeIncrementerViewModel, VaultItemViewBehaviour)
             -> Void = { _, _, _ in }
         func makeHOTPView(
-            viewModel: CodePreviewViewModel,
-            incrementer: CodeIncrementerViewModel,
+            viewModel: OTPCodePreviewViewModel,
+            incrementer: OTPCodeIncrementerViewModel,
             behaviour: VaultItemViewBehaviour
         ) -> some View {
             makeHOTPViewExecutedCount += 1
@@ -167,8 +167,8 @@ extension HOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [CodePreviewViewModel] {
-        var viewModels = [CodePreviewViewModel]()
+    ) -> [OTPCodePreviewViewModel] {
+        var viewModels = [OTPCodePreviewViewModel]()
 
         let group = DispatchGroup()
         factory.makeHOTPViewExecuted = { viewModel, _, _ in
@@ -199,8 +199,8 @@ extension HOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [CodeIncrementerViewModel] {
-        var viewModels = [CodeIncrementerViewModel]()
+    ) -> [OTPCodeIncrementerViewModel] {
+        var viewModels = [OTPCodeIncrementerViewModel]()
 
         let group = DispatchGroup()
         factory.makeHOTPViewExecuted = { _, incrementer, _ in

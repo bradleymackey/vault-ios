@@ -4,10 +4,10 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class CodeDetailViewModel {
+public final class OTPCodeDetailViewModel {
     public let storedCode: GenericOTPAuthCode
     public let storedMetdata: StoredVaultItem.Metadata
-    public var editingModel: CodeDetailEditingModel
+    public var editingModel: OTPCodeDetailEditingModel
 
     public private(set) var isSaving = false
     public private(set) var isInEditMode = false
@@ -24,15 +24,15 @@ public final class CodeDetailViewModel {
         self.storedCode = storedCode
         storedMetdata = storedMetadata
         self.editor = editor
-        editingModel = CodeDetailEditingModel(detail: .init(
+        editingModel = OTPCodeDetailEditingModel(detail: .init(
             issuerTitle: storedCode.data.issuer ?? "",
             accountNameTitle: storedCode.data.accountName,
             description: storedMetadata.userDescription ?? ""
         ))
     }
 
-    public var detailMenuItems: [CodeDetailMenuItem] {
-        let details = CodeDetailMenuItem(
+    public var detailMenuItems: [OTPCodeDetailMenuItem] {
+        let details = OTPCodeDetailMenuItem(
             id: "detail",
             title: localized(key: "codeDetail.listSection.details.title"),
             systemIconName: "books.vertical.fill",
@@ -93,7 +93,7 @@ public final class CodeDetailViewModel {
 
 // MARK: - Error
 
-public extension CodeDetailViewModel {
+public extension OTPCodeDetailViewModel {
     enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
         case save
         case delete
@@ -119,7 +119,7 @@ public extension CodeDetailViewModel {
 
 // MARK: - Titles
 
-public extension CodeDetailViewModel {
+public extension OTPCodeDetailViewModel {
     var createdDateTitle: String {
         localized(key: "codeDetail.listSection.created.title")
     }
@@ -153,9 +153,9 @@ public extension CodeDetailViewModel {
     }
 }
 
-extension CodeDetailViewModel {
+extension OTPCodeDetailViewModel {
     private static func makeInfoEntries(_ code: GenericOTPAuthCode) -> [DetailEntry] {
-        let formatter = CodeDetailFormatter(code: code)
+        let formatter = OTPCodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
         entries.append(
             DetailEntry(

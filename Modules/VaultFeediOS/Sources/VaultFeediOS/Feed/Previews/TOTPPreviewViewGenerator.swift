@@ -13,17 +13,17 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
     public typealias PreviewItem = TOTPAuthCode
 
     let viewFactory: Factory
-    let updaterFactory: any CodeTimerUpdaterFactory
+    let updaterFactory: any OTPCodeTimerUpdaterFactory
     let clock: EpochClock
     let timer: any IntervalTimer
 
-    private var timerUpdaterCache = Cache<UInt64, any CodeTimerUpdater>()
-    private var timerPeriodStateCache = Cache<UInt64, CodeTimerPeriodState>()
-    private var viewModelCache = Cache<UUID, CodePreviewViewModel>()
+    private var timerUpdaterCache = Cache<UInt64, any OTPCodeTimerUpdater>()
+    private var timerPeriodStateCache = Cache<UInt64, OTPCodeTimerPeriodState>()
+    private var viewModelCache = Cache<UUID, OTPCodePreviewViewModel>()
 
     public init(
         viewFactory: Factory,
-        updaterFactory: any CodeTimerUpdaterFactory,
+        updaterFactory: any OTPCodeTimerUpdaterFactory,
         clock: EpochClock,
         timer: any IntervalTimer
     ) {
@@ -89,30 +89,30 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
         timerPeriodStateCache.count
     }
 
-    private func makeTimerController(period: UInt64) -> any CodeTimerUpdater {
+    private func makeTimerController(period: UInt64) -> any OTPCodeTimerUpdater {
         timerUpdaterCache.getOrCreateValue(for: period) {
             updaterFactory.makeUpdater(period: period)
         }
     }
 
-    private func makeTimerPeriodState(period: UInt64) -> CodeTimerPeriodState {
+    private func makeTimerPeriodState(period: UInt64) -> OTPCodeTimerPeriodState {
         timerPeriodStateCache.getOrCreateValue(for: period) {
             let timerController = makeTimerController(period: period)
-            return CodeTimerPeriodState(clock: clock, statePublisher: timerController.timerUpdatedPublisher())
+            return OTPCodeTimerPeriodState(clock: clock, statePublisher: timerController.timerUpdatedPublisher())
         }
     }
 
     private func makeViewModelForCode(
         id: UUID,
         code: TOTPAuthCode
-    ) -> CodePreviewViewModel {
+    ) -> OTPCodePreviewViewModel {
         viewModelCache.getOrCreateValue(for: id) {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
             let renderer = TOTPCodeRenderer(
                 timer: makeTimerController(period: code.period),
                 totpGenerator: totpGenerator
             )
-            return CodePreviewViewModel(
+            return OTPCodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 renderer: renderer

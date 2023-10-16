@@ -1,7 +1,7 @@
 import Foundation
 import VaultCore
 
-public struct CodeDetailFormatter {
+public struct OTPCodeDetailFormatter {
     private let code: GenericOTPAuthCode
     private let measurementFormatter: MeasurementFormatter = {
         let formatter = MeasurementFormatter()

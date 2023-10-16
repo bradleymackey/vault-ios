@@ -5,7 +5,7 @@ import VaultFeed
 import XCTest
 
 @MainActor
-final class CodeIncrementerViewModelTests: XCTestCase {
+final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_isInitiallyTrue() {
         let (_, _, sut) = makeSUT()
 
@@ -93,10 +93,10 @@ final class CodeIncrementerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, CodeIncrementerViewModel) {
+    private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, OTPCodeIncrementerViewModel) {
         let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()))
         let timer = MockIntervalTimer()
-        let sut = CodeIncrementerViewModel(
+        let sut = OTPCodeIncrementerViewModel(
             hotpRenderer: renderer,
             timer: timer,
             initialCounter: 0

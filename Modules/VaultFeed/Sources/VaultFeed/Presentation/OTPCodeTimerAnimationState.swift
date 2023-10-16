@@ -1,11 +1,11 @@
 import Foundation
 
-public enum CodeTimerAnimationState: Equatable {
+public enum OTPCodeTimerAnimationState: Equatable {
     case freeze(fraction: Double)
-    case animate(OTPTimerState)
+    case animate(OTPCodeTimerState)
 }
 
-public extension CodeTimerAnimationState {
+public extension OTPCodeTimerAnimationState {
     func initialFraction(currentTime: Double) -> Double {
         switch self {
         case let .freeze(fraction):
@@ -15,7 +15,7 @@ public extension CodeTimerAnimationState {
         }
     }
 
-    static func countdownFrom(timerState: OTPTimerState?) -> CodeTimerAnimationState {
+    static func countdownFrom(timerState: OTPCodeTimerState?) -> OTPCodeTimerAnimationState {
         guard let timerState else { return .freeze(fraction: 0) }
         return .animate(timerState)
     }

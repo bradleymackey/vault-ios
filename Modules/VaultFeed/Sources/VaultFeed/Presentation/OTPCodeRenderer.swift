@@ -18,10 +18,10 @@ extension Publisher where Output == BigUInt {
 }
 
 public final class TOTPCodeRenderer: OTPCodeRenderer {
-    private let timer: any CodeTimerUpdater
+    private let timer: any OTPCodeTimerUpdater
     private let totpGenerator: TOTPGenerator
 
-    public init(timer: any CodeTimerUpdater, totpGenerator: TOTPGenerator) {
+    public init(timer: any OTPCodeTimerUpdater, totpGenerator: TOTPGenerator) {
         self.timer = timer
         self.totpGenerator = totpGenerator
     }

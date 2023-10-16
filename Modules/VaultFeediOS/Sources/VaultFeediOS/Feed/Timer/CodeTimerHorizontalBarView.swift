@@ -5,7 +5,7 @@ import VaultCore
 import VaultFeed
 
 public struct CodeTimerHorizontalBarView: View {
-    var timerState: CodeTimerPeriodState
+    var timerState: OTPCodeTimerPeriodState
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
@@ -61,18 +61,18 @@ public struct CodeTimerHorizontalBarView: View {
 struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
     static var previews: some View {
         CodeTimerHorizontalBarView(
-            timerState: CodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher())
+            timerState: OTPCodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher())
         )
         .frame(width: 250, height: 20)
         .previewLayout(.fixed(width: 300, height: 300))
         .onAppear {
-            subject.send(OTPTimerState(startTime: 15, endTime: 60))
+            subject.send(OTPCodeTimerState(startTime: 15, endTime: 60))
         }
     }
 
     // MARK: - Helpers
 
-    private static let subject: PassthroughSubject<OTPTimerState, Never> = .init()
+    private static let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
 
     static let clock = EpochClock { 40 }
 }

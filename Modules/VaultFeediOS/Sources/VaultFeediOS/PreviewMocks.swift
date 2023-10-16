@@ -2,10 +2,10 @@ import Combine
 import Foundation
 import VaultFeed
 
-final class MockCodeTimerUpdater: CodeTimerUpdater {
+final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
     var recalculateCallCount = 0
-    let subject = PassthroughSubject<OTPTimerState, Never>()
-    func timerUpdatedPublisher() -> AnyPublisher<OTPTimerState, Never> {
+    let subject = PassthroughSubject<OTPCodeTimerState, Never>()
+    func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
         subject.eraseToAnyPublisher()
     }
 

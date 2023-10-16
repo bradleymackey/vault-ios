@@ -3,7 +3,7 @@ import XCTest
 @testable import VaultFeed
 
 @MainActor
-final class CodeDetailEditingModelTests: XCTestCase {
+final class OTPCodeDetailEditingModelTests: XCTestCase {
     func test_isDirty_initiallyFalse() {
         let detail = OTPCodeDetailEdits()
         let sut = makeSUT(detail: detail)
@@ -24,10 +24,10 @@ final class CodeDetailEditingModelTests: XCTestCase {
     }
 }
 
-extension CodeDetailEditingModelTests {
+extension OTPCodeDetailEditingModelTests {
     private func makeSUT(
         detail: OTPCodeDetailEdits
-    ) -> CodeDetailEditingModel {
-        CodeDetailEditingModel(detail: detail)
+    ) -> OTPCodeDetailEditingModel {
+        OTPCodeDetailEditingModel(detail: detail)
     }
 }

@@ -5,7 +5,7 @@ import VaultFeed
 @MainActor
 struct HOTPCodePreviewView<ButtonView: View>: View {
     var buttonView: ButtonView
-    var previewViewModel: CodePreviewViewModel
+    var previewViewModel: OTPCodePreviewViewModel
     var behaviour: VaultItemViewBehaviour
 
     @Namespace private var codeTimerAnimation
@@ -68,7 +68,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 
     private var codeText: some View {
         HStack(alignment: .center) {
-            CodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
+            OTPCodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
@@ -123,7 +123,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
         renderer: OTPCodeRendererMock,
         behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {
-        let previewViewModel = CodePreviewViewModel(
+        let previewViewModel = OTPCodePreviewViewModel(
             accountName: accountName,
             issuer: "Authority",
             renderer: renderer

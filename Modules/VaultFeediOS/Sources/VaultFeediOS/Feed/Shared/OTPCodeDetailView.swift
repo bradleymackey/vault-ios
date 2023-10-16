@@ -5,14 +5,14 @@ import VaultUI
 
 @MainActor
 public struct OTPCodeDetailView: View {
-    @Bindable public var viewModel: CodeDetailViewModel
+    @Bindable public var viewModel: OTPCodeDetailViewModel
 
     @Environment(\.dismiss) var dismiss
     @State private var isError = false
     @State private var currentError: Error?
     @State private var isShowingDeleteConfirmation = false
 
-    public init(viewModel: CodeDetailViewModel) {
+    public init(viewModel: OTPCodeDetailViewModel) {
         self.viewModel = viewModel
     }
 
@@ -241,7 +241,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     static var previews: some View {
         OTPCodeDetailView(
-            viewModel: CodeDetailViewModel(
+            viewModel: OTPCodeDetailViewModel(
                 storedCode: .init(
                     type: .totp(),
                     data: .init(secret: .empty(), accountName: "Test")

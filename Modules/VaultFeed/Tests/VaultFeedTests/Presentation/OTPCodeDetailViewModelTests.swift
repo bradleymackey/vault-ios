@@ -6,7 +6,7 @@ import VaultFeed
 import XCTest
 
 @MainActor
-final class CodeDetailViewModelTests: XCTestCase {
+final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_detailMenuItems_hasOneExpectedItem() {
         let sut = makeSUT()
 
@@ -259,15 +259,15 @@ final class CodeDetailViewModelTests: XCTestCase {
     }
 }
 
-extension CodeDetailViewModelTests {
+extension OTPCodeDetailViewModelTests {
     private func makeSUT(
         code: GenericOTPAuthCode = uniqueCode(),
         metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
         editor: CodeDetailEditorMock = CodeDetailEditorMock(),
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> CodeDetailViewModel {
-        let sut = CodeDetailViewModel(storedCode: code, storedMetadata: metadata, editor: editor)
+    ) -> OTPCodeDetailViewModel {
+        let sut = OTPCodeDetailViewModel(storedCode: code, storedMetadata: metadata, editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut

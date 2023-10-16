@@ -36,7 +36,7 @@ struct VaultApp: App {
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: RealTOTPPreviewViewFactory(),
-            updaterFactory: CodeTimerControllerFactory(timer: timer, clock: clock),
+            updaterFactory: OTPCodeTimerControllerFactory(timer: timer, clock: clock),
             clock: clock,
             timer: timer
         )
