@@ -5,18 +5,22 @@ import VaultFeed
 
 public struct GenericVaultItemPreviewViewGenerator<
     TOTP: VaultItemPreviewViewGenerator,
-    HOTP: VaultItemPreviewViewGenerator
+    HOTP: VaultItemPreviewViewGenerator,
+    Note: VaultItemPreviewViewGenerator
 >: VaultItemPreviewViewGenerator
     where TOTP.PreviewItem == TOTPAuthCode,
-    HOTP.PreviewItem == HOTPAuthCode
+    HOTP.PreviewItem == HOTPAuthCode,
+    Note.PreviewItem == SecureNote
 {
     public typealias PreviewItem = VaultItem
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
+    private let noteGenerator: Note
 
-    public init(totpGenerator: TOTP, hotpGenerator: HOTP) {
+    public init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note) {
         self.totpGenerator = totpGenerator
         self.hotpGenerator = hotpGenerator
+        self.noteGenerator = noteGenerator
     }
 
     @ViewBuilder
@@ -37,8 +41,12 @@ public struct GenericVaultItemPreviewViewGenerator<
                     behaviour: behaviour
                 )
             }
-        case .secureNote:
-            Color.red
+        case let .secureNote(secureNote):
+            noteGenerator.makeVaultPreviewView(
+                id: id,
+                item: secureNote,
+                behaviour: behaviour
+            )
         }
     }
 

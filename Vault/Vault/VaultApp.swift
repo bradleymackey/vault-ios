@@ -10,6 +10,7 @@ struct VaultApp: App {
     @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
+    @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<RealSecureNotePreviewViewFactory>
     @State private var pasteboard: Pasteboard
     @State private var localSettings: LocalSettings
     @State private var settingsViewModel = SettingsViewModel()
@@ -44,6 +45,7 @@ struct VaultApp: App {
             viewFactory: RealHOTPPreviewViewFactory(),
             timer: timer
         )
+        let note = SecureNotePreviewViewGenerator(viewFactory: RealSecureNotePreviewViewFactory())
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(LiveSystemPasteboard(clock: clock), localSettings: localSettings)
 
@@ -52,6 +54,7 @@ struct VaultApp: App {
         _feedViewModel = State(wrappedValue: feed)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
+        _notePreviewGenerator = State(wrappedValue: note)
         _localSettings = State(wrappedValue: localSettings)
     }
 
@@ -64,7 +67,8 @@ struct VaultApp: App {
                         localSettings: localSettings,
                         viewGenerator: GenericVaultItemPreviewViewGenerator(
                             totpGenerator: totpPreviewGenerator,
-                            hotpGenerator: hotpPreviewGenerator
+                            hotpGenerator: hotpPreviewGenerator,
+                            noteGenerator: notePreviewGenerator
                         )
                     )
                     .environment(pasteboard)
