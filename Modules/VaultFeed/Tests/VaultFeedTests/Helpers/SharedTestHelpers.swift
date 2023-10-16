@@ -18,20 +18,20 @@ func uniqueCode() -> GenericOTPAuthCode {
     )
 }
 
+func uniqueStoredMetadata() -> StoredVaultItem.Metadata {
+    .init(id: UUID(), created: Date(), updated: Date(), userDescription: "any")
+}
+
 func uniqueStoredVaultItem() -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(
-            id: UUID(), created: Date(), updated: Date(), userDescription: "any"
-        ),
+        metadata: uniqueStoredMetadata(),
         item: .otpCode(uniqueCode())
     )
 }
 
 func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(
-            id: UUID(), created: Date(), updated: Date(), userDescription: "any"
-        ),
+        metadata: uniqueStoredMetadata(),
         item: item
     )
 }

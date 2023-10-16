@@ -243,16 +243,14 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
         OTPCodeDetailView(
             viewModel: CodeDetailViewModel(
                 storedCode: .init(
-                    metadata: .init(
-                        id: UUID(),
-                        created: Date(),
-                        updated: Date(),
-                        userDescription: "Description"
-                    ),
-                    item: .otpCode(.init(
-                        type: .totp(),
-                        data: .init(secret: .empty(), accountName: "Test")
-                    ))
+                    type: .totp(),
+                    data: .init(secret: .empty(), accountName: "Test")
+                ),
+                storedMetadata: .init(
+                    id: UUID(),
+                    created: Date(),
+                    updated: Date(),
+                    userDescription: "Description"
                 ),
                 editor: StubEditor()
             )
