@@ -53,11 +53,13 @@ public struct GenericVaultItemPreviewViewGenerator<
     public func scenePhaseDidChange(to scenePhase: ScenePhase) {
         hotpGenerator.scenePhaseDidChange(to: scenePhase)
         totpGenerator.scenePhaseDidChange(to: scenePhase)
+        noteGenerator.scenePhaseDidChange(to: scenePhase)
     }
 
     public func didAppear() {
         hotpGenerator.didAppear()
         totpGenerator.didAppear()
+        noteGenerator.didAppear()
     }
 }
 
