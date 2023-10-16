@@ -14,7 +14,7 @@ public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
 
     public func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
         var storedItem = item
-        storedItem.userDescription = edits.description
+        storedItem.metadata.userDescription = edits.description
 
         switch item.item {
         case var .otpCode(otpCode):

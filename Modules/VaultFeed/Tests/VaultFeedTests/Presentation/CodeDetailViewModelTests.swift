@@ -232,7 +232,7 @@ final class CodeDetailViewModelTests: XCTestCase {
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
         var item = uniqueVaultItem(item: .otpCode(code))
-        item.userDescription = "description test"
+        item.metadata.userDescription = "description test"
         let sut = makeSUT(item: item)
 
         let editing = sut.editingModel
@@ -247,7 +247,7 @@ final class CodeDetailViewModelTests: XCTestCase {
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
         var item = uniqueVaultItem(item: .otpCode(code))
-        item.userDescription = "description test"
+        item.metadata.userDescription = "description test"
         let sut = makeSUT(item: item)
 
         let editing = sut.editingModel

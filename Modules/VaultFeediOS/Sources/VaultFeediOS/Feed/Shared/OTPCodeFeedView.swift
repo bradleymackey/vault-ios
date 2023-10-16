@@ -105,10 +105,12 @@ struct OTPCodeFeedView_Previews: PreviewProvider {
         OTPCodeFeedView(
             viewModel: .init(store: InMemoryVaultStore(codes: [
                 .init(
-                    id: UUID(),
-                    created: Date(),
-                    updated: Date(),
-                    userDescription: "My Cool Code",
+                    metadata: .init(
+                        id: UUID(),
+                        created: Date(),
+                        updated: Date(),
+                        userDescription: "My Cool Code"
+                    ),
                     item: .otpCode(.init(
                         type: .totp(),
                         data: .init(

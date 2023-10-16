@@ -5,28 +5,28 @@ import VaultCore
 ///
 /// Includes the unique ID used to identify this item.
 public struct StoredVaultItem: Equatable, Hashable, Identifiable {
-    public var id: UUID
-    public var created: Date
-    public var updated: Date
-    public var userDescription: String?
+    /// Information about the stored item.
+    public var metadata: Metadata
     /// The stored vault item.
     public var item: VaultItem
 
-    public init(id: UUID, created: Date, updated: Date, userDescription: String?, item: VaultItem) {
-        self.id = id
-        self.created = created
-        self.updated = updated
-        self.userDescription = userDescription
+    public init(metadata: Metadata, item: VaultItem) {
+        self.metadata = metadata
         self.item = item
+    }
+
+    public var id: UUID {
+        metadata.id
     }
 
     /// Maps this object to a `StoredVaultItem.Write` for writing.
     public var asWritable: StoredVaultItem.Write {
-        .init(userDescription: userDescription, item: item)
+        .init(userDescription: metadata.userDescription, item: item)
     }
 }
 
 public extension StoredVaultItem {
+    /// Common metadata for all stored vault items.
     struct Metadata: Equatable, Hashable, Identifiable {
         /// A unique ID to identify this specific `item`.
         ///

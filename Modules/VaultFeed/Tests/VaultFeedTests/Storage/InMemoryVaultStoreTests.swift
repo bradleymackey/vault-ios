@@ -51,7 +51,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         XCTAssertEqual(retrieved.count, 1)
         let item = try XCTUnwrap(retrieved.first)
         XCTAssertEqual(item.id, code1.id)
-        XCTAssertEqual(item.userDescription, newUserDescription)
+        XCTAssertEqual(item.metadata.userDescription, newUserDescription)
         XCTAssertEqual(item.item, .otpCode(newCode))
     }
 

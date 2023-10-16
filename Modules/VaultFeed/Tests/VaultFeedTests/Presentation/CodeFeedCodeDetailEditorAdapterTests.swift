@@ -18,7 +18,7 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         code.data.accountName = "old account name"
         code.data.issuer = "old issuer name"
         var item = uniqueVaultItem(item: .otpCode(code))
-        item.userDescription = "old description"
+        item.metadata.userDescription = "old description"
 
         let edits = CodeDetailEdits(
             issuerTitle: "new issuer name",

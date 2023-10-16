@@ -23,7 +23,7 @@ public final class CodeDetailViewModel {
             editingModel = CodeDetailEditingModel(detail: .init(
                 issuerTitle: otpCode.data.issuer ?? "",
                 accountNameTitle: otpCode.data.accountName,
-                description: storedCode.userDescription ?? ""
+                description: storedCode.metadata.userDescription ?? ""
             ))
         case .secureNote:
             editingModel = CodeDetailEditingModel(detail: .init())
@@ -129,7 +129,7 @@ public extension CodeDetailViewModel {
     }
 
     var createdDateValue: String {
-        storedCode.created.formatted(date: .abbreviated, time: .omitted)
+        storedCode.metadata.created.formatted(date: .abbreviated, time: .omitted)
     }
 
     var updatedDateTitle: String {
@@ -137,7 +137,7 @@ public extension CodeDetailViewModel {
     }
 
     var updatedDateValue: String {
-        storedCode.updated.formatted(date: .abbreviated, time: .omitted)
+        storedCode.metadata.updated.formatted(date: .abbreviated, time: .omitted)
     }
 
     var doneEditingTitle: String {

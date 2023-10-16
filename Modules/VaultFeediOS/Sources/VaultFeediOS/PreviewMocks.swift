@@ -28,10 +28,12 @@ func forceRunLoopAdvance() {
 struct CodeStoreFake: VaultStoreReader {
     let codes: [StoredVaultItem] = [
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: ""
+            ),
             item: .otpCode(
                 .init(
                     type: .totp(),
@@ -44,10 +46,12 @@ struct CodeStoreFake: VaultStoreReader {
             )
         ),
         .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: "",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: ""
+            ),
             item: .otpCode(
                 .init(
                     type: .totp(),
@@ -60,8 +64,12 @@ struct CodeStoreFake: VaultStoreReader {
             )
         ),
         .init(
-            id: UUID(),
-            created: Date(), updated: Date(), userDescription: "",
+            metadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: ""
+            ),
             item: .otpCode(
                 .init(
                     type: .hotp(counter: 0),
