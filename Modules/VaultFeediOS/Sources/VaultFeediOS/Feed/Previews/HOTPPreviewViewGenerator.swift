@@ -56,8 +56,8 @@ extension HOTPPreviewViewGenerator: VaultItemCopyTextProvider {
 
 // MARK: - Caching
 
-extension HOTPPreviewViewGenerator: CodeDetailCache {
-    public func invalidateCodeDetailCache(forCodeWithID id: UUID) {
+extension HOTPPreviewViewGenerator: VaultItemCache {
+    public func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
         rendererCache.remove(key: id)
         previewViewModelCache.remove(key: id)
         incrementerViewModelCache.remove(key: id)

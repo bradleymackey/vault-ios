@@ -110,7 +110,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(sut.cachedRendererCount, 1)
         XCTAssertEqual(sut.cachedIncrementerCount, 1)
 
-        sut.invalidateCodeDetailCache(forCodeWithID: id)
+        sut.invalidateVaultItemDetailCache(forVaultItemWithID: id)
 
         XCTAssertEqual(sut.cachedViewsCount, 0)
         XCTAssertEqual(sut.cachedRendererCount, 0)

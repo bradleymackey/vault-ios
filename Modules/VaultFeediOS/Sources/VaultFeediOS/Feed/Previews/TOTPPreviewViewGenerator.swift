@@ -70,8 +70,8 @@ extension TOTPPreviewViewGenerator: VaultItemCopyTextProvider {
 
 // MARK: - Caching
 
-extension TOTPPreviewViewGenerator: CodeDetailCache {
-    public func invalidateCodeDetailCache(forCodeWithID id: UUID) {
+extension TOTPPreviewViewGenerator: VaultItemCache {
+    public func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
         viewModelCache.remove(key: id)
         // don't invalidate period caches, as they are independant of the code detail
     }
