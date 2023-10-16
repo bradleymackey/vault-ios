@@ -20,7 +20,7 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         var item = uniqueVaultItem(item: .otpCode(code))
         item.metadata.userDescription = "old description"
 
-        let edits = CodeDetailEdits(
+        let edits = OTPCodeDetailEdits(
             issuerTitle: "new issuer name",
             accountNameTitle: "new account name",
             description: "new description"
@@ -63,8 +63,8 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
 }
 
 extension CodeFeedCodeDetailEditorAdapterTests {
-    private func makeSUT(feed: any VaultFeed) -> VaultFeedVaultDetailEditorAdapter {
-        VaultFeedVaultDetailEditorAdapter(vaultFeed: feed)
+    private func makeSUT(feed: any VaultFeed) -> VaultFeedOTPCodeDetailEditorAdapter {
+        VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feed)
     }
 
     private class StubCodeFeed: VaultFeed {

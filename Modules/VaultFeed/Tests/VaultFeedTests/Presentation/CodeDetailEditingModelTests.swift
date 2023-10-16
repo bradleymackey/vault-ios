@@ -5,14 +5,14 @@ import XCTest
 @MainActor
 final class CodeDetailEditingModelTests: XCTestCase {
     func test_isDirty_initiallyFalse() {
-        let detail = CodeDetailEdits()
+        let detail = OTPCodeDetailEdits()
         let sut = makeSUT(detail: detail)
 
         XCTAssertFalse(sut.isDirty)
     }
 
     func test_isDirty_resetsOncePersisted() async throws {
-        let detail = CodeDetailEdits(
+        let detail = OTPCodeDetailEdits(
             issuerTitle: "hello"
         )
         let sut = makeSUT(detail: detail)
@@ -26,7 +26,7 @@ final class CodeDetailEditingModelTests: XCTestCase {
 
 extension CodeDetailEditingModelTests {
     private func makeSUT(
-        detail: CodeDetailEdits
+        detail: OTPCodeDetailEdits
     ) -> CodeDetailEditingModel {
         CodeDetailEditingModel(detail: detail)
     }

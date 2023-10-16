@@ -257,8 +257,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
         )
     }
 
-    class StubEditor: VaultDetailEditor {
-        func update(item _: StoredVaultItem, edits _: CodeDetailEdits) async throws {
+    class StubEditor: OTPCodeDetailEditor {
+        func update(item _: StoredVaultItem, edits _: OTPCodeDetailEdits) async throws {
             // noop
         }
 

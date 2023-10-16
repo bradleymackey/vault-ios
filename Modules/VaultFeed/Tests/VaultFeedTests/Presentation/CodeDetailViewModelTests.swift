@@ -273,10 +273,10 @@ extension CodeDetailViewModelTests {
         return sut
     }
 
-    private class CodeDetailEditorMock: VaultDetailEditor {
+    private class CodeDetailEditorMock: OTPCodeDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
-        var updateCodeCalled: (StoredVaultItem, CodeDetailEdits) async -> Void = { _, _ in }
-        func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
+        var updateCodeCalled: (StoredVaultItem, OTPCodeDetailEdits) async -> Void = { _, _ in }
+        func update(item: StoredVaultItem, edits: OTPCodeDetailEdits) async throws {
             await updateCodeCalled(item, edits)
             try updateCodeResult.get()
         }

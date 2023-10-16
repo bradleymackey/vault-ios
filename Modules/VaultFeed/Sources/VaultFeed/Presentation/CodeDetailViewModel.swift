@@ -12,14 +12,14 @@ public final class CodeDetailViewModel {
     public private(set) var isSaving = false
     public private(set) var isInEditMode = false
 
-    private let editor: any VaultDetailEditor
+    private let editor: any OTPCodeDetailEditor
     private let didEncounterErrorSubject = PassthroughSubject<Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
     public init(
         storedCode: GenericOTPAuthCode,
         storedMetadata: StoredVaultItem.Metadata,
-        editor: any VaultDetailEditor
+        editor: any OTPCodeDetailEditor
     ) {
         self.storedCode = storedCode
         storedMetdata = storedMetadata

@@ -1,18 +1,18 @@
 import Foundation
 
-public protocol VaultDetailEditor {
-    func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws
+public protocol OTPCodeDetailEditor {
+    func update(item: StoredVaultItem, edits: OTPCodeDetailEdits) async throws
     func deleteCode(id: UUID) async throws
 }
 
-/// A `VaultDetailEditor` that uses a feed for updating after a given edit.
-public struct VaultFeedVaultDetailEditorAdapter: VaultDetailEditor {
+/// A `OTPCodeDetailEditor` that uses a feed for updating after a given edit.
+public struct VaultFeedOTPCodeDetailEditorAdapter: OTPCodeDetailEditor {
     private let vaultFeed: any VaultFeed
     public init(vaultFeed: any VaultFeed) {
         self.vaultFeed = vaultFeed
     }
 
-    public func update(item: StoredVaultItem, edits: CodeDetailEdits) async throws {
+    public func update(item: StoredVaultItem, edits: OTPCodeDetailEdits) async throws {
         var storedItem = item
         storedItem.metadata.userDescription = edits.description
 
