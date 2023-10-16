@@ -59,8 +59,7 @@ public final class CodeDetailViewModel {
         isSaving = true
         defer { isSaving = false }
         do {
-            let originalItem = StoredVaultItem(metadata: storedMetdata, item: .otpCode(storedCode))
-            try await editor.update(item: originalItem, edits: editingModel.detail)
+            try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
             isInEditMode = false
             editingModel.didPersist()
         } catch {

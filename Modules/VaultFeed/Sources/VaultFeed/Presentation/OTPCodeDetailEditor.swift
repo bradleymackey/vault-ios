@@ -1,7 +1,8 @@
 import Foundation
+import VaultCore
 
 public protocol OTPCodeDetailEditor {
-    func update(item: StoredVaultItem, edits: OTPCodeDetailEdits) async throws
+    func update(id: UUID, item: GenericOTPAuthCode, edits: OTPCodeDetailEdits) async throws
     func deleteCode(id: UUID) async throws
 }
 
@@ -12,20 +13,12 @@ public struct VaultFeedOTPCodeDetailEditorAdapter: OTPCodeDetailEditor {
         self.vaultFeed = vaultFeed
     }
 
-    public func update(item: StoredVaultItem, edits: OTPCodeDetailEdits) async throws {
-        var storedItem = item
-        storedItem.metadata.userDescription = edits.description
+    public func update(id: UUID, item: GenericOTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+        var item = item
+        item.data.accountName = edits.accountNameTitle
+        item.data.issuer = edits.issuerTitle
 
-        switch item.item {
-        case var .otpCode(otpCode):
-            otpCode.data.accountName = edits.accountNameTitle
-            otpCode.data.issuer = edits.issuerTitle
-            storedItem.item = .otpCode(otpCode)
-        case .secureNote:
-            break
-        }
-
-        try await vaultFeed.update(id: item.id, item: storedItem.asWritable)
+        try await vaultFeed.update(id: id, item: .init(userDescription: edits.description, item: .otpCode(item)))
     }
 
     public func deleteCode(id: UUID) async throws {

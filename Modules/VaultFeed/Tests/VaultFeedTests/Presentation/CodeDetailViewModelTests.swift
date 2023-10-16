@@ -38,7 +38,7 @@ final class CodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_setsIsSavingToTrue() async throws {
         let completeUpdateSignal = PendingValue<Void>()
         let editor = CodeDetailEditorMock()
-        editor.updateCodeCalled = { _, _ in
+        editor.updateCodeCalled = { _, _, _ in
             try? await completeUpdateSignal.awaitValue()
         }
 
@@ -275,9 +275,9 @@ extension CodeDetailViewModelTests {
 
     private class CodeDetailEditorMock: OTPCodeDetailEditor {
         var updateCodeResult: Result<Void, Error> = .success(())
-        var updateCodeCalled: (StoredVaultItem, OTPCodeDetailEdits) async -> Void = { _, _ in }
-        func update(item: StoredVaultItem, edits: OTPCodeDetailEdits) async throws {
-            await updateCodeCalled(item, edits)
+        var updateCodeCalled: (UUID, GenericOTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
+        func update(id: UUID, item: GenericOTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+            await updateCodeCalled(id, item, edits)
             try updateCodeResult.get()
         }
 

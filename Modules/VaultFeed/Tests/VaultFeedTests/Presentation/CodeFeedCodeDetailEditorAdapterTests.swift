@@ -39,7 +39,7 @@ final class CodeFeedCodeDetailEditorAdapterTests: XCTestCase {
             exp.fulfill()
         }
 
-        try await sut.update(item: item, edits: edits)
+        try await sut.update(id: item.metadata.id, item: code, edits: edits)
 
         await fulfillment(of: [exp])
     }
