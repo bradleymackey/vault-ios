@@ -8,7 +8,9 @@ public struct SecureNotePreviewView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 2) {
             titleLabel
-            descriptionLabel
+            if let description = viewModel.description {
+                descriptionLabel(text: description)
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
@@ -19,8 +21,8 @@ public struct SecureNotePreviewView: View {
             .font(.headline)
     }
 
-    private var descriptionLabel: some View {
-        Text(viewModel.description)
+    private func descriptionLabel(text: String) -> some View {
+        Text(text)
             .font(.callout)
             .foregroundStyle(.secondary)
             .lineLimit(5)
