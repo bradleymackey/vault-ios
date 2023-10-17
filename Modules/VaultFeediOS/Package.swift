@@ -3,6 +3,10 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("StrictConcurrency"),
+]
+
 let package = Package(
     name: "VaultFeediOS",
     defaultLocalization: "en",
@@ -24,14 +28,16 @@ let package = Package(
     targets: [
         .target(
             name: "VaultFeediOS",
-            dependencies: ["VaultFeed", "SimpleToast", "VaultUI", "FoundationExtensions", "VaultSettings"]
+            dependencies: ["VaultFeed", "SimpleToast", "VaultUI", "FoundationExtensions", "VaultSettings"],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "VaultFeediOSTests",
             dependencies: [
                 "VaultFeediOS",
                 "TestHelpers",
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
     ]
 )
