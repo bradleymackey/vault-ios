@@ -4,6 +4,10 @@
 import PackageDescription
 
 let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
 ]
 
