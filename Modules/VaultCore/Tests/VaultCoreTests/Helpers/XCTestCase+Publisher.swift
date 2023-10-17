@@ -34,12 +34,12 @@ extension XCTestCase {
         _ publisher: T,
         timeout: TimeInterval = 10,
         when operation: () -> Void,
-        file: StaticString = #file,
+        file: StaticString = #filePath,
         line: UInt = #line
     ) throws -> T.Output {
         // This time, we use Swift's Result type to keep track
         // of the result of our Combine pipeline:
-        var result: Result<T.Output, Error>?
+        var result: Result<T.Output, any Error>?
         let expectation = expectation(description: "Awaiting publisher")
 
         let cancellable = publisher.sink(
