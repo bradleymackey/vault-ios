@@ -6,8 +6,8 @@ public enum VaultItem: Equatable, Hashable {
     case secureNote(SecureNote)
 }
 
-public extension VaultItem {
-    var otpCode: OTPAuthCode? {
+extension VaultItem {
+    public var otpCode: OTPAuthCode? {
         switch self {
         case let .otpCode(otpCode):
             return otpCode
@@ -16,7 +16,7 @@ public extension VaultItem {
         }
     }
 
-    var secureNote: SecureNote? {
+    public var secureNote: SecureNote? {
         switch self {
         case let .secureNote(note):
             return note

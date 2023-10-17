@@ -6,6 +6,7 @@
 --commas always
 --decimalgrouping 3,6
 --elseposition same-line
+--extensionacl on-declarations
 --voidtype void
 --exponentcase lowercase
 --exponentgrouping disabled

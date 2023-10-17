@@ -220,17 +220,17 @@ final class DefaultsKitTests: XCTestCase {
 
 // MARK: - Helpers
 
-private extension DefaultsKey {
-    static let integerKey = Key<Int>("integerKey")
-    static let floatKey = Key<Float>("floatKey")
-    static let doubleKey = Key<Double>("doubleKey")
-    static let stringKey = Key<String>("stringKey")
-    static let boolKey = Key<Bool>("boolKey")
-    static let dateKey = Key<Date>("dateKey")
-    static let enumKey = Key<EnumMock>("enumKey")
-    static let optionSetKey = Key<OptionSetMock>("optionSetKey")
-    static let arrayOfIntegersKey = Key<[Int]>("arrayOfIntegersKey")
-    static let personMockKey = Key<PersonMock>("personMockKey")
+extension DefaultsKey {
+    fileprivate static let integerKey = Key<Int>("integerKey")
+    fileprivate static let floatKey = Key<Float>("floatKey")
+    fileprivate static let doubleKey = Key<Double>("doubleKey")
+    fileprivate static let stringKey = Key<String>("stringKey")
+    fileprivate static let boolKey = Key<Bool>("boolKey")
+    fileprivate static let dateKey = Key<Date>("dateKey")
+    fileprivate static let enumKey = Key<EnumMock>("enumKey")
+    fileprivate static let optionSetKey = Key<OptionSetMock>("optionSetKey")
+    fileprivate static let arrayOfIntegersKey = Key<[Int]>("arrayOfIntegersKey")
+    fileprivate static let personMockKey = Key<PersonMock>("personMockKey")
 }
 
 struct PersonMock: Codable {

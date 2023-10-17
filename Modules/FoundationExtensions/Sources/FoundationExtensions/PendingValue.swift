@@ -16,41 +16,41 @@ public actor PendingValue<Output> {
 
 // MARK: - Helpers
 
-public extension PendingValue {
+extension PendingValue {
     /// Returns `true` if waiting on `waitToProduce` at this moment.
-    var isWaiting: Bool {
+    public var isWaiting: Bool {
         valuePipeline != nil
     }
 
     /// Cancel the `waitToProduce`, causing it to throw a `CancellationError`.
-    func cancel() {
+    public func cancel() {
         valuePipeline?.send(completion: .failure(CancellationError()))
     }
 }
 
 // MARK: - API
 
-public extension PendingValue {
+extension PendingValue {
     /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
-    func fulfill(_ value: Output) {
+    public func fulfill(_ value: Output) {
         lastValue = .success(value)
         valuePipeline?.send(value)
         valuePipeline?.send(completion: .finished)
     }
 
     /// Produces an error to cause `waitToForValue` to throw.
-    func reject(error: any Error) {
+    public func reject(error: any Error) {
         lastValue = .failure(error)
         valuePipeline?.send(completion: .failure(error))
     }
 
-    struct AlreadyWaitingError: Error {}
+    public struct AlreadyWaitingError: Error {}
 
     /// Wait for the production of the target value, cancelling on a Task cancellation.
     /// Yields the value when `produceNow` is called, but waits until that moment.
     ///
     /// - throws: `CancellationError` if cancelled, `ProductionError.alreadyWaiting` if already waiting.
-    func awaitValue() async throws -> Output {
+    public func awaitValue() async throws -> Output {
         if isWaiting {
             throw AlreadyWaitingError()
         }
@@ -92,9 +92,9 @@ public extension PendingValue {
 
 // MARK: - Specialisation
 
-public extension PendingValue where Output == Void {
+extension PendingValue where Output == Void {
     /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
-    func fulfill() {
+    public func fulfill() {
         fulfill(())
     }
 }

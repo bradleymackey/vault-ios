@@ -64,8 +64,8 @@ extension HOTPGenerator {
     }
 }
 
-private extension HOTPGenerator.Algorithm {
-    var hmacVariant: HMAC.Variant {
+extension HOTPGenerator.Algorithm {
+    fileprivate var hmacVariant: HMAC.Variant {
         switch self {
         case .sha1:
             return .sha1

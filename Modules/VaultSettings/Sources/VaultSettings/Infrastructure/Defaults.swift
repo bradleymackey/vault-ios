@@ -151,12 +151,14 @@ public final class Defaults {
 
 // MARK: - RawRepresentable
 
-public extension Defaults {
+extension Defaults {
     /// Returns the value associated with the specified key.
     ///
     /// - Parameter key: The key.
     /// - Returns: A `ValueType` or nil if the key was not found.
-    func get<ValueType: RawRepresentable>(for key: Key<ValueType>) -> ValueType? where ValueType.RawValue: Codable {
+    public func get<ValueType: RawRepresentable>(for key: Key<ValueType>) -> ValueType?
+        where ValueType.RawValue: Codable
+    {
         let convertedKey = Key<ValueType.RawValue>(key.storageName)
         if let raw = get(for: convertedKey) {
             return ValueType(rawValue: raw)
@@ -169,7 +171,7 @@ public extension Defaults {
     /// - Parameters:
     ///   - some: The value to set.
     ///   - key: The associated `Key<ValueType>`.
-    func set<ValueType: RawRepresentable>(_ value: ValueType, for key: Key<ValueType>) throws
+    public func set<ValueType: RawRepresentable>(_ value: ValueType, for key: Key<ValueType>) throws
         where ValueType.RawValue: Codable
     {
         let convertedKey = Key<ValueType.RawValue>(key.storageName)

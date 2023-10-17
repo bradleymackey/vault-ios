@@ -1,8 +1,8 @@
 import Foundation
 import XCTest
 
-public extension XCTestCase {
-    func expectSingleMutation<T: Observable>(
+extension XCTestCase {
+    public func expectSingleMutation<T: Observable>(
         observable object: T,
         keyPath: KeyPath<T, some Any>,
         when action: () async throws -> Void
@@ -20,7 +20,7 @@ public extension XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
-    func expectNoMutation<T: Observable>(
+    public func expectNoMutation<T: Observable>(
         observable object: T,
         keyPath: KeyPath<T, some Any>,
         timeout: Double = 1.0,

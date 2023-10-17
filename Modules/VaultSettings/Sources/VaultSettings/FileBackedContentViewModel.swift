@@ -6,9 +6,9 @@ public protocol FileBackedContentViewModel {
     var fileExtension: String { get }
 }
 
-public extension FileBackedContentViewModel {
+extension FileBackedContentViewModel {
     /// Load the content from this file.
-    func loadContent() -> String? {
+    public func loadContent() -> String? {
         guard let path = Bundle.module.path(forResource: fileName, ofType: fileExtension) else {
             return nil
         }
@@ -19,7 +19,7 @@ public extension FileBackedContentViewModel {
         return String(data: contents, encoding: .utf8)
     }
 
-    var errorLoadingMessage: String {
+    public var errorLoadingMessage: String {
         localized(key: "settings.errorLoadingDocument")
     }
 }

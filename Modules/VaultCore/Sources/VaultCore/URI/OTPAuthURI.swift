@@ -2,9 +2,9 @@ import Foundation
 
 public typealias OTPAuthURI = URL
 
-public extension OTPAuthURI {
+extension OTPAuthURI {
     /// The canonical URI scheme used for OTP auth code URIs.
-    static var otpAuthScheme: String {
+    public static var otpAuthScheme: String {
         "otpauth"
     }
 }

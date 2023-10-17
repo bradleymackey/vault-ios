@@ -20,8 +20,8 @@ public struct ToastAlertMessageView: View {
     }
 }
 
-public extension ToastAlertMessageView {
-    static func copiedToClipboard() -> ToastAlertMessageView {
+extension ToastAlertMessageView {
+    public static func copiedToClipboard() -> ToastAlertMessageView {
         .init(title: localized(key: "code.copyied"), image: Image(systemName: "doc.on.doc.fill"))
     }
 }

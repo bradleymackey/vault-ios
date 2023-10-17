@@ -72,8 +72,8 @@ public final class HOTPCodeRenderer: OTPCodeRenderer {
     }
 }
 
-private extension String {
-    func leftPadding(toLength newLength: Int, withPad character: Character) -> String {
+extension String {
+    fileprivate func leftPadding(toLength newLength: Int, withPad character: Character) -> String {
         let stringLength = count
         if stringLength < newLength {
             return String(repeatElement(character, count: newLength - stringLength)) + self

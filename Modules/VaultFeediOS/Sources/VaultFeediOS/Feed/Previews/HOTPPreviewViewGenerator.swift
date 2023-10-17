@@ -43,8 +43,8 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
     }
 }
 
-public extension HOTPPreviewViewGenerator {
-    func hideAllCodesUntilNextUpdate() {
+extension HOTPPreviewViewGenerator {
+    public func hideAllCodesUntilNextUpdate() {
         for viewModel in previewViewModelCache.values {
             viewModel.hideCodeUntilNextUpdate()
         }

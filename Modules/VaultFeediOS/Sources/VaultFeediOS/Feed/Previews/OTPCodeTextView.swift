@@ -69,8 +69,8 @@ public struct OTPCodeTextView: View {
     }
 }
 
-private extension [Character] {
-    func chunked(by chunkSize: Int) -> [String] {
+extension [Character] {
+    fileprivate func chunked(by chunkSize: Int) -> [String] {
         stride(from: startIndex, to: endIndex, by: chunkSize).map {
             let startIndex = $0
             let endIndex = Swift.min($0 + chunkSize, count)

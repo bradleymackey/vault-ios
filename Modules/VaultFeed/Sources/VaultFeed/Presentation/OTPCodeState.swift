@@ -8,8 +8,8 @@ public enum OTPCodeState: Equatable {
     case error(PresentationError, digits: Int)
 }
 
-public extension OTPCodeState {
-    var allowsNextCodeToBeGenerated: Bool {
+extension OTPCodeState {
+    public var allowsNextCodeToBeGenerated: Bool {
         switch self {
         case .visible, .obfuscated:
             return true
@@ -18,7 +18,7 @@ public extension OTPCodeState {
         }
     }
 
-    var isVisible: Bool {
+    public var isVisible: Bool {
         switch self {
         case .visible:
             return true
@@ -27,7 +27,7 @@ public extension OTPCodeState {
         }
     }
 
-    var visibleCode: String? {
+    public var visibleCode: String? {
         switch self {
         case let .visible(code):
             return code

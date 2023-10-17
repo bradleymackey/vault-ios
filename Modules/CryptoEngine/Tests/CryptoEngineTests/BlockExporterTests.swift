@@ -145,8 +145,8 @@ private func byte(int: Int) -> Data {
     Data(repeating: UInt8(int), count: 1)
 }
 
-private extension BlockExporter {
-    mutating func allElements() -> [Data] {
+extension BlockExporter {
+    fileprivate mutating func allElements() -> [Data] {
         var acc = [Data]()
         while let next = try? next() {
             acc.append(next)

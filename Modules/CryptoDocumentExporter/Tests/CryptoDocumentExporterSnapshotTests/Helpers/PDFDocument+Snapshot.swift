@@ -15,8 +15,8 @@ extension Snapshotting where Value == PDFDocument, Format == UIImage {
     }
 }
 
-private extension PDFDocument {
-    func asImage(page: Int = 1) -> UIImage? {
+extension PDFDocument {
+    fileprivate func asImage(page: Int = 1) -> UIImage? {
         guard let data = dataRepresentation() else { return nil }
         let cfData = data as CFData
         guard let provider = CGDataProvider(data: cfData) else { return nil }

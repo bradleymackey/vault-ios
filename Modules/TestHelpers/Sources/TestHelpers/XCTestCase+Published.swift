@@ -2,9 +2,9 @@ import Combine
 import Foundation
 import XCTest
 
-public extension XCTestCase {
+extension XCTestCase {
     /// Asserts that the given publisher completes before continuing.
-    func awaitPublisher<T: Publisher>(
+    public func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 1,
         when perform: () async throws -> Void,
@@ -46,7 +46,7 @@ public extension XCTestCase {
     }
 
     /// Asserts that the given publisher does not output any values.
-    func awaitNoPublish(
+    public func awaitNoPublish(
         publisher: some Publisher,
         timeout: Double = 1.0,
         when perform: () async throws -> Void
@@ -73,9 +73,9 @@ public extension XCTestCase {
     }
 }
 
-public extension Published.Publisher {
+extension Published.Publisher {
     /// Collect the next *n* elements that are output, ignoring the first result
-    func collectNext(_ count: Int) -> AnyPublisher<[Output], Never> {
+    public func collectNext(_ count: Int) -> AnyPublisher<[Output], Never> {
         dropFirst()
             .collect(count)
             .first()
@@ -83,14 +83,14 @@ public extension Published.Publisher {
     }
 
     /// For @Published, this is a publisher that ignores the first element.
-    func nextElements() -> AnyPublisher<Output, Never> {
+    public func nextElements() -> AnyPublisher<Output, Never> {
         dropFirst().eraseToAnyPublisher()
     }
 }
 
-public extension Publisher {
+extension Publisher {
     /// Collects the first *n* elements that are output.
-    func collectFirst(_ count: Int) -> AnyPublisher<[Output], Failure> {
+    public func collectFirst(_ count: Int) -> AnyPublisher<[Output], Failure> {
         collect(count)
             .first()
             .eraseToAnyPublisher()
