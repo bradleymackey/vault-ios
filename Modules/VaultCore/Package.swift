@@ -2,6 +2,10 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("StrictConcurrency"),
+]
+
 let package = Package(
     name: "VaultCore",
     platforms: [.iOS(.v17), .macOS(.v14)],
@@ -17,11 +21,13 @@ let package = Package(
     targets: [
         .target(
             name: "VaultCore",
-            dependencies: ["CryptoEngine"]
+            dependencies: ["CryptoEngine"],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "VaultCoreTests",
-            dependencies: ["VaultCore"]
+            dependencies: ["VaultCore"],
+            swiftSettings: swiftSettings
         ),
     ]
 )
