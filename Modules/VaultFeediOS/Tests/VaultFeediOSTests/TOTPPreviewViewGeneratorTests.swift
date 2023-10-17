@@ -21,7 +21,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let sut = makeSUT()
 
-        let view = sut.makeVaultPreviewView(id: UUID(), item: anyTOTPCode(), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(item: anyTOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, TOTP!")
@@ -76,7 +76,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let sut = makeSUT(factory: factory)
         let id = UUID()
 
-        _ = sut.makeVaultPreviewView(id: id, item: anyTOTPCode(), behaviour: .normal)
+        _ = sut.makeVaultPreviewView(item: anyTOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(sut.cachedPeriodStateCount, 1)
@@ -190,7 +190,7 @@ extension TOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeVaultPreviewView(id: id, item: anyTOTPCode(), behaviour: .normal)
+            _ = sut.makeVaultPreviewView(item: anyTOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))

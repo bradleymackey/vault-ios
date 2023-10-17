@@ -15,7 +15,11 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
         self.viewFactory = viewFactory
     }
 
-    public func makeVaultPreviewView(id _: UUID, item: SecureNote, behaviour _: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(
+        item: SecureNote,
+        metadata _: StoredVaultItem.Metadata,
+        behaviour _: VaultItemViewBehaviour
+    ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: item.title,
             description: "this should be the description, not the contents!"

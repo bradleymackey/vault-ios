@@ -21,11 +21,13 @@ func uniqueCode() -> OTPAuthCode {
 
 func uniqueStoredVaultItem() -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(
-            id: UUID(), created: Date(), updated: Date(), userDescription: "any"
-        ),
+        metadata: uniqueMetadata(),
         item: .otpCode(uniqueCode())
     )
+}
+
+func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
+    .init(id: id, created: Date(), updated: Date(), userDescription: "any")
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {

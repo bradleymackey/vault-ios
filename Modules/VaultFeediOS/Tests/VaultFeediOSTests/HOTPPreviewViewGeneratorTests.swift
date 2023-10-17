@@ -18,7 +18,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let (sut, _, _) = makeSUT()
 
-        let view = sut.makeVaultPreviewView(id: UUID(), item: anyHOTPCode(), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
         let foundText = try view.inspect().text().string()
         XCTAssertEqual(foundText, "Hello, HOTP!")
@@ -63,7 +63,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let (sut, _, _) = makeSUT()
 
         let id = UUID()
-        _ = sut.makeVaultPreviewView(id: id, item: anyHOTPCode(), behaviour: .normal)
+        _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
         let code = sut.currentCopyableText(id: id)
 
         XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
@@ -104,7 +104,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let id = UUID()
 
-        _ = sut.makeVaultPreviewView(id: id, item: anyHOTPCode(), behaviour: .normal)
+        _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(sut.cachedRendererCount, 1)
@@ -178,7 +178,7 @@ extension HOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeVaultPreviewView(id: id, item: anyHOTPCode(), behaviour: .normal)
+            _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))
@@ -210,7 +210,7 @@ extension HOTPPreviewViewGeneratorTests {
 
         for id in ids {
             group.enter()
-            _ = sut.makeVaultPreviewView(id: id, item: anyHOTPCode(), behaviour: .normal)
+            _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
         }
 
         _ = group.wait(timeout: .now() + .seconds(1))
