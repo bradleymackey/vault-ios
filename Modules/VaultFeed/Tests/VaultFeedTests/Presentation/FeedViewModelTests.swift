@@ -222,7 +222,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     private struct ErrorStubStore: VaultStoreReader, VaultStoreWriter {
-        var error: Error
+        var error: any Error
         var retrieveStoreCalled: () -> Void = {}
         func retrieve() async throws -> [StoredVaultItem] {
             retrieveStoreCalled()

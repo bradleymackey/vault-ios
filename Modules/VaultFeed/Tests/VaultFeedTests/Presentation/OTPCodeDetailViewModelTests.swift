@@ -274,14 +274,14 @@ extension OTPCodeDetailViewModelTests {
     }
 
     private class CodeDetailEditorMock: OTPCodeDetailEditor {
-        var updateCodeResult: Result<Void, Error> = .success(())
+        var updateCodeResult: Result<Void, any Error> = .success(())
         var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
         func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
             await updateCodeCalled(id, item, edits)
             try updateCodeResult.get()
         }
 
-        var deleteCodeResult: Result<Void, Error> = .success(())
+        var deleteCodeResult: Result<Void, any Error> = .success(())
         var deleteCodeCalled: (UUID) async -> Void = { _ in }
         func deleteCode(id: UUID) async throws {
             await deleteCodeCalled(id)

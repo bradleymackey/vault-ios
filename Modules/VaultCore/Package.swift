@@ -3,6 +3,10 @@
 import PackageDescription
 
 let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("ForwardTrailingClosures"),
+    .enableUpcomingFeature("BareSlashRegexLiterals"),
+    .enableUpcomingFeature("ConciseMagicFile"),
+    .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
 ]
 
@@ -17,6 +21,7 @@ let package = Package(
     ],
     dependencies: [
         .package(name: "CryptoEngine", path: "../CryptoEngine"),
+        .package(name: "TestHelpers", path: "../TestHelpers"),
     ],
     targets: [
         .target(
@@ -26,7 +31,7 @@ let package = Package(
         ),
         .testTarget(
             name: "VaultCoreTests",
-            dependencies: ["VaultCore"],
+            dependencies: ["VaultCore", "TestHelpers"],
             swiftSettings: swiftSettings
         ),
     ]

@@ -13,7 +13,7 @@ public final class OTPCodeDetailViewModel {
     public private(set) var isInEditMode = false
 
     private let editor: any OTPCodeDetailEditor
-    private let didEncounterErrorSubject = PassthroughSubject<Error, Never>()
+    private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
     public init(
@@ -41,7 +41,7 @@ public final class OTPCodeDetailViewModel {
         return [details]
     }
 
-    public func didEncounterErrorPublisher() -> AnyPublisher<Error, Never> {
+    public func didEncounterErrorPublisher() -> AnyPublisher<any Error, Never> {
         didEncounterErrorSubject.eraseToAnyPublisher()
     }
 

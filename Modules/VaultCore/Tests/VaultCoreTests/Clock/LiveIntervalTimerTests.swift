@@ -1,4 +1,5 @@
 import Foundation
+import TestHelpers
 import VaultCore
 import XCTest
 
@@ -9,7 +10,7 @@ final class LiveIntervalTimerTests: XCTestCase {
 
         let publisher = sut.wait(for: 0.5).collect(1).first()
 
-        let values: [Void] = try awaitPublisher(publisher, timeout: 2.0, when: {})
+        let values: [Void] = try await awaitPublisher(publisher, timeout: 2.0, when: {})
         XCTAssertEqual(values.count, 1)
     }
 
