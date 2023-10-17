@@ -54,7 +54,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isSaving)
 
         // Cleanup
-        completeUpdateSignal.fulfill()
+        await completeUpdateSignal.fulfill()
         _ = await task.value
     }
 
@@ -150,7 +150,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isSaving)
 
         // Cleanup
-        completeDeleteSignal.fulfill()
+        await completeDeleteSignal.fulfill()
         _ = await task.value
     }
 

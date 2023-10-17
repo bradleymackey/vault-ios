@@ -19,7 +19,7 @@ final class PendingValueTests: XCTestCase {
         }
         Task {
             try await Task.sleep(for: .milliseconds(100))
-            producer.fulfill(42)
+            await producer.fulfill(42)
         }
 
         await fulfillment(of: [exp], timeout: 1.0)
@@ -39,7 +39,7 @@ final class PendingValueTests: XCTestCase {
         }
         Task {
             try await Task.sleep(for: .milliseconds(100))
-            producer.reject(error: TestError.testCase)
+            await producer.reject(error: TestError.testCase)
         }
 
         await fulfillment(of: [exp], timeout: 1.0)
@@ -47,7 +47,7 @@ final class PendingValueTests: XCTestCase {
 
     func test_fulfill_beforeAwaitingReturnsInitialValue() async throws {
         let producer = PendingValue<Int>()
-        producer.fulfill(42)
+        await producer.fulfill(42)
         let exp = expectation(description: "Produces")
         Task {
             defer { exp.fulfill() }
@@ -60,9 +60,9 @@ final class PendingValueTests: XCTestCase {
 
     func test_fulfill_remembersMostRecentValueOnly() async throws {
         let producer = PendingValue<Int>()
-        producer.fulfill(42)
-        producer.fulfill(43)
-        producer.fulfill(44)
+        await producer.fulfill(42)
+        await producer.fulfill(43)
+        await producer.fulfill(44)
 
         let exp = expectation(description: "Produces")
         Task {
@@ -77,7 +77,7 @@ final class PendingValueTests: XCTestCase {
 
     func test_reject_beforeAwaitResolvesWithInitialError() async throws {
         let producer = PendingValue<Int>()
-        producer.reject(error: TestError.testCase)
+        await producer.reject(error: TestError.testCase)
 
         let exp = expectation(description: "Produces")
         Task {
@@ -97,8 +97,8 @@ final class PendingValueTests: XCTestCase {
 
     func test_reject_resolvesWithMostRecentError() async throws {
         let producer = PendingValue<Int>()
-        producer.reject(error: TestError.testCase)
-        producer.reject(error: TestError.testCase2)
+        await producer.reject(error: TestError.testCase)
+        await producer.reject(error: TestError.testCase2)
 
         let exp = expectation(description: "Produces")
         Task {
