@@ -2,6 +2,10 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("StrictConcurrency"),
+]
+
 let package = Package(
     name: "TestHelpers",
     platforms: [.iOS(.v17), .macOS(.v14)],
@@ -21,7 +25,8 @@ let package = Package(
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 .product(name: "ViewInspector", package: "ViewInspector"),
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
     ]
 )

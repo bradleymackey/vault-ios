@@ -3,6 +3,10 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("StrictConcurrency"),
+]
+
 let package = Package(
     name: "CryptoEngine",
     platforms: [.macOS(.v10_15), .iOS(.v13)],
@@ -22,11 +26,13 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "CryptoEngine",
-            dependencies: ["CryptoSwift", "BigInt"]
+            dependencies: ["CryptoSwift", "BigInt"],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "CryptoEngineTests",
-            dependencies: ["CryptoEngine"]
+            dependencies: ["CryptoEngine"],
+            swiftSettings: swiftSettings
         ),
     ]
 )
