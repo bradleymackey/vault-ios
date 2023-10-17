@@ -6,19 +6,25 @@ public struct SecureNotePreviewView: View {
     var viewModel: SecureNotePreviewViewModel
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 2) {
+        VStack(alignment: .leading, spacing: 4) {
             titleLabel
             if let description = viewModel.description {
                 descriptionLabel(text: description)
             }
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
         .multilineTextAlignment(.leading)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(2)
     }
 
     private var titleLabel: some View {
-        Text(viewModel.title)
-            .font(.headline)
+        HStack(alignment: .center, spacing: 4) {
+            Image(systemName: "doc.text.fill")
+                .font(.footnote)
+            Text(viewModel.title)
+                .font(.headline)
+        }
+        .padding(.vertical, 4)
     }
 
     private func descriptionLabel(text: String) -> some View {
