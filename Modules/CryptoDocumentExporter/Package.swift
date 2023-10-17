@@ -3,6 +3,10 @@
 
 import PackageDescription
 
+let swiftSettings: [SwiftSetting] = [
+    .enableUpcomingFeature("StrictConcurrency"),
+]
+
 let package = Package(
     name: "CryptoDocumentExporter",
     platforms: [.iOS(.v13)],
@@ -25,13 +29,15 @@ let package = Package(
         // Targets can depend on other targets in this package and products from dependencies.
         .target(
             name: "CryptoDocumentExporter",
-            dependencies: ["CryptoEngine"]
+            dependencies: ["CryptoEngine"],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "CryptoDocumentExporterTests",
             dependencies: [
                 "CryptoDocumentExporter",
-            ]
+            ],
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "CryptoDocumentExporterSnapshotTests",
@@ -42,7 +48,8 @@ let package = Package(
                     package: "swift-snapshot-testing"
                 ),
             ],
-            exclude: ["__Snapshots__"]
+            exclude: ["__Snapshots__"],
+            swiftSettings: swiftSettings
         ),
     ]
 )
