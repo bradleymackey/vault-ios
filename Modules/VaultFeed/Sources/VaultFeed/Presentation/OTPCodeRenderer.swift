@@ -5,7 +5,7 @@ import VaultCore
 
 /// Renders the code to a visible state for the given `code`.
 public protocol OTPCodeRenderer {
-    func renderedCodePublisher() -> AnyPublisher<String, Error>
+    func renderedCodePublisher() -> AnyPublisher<String, any Error>
 }
 
 extension Publisher where Output == BigUInt {
@@ -26,15 +26,15 @@ public final class TOTPCodeRenderer: OTPCodeRenderer {
         self.totpGenerator = totpGenerator
     }
 
-    public func renderedCodePublisher() -> AnyPublisher<String, Error> {
+    public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
         codeValuePublisher()
             .digitsRenderer(digits: Int(totpGenerator.digits))
     }
 
-    private func codeValuePublisher() -> AnyPublisher<BigUInt, Error> {
+    private func codeValuePublisher() -> AnyPublisher<BigUInt, any Error> {
         let generator = totpGenerator
         return timer.timerUpdatedPublisher()
-            .setFailureType(to: Error.self)
+            .setFailureType(to: (any Error).self)
             .tryMap { state in
                 try generator.code(epochSeconds: UInt64(state.startTime))
             }
@@ -56,15 +56,15 @@ public final class HOTPCodeRenderer: OTPCodeRenderer {
         counterSubject.send(counter)
     }
 
-    public func renderedCodePublisher() -> AnyPublisher<String, Error> {
+    public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
         codeValuePublisher()
             .digitsRenderer(digits: Int(hotpGenerator.digits))
     }
 
-    private func codeValuePublisher() -> AnyPublisher<BigUInt, Error> {
+    private func codeValuePublisher() -> AnyPublisher<BigUInt, any Error> {
         let generator = hotpGenerator
         return counterSubject
-            .setFailureType(to: Error.self)
+            .setFailureType(to: (any Error).self)
             .tryMap { counterValue in
                 try generator.code(counter: counterValue)
             }

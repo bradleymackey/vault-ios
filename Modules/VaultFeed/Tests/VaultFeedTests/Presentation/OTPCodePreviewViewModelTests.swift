@@ -76,8 +76,8 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     }
 
     private struct MockCodeRenderer: OTPCodeRenderer {
-        let subject = PassthroughSubject<String, Error>()
-        func renderedCodePublisher() -> AnyPublisher<String, Error> {
+        let subject = PassthroughSubject<String, any Error>()
+        func renderedCodePublisher() -> AnyPublisher<String, any Error> {
             subject.eraseToAnyPublisher()
         }
     }
