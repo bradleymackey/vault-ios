@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
-public final class PendingValue<Output> {
+public actor PendingValue<Output> {
     /// A one-shot publisher, on which we check it's completion.
     private var valuePipeline: PassthroughSubject<Output, any Error>?
     /// Internal pipeline listener.
@@ -12,10 +12,6 @@ public final class PendingValue<Output> {
     private var lastValue: Result<Output, any Error>?
 
     public init() {}
-
-    deinit {
-        cancel()
-    }
 }
 
 // MARK: - Helpers
@@ -87,7 +83,9 @@ public extension PendingValue {
                 }
             }
         } onCancel: {
-            valuePipeline?.send(completion: .failure(CancellationError()))
+            Task {
+                await valuePipeline?.send(completion: .failure(CancellationError()))
+            }
         }
     }
 }
