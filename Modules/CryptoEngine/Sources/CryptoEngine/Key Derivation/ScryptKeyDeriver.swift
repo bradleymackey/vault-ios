@@ -37,8 +37,8 @@ public struct ScryptKeyDeriver: KeyDeriver {
 
 // MARK: - Parameters
 
-public extension ScryptKeyDeriver {
-    struct Parameters {
+extension ScryptKeyDeriver {
+    public struct Parameters {
         /// **dkLen**
         ///
         /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer
@@ -66,8 +66,8 @@ public extension ScryptKeyDeriver {
     }
 }
 
-public extension ScryptKeyDeriver.Parameters {
-    static var aes256Strong: Self {
+extension ScryptKeyDeriver.Parameters {
+    public static var aes256Strong: Self {
         .init(
             outputLengthBytes: 32,
             costFactor: 16384,

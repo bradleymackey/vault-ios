@@ -269,8 +269,8 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     }
 }
 
-private extension URL {
-    var queryParameters: [String: String] {
+extension URL {
+    fileprivate var queryParameters: [String: String] {
         guard
             let components = URLComponents(url: self, resolvingAgainstBaseURL: true),
             let queryItems = components.queryItems else { return [:] }

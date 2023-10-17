@@ -54,8 +54,8 @@ public struct OTPAuthDigits: Equatable, Hashable, CustomStringConvertible {
     }
 }
 
-public extension OTPAuthDigits {
-    static var `default`: OTPAuthDigits { .init(value: 6) }
+extension OTPAuthDigits {
+    public static var `default`: OTPAuthDigits { .init(value: 6) }
 }
 
 public enum OTPAuthAlgorithm: Equatable, Hashable {
@@ -77,9 +77,9 @@ public enum OTPAuthType: Equatable, Hashable {
     public var kind: Kind {
         switch self {
         case .totp:
-            return .totp
+            .totp
         case .hotp:
-            return .hotp
+            .hotp
         }
     }
 }

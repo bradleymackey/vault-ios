@@ -63,11 +63,11 @@ public struct OTPCodeFeedView<
 
     private var currentBehaviour: VaultItemViewBehaviour {
         if isEditing {
-            return .obfuscate(message: localized(key: "action.tapToView"))
+            .obfuscate(message: localized(key: "action.tapToView"))
         } else if isReordering {
-            return reorderingBehaviour
+            reorderingBehaviour
         } else {
-            return .normal
+            .normal
         }
     }
 
@@ -105,9 +105,9 @@ public struct OTPCodeFeedView<
     private var minimumGridSize: Double {
         switch localSettings.state.previewSize {
         case .medium:
-            return 150
+            150
         case .large:
-            return 250
+            250
         }
     }
 }

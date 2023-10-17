@@ -11,22 +11,22 @@ public struct QRCodeGenerator {
     }
 }
 
-private extension CIFilter {
+extension CIFilter {
     /// Create a filter to produce a QRCode from the provided data.
     ///
     /// - Returns: `nil` only if the filter cannot be loaded internally.
-    static func qrCode(data: Data) -> CIFilter? {
+    fileprivate static func qrCode(data: Data) -> CIFilter? {
         let filter = CIFilter(name: "CIQRCodeGenerator")
         filter?.setValue(data, forKey: "inputMessage")
         return filter
     }
 }
 
-private extension CIImage {
+extension CIImage {
     /// Convert this image into PNG data, in the `sRGB` color space.
     ///
     /// - Returns: `nil` if the image cannot be rendered.
-    func asPNG() -> Data? {
+    fileprivate func asPNG() -> Data? {
         guard let colorSpace = CGColorSpace(name: CGColorSpace.sRGB) else {
             return nil
         }

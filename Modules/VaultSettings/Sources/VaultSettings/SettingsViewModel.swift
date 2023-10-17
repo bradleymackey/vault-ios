@@ -7,52 +7,52 @@ public final class SettingsViewModel {
 
 // MARK: - Strings
 
-public extension SettingsViewModel {
-    var title: String {
+extension SettingsViewModel {
+    public var title: String {
         localized(key: "home.title")
     }
 
-    var viewOptionsSectionTitle: String {
+    public var viewOptionsSectionTitle: String {
         localized(key: "home.header.viewOptions.title")
     }
 
-    var policyAndLegacySectionTitle: String {
+    public var policyAndLegacySectionTitle: String {
         localized(key: "home.header.policyAndLegal.title")
     }
 
-    var aboutTitle: String {
+    public var aboutTitle: String {
         localized(key: "about.title")
     }
 
-    var previewSizeTitle: String {
+    public var previewSizeTitle: String {
         localized(key: "previewSize.title")
     }
 
-    var pasteTTLTitle: String {
+    public var pasteTTLTitle: String {
         localized(key: "pasteTTL.title")
     }
 
-    var saveBackupTitle: String {
+    public var saveBackupTitle: String {
         localized(key: "saveBackup.title")
     }
 
-    var restoreBackupTitle: String {
+    public var restoreBackupTitle: String {
         localized(key: "restoreBackup.title")
     }
 
-    var openSourceTitle: String {
+    public var openSourceTitle: String {
         localized(key: "openSource.title")
     }
 
-    var thirdPartyTitle: String {
+    public var thirdPartyTitle: String {
         localized(key: "thirdPartyLibraries.title")
     }
 
-    var privacyPolicyTitle: String {
+    public var privacyPolicyTitle: String {
         localized(key: "privacyPolicy.title")
     }
 
-    var termsOfUseTitle: String {
+    public var termsOfUseTitle: String {
         localized(key: "termsOfUse.title")
     }
 }

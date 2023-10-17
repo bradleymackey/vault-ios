@@ -46,45 +46,45 @@ struct ManagedVaultItemEncoder {
     private func authTypeString(authType: OTPAuthType) -> String {
         switch authType {
         case .totp:
-            return "totp"
+            "totp"
         case .hotp:
-            return "hotp"
+            "hotp"
         }
     }
 
     private func authTypePeriod(authType: OTPAuthType) -> NSNumber? {
         switch authType {
         case let .totp(period):
-            return period as NSNumber
+            period as NSNumber
         case .hotp:
-            return nil
+            nil
         }
     }
 
     private func authTypeCounter(authType: OTPAuthType) -> NSNumber? {
         switch authType {
         case .totp:
-            return nil
+            nil
         case let .hotp(counter):
-            return counter as NSNumber
+            counter as NSNumber
         }
     }
 
     private func encoded(algorithm: OTPAuthAlgorithm) -> String {
         switch algorithm {
         case .sha1:
-            return "SHA1"
+            "SHA1"
         case .sha256:
-            return "SHA256"
+            "SHA256"
         case .sha512:
-            return "SHA512"
+            "SHA512"
         }
     }
 
     private func encoded(secretFormat: OTPAuthSecret.Format) -> String {
         switch secretFormat {
         case .base32:
-            return "BASE_32"
+            "BASE_32"
         }
     }
 }

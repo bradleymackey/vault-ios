@@ -70,66 +70,66 @@ public func base32HexDecode(_ string: String) -> [UInt8]? {
 
 // MARK: extensions
 
-public extension String {
+extension String {
     // base32
-    var base32DecodedData: Data? {
+    public var base32DecodedData: Data? {
         base32DecodeToData(self)
     }
 
-    var base32EncodedString: String {
+    public var base32EncodedString: String {
         utf8CString.withUnsafeBufferPointer {
             base32encode($0.baseAddress!, $0.count - 1, alphabetEncodeTable)
         }
     }
 
-    func base32DecodedString(_: String.Encoding = .utf8) -> String? {
+    public func base32DecodedString(_: String.Encoding = .utf8) -> String? {
         base32DecodedData.flatMap {
             String(data: $0, encoding: .utf8)
         }
     }
 
     // base32Hex
-    var base32HexDecodedData: Data? {
+    public var base32HexDecodedData: Data? {
         base32HexDecodeToData(self)
     }
 
-    var base32HexEncodedString: String {
+    public var base32HexEncodedString: String {
         utf8CString.withUnsafeBufferPointer {
             base32encode($0.baseAddress!, $0.count - 1, extendedHexAlphabetEncodeTable)
         }
     }
 
-    func base32HexDecodedString(_: String.Encoding = .utf8) -> String? {
+    public func base32HexDecodedString(_: String.Encoding = .utf8) -> String? {
         base32HexDecodedData.flatMap {
             String(data: $0, encoding: .utf8)
         }
     }
 }
 
-public extension Data {
+extension Data {
     // base32
-    var base32EncodedString: String {
+    public var base32EncodedString: String {
         base32Encode(self)
     }
 
-    var base32EncodedData: Data {
+    public var base32EncodedData: Data {
         base32EncodedString.dataUsingUTF8StringEncoding
     }
 
-    var base32DecodedData: Data? {
+    public var base32DecodedData: Data? {
         String(data: self, encoding: .utf8).flatMap(base32DecodeToData)
     }
 
     // base32Hex
-    var base32HexEncodedString: String {
+    public var base32HexEncodedString: String {
         base32HexEncode(self)
     }
 
-    var base32HexEncodedData: Data {
+    public var base32HexEncodedData: Data {
         base32HexEncodedString.dataUsingUTF8StringEncoding
     }
 
-    var base32HexDecodedData: Data? {
+    public var base32HexDecodedData: Data? {
         String(data: self, encoding: .utf8).flatMap(base32HexDecodeToData)
     }
 }
@@ -343,15 +343,15 @@ private func base32decode(_ string: String, _ table: [UInt8]) -> [UInt8]? {
     // calc padding length
     func getLeastPaddingLength(_ string: String) -> Int {
         if string.hasSuffix("======") {
-            return 6
+            6
         } else if string.hasSuffix("====") {
-            return 4
+            4
         } else if string.hasSuffix("===") {
-            return 3
+            3
         } else if string.hasSuffix("=") {
-            return 1
+            1
         } else {
-            return 0
+            0
         }
     }
 

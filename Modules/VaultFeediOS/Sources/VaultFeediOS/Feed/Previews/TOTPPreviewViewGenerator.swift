@@ -57,8 +57,8 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
     }
 }
 
-public extension TOTPPreviewViewGenerator {
-    func recalculateAllTimers() {
+extension TOTPPreviewViewGenerator {
+    public func recalculateAllTimers() {
         for timerUpdater in timerUpdaterCache.values {
             timerUpdater.recalculate()
         }

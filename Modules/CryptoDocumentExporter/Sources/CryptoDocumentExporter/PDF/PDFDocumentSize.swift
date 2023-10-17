@@ -13,14 +13,14 @@ public enum PDFDocumentSize {
     /// The size of the document in inches.
     public var inchDimensions: (width: Double, height: Double) {
         switch self {
-        case .a2: return (16.54, 23.39)
-        case .a3: return (11.69, 16.54)
-        case .a4: return (8.27, 11.69)
-        case .a5: return (5.83, 8.27)
-        case .a6: return (4.13, 5.83)
-        case .usLetter: return (8.5, 11)
-        case .usLegal: return (8.5, 14)
-        case .usTabloid: return (11, 17)
+        case .a2: (16.54, 23.39)
+        case .a3: (11.69, 16.54)
+        case .a4: (8.27, 11.69)
+        case .a5: (5.83, 8.27)
+        case .a6: (4.13, 5.83)
+        case .usLetter: (8.5, 11)
+        case .usLegal: (8.5, 14)
+        case .usTabloid: (11, 17)
         }
     }
 

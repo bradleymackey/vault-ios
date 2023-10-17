@@ -77,8 +77,8 @@ extension LocalSettingsTests {
     }
 }
 
-private extension UserDefaults {
-    var allStoredKeys: [String] {
+extension UserDefaults {
+    private var allStoredKeys: [String] {
         dictionaryRepresentation().keys.map { $0 }
     }
 }

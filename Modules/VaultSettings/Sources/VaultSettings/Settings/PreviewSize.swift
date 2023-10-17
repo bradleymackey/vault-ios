@@ -6,9 +6,9 @@ public enum PreviewSize: String, Codable, Equatable, Hashable, CaseIterable {
     case large
 }
 
-public extension PreviewSize {
+extension PreviewSize {
     /// The default suggested size to use as a preview size.
-    static let `default`: PreviewSize = .medium
+    public static let `default`: PreviewSize = .medium
 }
 
 extension PreviewSize: Identifiable {
@@ -17,13 +17,13 @@ extension PreviewSize: Identifiable {
     }
 }
 
-public extension PreviewSize {
-    var localizedName: String {
+extension PreviewSize {
+    public var localizedName: String {
         switch self {
         case .medium:
-            return localized(key: "previewSize.medium")
+            localized(key: "previewSize.medium")
         case .large:
-            return localized(key: "previewSize.large")
+            localized(key: "previewSize.large")
         }
     }
 }

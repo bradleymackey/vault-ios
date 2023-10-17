@@ -5,17 +5,17 @@ public enum OTPCodeTimerAnimationState: Equatable {
     case animate(OTPCodeTimerState)
 }
 
-public extension OTPCodeTimerAnimationState {
-    func initialFraction(currentTime: Double) -> Double {
+extension OTPCodeTimerAnimationState {
+    public func initialFraction(currentTime: Double) -> Double {
         switch self {
         case let .freeze(fraction):
-            return fraction
+            fraction
         case let .animate(state):
-            return 1 - state.fractionCompleted(at: currentTime)
+            1 - state.fractionCompleted(at: currentTime)
         }
     }
 
-    static func countdownFrom(timerState: OTPCodeTimerState?) -> OTPCodeTimerAnimationState {
+    public static func countdownFrom(timerState: OTPCodeTimerState?) -> OTPCodeTimerAnimationState {
         guard let timerState else { return .freeze(fraction: 0) }
         return .animate(timerState)
     }

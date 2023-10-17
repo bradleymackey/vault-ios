@@ -72,12 +72,12 @@ final class DocumentPagePDFRendererFactoryTests: XCTestCase {
     }
 }
 
-private extension UIGraphicsPDFRendererFormat {
-    func documentInfo(forKey key: String) -> Any? {
+extension UIGraphicsPDFRendererFormat {
+    fileprivate func documentInfo(forKey key: String) -> Any? {
         documentInfo[key]
     }
 
-    func documentInfo(forKey key: CFString) -> Any? {
+    fileprivate func documentInfo(forKey key: CFString) -> Any? {
         documentInfo[key as String]
     }
 }

@@ -40,6 +40,7 @@
 		1C1318002AD75008006F14F5 /* VaultSettingsView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = VaultSettingsView.swift; sourceTree = "<group>"; };
 		1C1318012AD75008006F14F5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C1318032AD75008006F14F5 /* CodeManagerTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeManagerTests.swift; sourceTree = "<group>"; };
+		1CA95CB42ADF27BA00012434 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; name = .swiftformat; path = ../.swiftformat; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* Vault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vault.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CDA9CA12A057A8C00555E7A /* VaultTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = VaultTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -106,6 +107,7 @@
 		1CDA9C882A057A8B00555E7A = {
 			isa = PBXGroup;
 			children = (
+				1CA95CB42ADF27BA00012434 /* .swiftformat */,
 				1C1317F62AD75008006F14F5 /* Vault */,
 				1C1318022AD75008006F14F5 /* VaultTests */,
 				1CDA9C922A057A8B00555E7A /* Products */,

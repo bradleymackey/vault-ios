@@ -14,10 +14,10 @@ extension PasteTTL: Identifiable {
     }
 }
 
-public extension PasteTTL {
-    static let `default`: PasteTTL = .init(duration: nil)
+extension PasteTTL {
+    public static let `default`: PasteTTL = .init(duration: nil)
 
-    static let defaultOptions: [PasteTTL] = [
+    public static let defaultOptions: [PasteTTL] = [
         .init(duration: nil),
         .init(duration: 30),
         .init(duration: 60),
@@ -28,8 +28,8 @@ public extension PasteTTL {
     ]
 }
 
-public extension PasteTTL {
-    var localizedName: String {
+extension PasteTTL {
+    public var localizedName: String {
         guard let duration else {
             return localized(key: "pasteTTL.none")
         }

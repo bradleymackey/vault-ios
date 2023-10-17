@@ -309,8 +309,8 @@ final class OTPAuthURIDecoderTests: XCTestCase {
     }
 }
 
-private extension OTPAuthURIDecoder {
-    func decode(_ testCaseValue: String) throws -> OTPAuthCode {
+extension OTPAuthURIDecoder {
+    fileprivate func decode(_ testCaseValue: String) throws -> OTPAuthCode {
         let uri = try XCTUnwrap(OTPAuthURI(string: testCaseValue), "Not a valid url.")
         return try decode(uri: uri)
     }

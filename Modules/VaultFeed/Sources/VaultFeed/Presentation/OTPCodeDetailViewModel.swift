@@ -93,17 +93,17 @@ public final class OTPCodeDetailViewModel {
 
 // MARK: - Error
 
-public extension OTPCodeDetailViewModel {
-    enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
+extension OTPCodeDetailViewModel {
+    public enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
         case save
         case delete
 
         public var description: String {
             switch self {
             case .save:
-                return localized(key: "codeDetail.action.save.error.description")
+                localized(key: "codeDetail.action.save.error.description")
             case .delete:
-                return localized(key: "codeDetail.action.delete.error.description")
+                localized(key: "codeDetail.action.delete.error.description")
             }
         }
 
@@ -119,36 +119,36 @@ public extension OTPCodeDetailViewModel {
 
 // MARK: - Titles
 
-public extension OTPCodeDetailViewModel {
-    var createdDateTitle: String {
+extension OTPCodeDetailViewModel {
+    public var createdDateTitle: String {
         localized(key: "codeDetail.listSection.created.title")
     }
 
-    var createdDateValue: String {
+    public var createdDateValue: String {
         storedMetdata.created.formatted(date: .abbreviated, time: .omitted)
     }
 
-    var updatedDateTitle: String {
+    public var updatedDateTitle: String {
         localized(key: "codeDetail.listSection.updated.title")
     }
 
-    var updatedDateValue: String {
+    public var updatedDateValue: String {
         storedMetdata.updated.formatted(date: .abbreviated, time: .omitted)
     }
 
-    var doneEditingTitle: String {
+    public var doneEditingTitle: String {
         localized(key: "feedViewModel.doneEditing.title")
     }
 
-    var saveEditsTitle: String {
+    public var saveEditsTitle: String {
         localized(key: "feedViewModel.saveEdits.title")
     }
 
-    var cancelEditsTitle: String {
+    public var cancelEditsTitle: String {
         localized(key: "feedViewModel.cancelEdits.title")
     }
 
-    var startEditingTitle: String {
+    public var startEditingTitle: String {
         localized(key: "feedViewModel.edit.title")
     }
 }

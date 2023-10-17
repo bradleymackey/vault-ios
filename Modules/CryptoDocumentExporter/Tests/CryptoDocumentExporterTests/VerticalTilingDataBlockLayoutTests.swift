@@ -181,8 +181,8 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     }
 }
 
-private extension CGSize {
-    static func square(_ size: CGFloat) -> CGSize {
+extension CGSize {
+    fileprivate static func square(_ size: CGFloat) -> CGSize {
         CGSize(width: size, height: size)
     }
 }
