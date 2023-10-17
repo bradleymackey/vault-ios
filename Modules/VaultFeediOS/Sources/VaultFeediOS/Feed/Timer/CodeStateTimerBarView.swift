@@ -29,9 +29,9 @@ struct CodeStateTimerBarView<Timer: View>: View {
 
     private var barHeight: Double {
         if textToDisplay != nil {
-            return 20
+            20
         } else {
-            return 12
+            12
         }
     }
 
@@ -42,14 +42,14 @@ struct CodeStateTimerBarView<Timer: View>: View {
     private var textToDisplay: String? {
         switch behaviour {
         case let .obfuscate(message):
-            return message
+            message
         case .normal:
             if case let .error(err, _) = codeState {
-                return err.userTitle
+                err.userTitle
             } else if case .obfuscated = codeState {
-                return localized(key: "code.updateRequired")
+                localized(key: "code.updateRequired")
             } else {
-                return nil
+                nil
             }
         }
     }

@@ -68,11 +68,11 @@ extension HOTPGenerator.Algorithm {
     fileprivate var hmacVariant: HMAC.Variant {
         switch self {
         case .sha1:
-            return .sha1
+            .sha1
         case .sha256:
-            return .sha2(.sha256)
+            .sha2(.sha256)
         case .sha512:
-            return .sha2(.sha512)
+            .sha2(.sha512)
         }
     }
 }

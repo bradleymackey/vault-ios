@@ -10,18 +10,18 @@ extension VaultItem {
     public var otpCode: OTPAuthCode? {
         switch self {
         case let .otpCode(otpCode):
-            return otpCode
+            otpCode
         default:
-            return nil
+            nil
         }
     }
 
     public var secureNote: SecureNote? {
         switch self {
         case let .secureNote(note):
-            return note
+            note
         default:
-            return nil
+            nil
         }
     }
 }

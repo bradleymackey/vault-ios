@@ -343,15 +343,15 @@ private func base32decode(_ string: String, _ table: [UInt8]) -> [UInt8]? {
     // calc padding length
     func getLeastPaddingLength(_ string: String) -> Int {
         if string.hasSuffix("======") {
-            return 6
+            6
         } else if string.hasSuffix("====") {
-            return 4
+            4
         } else if string.hasSuffix("===") {
-            return 3
+            3
         } else if string.hasSuffix("=") {
-            return 1
+            1
         } else {
-            return 0
+            0
         }
     }
 

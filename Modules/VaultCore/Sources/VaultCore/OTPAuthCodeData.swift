@@ -77,9 +77,9 @@ public enum OTPAuthType: Equatable, Hashable {
     public var kind: Kind {
         switch self {
         case .totp:
-            return .totp
+            .totp
         case .hotp:
-            return .hotp
+            .hotp
         }
     }
 }

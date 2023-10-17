@@ -128,9 +128,9 @@ public final class Defaults {
     private func isSwiftCodableType(_ type: (some Any).Type) -> Bool {
         switch type {
         case is String.Type, is Bool.Type, is Int.Type, is Float.Type, is Double.Type:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
@@ -142,9 +142,9 @@ public final class Defaults {
     private func isFoundationCodableType(_ type: (some Any).Type) -> Bool {
         switch type {
         case is Date.Type:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 }

@@ -87,18 +87,18 @@ public struct Shimmer: ViewModifier {
     /// The start unit point of our gradient, adjusting for layout direction.
     var startPoint: UnitPoint {
         if layoutDirection == .rightToLeft {
-            return isInitialState ? UnitPoint(x: max, y: min) : UnitPoint(x: 0, y: 1)
+            isInitialState ? UnitPoint(x: max, y: min) : UnitPoint(x: 0, y: 1)
         } else {
-            return isInitialState ? UnitPoint(x: min, y: min) : UnitPoint(x: 1, y: 1)
+            isInitialState ? UnitPoint(x: min, y: min) : UnitPoint(x: 1, y: 1)
         }
     }
 
     /// The end unit point of our gradient, adjusting for layout direction.
     var endPoint: UnitPoint {
         if layoutDirection == .rightToLeft {
-            return isInitialState ? UnitPoint(x: 1, y: 0) : UnitPoint(x: min, y: max)
+            isInitialState ? UnitPoint(x: 1, y: 0) : UnitPoint(x: min, y: max)
         } else {
-            return isInitialState ? UnitPoint(x: 0, y: 0) : UnitPoint(x: max, y: max)
+            isInitialState ? UnitPoint(x: 0, y: 0) : UnitPoint(x: max, y: max)
         }
     }
 

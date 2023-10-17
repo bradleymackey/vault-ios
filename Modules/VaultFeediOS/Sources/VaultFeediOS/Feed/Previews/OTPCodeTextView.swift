@@ -56,15 +56,15 @@ public struct OTPCodeTextView: View {
     private func chunkSize(length: Int) -> Int {
         switch length {
         case 0 ..< 6:
-            return length
+            length
         case let x where x.isMultiple(of: 3):
-            return 3
+            3
         case let x where x.isMultiple(of: 4):
-            return 4
+            4
         case let x where x.isMultiple(of: 5):
-            return 5
+            5
         default:
-            return 3
+            3
         }
     }
 }

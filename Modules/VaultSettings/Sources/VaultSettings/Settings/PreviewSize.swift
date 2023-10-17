@@ -21,9 +21,9 @@ extension PreviewSize {
     public var localizedName: String {
         switch self {
         case .medium:
-            return localized(key: "previewSize.medium")
+            localized(key: "previewSize.medium")
         case .large:
-            return localized(key: "previewSize.large")
+            localized(key: "previewSize.large")
         }
     }
 }

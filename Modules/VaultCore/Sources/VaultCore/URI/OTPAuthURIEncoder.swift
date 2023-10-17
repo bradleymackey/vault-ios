@@ -65,29 +65,29 @@ extension OTPAuthURIEncoder {
 
     private func makeFormattedLabel(code: OTPAuthCode) -> String {
         if let issuer = code.data.issuer {
-            return "\(issuer):\(code.data.accountName)"
+            "\(issuer):\(code.data.accountName)"
         } else {
-            return code.data.accountName
+            code.data.accountName
         }
     }
 
     private func makeFormatted(type: OTPAuthType) -> String {
         switch type {
         case .totp:
-            return "totp"
+            "totp"
         case .hotp:
-            return "hotp"
+            "hotp"
         }
     }
 
     private func formatted(algorithm: OTPAuthAlgorithm) -> String {
         switch algorithm {
         case .sha1:
-            return "SHA1"
+            "SHA1"
         case .sha256:
-            return "SHA256"
+            "SHA256"
         case .sha512:
-            return "SHA512"
+            "SHA512"
         }
     }
 }

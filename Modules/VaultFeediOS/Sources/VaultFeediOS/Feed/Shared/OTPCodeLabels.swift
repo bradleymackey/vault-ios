@@ -27,9 +27,9 @@ struct OTPCodeLabels: View {
 
     private var accountNameFormatted: String {
         if accountName.isEmpty {
-            return localized(key: "code.accountNamePlaceholder")
+            localized(key: "code.accountNamePlaceholder")
         } else {
-            return accountName
+            accountName
         }
     }
 }

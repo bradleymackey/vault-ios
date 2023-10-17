@@ -12,27 +12,27 @@ extension OTPCodeState {
     public var allowsNextCodeToBeGenerated: Bool {
         switch self {
         case .visible, .obfuscated:
-            return true
+            true
         case .notReady, .finished, .error:
-            return false
+            false
         }
     }
 
     public var isVisible: Bool {
         switch self {
         case .visible:
-            return true
+            true
         default:
-            return false
+            false
         }
     }
 
     public var visibleCode: String? {
         switch self {
         case let .visible(code):
-            return code
+            code
         default:
-            return nil
+            nil
         }
     }
 }

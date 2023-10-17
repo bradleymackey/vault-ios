@@ -9,9 +9,9 @@ extension OTPCodeTimerAnimationState {
     public func initialFraction(currentTime: Double) -> Double {
         switch self {
         case let .freeze(fraction):
-            return fraction
+            fraction
         case let .animate(state):
-            return 1 - state.fractionCompleted(at: currentTime)
+            1 - state.fractionCompleted(at: currentTime)
         }
     }
 

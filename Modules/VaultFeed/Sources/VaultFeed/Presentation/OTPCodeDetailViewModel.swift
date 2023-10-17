@@ -101,9 +101,9 @@ extension OTPCodeDetailViewModel {
         public var description: String {
             switch self {
             case .save:
-                return localized(key: "codeDetail.action.save.error.description")
+                localized(key: "codeDetail.action.save.error.description")
             case .delete:
-                return localized(key: "codeDetail.action.delete.error.description")
+                localized(key: "codeDetail.action.delete.error.description")
             }
         }
 

@@ -24,9 +24,9 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
         var id: some Hashable {
             switch self {
             case .addItem:
-                return "add"
+                "add"
             case let .detail(id, _):
-                return id.uuidString
+                id.uuidString
             }
         }
     }
