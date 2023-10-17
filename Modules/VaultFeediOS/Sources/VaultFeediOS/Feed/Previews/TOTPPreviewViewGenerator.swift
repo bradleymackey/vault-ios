@@ -33,9 +33,13 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
         self.timer = timer
     }
 
-    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(
+        item: PreviewItem,
+        metadata: StoredVaultItem.Metadata,
+        behaviour: VaultItemViewBehaviour
+    ) -> some View {
         viewFactory.makeTOTPView(
-            viewModel: makeViewModelForCode(id: id, code: item),
+            viewModel: makeViewModelForCode(id: metadata.id, code: item),
             periodState: makeTimerPeriodState(period: item.period),
             updater: makeTimerController(period: item.period),
             behaviour: behaviour

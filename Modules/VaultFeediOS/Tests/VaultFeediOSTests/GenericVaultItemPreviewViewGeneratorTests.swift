@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import TestHelpers
 import VaultCore
+import VaultFeed
 import VaultFeediOS
 import XCTest
 
@@ -25,7 +26,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let code = OTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
-        let view = sut.makeVaultPreviewView(id: UUID(), item: .otpCode(code), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(item: .otpCode(code), metadata: uniqueMetadata(), behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "TOTP")
@@ -38,7 +39,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let code = OTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
-        let view = sut.makeVaultPreviewView(id: UUID(), item: .otpCode(code), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(item: .otpCode(code), metadata: uniqueMetadata(), behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "HOTP")
@@ -51,7 +52,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let noteItem = SecureNote(title: "Title", contents: "Contents")
-        let view = sut.makeVaultPreviewView(id: UUID(), item: .secureNote(noteItem), behaviour: .normal)
+        let view = sut.makeVaultPreviewView(item: .secureNote(noteItem), metadata: uniqueMetadata(), behaviour: .normal)
 
         let text = try view.inspect().text().string()
         XCTAssertEqual(text, "Secure Note")
@@ -109,7 +110,11 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         @MainActor
         init() {}
 
-        func makeVaultPreviewView(id _: UUID, item _: PreviewItem, behaviour _: VaultItemViewBehaviour) -> some View {
+        func makeVaultPreviewView(
+            item _: PreviewItem,
+            metadata _: StoredVaultItem.Metadata,
+            behaviour _: VaultItemViewBehaviour
+        ) -> some View {
             Text("HOTP")
         }
 
@@ -134,7 +139,11 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         @MainActor
         init() {}
 
-        func makeVaultPreviewView(id _: UUID, item _: PreviewItem, behaviour _: VaultItemViewBehaviour) -> some View {
+        func makeVaultPreviewView(
+            item _: PreviewItem,
+            metadata _: StoredVaultItem.Metadata,
+            behaviour _: VaultItemViewBehaviour
+        ) -> some View {
             Text("TOTP")
         }
 
@@ -159,7 +168,11 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         @MainActor
         init() {}
 
-        func makeVaultPreviewView(id _: UUID, item _: SecureNote, behaviour _: VaultItemViewBehaviour) -> some View {
+        func makeVaultPreviewView(
+            item _: SecureNote,
+            metadata _: StoredVaultItem.Metadata,
+            behaviour _: VaultItemViewBehaviour
+        ) -> some View {
             Text("Secure Note")
         }
 

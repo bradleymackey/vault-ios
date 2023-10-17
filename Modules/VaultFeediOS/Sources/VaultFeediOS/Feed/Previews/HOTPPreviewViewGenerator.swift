@@ -20,10 +20,14 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
         self.timer = timer
     }
 
-    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(
+        item: PreviewItem,
+        metadata: StoredVaultItem.Metadata,
+        behaviour: VaultItemViewBehaviour
+    ) -> some View {
         viewFactory.makeHOTPView(
-            viewModel: makePreviewViewModel(id: id, code: item),
-            incrementer: makeIncrementerViewModel(id: id, code: item),
+            viewModel: makePreviewViewModel(id: metadata.id, code: item),
+            incrementer: makeIncrementerViewModel(id: metadata.id, code: item),
             behaviour: behaviour
         )
     }

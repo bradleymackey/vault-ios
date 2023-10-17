@@ -46,7 +46,7 @@ enum DemoVaultFactory {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: "This is a secure note"
+                userDescription: "This is a secure note which I made. The contents should be very secret."
             ),
             item: .secureNote(.init(title: title, contents: contents))
         )

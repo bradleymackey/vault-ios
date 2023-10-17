@@ -24,27 +24,31 @@ public struct GenericVaultItemPreviewViewGenerator<
     }
 
     @ViewBuilder
-    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(
+        item: PreviewItem,
+        metadata: StoredVaultItem.Metadata,
+        behaviour: VaultItemViewBehaviour
+    ) -> some View {
         switch item {
         case let .otpCode(otpCode):
             switch otpCode.type {
             case let .totp(period):
                 totpGenerator.makeVaultPreviewView(
-                    id: id,
                     item: .init(period: period, data: otpCode.data),
+                    metadata: metadata,
                     behaviour: behaviour
                 )
             case let .hotp(counter):
                 hotpGenerator.makeVaultPreviewView(
-                    id: id,
                     item: .init(counter: counter, data: otpCode.data),
+                    metadata: metadata,
                     behaviour: behaviour
                 )
             }
         case let .secureNote(secureNote):
             noteGenerator.makeVaultPreviewView(
-                id: id,
                 item: secureNote,
+                metadata: metadata,
                 behaviour: behaviour
             )
         }

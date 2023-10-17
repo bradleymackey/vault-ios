@@ -1,12 +1,17 @@
 import Foundation
 import SwiftUI
 import VaultCore
+import VaultFeed
 import VaultFeediOS
 
 final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
     typealias PreviewItem = VaultItem
 
-    func makeVaultPreviewView(id _: UUID, item _: PreviewItem, behaviour _: VaultItemViewBehaviour) -> some View {
+    func makeVaultPreviewView(
+        item _: PreviewItem,
+        metadata _: StoredVaultItem.Metadata,
+        behaviour _: VaultItemViewBehaviour
+    ) -> some View {
         ZStack {
             Color.blue
             Text("Code")

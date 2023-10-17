@@ -12,11 +12,15 @@ public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGene
         self.onTap = onTap
     }
 
-    public func makeVaultPreviewView(id: UUID, item: PreviewItem, behaviour: VaultItemViewBehaviour) -> some View {
+    public func makeVaultPreviewView(
+        item: PreviewItem,
+        metadata: StoredVaultItem.Metadata,
+        behaviour: VaultItemViewBehaviour
+    ) -> some View {
         Button {
-            onTap(id)
+            onTap(metadata.id)
         } label: {
-            generator.makeVaultPreviewView(id: id, item: item, behaviour: behaviour)
+            generator.makeVaultPreviewView(item: item, metadata: metadata, behaviour: behaviour)
                 .modifier(OTPCardViewModifier())
         }
     }
