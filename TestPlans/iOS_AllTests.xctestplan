@@ -22,70 +22,70 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "CryptoDocumentExporterSnapshotTests",
         "name" : "CryptoDocumentExporterSnapshotTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "CryptoDocumentExporterTests",
         "name" : "CryptoDocumentExporterTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "CryptoEngineTests",
         "name" : "CryptoEngineTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "VaultAppTests",
         "name" : "VaultAppTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "VaultCoreTests",
         "name" : "VaultCoreTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "VaultFeedTests",
         "name" : "VaultFeedTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "VaultFeediOSTests",
         "name" : "VaultFeediOSTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "VaultSettingsTests",
         "name" : "VaultSettingsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Modules\/VaultApp",
+        "containerPath" : "container:..\/VaultApp",
         "identifier" : "VaultUITests",
         "name" : "VaultUITests"
       }
