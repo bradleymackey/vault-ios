@@ -239,7 +239,7 @@ extension TOTPPreviewViewGeneratorTests {
     }
 
     private final class MockCodeTimerUpdaterFactory: OTPCodeTimerUpdaterFactory {
-        func makeUpdater(period: UInt64) -> OTPCodeTimerUpdater {
+        func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater {
             MockCodeTimerUpdater(period: period)
         }
     }

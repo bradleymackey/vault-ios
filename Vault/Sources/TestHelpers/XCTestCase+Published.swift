@@ -11,7 +11,7 @@ extension XCTestCase {
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> T.Output {
-        var result: Result<T.Output, Error>?
+        var result: Result<T.Output, any Error>?
         let expectation = expectation(description: "Awaiting publisher")
 
         let cancellable = publisher.sink(
