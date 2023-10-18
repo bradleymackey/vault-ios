@@ -22,70 +22,70 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "CryptoDocumentExporterSnapshotTests",
         "name" : "CryptoDocumentExporterSnapshotTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "CryptoDocumentExporterTests",
         "name" : "CryptoDocumentExporterTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "CryptoEngineTests",
         "name" : "CryptoEngineTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
-        "identifier" : "VaultAppTests",
-        "name" : "VaultAppTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "VaultCoreTests",
         "name" : "VaultCoreTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "VaultFeedTests",
         "name" : "VaultFeedTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "VaultFeediOSTests",
         "name" : "VaultFeediOSTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
         "identifier" : "VaultSettingsTests",
         "name" : "VaultSettingsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultApp",
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultTests",
+        "name" : "VaultTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
         "identifier" : "VaultUITests",
         "name" : "VaultUITests"
       }
