@@ -16,8 +16,8 @@ let package = Package(
     platforms: [.iOS(.v17)],
     products: [
         .library(
-            name: "VaultApp",
-            targets: ["VaultApp"]
+            name: "Vault",
+            targets: ["Vault"]
         ),
     ],
     dependencies: [
@@ -29,13 +29,13 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "VaultApp",
+            name: "Vault",
             dependencies: ["VaultUI", "VaultFeed", "VaultFeediOS", "VaultSettings", "VaultCore"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "VaultAppTests",
-            dependencies: ["VaultApp"],
+            name: "VaultTests",
+            dependencies: ["Vault"],
             swiftSettings: swiftSettings
         ),
         .target(

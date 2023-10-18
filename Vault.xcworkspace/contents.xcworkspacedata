@@ -2,10 +2,10 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Vault/Vault.xcodeproj">
+      location = "group:VaultApp/VaultApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:VaultApp">
+      location = "group:Vault">
    </FileRef>
    <Group
       location = "group:TestPlans"

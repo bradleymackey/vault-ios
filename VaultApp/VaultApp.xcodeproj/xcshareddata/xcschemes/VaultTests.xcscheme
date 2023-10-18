@@ -21,7 +21,7 @@
                BlueprintIdentifier = "1CDA9CA02A057A8C00555E7A"
                BuildableName = "VaultTests.xctest"
                BlueprintName = "VaultTests"
-               ReferencedContainer = "container:Vault.xcodeproj">
+               ReferencedContainer = "container:VaultApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

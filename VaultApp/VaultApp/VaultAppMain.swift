@@ -1,10 +1,10 @@
 import SwiftUI
-import VaultApp
+import Vault
 
 @main
 @MainActor
 struct VaultApp: App {
     var body: some Scene {
-        VaultAppScene()
+        VaultMainScene()
     }
 }

@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1CDA9C902A057A8B00555E7A"
-               BuildableName = "Vault.app"
-               BlueprintName = "Vault"
-               ReferencedContainer = "container:Vault.xcodeproj">
+               BuildableName = "VaultApp.app"
+               BlueprintName = "VaultApp"
+               ReferencedContainer = "container:VaultApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -44,9 +44,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1CDA9C902A057A8B00555E7A"
-            BuildableName = "Vault.app"
-            BlueprintName = "Vault"
-            ReferencedContainer = "container:Vault.xcodeproj">
+            BuildableName = "VaultApp.app"
+            BlueprintName = "VaultApp"
+            ReferencedContainer = "container:VaultApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -61,9 +61,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1CDA9C902A057A8B00555E7A"
-            BuildableName = "Vault.app"
-            BlueprintName = "Vault"
-            ReferencedContainer = "container:Vault.xcodeproj">
+            BuildableName = "VaultApp.app"
+            BlueprintName = "VaultApp"
+            ReferencedContainer = "container:VaultApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

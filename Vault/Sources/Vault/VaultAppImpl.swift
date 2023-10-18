@@ -6,7 +6,7 @@ import VaultSettings
 
 /// Entrypoint scene for the vault app.
 @MainActor
-public struct VaultAppScene: Scene {
+public struct VaultMainScene: Scene {
     @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>

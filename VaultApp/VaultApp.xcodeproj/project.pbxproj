@@ -8,18 +8,18 @@
 
 /* Begin PBXBuildFile section */
 		1C1318072AD75008006F14F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FB2AD75008006F14F5 /* Assets.xcassets */; };
-		1C1318092AD75008006F14F5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */; };
-		1C45B07C2ADFE8BE00197B32 /* VaultMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C45B07B2ADFE8BE00197B32 /* VaultMain.swift */; };
-		1C7A70FB2ADFE9EB004CFDF3 /* VaultApp in Frameworks */ = {isa = PBXBuildFile; productRef = 1C7A70FA2ADFE9EB004CFDF3 /* VaultApp */; };
+		1C2856642ADFF2E800DA4AA9 /* Vault in Frameworks */ = {isa = PBXBuildFile; productRef = 1C2856632ADFF2E800DA4AA9 /* Vault */; };
+		1C2856652ADFF39800DA4AA9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */; };
+		1C45B07C2ADFE8BE00197B32 /* VaultAppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
 		1C1317FB2AD75008006F14F5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1C1318012AD75008006F14F5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		1C45B07B2ADFE8BE00197B32 /* VaultMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultMain.swift; sourceTree = "<group>"; };
+		1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultAppMain.swift; sourceTree = "<group>"; };
 		1CA95CB42ADF27BA00012434 /* .swiftformat */ = {isa = PBXFileReference; lastKnownFileType = text; name = .swiftformat; path = ../.swiftformat; sourceTree = "<group>"; };
-		1CDA9C912A057A8B00555E7A /* Vault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vault.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CDA9C912A057A8B00555E7A /* VaultApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VaultApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -27,22 +27,22 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C7A70FB2ADFE9EB004CFDF3 /* VaultApp in Frameworks */,
+				1C2856642ADFF2E800DA4AA9 /* Vault in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		1C1317F62AD75008006F14F5 /* Vault */ = {
+		1C1317F62AD75008006F14F5 /* VaultApp */ = {
 			isa = PBXGroup;
 			children = (
-				1C45B07B2ADFE8BE00197B32 /* VaultMain.swift */,
+				1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */,
 				1C1317FB2AD75008006F14F5 /* Assets.xcassets */,
 				1C1317FD2AD75008006F14F5 /* Preview Content */,
 				1C1318012AD75008006F14F5 /* Info.plist */,
 			);
-			path = Vault;
+			path = VaultApp;
 			sourceTree = "<group>";
 		};
 		1C1317FD2AD75008006F14F5 /* Preview Content */ = {
@@ -57,7 +57,7 @@
 			isa = PBXGroup;
 			children = (
 				1CA95CB42ADF27BA00012434 /* .swiftformat */,
-				1C1317F62AD75008006F14F5 /* Vault */,
+				1C1317F62AD75008006F14F5 /* VaultApp */,
 				1CDA9C922A057A8B00555E7A /* Products */,
 				1CDA9CC12A057ADC00555E7A /* Frameworks */,
 			);
@@ -66,7 +66,7 @@
 		1CDA9C922A057A8B00555E7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1CDA9C912A057A8B00555E7A /* Vault.app */,
+				1CDA9C912A057A8B00555E7A /* VaultApp.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -81,9 +81,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1CDA9C902A057A8B00555E7A /* Vault */ = {
+		1CDA9C902A057A8B00555E7A /* VaultApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "Vault" */;
+			buildConfigurationList = 1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "VaultApp" */;
 			buildPhases = (
 				1CDA9C8D2A057A8B00555E7A /* Sources */,
 				1CDA9C8E2A057A8B00555E7A /* Frameworks */,
@@ -93,12 +93,12 @@
 			);
 			dependencies = (
 			);
-			name = Vault;
+			name = VaultApp;
 			packageProductDependencies = (
-				1C7A70FA2ADFE9EB004CFDF3 /* VaultApp */,
+				1C2856632ADFF2E800DA4AA9 /* Vault */,
 			);
 			productName = CodeManager;
-			productReference = 1CDA9C912A057A8B00555E7A /* Vault.app */;
+			productReference = 1CDA9C912A057A8B00555E7A /* VaultApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -116,7 +116,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "Vault" */;
+			buildConfigurationList = 1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "VaultApp" */;
 			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
@@ -129,7 +129,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1CDA9C902A057A8B00555E7A /* Vault */,
+				1CDA9C902A057A8B00555E7A /* VaultApp */,
 			);
 		};
 /* End PBXProject section */
@@ -139,7 +139,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C1318092AD75008006F14F5 /* Preview Assets.xcassets in Resources */,
+				1C2856652ADFF39800DA4AA9 /* Preview Assets.xcassets in Resources */,
 				1C1318072AD75008006F14F5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,7 +151,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C45B07C2ADFE8BE00197B32 /* VaultMain.swift in Sources */,
+				1C45B07C2ADFE8BE00197B32 /* VaultAppMain.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -283,11 +283,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "Vault/Preview\\ Content";
+				DEVELOPMENT_ASSET_PATHS = "\"VaultApp/Preview Content/\"";
 				DEVELOPMENT_TEAM = U2GCDMVV7S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Vault/Info.plist;
+				INFOPLIST_FILE = VaultApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Vault;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -315,11 +315,11 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_ASSET_PATHS = "Vault/Preview\\ Content";
+				DEVELOPMENT_ASSET_PATHS = "\"VaultApp/Preview Content/\"";
 				DEVELOPMENT_TEAM = U2GCDMVV7S;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = Vault/Info.plist;
+				INFOPLIST_FILE = VaultApp/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Vault;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -343,7 +343,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "Vault" */ = {
+		1CDA9C8C2A057A8B00555E7A /* Build configuration list for PBXProject "VaultApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CDA9CB32A057A8C00555E7A /* Debug */,
@@ -352,7 +352,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "Vault" */ = {
+		1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "VaultApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CDA9CB62A057A8C00555E7A /* Debug */,
@@ -364,9 +364,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1C7A70FA2ADFE9EB004CFDF3 /* VaultApp */ = {
+		1C2856632ADFF2E800DA4AA9 /* Vault */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = VaultApp;
+			productName = Vault;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
