@@ -22,65 +22,72 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:",
-        "identifier" : "CryptoEngineTests",
-        "name" : "CryptoEngineTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/CryptoDocumentExporter",
-        "identifier" : "CryptoDocumentExporterTests",
-        "name" : "CryptoDocumentExporterTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/CryptoDocumentExporter",
+        "containerPath" : "container:..\/Modules\/VaultApp",
         "identifier" : "CryptoDocumentExporterSnapshotTests",
         "name" : "CryptoDocumentExporterSnapshotTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/FoundationExtensions",
+        "containerPath" : "container:..\/Modules\/VaultApp",
+        "identifier" : "CryptoDocumentExporterTests",
+        "name" : "CryptoDocumentExporterTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/VaultApp",
+        "identifier" : "CryptoEngineTests",
+        "name" : "CryptoEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/VaultApp",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultCore",
+        "containerPath" : "container:..\/Modules\/VaultApp",
+        "identifier" : "VaultAppTests",
+        "name" : "VaultAppTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/VaultApp",
         "identifier" : "VaultCoreTests",
         "name" : "VaultCoreTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultUI",
-        "identifier" : "VaultUITests",
-        "name" : "VaultUITests"
+        "containerPath" : "container:..\/Modules\/VaultApp",
+        "identifier" : "VaultFeedTests",
+        "name" : "VaultFeedTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultSettings",
-        "identifier" : "VaultSettingsTests",
-        "name" : "VaultSettingsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:..\/VaultFeediOS",
+        "containerPath" : "container:..\/Modules\/VaultApp",
         "identifier" : "VaultFeediOSTests",
         "name" : "VaultFeediOSTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/VaultFeed",
-        "identifier" : "VaultFeedTests",
-        "name" : "VaultFeedTests"
+        "containerPath" : "container:..\/Modules\/VaultApp",
+        "identifier" : "VaultSettingsTests",
+        "name" : "VaultSettingsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Modules\/VaultApp",
+        "identifier" : "VaultUITests",
+        "name" : "VaultUITests"
       }
     }
   ],
