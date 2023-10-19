@@ -120,6 +120,10 @@ let package = Package(
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
+            resources: [
+                .copy("LocalSettingsTests.swift.plist"),
+                .copy("Infrastructure/DefaultsTests.swift.plist"),
+            ],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -147,6 +151,9 @@ let package = Package(
                 "TestHelpers",
             ],
             exclude: ["__Snapshots__"],
+            resources: [
+                .copy("PasteboardTests.swift.plist"),
+            ],
             swiftSettings: swiftSettings
         ),
         .target(
