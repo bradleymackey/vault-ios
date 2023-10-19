@@ -5,6 +5,7 @@ import XCTest
 @testable import VaultFeed
 
 final class ManagedVaultItemDecoderTests: XCTestCase {
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var persistentContainer: NSPersistentContainer!
 
     override func setUpWithError() throws {

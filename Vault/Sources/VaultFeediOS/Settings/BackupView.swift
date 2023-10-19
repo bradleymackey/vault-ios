@@ -22,7 +22,7 @@ struct BackupView: View {
     private var createPasswordSection: some View {
         Section {
             Button {
-                print("set backup password in keychain")
+//                print("set backup password in keychain")
                 isBackupPasswordSet = true
             } label: {
                 Text("Set Backup Password")
@@ -33,15 +33,15 @@ struct BackupView: View {
     private var updatePasswordSection: some View {
         Section {
             Button {
-                print("update backup password in keychain")
-                print("note: old backups will still require your old password, you should destroy them")
+//                print("update backup password in keychain")
+//                print("note: old backups will still require your old password, you should destroy them")
             } label: {
                 Text("Change Backup Password")
             }
 
             Button {
-                print("disable backups")
-                print("note: any existing backups will still work using the backup password at their time of creation")
+//                print("disable backups")
+//                print("note: any existing backups will still work using the backup password at their time of creation")
                 isBackupPasswordSet = false
             } label: {
                 Text("Disable Backups")

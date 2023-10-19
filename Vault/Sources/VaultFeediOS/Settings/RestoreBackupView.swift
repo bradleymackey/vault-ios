@@ -18,7 +18,7 @@ struct RestoreBackupView: View {
     private var noExistingCodesSection: some View {
         Section {
             Button {
-                print("restore existing")
+//                print("restore existing")
             } label: {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("Restore Existing Codes")
@@ -30,7 +30,7 @@ struct RestoreBackupView: View {
     private var hasExistingCodesSection: some View {
         Section {
             Button {
-                print("merge")
+//                print("merge")
             } label: {
                 FormRow(image: Image(systemName: "doc.on.doc.fill"), color: .green) {
                     VStack(alignment: .leading, spacing: 2) {
@@ -44,7 +44,7 @@ struct RestoreBackupView: View {
             }
 
             Button {
-                print("override")
+//                print("override")
             } label: {
                 FormRow(image: Image(systemName: "doc.fill"), color: .red) {
                     VStack(alignment: .leading, spacing: 2) {
