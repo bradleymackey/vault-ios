@@ -27,6 +27,7 @@ import XCTest
 @testable import VaultSettings
 
 final class DefaultsKitTests: XCTestCase {
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var defaults: Defaults!
 
     override func setUpWithError() throws {

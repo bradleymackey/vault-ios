@@ -6,7 +6,9 @@ import XCTest
 
 @MainActor
 final class FeedViewModelTests: XCTestCase {
+    // swiftlint:disable:next implicitly_unwrapped_optional
     private var cancellables: Set<AnyCancellable>!
+
     override func setUp() {
         super.setUp()
         cancellables = Set()

@@ -7,11 +7,4 @@
    <FileRef
       location = "group:Vault">
    </FileRef>
-   <Group
-      location = "group:CI"
-      name = "CI">
-      <FileRef
-         location = "group:/Users/bradley/Documents/Developer/CodeManager/CI/ios_alltests.xctestplan">
-      </FileRef>
-   </Group>
 </Workspace>

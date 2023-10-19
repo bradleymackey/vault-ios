@@ -43,8 +43,7 @@ public struct CodeTimerHorizontalBarView: View {
     private func resetAnimation(animateReset: Bool) {
         let currentTime = clock.currentTime
         withAnimation(
-            .linear(duration: animateReset ? 0.15 : 0),
-            {
+            .linear(duration: animateReset ? 0.15 : 0), {
                 currentFractionCompleted = timerState.animationState.initialFraction(currentTime: currentTime)
             },
             completion: {

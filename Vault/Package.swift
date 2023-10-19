@@ -13,12 +13,13 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "Vault",
     defaultLocalization: "en",
-    platforms: [.iOS(.v17)],
+    platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
             name: "Vault",
             targets: ["Vault"]
         ),
+        .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.11.0"),
@@ -26,11 +27,18 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.7.0"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", from: "0.8.0"),
+        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.3"),
     ],
     targets: [
         .target(
             name: "Vault",
-            dependencies: ["VaultUI", "VaultFeed", "VaultFeediOS", "VaultSettings", "VaultCore"],
+            dependencies: [
+                "VaultFeed",
+                "VaultSettings",
+                "VaultCore",
+                .targetItem(name: "VaultFeediOS", condition: .when(platforms: [.iOS])),
+                .targetItem(name: "VaultUI", condition: .when(platforms: [.iOS])),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -67,6 +75,7 @@ let package = Package(
                 "VaultUI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
+            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -111,11 +120,18 @@ let package = Package(
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
+            resources: [
+                .copy("LocalSettingsTests.swift.plist"),
+                .copy("Infrastructure/DefaultsTests.swift.plist"),
+            ],
             swiftSettings: swiftSettings
         ),
         .target(
             name: "VaultFeed",
             dependencies: ["VaultCore", "CryptoEngine"],
+            resources: [
+                .copy("Resources/VaultStore.xcdatamodeld"),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -134,6 +150,10 @@ let package = Package(
                 "VaultFeediOS",
                 "TestHelpers",
             ],
+            exclude: ["__Snapshots__"],
+            resources: [
+                .copy("PasteboardTests.swift.plist"),
+            ],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -144,6 +164,47 @@ let package = Package(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions"],
             swiftSettings: swiftSettings
+        ),
+
+        // MARK: - TOOLING
+
+        .plugin(
+            name: "FormatSwift",
+            capability: .command(
+                intent: .custom(
+                    verb: "format",
+                    description: "Formats Swift source files using swiftformat and swiftlint"
+                ),
+                permissions: [
+                    .writeToPackageDirectory(reason: "Format Swift source files"),
+                ]
+            ),
+            dependencies: [
+                "SwiftFormatTool",
+                "swiftformat",
+                "swiftlint",
+            ]
+        ),
+        .executableTarget(
+            name: "SwiftFormatTool",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+            ],
+            resources: [
+                .process("default.swiftformat"),
+                .process("swiftlint.yml"),
+            ]
+        ),
+
+        .binaryTarget(
+            name: "swiftformat",
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.52.8/swiftformat.artifactbundle.zip",
+            checksum: "4ffc4d52d67feefa9576ceb1c83bbd1cb0832d735fa85ac580dc7453ce3face0"
+        ),
+        .binaryTarget(
+            name: "swiftlint",
+            url: "https://github.com/realm/SwiftLint/releases/download/0.52.1/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: "bb4875e7a0a80b4799211f2eb35d4a81a9d4fc9175f06be4479a680d76ddf29c"
         ),
     ]
 )
