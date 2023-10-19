@@ -8,7 +8,7 @@ public struct SecureNoteDetailEdits: Equatable {
     public var title: String
     public var contents: String
 
-    public init(description: String, title: String, contents: String) {
+    public init(description: String = "", title: String = "", contents: String = "") {
         self.description = description
         self.title = title
         self.contents = contents

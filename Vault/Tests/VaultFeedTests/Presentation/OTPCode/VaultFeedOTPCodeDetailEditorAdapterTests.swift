@@ -1,4 +1,5 @@
 import Foundation
+import TestHelpers
 import VaultFeed
 import XCTest
 
@@ -44,6 +45,13 @@ final class VaultFeedOTPCodeDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    func test_update_propagatesFailureOnError() async {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: uniqueCode(), edits: .init()))
+    }
+
     func test_delete_deletesFromFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -59,6 +67,13 @@ final class VaultFeedOTPCodeDetailEditorAdapterTests: XCTestCase {
         try await sut.deleteCode(id: id)
 
         await fulfillment(of: [exp])
+    }
+
+    func test_delete_propagatesFailureOnError() async {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.deleteCode(id: UUID()))
     }
 }
 
