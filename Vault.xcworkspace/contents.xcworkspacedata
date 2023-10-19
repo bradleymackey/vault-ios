@@ -2,43 +2,16 @@
 <Workspace
    version = "1.0">
    <FileRef
-      location = "group:Vault/Vault.xcodeproj">
+      location = "group:VaultApp/VaultApp.xcodeproj">
    </FileRef>
    <FileRef
-      location = "group:Modules/FoundationExtensions">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/VaultFeed">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/VaultFeediOS">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/VaultSettings">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/CryptoEngine">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/CryptoDocumentExporter">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/VaultUI">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/VaultCore">
-   </FileRef>
-   <FileRef
-      location = "group:Modules/TestHelpers">
+      location = "group:Vault">
    </FileRef>
    <Group
-      location = "group:TestPlans"
-      name = "TestPlans">
+      location = "group:CI"
+      name = "CI">
       <FileRef
-         location = "group:iOS_AllTests.xctestplan">
-      </FileRef>
-      <FileRef
-         location = "group:macOS_AllTests.xctestplan">
+         location = "group:/Users/bradley/Documents/Developer/CodeManager/CI/ios_alltests.xctestplan">
       </FileRef>
    </Group>
 </Workspace>

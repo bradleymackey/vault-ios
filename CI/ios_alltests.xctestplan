@@ -1,0 +1,95 @@
+{
+  "configurations" : [
+    {
+      "id" : "6E280D70-B6E5-4314-A68C-AE447A84D4F3",
+      "name" : "Default",
+      "options" : {
+
+      }
+    },
+    {
+      "id" : "2B44142F-E8BF-4566-9965-BDC655B045D7",
+      "name" : "TSAN",
+      "options" : {
+        "threadSanitizerEnabled" : true
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testExecutionOrdering" : "random",
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "CryptoDocumentExporterSnapshotTests",
+        "name" : "CryptoDocumentExporterSnapshotTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "CryptoDocumentExporterTests",
+        "name" : "CryptoDocumentExporterTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "CryptoEngineTests",
+        "name" : "CryptoEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "FoundationExtensionsTests",
+        "name" : "FoundationExtensionsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultCoreTests",
+        "name" : "VaultCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultFeedTests",
+        "name" : "VaultFeedTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultFeediOSTests",
+        "name" : "VaultFeediOSTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultSettingsTests",
+        "name" : "VaultSettingsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultTests",
+        "name" : "VaultTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..\/Vault",
+        "identifier" : "VaultUITests",
+        "name" : "VaultUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

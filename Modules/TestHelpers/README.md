@@ -1,3 +1,0 @@
-# TestHelpers
-
-Universal test helpers.
