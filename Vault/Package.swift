@@ -13,7 +13,7 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "Vault",
     defaultLocalization: "en",
-    platforms: [.iOS(.v17)],
+    platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
             name: "Vault",
@@ -30,7 +30,13 @@ let package = Package(
     targets: [
         .target(
             name: "Vault",
-            dependencies: ["VaultUI", "VaultFeed", "VaultFeediOS", "VaultSettings", "VaultCore"],
+            dependencies: [
+                "VaultFeed",
+                "VaultSettings",
+                "VaultCore",
+                .targetItem(name: "VaultFeediOS", condition: .when(platforms: [.iOS])),
+                .targetItem(name: "VaultUI", condition: .when(platforms: [.iOS])),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
