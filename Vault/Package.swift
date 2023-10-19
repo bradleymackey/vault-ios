@@ -125,6 +125,9 @@ let package = Package(
         .target(
             name: "VaultFeed",
             dependencies: ["VaultCore", "CryptoEngine"],
+            resources: [
+                .copy("Resources/VaultStore.xcdatamodeld"),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
