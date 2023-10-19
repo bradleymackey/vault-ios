@@ -2,7 +2,7 @@ import Foundation
 import VaultFeed
 import XCTest
 
-final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
+final class VaultFeedOTPCodeDetailEditorAdapterTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let feed = MockVaultFeed()
         _ = makeSUT(feed: feed)
@@ -62,7 +62,7 @@ final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
     }
 }
 
-extension OTPCodeFeedCodeDetailEditorAdapterTests {
+extension VaultFeedOTPCodeDetailEditorAdapterTests {
     private func makeSUT(feed: any VaultFeed) -> VaultFeedOTPCodeDetailEditorAdapter {
         VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feed)
     }
