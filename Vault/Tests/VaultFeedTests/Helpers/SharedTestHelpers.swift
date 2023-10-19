@@ -18,6 +18,10 @@ func uniqueCode() -> OTPAuthCode {
     )
 }
 
+func anyStoredNote() -> SecureNote {
+    SecureNote(title: "Some note", contents: "Some note contents")
+}
+
 func uniqueStoredMetadata() -> StoredVaultItem.Metadata {
     .init(id: UUID(), created: Date(), updated: Date(), userDescription: "any")
 }

@@ -2,7 +2,7 @@ import Foundation
 import VaultFeed
 import XCTest
 
-final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
+final class VaultFeedSecureNoteDetailEditorAdapterTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let feed = MockVaultFeed()
         _ = makeSUT(feed: feed)
@@ -14,32 +14,28 @@ final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        var code = uniqueCode()
-        code.data.accountName = "old account name"
-        code.data.issuer = "old issuer name"
-        var item = uniqueVaultItem(item: .otpCode(code))
+        var note = anyStoredNote()
+        note.title = "old title"
+        note.contents = "old contents"
+        var item = uniqueVaultItem(item: .secureNote(note))
         item.metadata.userDescription = "old description"
 
-        let edits = OTPCodeDetailEdits(
-            issuerTitle: "new issuer name",
-            accountNameTitle: "new account name",
-            description: "new description"
-        )
+        let edits = SecureNoteDetailEdits(description: "new description", title: "new title", contents: "new contents")
 
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
             switch data.item {
-            case let .otpCode(otpCode):
-                XCTAssertEqual(otpCode.data.accountName, "new account name")
-                XCTAssertEqual(otpCode.data.issuer, "new issuer name")
-            case .secureNote:
+            case let .secureNote(note):
+                XCTAssertEqual(note.title, "new title")
+                XCTAssertEqual(note.contents, "new contents")
+            default:
                 XCTFail("invalid kind")
             }
             exp.fulfill()
         }
 
-        try await sut.update(id: item.metadata.id, item: code, edits: edits)
+        try await sut.update(id: item.metadata.id, item: note, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -56,14 +52,14 @@ final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
             exp.fulfill()
         }
 
-        try await sut.deleteCode(id: id)
+        try await sut.deleteNote(id: id)
 
         await fulfillment(of: [exp])
     }
 }
 
-extension OTPCodeFeedCodeDetailEditorAdapterTests {
-    private func makeSUT(feed: any VaultFeed) -> VaultFeedOTPCodeDetailEditorAdapter {
-        VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feed)
+extension VaultFeedSecureNoteDetailEditorAdapterTests {
+    private func makeSUT(feed: any VaultFeed) -> VaultFeedSecureNoteDetailEditorAdapter {
+        VaultFeedSecureNoteDetailEditorAdapter(vaultFeed: feed)
     }
 }
