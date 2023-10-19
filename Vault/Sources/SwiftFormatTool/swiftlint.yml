@@ -16,8 +16,6 @@ only_rules:
   - custom_rules
 
 excluded:
-  - Carthage
-  - Pods
   - .build
 
 colon:
