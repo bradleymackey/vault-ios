@@ -157,6 +157,7 @@ struct SwiftFormatTool: ParsableCommand {
             "--config", swiftLintConfig,
             // Required for SwiftLint to emit a non-zero exit code on lint failure
             "--strict",
+            "--quiet",
         ]
 
         if let swiftLintCachePath {
