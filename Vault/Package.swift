@@ -67,6 +67,7 @@ let package = Package(
                 "VaultUI",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
+            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -134,6 +135,7 @@ let package = Package(
                 "VaultFeediOS",
                 "TestHelpers",
             ],
+            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(
