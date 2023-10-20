@@ -35,7 +35,7 @@ final class DetailEditState {
         }
     }
 
-    func deleteCode() async throws {
+    func deleteItem() async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }

@@ -73,7 +73,7 @@ public final class OTPCodeDetailViewModel {
 
     public func deleteCode() async {
         do {
-            try await detailEditState.deleteCode()
+            try await detailEditState.deleteItem()
         } catch {
             didEncounterErrorSubject.send(error)
         }
