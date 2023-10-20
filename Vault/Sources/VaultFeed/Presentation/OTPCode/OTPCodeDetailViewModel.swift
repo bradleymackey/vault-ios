@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 @MainActor
@@ -7,14 +8,20 @@ import VaultCore
 public final class OTPCodeDetailViewModel {
     public let storedCode: OTPAuthCode
     public let storedMetdata: StoredVaultItem.Metadata
-    public var editingModel: OTPCodeDetailEditingModel
-
-    public private(set) var isSaving = false
-    public private(set) var isInEditMode = false
+    public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
     private let editor: any OTPCodeDetailEditor
+    private let detailEditState: DetailEditState<OTPCodeDetailEdits>
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
+
+    public var isSaving: Bool {
+        detailEditState.isSaving
+    }
+
+    public var isInEditMode: Bool {
+        detailEditState.isInEditMode
+    }
 
     public init(
         storedCode: OTPAuthCode,
@@ -24,11 +31,14 @@ public final class OTPCodeDetailViewModel {
         self.storedCode = storedCode
         storedMetdata = storedMetadata
         self.editor = editor
-        editingModel = OTPCodeDetailEditingModel(detail: .init(
+        let editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: .init(
             issuerTitle: storedCode.data.issuer ?? "",
             accountNameTitle: storedCode.data.accountName,
             description: storedMetadata.userDescription ?? ""
         ))
+        detailEditState = DetailEditState(editingModel: editingModel)
+        self.editingModel = editingModel
+        detailEditState.delegate = WeakBox(self)
     }
 
     public var detailMenuItems: [OTPCodeDetailMenuItem] {
@@ -51,43 +61,46 @@ public final class OTPCodeDetailViewModel {
     }
 
     public func startEditing() {
-        isInEditMode = true
+        detailEditState.startEditing()
     }
 
     public func saveChanges() async {
-        guard !isSaving else { return }
-        isSaving = true
-        defer { isSaving = false }
         do {
-            try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
-            isInEditMode = false
-            editingModel.didPersist()
+            try await detailEditState.saveChanges()
         } catch {
-            let error = OperationError.save
             didEncounterErrorSubject.send(error)
         }
     }
 
     public func deleteCode() async {
-        guard !isSaving else { return }
-        isSaving = true
-        defer { isSaving = false }
         do {
-            try await editor.deleteCode(id: storedMetdata.id)
-            isFinishedSubject.send()
+            try await detailEditState.deleteItem()
         } catch {
-            let error = OperationError.delete
             didEncounterErrorSubject.send(error)
         }
     }
 
     public func done() {
-        if isInEditMode {
-            isInEditMode = false
-            editingModel.restoreInitialState()
-        } else {
-            isFinishedSubject.send()
-        }
+        detailEditState.exitCurrentMode()
+    }
+}
+
+extension OTPCodeDetailViewModel: DetailEditStateDelegate {
+    func performUpdate() async throws {
+        try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
+        editingModel.didPersist()
+    }
+
+    func performDeletion() async throws {
+        try await editor.deleteCode(id: storedMetdata.id)
+    }
+
+    func clearDirtyState() {
+        editingModel.restoreInitialState()
+    }
+
+    func exitCurrentMode() {
+        isFinishedSubject.send()
     }
 }
 

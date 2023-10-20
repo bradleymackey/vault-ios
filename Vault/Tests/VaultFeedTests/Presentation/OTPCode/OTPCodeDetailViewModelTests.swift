@@ -7,6 +7,13 @@ import XCTest
 
 @MainActor
 final class OTPCodeDetailViewModelTests: XCTestCase {
+    func test_init_hasNoSideEffects() {
+        let editor = MockOTPCodeDetailEditor()
+        _ = makeSUT(editor: editor)
+
+        XCTAssertEqual(editor.operationsPerformed, [])
+    }
+
     func test_detailMenuItems_hasOneExpectedItem() {
         let sut = makeSUT()
 
@@ -22,9 +29,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_startEditing_setsEditModeTrue() async throws {
         let sut = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.isInEditMode) {
-            sut.startEditing()
-        }
+        sut.startEditing()
 
         XCTAssertTrue(sut.isInEditMode)
     }
@@ -33,46 +38,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT()
 
         XCTAssertFalse(sut.isSaving)
-    }
-
-    func test_saveChanges_setsIsSavingToTrue() async throws {
-        let completeUpdateSignal = PendingValue<Void>()
-        let editor = CodeDetailEditorMock()
-        editor.updateCodeCalled = { _, _, _ in
-            try? await completeUpdateSignal.awaitValue()
-        }
-
-        let sut = makeSUT(editor: editor)
-
-        let exp = expectation(description: "Wait for save changes to start")
-        let task = Task {
-            exp.fulfill()
-            await sut.saveChanges()
-        }
-        await fulfillment(of: [exp], timeout: 1.0)
-
-        XCTAssertTrue(sut.isSaving)
-
-        // Cleanup
-        await completeUpdateSignal.fulfill()
-        _ = await task.value
-    }
-
-    func test_saveChanges_setsBackToFalseAfterSuccessfulSave() async throws {
-        let sut = makeSUT()
-
-        await sut.saveChanges()
-
-        XCTAssertFalse(sut.isSaving)
-    }
-
-    func test_saveChanges_disablesEditModeIfSuccessful() async throws {
-        let sut = makeSUT()
-
-        sut.startEditing()
-        await sut.saveChanges()
-
-        XCTAssertFalse(sut.isInEditMode)
     }
 
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
@@ -86,7 +51,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -95,19 +60,8 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isSaving)
     }
 
-    func test_saveChanges_remainsInEditModeAfterSaveFailure() async throws {
-        let editor = CodeDetailEditorMock()
-        editor.updateCodeResult = .failure(anyNSError())
-        let sut = makeSUT(editor: editor)
-
-        sut.startEditing()
-        await sut.saveChanges()
-
-        XCTAssertTrue(sut.isInEditMode)
-    }
-
     func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
         sut.editingModel.detail.accountNameTitle = UUID().uuidString
@@ -119,7 +73,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_saveChanges_sendsErrorIfSaveError() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -129,29 +83,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         }
 
         XCTAssertEqual(output.count, 1)
-    }
-
-    func test_deleteCode_setsIsSavingToTrue() async throws {
-        let completeDeleteSignal = PendingValue<Void>()
-        let editor = CodeDetailEditorMock()
-        editor.deleteCodeCalled = { _ in
-            try? await completeDeleteSignal.awaitValue()
-        }
-
-        let sut = makeSUT(editor: editor)
-
-        let exp = expectation(description: "Wait for save changes to start")
-        let task = Task {
-            exp.fulfill()
-            await sut.deleteCode()
-        }
-        await fulfillment(of: [exp], timeout: 1.0)
-
-        XCTAssertTrue(sut.isSaving)
-
-        // Cleanup
-        await completeDeleteSignal.fulfill()
-        _ = await task.value
     }
 
     func test_deleteCode_setsBackToFalseAfterSuccessfulDelete() async throws {
@@ -174,7 +105,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_deleteCode_sendsErrorIfDeleteError() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.deleteCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -184,15 +115,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         }
 
         XCTAssertEqual(output.count, 1)
-    }
-
-    func test_done_disablesEditModeIfInEditMode() async throws {
-        let sut = makeSUT()
-        sut.startEditing()
-
-        sut.done()
-
-        XCTAssertFalse(sut.isInEditMode)
     }
 
     func test_done_restoresInitialEditingStateIfInEditMode() async throws {
@@ -205,27 +127,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         sut.done()
 
         XCTAssertFalse(sut.editingModel.isDirty)
-    }
-
-    func test_done_doesNotFinishIfInEditMode() async throws {
-        let sut = makeSUT()
-        sut.startEditing()
-
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        await awaitNoPublish(publisher: publisher) {
-            sut.done()
-        }
-    }
-
-    func test_done_finishesIfNotInEditMode() async throws {
-        let sut = makeSUT()
-
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
-            sut.done()
-        }
-
-        XCTAssertEqual(output.count, 1)
     }
 
     func test_editingModel_initialStateUsesData() {
@@ -263,7 +164,7 @@ extension OTPCodeDetailViewModelTests {
     private func makeSUT(
         code: OTPAuthCode = uniqueCode(),
         metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
-        editor: CodeDetailEditorMock = CodeDetailEditorMock(),
+        editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
@@ -271,21 +172,5 @@ extension OTPCodeDetailViewModelTests {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
-    }
-
-    private class CodeDetailEditorMock: OTPCodeDetailEditor {
-        var updateCodeResult: Result<Void, any Error> = .success(())
-        var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
-        func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
-            await updateCodeCalled(id, item, edits)
-            try updateCodeResult.get()
-        }
-
-        var deleteCodeResult: Result<Void, any Error> = .success(())
-        var deleteCodeCalled: (UUID) async -> Void = { _ in }
-        func deleteCode(id: UUID) async throws {
-            await deleteCodeCalled(id)
-            try deleteCodeResult.get()
-        }
     }
 }

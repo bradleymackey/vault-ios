@@ -1,17 +1,18 @@
 import Foundation
+import TestHelpers
 import VaultFeed
 import XCTest
 
-final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
+final class VaultFeedOTPCodeDetailEditorAdapterTests: XCTestCase {
     func test_init_hasNoSideEffects() {
-        let feed = StubCodeFeed()
+        let feed = MockVaultFeed()
         _ = makeSUT(feed: feed)
 
         XCTAssertTrue(feed.calls.isEmpty)
     }
 
     func test_update_translatesCodeDataForCall() async throws {
-        let feed = StubCodeFeed()
+        let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
 
         var code = uniqueCode()
@@ -44,8 +45,15 @@ final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    func test_update_propagatesFailureOnError() async {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: uniqueCode(), edits: .init()))
+    }
+
     func test_delete_deletesFromFeed() async throws {
-        let feed = StubCodeFeed()
+        let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
 
         let id = UUID()
@@ -60,30 +68,17 @@ final class OTPCodeFeedCodeDetailEditorAdapterTests: XCTestCase {
 
         await fulfillment(of: [exp])
     }
+
+    func test_delete_propagatesFailureOnError() async {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.deleteCode(id: UUID()))
+    }
 }
 
-extension OTPCodeFeedCodeDetailEditorAdapterTests {
+extension VaultFeedOTPCodeDetailEditorAdapterTests {
     private func makeSUT(feed: any VaultFeed) -> VaultFeedOTPCodeDetailEditorAdapter {
         VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feed)
-    }
-
-    private class StubCodeFeed: VaultFeed {
-        var calls = [String]()
-
-        func reloadData() async {
-            calls.append("\(#function)")
-        }
-
-        var updateCalled: (UUID, StoredVaultItem.Write) -> Void = { _, _ in }
-        func update(id: UUID, item: StoredVaultItem.Write) async throws {
-            calls.append("\(#function)")
-            updateCalled(id, item)
-        }
-
-        var deleteCalled: (UUID) -> Void = { _ in }
-        func delete(id: UUID) async throws {
-            calls.append(#function)
-            deleteCalled(id)
-        }
     }
 }
