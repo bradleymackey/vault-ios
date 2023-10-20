@@ -7,6 +7,13 @@ import XCTest
 
 @MainActor
 final class OTPCodeDetailViewModelTests: XCTestCase {
+    func test_init_hasNoSideEffects() {
+        let editor = MockOTPCodeDetailEditor()
+        _ = makeSUT(editor: editor)
+
+        XCTAssertEqual(editor.operationsPerformed, [])
+    }
+
     func test_detailMenuItems_hasOneExpectedItem() {
         let sut = makeSUT()
 
@@ -37,7 +44,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     func test_saveChanges_setsIsSavingToTrue() async throws {
         let completeUpdateSignal = PendingValue<Void>()
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeCalled = { _, _, _ in
             try? await completeUpdateSignal.awaitValue()
         }
@@ -86,7 +93,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -96,7 +103,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_saveChanges_remainsInEditModeAfterSaveFailure() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -107,7 +114,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
         sut.editingModel.detail.accountNameTitle = UUID().uuidString
@@ -119,7 +126,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_saveChanges_sendsErrorIfSaveError() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -133,7 +140,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     func test_deleteCode_setsIsSavingToTrue() async throws {
         let completeDeleteSignal = PendingValue<Void>()
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.deleteCodeCalled = { _ in
             try? await completeDeleteSignal.awaitValue()
         }
@@ -174,7 +181,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     func test_deleteCode_sendsErrorIfDeleteError() async throws {
-        let editor = CodeDetailEditorMock()
+        let editor = MockOTPCodeDetailEditor()
         editor.deleteCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
 
@@ -263,7 +270,7 @@ extension OTPCodeDetailViewModelTests {
     private func makeSUT(
         code: OTPAuthCode = uniqueCode(),
         metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
-        editor: CodeDetailEditorMock = CodeDetailEditorMock(),
+        editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
@@ -271,21 +278,5 @@ extension OTPCodeDetailViewModelTests {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
-    }
-
-    private class CodeDetailEditorMock: OTPCodeDetailEditor {
-        var updateCodeResult: Result<Void, any Error> = .success(())
-        var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
-        func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
-            await updateCodeCalled(id, item, edits)
-            try updateCodeResult.get()
-        }
-
-        var deleteCodeResult: Result<Void, any Error> = .success(())
-        var deleteCodeCalled: (UUID) async -> Void = { _ in }
-        func deleteCode(id: UUID) async throws {
-            await deleteCodeCalled(id)
-            try deleteCodeResult.get()
-        }
     }
 }
