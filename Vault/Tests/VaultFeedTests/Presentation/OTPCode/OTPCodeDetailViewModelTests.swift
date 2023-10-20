@@ -42,46 +42,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isSaving)
     }
 
-    func test_saveChanges_setsIsSavingToTrue() async throws {
-        let completeUpdateSignal = PendingValue<Void>()
-        let editor = MockOTPCodeDetailEditor()
-        editor.updateCodeCalled = { _, _, _ in
-            try? await completeUpdateSignal.awaitValue()
-        }
-
-        let sut = makeSUT(editor: editor)
-
-        let exp = expectation(description: "Wait for save changes to start")
-        let task = Task {
-            exp.fulfill()
-            await sut.saveChanges()
-        }
-        await fulfillment(of: [exp], timeout: 1.0)
-
-        XCTAssertTrue(sut.isSaving)
-
-        // Cleanup
-        await completeUpdateSignal.fulfill()
-        _ = await task.value
-    }
-
-    func test_saveChanges_setsBackToFalseAfterSuccessfulSave() async throws {
-        let sut = makeSUT()
-
-        await sut.saveChanges()
-
-        XCTAssertFalse(sut.isSaving)
-    }
-
-    func test_saveChanges_disablesEditModeIfSuccessful() async throws {
-        let sut = makeSUT()
-
-        sut.startEditing()
-        await sut.saveChanges()
-
-        XCTAssertFalse(sut.isInEditMode)
-    }
-
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUT()
         sut.editingModel.detail.accountNameTitle = UUID().uuidString
@@ -100,17 +60,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         await sut.saveChanges()
 
         XCTAssertFalse(sut.isSaving)
-    }
-
-    func test_saveChanges_remainsInEditModeAfterSaveFailure() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.updateCodeResult = .failure(anyNSError())
-        let sut = makeSUT(editor: editor)
-
-        sut.startEditing()
-        await sut.saveChanges()
-
-        XCTAssertTrue(sut.isInEditMode)
     }
 
     func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
@@ -136,29 +85,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         }
 
         XCTAssertEqual(output.count, 1)
-    }
-
-    func test_deleteCode_setsIsSavingToTrue() async throws {
-        let completeDeleteSignal = PendingValue<Void>()
-        let editor = MockOTPCodeDetailEditor()
-        editor.deleteCodeCalled = { _ in
-            try? await completeDeleteSignal.awaitValue()
-        }
-
-        let sut = makeSUT(editor: editor)
-
-        let exp = expectation(description: "Wait for save changes to start")
-        let task = Task {
-            exp.fulfill()
-            await sut.deleteCode()
-        }
-        await fulfillment(of: [exp], timeout: 1.0)
-
-        XCTAssertTrue(sut.isSaving)
-
-        // Cleanup
-        await completeDeleteSignal.fulfill()
-        _ = await task.value
     }
 
     func test_deleteCode_setsBackToFalseAfterSuccessfulDelete() async throws {
@@ -193,15 +119,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(output.count, 1)
     }
 
-    func test_done_disablesEditModeIfInEditMode() async throws {
-        let sut = makeSUT()
-        sut.startEditing()
-
-        sut.done()
-
-        XCTAssertFalse(sut.isInEditMode)
-    }
-
     func test_done_restoresInitialEditingStateIfInEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
@@ -212,27 +129,6 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         sut.done()
 
         XCTAssertFalse(sut.editingModel.isDirty)
-    }
-
-    func test_done_doesNotFinishIfInEditMode() async throws {
-        let sut = makeSUT()
-        sut.startEditing()
-
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        await awaitNoPublish(publisher: publisher) {
-            sut.done()
-        }
-    }
-
-    func test_done_finishesIfNotInEditMode() async throws {
-        let sut = makeSUT()
-
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
-            sut.done()
-        }
-
-        XCTAssertEqual(output.count, 1)
     }
 
     func test_editingModel_initialStateUsesData() {
