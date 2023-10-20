@@ -28,6 +28,58 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertTrue(sut.isInEditMode)
     }
 
+    func test_saveChanges_setsIsSavingToTrue() async throws {
+        let delegate = MockDetailEditStateDelegate()
+        let sut = makeSUT(delegate: delegate)
+
+        let exp = expectation(description: "Wait for performUpdate")
+        let pendingCall = PendingValue<Void>()
+        delegate.performUpdateCalled = {
+            exp.fulfill()
+            try? await pendingCall.awaitValue()
+        }
+
+        // Save changes in a different task, so we don't suspend the current (test) task
+        Task.detached(priority: .background) {
+            try await sut.saveChanges()
+        }
+
+        await fulfillment(of: [exp])
+
+        XCTAssertTrue(sut.isSaving)
+
+        await pendingCall.fulfill()
+    }
+
+    func test_saveChanges_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
+        let delegate = MockDetailEditStateDelegate()
+        let sut = makeSUT(delegate: delegate)
+
+        let exp = expectation(description: "Wait for performUpdate")
+        let pendingCall = PendingValue<Void>()
+        delegate.performUpdateCalled = {
+            exp.fulfill()
+            try? await pendingCall.awaitValue()
+        }
+
+        Task.detached(priority: .background) {
+            await withTaskGroup(of: Void.self) { group in
+                for _ in 0 ..< 3 {
+                    // Multiple calls being made, concurrently.
+                    group.addTask {
+                        try? await sut.saveChanges()
+                    }
+                }
+            }
+        }
+
+        await fulfillment(of: [exp])
+
+        XCTAssertEqual(delegate.operationsPerformed, [.update], "Only a single update should be performed.")
+
+        await pendingCall.fulfill()
+    }
+
     func test_saveChanges_successSetsEditModeToFalse() async throws {
         let delegate = MockDetailEditStateDelegate()
         delegate.performUpdateResult = .success(())
@@ -81,10 +133,10 @@ extension DetailEditStateTests {
         private(set) var operationsPerformed = [Operation]()
 
         var performUpdateResult: Result<Void, any Error> = .success(())
-        var performUpdateCalled: () -> Void = {}
+        var performUpdateCalled: () async -> Void = {}
         func performUpdate() async throws {
             operationsPerformed.append(.update)
-            performUpdateCalled()
+            await performUpdateCalled()
             try performUpdateResult.get()
         }
 
