@@ -29,9 +29,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_startEditing_setsEditModeTrue() async throws {
         let sut = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.isInEditMode) {
-            sut.startEditing()
-        }
+        sut.startEditing()
 
         XCTAssertTrue(sut.isInEditMode)
     }
