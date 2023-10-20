@@ -7,7 +7,7 @@ import XCTest
 final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let editor = MockSecureNoteDetailEditor()
-        let sut = makeSUT(editor: editor)
+        _ = makeSUT(editor: editor)
 
         XCTAssertEqual(editor.operationsPerformed, [])
     }
