@@ -17,6 +17,14 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(sut.isSaving)
         XCTAssertFalse(sut.isInEditMode)
     }
+
+    func test_startEditing_setsModeToEditing() {
+        let sut = makeSUT()
+
+        sut.startEditing()
+
+        XCTAssertTrue(sut.isInEditMode)
+    }
 }
 
 // MARK: - Helpers
