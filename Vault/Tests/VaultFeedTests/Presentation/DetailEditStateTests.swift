@@ -1,4 +1,6 @@
 import Foundation
+import FoundationExtensions
+import TestHelpers
 import XCTest
 @testable import VaultFeed
 
@@ -25,6 +27,36 @@ final class DetailEditStateTests: XCTestCase {
 
         XCTAssertTrue(sut.isInEditMode)
     }
+
+    func test_saveChanges_successSetsEditModeToFalse() async throws {
+        let delegate = MockDetailEditStateDelegate()
+        delegate.performUpdateResult = .success(())
+        let sut = makeSUT(delegate: delegate)
+        sut.startEditing()
+
+        try await sut.saveChanges()
+
+        XCTAssertFalse(sut.isInEditMode)
+    }
+
+    func test_saveChanges_failureDoesNotChangeEditMode() async throws {
+        let delegate = MockDetailEditStateDelegate()
+        delegate.performUpdateResult = .failure(anyNSError())
+        let sut = makeSUT(delegate: delegate)
+        sut.startEditing()
+
+        try? await sut.saveChanges()
+
+        XCTAssertTrue(sut.isInEditMode)
+    }
+
+    func test_saveChanges_failureThrowsError() async {
+        let delegate = MockDetailEditStateDelegate()
+        delegate.performUpdateResult = .failure(anyNSError())
+        let sut = makeSUT(delegate: delegate)
+
+        await XCTAssertThrowsError(try await sut.saveChanges())
+    }
 }
 
 // MARK: - Helpers
@@ -48,10 +80,12 @@ extension DetailEditStateTests {
 
         private(set) var operationsPerformed = [Operation]()
 
+        var performUpdateResult: Result<Void, any Error> = .success(())
         var performUpdateCalled: () -> Void = {}
         func performUpdate() async throws {
             operationsPerformed.append(.update)
             performUpdateCalled()
+            try performUpdateResult.get()
         }
 
         var performDeletionCalled: () -> Void = {}
