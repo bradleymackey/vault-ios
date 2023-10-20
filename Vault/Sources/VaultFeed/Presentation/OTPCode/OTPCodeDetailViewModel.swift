@@ -8,13 +8,12 @@ import VaultCore
 public final class OTPCodeDetailViewModel {
     public let storedCode: OTPAuthCode
     public let storedMetdata: StoredVaultItem.Metadata
-    public var editingModel: OTPCodeDetailEditingModel
+    public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
     private let editor: any OTPCodeDetailEditor
+    private let detailEditState: DetailEditState<OTPCodeDetailEdits>
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
-
-    private var detailEditState = DetailEditState()
 
     public var isSaving: Bool {
         detailEditState.isSaving
@@ -32,11 +31,13 @@ public final class OTPCodeDetailViewModel {
         self.storedCode = storedCode
         storedMetdata = storedMetadata
         self.editor = editor
-        editingModel = OTPCodeDetailEditingModel(detail: .init(
+        let editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: .init(
             issuerTitle: storedCode.data.issuer ?? "",
             accountNameTitle: storedCode.data.accountName,
             description: storedMetadata.userDescription ?? ""
         ))
+        detailEditState = DetailEditState(editingModel: editingModel)
+        self.editingModel = editingModel
         detailEditState.delegate = WeakBox(self)
     }
 

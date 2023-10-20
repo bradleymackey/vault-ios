@@ -91,6 +91,22 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    func test_saveChanges_persistsModelAfterUpdate() async throws {
+        let delegate = MockDetailEditStateDelegate()
+        delegate.performUpdateResult = .success(())
+        let editingModel = DetailEditingModel<MockState>(detail: "initial state")
+        let sut = makeSUT(editingModel: editingModel, delegate: delegate)
+        sut.startEditing()
+
+        editingModel.detail = "made changes"
+        XCTAssertTrue(editingModel.isDirty)
+
+        try await sut.saveChanges()
+
+        XCTAssertFalse(editingModel.isDirty)
+        XCTAssertEqual(editingModel.detail, "made changes")
+    }
+
     func test_saveChanges_failureDoesNotChangeEditMode() async throws {
         let delegate = MockDetailEditStateDelegate()
         delegate.performUpdateResult = .failure(anyNSError())
@@ -219,15 +235,33 @@ final class DetailEditStateTests: XCTestCase {
 
         XCTAssertEqual(delegate.operationsPerformed, [.exitCurrentMode])
     }
+
+    func test_exitCurrentMode_restoresInitialEditingStateWhenInEditMode() {
+        let editingModel = DetailEditingModel<MockState>(detail: "initial state")
+        let sut = makeSUT(editingModel: editingModel)
+        sut.startEditing()
+
+        editingModel.detail = "made changes"
+        XCTAssertTrue(editingModel.isDirty)
+
+        sut.exitCurrentMode()
+
+        XCTAssertFalse(editingModel.isDirty)
+        XCTAssertEqual(editingModel.detail, "initial state")
+    }
 }
 
 // MARK: - Helpers
 
 extension DetailEditStateTests {
+    typealias MockState = String
+
     private func makeSUT(
+        editingModel: DetailEditingModel<MockState>? = nil,
         delegate: MockDetailEditStateDelegate = MockDetailEditStateDelegate()
-    ) -> DetailEditState {
-        let sut = DetailEditState()
+    ) -> DetailEditState<MockState> {
+        let editingModel = editingModel ?? DetailEditingModel(detail: "Test")
+        let sut = DetailEditState<MockState>(editingModel: editingModel)
         sut.delegate = delegate
         return sut
     }

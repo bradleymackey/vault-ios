@@ -1,13 +1,14 @@
 import Combine
 import Foundation
 
+/// Manages the state when editing a particular model, tracking if the edits are dirty or not.
 @MainActor
 @Observable
-public final class OTPCodeDetailEditingModel {
-    public var detail: OTPCodeDetailEdits
-    public private(set) var initialDetail: OTPCodeDetailEdits
+public final class DetailEditingModel<T: Equatable> {
+    public var detail: T
+    public private(set) var initialDetail: T
 
-    public init(detail: OTPCodeDetailEdits) {
+    public init(detail: T) {
         initialDetail = detail
         self.detail = detail
     }

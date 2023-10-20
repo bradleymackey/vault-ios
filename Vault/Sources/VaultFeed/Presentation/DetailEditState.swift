@@ -4,13 +4,16 @@ import Foundation
 /// Manages the edit/saving state for specific editing specific vault items.
 @MainActor
 @Observable
-final class DetailEditState {
+final class DetailEditState<T: Equatable> {
     private(set) var isSaving = false
     private(set) var isInEditMode = false
 
+    private let editingModel: DetailEditingModel<T>
     var delegate: (any DetailEditStateDelegate)?
 
-    init() {}
+    init(editingModel: DetailEditingModel<T>) {
+        self.editingModel = editingModel
+    }
 
     func startEditing() {
         isInEditMode = true
@@ -22,6 +25,7 @@ final class DetailEditState {
         defer { isSaving = false }
         do {
             try await delegate?.performUpdate()
+            editingModel.didPersist()
             isInEditMode = false
         } catch {
             throw OperationError.save
@@ -43,6 +47,7 @@ final class DetailEditState {
     func exitCurrentMode() {
         if isInEditMode {
             delegate?.clearDirtyState()
+            editingModel.restoreInitialState()
             isInEditMode = false
         } else {
             delegate?.exitCurrentMode()
