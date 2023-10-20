@@ -190,6 +190,35 @@ final class DetailEditStateTests: XCTestCase {
 
         await XCTAssertThrowsError(try await sut.deleteItem())
     }
+
+    func test_exitCurrentMode_clearsDirtyStateInEditMode() {
+        let delegate = MockDetailEditStateDelegate()
+        let sut = makeSUT(delegate: delegate)
+        sut.startEditing()
+
+        sut.exitCurrentMode()
+
+        XCTAssertEqual(delegate.operationsPerformed, [.clearDirtyState])
+    }
+
+    func test_exitCurrentMode_disablesEditModeIfInEditMode() {
+        let delegate = MockDetailEditStateDelegate()
+        let sut = makeSUT(delegate: delegate)
+        sut.startEditing()
+
+        sut.exitCurrentMode()
+
+        XCTAssertFalse(sut.isInEditMode)
+    }
+
+    func test_exitCurrentMode_existsCurrentModeIfNotInEditMode() {
+        let delegate = MockDetailEditStateDelegate()
+        let sut = makeSUT(delegate: delegate)
+
+        sut.exitCurrentMode()
+
+        XCTAssertEqual(delegate.operationsPerformed, [.exitCurrentMode])
+    }
 }
 
 // MARK: - Helpers
