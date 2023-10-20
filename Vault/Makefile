@@ -8,3 +8,7 @@ format:
 lint:
 	swift package --allow-writing-to-package-directory format --lint
 
+.PHONY: clean
+clean:
+	swift package clean
+	rm -rf .build

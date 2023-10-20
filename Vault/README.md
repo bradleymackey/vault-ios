@@ -22,4 +22,8 @@ This is the package that defines the targets and build settings for them.
 	<td>Lint Sources</td>
 	<td><b>make lint</b></td>
   </tr>
+  <tr>
+	<td>Force clean existing build artifacts</td>
+	<td><b>make clean</b></td>
+  </tr>
 </table>
