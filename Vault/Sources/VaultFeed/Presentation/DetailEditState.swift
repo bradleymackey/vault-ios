@@ -1,13 +1,6 @@
 import Combine
 import Foundation
 
-protocol DetailEditStateDelegate {
-    func performUpdate() async throws
-    func performDeletion() async throws
-    func clearDirtyState()
-    func exitCurrentMode()
-}
-
 /// Manages the edit/saving state for specific editing specific vault items.
 @MainActor
 @Observable

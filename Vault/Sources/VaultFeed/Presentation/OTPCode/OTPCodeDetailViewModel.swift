@@ -103,24 +103,6 @@ extension OTPCodeDetailViewModel: DetailEditStateDelegate {
     }
 }
 
-extension WeakBox: DetailEditStateDelegate where T: DetailEditStateDelegate {
-    func performUpdate() async throws {
-        try await value?.performUpdate()
-    }
-
-    func performDeletion() async throws {
-        try await value?.performDeletion()
-    }
-
-    func clearDirtyState() {
-        value?.clearDirtyState()
-    }
-
-    func exitCurrentMode() {
-        value?.exitCurrentMode()
-    }
-}
-
 // MARK: - Error
 
 extension OTPCodeDetailViewModel {
