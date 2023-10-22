@@ -93,32 +93,6 @@ public final class OTPCodeDetailViewModel {
     }
 }
 
-// MARK: - Error
-
-extension OTPCodeDetailViewModel {
-    public enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
-        case save
-        case delete
-
-        public var description: String {
-            switch self {
-            case .save:
-                localized(key: "codeDetail.action.save.error.description")
-            case .delete:
-                localized(key: "codeDetail.action.delete.error.description")
-            }
-        }
-
-        public var errorDescription: String? {
-            description
-        }
-
-        public var id: some Hashable {
-            rawValue
-        }
-    }
-}
-
 // MARK: - Titles
 
 extension OTPCodeDetailViewModel {
