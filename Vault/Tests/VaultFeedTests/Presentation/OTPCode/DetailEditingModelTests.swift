@@ -11,7 +11,7 @@ final class DetailEditingModelTests: XCTestCase {
     }
 
     func test_isDirty_resetsOncePersisted() async throws {
-        let sut = makeSUT(detail: "hello")
+        var sut = makeSUT(detail: "hello")
 
         sut.detail = "next"
         XCTAssertTrue(sut.isDirty)

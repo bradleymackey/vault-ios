@@ -2,9 +2,7 @@ import Combine
 import Foundation
 
 /// Manages the state when editing a particular model, tracking if the edits are dirty or not.
-@MainActor
-@Observable
-public final class DetailEditingModel<T: Equatable> {
+public struct DetailEditingModel<T: Equatable> {
     public var detail: T
     public private(set) var initialDetail: T
 
@@ -17,11 +15,11 @@ public final class DetailEditingModel<T: Equatable> {
         detail != initialDetail
     }
 
-    public func restoreInitialState() {
+    public mutating func restoreInitialState() {
         detail = initialDetail
     }
 
-    public func didPersist() {
+    public mutating func didPersist() {
         initialDetail = detail
     }
 }
