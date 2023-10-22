@@ -29,19 +29,16 @@ final class DetailEditStateTests: XCTestCase {
     }
 
     func test_saveChanges_setsIsSavingToTrue() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
         let exp = expectation(description: "Wait for performUpdate")
         let pendingCall = PendingValue<Void>()
-        delegate.performUpdateCalled = {
-            exp.fulfill()
-            try? await pendingCall.awaitValue()
-        }
-
         // Save changes in a different task, so we don't suspend the current (test) task
         Task.detached(priority: .background) {
-            try await sut.saveChanges()
+            try await sut.saveChanges {
+                exp.fulfill()
+                try? await pendingCall.awaitValue()
+            }
         }
 
         await fulfillment(of: [exp])
@@ -52,22 +49,19 @@ final class DetailEditStateTests: XCTestCase {
     }
 
     func test_saveChanges_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
         let exp = expectation(description: "Wait for performUpdate")
         let pendingCall = PendingValue<Void>()
-        delegate.performUpdateCalled = {
-            exp.fulfill()
-            try? await pendingCall.awaitValue()
-        }
-
         Task.detached(priority: .background) {
             await withTaskGroup(of: Void.self) { group in
                 for _ in 0 ..< 3 {
                     // Multiple calls being made, concurrently.
                     group.addTask {
-                        try? await sut.saveChanges()
+                        try? await sut.saveChanges {
+                            exp.fulfill()
+                            try? await pendingCall.awaitValue()
+                        }
                     }
                 }
             }
@@ -75,49 +69,33 @@ final class DetailEditStateTests: XCTestCase {
 
         await fulfillment(of: [exp])
 
-        XCTAssertEqual(delegate.operationsPerformed, [.update], "Only a single update should be performed.")
-
         await pendingCall.fulfill()
     }
 
     func test_saveChanges_successSetsEditModeToFalse() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performUpdateResult = .success(())
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
         sut.startEditing()
 
-        try await sut.saveChanges()
+        try await sut.saveChanges { /* noop */ }
 
         XCTAssertFalse(sut.isInEditMode)
     }
 
-    func test_saveChanges_persistsModelAfterUpdate() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performUpdateResult = .success(())
-        let sut = makeSUT(delegate: delegate)
-
-        try await sut.saveChanges()
-
-        XCTAssertEqual(delegate.operationsPerformed, [.update])
-    }
-
     func test_saveChanges_failureDoesNotChangeEditMode() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performUpdateResult = .failure(anyNSError())
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
         sut.startEditing()
 
-        try? await sut.saveChanges()
+        try? await sut.saveChanges { throw anyNSError() }
 
         XCTAssertTrue(sut.isInEditMode)
     }
 
     func test_saveChanges_failureThrowsError() async {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performUpdateResult = .failure(anyNSError())
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
-        await XCTAssertThrowsError(try await sut.saveChanges())
+        await XCTAssertThrowsError(try await sut.saveChanges {
+            throw anyNSError()
+        })
     }
 
     func test_deleteItem_setsIsSavingToTrue() async throws {
@@ -246,21 +224,12 @@ extension DetailEditStateTests {
 
     private class MockDetailEditStateDelegate: DetailEditStateDelegate {
         enum Operation: Equatable {
-            case update
             case delete
             case clearDirtyState
             case exitCurrentMode
         }
 
         private(set) var operationsPerformed = [Operation]()
-
-        var performUpdateResult: Result<Void, any Error> = .success(())
-        var performUpdateCalled: () async -> Void = {}
-        func performUpdate() async throws {
-            operationsPerformed.append(.update)
-            await performUpdateCalled()
-            try performUpdateResult.get()
-        }
 
         var performDeletionResult: Result<Void, any Error> = .success(())
         var performDeletionCalled: () async -> Void = {}

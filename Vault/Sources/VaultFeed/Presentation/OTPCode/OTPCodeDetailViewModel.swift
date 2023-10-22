@@ -64,7 +64,10 @@ public final class OTPCodeDetailViewModel {
 
     public func saveChanges() async {
         do {
-            try await detailEditState.saveChanges()
+            try await detailEditState.saveChanges {
+                try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
+                editingModel.didPersist()
+            }
         } catch {
             didEncounterErrorSubject.send(error)
         }
@@ -84,11 +87,6 @@ public final class OTPCodeDetailViewModel {
 }
 
 extension OTPCodeDetailViewModel: DetailEditStateDelegate {
-    func performUpdate() async throws {
-        try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
-        editingModel.didPersist()
-    }
-
     func performDeletion() async throws {
         try await editor.deleteCode(id: storedMetdata.id)
     }

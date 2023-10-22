@@ -16,12 +16,12 @@ final class DetailEditState<T: Equatable> {
         isInEditMode = true
     }
 
-    func saveChanges() async throws {
+    func saveChanges(performUpdate: () async throws -> Void) async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
         do {
-            try await delegate?.performUpdate()
+            try await performUpdate()
             isInEditMode = false
         } catch {
             throw OperationError.save
