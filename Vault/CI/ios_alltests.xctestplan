@@ -65,13 +65,6 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "VaultFeediOSTests",
-        "name" : "VaultFeediOSTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "VaultSettingsTests",
         "name" : "VaultSettingsTests"
       }

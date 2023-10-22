@@ -1,7 +1,7 @@
 import SwiftUI
 import VaultCore
 import VaultFeed
-import VaultFeediOS
+import VaultiOS
 import VaultSettings
 
 /// Entrypoint scene for the vault app.

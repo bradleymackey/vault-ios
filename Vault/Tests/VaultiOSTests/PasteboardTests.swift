@@ -1,5 +1,5 @@
 import Foundation
-import VaultFeediOS
+import VaultiOS
 import VaultSettings
 import XCTest
 

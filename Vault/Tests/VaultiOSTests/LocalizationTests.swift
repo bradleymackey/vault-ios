@@ -1,7 +1,7 @@
 import Foundation
 import TestHelpers
 import XCTest
-@testable import VaultFeediOS
+@testable import VaultiOS
 
 final class PresentationLocalizationTests: XCTestCase {
     func test_localizedStrings_haveKeysAndValuesForAllSupportedLocalizations() {

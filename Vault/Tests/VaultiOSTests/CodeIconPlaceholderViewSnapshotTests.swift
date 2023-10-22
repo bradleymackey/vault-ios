@@ -1,7 +1,7 @@
 import Combine
 import SnapshotTesting
 import XCTest
-@testable import VaultFeediOS
+@testable import VaultiOS
 
 final class CodeIconPlaceholderViewSnapshotTests: XCTestCase {
     override func setUp() {

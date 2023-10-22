@@ -1,7 +1,7 @@
 import Combine
 import SnapshotTesting
 import XCTest
-@testable import VaultFeediOS
+@testable import VaultiOS
 
 final class CodeTextViewSnapshotTests: XCTestCase {
     func test_visible_staysOnASingleLineIfNotEnoughSpace() {

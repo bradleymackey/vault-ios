@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import TestHelpers
 import VaultFeed
-import VaultFeediOS
+import VaultiOS
 import VaultSettings
 import XCTest
 

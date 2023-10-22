@@ -1,6 +1,6 @@
 import Foundation
 import VaultFeed
-import VaultFeediOS
+import VaultiOS
 
 final class MockOTPCodeStore: VaultStore {
     init() {}

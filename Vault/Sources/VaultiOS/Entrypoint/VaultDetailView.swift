@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import VaultCore
 import VaultFeed
-import VaultFeediOS
+import VaultiOS
 
 struct VaultDetailView<Store: VaultStore>: View {
     @Environment(\.dismiss) var dismiss
