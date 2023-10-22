@@ -1,7 +1,6 @@
 import SwiftUI
 import VaultCore
 import VaultFeed
-import VaultiOS
 import VaultSettings
 
 @MainActor
