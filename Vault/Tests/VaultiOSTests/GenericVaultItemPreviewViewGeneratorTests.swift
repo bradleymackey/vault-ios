@@ -103,7 +103,7 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         )
     }
 
-    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemCopyTextProvider {
+    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
         typealias PreviewItem = HOTPAuthCode
         private(set) var calledMethods = [String]()
 
@@ -126,13 +126,13 @@ extension GenericVaultItemPreviewViewGeneratorTests {
             calledMethods.append(#function)
         }
 
-        func currentCopyableText(id _: UUID) -> String? {
+        func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
             calledMethods.append(#function)
-            return "some code"
+            return .copyText("some code")
         }
     }
 
-    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemCopyTextProvider {
+    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
         typealias PreviewItem = TOTPAuthCode
         private(set) var calledMethods = [String]()
 
@@ -155,9 +155,9 @@ extension GenericVaultItemPreviewViewGeneratorTests {
             calledMethods.append(#function)
         }
 
-        func currentCopyableText(id _: UUID) -> String? {
+        func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
             calledMethods.append(#function)
-            return "some code"
+            return .copyText("some code")
         }
     }
 

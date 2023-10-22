@@ -36,8 +36,10 @@ public struct VaultItemOnTapDecoratorViewGenerator<
     }
 }
 
-extension VaultItemOnTapDecoratorViewGenerator: VaultItemCopyTextProvider where Generator: VaultItemCopyTextProvider {
-    public func currentCopyableText(id: UUID) -> String? {
-        generator.currentCopyableText(id: id)
+extension VaultItemOnTapDecoratorViewGenerator: VaultItemPreviewActionHandler
+    where Generator: VaultItemPreviewActionHandler
+{
+    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+        generator.previewActionForVaultItem(id: id)
     }
 }

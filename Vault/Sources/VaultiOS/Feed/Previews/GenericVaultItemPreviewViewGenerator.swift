@@ -67,10 +67,10 @@ public struct GenericVaultItemPreviewViewGenerator<
     }
 }
 
-extension GenericVaultItemPreviewViewGenerator: VaultItemCopyTextProvider where TOTP: VaultItemCopyTextProvider,
-    HOTP: VaultItemCopyTextProvider
+extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler where TOTP: VaultItemPreviewActionHandler,
+    HOTP: VaultItemPreviewActionHandler
 {
-    public func currentCopyableText(id: UUID) -> String? {
-        totpGenerator.currentCopyableText(id: id) ?? hotpGenerator.currentCopyableText(id: id)
+    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+        totpGenerator.previewActionForVaultItem(id: id) ?? hotpGenerator.previewActionForVaultItem(id: id)
     }
 }

@@ -65,10 +65,10 @@ extension TOTPPreviewViewGenerator {
     }
 }
 
-extension TOTPPreviewViewGenerator: VaultItemCopyTextProvider {
-    public func currentCopyableText(id: UUID) -> String? {
-        guard let viewModel = viewModelCache[id] else { return nil }
-        return viewModel.code.visibleCode
+extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler {
+    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+        guard let visibleCode = viewModelCache[id]?.code.visibleCode else { return nil }
+        return .copyText(visibleCode)
     }
 }
 

@@ -13,6 +13,12 @@ public protocol VaultItemPreviewViewGenerator {
     func didAppear()
 }
 
-public protocol VaultItemCopyTextProvider {
-    func currentCopyableText(id: UUID) -> String?
+/// Handle a given action after interacting with a vault item.
+public protocol VaultItemPreviewActionHandler {
+    func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction?
+}
+
+/// A kind of action that can be taken after interacting with a given vault item.
+public enum VaultItemPreviewAction: Equatable {
+    case copyText(String)
 }
