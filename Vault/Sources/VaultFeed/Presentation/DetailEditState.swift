@@ -8,49 +8,42 @@ final class DetailEditState<T: Equatable> {
     private(set) var isSaving = false
     private(set) var isInEditMode = false
 
-    private let editingModel: DetailEditingModel<T>
-    var delegate: (any DetailEditStateDelegate)?
-
-    init(editingModel: DetailEditingModel<T>) {
-        self.editingModel = editingModel
-    }
+    init() {}
 
     func startEditing() {
         isInEditMode = true
     }
 
-    func saveChanges() async throws {
+    func saveChanges(performUpdate: () async throws -> Void) async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
         do {
-            try await delegate?.performUpdate()
-            editingModel.didPersist()
+            try await performUpdate()
             isInEditMode = false
         } catch {
             throw OperationError.save
         }
     }
 
-    func deleteItem() async throws {
+    func deleteItem(performDeletion: () async throws -> Void, exitEditor: () -> Void) async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
         do {
-            try await delegate?.performDeletion()
-            delegate?.exitCurrentMode()
+            try await performDeletion()
+            exitEditor()
         } catch {
             throw OperationError.delete
         }
     }
 
-    func exitCurrentMode() {
+    func exitCurrentModeClearingDirtyState(clearDirtyState: () -> Void, exitEditor: () -> Void) {
         if isInEditMode {
-            delegate?.clearDirtyState()
-            editingModel.restoreInitialState()
+            clearDirtyState()
             isInEditMode = false
         } else {
-            delegate?.exitCurrentMode()
+            exitEditor()
         }
     }
 }

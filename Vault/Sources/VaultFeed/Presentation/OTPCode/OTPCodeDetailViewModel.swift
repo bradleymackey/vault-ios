@@ -11,7 +11,7 @@ public final class OTPCodeDetailViewModel {
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
     private let editor: any OTPCodeDetailEditor
-    private let detailEditState: DetailEditState<OTPCodeDetailEdits>
+    private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
@@ -31,14 +31,11 @@ public final class OTPCodeDetailViewModel {
         self.storedCode = storedCode
         storedMetdata = storedMetadata
         self.editor = editor
-        let editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: .init(
+        editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: .init(
             issuerTitle: storedCode.data.issuer ?? "",
             accountNameTitle: storedCode.data.accountName,
             description: storedMetadata.userDescription ?? ""
         ))
-        detailEditState = DetailEditState(editingModel: editingModel)
-        self.editingModel = editingModel
-        detailEditState.delegate = WeakBox(self)
     }
 
     public var detailMenuItems: [OTPCodeDetailMenuItem] {
@@ -66,7 +63,10 @@ public final class OTPCodeDetailViewModel {
 
     public func saveChanges() async {
         do {
-            try await detailEditState.saveChanges()
+            try await detailEditState.saveChanges {
+                try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
+                editingModel.didPersist()
+            }
         } catch {
             didEncounterErrorSubject.send(error)
         }
@@ -74,33 +74,22 @@ public final class OTPCodeDetailViewModel {
 
     public func deleteCode() async {
         do {
-            try await detailEditState.deleteItem()
+            try await detailEditState.deleteItem {
+                try await editor.deleteCode(id: storedMetdata.id)
+            } exitEditor: {
+                isFinishedSubject.send()
+            }
         } catch {
             didEncounterErrorSubject.send(error)
         }
     }
 
     public func done() {
-        detailEditState.exitCurrentMode()
-    }
-}
-
-extension OTPCodeDetailViewModel: DetailEditStateDelegate {
-    func performUpdate() async throws {
-        try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
-        editingModel.didPersist()
-    }
-
-    func performDeletion() async throws {
-        try await editor.deleteCode(id: storedMetdata.id)
-    }
-
-    func clearDirtyState() {
-        editingModel.restoreInitialState()
-    }
-
-    func exitCurrentMode() {
-        isFinishedSubject.send()
+        detailEditState.exitCurrentModeClearingDirtyState {
+            editingModel.restoreInitialState()
+        } exitEditor: {
+            isFinishedSubject.send()
+        }
     }
 }
 
