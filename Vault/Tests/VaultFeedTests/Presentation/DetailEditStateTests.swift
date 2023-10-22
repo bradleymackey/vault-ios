@@ -277,7 +277,7 @@ extension DetailEditStateTests {
         }
 
         var exitCurrentModeCalled: () -> Void = {}
-        func exitCurrentMode() {
+        func didExitCurrentMode() {
             operationsPerformed.append(.exitCurrentMode)
             exitCurrentModeCalled()
         }

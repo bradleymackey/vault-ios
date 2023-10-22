@@ -34,7 +34,7 @@ final class DetailEditState<T: Equatable> {
         defer { isSaving = false }
         do {
             try await delegate?.performDeletion()
-            delegate?.exitCurrentMode()
+            delegate?.didExitCurrentMode()
         } catch {
             throw OperationError.delete
         }
@@ -45,7 +45,7 @@ final class DetailEditState<T: Equatable> {
             delegate?.clearDirtyState()
             isInEditMode = false
         } else {
-            delegate?.exitCurrentMode()
+            delegate?.didExitCurrentMode()
         }
     }
 }

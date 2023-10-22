@@ -97,7 +97,7 @@ extension OTPCodeDetailViewModel: DetailEditStateDelegate {
         editingModel.restoreInitialState()
     }
 
-    func exitCurrentMode() {
+    func didExitCurrentMode() {
         isFinishedSubject.send()
     }
 }

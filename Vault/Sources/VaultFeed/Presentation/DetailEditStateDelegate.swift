@@ -5,7 +5,7 @@ protocol DetailEditStateDelegate {
     func performUpdate() async throws
     func performDeletion() async throws
     func clearDirtyState()
-    func exitCurrentMode()
+    func didExitCurrentMode()
 }
 
 extension WeakBox: DetailEditStateDelegate where T: DetailEditStateDelegate {
@@ -21,7 +21,7 @@ extension WeakBox: DetailEditStateDelegate where T: DetailEditStateDelegate {
         value?.clearDirtyState()
     }
 
-    func exitCurrentMode() {
-        value?.exitCurrentMode()
+    func didExitCurrentMode() {
+        value?.didExitCurrentMode()
     }
 }
