@@ -89,12 +89,15 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
     {
         VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
             if isEditing {
-                guard let code = feedViewModel.code(id: id) else { return }
-                modal = .detail(id, code)
+                guard let item = feedViewModel.code(id: id) else { return }
+                modal = .detail(id, item)
             } else if let previewAction = viewGenerator.previewActionForVaultItem(id: id) {
                 switch previewAction {
                 case let .copyText(text):
                     pasteboard.copy(text)
+                case let .openItemDetail(id):
+                    guard let item = feedViewModel.code(id: id) else { return }
+                    modal = .detail(id, item)
                 }
             }
         }

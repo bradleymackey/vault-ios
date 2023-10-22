@@ -26,6 +26,10 @@ func uniqueStoredVaultItem() -> StoredVaultItem {
     )
 }
 
+func anySecureNote() -> SecureNote {
+    .init(title: "Hello World", contents: "This is my note")
+}
+
 func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
     .init(id: id, created: Date(), updated: Date(), userDescription: "any")
 }

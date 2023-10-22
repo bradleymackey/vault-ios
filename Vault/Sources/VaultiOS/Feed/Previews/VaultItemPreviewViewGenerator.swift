@@ -21,4 +21,5 @@ public protocol VaultItemPreviewActionHandler {
 /// A kind of action that can be taken after interacting with a given vault item.
 public enum VaultItemPreviewAction: Equatable {
     case copyText(String)
+    case openItemDetail(UUID)
 }
