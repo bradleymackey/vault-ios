@@ -22,72 +22,72 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "CryptoDocumentExporterSnapshotTests",
         "name" : "CryptoDocumentExporterSnapshotTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "CryptoDocumentExporterTests",
         "name" : "CryptoDocumentExporterTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "CryptoEngineTests",
         "name" : "CryptoEngineTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "FoundationExtensionsTests",
         "name" : "FoundationExtensionsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "VaultCoreTests",
         "name" : "VaultCoreTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "VaultFeedTests",
         "name" : "VaultFeedTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "VaultFeediOSTests",
         "name" : "VaultFeediOSTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
+        "containerPath" : "container:",
         "identifier" : "VaultSettingsTests",
         "name" : "VaultSettingsTests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
-        "identifier" : "VaultTests",
-        "name" : "VaultTests"
+        "containerPath" : "container:",
+        "identifier" : "VaultUITests",
+        "name" : "VaultUITests"
       }
     },
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
-        "identifier" : "VaultUITests",
-        "name" : "VaultUITests"
+        "containerPath" : "container:",
+        "identifier" : "VaultiOSTests",
+        "name" : "VaultiOSTests"
       }
     }
   ],

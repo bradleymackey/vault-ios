@@ -16,8 +16,8 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
-            name: "Vault",
-            targets: ["Vault"]
+            name: "VaultiOS",
+            targets: ["VaultiOS"]
         ),
         .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
     ],
@@ -31,7 +31,7 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Vault",
+            name: "VaultiOS",
             dependencies: [
                 "VaultFeed",
                 "VaultSettings",
@@ -42,8 +42,8 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "VaultTests",
-            dependencies: ["Vault"],
+            name: "VaultiOSTests",
+            dependencies: ["VaultiOS"],
             swiftSettings: swiftSettings
         ),
         .target(
