@@ -99,19 +99,18 @@ final class DetailEditStateTests: XCTestCase {
     }
 
     func test_deleteItem_setsIsSavingToTrue() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
         let exp = expectation(description: "Wait for performDeletion")
         let pendingCall = PendingValue<Void>()
-        delegate.performDeletionCalled = {
-            exp.fulfill()
-            try? await pendingCall.awaitValue()
-        }
-
         // Save changes in a different task, so we don't suspend the current (test) task
         Task.detached(priority: .background) {
-            try await sut.deleteItem()
+            try await sut.deleteItem {
+                exp.fulfill()
+                try? await pendingCall.awaitValue()
+            } exitCurrentMode: {
+                /* noop */
+            }
         }
 
         await fulfillment(of: [exp])
@@ -122,22 +121,21 @@ final class DetailEditStateTests: XCTestCase {
     }
 
     func test_deleteItem_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
         let exp = expectation(description: "Wait for performDeletion")
         let pendingCall = PendingValue<Void>()
-        delegate.performDeletionCalled = {
-            exp.fulfill()
-            try? await pendingCall.awaitValue()
-        }
-
         Task.detached(priority: .background) {
             await withTaskGroup(of: Void.self) { group in
                 for _ in 0 ..< 3 {
                     // Multiple calls being made, concurrently.
                     group.addTask {
-                        try? await sut.deleteItem()
+                        try? await sut.deleteItem {
+                            exp.fulfill()
+                            try? await pendingCall.awaitValue()
+                        } exitCurrentMode: {
+                            /* noop */
+                        }
                     }
                 }
             }
@@ -145,38 +143,44 @@ final class DetailEditStateTests: XCTestCase {
 
         await fulfillment(of: [exp])
 
-        XCTAssertEqual(delegate.operationsPerformed, [.delete], "Only a single deletion should be performed.")
-
         await pendingCall.fulfill()
     }
 
     func test_deleteItem_successExitsCurrentMode() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performDeletionResult = .success(())
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
-        try await sut.deleteItem()
+        let expDelete = expectation(description: "Wait for perform deletion")
+        let expExit = expectation(description: "Wait for exit current mode")
+        try await sut.deleteItem {
+            expDelete.fulfill()
+        } exitCurrentMode: {
+            expExit.fulfill()
+        }
 
-        XCTAssertEqual(delegate.operationsPerformed, [.delete, .exitCurrentMode])
+        await fulfillment(of: [expDelete, expExit], enforceOrder: true)
     }
 
     func test_deleteItem_failureDoesNotChangeEditMode() async throws {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performDeletionResult = .failure(anyNSError())
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
         sut.startEditing()
 
-        try? await sut.deleteItem()
+        try? await sut.deleteItem {
+            throw anyNSError()
+        } exitCurrentMode: {
+            // noop
+        }
 
-        XCTAssertEqual(delegate.operationsPerformed, [.delete])
+        XCTAssertTrue(sut.isInEditMode)
     }
 
     func test_deleteItem_failureThrowsError() async {
-        let delegate = MockDetailEditStateDelegate()
-        delegate.performDeletionResult = .failure(anyNSError())
-        let sut = makeSUT(delegate: delegate)
+        let sut = makeSUT()
 
-        await XCTAssertThrowsError(try await sut.deleteItem())
+        await XCTAssertThrowsError(try await sut.deleteItem {
+            throw anyNSError()
+        } exitCurrentMode: {
+            // noop
+        })
     }
 
     func test_exitCurrentMode_clearsDirtyStateInEditMode() {
@@ -224,20 +228,11 @@ extension DetailEditStateTests {
 
     private class MockDetailEditStateDelegate: DetailEditStateDelegate {
         enum Operation: Equatable {
-            case delete
             case clearDirtyState
             case exitCurrentMode
         }
 
         private(set) var operationsPerformed = [Operation]()
-
-        var performDeletionResult: Result<Void, any Error> = .success(())
-        var performDeletionCalled: () async -> Void = {}
-        func performDeletion() async throws {
-            operationsPerformed.append(.delete)
-            await performDeletionCalled()
-            try performDeletionResult.get()
-        }
 
         var clearDirtyStateCalled: () -> Void = {}
         func clearDirtyState() {
