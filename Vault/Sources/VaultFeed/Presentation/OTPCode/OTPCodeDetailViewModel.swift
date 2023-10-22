@@ -6,22 +6,14 @@ import VaultCore
 @MainActor
 @Observable
 public final class OTPCodeDetailViewModel {
-    public let storedCode: OTPAuthCode
-    public let storedMetdata: StoredVaultItem.Metadata
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
+    private let storedCode: OTPAuthCode
+    private let storedMetdata: StoredVaultItem.Metadata
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
-
-    public var isSaving: Bool {
-        detailEditState.isSaving
-    }
-
-    public var isInEditMode: Bool {
-        detailEditState.isInEditMode
-    }
 
     public init(
         storedCode: OTPAuthCode,
@@ -36,6 +28,14 @@ public final class OTPCodeDetailViewModel {
             accountNameTitle: storedCode.data.accountName,
             description: storedMetadata.userDescription ?? ""
         ))
+    }
+
+    public var isSaving: Bool {
+        detailEditState.isSaving
+    }
+
+    public var isInEditMode: Bool {
+        detailEditState.isInEditMode
     }
 
     public var detailMenuItems: [OTPCodeDetailMenuItem] {
