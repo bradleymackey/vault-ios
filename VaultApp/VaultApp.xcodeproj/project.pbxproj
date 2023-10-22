@@ -8,9 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		1C1318072AD75008006F14F5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FB2AD75008006F14F5 /* Assets.xcassets */; };
-		1C2856642ADFF2E800DA4AA9 /* Vault in Frameworks */ = {isa = PBXBuildFile; productRef = 1C2856632ADFF2E800DA4AA9 /* Vault */; };
 		1C2856652ADFF39800DA4AA9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */; };
 		1C45B07C2ADFE8BE00197B32 /* VaultAppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */; };
+		1C58F2F32AE5764100962BAB /* VaultiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1C58F2F22AE5764100962BAB /* VaultiOS */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,7 +26,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C2856642ADFF2E800DA4AA9 /* Vault in Frameworks */,
+				1C58F2F32AE5764100962BAB /* VaultiOS in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -93,7 +93,7 @@
 			);
 			name = VaultApp;
 			packageProductDependencies = (
-				1C2856632ADFF2E800DA4AA9 /* Vault */,
+				1C58F2F22AE5764100962BAB /* VaultiOS */,
 			);
 			productName = CodeManager;
 			productReference = 1CDA9C912A057A8B00555E7A /* VaultApp.app */;
@@ -362,9 +362,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		1C2856632ADFF2E800DA4AA9 /* Vault */ = {
+		1C58F2F22AE5764100962BAB /* VaultiOS */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = Vault;
+			productName = VaultiOS;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
