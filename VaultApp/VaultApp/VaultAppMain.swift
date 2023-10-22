@@ -1,5 +1,5 @@
 import SwiftUI
-import Vault
+import VaultiOS
 
 @main
 @MainActor

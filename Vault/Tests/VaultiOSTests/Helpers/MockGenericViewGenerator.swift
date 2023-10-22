@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import VaultCore
 import VaultFeed
-import VaultFeediOS
+import VaultiOS
 
 final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
     typealias PreviewItem = VaultItem

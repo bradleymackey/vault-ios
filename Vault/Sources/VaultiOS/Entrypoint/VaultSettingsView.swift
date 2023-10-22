@@ -1,5 +1,4 @@
 import SwiftUI
-import VaultFeediOS
 import VaultSettings
 
 struct VaultSettingsView: View {

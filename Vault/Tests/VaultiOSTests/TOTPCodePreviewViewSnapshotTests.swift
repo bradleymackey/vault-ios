@@ -3,7 +3,7 @@ import SnapshotTesting
 import SwiftUI
 import VaultFeed
 import XCTest
-@testable import VaultFeediOS
+@testable import VaultiOS
 
 @MainActor
 final class TOTPCodePreviewViewSnapshotTests: XCTestCase {

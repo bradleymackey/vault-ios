@@ -16,8 +16,8 @@ let package = Package(
     platforms: [.iOS(.v17), .macOS(.v14)],
     products: [
         .library(
-            name: "Vault",
-            targets: ["Vault"]
+            name: "VaultiOS",
+            targets: ["VaultiOS"]
         ),
         .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
     ],
@@ -31,19 +31,24 @@ let package = Package(
     ],
     targets: [
         .target(
-            name: "Vault",
+            name: "VaultiOS",
             dependencies: [
                 "VaultFeed",
                 "VaultSettings",
                 "VaultCore",
-                .targetItem(name: "VaultFeediOS", condition: .when(platforms: [.iOS])),
+                "SimpleToast",
+                "FoundationExtensions",
                 .targetItem(name: "VaultUI", condition: .when(platforms: [.iOS])),
             ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
-            name: "VaultTests",
-            dependencies: ["Vault"],
+            name: "VaultiOSTests",
+            dependencies: [
+                "VaultiOS",
+                "TestHelpers",
+            ],
+            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -133,20 +138,6 @@ let package = Package(
         .testTarget(
             name: "VaultFeedTests",
             dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
-        ),
-        .target(
-            name: "VaultFeediOS",
-            dependencies: ["VaultFeed", "SimpleToast", "VaultUI", "FoundationExtensions", "VaultSettings"],
-            swiftSettings: swiftSettings
-        ),
-        .testTarget(
-            name: "VaultFeediOSTests",
-            dependencies: [
-                "VaultFeediOS",
-                "TestHelpers",
-            ],
-            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(

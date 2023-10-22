@@ -3,7 +3,7 @@ import SwiftUI
 import TestHelpers
 import VaultCore
 import VaultFeed
-import VaultFeediOS
+import VaultiOS
 import XCTest
 
 @MainActor
