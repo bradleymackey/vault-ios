@@ -108,7 +108,7 @@ final class DetailEditStateTests: XCTestCase {
             try await sut.deleteItem {
                 exp.fulfill()
                 try? await pendingCall.awaitValue()
-            } exitCurrentMode: {
+            } exitEditor: {
                 /* noop */
             }
         }
@@ -133,7 +133,7 @@ final class DetailEditStateTests: XCTestCase {
                         try? await sut.deleteItem {
                             exp.fulfill()
                             try? await pendingCall.awaitValue()
-                        } exitCurrentMode: {
+                        } exitEditor: {
                             /* noop */
                         }
                     }
@@ -146,18 +146,31 @@ final class DetailEditStateTests: XCTestCase {
         await pendingCall.fulfill()
     }
 
-    func test_deleteItem_successExitsCurrentMode() async throws {
+    func test_deleteItem_successExitsEditor() async throws {
         let sut = makeSUT()
 
         let expDelete = expectation(description: "Wait for perform deletion")
         let expExit = expectation(description: "Wait for exit current mode")
         try await sut.deleteItem {
             expDelete.fulfill()
-        } exitCurrentMode: {
+        } exitEditor: {
             expExit.fulfill()
         }
 
         await fulfillment(of: [expDelete, expExit], enforceOrder: true)
+    }
+
+    func test_deleteItem_failureDoesNotExitEditor() async throws {
+        let sut = makeSUT()
+
+        var exited = false
+        try? await sut.deleteItem {
+            throw anyNSError()
+        } exitEditor: {
+            exited = false
+        }
+
+        XCTAssertFalse(exited)
     }
 
     func test_deleteItem_failureDoesNotChangeEditMode() async throws {
@@ -166,7 +179,7 @@ final class DetailEditStateTests: XCTestCase {
 
         try? await sut.deleteItem {
             throw anyNSError()
-        } exitCurrentMode: {
+        } exitEditor: {
             // noop
         }
 
@@ -178,7 +191,7 @@ final class DetailEditStateTests: XCTestCase {
 
         await XCTAssertThrowsError(try await sut.deleteItem {
             throw anyNSError()
-        } exitCurrentMode: {
+        } exitEditor: {
             // noop
         })
     }
