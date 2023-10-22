@@ -8,8 +8,6 @@ final class DetailEditState<T: Equatable> {
     private(set) var isSaving = false
     private(set) var isInEditMode = false
 
-    var delegate: (any DetailEditStateDelegate)?
-
     init() {}
 
     func startEditing() {
@@ -40,12 +38,12 @@ final class DetailEditState<T: Equatable> {
         }
     }
 
-    func exitCurrentMode() {
+    func exitCurrentModeClearingDirtyState(clearDirtyState: () -> Void, exitEditor: () -> Void) {
         if isInEditMode {
-            delegate?.clearDirtyState()
+            clearDirtyState()
             isInEditMode = false
         } else {
-            delegate?.didExitCurrentMode()
+            exitEditor()
         }
     }
 }

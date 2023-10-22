@@ -36,7 +36,6 @@ public final class OTPCodeDetailViewModel {
             accountNameTitle: storedCode.data.accountName,
             description: storedMetadata.userDescription ?? ""
         ))
-        detailEditState.delegate = WeakBox(self)
     }
 
     public var detailMenuItems: [OTPCodeDetailMenuItem] {
@@ -86,17 +85,11 @@ public final class OTPCodeDetailViewModel {
     }
 
     public func done() {
-        detailEditState.exitCurrentMode()
-    }
-}
-
-extension OTPCodeDetailViewModel: DetailEditStateDelegate {
-    func clearDirtyState() {
-        editingModel.restoreInitialState()
-    }
-
-    func didExitCurrentMode() {
-        isFinishedSubject.send()
+        detailEditState.exitCurrentModeClearingDirtyState {
+            editingModel.restoreInitialState()
+        } exitEditor: {
+            isFinishedSubject.send()
+        }
     }
 }
 

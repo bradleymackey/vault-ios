@@ -6,13 +6,6 @@ import XCTest
 
 @MainActor
 final class DetailEditStateTests: XCTestCase {
-    func test_init_hasNoSideEffects() {
-        let delegate = MockDetailEditStateDelegate()
-        _ = makeSUT(delegate: delegate)
-
-        XCTAssertEqual(delegate.operationsPerformed, [])
-    }
-
     func test_init_isInitiallyNotPerformingAnyOperations() {
         let sut = makeSUT()
 
@@ -196,33 +189,48 @@ final class DetailEditStateTests: XCTestCase {
         })
     }
 
-    func test_exitCurrentMode_clearsDirtyStateInEditMode() {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+    func test_exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() {
+        let sut = makeSUT()
         sut.startEditing()
 
-        sut.exitCurrentMode()
+        var clearedState = false
+        var exitedEditor = false
+        sut.exitCurrentModeClearingDirtyState {
+            clearedState = true
+        } exitEditor: {
+            exitedEditor = true
+        }
 
-        XCTAssertEqual(delegate.operationsPerformed, [.clearDirtyState])
+        XCTAssertTrue(clearedState)
+        XCTAssertFalse(exitedEditor, "Should not have exited editor")
     }
 
-    func test_exitCurrentMode_disablesEditModeIfInEditMode() {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+    func test_exitCurrentModeClearingDirtyState_disablesEditModeIfInEditMode() {
+        let sut = makeSUT()
         sut.startEditing()
 
-        sut.exitCurrentMode()
+        sut.exitCurrentModeClearingDirtyState {
+            // noop
+        } exitEditor: {
+            // noop
+        }
 
         XCTAssertFalse(sut.isInEditMode)
     }
 
-    func test_exitCurrentMode_existsCurrentModeIfNotInEditMode() {
-        let delegate = MockDetailEditStateDelegate()
-        let sut = makeSUT(delegate: delegate)
+    func test_exitCurrentModeClearingDirtyState_existsCurrentModeIfNotInEditMode() {
+        let sut = makeSUT()
 
-        sut.exitCurrentMode()
+        var clearedState = false
+        var exitedEditor = false
+        sut.exitCurrentModeClearingDirtyState {
+            clearedState = true
+        } exitEditor: {
+            exitedEditor = true
+        }
 
-        XCTAssertEqual(delegate.operationsPerformed, [.exitCurrentMode])
+        XCTAssertTrue(exitedEditor)
+        XCTAssertFalse(clearedState, "Should not have cleared state")
     }
 }
 
@@ -231,32 +239,7 @@ final class DetailEditStateTests: XCTestCase {
 extension DetailEditStateTests {
     typealias MockState = String
 
-    private func makeSUT(
-        delegate: MockDetailEditStateDelegate = MockDetailEditStateDelegate()
-    ) -> DetailEditState<MockState> {
-        let sut = DetailEditState<MockState>()
-        sut.delegate = delegate
-        return sut
-    }
-
-    private class MockDetailEditStateDelegate: DetailEditStateDelegate {
-        enum Operation: Equatable {
-            case clearDirtyState
-            case exitCurrentMode
-        }
-
-        private(set) var operationsPerformed = [Operation]()
-
-        var clearDirtyStateCalled: () -> Void = {}
-        func clearDirtyState() {
-            operationsPerformed.append(.clearDirtyState)
-            clearDirtyStateCalled()
-        }
-
-        var exitCurrentModeCalled: () -> Void = {}
-        func didExitCurrentMode() {
-            operationsPerformed.append(.exitCurrentMode)
-            exitCurrentModeCalled()
-        }
+    private func makeSUT() -> DetailEditState<MockState> {
+        DetailEditState<MockState>()
     }
 }
