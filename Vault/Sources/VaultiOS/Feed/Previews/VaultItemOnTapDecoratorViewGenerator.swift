@@ -2,7 +2,9 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
-public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGenerator>: VaultItemPreviewViewGenerator {
+public struct VaultItemOnTapDecoratorViewGenerator<
+    Generator: VaultItemPreviewViewGenerator
+>: VaultItemPreviewViewGenerator {
     public typealias PreviewItem = Generator.PreviewItem
     public let generator: Generator
     public let onTap: (UUID) -> Void
@@ -34,7 +36,7 @@ public struct OTPOnTapDecoratorViewGenerator<Generator: VaultItemPreviewViewGene
     }
 }
 
-extension OTPOnTapDecoratorViewGenerator: VaultItemCopyTextProvider where Generator: VaultItemCopyTextProvider {
+extension VaultItemOnTapDecoratorViewGenerator: VaultItemCopyTextProvider where Generator: VaultItemCopyTextProvider {
     public func currentCopyableText(id: UUID) -> String? {
         generator.currentCopyableText(id: id)
     }

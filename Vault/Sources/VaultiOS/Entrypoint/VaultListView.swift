@@ -85,9 +85,9 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
     }
 
     func interactableViewGenerator()
-        -> OTPOnTapDecoratorViewGenerator<Generator>
+        -> VaultItemOnTapDecoratorViewGenerator<Generator>
     {
-        OTPOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
+        VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
             if isEditing {
                 guard let code = feedViewModel.code(id: id) else { return }
                 modal = .detail(id, code)
