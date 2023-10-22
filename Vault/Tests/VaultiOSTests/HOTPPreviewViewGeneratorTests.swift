@@ -51,25 +51,25 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: viewModels)
     }
 
-    func test_currentVisibleCode_isNilIfCacheEmpty() {
+    func test_previewActionForVaultItem_isNilIfCacheEmpty() {
         let (sut, _, _) = makeSUT()
 
-        let code = sut.currentCopyableText(id: UUID())
+        let code = sut.previewActionForVaultItem(id: UUID())
 
         XCTAssertNil(code)
     }
 
-    func test_currentVisibleCode_isNilWhenCodeIsObfuscated() {
+    func test_previewActionForVaultItem_isNilWhenCodeIsObfuscated() {
         let (sut, _, _) = makeSUT()
 
         let id = UUID()
         _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
-        let code = sut.currentCopyableText(id: id)
+        let code = sut.previewActionForVaultItem(id: id)
 
         XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
     }
 
-    func test_currentVisibleCode_isValueIfCodeHasBeenGenerated() {
+    func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let (sut, _, factory) = makeSUT()
         let id = UUID()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
@@ -78,9 +78,9 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
             viewModel.update(code: .visible("123456"))
         }
 
-        let code = sut.currentCopyableText(id: id)
+        let code = sut.previewActionForVaultItem(id: id)
 
-        XCTAssertEqual(code, "123456")
+        XCTAssertEqual(code, .copyText("123456"))
     }
 
     func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {

@@ -35,3 +35,9 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
         // noop
     }
 }
+
+extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler {
+    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+        .openItemDetail(id)
+    }
+}

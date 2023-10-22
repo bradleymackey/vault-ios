@@ -48,15 +48,15 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: models)
     }
 
-    func test_currentVisibleCode_isNilIfCacheEmpty() {
+    func test_previewActionForVaultItem_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
-        let code = sut.currentCopyableText(id: UUID())
+        let code = sut.previewActionForVaultItem(id: UUID())
 
         XCTAssertNil(code)
     }
 
-    func test_currentVisibleCode_isValueIfCodeHasBeenGenerated() {
+    func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
         let id = UUID()
@@ -66,9 +66,9 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
             viewModel.update(code: .visible("123456"))
         }
 
-        let code = sut.currentCopyableText(id: id)
+        let code = sut.previewActionForVaultItem(id: id)
 
-        XCTAssertEqual(code, "123456")
+        XCTAssertEqual(code, .copyText("123456"))
     }
 
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {

@@ -25,5 +25,5 @@
 "codeDetail.listSection.algorithm.title" = "Algorithm";
 "codeDetail.listSection.secretFormat.title" = "Secret Format";
 
-"codeDetail.action.save.error.description" = "There was an error saving the current code. You might need to remove and re-add it.";
-"codeDetail.action.delete.error.description" = "There was an error deleting the current code. Please try again later.";
+"detail.operationError.save.description" = "An error was encountered during saving. Please quit the app and try again.";
+"detail.operationError.delete.description" = "An error was encountered during deletion. Please quit the app and try again.";

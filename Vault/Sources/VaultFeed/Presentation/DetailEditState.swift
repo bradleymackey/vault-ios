@@ -56,9 +56,9 @@ extension DetailEditState {
         var description: String {
             switch self {
             case .save:
-                localized(key: "codeDetail.action.save.error.description")
+                localized(key: "detail.operationError.save.description")
             case .delete:
-                localized(key: "codeDetail.action.delete.error.description")
+                localized(key: "detail.operationError.delete.description")
             }
         }
 

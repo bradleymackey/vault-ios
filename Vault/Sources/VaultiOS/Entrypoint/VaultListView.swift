@@ -4,7 +4,7 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemCopyTextProvider>: View
+struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler>: View
     where Generator.PreviewItem == VaultItem
 {
     var feedViewModel: FeedViewModel<Store>
@@ -85,14 +85,20 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
     }
 
     func interactableViewGenerator()
-        -> OTPOnTapDecoratorViewGenerator<Generator>
+        -> VaultItemOnTapDecoratorViewGenerator<Generator>
     {
-        OTPOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
+        VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
             if isEditing {
-                guard let code = feedViewModel.code(id: id) else { return }
-                modal = .detail(id, code)
-            } else if let code = viewGenerator.currentCopyableText(id: id) {
-                pasteboard.copy(code)
+                guard let item = feedViewModel.code(id: id) else { return }
+                modal = .detail(id, item)
+            } else if let previewAction = viewGenerator.previewActionForVaultItem(id: id) {
+                switch previewAction {
+                case let .copyText(text):
+                    pasteboard.copy(text)
+                case let .openItemDetail(id):
+                    guard let item = feedViewModel.code(id: id) else { return }
+                    modal = .detail(id, item)
+                }
             }
         }
     }

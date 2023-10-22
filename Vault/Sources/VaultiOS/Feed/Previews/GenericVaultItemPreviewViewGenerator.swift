@@ -16,11 +16,13 @@ public struct GenericVaultItemPreviewViewGenerator<
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note
+    private let allGenerators: [any VaultItemPreviewViewGenerator]
 
     public init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note) {
         self.totpGenerator = totpGenerator
         self.hotpGenerator = hotpGenerator
         self.noteGenerator = noteGenerator
+        allGenerators = [totpGenerator, hotpGenerator, noteGenerator]
     }
 
     @ViewBuilder
@@ -55,22 +57,27 @@ public struct GenericVaultItemPreviewViewGenerator<
     }
 
     public func scenePhaseDidChange(to scenePhase: ScenePhase) {
-        hotpGenerator.scenePhaseDidChange(to: scenePhase)
-        totpGenerator.scenePhaseDidChange(to: scenePhase)
-        noteGenerator.scenePhaseDidChange(to: scenePhase)
+        for generator in allGenerators {
+            generator.scenePhaseDidChange(to: scenePhase)
+        }
     }
 
     public func didAppear() {
-        hotpGenerator.didAppear()
-        totpGenerator.didAppear()
-        noteGenerator.didAppear()
+        for generator in allGenerators {
+            generator.didAppear()
+        }
     }
 }
 
-extension GenericVaultItemPreviewViewGenerator: VaultItemCopyTextProvider where TOTP: VaultItemCopyTextProvider,
-    HOTP: VaultItemCopyTextProvider
-{
-    public func currentCopyableText(id: UUID) -> String? {
-        totpGenerator.currentCopyableText(id: id) ?? hotpGenerator.currentCopyableText(id: id)
+extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler {
+    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+        for generator in allGenerators {
+            if let actionHandler = generator as? any VaultItemPreviewActionHandler,
+               let action = actionHandler.previewActionForVaultItem(id: id)
+            {
+                return action
+            }
+        }
+        return nil
     }
 }
