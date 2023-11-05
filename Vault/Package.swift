@@ -22,12 +22,12 @@ let package = Package(
         .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", from: "1.11.0"),
-        .package(url: "https://github.com/nalexn/ViewInspector", from: "0.9.6"),
-        .package(url: "https://github.com/attaswift/BigInt.git", from: "5.3.0"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", from: "1.7.0"),
-        .package(url: "https://github.com/sanzaru/SimpleToast.git", from: "0.8.0"),
-        .package(url: "https://github.com/apple/swift-argument-parser", from: "1.0.3"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.14.2"),
+        .package(url: "https://github.com/nalexn/ViewInspector", exact: "0.9.8"),
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.0"),
+        .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
+        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.2.3"),
     ],
     targets: [
         .target(
@@ -187,8 +187,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.52.1/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "bb4875e7a0a80b4799211f2eb35d4a81a9d4fc9175f06be4479a680d76ddf29c"
+            url: "https://github.com/realm/SwiftLint/releases/download/0.53.0/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: "03416a4f75f023e10f9a76945806ddfe70ca06129b895455cc773c5c7d86b73e"
         ),
     ]
 )

@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sanzaru/SimpleToast.git",
       "state" : {
-        "revision" : "6637b95dfc49d3d688ad2d7b6e0655c0f6862f83",
-        "version" : "0.8.0"
+        "revision" : "8dbc2e7c33cda25c0b2efafd59716cb9820c83eb",
+        "version" : "0.8.1"
       }
     },
     {
