@@ -11,9 +11,7 @@ Development takes place in `/Vault`, so take a look in there.
 
 ## Tenets
 
-![Tenet](https://media.tenor.com/bcOXw06JhO8AAAAC/tenet-hands.gif)
-
-- Platform native: it should look like Apple made this app.
-- Modern: we should use modern features and push for fast deprecations.
-- Open source by default: no binary dependencies or obfuscated stuff.
-- Robust: test-driven development.
+- **Platform native**: it should look like Apple made this app.
+- **Modern**: we should use modern features and push for fast deprecations.
+- **Open source by default**: no binary dependencies or obfuscated stuff.
+- **Robust**: test-driven development, modular PRs/commits.
