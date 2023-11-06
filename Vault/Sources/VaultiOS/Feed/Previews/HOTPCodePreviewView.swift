@@ -129,7 +129,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
             renderer: renderer
         )
         return HOTPCodePreviewView(
-            buttonView: CodeButtonView(
+            buttonView: OTPCodeButtonView(
                 viewModel: .init(
                     hotpRenderer: .init(
                         hotpGenerator: .init(secret: Data())

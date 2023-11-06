@@ -3,7 +3,7 @@ import VaultCore
 import VaultFeed
 
 @MainActor
-struct CodeButtonView: View {
+struct OTPCodeButtonView: View {
     var viewModel: OTPCodeIncrementerViewModel
 
     @Environment(\.isEnabled) private var isEnabled

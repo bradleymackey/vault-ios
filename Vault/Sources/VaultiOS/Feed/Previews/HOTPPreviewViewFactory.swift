@@ -20,7 +20,7 @@ public struct RealHOTPPreviewViewFactory: HOTPPreviewViewFactory {
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         HOTPCodePreviewView(
-            buttonView: CodeButtonView(viewModel: incrementer),
+            buttonView: OTPCodeButtonView(viewModel: incrementer),
             previewViewModel: viewModel,
             behaviour: behaviour
         )
