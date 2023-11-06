@@ -12,7 +12,7 @@ struct OTPCodeButtonView: View {
         Button {
             viewModel.incrementCounter()
         } label: {
-            CodeButtonIcon()
+            OTPCodeButtonIcon()
                 .font(.system(size: 22, weight: isDisabled ? .light : .bold))
         }
         .foregroundColor(.accentColor)
