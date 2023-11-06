@@ -18,7 +18,7 @@
 
 "codeDetail.action.error.title" = "Error";
 "codeDetail.action.error.confirm.title" = "OK";
-"codeDetail.action.delete.title" = "Delete";
+"item.action.delete.title" = "Delete";
 "codeDetail.action.delete.entity.title" = "Delete This Code Forever";
 "codeDetail.action.delete.confirm.title" = "Delete Code?";
 "codeDetail.action.delete.confirm.subtitle" = "This will permanently delete this code. Unless you have made a backup, you may not be able to login on this site.";

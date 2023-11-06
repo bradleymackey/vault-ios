@@ -231,7 +231,7 @@ public struct OTPCodeDetailView: View {
         Button {
             isShowingDeleteConfirmation = true
         } label: {
-            CodeDeleteLabel()
+            ItemDeleteLabel()
         }
     }
 }
