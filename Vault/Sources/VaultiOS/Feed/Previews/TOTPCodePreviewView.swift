@@ -37,7 +37,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             PreviewErrorIcon()
                 .font(.callout)
         } else {
-            CodeIconPlaceholderView(iconFontSize: 8)
+            OTPCodeIconPlaceholderView(iconFontSize: 8)
                 .clipShape(Circle())
         }
     }

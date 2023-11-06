@@ -10,13 +10,13 @@ final class CodeIconPlaceholderViewSnapshotTests: XCTestCase {
     }
 
     func test_layout_smallSize() {
-        let view = CodeIconPlaceholderView(iconFontSize: 22)
+        let view = OTPCodeIconPlaceholderView(iconFontSize: 22)
 
         assertSnapshot(matching: view, as: .image)
     }
 
     func test_layout_mediumSize() {
-        let view = CodeIconPlaceholderView(iconFontSize: 44)
+        let view = OTPCodeIconPlaceholderView(iconFontSize: 44)
 
         assertSnapshot(matching: view, as: .image)
     }

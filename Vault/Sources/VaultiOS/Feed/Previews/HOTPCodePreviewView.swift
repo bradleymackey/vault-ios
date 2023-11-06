@@ -61,7 +61,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             PreviewErrorIcon()
                 .font(.callout)
         } else {
-            CodeIconPlaceholderView(iconFontSize: 8)
+            OTPCodeIconPlaceholderView(iconFontSize: 8)
                 .clipShape(Circle())
         }
     }

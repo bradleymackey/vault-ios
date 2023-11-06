@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-public struct CodeIconPlaceholderView: View {
+public struct OTPCodeIconPlaceholderView: View {
     public let iconFontSize: Double
 
     public var body: some View {
@@ -16,5 +16,11 @@ public struct CodeIconPlaceholderView: View {
 
     private var size: Double {
         iconFontSize * 2
+    }
+}
+
+struct OTPCodeIconPlaceholderView_Previews: PreviewProvider {
+    static var previews: some View {
+        OTPCodeIconPlaceholderView(iconFontSize: 20)
     }
 }
