@@ -3,7 +3,7 @@ import VaultCore
 import VaultFeed
 
 @MainActor
-struct CodeButtonView: View {
+struct OTPCodeButtonView: View {
     var viewModel: OTPCodeIncrementerViewModel
 
     @Environment(\.isEnabled) private var isEnabled
@@ -12,7 +12,7 @@ struct CodeButtonView: View {
         Button {
             viewModel.incrementCounter()
         } label: {
-            CodeButtonIcon()
+            OTPCodeButtonIcon()
                 .font(.system(size: 22, weight: isDisabled ? .light : .bold))
         }
         .foregroundColor(.accentColor)

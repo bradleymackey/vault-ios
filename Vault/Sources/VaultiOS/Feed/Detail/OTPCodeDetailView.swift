@@ -98,7 +98,7 @@ public struct OTPCodeDetailView: View {
     private var iconHeader: some View {
         HStack {
             Spacer()
-            CodeIconPlaceholderView(iconFontSize: 22)
+            OTPCodeIconPlaceholderView(iconFontSize: 22)
                 .clipShape(Circle())
             Spacer()
         }
@@ -231,7 +231,7 @@ public struct OTPCodeDetailView: View {
         Button {
             isShowingDeleteConfirmation = true
         } label: {
-            CodeDeleteLabel()
+            ItemDeleteLabel()
         }
     }
 }

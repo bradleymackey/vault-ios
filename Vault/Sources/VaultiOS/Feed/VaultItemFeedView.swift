@@ -5,7 +5,7 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-public struct OTPCodeFeedView<
+public struct VaultItemFeedView<
     Store: VaultStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
@@ -112,9 +112,9 @@ public struct OTPCodeFeedView<
     }
 }
 
-struct OTPCodeFeedView_Previews: PreviewProvider {
+struct VaultItemFeedView_Previews: PreviewProvider {
     static var previews: some View {
-        OTPCodeFeedView(
+        VaultItemFeedView(
             viewModel: .init(store: InMemoryVaultStore(codes: [
                 .init(
                     metadata: .init(

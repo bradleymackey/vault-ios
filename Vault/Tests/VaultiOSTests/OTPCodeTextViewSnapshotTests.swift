@@ -3,7 +3,7 @@ import SnapshotTesting
 import XCTest
 @testable import VaultiOS
 
-final class CodeTextViewSnapshotTests: XCTestCase {
+final class OTPCodeTextViewSnapshotTests: XCTestCase {
     func test_visible_staysOnASingleLineIfNotEnoughSpace() {
         let view = OTPCodeTextView(codeState: .visible("123456"))
             .frame(width: 20, height: 100)

@@ -31,7 +31,7 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
     }
 
     var body: some View {
-        OTPCodeFeedView(
+        VaultItemFeedView(
             viewModel: feedViewModel,
             localSettings: localSettings,
             viewGenerator: interactableViewGenerator(),

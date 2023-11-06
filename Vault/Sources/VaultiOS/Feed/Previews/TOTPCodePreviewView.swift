@@ -34,10 +34,10 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     @ViewBuilder
     private var icon: some View {
         if case .error = previewViewModel.code {
-            CodeErrorIcon()
+            PreviewErrorIcon()
                 .font(.callout)
         } else {
-            CodeIconPlaceholderView(iconFontSize: 8)
+            OTPCodeIconPlaceholderView(iconFontSize: 8)
                 .clipShape(Circle())
         }
     }

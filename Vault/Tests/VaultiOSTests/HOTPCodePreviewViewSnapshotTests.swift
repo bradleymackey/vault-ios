@@ -87,7 +87,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
     ) -> some View {
         let preview = OTPCodePreviewViewModel(accountName: accountName, issuer: issuer, fixedCodeState: state)
         return HOTPCodePreviewView(
-            buttonView: CodeButtonIcon(),
+            buttonView: OTPCodeButtonIcon(),
             previewViewModel: preview,
             behaviour: behaviour
         )

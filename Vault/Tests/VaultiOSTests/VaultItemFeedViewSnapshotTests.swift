@@ -7,7 +7,7 @@ import VaultSettings
 import XCTest
 
 @MainActor
-final class OTPCodeFeedViewSnapshotTests: XCTestCase {
+final class VaultItemFeedViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         isRecording = false
@@ -79,14 +79,14 @@ final class OTPCodeFeedViewSnapshotTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension OTPCodeFeedViewSnapshotTests {
-    typealias SUT = OTPCodeFeedView<MockOTPCodeStore, MockGenericViewGenerator>
+extension VaultItemFeedViewSnapshotTests {
+    typealias SUT = VaultItemFeedView<MockOTPCodeStore, MockGenericViewGenerator>
     private func makeSUT(
         viewModel: FeedViewModel<MockOTPCodeStore>,
         localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
     ) -> SUT {
         let generator = MockGenericViewGenerator()
-        return OTPCodeFeedView(
+        return VaultItemFeedView(
             viewModel: viewModel,
             localSettings: localSettings,
             viewGenerator: generator,

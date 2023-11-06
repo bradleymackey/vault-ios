@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct CodeDeleteLabel: View {
+struct ItemDeleteLabel: View {
     var body: some View {
         VStack {
             icon
@@ -23,14 +23,14 @@ struct CodeDeleteLabel: View {
     }
 
     private var label: some View {
-        Text(localized(key: "codeDetail.action.delete.title"))
+        Text(localized(key: "item.action.delete.title"))
             .font(.caption.bold())
             .textCase(.uppercase)
     }
 }
 
-struct CodeDeleteLabel_Previews: PreviewProvider {
+struct ItemDeleteLabel_Previews: PreviewProvider {
     static var previews: some View {
-        CodeDeleteLabel()
+        ItemDeleteLabel()
     }
 }

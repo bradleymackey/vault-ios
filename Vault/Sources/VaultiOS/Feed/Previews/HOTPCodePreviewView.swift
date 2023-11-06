@@ -58,10 +58,10 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     @ViewBuilder
     private var icon: some View {
         if case .error = previewViewModel.code {
-            CodeErrorIcon()
+            PreviewErrorIcon()
                 .font(.callout)
         } else {
-            CodeIconPlaceholderView(iconFontSize: 8)
+            OTPCodeIconPlaceholderView(iconFontSize: 8)
                 .clipShape(Circle())
         }
     }
@@ -129,7 +129,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
             renderer: renderer
         )
         return HOTPCodePreviewView(
-            buttonView: CodeButtonView(
+            buttonView: OTPCodeButtonView(
                 viewModel: .init(
                     hotpRenderer: .init(
                         hotpGenerator: .init(secret: Data())
