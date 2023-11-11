@@ -1,5 +1,6 @@
 import Foundation
 import TestHelpers
+import VaultCore
 import VaultFeed
 import XCTest
 
@@ -11,12 +12,24 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(editor.operationsPerformed, [])
     }
+
+    func test_init_editingModelUsesInitialData() {
+        let note = SecureNote(title: "my title", contents: "my contents")
+        let metadata = uniqueStoredMetadata(userDescription: "my description")
+        let sut = makeSUT(storedNote: note, storedMetadata: metadata)
+
+        XCTAssertEqual(sut.editingModel.detail.title, note.title)
+        XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
+        XCTAssertEqual(sut.editingModel.detail.description, metadata.userDescription)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
     private func makeSUT(
+        storedNote: SecureNote = anyStoredNote(),
+        storedMetadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(storedNote: anyStoredNote(), storedMetadata: uniqueStoredMetadata(), editor: editor)
+        SecureNoteDetailViewModel(storedNote: storedNote, storedMetadata: storedMetadata, editor: editor)
     }
 }
