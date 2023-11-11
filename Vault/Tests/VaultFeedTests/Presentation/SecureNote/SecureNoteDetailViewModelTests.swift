@@ -36,6 +36,12 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertTrue(sut.isInEditMode)
     }
+
+    func test_isSaving_isInitiallyFalse() {
+        let sut = makeSUT()
+
+        XCTAssertFalse(sut.isSaving)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {

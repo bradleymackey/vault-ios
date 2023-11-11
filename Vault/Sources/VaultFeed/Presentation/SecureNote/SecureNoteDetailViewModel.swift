@@ -26,6 +26,10 @@ public final class SecureNoteDetailViewModel {
         detailEditState.isInEditMode
     }
 
+    public var isSaving: Bool {
+        false
+    }
+
     public func startEditing() {
         detailEditState.startEditing()
     }
