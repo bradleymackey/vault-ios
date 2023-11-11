@@ -20,4 +20,8 @@ public final class SecureNoteDetailViewModel {
             contents: storedNote.contents
         ))
     }
+
+    public var isInEditMode: Bool {
+        false
+    }
 }

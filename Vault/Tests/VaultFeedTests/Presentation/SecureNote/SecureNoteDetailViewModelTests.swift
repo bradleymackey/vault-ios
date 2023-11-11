@@ -22,6 +22,12 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
         XCTAssertEqual(sut.editingModel.detail.description, metadata.userDescription)
     }
+
+    func test_isInEditMode_initiallyFalse() {
+        let sut = makeSUT()
+
+        XCTAssertFalse(sut.isInEditMode)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
