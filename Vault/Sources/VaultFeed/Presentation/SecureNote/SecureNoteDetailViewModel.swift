@@ -8,6 +8,7 @@ public final class SecureNoteDetailViewModel {
 
     private let storedNote: SecureNote
     private let storedMetadata: StoredVaultItem.Metadata
+    private let detailEditState = DetailEditState<SecureNoteDetailEdits>()
     private let editor: any SecureNoteDetailEditor
 
     public init(storedNote: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
@@ -22,6 +23,10 @@ public final class SecureNoteDetailViewModel {
     }
 
     public var isInEditMode: Bool {
-        false
+        detailEditState.isInEditMode
+    }
+
+    public func startEditing() {
+        detailEditState.startEditing()
     }
 }
