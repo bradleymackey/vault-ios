@@ -4,7 +4,7 @@ import Foundation
 ///
 /// This is currently a "version 1" vault backup. It must be maintained for future compatibility in the event that
 /// this structure is changed in the future.
-public struct VaultBackupPayload: Codable {
+public struct VaultBackupPayload: Codable, Equatable {
     /// Version of this backup, determined when the backup was initially created.
     ///
     /// Determines the decoding structure. This allows for future breaking changes.
