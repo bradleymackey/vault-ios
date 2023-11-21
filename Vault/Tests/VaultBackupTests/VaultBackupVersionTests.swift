@@ -1,6 +1,6 @@
 import Foundation
+import VaultBackup
 import XCTest
-@testable import VaultBackup
 
 final class VaultBackupVersionTests: XCTestCase {
     func test_allCases_onlyHasV1() {
