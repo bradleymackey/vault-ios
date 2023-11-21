@@ -82,6 +82,13 @@
         "identifier" : "VaultiOSTests",
         "name" : "VaultiOSTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultBackupTests",
+        "name" : "VaultBackupTests"
+      }
     }
   ],
   "version" : 1
