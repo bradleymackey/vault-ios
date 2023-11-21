@@ -16,7 +16,7 @@ struct VaultDetailView<Store: VaultStore>: View {
                 viewModel: .init(
                     storedCode: storedCode,
                     storedMetadata: storedItem.metadata,
-                    editor: VaultFeedOTPCodeDetailEditorAdapter(vaultFeed: feedViewModel)
+                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
                 )
             )
         case .secureNote:

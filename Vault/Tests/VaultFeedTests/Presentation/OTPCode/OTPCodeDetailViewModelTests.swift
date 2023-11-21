@@ -14,6 +14,24 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(editor.operationsPerformed, [])
     }
 
+    func test_init_editingModelUsesInitialData() {
+        let code = OTPAuthCode(
+            type: .totp(),
+            data: .init(
+                secret: .init(data: Data(), format: .base32),
+                accountName: "my account",
+                issuer: "my issuer"
+            )
+        )
+        let metadata = uniqueStoredMetadata(userDescription: "my description")
+
+        let sut = makeSUT(code: code, metadata: metadata)
+
+        XCTAssertEqual(sut.editingModel.detail.accountNameTitle, "my account")
+        XCTAssertEqual(sut.editingModel.detail.issuerTitle, "my issuer")
+        XCTAssertEqual(sut.editingModel.detail.description, "my description")
+    }
+
     func test_detailMenuItems_hasOneExpectedItem() {
         let sut = makeSUT()
 
