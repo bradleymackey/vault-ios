@@ -52,6 +52,15 @@ let package = Package(
             swiftSettings: swiftSettings
         ),
         .target(
+            name: "VaultBackup",
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "VaultBackupTests",
+            dependencies: ["VaultBackup"],
+            swiftSettings: swiftSettings
+        ),
+        .target(
             name: "TestHelpers",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
