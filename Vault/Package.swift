@@ -57,7 +57,8 @@ let package = Package(
         ),
         .testTarget(
             name: "VaultBackupTests",
-            dependencies: ["VaultBackup"],
+            dependencies: ["VaultBackup", "TestHelpers"],
+            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(
