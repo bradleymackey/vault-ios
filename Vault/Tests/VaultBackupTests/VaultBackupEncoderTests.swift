@@ -19,6 +19,61 @@ final class VaultBackupEncoderTests: XCTestCase {
         assertSnapshot(of: encoded, as: .lines)
     }
 
+    func test_encodeVault_encodesToJSONFormat_secureNote() throws {
+        let sut = makeSUT()
+        let date = Date(timeIntervalSince1970: 12345)
+        let uuid = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let item = VaultBackupItem(
+            id: uuid,
+            createdDate: date,
+            updatedDate: date.addingTimeInterval(7000),
+            item: .note(data: .init(title: "Example Note", rawContents: "Example note"))
+        )
+        let backup = anyBackupPayload(
+            created: date,
+            userDescription: "Example vault with a single note",
+            items: [item]
+        )
+
+        let data = try sut.encode(vaultBackup: backup)
+
+        let encoded = try XCTUnwrap(String(data: data, encoding: .utf8))
+        assertSnapshot(of: encoded, as: .lines)
+    }
+
+    func test_encodeVault_encodesToJSONFormat_otpCode() throws {
+        let sut = makeSUT()
+        let date = Date(timeIntervalSince1970: 12345)
+        let uuid = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let item = VaultBackupItem(
+            id: uuid,
+            createdDate: date,
+            updatedDate: date.addingTimeInterval(100),
+            item: .otp(data: .init(
+                secretFormat: "any",
+                secretData: Data(repeating: 0x41, count: 20),
+                authType: "authtype",
+                period: 123,
+                counter: 456,
+                algorithm: "algo",
+                digits: 789,
+                accountName: "acc",
+                issuer: "iss"
+            ))
+        )
+
+        let backup = anyBackupPayload(
+            created: date,
+            userDescription: "Example vault with a single otp code",
+            items: [item]
+        )
+
+        let data = try sut.encode(vaultBackup: backup)
+
+        let encoded = try XCTUnwrap(String(data: data, encoding: .utf8))
+        assertSnapshot(of: encoded, as: .lines)
+    }
+
     func test_encodeVault_encodesToJSONFormat_nonEmptyVault() throws {
         let sut = makeSUT()
         let date1 = Date(timeIntervalSince1970: 12345)
