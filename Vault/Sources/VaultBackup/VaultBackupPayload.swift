@@ -4,7 +4,7 @@ import Foundation
 ///
 /// This is currently a "version 1" vault backup. It must be maintained for future compatibility in the event that
 /// this structure is changed in the future.
-public struct VaultBackupPayload: Codable {
+public struct VaultBackupPayload: Codable, Equatable {
     /// Version of this backup, determined when the backup was initially created.
     ///
     /// Determines the decoding structure. This allows for future breaking changes.
@@ -19,7 +19,7 @@ public struct VaultBackupPayload: Codable {
 
 // MARK: - Item
 
-public struct VaultBackupItem: Codable {
+public struct VaultBackupItem: Codable, Equatable, Identifiable {
     /// The underlying ID of the vault item in the application.
     public var id: UUID
     public var createdDate: Date
@@ -31,13 +31,13 @@ public struct VaultBackupItem: Codable {
 
 extension VaultBackupItem {
     /// A individual vault item with enough information to reconstruct it.
-    public enum Item: Codable {
-        case otp(OTP)
-        case note(Note)
+    public enum Item: Codable, Equatable {
+        case otp(data: OTP)
+        case note(data: Note)
     }
 
     /// A backed up OTP code.
-    public struct OTP: Codable {
+    public struct OTP: Codable, Equatable {
         var secretFormat: String
         var secretData: Data
         var authType: String
@@ -50,7 +50,7 @@ extension VaultBackupItem {
     }
 
     /// A backed up secure note.
-    public struct Note: Codable {
+    public struct Note: Codable, Equatable {
         var title: String
         var rawContents: String?
     }
