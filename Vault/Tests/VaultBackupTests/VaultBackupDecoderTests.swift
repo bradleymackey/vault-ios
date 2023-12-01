@@ -85,7 +85,9 @@ final class VaultBackupDecoderTests: XCTestCase {
 
 extension VaultBackupDecoderTests {
     private func makeSUT() -> VaultBackupDecoder {
-        VaultBackupDecoder()
+        let sut = VaultBackupDecoder()
+        trackForMemoryLeaks(sut)
+        return sut
     }
 
     private func anyBackupPayload(
