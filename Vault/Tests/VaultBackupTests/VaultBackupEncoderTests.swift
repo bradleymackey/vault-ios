@@ -127,7 +127,9 @@ final class VaultBackupEncoderTests: XCTestCase {
 
 extension VaultBackupEncoderTests {
     private func makeSUT() -> VaultBackupEncoder {
-        VaultBackupEncoder()
+        let sut = VaultBackupEncoder()
+        trackForMemoryLeaks(sut)
+        return sut
     }
 
     private func anyBackupPayload(
