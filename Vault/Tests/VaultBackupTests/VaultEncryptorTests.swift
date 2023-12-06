@@ -2,8 +2,19 @@ import Foundation
 import TestHelpers
 import XCTest
 
+struct VaultKey {
+    /// The key data for a vault.
+    let key: Data
+    /// Initialization vector.
+    let iv: Data
+}
+
 final class VaultEncryptor {
-    init() {}
+    private let key: VaultKey
+
+    init(key: VaultKey) {
+        self.key = key
+    }
 
     func encrypt(data: Data) throws -> Data {
         data
@@ -12,7 +23,7 @@ final class VaultEncryptor {
 
 final class VaultEncryptorTests: XCTestCase {
     func test_encrypt_emptyDataStaysEmpty() throws {
-        let sut = makeSUT()
+        let sut = makeSUT(key: anyVaultKey())
 
         let result = try sut.encrypt(data: Data())
 
@@ -23,9 +34,13 @@ final class VaultEncryptorTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultEncryptorTests {
-    private func makeSUT() -> VaultEncryptor {
-        let sut = VaultEncryptor()
+    private func makeSUT(key: VaultKey) -> VaultEncryptor {
+        let sut = VaultEncryptor(key: key)
         trackForMemoryLeaks(sut)
         return sut
+    }
+
+    private func anyVaultKey() -> VaultKey {
+        VaultKey(key: Data(), iv: Data())
     }
 }
