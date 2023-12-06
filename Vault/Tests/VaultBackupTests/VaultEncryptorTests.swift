@@ -2,11 +2,19 @@ import Foundation
 import TestHelpers
 import XCTest
 
+/// A key used to encrypt or decrypt a vault.
 struct VaultKey {
     /// The key data for a vault.
     let key: Data
     /// Initialization vector.
     let iv: Data
+}
+
+struct EncryptedVault {
+    /// The encrypted payload after encryption.
+    let data: Data
+    /// Additional data that represents authentication.
+    let authentication: Data
 }
 
 final class VaultEncryptor {
@@ -16,18 +24,18 @@ final class VaultEncryptor {
         self.key = key
     }
 
-    func encrypt(data: Data) throws -> Data {
-        data
+    func encrypt(data: Data) throws -> EncryptedVault {
+        EncryptedVault(data: data, authentication: data)
     }
 }
 
 final class VaultEncryptorTests: XCTestCase {
-    func test_encrypt_emptyDataStaysEmpty() throws {
+    func test_encrypt_emptyDataGivesEmptyEncryption() throws {
         let sut = makeSUT(key: anyVaultKey())
 
         let result = try sut.encrypt(data: Data())
 
-        XCTAssertEqual(result, Data())
+        XCTAssertEqual(result.data, Data())
     }
 }
 
