@@ -6,8 +6,9 @@ import XCTest
 final class VaultEncryptorTests: XCTestCase {
     func test_encrypt_emptyDataGivesEmptyEncryption() throws {
         let sut = try makeSUT(key: anyVaultKey())
+        let encodedVault = EncodedVault(data: Data())
 
-        let result = try sut.encrypt(data: Data())
+        let result = try sut.encrypt(encodedVault: encodedVault)
 
         XCTAssertEqual(result.data, Data())
     }
@@ -19,9 +20,10 @@ final class VaultEncryptorTests: XCTestCase {
             iv: Data(repeating: 0x32, count: 32)
         )
         let sut = makeSUT(key: knownKey)
-
         let plainData = Data(hex: "0x41414141414141")
-        let result = try sut.encrypt(data: plainData)
+        let encodedVault = EncodedVault(data: plainData)
+
+        let result = try sut.encrypt(encodedVault: encodedVault)
 
         XCTAssertEqual(result.data, Data(hex: "0x4126987aceb598"))
         XCTAssertEqual(result.authentication, Data(hex: "0x4343890cb716dfb9915f8f7c050829ca"))

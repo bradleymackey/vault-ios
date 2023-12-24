@@ -6,15 +6,17 @@ final class VaultBackupDecoderTests: XCTestCase {
     func test_decodeVault_throwsForEmptyData() {
         let sut = makeSUT()
         let data = Data()
+        let vault = EncodedVault(data: data)
 
-        XCTAssertThrowsError(try sut.decode(data: data))
+        XCTAssertThrowsError(try sut.decode(encodedVault: vault))
     }
 
     func test_decodeVault_throwsForInvalidJSON() {
         let sut = makeSUT()
         let data = Data("{}".utf8)
+        let vault = EncodedVault(data: data)
 
-        XCTAssertThrowsError(try sut.decode(data: data))
+        XCTAssertThrowsError(try sut.decode(encodedVault: vault))
     }
 
     func test_decodeVault_decodesZeroItems() throws {
@@ -27,7 +29,7 @@ final class VaultBackupDecoderTests: XCTestCase {
         )
         let encoder = VaultBackupEncoder()
 
-        let decoded = try sut.decode(data: encoder.encode(vaultBackup: input))
+        let decoded = try sut.decode(encodedVault: encoder.encode(vaultBackup: input))
 
         XCTAssertEqual(decoded, input, "Decoded backup differs from input")
     }
@@ -75,7 +77,7 @@ final class VaultBackupDecoderTests: XCTestCase {
         )
         let encoder = VaultBackupEncoder()
 
-        let decoded = try sut.decode(data: encoder.encode(vaultBackup: input))
+        let decoded = try sut.decode(encodedVault: encoder.encode(vaultBackup: input))
 
         XCTAssertEqual(decoded, input, "Decoded backup differs from input")
     }

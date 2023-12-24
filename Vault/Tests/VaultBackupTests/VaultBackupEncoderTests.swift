@@ -13,9 +13,9 @@ final class VaultBackupEncoderTests: XCTestCase {
             items: []
         )
 
-        let data = try sut.encode(vaultBackup: backup)
+        let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -35,9 +35,9 @@ final class VaultBackupEncoderTests: XCTestCase {
             items: [item]
         )
 
-        let data = try sut.encode(vaultBackup: backup)
+        let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -68,9 +68,9 @@ final class VaultBackupEncoderTests: XCTestCase {
             items: [item]
         )
 
-        let data = try sut.encode(vaultBackup: backup)
+        let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -116,9 +116,9 @@ final class VaultBackupEncoderTests: XCTestCase {
             items: [item1, item2, item3]
         )
 
-        let data = try sut.encode(vaultBackup: backup)
+        let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: data, encoding: .utf8))
+        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 }

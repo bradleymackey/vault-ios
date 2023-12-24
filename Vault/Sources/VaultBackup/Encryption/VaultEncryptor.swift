@@ -8,8 +8,8 @@ public final class VaultEncryptor {
         encryptor = AESGCMEncryptor(key: key.key, iv: key.iv)
     }
 
-    public func encrypt(data: Data) throws -> EncryptedVault {
-        let encrypted = try encryptor.encrypt(plaintext: data)
+    public func encrypt(encodedVault: EncodedVault) throws -> EncryptedVault {
+        let encrypted = try encryptor.encrypt(plaintext: encodedVault.data)
         return EncryptedVault(data: encrypted.ciphertext, authentication: encrypted.authenticationTag)
     }
 }

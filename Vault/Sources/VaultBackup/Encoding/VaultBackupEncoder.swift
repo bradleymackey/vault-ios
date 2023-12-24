@@ -4,8 +4,9 @@ import Foundation
 public final class VaultBackupEncoder {
     public init() {}
 
-    public func encode(vaultBackup: VaultBackupPayload) throws -> Data {
-        try makeEncoder().encode(vaultBackup)
+    public func encode(vaultBackup: VaultBackupPayload) throws -> EncodedVault {
+        let data = try makeEncoder().encode(vaultBackup)
+        return EncodedVault(data: data)
     }
 
     private func makeEncoder() -> JSONEncoder {

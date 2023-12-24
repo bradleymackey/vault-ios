@@ -4,8 +4,8 @@ import Foundation
 public final class VaultBackupDecoder {
     public init() {}
 
-    public func decode(data: Data) throws -> VaultBackupPayload {
-        try makeDecoder().decode(VaultBackupPayload.self, from: data)
+    public func decode(encodedVault: EncodedVault) throws -> VaultBackupPayload {
+        try makeDecoder().decode(VaultBackupPayload.self, from: encodedVault.data)
     }
 
     private func makeDecoder() -> JSONDecoder {
