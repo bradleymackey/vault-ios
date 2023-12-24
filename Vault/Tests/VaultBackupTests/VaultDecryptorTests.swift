@@ -13,6 +13,13 @@ final class VaultDecryptorTests: XCTestCase {
         XCTAssertEqual(decrypted.data, Data())
     }
 
+    func test_decrypt_invalidDataFails() throws {
+        let sut = try makeSUT(key: anyVaultKey())
+        let vault = EncryptedVault(data: Data(hex: "0x1234"), authentication: Data(hex: "0x1234"))
+
+        XCTAssertThrowsError(try sut.decrypt(encryptedVault: vault))
+    }
+
     /// Reference test case: https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'3131313131313131313131313131313131313131313131313131313131313131'%7D,%7B'option':'Hex','string':'3232323232323232323232323232323232323232323232323232323232323232'%7D,'GCM','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=NDE0MTQxNDE0MTQxNDE
     func test_decrypt_expectedDataIsDecrypted() throws {
         let knownKey = try VaultKey(
