@@ -1,28 +1,6 @@
 import Foundation
+import VaultBackup
 import XCTest
-
-/// A key used to encrypt or decrypt a vault.
-struct VaultKey {
-    /// The key data for a vault.
-    let key: Data
-    /// Initialization vector.
-    let iv: Data
-
-    enum KeyError: Error {
-        case invalidLength
-    }
-
-    enum IVError: Error {
-        case invalidLength
-    }
-
-    init(key: Data, iv: Data) throws {
-        guard key.count == 32 else { throw KeyError.invalidLength }
-        guard iv.count == 32 else { throw IVError.invalidLength }
-        self.key = key
-        self.iv = iv
-    }
-}
 
 final class VaultKeyTests: XCTestCase {
     func test_init_invalidKeyLengthThrows() {

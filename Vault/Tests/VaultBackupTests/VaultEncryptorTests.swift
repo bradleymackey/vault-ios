@@ -1,27 +1,7 @@
-import CryptoEngine
 import Foundation
 import TestHelpers
+import VaultBackup
 import XCTest
-
-struct EncryptedVault {
-    /// The encrypted payload after encryption.
-    let data: Data
-    /// Additional data that represents authentication.
-    let authentication: Data
-}
-
-final class VaultEncryptor {
-    private let encryptor: AESGCMEncryptor
-
-    init(key: VaultKey) {
-        encryptor = AESGCMEncryptor(key: key.key, iv: key.iv)
-    }
-
-    func encrypt(data: Data) throws -> EncryptedVault {
-        let encrypted = try encryptor.encrypt(plaintext: data)
-        return EncryptedVault(data: encrypted.ciphertext, authentication: encrypted.authenticationTag)
-    }
-}
 
 final class VaultEncryptorTests: XCTestCase {
     func test_encrypt_emptyDataGivesEmptyEncryption() throws {
