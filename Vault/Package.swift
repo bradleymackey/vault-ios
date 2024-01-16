@@ -53,6 +53,7 @@ let package = Package(
         ),
         .target(
             name: "VaultBackup",
+            dependencies: ["CryptoDocumentExporter"],
             swiftSettings: swiftSettings
         ),
         .testTarget(
