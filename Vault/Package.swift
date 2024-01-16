@@ -28,6 +28,7 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.0"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.2.3"),
+        .package(url: "https://github.com/Matejkob/swift-spyable", exact: "0.2.1"),
     ],
     targets: [
         .target(
@@ -96,7 +97,10 @@ let package = Package(
         ),
         .target(
             name: "CryptoDocumentExporter",
-            dependencies: ["CryptoEngine"],
+            dependencies: [
+                "CryptoEngine",
+                .product(name: "Spyable", package: "swift-spyable"),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
