@@ -1,8 +1,8 @@
+import CryptoDocumentExporter
 import Foundation
 import TestHelpers
 import VaultBackup
 import XCTest
-@testable import CryptoDocumentExporter
 
 /// Exports an encrypted vault to a document format, for external saving or printing.
 ///
@@ -20,7 +20,7 @@ final class VaultDocumentExporterTests: XCTestCase {
 
         _ = makeSUT(documentRenderer: renderer)
 
-        XCTAssertEqual(renderer.renderDocumentCallsCount, 0)
+        XCTAssertFalse(renderer.renderDocumentCalled)
     }
 }
 

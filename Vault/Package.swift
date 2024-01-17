@@ -8,6 +8,7 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
+    .define("SPYABLE", .when(configuration: .debug)),
 ]
 
 let package = Package(
@@ -28,7 +29,7 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.0"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.2.3"),
-        .package(url: "https://github.com/Matejkob/swift-spyable", exact: "0.2.1"),
+        .package(url: "https://github.com/bradleymackey/swift-spyable", branch: "main"),
     ],
     targets: [
         .target(

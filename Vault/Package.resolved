@@ -48,10 +48,10 @@
     {
       "identity" : "swift-spyable",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Matejkob/swift-spyable",
+      "location" : "https://github.com/bradleymackey/swift-spyable",
       "state" : {
-        "revision" : "52acf5a7d058db635dc877067edc1babb3053d75",
-        "version" : "0.2.1"
+        "branch" : "main",
+        "revision" : "66750a8bffc4685a05b8f7af8eac0237f49df41d"
       }
     },
     {
