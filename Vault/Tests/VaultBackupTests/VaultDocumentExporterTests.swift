@@ -4,16 +4,6 @@ import TestHelpers
 import VaultBackup
 import XCTest
 
-/// Exports an encrypted vault to a document format, for external saving or printing.
-///
-/// This is a very manual form of backup, but is useful for cold or long-term storage.
-final class VaultDocumentExporter {
-    private let documentRenderer: any PDFDocumentRenderer
-    init(documentRenderer: any PDFDocumentRenderer) {
-        self.documentRenderer = documentRenderer
-    }
-}
-
 final class VaultDocumentExporterTests: XCTestCase {
     func test_init_doesNotHaveAnySideEffects() {
         let renderer = PDFDocumentRendererSpy<Void>()
