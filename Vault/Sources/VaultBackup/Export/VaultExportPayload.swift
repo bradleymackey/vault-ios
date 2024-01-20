@@ -8,7 +8,7 @@ import Foundation
 /// This payload is export-only, as only the `encryptedVault` is required to be
 /// decrypted, parsed and imported.
 /// The other fields don't need importing.
-struct VaultExportPayload {
+public struct VaultExportPayload {
     var encryptedVault: EncryptedVault
     var userDescription: String
     var created: Date
