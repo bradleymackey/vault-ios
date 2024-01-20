@@ -3,18 +3,17 @@ import PDFKit
 import UIKit
 
 public struct PDFDataBlockDocumentRenderer<
-    RendererFactory: PDFRendererFactory,
     ImageRenderer: PDFImageRenderer,
     BlockLayout: PDFDataBlockLayout
 >: PDFDocumentRenderer {
     public typealias Document = DataBlockExportDocument
 
-    public let rendererFactory: RendererFactory
+    public let rendererFactory: any PDFRendererFactory
     public let imageRenderer: ImageRenderer
     public let blockLayout: (CGRect) -> BlockLayout
 
     public init(
-        rendererFactory: RendererFactory,
+        rendererFactory: any PDFRendererFactory,
         imageRenderer: ImageRenderer,
         blockLayout: @escaping (CGRect) -> BlockLayout
     ) {
@@ -23,7 +22,7 @@ public struct PDFDataBlockDocumentRenderer<
         self.blockLayout = blockLayout
     }
 
-    public func render(document: DataBlockExportDocument) -> PDFDocument? {
+    public func render(document: DataBlockExportDocument) throws -> PDFDocument {
         let renderer = rendererFactory.makeRenderer()
         let data = renderer.pdfData { context in
             let drawer = PDFDocumentDrawerHelper(context: context)
@@ -33,7 +32,11 @@ public struct PDFDataBlockDocumentRenderer<
             }
             drawer.draw(images: document.dataBlockImageData, imageRenderer: imageRenderer, blockLayout: blockLayout)
         }
-        return PDFDocument(data: data)
+        if let document = PDFDocument(data: data) {
+            return document
+        } else {
+            throw PDFRenderingError.invalidData
+        }
     }
 }
 
