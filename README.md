@@ -15,3 +15,37 @@ Development takes place in `/Vault`, so take a look in there.
 - **Modern**: we should use modern features and push for fast deprecations.
 - **Open source by default**: no binary dependencies or obfuscated stuff.
 - **Robust**: test-driven development, modular PRs/commits.
+
+## Development
+
+The project is mostly based around the SPM package in `/Vault`.
+You should be looking in there really.
+As soon as we are able, we will be dropping the xcodeproj project wrapper and going all-in on the Swift Package Manager.
+
+There's a few things to be aware of when developing and some helpful commands to ensure your code is up to scratch.
+
+## Testing Configuration
+
+<table>
+  <tr>
+	<td>Simulator for snapshot tests</td>
+	<td><b>iPhone 15 on iOS 17</b></td>
+  </tr>
+</table>
+
+## Development Workflow
+
+<table>
+  <tr>
+	<td>Format Sources</td>
+	<td><b>make format</b></td>
+  </tr>
+  <tr>
+	<td>Lint Sources</td>
+	<td><b>make lint</b></td>
+  </tr>
+  <tr>
+	<td>Force clean existing build artifacts</td>
+	<td><b>make clean</b></td>
+  </tr>
+</table>
