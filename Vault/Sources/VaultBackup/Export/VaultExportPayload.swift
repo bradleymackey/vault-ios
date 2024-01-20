@@ -12,4 +12,10 @@ public struct VaultExportPayload {
     var encryptedVault: EncryptedVault
     var userDescription: String
     var created: Date
+
+    public init(encryptedVault: EncryptedVault, userDescription: String, created: Date) {
+        self.encryptedVault = encryptedVault
+        self.userDescription = userDescription
+        self.created = created
+    }
 }
