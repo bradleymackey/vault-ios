@@ -9,7 +9,7 @@ struct VaultExportDataBlockGenerator {
         self.payload = payload
     }
 
-    func makeDocument() throws -> DataBlockExportDocument {
-        DataBlockExportDocument(headerForPage: { _ in nil }, titles: [], dataBlockImageData: [])
+    func makeDocument() throws -> DataBlockDocument {
+        DataBlockDocument(headerForPage: { _ in nil }, titles: [], dataBlockImageData: [])
     }
 }

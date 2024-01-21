@@ -1,6 +1,6 @@
 import Foundation
 
-public struct DataBlockExportDocument {
+public struct DataBlockDocument {
     /// Header generator for a given page number.
     public var headerForPage: (Int) -> DataBlockHeader?
     public var titles: [DataBlockLabel]

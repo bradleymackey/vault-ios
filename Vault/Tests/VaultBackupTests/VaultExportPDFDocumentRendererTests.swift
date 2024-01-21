@@ -49,7 +49,7 @@ extension VaultExportPDFDocumentRendererTests {
     }
 }
 
-private typealias RendererSpy = PDFDocumentRendererSpy<DataBlockExportDocument>
+private typealias RendererSpy = PDFDocumentRendererSpy<DataBlockDocument>
 
 private func makeRendererSpy() -> RendererSpy {
     let renderer = RendererSpy()

@@ -6,7 +6,7 @@ public struct PDFDataBlockDocumentRenderer<
     ImageRenderer: PDFImageRenderer,
     BlockLayout: PDFDataBlockLayout
 >: PDFDocumentRenderer {
-    public typealias Document = DataBlockExportDocument
+    public typealias Document = DataBlockDocument
 
     public let rendererFactory: any PDFRendererFactory
     public let imageRenderer: ImageRenderer
@@ -22,7 +22,7 @@ public struct PDFDataBlockDocumentRenderer<
         self.blockLayout = blockLayout
     }
 
-    public func render(document: DataBlockExportDocument) throws -> PDFDocument {
+    public func render(document: DataBlockDocument) throws -> PDFDocument {
         let renderer = rendererFactory.makeRenderer()
         let data = renderer.pdfData { context in
             let drawer = PDFDocumentDrawerHelper(context: context)

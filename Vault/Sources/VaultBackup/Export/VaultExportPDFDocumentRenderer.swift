@@ -8,7 +8,7 @@ import PDFKit
 public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
     where
     Renderer: PDFDocumentRenderer,
-    Renderer.Document == DataBlockExportDocument
+    Renderer.Document == DataBlockDocument
 {
     public typealias Document = VaultExportPayload
 
@@ -19,7 +19,7 @@ public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
     }
 
     public func render(document _: VaultExportPayload) throws -> PDFDocument {
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             headerForPage: { _ in nil },
             titles: [.init(text: "My Export", font: .systemFont(ofSize: 14), padding: .zero)],
             dataBlockImageData: []

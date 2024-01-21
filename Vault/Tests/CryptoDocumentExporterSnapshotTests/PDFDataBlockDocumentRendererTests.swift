@@ -18,7 +18,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsSingleImage() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockExportDocument(dataBlockImageData: [anyData()])
+        let document = DataBlockDocument(dataBlockImageData: [anyData()])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -26,7 +26,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsRowOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 3))
+        let document = DataBlockDocument(dataBlockImageData: Array(repeating: anyData(), count: 3))
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -34,7 +34,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
         let sut = makeSUT(tilesPerRow: 10)
-        let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 24))
+        let document = DataBlockDocument(dataBlockImageData: Array(repeating: anyData(), count: 24))
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -42,7 +42,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsMultiplePagesOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockExportDocument(dataBlockImageData: Array(repeating: anyData(), count: 14))
+        let document = DataBlockDocument(dataBlockImageData: Array(repeating: anyData(), count: 14))
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
@@ -56,7 +56,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
@@ -73,7 +73,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
@@ -90,7 +90,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
@@ -107,7 +107,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             font: UIFont.systemFont(ofSize: 14, weight: .regular),
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             titles: [titleLabel],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
@@ -123,7 +123,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
             padding: .init(top: 36, left: 10, bottom: 0, right: 10)
         )
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             titles: [titleLabel, longSubtitle()],
             dataBlockImageData: Array(repeating: anyData(), count: 14)
         )
@@ -136,7 +136,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let sut = makeSUT(tilesPerRow: 10)
         let title = longTitle(padding: .init(top: 40, left: 40, bottom: 10, right: 40))
         let subtitle = longSubtitle(padding: .init(top: 40, left: 60, bottom: 10, right: 60))
-        let document = DataBlockExportDocument(
+        let document = DataBlockDocument(
             titles: [title, subtitle],
             dataBlockImageData: Array(repeating: anyData(), count: 0)
         )
@@ -150,7 +150,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     private func makeSUT(
         tilesPerRow: UInt,
         imageRenderer: RGBCyclingStubColorImageRenderer = RGBCyclingStubColorImageRenderer()
-    ) -> some PDFDocumentRenderer<DataBlockExportDocument> {
+    ) -> some PDFDocumentRenderer<DataBlockDocument> {
         PDFDataBlockDocumentRenderer(
             rendererFactory: StubPDFRendererFactory(),
             imageRenderer: imageRenderer,
@@ -164,8 +164,8 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         Data(repeating: 0xFF, count: 10)
     }
 
-    private func emptyDocument() -> DataBlockExportDocument {
-        DataBlockExportDocument(dataBlockImageData: [])
+    private func emptyDocument() -> DataBlockDocument {
+        DataBlockDocument(dataBlockImageData: [])
     }
 
     private func longTitle(padding: UIEdgeInsets = .init(top: 36, left: 10, bottom: 0, right: 10)) -> DataBlockLabel {
