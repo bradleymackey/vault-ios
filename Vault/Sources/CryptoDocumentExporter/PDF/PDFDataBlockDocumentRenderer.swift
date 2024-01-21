@@ -27,10 +27,14 @@ public struct PDFDataBlockDocumentRenderer<
         let data = renderer.pdfData { context in
             let drawer = PDFDocumentDrawerHelper(context: context, headerGenerator: document.headerGenerator)
             drawer.startNextPage()
-            for title in document.titles {
-                drawer.draw(label: title)
+            for content in document.content {
+                switch content {
+                case let .title(label):
+                    drawer.draw(label: label)
+                case let .images(imageData):
+                    drawer.draw(images: imageData, imageRenderer: imageRenderer, blockLayout: blockLayout)
+                }
             }
-            drawer.draw(images: document.dataBlockImageData, imageRenderer: imageRenderer, blockLayout: blockLayout)
         }
         if let document = PDFDocument(data: data) {
             return document

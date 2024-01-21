@@ -3,16 +3,22 @@ import Foundation
 public struct DataBlockDocument {
     /// Header generator for a given page number.
     public var headerGenerator: any DataBlockHeaderGenerator
-    public var titles: [DataBlockLabel]
-    public var dataBlockImageData: [Data]
+    /// The content to be drawn to the document, in the order provided here.
+    public var content: [Content]
+
+    /// Content that can be rendered to the document.
+    public enum Content {
+        /// A piece of text rendered as a label.
+        case title(DataBlockLabel)
+        /// A series of images, which will draw the PNG data to the document as a sqaure, tiling the images.
+        case images([Data])
+    }
 
     public init(
         headerGenerator: any DataBlockHeaderGenerator = NoHeaderDataBlockHeaderGenerator(),
-        titles: [DataBlockLabel] = [],
-        dataBlockImageData: [Data]
+        content: [Content]
     ) {
         self.headerGenerator = headerGenerator
-        self.titles = titles
-        self.dataBlockImageData = dataBlockImageData
+        self.content = content
     }
 }

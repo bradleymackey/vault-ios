@@ -63,7 +63,10 @@ extension PDFDataBlockDocumentRendererTests {
     }
 
     private func anyDataBlockExportDocument() -> DataBlockDocument {
-        DataBlockDocument(headerGenerator: DataBlockHeaderGeneratorSpy(), titles: [], dataBlockImageData: [])
+        DataBlockDocument(
+            headerGenerator: DataBlockHeaderGeneratorSpy(),
+            content: []
+        )
     }
 
     private func makeInvalidPDFData() -> Data {

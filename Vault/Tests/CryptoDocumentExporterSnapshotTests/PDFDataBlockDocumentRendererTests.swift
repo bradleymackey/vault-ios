@@ -18,7 +18,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsSingleImage() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockDocument(dataBlockImageData: [anyData()])
+        let document = DataBlockDocument(content: [.images([anyData()])])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -26,7 +26,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsRowOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockDocument(dataBlockImageData: Array(repeating: anyData(), count: 3))
+        let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 3))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -34,7 +34,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
         let sut = makeSUT(tilesPerRow: 10)
-        let document = DataBlockDocument(dataBlockImageData: Array(repeating: anyData(), count: 24))
+        let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 24))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -42,7 +42,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsMultiplePagesOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockDocument(dataBlockImageData: Array(repeating: anyData(), count: 14))
+        let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 14))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
@@ -57,8 +57,10 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockDocument(
-            titles: [titleLabel],
-            dataBlockImageData: Array(repeating: anyData(), count: 14)
+            content: [
+                .title(titleLabel),
+                .images(Array(repeating: anyData(), count: 14)),
+            ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -74,8 +76,10 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockDocument(
-            titles: [titleLabel],
-            dataBlockImageData: Array(repeating: anyData(), count: 14)
+            content: [
+                .title(titleLabel),
+                .images(Array(repeating: anyData(), count: 14)),
+            ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -91,8 +95,10 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockDocument(
-            titles: [titleLabel],
-            dataBlockImageData: Array(repeating: anyData(), count: 14)
+            content: [
+                .title(titleLabel),
+                .images(Array(repeating: anyData(), count: 14)),
+            ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -108,8 +114,10 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 22, right: 10)
         )
         let document = DataBlockDocument(
-            titles: [titleLabel],
-            dataBlockImageData: Array(repeating: anyData(), count: 14)
+            content: [
+                .title(titleLabel),
+                .images(Array(repeating: anyData(), count: 14)),
+            ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -124,8 +132,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: .init(top: 36, left: 10, bottom: 0, right: 10)
         )
         let document = DataBlockDocument(
-            titles: [titleLabel, longSubtitle()],
-            dataBlockImageData: Array(repeating: anyData(), count: 14)
+            content: [
+                .title(titleLabel),
+                .title(longSubtitle()),
+                .images(Array(repeating: anyData(), count: 14)),
+            ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -137,8 +148,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let title = longTitle(padding: .init(top: 40, left: 40, bottom: 10, right: 40))
         let subtitle = longSubtitle(padding: .init(top: 40, left: 60, bottom: 10, right: 60))
         let document = DataBlockDocument(
-            titles: [title, subtitle],
-            dataBlockImageData: Array(repeating: anyData(), count: 0)
+            content: [
+                .title(title),
+                .title(subtitle),
+                .images(Array(repeating: anyData(), count: 0)),
+            ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
@@ -196,7 +210,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     }
 
     private func emptyDocument() -> DataBlockDocument {
-        DataBlockDocument(dataBlockImageData: [])
+        DataBlockDocument(content: [])
     }
 
     private func longTitle(padding: UIEdgeInsets = .init(top: 36, left: 10, bottom: 0, right: 10)) -> DataBlockLabel {
@@ -242,8 +256,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let document = DataBlockDocument(
             headerGenerator: headerGenerator,
-            titles: [title, subtitle],
-            dataBlockImageData: Array(repeating: anyData(), count: numberOfImages)
+            content: [
+                .title(title),
+                .title(subtitle),
+                .images(Array(repeating: anyData(), count: numberOfImages)),
+            ]
         )
         return try XCTUnwrap(sut.render(document: document))
     }
