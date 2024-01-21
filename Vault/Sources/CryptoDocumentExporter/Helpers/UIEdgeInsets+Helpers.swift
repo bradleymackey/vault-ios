@@ -8,4 +8,8 @@ extension UIEdgeInsets {
     var horizontalTotal: CGFloat {
         left + right
     }
+
+    init(uniform: CGFloat) {
+        self = .init(top: uniform, left: uniform, bottom: uniform, right: uniform)
+    }
 }

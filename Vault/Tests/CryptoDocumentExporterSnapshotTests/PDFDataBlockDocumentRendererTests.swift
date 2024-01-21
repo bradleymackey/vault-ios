@@ -145,6 +145,37 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         assertSnapshot(matching: pdf, as: .pdf())
     }
 
+    func test_render_drawsShortHeaders() throws {
+        let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: ShortHeaderGenerator())
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsLongHeaders() throws {
+        let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: LongHeaderGenerator())
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsLeftHeadersOnly() throws {
+        let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: LeftHeaderGenerator())
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsRightHeadersOnly() throws {
+        let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: RightHeaderGenerator())
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsHeadersOnAllPages() throws {
+        let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: PageNumberHeaderGenerator(), numberOfImages: 50)
+
+        assertSnapshot(matching: pdf, as: .pdf(page: 1))
+        assertSnapshot(matching: pdf, as: .pdf(page: 2))
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(
@@ -187,6 +218,35 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             padding: padding
         )
     }
+
+    private func makeDocumentWithHeaderGenerator(
+        headerGenerator: any DataBlockHeaderGenerator,
+        numberOfImages: Int = 10
+    ) throws -> PDFDocument {
+        let sut = PDFDataBlockDocumentRenderer(
+            rendererFactory: StubPDFRendererFactory(),
+            imageRenderer: PlainBlackColorImageRenderer(),
+            blockLayout: { size in
+                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: 5, margin: 10, spacing: 5)
+            }
+        )
+        let title = DataBlockLabel(
+            text: "My Title",
+            font: UIFont.systemFont(ofSize: 50, weight: .bold),
+            padding: .zero
+        )
+        let subtitle = DataBlockLabel(
+            text: "Testing headers only - no padding on these labels",
+            font: UIFont.systemFont(ofSize: 18, weight: .regular),
+            padding: .zero
+        )
+        let document = DataBlockDocument(
+            headerGenerator: headerGenerator,
+            titles: [title, subtitle],
+            dataBlockImageData: Array(repeating: anyData(), count: numberOfImages)
+        )
+        return try XCTUnwrap(sut.render(document: document))
+    }
 }
 
 private struct StubPDFRendererFactory: PDFRendererFactory {
@@ -209,5 +269,45 @@ private class RGBCyclingStubColorImageRenderer: PDFImageRenderer {
         let image = UIImage.from(color: states[currentState % states.count])
         let resizer = UIImageResizer(mode: .noSmoothing)
         return resizer.resize(image: image, to: size)
+    }
+}
+
+private class PlainBlackColorImageRenderer: PDFImageRenderer {
+    func makeImage(fromData _: Data, size _: CGSize) -> UIImage? {
+        UIImage.from(color: .black)
+    }
+}
+
+private class ShortHeaderGenerator: DataBlockHeaderGenerator {
+    func makeHeader(pageNumber _: Int) -> DataBlockHeader? {
+        DataBlockHeader(left: "LEFT", right: "RIGHT")
+    }
+}
+
+private class LongHeaderGenerator: DataBlockHeaderGenerator {
+    func makeHeader(pageNumber _: Int) -> DataBlockHeader? {
+        let left = Array(repeating: "LEFT", count: 100).joined(separator: " ")
+        let right = Array(repeating: "RIGHT", count: 100).joined(separator: " ")
+        return DataBlockHeader(left: left, right: right)
+    }
+}
+
+private class LeftHeaderGenerator: DataBlockHeaderGenerator {
+    func makeHeader(pageNumber _: Int) -> DataBlockHeader? {
+        let left = Array(repeating: "LEFT", count: 100).joined(separator: " ")
+        return DataBlockHeader(left: left, right: nil)
+    }
+}
+
+private class RightHeaderGenerator: DataBlockHeaderGenerator {
+    func makeHeader(pageNumber _: Int) -> DataBlockHeader? {
+        let right = Array(repeating: "RIGHT", count: 100).joined(separator: " ")
+        return DataBlockHeader(left: nil, right: right)
+    }
+}
+
+private class PageNumberHeaderGenerator: DataBlockHeaderGenerator {
+    func makeHeader(pageNumber: Int) -> DataBlockHeader? {
+        DataBlockHeader(left: "L: Page \(pageNumber)", right: "R: Page \(pageNumber)")
     }
 }

@@ -25,7 +25,7 @@ public struct PDFDataBlockDocumentRenderer<
     public func render(document: DataBlockDocument) throws -> PDFDocument {
         let renderer = rendererFactory.makeRenderer()
         let data = renderer.pdfData { context in
-            let drawer = PDFDocumentDrawerHelper(context: context)
+            let drawer = PDFDocumentDrawerHelper(context: context, headerGenerator: document.headerGenerator)
             drawer.startNextPage()
             for title in document.titles {
                 drawer.draw(label: title)
@@ -42,11 +42,14 @@ public struct PDFDataBlockDocumentRenderer<
 
 private final class PDFDocumentDrawerHelper {
     let context: UIGraphicsPDFRendererContext
+    private let headerGenerator: any DataBlockHeaderGenerator
     private var currentVerticalOffset = 0.0
     private var currentImageNumberOnPage = 0
+    private var currentPage = 0
 
-    init(context: UIGraphicsPDFRendererContext) {
+    init(context: UIGraphicsPDFRendererContext, headerGenerator: any DataBlockHeaderGenerator) {
         self.context = context
+        self.headerGenerator = headerGenerator
     }
 
     func draw(label: DataBlockLabel) {
@@ -78,8 +81,59 @@ private final class PDFDocumentDrawerHelper {
 
     func startNextPage() {
         context.beginPage()
+        currentPage += 1
         currentVerticalOffset = 0.0
         currentImageNumberOnPage = 0
+
+        drawHeaderIfNeeded()
+    }
+
+    private func drawHeaderIfNeeded() {
+        guard let header = headerGenerator.makeHeader(pageNumber: currentPage) else { return }
+        var labelHeights = [Double]()
+        if let left = header.left {
+            let (attributedString, rect) = renderedHeaderLabel(text: left, position: .left)
+            attributedString.draw(in: rect)
+            labelHeights.append(rect.height)
+        }
+        if let right = header.right {
+            let (attributedString, rect) = renderedHeaderLabel(text: right, position: .right)
+            attributedString.draw(in: rect)
+            labelHeights.append(rect.height)
+        }
+        currentVerticalOffset += labelHeights.max() ?? 0.0
+    }
+
+    private func renderedHeaderLabel(text: String, position: HeaderPosition) -> (NSAttributedString, CGRect) {
+        let labelInsetSize = 16.0
+        let labelFontSize = 9.0
+        let labelInsets = UIEdgeInsets(uniform: labelInsetSize)
+
+        let paragraphStyle = NSMutableParagraphStyle()
+        paragraphStyle.alignment = position.textAlignment
+        paragraphStyle.lineBreakMode = position.lineBreakMode
+
+        let attributedString = NSAttributedString(
+            string: text,
+            attributes: [
+                NSAttributedString.Key.paragraphStyle: paragraphStyle,
+                NSAttributedString.Key.font: UIFont.systemFont(ofSize: labelFontSize, weight: .regular),
+                NSAttributedString.Key.foregroundColor: UIColor.darkGray,
+            ]
+        )
+        let width = (context.pdfContextBounds.width / 2) - labelInsets.horizontalTotal
+        let boundingRect = attributedString.boundingRect(
+            with: CGSize(width: width, height: .greatestFiniteMagnitude),
+            options: .usesLineFragmentOrigin,
+            context: nil
+        )
+        let textRect = CGRect(
+            x: position.xPosition(width: width, insetSize: labelInsetSize),
+            y: labelInsets.top,
+            width: width,
+            height: boundingRect.height + labelInsets.verticalTotal
+        )
+        return (attributedString, textRect)
     }
 
     /// Returns the first rect that fits in the page bounds or `nil`.
@@ -120,5 +174,34 @@ private final class PDFDocumentDrawerHelper {
             height: boundingRect.height + label.padding.bottom
         )
         return (attributedText, textRect)
+    }
+}
+
+/// The position that a header label can be rendered in.
+private enum HeaderPosition {
+    case left, right
+
+    var textAlignment: NSTextAlignment {
+        switch self {
+        case .left: .left
+        case .right: .right
+        }
+    }
+
+    var lineBreakMode: NSLineBreakMode {
+        switch self {
+        case .left: .byTruncatingTail
+        case .right: .byTruncatingHead
+        }
+    }
+
+    func xPosition(width: CGFloat, insetSize: CGFloat) -> CGFloat {
+        switch self {
+        case .left: insetSize // left's `.left` padding
+        case .right: width
+            + insetSize // left's `.left` padding
+            + insetSize // left's `.right` padding
+            + insetSize // right's `.left` padding
+        }
     }
 }
