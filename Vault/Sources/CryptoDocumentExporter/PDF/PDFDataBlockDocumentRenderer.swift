@@ -78,6 +78,10 @@ private final class PDFDocumentDrawerHelper {
                 if let imageRect = getNextRectForImageOnPage(blockLayout: blockLayout) {
                     let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
                     image?.draw(in: imageRect)
+                } else {
+                    // can't draw image, even on the next page.
+                    // there probably just isn't enough space on the page, so ignore.
+                    // FIXME: should this throw? probably
                 }
             }
         }
