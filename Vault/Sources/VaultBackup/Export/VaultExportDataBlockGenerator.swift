@@ -10,6 +10,6 @@ struct VaultExportDataBlockGenerator {
     }
 
     func makeDocument() throws -> DataBlockExportDocument {
-        DataBlockExportDocument(titles: [], dataBlockImageData: [])
+        DataBlockExportDocument(headerForPage: { _ in nil }, titles: [], dataBlockImageData: [])
     }
 }
