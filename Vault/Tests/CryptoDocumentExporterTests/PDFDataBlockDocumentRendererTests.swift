@@ -13,11 +13,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     }
 
     func test_init_rendersNoBlocks() {
-        let blockLayout = makeBlockLayout()
+        let rectLayout = makeRectSeriesLayout()
 
-        _ = makeSUT(blockLayout: blockLayout)
+        _ = makeSUT(rectLayout: rectLayout)
 
-        XCTAssertFalse(blockLayout.rectAtIndexCalled)
+        XCTAssertFalse(rectLayout.rectAtIndexCalled)
     }
 
     func test_render_makesSingleRendererFromFactory() throws {
@@ -53,12 +53,12 @@ extension PDFDataBlockDocumentRendererTests {
     private func makeSUT(
         rendererFactory: RendererFactory = makeRendererFactory(),
         imageRenderer: ImageRenderer = makeImageRenderer(),
-        blockLayout: BlockLayout = makeBlockLayout()
-    ) -> PDFDataBlockDocumentRenderer<ImageRenderer, BlockLayout> {
+        rectLayout: RectLayout = makeRectSeriesLayout()
+    ) -> PDFDataBlockDocumentRenderer<ImageRenderer, RectLayout> {
         PDFDataBlockDocumentRenderer(
             rendererFactory: rendererFactory,
             imageRenderer: imageRenderer,
-            blockLayout: { _ in blockLayout }
+            blockLayout: { _ in rectLayout }
         )
     }
 
@@ -73,7 +73,7 @@ extension PDFDataBlockDocumentRendererTests {
 }
 
 private typealias ImageRenderer = PDFImageRendererSpy
-private typealias BlockLayout = PDFDataBlockLayoutSpy
+private typealias RectLayout = RectSeriesLayoutSpy
 private typealias RendererFactory = PDFRendererFactorySpy
 
 private func makeImageRenderer() -> ImageRenderer {
@@ -82,8 +82,8 @@ private func makeImageRenderer() -> ImageRenderer {
     return stub
 }
 
-private func makeBlockLayout() -> BlockLayout {
-    let stub = BlockLayout()
+private func makeRectSeriesLayout() -> RectLayout {
+    let stub = RectLayout()
     stub.rectAtIndexReturnValue = CGRect(origin: .zero, size: .zero)
     return stub
 }
