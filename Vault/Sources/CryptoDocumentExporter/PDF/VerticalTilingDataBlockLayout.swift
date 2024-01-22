@@ -3,7 +3,7 @@ import Foundation
 
 /// Lays out square rects in a tile.
 /// This is essentially an iterator that can be used once per layout.
-public struct VerticalTilingDataBlockLayout: RectSeriesLayout {
+public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
     public let bounds: CGRect
     public let tilesPerRow: UInt
     public let margin: CGFloat
