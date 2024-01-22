@@ -31,8 +31,7 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
             "Document should be returned from the block renderer"
         )
         XCTAssertEqual(renderer.renderDocumentCallsCount, 1)
-        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.titles.map(\.text), ["My Export"])
-        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.dataBlockImageData, [])
+        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.content.count, 1)
     }
 }
 
@@ -49,7 +48,7 @@ extension VaultExportPDFDocumentRendererTests {
     }
 }
 
-private typealias RendererSpy = PDFDocumentRendererSpy<DataBlockExportDocument>
+private typealias RendererSpy = PDFDocumentRendererSpy<DataBlockDocument>
 
 private func makeRendererSpy() -> RendererSpy {
     let renderer = RendererSpy()
