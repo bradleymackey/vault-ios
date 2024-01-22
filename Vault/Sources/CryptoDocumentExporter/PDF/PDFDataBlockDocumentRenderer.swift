@@ -68,16 +68,27 @@ private final class PDFDocumentDrawerHelper {
     }
 
     func draw(images: [Data], imageRenderer: some PDFImageRenderer, blockLayout: (CGRect) -> some RectSeriesLayout) {
+        var currentImageNumberOnPage = 0
+        var newOffset = currentVerticalOffset
         for imageData in images {
             defer { currentImageNumberOnPage += 1 }
-            if let imageRect = getNextRectForImageOnPage(blockLayout: blockLayout) {
+            if let (imageRect, spacing) = getNextRectForImageOnPage(
+                imageNumberOnPage: currentImageNumberOnPage,
+                blockLayout: blockLayout
+            ) {
                 let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
                 image?.draw(in: imageRect)
+                newOffset = imageRect.maxY + spacing
             } else {
                 startNextPage()
-                if let imageRect = getNextRectForImageOnPage(blockLayout: blockLayout) {
+                currentImageNumberOnPage = 0
+                if let (imageRect, spacing) = getNextRectForImageOnPage(
+                    imageNumberOnPage: currentImageNumberOnPage,
+                    blockLayout: blockLayout
+                ) {
                     let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
                     image?.draw(in: imageRect)
+                    newOffset = imageRect.maxY + spacing
                 } else {
                     // can't draw image, even on the next page.
                     // there probably just isn't enough space on the page, so ignore.
@@ -85,13 +96,13 @@ private final class PDFDocumentDrawerHelper {
                 }
             }
         }
+        currentVerticalOffset = newOffset
     }
 
     func startNextPage() {
         context.beginPage()
         currentPage += 1
         currentVerticalOffset = 0.0
-        currentImageNumberOnPage = 0
 
         drawHeaderIfNeeded()
     }
@@ -145,12 +156,18 @@ private final class PDFDocumentDrawerHelper {
     }
 
     /// Returns the first rect that fits in the page bounds or `nil`.
-    private func getNextRectForImageOnPage(blockLayout: (CGRect) -> some RectSeriesLayout) -> CGRect? {
+    private func getNextRectForImageOnPage(
+        imageNumberOnPage: Int,
+        blockLayout: (CGRect) -> some RectSeriesLayout
+    ) -> (rect: CGRect, gridSpacing: CGFloat)? {
         let currentInsets = UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0)
         let currentLayoutEngine = blockLayout(
             context.pdfContextBounds.inset(by: currentInsets)
         )
-        return currentLayoutEngine.rect(atIndex: UInt(currentImageNumberOnPage))
+        guard let rect = currentLayoutEngine.rect(atIndex: UInt(imageNumberOnPage)) else {
+            return nil
+        }
+        return (rect, currentLayoutEngine.spacing)
     }
 
     private func renderedLabel(

@@ -32,6 +32,21 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         assertSnapshot(matching: pdf, as: .pdf())
     }
 
+    func test_render_drawsIntersposedImagesAndTitles() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let document = DataBlockDocument(content: [
+            .images(Array(repeating: anyData(), count: 10)),
+            .title(longSubtitle(padding: .zero)),
+            .images(Array(repeating: anyData(), count: 3)),
+            .title(longSubtitle(padding: .zero)),
+            .images(Array(repeating: anyData(), count: 2)),
+            .title(longSubtitle(padding: .zero)),
+        ])
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
     func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
         let sut = makeSUT(tilesPerRow: 10)
         let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 24))])

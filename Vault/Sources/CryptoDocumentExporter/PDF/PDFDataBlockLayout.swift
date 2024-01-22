@@ -10,4 +10,6 @@ import Spyable
 public protocol RectSeriesLayout {
     /// - Returns: `nil` if we cannot fit a block on this page at this position.
     func rect(atIndex index: UInt) -> CGRect?
+    /// - Returns: the consistent spacing used between the drawn rects
+    var spacing: CGFloat { get }
 }
