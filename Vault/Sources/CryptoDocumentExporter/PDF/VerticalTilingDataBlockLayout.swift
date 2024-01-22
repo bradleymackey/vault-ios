@@ -6,13 +6,11 @@ import Foundation
 public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
     public let bounds: CGRect
     public let tilesPerRow: UInt
-    public let margin: CGFloat
     public let spacing: CGFloat
 
-    public init(bounds: CGRect, tilesPerRow: UInt, margin: CGFloat = 0, spacing: CGFloat = 0) {
+    public init(bounds: CGRect, tilesPerRow: UInt, spacing: CGFloat = 0) {
         self.bounds = bounds
         self.tilesPerRow = tilesPerRow
-        self.margin = margin
         self.spacing = spacing
     }
 
@@ -27,8 +25,7 @@ public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
 
     /// Determines if this rect fits within the bounds of the layout.
     public func isFullyWithinBounds(rect: CGRect) -> Bool {
-        let effectiveBounds = bounds.insetBy(dx: margin, dy: margin)
-        return effectiveBounds.intersection(rect).isAlmostEqual(to: rect)
+        bounds.intersection(rect).isAlmostEqual(to: rect)
     }
 
     private func origin(index: UInt) -> CGPoint {
@@ -44,7 +41,6 @@ public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
         let value = CGFloat(position)
         var position = value * sideLength
         position += offset
-        position += margin
         position += value * spacing
         return position
     }
@@ -52,8 +48,7 @@ public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
     /// The length of the side of all tiles.
     private var sideLength: CGFloat {
         let horizontalSpacingRequired = CGFloat(tilesPerRow - 1) * spacing
-        let totalHorizontalMargin = margin * 2
-        let availableWidth = bounds.width - totalHorizontalMargin - horizontalSpacingRequired
+        let availableWidth = bounds.width - horizontalSpacingRequired
         return availableWidth / CGFloat(tilesPerRow)
     }
 }

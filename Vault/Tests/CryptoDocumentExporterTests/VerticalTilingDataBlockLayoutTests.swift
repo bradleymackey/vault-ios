@@ -35,36 +35,6 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    func test_rect_layoutSizesToRespectMargin() {
-        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
-
-        expectFirstRow(
-            for: sut,
-            sizes: [.square(30), .square(30), .square(30)],
-            origins: [CGPoint(x: 5, y: 5), CGPoint(x: 35, y: 5), CGPoint(x: 65, y: 5)]
-        )
-        expectFirstColumn(
-            for: sut,
-            sizes: [.square(30), .square(30), .square(30)],
-            origins: [CGPoint(x: 5, y: 5), CGPoint(x: 5, y: 35), CGPoint(x: 5, y: 65)]
-        )
-    }
-
-    func test_rect_escapesBoundsIfNegativeMargin() {
-        let sut = makeSUT(size: .square(80), tilesPerRow: 3, margin: -5)
-
-        expectFirstRow(
-            for: sut,
-            sizes: [.square(30), .square(30), .square(30)],
-            origins: [CGPoint(x: -5, y: -5), CGPoint(x: 25, y: -5), CGPoint(x: 55, y: -5)]
-        )
-        expectFirstColumn(
-            for: sut,
-            sizes: [.square(30), .square(30), .square(30)],
-            origins: [CGPoint(x: -5, y: -5), CGPoint(x: -5, y: 25), CGPoint(x: -5, y: 55)]
-        )
-    }
-
     func test_rect_layoutSizesToRespectSpacing() {
         let sut = makeSUT(size: .square(110), tilesPerRow: 3, spacing: 10)
 
@@ -100,7 +70,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     }
 
     func test_rect_isNotNilIfContainedWithinBounds() {
-        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
+        let sut = makeSUT(size: .square(100), tilesPerRow: 3)
 
         for index: UInt in 0 ..< 9 {
             XCTAssertNotNil(sut.rect(atIndex: index))
@@ -108,7 +78,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     }
 
     func test_rect_isNilIfOutsideOfBounds() {
-        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
+        let sut = makeSUT(size: .square(100), tilesPerRow: 3)
 
         for index: UInt in 9 ..< 100 {
             XCTAssertNil(sut.rect(atIndex: index))
@@ -116,7 +86,7 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     }
 
     func test_isFullyWithinBounds_containsItem() {
-        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
+        let sut = makeSUT(size: .square(100), tilesPerRow: 3)
 
         let validRects: [CGRect] = [
             CGRect(x: 5, y: 5, width: 10, height: 10),
@@ -130,12 +100,9 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
     }
 
     func test_isFullyWithinBounds_doesNotContainItem() {
-        let sut = makeSUT(size: .square(100), tilesPerRow: 3, margin: 5)
+        let sut = makeSUT(size: .square(100), tilesPerRow: 3)
 
         let invalidRects: [CGRect] = [
-            CGRect(x: 0, y: 0, width: 10, height: 10),
-            CGRect(x: 0, y: 0, width: 100, height: 100),
-            CGRect(x: 5, y: 5, width: 95, height: 95),
             CGRect(x: -5, y: -5, width: 10, height: 10),
             CGRect(x: -5, y: -5, width: 500, height: 10),
         ]
@@ -151,13 +118,11 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         origin: CGPoint = .zero,
         size: CGSize,
         tilesPerRow: UInt,
-        margin: CGFloat = 0,
         spacing: CGFloat = 0
     ) -> VerticalTilingDataBlockLayout {
         VerticalTilingDataBlockLayout(
             bounds: CGRect(origin: origin, size: size),
             tilesPerRow: tilesPerRow,
-            margin: margin,
             spacing: spacing
         )
     }

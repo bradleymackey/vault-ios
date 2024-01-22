@@ -13,11 +13,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     }
 
     func test_init_rendersNoBlocks() {
-        let rectLayout = makeRectSeriesLayout()
+        let layoutSpy = LayoutSpy()
 
-        _ = makeSUT(rectLayout: rectLayout)
+        _ = makeSUT(rectLayout: layoutSpy)
 
-        XCTAssertFalse(rectLayout.rectAtIndexCalled)
+        XCTAssertFalse(layoutSpy.rectAtIndexCalled)
     }
 
     func test_render_makesSingleRendererFromFactory() throws {
@@ -53,9 +53,10 @@ extension PDFDataBlockDocumentRendererTests {
     private func makeSUT(
         rendererFactory: RendererFactory = makeRendererFactory(),
         imageRenderer: ImageRenderer = makeImageRenderer(),
-        rectLayout: RectLayout = makeRectSeriesLayout()
-    ) -> PDFDataBlockDocumentRenderer<ImageRenderer, RectLayout> {
+        rectLayout: LayoutSpy = LayoutSpy()
+    ) -> PDFDataBlockDocumentRenderer<ImageRenderer, LayoutSpy> {
         PDFDataBlockDocumentRenderer(
+            pageMargin: 10.0,
             rendererFactory: rendererFactory,
             imageRenderer: imageRenderer,
             blockLayout: { _ in rectLayout }
@@ -75,19 +76,26 @@ extension PDFDataBlockDocumentRendererTests {
     }
 }
 
+private class LayoutSpy: RectSeriesLayout, PageLayout {
+    var rectAtIndexCalled = false
+    func rect(atIndex _: UInt) -> CGRect? {
+        rectAtIndexCalled = true
+        return .init(origin: .zero, size: .zero)
+    }
+
+    var spacing: CGFloat = 5.0
+
+    func isFullyWithinBounds(rect _: CGRect) -> Bool {
+        false
+    }
+}
+
 private typealias ImageRenderer = PDFImageRendererSpy
-private typealias RectLayout = RectSeriesLayoutSpy
 private typealias RendererFactory = PDFRendererFactorySpy
 
 private func makeImageRenderer() -> ImageRenderer {
     let stub = ImageRenderer()
     stub.makeImageFromDataSizeReturnValue = nil
-    return stub
-}
-
-private func makeRectSeriesLayout() -> RectLayout {
-    let stub = RectLayout()
-    stub.rectAtIndexReturnValue = CGRect(origin: .zero, size: .zero)
     return stub
 }
 

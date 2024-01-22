@@ -7,6 +7,7 @@ import XCTest
 final class PDFDataBlockDocumentRendererTests: XCTestCase {
     override func setUp() {
         super.setUp()
+        isRecording = false
     }
 
     func test_render_drawsEmptyPDFDocument() throws {
@@ -45,6 +46,29 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsLabelsOnNextPageIfNotEnoughRoom() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let document = DataBlockDocument(content: [
+            .images(Array(repeating: anyData(), count: 10)),
+            .title(longSubtitle(padding: .zero)),
+            .images(Array(repeating: anyData(), count: 3)),
+            .title(longSubtitle(padding: .zero)),
+            .images(Array(repeating: anyData(), count: 2)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+            .title(longSubtitle(padding: .zero)),
+        ])
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
+        assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
     }
 
     func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
@@ -158,6 +182,20 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         assertSnapshot(matching: pdf, as: .pdf())
     }
 
+    func test_render_labelsRespectPageMargin() throws {
+        let sut = makeSUT(tilesPerRow: 4, margin: 40)
+        let text = Array(repeating: "Hello", count: 30).joined(separator: " ")
+        let label = DataBlockLabel(text: text, font: .systemFont(ofSize: 13), padding: .zero)
+        let document = DataBlockDocument(
+            content: [
+                .title(label),
+            ]
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf(page: 1))
+    }
+
     func test_render_labelsRespectPadding() throws {
         let sut = makeSUT(tilesPerRow: 10)
         let title = longTitle(padding: .init(top: 40, left: 40, bottom: 10, right: 40))
@@ -209,13 +247,15 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     private func makeSUT(
         tilesPerRow: UInt,
+        margin: CGFloat = 10.0,
         imageRenderer: RGBCyclingStubColorImageRenderer = RGBCyclingStubColorImageRenderer()
     ) -> some PDFDocumentRenderer<DataBlockDocument> {
         PDFDataBlockDocumentRenderer(
+            pageMargin: margin,
             rendererFactory: StubPDFRendererFactory(),
             imageRenderer: imageRenderer,
             blockLayout: { size in
-                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: tilesPerRow, margin: 10, spacing: 5)
+                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: tilesPerRow, spacing: 5)
             }
         )
     }
@@ -253,10 +293,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         numberOfImages: Int = 10
     ) throws -> PDFDocument {
         let sut = PDFDataBlockDocumentRenderer(
+            pageMargin: 10,
             rendererFactory: StubPDFRendererFactory(),
             imageRenderer: PlainBlackColorImageRenderer(),
             blockLayout: { size in
-                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: 5, margin: 10, spacing: 5)
+                VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: 5, spacing: 5)
             }
         )
         let title = DataBlockLabel(
