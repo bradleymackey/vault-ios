@@ -67,33 +67,41 @@ private final class PDFDocumentDrawerHelper {
         currentVerticalOffset += rect.height
     }
 
+    struct NoPlaceToDraw: Error {}
+
     func draw(images: [Data], imageRenderer: some PDFImageRenderer, blockLayout: (CGRect) -> some RectSeriesLayout) {
         var currentImageNumberOnPage = 0
         var newOffset = currentVerticalOffset
+
         for imageData in images {
             defer { currentImageNumberOnPage += 1 }
-            if let (imageRect, spacing) = getNextRectForImageOnPage(
-                imageNumberOnPage: currentImageNumberOnPage,
-                blockLayout: blockLayout
-            ) {
-                let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
-                image?.draw(in: imageRect)
-                newOffset = imageRect.maxY + spacing
-            } else {
-                startNextPage()
-                currentImageNumberOnPage = 0
-                if let (imageRect, spacing) = getNextRectForImageOnPage(
+
+            /// Gets the next location and attempts to draw the image there.
+            /// - Throws `NoPlaceToDraw` if we can't get a rect for that location.
+            func attemptToDrawNextImage() throws {
+                if let location = getNextRectForImageOnPage(
                     imageNumberOnPage: currentImageNumberOnPage,
                     blockLayout: blockLayout
                 ) {
-                    let image = imageRenderer.makeImage(fromData: imageData, size: imageRect.size)
-                    image?.draw(in: imageRect)
-                    newOffset = imageRect.maxY + spacing
+                    let image = imageRenderer.makeImage(fromData: imageData, size: location.rect.size)
+                    image?.draw(in: location.rect)
+                    newOffset = location.maxYWithPadding
                 } else {
-                    // can't draw image, even on the next page.
-                    // there probably just isn't enough space on the page, so ignore.
-                    // FIXME: should this throw? probably
+                    throw NoPlaceToDraw()
                 }
+            }
+
+            do {
+                try attemptToDrawNextImage()
+            } catch {
+                // start a new page and draw from there
+                startNextPage()
+                currentImageNumberOnPage = 0
+
+                // if this fails, we can't draw the image, even on the next page.
+                // there probably just isn't enough space on the page, so ignore.
+                // FIXME: should this throw? probably
+                try? attemptToDrawNextImage()
             }
         }
         currentVerticalOffset = newOffset
@@ -155,11 +163,20 @@ private final class PDFDocumentDrawerHelper {
         return (attributedString, textRect)
     }
 
+    private struct TargetImageLocation {
+        var rect: CGRect
+        var gridSpacing: CGFloat
+
+        var maxYWithPadding: CGFloat {
+            rect.maxY + gridSpacing
+        }
+    }
+
     /// Returns the first rect that fits in the page bounds or `nil`.
     private func getNextRectForImageOnPage(
         imageNumberOnPage: Int,
         blockLayout: (CGRect) -> some RectSeriesLayout
-    ) -> (rect: CGRect, gridSpacing: CGFloat)? {
+    ) -> TargetImageLocation? {
         let currentInsets = UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0)
         let currentLayoutEngine = blockLayout(
             context.pdfContextBounds.inset(by: currentInsets)
@@ -167,7 +184,7 @@ private final class PDFDocumentDrawerHelper {
         guard let rect = currentLayoutEngine.rect(atIndex: UInt(imageNumberOnPage)) else {
             return nil
         }
-        return (rect, currentLayoutEngine.spacing)
+        return TargetImageLocation(rect: rect, gridSpacing: currentLayoutEngine.spacing)
     }
 
     private func renderedLabel(
