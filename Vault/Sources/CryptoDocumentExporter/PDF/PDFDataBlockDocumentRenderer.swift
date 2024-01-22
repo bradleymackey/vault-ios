@@ -78,18 +78,23 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     }
 
     func draw(label: DataBlockLabel) {
-        let currentLayoutEngine = pageLayout(currentPageBoundsWithMargin)
-        let (attributedString, rect) = renderedLabel(for: label)
-        if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
-            attributedString.draw(in: rect)
-            currentVerticalOffset += label.padding.top
-            currentVerticalOffset += rect.height
-        } else {
-            startNextPage()
+        func attemptToDrawLabel() throws {
+            let currentLayoutEngine = pageLayout(currentPageBoundsWithMargin)
             let (attributedString, rect) = renderedLabel(for: label)
-            attributedString.draw(in: rect)
-            currentVerticalOffset += label.padding.top
-            currentVerticalOffset += rect.height
+            if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
+                attributedString.draw(in: rect)
+                currentVerticalOffset += label.padding.top
+                currentVerticalOffset += rect.height
+            } else {
+                throw NoPlaceToDraw()
+            }
+        }
+
+        do {
+            try attemptToDrawLabel()
+        } catch {
+            startNextPage()
+            try? attemptToDrawLabel()
         }
     }
 
