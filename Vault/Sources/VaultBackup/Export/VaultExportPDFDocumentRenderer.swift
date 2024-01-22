@@ -21,8 +21,7 @@ public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
     public func render(document _: VaultExportPayload) throws -> PDFDocument {
         let document = DataBlockDocument(
             headerGenerator: VaultExportDataBlockHeaderGenerator(),
-            titles: [.init(text: "My Export", font: .systemFont(ofSize: 14), padding: .zero)],
-            dataBlockImageData: []
+            content: [.title(.init(text: "My Export", font: .systemFont(ofSize: 14), padding: .zero))]
         )
         return try renderer.render(document: document)
     }
