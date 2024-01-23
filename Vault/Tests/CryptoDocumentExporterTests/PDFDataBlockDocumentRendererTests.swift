@@ -56,7 +56,7 @@ extension PDFDataBlockDocumentRendererTests {
         rectLayout: LayoutSpy = LayoutSpy()
     ) -> PDFDataBlockDocumentRenderer<ImageRenderer, LayoutSpy> {
         PDFDataBlockDocumentRenderer(
-            pageMargin: 10.0,
+            margins: .init(uniform: 10.0),
             rendererFactory: rendererFactory,
             imageRenderer: imageRenderer,
             blockLayout: { _ in rectLayout }
