@@ -1,29 +1,11 @@
 import Foundation
 
-public enum PDFDocumentSize {
-    case a2
-    case a3
-    case a4
-    case a5
-    case a6
-    case usLetter
-    case usLegal
-    case usTabloid
-
+public protocol PDFDocumentSize {
     /// The size of the document in inches.
-    public var inchDimensions: (width: Double, height: Double) {
-        switch self {
-        case .a2: (16.54, 23.39)
-        case .a3: (11.69, 16.54)
-        case .a4: (8.27, 11.69)
-        case .a5: (5.83, 8.27)
-        case .a6: (4.13, 5.83)
-        case .usLetter: (8.5, 11)
-        case .usLegal: (8.5, 14)
-        case .usTabloid: (11, 17)
-        }
-    }
+    var inchDimensions: (width: Double, height: Double) { get }
+}
 
+extension PDFDocumentSize {
     /// The size of the document in points, given the `pointsPerInch`.
     ///
     /// The default PPI of a PDF is 72.
@@ -38,5 +20,49 @@ public enum PDFDocumentSize {
     public var idealNumberOfHorizontalSquaresForPaperSize: Int {
         let (width, _) = inchDimensions
         return Int(width / 1.6)
+    }
+}
+
+// MARK: - Sizes
+
+public struct A3DocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (11.69, 16.54)
+    }
+}
+
+public struct A4DocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (8.27, 11.69)
+    }
+}
+
+public struct A5DocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (5.83, 8.27)
+    }
+}
+
+public struct USLetterDocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (8.5, 11)
+    }
+}
+
+public struct USLegalDocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (8.5, 14)
+    }
+}
+
+public struct USTabloidDocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (11, 17)
     }
 }

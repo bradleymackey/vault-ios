@@ -4,7 +4,7 @@ import XCTest
 
 final class DocumentPagePDFRendererFactoryTests: XCTestCase {
     func test_makeRenderer_rendererHasSpecifiedSizeSet() {
-        let documentSize = PDFDocumentSize.usLetter
+        let documentSize = USLetterDocumentSize()
         let sut = makeSUT(size: documentSize)
 
         let renderer = sut.makeRenderer()
@@ -16,7 +16,7 @@ final class DocumentPagePDFRendererFactoryTests: XCTestCase {
     }
 
     func test_makeRenderer_rendererStartsAtOrigin() {
-        let documentSize = PDFDocumentSize.usLetter
+        let documentSize = USLetterDocumentSize()
         let sut = makeSUT(size: documentSize)
 
         let renderer = sut.makeRenderer()
@@ -58,7 +58,7 @@ final class DocumentPagePDFRendererFactoryTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeSUT(
-        size: PDFDocumentSize = .usLetter,
+        size: any PDFDocumentSize = USLetterDocumentSize(),
         applicationName: String? = "Any",
         authorName: String? = "Any",
         documentTitle: String? = "Any"
