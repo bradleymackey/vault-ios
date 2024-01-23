@@ -10,17 +10,35 @@ final class PDFDocumentSizeTests: XCTestCase {
         XCTAssertEqual(height, 11)
     }
 
-    func test_pointSize_usLetter() {
+    func test_pointSize_isCorrect() {
         let (width, height) = makeDefaultPointSize(USLetterDocumentSize())
 
         XCTAssertEqual(width, 612)
         XCTAssertEqual(height, 792)
     }
 
-    func test_idealNumberOfHorizontalSquaresForPaperSize_usLetter() {
+    func test_idealNumberOfHorizontalSquaresForPaperSize_isCorrect() {
         let number = makeSquares(USLetterDocumentSize())
 
         XCTAssertEqual(number, 5)
+    }
+
+    func test_inchMargins_isStandardForUSLetter() {
+        let margins = USLetterDocumentSize().inchMargins
+
+        XCTAssertEqual(margins.top, 1)
+        XCTAssertEqual(margins.left, 1)
+        XCTAssertEqual(margins.bottom, 1)
+        XCTAssertEqual(margins.right, 1)
+    }
+
+    func test_pointMargins_isCorrect() {
+        let margins = USLetterDocumentSize().pointMargins
+
+        XCTAssertEqual(margins.top, 72)
+        XCTAssertEqual(margins.left, 72)
+        XCTAssertEqual(margins.bottom, 72)
+        XCTAssertEqual(margins.right, 72)
     }
 
     // MARK: - Helpers
