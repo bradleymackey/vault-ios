@@ -8,18 +8,18 @@ public struct PDFDataBlockDocumentRenderer<
 >: PDFDocumentRenderer {
     public typealias Document = DataBlockDocument
 
-    public let pageMargin: CGFloat
+    public let documentSize: any PDFDocumentSize
     public let rendererFactory: any PDFRendererFactory
     public let imageRenderer: ImageRenderer
     public let blockLayout: (CGRect) -> RectLayout
 
     public init(
-        pageMargin: CGFloat,
+        documentSize: any PDFDocumentSize,
         rendererFactory: any PDFRendererFactory,
         imageRenderer: ImageRenderer,
         blockLayout: @escaping (CGRect) -> RectLayout
     ) {
-        self.pageMargin = pageMargin
+        self.documentSize = documentSize
         self.rendererFactory = rendererFactory
         self.imageRenderer = imageRenderer
         self.blockLayout = blockLayout
@@ -30,7 +30,7 @@ public struct PDFDataBlockDocumentRenderer<
         let data = renderer.pdfData { context in
             let drawer = PDFDocumentDrawerHelper(
                 context: context,
-                pageMargin: pageMargin,
+                documentSize: documentSize,
                 headerGenerator: document.headerGenerator,
                 pageLayout: blockLayout
             )
@@ -56,25 +56,25 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     let context: UIGraphicsPDFRendererContext
     private let headerGenerator: any DataBlockHeaderGenerator
     private let pageLayout: (CGRect) -> Layout
-    private let pageMargin: CGFloat
+    private let documentSize: any PDFDocumentSize
     private var currentVerticalOffset = 0.0
     private var currentImageNumberOnPage = 0
     private var currentPage = 0
 
     init(
         context: UIGraphicsPDFRendererContext,
-        pageMargin: CGFloat,
+        documentSize: any PDFDocumentSize,
         headerGenerator: any DataBlockHeaderGenerator,
         pageLayout: @escaping (CGRect) -> Layout
     ) {
         self.context = context
-        self.pageMargin = pageMargin
+        self.documentSize = documentSize
         self.headerGenerator = headerGenerator
         self.pageLayout = pageLayout
     }
 
     private var currentPageBoundsWithMargin: CGRect {
-        context.pdfContextBounds.insetBy(dx: pageMargin, dy: pageMargin)
+        context.pdfContextBounds.inset(by: documentSize.pointMargins)
     }
 
     func draw(label: DataBlockLabel) {
@@ -146,7 +146,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         context.beginPage()
         currentPage += 1
         currentVerticalOffset = 0.0
-        currentVerticalOffset += pageMargin
+        currentVerticalOffset += documentSize.pointMargins.top
 
         drawHeaderIfNeeded()
     }
@@ -190,8 +190,8 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             context: nil
         )
         let textRect = CGRect(
-            x: position.xPosition(width: width, margin: pageMargin),
-            y: pageMargin,
+            x: position.xPosition(width: width, margins: documentSize.pointMargins),
+            y: documentSize.pointMargins.top,
             width: width,
             height: boundingRect.height + headerBottomSpacing
         )
@@ -212,8 +212,14 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         imageNumberOnPage: Int,
         rectSeriesLayout: (CGRect) -> some RectSeriesLayout
     ) -> TargetImageLocation? {
-        let currentInsets = UIEdgeInsets(top: currentVerticalOffset, left: 0, bottom: 0, right: 0)
-        let currentLayoutEngine = rectSeriesLayout(currentPageBoundsWithMargin.inset(by: currentInsets))
+        let margins = documentSize.pointMargins
+        let currentInsets = UIEdgeInsets(
+            top: currentVerticalOffset,
+            left: margins.left,
+            bottom: margins.bottom,
+            right: margins.right
+        )
+        let currentLayoutEngine = rectSeriesLayout(context.pdfContextBounds.inset(by: currentInsets))
         guard let rect = currentLayoutEngine.rect(atIndex: UInt(imageNumberOnPage)) else {
             return nil
         }
@@ -239,7 +245,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             context: nil
         )
         let textRect = CGRect(
-            x: pageMargin + label.padding.left,
+            x: documentSize.pointMargins.left + label.padding.left,
             y: currentVerticalOffset + label.padding.top,
             width: width,
             height: boundingRect.height + label.padding.bottom
@@ -266,11 +272,10 @@ private enum HeaderPosition {
         }
     }
 
-    func xPosition(width: CGFloat, margin: CGFloat) -> CGFloat {
+    func xPosition(width: CGFloat, margins: UIEdgeInsets) -> CGFloat {
         switch self {
-        case .left: margin // left margin
-        case .right: width
-            + margin // left margin
+        case .left: margins.left
+        case .right: width + margins.left
         }
     }
 }

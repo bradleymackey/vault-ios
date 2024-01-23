@@ -182,13 +182,29 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         assertSnapshot(matching: pdf, as: .pdf())
     }
 
-    func test_render_labelsRespectPageMargin() throws {
-        let sut = makeSUT(tilesPerRow: 4, margin: 40)
+    func test_render_respectsPageNoMargin() throws {
+        let sut = makeSUT(tilesPerRow: 4, documentSize: NoMarginsDocumentSize())
         let text = Array(repeating: "Hello", count: 30).joined(separator: " ")
         let label = DataBlockLabel(text: text, font: .systemFont(ofSize: 13), padding: .zero)
         let document = DataBlockDocument(
             content: [
                 .title(label),
+                .images(Array(repeating: anyData(), count: 14)),
+            ]
+        )
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf(page: 1))
+    }
+
+    func test_render_repectsPageOffCenterMargins() throws {
+        let sut = makeSUT(tilesPerRow: 4, documentSize: OffCenterMarginsDocumentSize())
+        let text = Array(repeating: "Hello", count: 30).joined(separator: " ")
+        let label = DataBlockLabel(text: text, font: .systemFont(ofSize: 13), padding: .zero)
+        let document = DataBlockDocument(
+            content: [
+                .title(label),
+                .images(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -247,11 +263,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     private func makeSUT(
         tilesPerRow: UInt,
-        margin: CGFloat = 10.0,
+        documentSize: any PDFDocumentSize = USLetterDocumentSize(),
         imageRenderer: RGBCyclingStubColorImageRenderer = RGBCyclingStubColorImageRenderer()
     ) -> some PDFDocumentRenderer<DataBlockDocument> {
         PDFDataBlockDocumentRenderer(
-            pageMargin: margin,
+            documentSize: documentSize,
             rendererFactory: StubPDFRendererFactory(),
             imageRenderer: imageRenderer,
             blockLayout: { size in
@@ -293,7 +309,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         numberOfImages: Int = 10
     ) throws -> PDFDocument {
         let sut = PDFDataBlockDocumentRenderer(
-            pageMargin: 10,
+            documentSize: USLetterDocumentSize(),
             rendererFactory: StubPDFRendererFactory(),
             imageRenderer: PlainBlackColorImageRenderer(),
             blockLayout: { size in
@@ -322,16 +338,29 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     }
 }
 
-private struct StubPDFRendererFactory: PDFRendererFactory {
-    // us letter size for stub
-    var size = CGSize(width: 8.5 * 72, height: 11 * 72)
-    var rect: CGRect {
-        CGRect(origin: .zero, size: size)
+private struct NoMarginsDocumentSize: PDFDocumentSize {
+    var inchDimensions: (width: Double, height: Double) {
+        USLegalDocumentSize().inchDimensions
     }
 
-    func makeRenderer() -> UIGraphicsPDFRenderer {
-        UIGraphicsPDFRenderer(bounds: rect)
+    var inchMargins: (top: Double, left: Double, bottom: Double, right: Double) {
+        (0, 0, 0, 0)
     }
+}
+
+private struct OffCenterMarginsDocumentSize: PDFDocumentSize {
+    var inchDimensions: (width: Double, height: Double) {
+        USLegalDocumentSize().inchDimensions
+    }
+
+    var inchMargins: (top: Double, left: Double, bottom: Double, right: Double) {
+        (0, 0, 2, 2)
+    }
+}
+
+private struct StubPDFRendererFactory: PDFRendererFactory {
+    // us letter size for stub
+    var size: any PDFDocumentSize = USLetterDocumentSize()
 }
 
 private class RGBCyclingStubColorImageRenderer: PDFImageRenderer {

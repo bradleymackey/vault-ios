@@ -4,13 +4,13 @@ import UIKit
 ///
 /// Contains information about the size of PDF to render and metadata that will be associated with the PDF.
 public struct PDFDocumentPageRendererFactory: PDFRendererFactory {
-    public var size: PDFDocumentSize
+    public var size: any PDFDocumentSize
     public var documentTitle: String?
     public var applicationName: String?
     public var authorName: String?
 
     public init(
-        size: PDFDocumentSize,
+        size: any PDFDocumentSize,
         applicationName: String? = nil,
         authorName: String? = nil,
         documentTitle: String? = nil

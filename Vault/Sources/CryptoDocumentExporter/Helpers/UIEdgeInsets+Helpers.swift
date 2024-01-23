@@ -1,15 +1,15 @@
 import UIKit
 
 extension UIEdgeInsets {
-    var verticalTotal: CGFloat {
+    public var verticalTotal: CGFloat {
         top + bottom
     }
 
-    var horizontalTotal: CGFloat {
+    public var horizontalTotal: CGFloat {
         left + right
     }
 
-    init(uniform: CGFloat) {
+    public init(uniform: CGFloat) {
         self = .init(top: uniform, left: uniform, bottom: uniform, right: uniform)
     }
 }
