@@ -97,7 +97,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
-                return .success(())
+                return .success(.didDrawToDocument)
             } else {
                 return .failure(.insufficientSpace)
             }
@@ -123,10 +123,12 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
                     return .failure(.insufficientSpace)
                 }
-                let image = imageRenderer.makeImage(fromData: imageData, size: rect.size)
-                image?.draw(in: rect)
+                guard let image = imageRenderer.makeImage(fromData: imageData, size: rect.size) else {
+                    return .failure(.contentMissing)
+                }
+                image.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
-                return .success(())
+                return .success(.didDrawToDocument)
             } makeNewPage: { [self] in
                 startNextPage()
                 currentImageNumberOnPage = 0
