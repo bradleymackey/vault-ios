@@ -1,6 +1,6 @@
 import UIKit
 
-class PDFLabelRenderer {
+final class PDFLabelRenderer {
     func makeAttributedTextForHeader(text: String, position: PDFLabelHeaderPosition) -> NSAttributedString {
         let labelFontSize = 9.0
         let paragraphStyle = NSMutableParagraphStyle()
