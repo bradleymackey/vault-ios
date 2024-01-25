@@ -123,8 +123,10 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
                     return .failure(.insufficientSpace)
                 }
-                let image = imageRenderer.makeImage(fromData: imageData, size: rect.size)
-                image?.draw(in: rect)
+                guard let image = imageRenderer.makeImage(fromData: imageData, size: rect.size) else {
+                    return .failure(.contentMissing)
+                }
+                image.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
                 return .success(())
             } makeNewPage: { [self] in
