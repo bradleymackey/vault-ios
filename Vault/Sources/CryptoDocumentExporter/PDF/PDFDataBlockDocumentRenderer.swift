@@ -32,6 +32,7 @@ public struct PDFDataBlockDocumentRenderer<
                 context: context,
                 documentSize: documentSize,
                 headerGenerator: document.headerGenerator,
+                labelRenderer: PDFLabelRenderer(),
                 pageLayout: blockLayout
             )
             drawer.startNextPage()
@@ -57,6 +58,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     private let headerGenerator: any DataBlockHeaderGenerator
     private let pageLayout: (CGRect) -> Layout
     private let documentSize: any PDFDocumentSize
+    private let labelRenderer: PDFLabelRenderer
     private var currentVerticalOffset = 0.0
     private var currentImageNumberOnPage = 0
     private var currentPage = 0
@@ -65,11 +67,13 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         context: UIGraphicsPDFRendererContext,
         documentSize: any PDFDocumentSize,
         headerGenerator: any DataBlockHeaderGenerator,
+        labelRenderer: PDFLabelRenderer,
         pageLayout: @escaping (CGRect) -> Layout
     ) {
         self.context = context
         self.documentSize = documentSize
         self.headerGenerator = headerGenerator
+        self.labelRenderer = labelRenderer
         self.pageLayout = pageLayout
     }
 
@@ -172,22 +176,9 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         currentVerticalOffset += labelHeights.max() ?? 0.0
     }
 
-    private func renderedHeaderLabel(text: String, position: HeaderPosition) -> (NSAttributedString, CGRect) {
+    private func renderedHeaderLabel(text: String, position: PDFLabelHeaderPosition) -> (NSAttributedString, CGRect) {
         let headerBottomSpacing = 8.0
-        let labelFontSize = 9.0
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = position.textAlignment
-        paragraphStyle.lineBreakMode = position.lineBreakMode
-
-        let attributedString = NSAttributedString(
-            string: text,
-            attributes: [
-                NSAttributedString.Key.paragraphStyle: paragraphStyle,
-                NSAttributedString.Key.font: UIFont.systemFont(ofSize: labelFontSize, weight: .regular),
-                NSAttributedString.Key.foregroundColor: UIColor.darkGray,
-            ]
-        )
+        let attributedString = labelRenderer.makeAttributedTextForHeader(text: text, position: position)
         let width = currentPageBoundsWithMargin.width / 2
         let boundingRect = attributedString.boundingRect(
             with: CGSize(width: width, height: .greatestFiniteMagnitude),
@@ -213,17 +204,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     }
 
     private func renderedLabel(for label: DataBlockLabel) -> (NSAttributedString, CGRect) {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        paragraphStyle.lineBreakMode = .byWordWrapping
-
-        let attributedText = NSAttributedString(
-            string: label.text,
-            attributes: [
-                NSAttributedString.Key.paragraphStyle: paragraphStyle,
-                NSAttributedString.Key.font: label.font,
-            ]
-        )
+        let attributedText = labelRenderer.makeAttributedTextForLabel(label)
         let width = currentPageBoundsWithMargin.width - label.padding.horizontalTotal
         let boundingRect = attributedText.boundingRect(
             with: CGSize(width: width, height: .greatestFiniteMagnitude),
@@ -237,31 +218,5 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             height: boundingRect.height + label.padding.bottom
         )
         return (attributedText, textRect)
-    }
-}
-
-/// The position that a header label can be rendered in.
-private enum HeaderPosition {
-    case left, right
-
-    var textAlignment: NSTextAlignment {
-        switch self {
-        case .left: .left
-        case .right: .right
-        }
-    }
-
-    var lineBreakMode: NSLineBreakMode {
-        switch self {
-        case .left: .byTruncatingTail
-        case .right: .byTruncatingHead
-        }
-    }
-
-    func xPosition(width: CGFloat, margins: UIEdgeInsets) -> CGFloat {
-        switch self {
-        case .left: margins.left
-        case .right: width + margins.left
-        }
     }
 }
