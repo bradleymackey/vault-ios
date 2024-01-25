@@ -59,8 +59,9 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     private let pageLayout: (CGRect) -> Layout
     private let documentSize: any PDFDocumentSize
     private let labelRenderer: PDFLabelRenderer
-    private var currentVerticalOffset = 0.0
-    private var currentImageNumberOnPage = 0
+    /// The current position where we are allowed to draw content.
+    /// This will change as elements are drawn, as we are not allowed to override them.
+    private var contentArea = PDFContentArea()
     private var currentPage = 0
 
     init(
@@ -77,30 +78,25 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         self.pageLayout = pageLayout
     }
 
-    private var currentPageBoundsWithMargin: CGRect {
-        context.pdfContextBounds.inset(by: documentSize.pointMargins)
-    }
-
     func draw(label: DataBlockLabel) {
         func attemptToDrawLabel() throws {
-            let currentLayoutEngine = pageLayout(currentPageBoundsWithMargin)
+            let currentLayoutEngine = pageLayout(contentArea.currentBounds)
             let attributedString = labelRenderer.makeAttributedTextForLabel(label)
-            let width = currentPageBoundsWithMargin.width - label.padding.horizontalTotal
+            let width = contentArea.currentBounds.size.width - label.padding.horizontalTotal
             let boundingRect = attributedString.boundingRect(
                 with: CGSize(width: width, height: .greatestFiniteMagnitude),
                 options: .usesLineFragmentOrigin,
                 context: nil
             )
             let rect = CGRect(
-                x: documentSize.pointMargins.left + label.padding.left,
-                y: currentVerticalOffset + label.padding.top,
+                x: contentArea.currentBounds.minX + label.padding.left,
+                y: contentArea.currentBounds.minY + label.padding.top,
                 width: width,
                 height: boundingRect.height + label.padding.bottom
             )
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
-                currentVerticalOffset += label.padding.top
-                currentVerticalOffset += rect.height
+                contentArea.didDrawContent(at: rect)
             } else {
                 throw NoPlaceToDraw()
             }
@@ -122,7 +118,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         rectSeriesLayout: (CGRect) -> some RectSeriesLayout
     ) {
         var currentImageNumberOnPage: UInt = 0
-        var newOffset = currentVerticalOffset
+        var currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
 
         for imageData in images {
             defer { currentImageNumberOnPage += 1 }
@@ -130,20 +126,12 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             /// Gets the next location and attempts to draw the image there.
             /// - Throws `NoPlaceToDraw` if we can't get a rect for that location.
             func attemptToDrawNextImage() throws {
-                let margins = documentSize.pointMargins
-                let currentInsets = UIEdgeInsets(
-                    top: currentVerticalOffset,
-                    left: margins.left,
-                    bottom: margins.bottom,
-                    right: margins.right
-                )
-                let currentLayoutEngine = rectSeriesLayout(context.pdfContextBounds.inset(by: currentInsets))
                 guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
                     throw NoPlaceToDraw()
                 }
                 let image = imageRenderer.makeImage(fromData: imageData, size: rect.size)
                 image?.draw(in: rect)
-                newOffset = rect.maxY + currentLayoutEngine.spacing
+                contentArea.didDrawContent(at: rect)
             }
 
             do {
@@ -152,6 +140,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 // start a new page and draw from there
                 startNextPage()
                 currentImageNumberOnPage = 0
+                currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
 
                 // if this fails, we can't draw the image, even on the next page.
                 // there probably just isn't enough space on the page, so ignore.
@@ -159,25 +148,24 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 try? attemptToDrawNextImage()
             }
         }
-        currentVerticalOffset = newOffset
     }
 
+    /// Creates a new page and drawable content area.
     func startNextPage() {
         context.beginPage()
         currentPage += 1
-        currentVerticalOffset = 0.0
-        currentVerticalOffset += documentSize.pointMargins.top
+        contentArea = PDFContentArea(fullSize: context.pdfContextBounds)
+        contentArea.inset(by: documentSize.pointMargins)
 
         drawHeaderIfNeeded()
     }
 
     private func drawHeaderIfNeeded() {
         guard let header = headerGenerator.makeHeader(pageNumber: currentPage) else { return }
-        var labelHeights = [Double]()
         for label in header.allHeaderLabels {
             let headerBottomSpacing = 8.0
             let attributedString = labelRenderer.makeAttributedTextForHeader(text: label.text, position: label.position)
-            let width = currentPageBoundsWithMargin.width / 2
+            let width = contentArea.currentBounds.width / 2
             let boundingRect = attributedString.boundingRect(
                 with: CGSize(width: width, height: .greatestFiniteMagnitude),
                 options: .usesLineFragmentOrigin,
@@ -190,16 +178,15 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 height: boundingRect.height + headerBottomSpacing
             )
             attributedString.draw(in: rect)
-            labelHeights.append(rect.height)
+            contentArea.didDrawContent(at: rect)
         }
-        currentVerticalOffset += labelHeights.max() ?? 0.0
     }
 }
 
 // MARK: - Positioning
 
 extension DataBlockHeader {
-    var allHeaderLabels: [(text: String, position: PDFLabelHeaderPosition)] {
+    fileprivate var allHeaderLabels: [(text: String, position: PDFLabelHeaderPosition)] {
         var labels = [(String, PDFLabelHeaderPosition)]()
         if let left {
             labels.append((left, .left))
