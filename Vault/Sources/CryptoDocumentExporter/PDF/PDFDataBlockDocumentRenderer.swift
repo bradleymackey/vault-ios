@@ -84,7 +84,19 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     func draw(label: DataBlockLabel) {
         func attemptToDrawLabel() throws {
             let currentLayoutEngine = pageLayout(currentPageBoundsWithMargin)
-            let (attributedString, rect) = renderedLabel(for: label)
+            let attributedString = labelRenderer.makeAttributedTextForLabel(label)
+            let width = currentPageBoundsWithMargin.width - label.padding.horizontalTotal
+            let boundingRect = attributedString.boundingRect(
+                with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                options: .usesLineFragmentOrigin,
+                context: nil
+            )
+            let rect = CGRect(
+                x: documentSize.pointMargins.left + label.padding.left,
+                y: currentVerticalOffset + label.padding.top,
+                width: width,
+                height: boundingRect.height + label.padding.bottom
+            )
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
                 currentVerticalOffset += label.padding.top
@@ -162,51 +174,39 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     private func drawHeaderIfNeeded() {
         guard let header = headerGenerator.makeHeader(pageNumber: currentPage) else { return }
         var labelHeights = [Double]()
-        if let left = header.left {
-            let (attributedString, rect) = renderedHeaderLabel(text: left, position: .left)
-            attributedString.draw(in: rect)
-            labelHeights.append(rect.height)
-        }
-        if let right = header.right {
-            let (attributedString, rect) = renderedHeaderLabel(text: right, position: .right)
+        for label in header.allHeaderLabels {
+            let headerBottomSpacing = 8.0
+            let attributedString = labelRenderer.makeAttributedTextForHeader(text: label.text, position: label.position)
+            let width = currentPageBoundsWithMargin.width / 2
+            let boundingRect = attributedString.boundingRect(
+                with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                options: .usesLineFragmentOrigin,
+                context: nil
+            )
+            let rect = CGRect(
+                x: label.position.xPosition(width: width, margins: documentSize.pointMargins),
+                y: documentSize.pointMargins.top,
+                width: width,
+                height: boundingRect.height + headerBottomSpacing
+            )
             attributedString.draw(in: rect)
             labelHeights.append(rect.height)
         }
         currentVerticalOffset += labelHeights.max() ?? 0.0
     }
+}
 
-    private func renderedHeaderLabel(text: String, position: PDFLabelHeaderPosition) -> (NSAttributedString, CGRect) {
-        let headerBottomSpacing = 8.0
-        let attributedString = labelRenderer.makeAttributedTextForHeader(text: text, position: position)
-        let width = currentPageBoundsWithMargin.width / 2
-        let boundingRect = attributedString.boundingRect(
-            with: CGSize(width: width, height: .greatestFiniteMagnitude),
-            options: .usesLineFragmentOrigin,
-            context: nil
-        )
-        let textRect = CGRect(
-            x: position.xPosition(width: width, margins: documentSize.pointMargins),
-            y: documentSize.pointMargins.top,
-            width: width,
-            height: boundingRect.height + headerBottomSpacing
-        )
-        return (attributedString, textRect)
-    }
+// MARK: - Positioning
 
-    private func renderedLabel(for label: DataBlockLabel) -> (NSAttributedString, CGRect) {
-        let attributedText = labelRenderer.makeAttributedTextForLabel(label)
-        let width = currentPageBoundsWithMargin.width - label.padding.horizontalTotal
-        let boundingRect = attributedText.boundingRect(
-            with: CGSize(width: width, height: .greatestFiniteMagnitude),
-            options: .usesLineFragmentOrigin,
-            context: nil
-        )
-        let textRect = CGRect(
-            x: documentSize.pointMargins.left + label.padding.left,
-            y: currentVerticalOffset + label.padding.top,
-            width: width,
-            height: boundingRect.height + label.padding.bottom
-        )
-        return (attributedText, textRect)
+extension DataBlockHeader {
+    var allHeaderLabels: [(text: String, position: PDFLabelHeaderPosition)] {
+        var labels = [(String, PDFLabelHeaderPosition)]()
+        if let left {
+            labels.append((left, .left))
+        }
+        if let right {
+            labels.append((right, .right))
+        }
+        return labels
     }
 }
