@@ -97,7 +97,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
-                return .success(())
+                return .success(.didDrawToDocument)
             } else {
                 return .failure(.insufficientSpace)
             }
@@ -128,7 +128,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 }
                 image.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
-                return .success(())
+                return .success(.didDrawToDocument)
             } makeNewPage: { [self] in
                 startNextPage()
                 currentImageNumberOnPage = 0

@@ -5,9 +5,13 @@ import Foundation
 /// If there's no room, it makes a new page and draws there.
 struct PDFContentDrawerer {
     /// Try to draw the content. Throw if not possible
-    let draw: () -> Result<Void, DrawError>
+    let draw: () -> Result<DrawSuccess, DrawError>
     /// Make a new page.
     let makeNewPage: () -> Void
+
+    enum DrawSuccess {
+        case didDrawToDocument
+    }
 
     enum DrawError: Error {
         /// There is no space to draw on the current page.
@@ -19,7 +23,9 @@ struct PDFContentDrawerer {
     func drawContent() {
         let result = draw()
         switch result {
-        case .success: break
+        case .success:
+            // draw is complete, nothing more to do
+            break
         case .failure(.insufficientSpace):
             makeNewPage()
             // if this fails, we can't draw, even on the next page.

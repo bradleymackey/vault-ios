@@ -8,7 +8,7 @@ final class PDFContentDrawererTests: XCTestCase {
         var executions = 0
         let sut = PDFContentDrawerer {
             executions += 1
-            return .success(())
+            return .success(.didDrawToDocument)
         } makeNewPage: {
             // noop
         }
@@ -49,7 +49,7 @@ final class PDFContentDrawererTests: XCTestCase {
     func test_drawContent_doesNotMakeNewPageOnSuccess() {
         var executions = 0
         let sut = PDFContentDrawerer {
-            .success(())
+            .success(.didDrawToDocument)
         } makeNewPage: {
             executions += 1
         }
