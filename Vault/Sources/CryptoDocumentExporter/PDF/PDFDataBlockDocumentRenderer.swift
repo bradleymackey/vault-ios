@@ -105,7 +105,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         imageRenderer: some PDFImageRenderer,
         rectSeriesLayout: (CGRect) -> some RectSeriesLayout
     ) {
-        var currentImageNumberOnPage = 0
+        var currentImageNumberOnPage: UInt = 0
         var newOffset = currentVerticalOffset
 
         for imageData in images {
@@ -114,16 +114,21 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             /// Gets the next location and attempts to draw the image there.
             /// - Throws `NoPlaceToDraw` if we can't get a rect for that location.
             func attemptToDrawNextImage() throws {
-                if let location = getNextRectForImageOnPage(
-                    imageNumberOnPage: currentImageNumberOnPage,
-                    rectSeriesLayout: rectSeriesLayout
-                ) {
-                    let image = imageRenderer.makeImage(fromData: imageData, size: location.rect.size)
-                    image?.draw(in: location.rect)
-                    newOffset = location.maxYWithPadding
-                } else {
+                let margins = documentSize.pointMargins
+                let currentInsets = UIEdgeInsets(
+                    top: currentVerticalOffset,
+                    left: margins.left,
+                    bottom: margins.bottom,
+                    right: margins.right
+                )
+                let currentLayoutEngine = rectSeriesLayout(context.pdfContextBounds.inset(by: currentInsets))
+                guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
                     throw NoPlaceToDraw()
                 }
+                let location = TargetImageLocation(rect: rect, gridSpacing: currentLayoutEngine.spacing)
+                let image = imageRenderer.makeImage(fromData: imageData, size: location.rect.size)
+                image?.draw(in: location.rect)
+                newOffset = location.maxYWithPadding
             }
 
             do {
@@ -205,25 +210,6 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         var maxYWithPadding: CGFloat {
             rect.maxY + gridSpacing
         }
-    }
-
-    /// Returns the first rect that fits in the page bounds or `nil`.
-    private func getNextRectForImageOnPage(
-        imageNumberOnPage: Int,
-        rectSeriesLayout: (CGRect) -> some RectSeriesLayout
-    ) -> TargetImageLocation? {
-        let margins = documentSize.pointMargins
-        let currentInsets = UIEdgeInsets(
-            top: currentVerticalOffset,
-            left: margins.left,
-            bottom: margins.bottom,
-            right: margins.right
-        )
-        let currentLayoutEngine = rectSeriesLayout(context.pdfContextBounds.inset(by: currentInsets))
-        guard let rect = currentLayoutEngine.rect(atIndex: UInt(imageNumberOnPage)) else {
-            return nil
-        }
-        return TargetImageLocation(rect: rect, gridSpacing: currentLayoutEngine.spacing)
     }
 
     private func renderedLabel(for label: DataBlockLabel) -> (NSAttributedString, CGRect) {
