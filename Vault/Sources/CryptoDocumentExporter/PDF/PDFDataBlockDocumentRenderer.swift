@@ -79,7 +79,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     }
 
     func draw(label: DataBlockLabel) {
-        func attemptToDrawLabel() throws {
+        let drawerer = PDFContentDrawerer { [self] in
             let currentLayoutEngine = pageLayout(contentArea.currentBounds)
             let attributedString = labelRenderer.makeAttributedTextForLabel(label)
             let width = contentArea.currentBounds.size.width - label.padding.horizontalTotal
@@ -97,25 +97,21 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
+                return .success(())
             } else {
-                throw NoPlaceToDraw()
+                return .failure(.insufficientSpace)
             }
-        }
-
-        do {
-            try attemptToDrawLabel()
-        } catch {
+        } makeNewPage: { [self] in
             startNextPage()
-            try? attemptToDrawLabel()
         }
-    }
 
-    struct NoPlaceToDraw: Error {}
+        drawerer.drawContent()
+    }
 
     func draw(
         images: [Data],
         imageRenderer: some PDFImageRenderer,
-        rectSeriesLayout: (CGRect) -> some RectSeriesLayout
+        rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout
     ) {
         var currentImageNumberOnPage: UInt = 0
         var currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
@@ -123,30 +119,21 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         for imageData in images {
             defer { currentImageNumberOnPage += 1 }
 
-            /// Gets the next location and attempts to draw the image there.
-            /// - Throws `NoPlaceToDraw` if we can't get a rect for that location.
-            func attemptToDrawNextImage() throws {
+            let drawerer = PDFContentDrawerer { [self] in
                 guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
-                    throw NoPlaceToDraw()
+                    return .failure(.insufficientSpace)
                 }
                 let image = imageRenderer.makeImage(fromData: imageData, size: rect.size)
                 image?.draw(in: rect)
                 contentArea.didDrawContent(at: rect)
-            }
-
-            do {
-                try attemptToDrawNextImage()
-            } catch {
-                // start a new page and draw from there
+                return .success(())
+            } makeNewPage: { [self] in
                 startNextPage()
                 currentImageNumberOnPage = 0
                 currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
-
-                // if this fails, we can't draw the image, even on the next page.
-                // there probably just isn't enough space on the page, so ignore.
-                // FIXME: should this throw? probably
-                try? attemptToDrawNextImage()
             }
+
+            drawerer.drawContent()
         }
     }
 
