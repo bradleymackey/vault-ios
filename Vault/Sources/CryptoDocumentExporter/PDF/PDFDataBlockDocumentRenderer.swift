@@ -129,10 +129,9 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
                     throw NoPlaceToDraw()
                 }
-                let location = TargetImageLocation(rect: rect, gridSpacing: currentLayoutEngine.spacing)
-                let image = imageRenderer.makeImage(fromData: imageData, size: location.rect.size)
-                image?.draw(in: location.rect)
-                newOffset = location.maxYWithPadding
+                let image = imageRenderer.makeImage(fromData: imageData, size: rect.size)
+                image?.draw(in: rect)
+                newOffset = rect.maxY + currentLayoutEngine.spacing
             }
 
             do {
@@ -192,15 +191,6 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             height: boundingRect.height + headerBottomSpacing
         )
         return (attributedString, textRect)
-    }
-
-    private struct TargetImageLocation {
-        var rect: CGRect
-        var gridSpacing: CGFloat
-
-        var maxYWithPadding: CGFloat {
-            rect.maxY + gridSpacing
-        }
     }
 
     private func renderedLabel(for label: DataBlockLabel) -> (NSAttributedString, CGRect) {
