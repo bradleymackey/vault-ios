@@ -32,6 +32,7 @@ public struct PDFDataBlockDocumentRenderer<
                 context: context,
                 documentSize: documentSize,
                 headerGenerator: document.headerGenerator,
+                labelRenderer: PDFLabelRenderer(),
                 pageLayout: blockLayout
             )
             drawer.startNextPage()
@@ -57,225 +58,129 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     private let headerGenerator: any DataBlockHeaderGenerator
     private let pageLayout: (CGRect) -> Layout
     private let documentSize: any PDFDocumentSize
-    private var currentVerticalOffset = 0.0
-    private var currentImageNumberOnPage = 0
+    private let labelRenderer: PDFLabelRenderer
+    /// The current position where we are allowed to draw content.
+    /// This will change as elements are drawn, as we are not allowed to override them.
+    private var contentArea = PDFContentArea()
     private var currentPage = 0
 
     init(
         context: UIGraphicsPDFRendererContext,
         documentSize: any PDFDocumentSize,
         headerGenerator: any DataBlockHeaderGenerator,
+        labelRenderer: PDFLabelRenderer,
         pageLayout: @escaping (CGRect) -> Layout
     ) {
         self.context = context
         self.documentSize = documentSize
         self.headerGenerator = headerGenerator
+        self.labelRenderer = labelRenderer
         self.pageLayout = pageLayout
     }
 
-    private var currentPageBoundsWithMargin: CGRect {
-        context.pdfContextBounds.inset(by: documentSize.pointMargins)
-    }
-
     func draw(label: DataBlockLabel) {
-        func attemptToDrawLabel() throws {
-            let currentLayoutEngine = pageLayout(currentPageBoundsWithMargin)
-            let (attributedString, rect) = renderedLabel(for: label)
+        let drawerer = PDFContentDrawerer { [self] in
+            let currentLayoutEngine = pageLayout(contentArea.currentBounds)
+            let attributedString = labelRenderer.makeAttributedTextForLabel(label)
+            let width = contentArea.currentBounds.size.width - label.padding.horizontalTotal
+            let boundingRect = attributedString.boundingRect(
+                with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                options: .usesLineFragmentOrigin,
+                context: nil
+            )
+            let rect = CGRect(
+                x: contentArea.currentBounds.minX + label.padding.left,
+                y: contentArea.currentBounds.minY + label.padding.top,
+                width: width,
+                height: boundingRect.height + label.padding.bottom
+            )
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
-                currentVerticalOffset += label.padding.top
-                currentVerticalOffset += rect.height
+                contentArea.didDrawContent(at: rect)
+                return .success(())
             } else {
-                throw NoPlaceToDraw()
+                return .failure(.insufficientSpace)
             }
-        }
-
-        do {
-            try attemptToDrawLabel()
-        } catch {
+        } makeNewPage: { [self] in
             startNextPage()
-            try? attemptToDrawLabel()
         }
-    }
 
-    struct NoPlaceToDraw: Error {}
+        drawerer.drawContent()
+    }
 
     func draw(
         images: [Data],
         imageRenderer: some PDFImageRenderer,
-        rectSeriesLayout: (CGRect) -> some RectSeriesLayout
+        rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout
     ) {
-        var currentImageNumberOnPage = 0
-        var newOffset = currentVerticalOffset
+        var currentImageNumberOnPage: UInt = 0
+        var currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
 
         for imageData in images {
             defer { currentImageNumberOnPage += 1 }
 
-            /// Gets the next location and attempts to draw the image there.
-            /// - Throws `NoPlaceToDraw` if we can't get a rect for that location.
-            func attemptToDrawNextImage() throws {
-                if let location = getNextRectForImageOnPage(
-                    imageNumberOnPage: currentImageNumberOnPage,
-                    rectSeriesLayout: rectSeriesLayout
-                ) {
-                    let image = imageRenderer.makeImage(fromData: imageData, size: location.rect.size)
-                    image?.draw(in: location.rect)
-                    newOffset = location.maxYWithPadding
-                } else {
-                    throw NoPlaceToDraw()
+            let drawerer = PDFContentDrawerer { [self] in
+                guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
+                    return .failure(.insufficientSpace)
                 }
-            }
-
-            do {
-                try attemptToDrawNextImage()
-            } catch {
-                // start a new page and draw from there
+                let image = imageRenderer.makeImage(fromData: imageData, size: rect.size)
+                image?.draw(in: rect)
+                contentArea.didDrawContent(at: rect)
+                return .success(())
+            } makeNewPage: { [self] in
                 startNextPage()
                 currentImageNumberOnPage = 0
-
-                // if this fails, we can't draw the image, even on the next page.
-                // there probably just isn't enough space on the page, so ignore.
-                // FIXME: should this throw? probably
-                try? attemptToDrawNextImage()
+                currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
             }
+
+            drawerer.drawContent()
         }
-        currentVerticalOffset = newOffset
     }
 
+    /// Creates a new page and drawable content area.
     func startNextPage() {
         context.beginPage()
         currentPage += 1
-        currentVerticalOffset = 0.0
-        currentVerticalOffset += documentSize.pointMargins.top
+        contentArea = PDFContentArea(fullSize: context.pdfContextBounds)
+        contentArea.inset(by: documentSize.pointMargins)
 
         drawHeaderIfNeeded()
     }
 
     private func drawHeaderIfNeeded() {
         guard let header = headerGenerator.makeHeader(pageNumber: currentPage) else { return }
-        var labelHeights = [Double]()
-        if let left = header.left {
-            let (attributedString, rect) = renderedHeaderLabel(text: left, position: .left)
+        for label in header.allHeaderLabels {
+            let headerBottomSpacing = 8.0
+            let attributedString = labelRenderer.makeAttributedTextForHeader(text: label.text, position: label.position)
+            let width = contentArea.currentBounds.width / 2
+            let boundingRect = attributedString.boundingRect(
+                with: CGSize(width: width, height: .greatestFiniteMagnitude),
+                options: .usesLineFragmentOrigin,
+                context: nil
+            )
+            let rect = CGRect(
+                x: label.position.xPosition(width: width, margins: documentSize.pointMargins),
+                y: documentSize.pointMargins.top,
+                width: width,
+                height: boundingRect.height + headerBottomSpacing
+            )
             attributedString.draw(in: rect)
-            labelHeights.append(rect.height)
+            contentArea.didDrawContent(at: rect)
         }
-        if let right = header.right {
-            let (attributedString, rect) = renderedHeaderLabel(text: right, position: .right)
-            attributedString.draw(in: rect)
-            labelHeights.append(rect.height)
-        }
-        currentVerticalOffset += labelHeights.max() ?? 0.0
-    }
-
-    private func renderedHeaderLabel(text: String, position: HeaderPosition) -> (NSAttributedString, CGRect) {
-        let headerBottomSpacing = 8.0
-        let labelFontSize = 9.0
-
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = position.textAlignment
-        paragraphStyle.lineBreakMode = position.lineBreakMode
-
-        let attributedString = NSAttributedString(
-            string: text,
-            attributes: [
-                NSAttributedString.Key.paragraphStyle: paragraphStyle,
-                NSAttributedString.Key.font: UIFont.systemFont(ofSize: labelFontSize, weight: .regular),
-                NSAttributedString.Key.foregroundColor: UIColor.darkGray,
-            ]
-        )
-        let width = currentPageBoundsWithMargin.width / 2
-        let boundingRect = attributedString.boundingRect(
-            with: CGSize(width: width, height: .greatestFiniteMagnitude),
-            options: .usesLineFragmentOrigin,
-            context: nil
-        )
-        let textRect = CGRect(
-            x: position.xPosition(width: width, margins: documentSize.pointMargins),
-            y: documentSize.pointMargins.top,
-            width: width,
-            height: boundingRect.height + headerBottomSpacing
-        )
-        return (attributedString, textRect)
-    }
-
-    private struct TargetImageLocation {
-        var rect: CGRect
-        var gridSpacing: CGFloat
-
-        var maxYWithPadding: CGFloat {
-            rect.maxY + gridSpacing
-        }
-    }
-
-    /// Returns the first rect that fits in the page bounds or `nil`.
-    private func getNextRectForImageOnPage(
-        imageNumberOnPage: Int,
-        rectSeriesLayout: (CGRect) -> some RectSeriesLayout
-    ) -> TargetImageLocation? {
-        let margins = documentSize.pointMargins
-        let currentInsets = UIEdgeInsets(
-            top: currentVerticalOffset,
-            left: margins.left,
-            bottom: margins.bottom,
-            right: margins.right
-        )
-        let currentLayoutEngine = rectSeriesLayout(context.pdfContextBounds.inset(by: currentInsets))
-        guard let rect = currentLayoutEngine.rect(atIndex: UInt(imageNumberOnPage)) else {
-            return nil
-        }
-        return TargetImageLocation(rect: rect, gridSpacing: currentLayoutEngine.spacing)
-    }
-
-    private func renderedLabel(for label: DataBlockLabel) -> (NSAttributedString, CGRect) {
-        let paragraphStyle = NSMutableParagraphStyle()
-        paragraphStyle.alignment = .center
-        paragraphStyle.lineBreakMode = .byWordWrapping
-
-        let attributedText = NSAttributedString(
-            string: label.text,
-            attributes: [
-                NSAttributedString.Key.paragraphStyle: paragraphStyle,
-                NSAttributedString.Key.font: label.font,
-            ]
-        )
-        let width = currentPageBoundsWithMargin.width - label.padding.horizontalTotal
-        let boundingRect = attributedText.boundingRect(
-            with: CGSize(width: width, height: .greatestFiniteMagnitude),
-            options: .usesLineFragmentOrigin,
-            context: nil
-        )
-        let textRect = CGRect(
-            x: documentSize.pointMargins.left + label.padding.left,
-            y: currentVerticalOffset + label.padding.top,
-            width: width,
-            height: boundingRect.height + label.padding.bottom
-        )
-        return (attributedText, textRect)
     }
 }
 
-/// The position that a header label can be rendered in.
-private enum HeaderPosition {
-    case left, right
+// MARK: - Positioning
 
-    var textAlignment: NSTextAlignment {
-        switch self {
-        case .left: .left
-        case .right: .right
+extension DataBlockHeader {
+    fileprivate var allHeaderLabels: [(text: String, position: PDFLabelHeaderPosition)] {
+        var labels = [(String, PDFLabelHeaderPosition)]()
+        if let left {
+            labels.append((left, .left))
         }
-    }
-
-    var lineBreakMode: NSLineBreakMode {
-        switch self {
-        case .left: .byTruncatingTail
-        case .right: .byTruncatingHead
+        if let right {
+            labels.append((right, .right))
         }
-    }
-
-    func xPosition(width: CGFloat, margins: UIEdgeInsets) -> CGFloat {
-        switch self {
-        case .left: margins.left
-        case .right: width + margins.left
-        }
+        return labels
     }
 }
