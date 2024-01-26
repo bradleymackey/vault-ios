@@ -7,6 +7,9 @@
     "Page %lld of %lld" : {
       "extractionState" : "manual"
     },
+    "To import this backup, scan all the QR codes below from all pages." : {
+      "extractionState" : "manual"
+    },
     "Vault Export" : {
       "extractionState" : "manual"
     }

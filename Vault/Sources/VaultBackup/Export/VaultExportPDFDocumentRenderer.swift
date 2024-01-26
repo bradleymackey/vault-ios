@@ -18,17 +18,42 @@ public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
         self.renderer = renderer
     }
 
-    public func render(document _: VaultExportPayload) throws -> PDFDocument {
+    public func render(document: VaultExportPayload) throws -> PDFDocument {
+        var documentContent: [DataBlockDocument.Content] = [
+            .title(.init(
+                text: localized(key: "Vault Export"),
+                font: .systemFont(ofSize: 18, weight: .bold),
+                padding: .init(top: 0, left: 0, bottom: 8, right: 0)
+            )),
+        ]
+
+        if !document.userDescription.isEmpty {
+            let userDescription: [DataBlockDocument.Content] = document.userDescription.split(separator: "\n")
+                .compactMap { text in
+                    if text.isEmpty { return nil }
+                    return .title(.init(
+                        text: String(text),
+                        font: .systemFont(ofSize: 14),
+                        padding: .init(top: 8, left: 0, bottom: 0, right: 0)
+                    ))
+                }
+            documentContent.append(contentsOf: userDescription)
+        }
+
+        documentContent.append(.title(.init(
+            text: localized(key: "To import this backup, scan all the QR codes below from all pages."),
+            font: .systemFont(ofSize: 12),
+            padding: .init(top: 12, left: 0, bottom: 12, right: 0)
+        )))
+
         func render(totalPageCount: Int?) throws -> PDFDocument {
             let finalPageCount = totalPageCount ?? 0
             let document = DataBlockDocument(
                 headerGenerator: VaultExportDataBlockHeaderGenerator(
-                    dateCreated: Date(),
+                    dateCreated: document.created,
                     totalNumberOfPages: finalPageCount
                 ),
-                content: [
-                    .title(.init(text: localized(key: "Vault Export"), font: .systemFont(ofSize: 14), padding: .zero)),
-                ]
+                content: documentContent
             )
             return try renderer.render(document: document)
         }
