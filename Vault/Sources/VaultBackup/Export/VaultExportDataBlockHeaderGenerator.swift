@@ -6,8 +6,9 @@ struct VaultExportDataBlockHeaderGenerator: DataBlockHeaderGenerator {
     let totalNumberOfPages: Int
 
     func makeHeader(pageNumber: Int) -> DataBlockHeader? {
-        let dateText = dateFormatter.string(from: dateCreated)
-        let pageNumber = "Page \(pageNumber)/\(totalNumberOfPages)"
+        let date = dateFormatter.string(from: dateCreated)
+        let dateText = localized(key: "Created \(date)")
+        let pageNumber = localized(key: "Page \(pageNumber) of \(totalNumberOfPages)")
         return DataBlockHeader(left: dateText, right: pageNumber)
     }
 

@@ -1,6 +1,12 @@
 {
   "sourceLanguage" : "en",
   "strings" : {
+    "Created %@" : {
+      "extractionState" : "manual"
+    },
+    "Page %lld of %lld" : {
+      "extractionState" : "manual"
+    },
     "Vault Export" : {
       "extractionState" : "manual"
     }
