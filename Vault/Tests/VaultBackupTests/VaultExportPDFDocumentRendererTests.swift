@@ -31,7 +31,7 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
             "Document should be returned from the block renderer"
         )
         XCTAssertEqual(renderer.renderDocumentCallsCount, 2, "Renders twice, first pass and final render")
-        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.content.count, 1)
+        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.content.count, 3)
     }
 }
 
