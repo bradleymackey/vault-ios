@@ -33,7 +33,7 @@ public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
                     if text.isEmpty { return nil }
                     return .title(.init(
                         text: String(text),
-                        font: .systemFont(ofSize: 14),
+                        font: .systemFont(ofSize: 12),
                         padding: .init(top: 8, left: 0, bottom: 0, right: 0)
                     ))
                 }
@@ -42,7 +42,8 @@ public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
 
         documentContent.append(.title(.init(
             text: localized(key: "To import this backup, scan all the QR codes below from all pages."),
-            font: .systemFont(ofSize: 12),
+            font: .systemFont(ofSize: 10),
+            textColor: .gray,
             padding: .init(top: 12, left: 0, bottom: 12, right: 0)
         )))
 
