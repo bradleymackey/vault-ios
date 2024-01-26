@@ -3,9 +3,11 @@ import Foundation
 
 struct VaultExportDataBlockHeaderGenerator: DataBlockHeaderGenerator {
     let dateCreated: Date
+    let totalNumberOfPages: Int
+
     func makeHeader(pageNumber: Int) -> DataBlockHeader? {
         let dateText = dateFormatter.string(from: dateCreated)
-        let pageNumber = "Page \(pageNumber)"
+        let pageNumber = "Page \(pageNumber)/\(totalNumberOfPages)"
         return DataBlockHeader(left: dateText, right: pageNumber)
     }
 

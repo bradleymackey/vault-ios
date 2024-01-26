@@ -6,7 +6,7 @@ import XCTest
 final class VaultExportDataBlockHeaderGeneratorTests: XCTestCase {
     func test_makeHeader_leftIsDate() {
         let date = Date(timeIntervalSince1970: 3_000_000)
-        let sut = VaultExportDataBlockHeaderGenerator(dateCreated: date)
+        let sut = VaultExportDataBlockHeaderGenerator(dateCreated: date, totalNumberOfPages: 100)
 
         let header = sut.makeHeader(pageNumber: 1)
 
@@ -14,10 +14,10 @@ final class VaultExportDataBlockHeaderGeneratorTests: XCTestCase {
     }
 
     func test_makeHeader_rightIsPageNumber() {
-        let sut = VaultExportDataBlockHeaderGenerator(dateCreated: Date())
+        let sut = VaultExportDataBlockHeaderGenerator(dateCreated: Date(), totalNumberOfPages: 500)
 
         let header = sut.makeHeader(pageNumber: 442)
 
-        XCTAssertEqual(header?.right, "Page 442")
+        XCTAssertEqual(header?.right, "Page 442/500")
     }
 }
