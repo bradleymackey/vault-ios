@@ -27,7 +27,7 @@ public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
                     totalNumberOfPages: finalPageCount
                 ),
                 content: [
-                    .title(.init(text: "My Export", font: .systemFont(ofSize: 14), padding: .zero)),
+                    .title(.init(text: localized(key: "Vault Export"), font: .systemFont(ofSize: 14), padding: .zero)),
                 ]
             )
             return try renderer.render(document: document)
