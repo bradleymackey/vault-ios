@@ -61,7 +61,7 @@ let package = Package(
         .testTarget(
             name: "VaultBackupTests",
             dependencies: ["VaultBackup", "TestHelpers", "CryptoEngine"],
-            exclude: ["__Snapshots__"],
+            exclude: ["__Snapshots__", "TestPlans"],
             swiftSettings: swiftSettings
         ),
         .target(
@@ -108,6 +108,7 @@ let package = Package(
             name: "CryptoDocumentExporterTests",
             dependencies: [
                 "CryptoDocumentExporter",
+                "TestHelpers",
             ],
             swiftSettings: swiftSettings
         ),
@@ -115,6 +116,7 @@ let package = Package(
             name: "CryptoDocumentExporterSnapshotTests",
             dependencies: [
                 "CryptoDocumentExporter",
+                "TestHelpers",
                 .product(
                     name: "SnapshotTesting",
                     package: "swift-snapshot-testing"

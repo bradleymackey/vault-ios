@@ -33,6 +33,9 @@ There's a few things to be aware of when developing and some helpful commands to
   </tr>
 </table>
 
+Simulator configuration, such as setting locale is covered by the use of test plans.
+You shouldn't need to manually change the locale or any other simulator setting for the tests to pass.
+
 ## Development Workflow
 
 <table>

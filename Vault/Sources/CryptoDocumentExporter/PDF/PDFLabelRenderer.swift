@@ -25,6 +25,7 @@ final class PDFLabelRenderer {
             attributes: [
                 NSAttributedString.Key.paragraphStyle: paragraphStyle,
                 NSAttributedString.Key.font: label.font,
+                NSAttributedString.Key.foregroundColor: label.textColor,
             ]
         )
     }

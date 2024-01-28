@@ -1,7 +1,6 @@
 import CryptoDocumentExporter
-import Foundation
 import PDFKit
-import SnapshotTesting
+import TestHelpers
 import XCTest
 
 final class PDFDataBlockDocumentRendererTests: XCTestCase {
@@ -28,6 +27,39 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     func test_render_drawsRowOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 3))])
+        let pdf = try XCTUnwrap(sut.render(document: document))
+
+        assertSnapshot(matching: pdf, as: .pdf())
+    }
+
+    func test_render_drawsLabelsOfDifferentStyles() throws {
+        let sut = makeSUT(tilesPerRow: 10)
+        let document = DataBlockDocument(content: [
+            .title(.init(
+                text: "Test 1",
+                font: .systemFont(ofSize: 18, weight: .bold),
+                textColor: .red,
+                padding: .zero
+            )),
+            .title(.init(
+                text: "Test 2",
+                font: .systemFont(ofSize: 24, weight: .regular),
+                textColor: .darkGray,
+                padding: .zero
+            )),
+            .title(.init(
+                text: "Test 3",
+                font: .systemFont(ofSize: 12, weight: .heavy),
+                textColor: .lightGray,
+                padding: .zero
+            )),
+            .title(.init(
+                text: "Test 4",
+                font: .systemFont(ofSize: 34, weight: .thin),
+                textColor: .systemBlue,
+                padding: .zero
+            )),
+        ])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())

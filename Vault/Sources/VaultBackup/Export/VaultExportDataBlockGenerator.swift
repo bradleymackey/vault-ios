@@ -4,12 +4,67 @@ import Foundation
 /// Helper for creating the data block document from an exported vault.
 struct VaultExportDataBlockGenerator {
     private let payload: VaultExportPayload
+    private let dataShardBuilder: DataShardBuilder
 
-    init(payload: VaultExportPayload) {
+    init(payload: VaultExportPayload, dataShardBuilder: DataShardBuilder = DataShardBuilder()) {
         self.payload = payload
+        self.dataShardBuilder = dataShardBuilder
     }
 
-    func makeDocument() throws -> DataBlockDocument {
-        DataBlockDocument(content: [])
+    func makeDocument(knownPageCount: Int) throws -> DataBlockDocument {
+        var document = DataBlockDocument(
+            headerGenerator: VaultExportDataBlockHeaderGenerator(
+                dateCreated: payload.created,
+                totalNumberOfPages: knownPageCount
+            ),
+            content: []
+        )
+        document.content.append(.title(makeTitle()))
+        document.content.append(contentsOf: makeUserDescriptionLabels().map { .title($0) })
+        let qrCodeImages = try makeQRCodeImagesFromVault()
+        document.content.append(.title(makeQRCodeHelperLabel(totalCodes: qrCodeImages.count)))
+        document.content.append(.images(qrCodeImages))
+        return document
+    }
+}
+
+extension VaultExportDataBlockGenerator {
+    private func makeTitle() -> DataBlockLabel {
+        .init(
+            text: localized(key: "Vault Export"),
+            font: .systemFont(ofSize: 24, weight: .heavy),
+            padding: .init(top: 8, left: 0, bottom: 8, right: 0)
+        )
+    }
+
+    private func makeUserDescriptionLabels() -> [DataBlockLabel] {
+        payload.userDescription
+            .split(separator: "\n")
+            .compactMap { text in
+                if text.isEmpty { return nil }
+                return .init(
+                    text: String(text),
+                    font: .systemFont(ofSize: 12),
+                    padding: .zero
+                )
+            }
+    }
+
+    private func makeQRCodeHelperLabel(totalCodes: Int) -> DataBlockLabel {
+        .init(
+            text: localized(
+                key: "The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be \(totalCodes) in total."
+            ),
+            font: .systemFont(ofSize: 10),
+            textColor: .gray,
+            padding: .init(top: 16, left: 0, bottom: 8, right: 0)
+        )
+    }
+
+    private func makeQRCodeImagesFromVault() throws -> [Data] {
+        let coder = EncryptedVaultCoder()
+        let encodedVault = try coder.encode(vault: payload.encryptedVault)
+        let pngEncoder = DataShardPNGEncoder(dataShardBuilder: dataShardBuilder)
+        return try pngEncoder.makeQRCodePNGs(fromData: encodedVault)
     }
 }

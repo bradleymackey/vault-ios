@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "FC090173-5A9C-4050-8D46-CF00FB416CC7",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultBackupTests",
+        "name" : "VaultBackupTests"
+      }
+    }
+  ],
+  "version" : 1
+}

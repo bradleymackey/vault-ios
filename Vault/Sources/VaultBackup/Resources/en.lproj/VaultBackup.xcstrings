@@ -1,0 +1,18 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Created %@" : {
+      "extractionState" : "manual"
+    },
+    "Page %lld of %lld" : {
+      "extractionState" : "manual"
+    },
+    "The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be %lld in total." : {
+      "extractionState" : "manual"
+    },
+    "Vault Export" : {
+      "extractionState" : "manual"
+    }
+  },
+  "version" : "1.0"
+}
