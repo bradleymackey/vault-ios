@@ -51,7 +51,7 @@ final class PDFDocumentSizeTests: XCTestCase {
         size.pointSize()
     }
 
-    private func makeSquares(_ size: any PDFDocumentSize) -> Int {
+    private func makeSquares(_ size: any PDFDocumentSize) -> UInt {
         size.idealNumberOfHorizontalSquaresForPaperSize
     }
 }
