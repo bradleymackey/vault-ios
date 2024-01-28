@@ -16,7 +16,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
         XCTAssertEqual(document.content.map(\.debugDescription), [
             "TITLE: Vault Export",
             "TITLE: my desc",
-            "TITLE: To import this backup, scan all the QR codes below from all pages.",
+            "TITLE: The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be 1 in total.",
             "IMAGES: count:1",
         ])
     }
@@ -46,7 +46,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
             "TITLE: It\'s very long",
             "TITLE: I think everyone is lame",
             "TITLE: nice",
-            "TITLE: To import this backup, scan all the QR codes below from all pages.",
+            "TITLE: The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be 1 in total.",
             "IMAGES: count:1",
         ])
     }
