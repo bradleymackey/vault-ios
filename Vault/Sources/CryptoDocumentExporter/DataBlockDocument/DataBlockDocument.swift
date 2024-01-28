@@ -16,7 +16,7 @@ public struct DataBlockDocument {
         public var debugDescription: String {
             switch self {
             case let .title(label): "TITLE: \(label.text)"
-            case let .images(data): "IMAGE: \(data)"
+            case let .images(data): "IMAGES: count:\(data.count)"
             }
         }
     }

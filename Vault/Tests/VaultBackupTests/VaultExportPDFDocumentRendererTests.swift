@@ -2,8 +2,8 @@ import CryptoDocumentExporter
 import Foundation
 import PDFKit
 import TestHelpers
-import VaultBackup
 import XCTest
+@testable import VaultBackup
 
 final class VaultExportPDFDocumentRendererTests: XCTestCase {
     func test_init_doesNotHaveAnySideEffects() {
@@ -31,7 +31,7 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
             "Document should be returned from the block renderer"
         )
         XCTAssertEqual(renderer.renderDocumentCallsCount, 2, "Renders twice, first pass and final render")
-        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.content.count, 3)
+        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.content.count, 4)
     }
 }
 
@@ -43,7 +43,7 @@ extension VaultExportPDFDocumentRendererTests {
         file _: StaticString = #filePath,
         line _: UInt = #line
     ) -> VaultExportPDFDocumentRenderer<RendererSpy> {
-        let sut = VaultExportPDFDocumentRenderer(renderer: documentRenderer)
+        let sut = VaultExportPDFDocumentRenderer(renderer: documentRenderer, dataShardBuilder: DataShardBuilder())
         return sut
     }
 }

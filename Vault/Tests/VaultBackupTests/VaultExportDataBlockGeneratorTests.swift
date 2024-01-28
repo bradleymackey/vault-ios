@@ -17,6 +17,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
             "TITLE: Vault Export",
             "TITLE: my desc",
             "TITLE: To import this backup, scan all the QR codes below from all pages.",
+            "IMAGES: count:1",
         ])
     }
 
@@ -46,6 +47,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
             "TITLE: I think everyone is lame",
             "TITLE: nice",
             "TITLE: To import this backup, scan all the QR codes below from all pages.",
+            "IMAGES: count:1",
         ])
     }
 }

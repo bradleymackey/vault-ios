@@ -5,21 +5,23 @@ import PDFKit
 /// A renderer for an exported vault.
 ///
 /// Internally uses a data block renderer to render the data to a PDF.
-public struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
+struct VaultExportPDFDocumentRenderer<Renderer>: PDFDocumentRenderer
     where
     Renderer: PDFDocumentRenderer,
     Renderer.Document == DataBlockDocument
 {
-    public typealias Document = VaultExportPayload
+    typealias Document = VaultExportPayload
 
     private let renderer: Renderer
+    private let dataShardBuilder: DataShardBuilder
 
-    public init(renderer: Renderer) {
+    init(renderer: Renderer, dataShardBuilder: DataShardBuilder) {
         self.renderer = renderer
+        self.dataShardBuilder = dataShardBuilder
     }
 
-    public func render(document: VaultExportPayload) throws -> PDFDocument {
-        let generator = VaultExportDataBlockGenerator(payload: document)
+    func render(document: VaultExportPayload) throws -> PDFDocument {
+        let generator = VaultExportDataBlockGenerator(payload: document, dataShardBuilder: dataShardBuilder)
 
         func render(totalPageCount: Int?) throws -> PDFDocument {
             let finalPageCount = totalPageCount ?? 0

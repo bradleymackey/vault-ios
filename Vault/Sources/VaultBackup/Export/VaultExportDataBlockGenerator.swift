@@ -4,9 +4,11 @@ import Foundation
 /// Helper for creating the data block document from an exported vault.
 struct VaultExportDataBlockGenerator {
     private let payload: VaultExportPayload
+    private let dataShardBuilder: DataShardBuilder
 
-    init(payload: VaultExportPayload) {
+    init(payload: VaultExportPayload, dataShardBuilder: DataShardBuilder = DataShardBuilder()) {
         self.payload = payload
+        self.dataShardBuilder = dataShardBuilder
     }
 
     func makeDocument(knownPageCount: Int) throws -> DataBlockDocument {
@@ -20,6 +22,7 @@ struct VaultExportDataBlockGenerator {
         document.content.append(.title(makeTitle()))
         document.content.append(contentsOf: makeUserDescriptionLabels().map { .title($0) })
         document.content.append(.title(makeQRCodeHelperLabel()))
+        try document.content.append(.images(makeQRCodeImagesFromVault()))
         return document
     }
 }
@@ -53,5 +56,12 @@ extension VaultExportDataBlockGenerator {
             textColor: .gray,
             padding: .init(top: 12, left: 0, bottom: 12, right: 0)
         )
+    }
+
+    private func makeQRCodeImagesFromVault() throws -> [Data] {
+        let coder = EncryptedVaultCoder()
+        let encodedVault = try coder.encode(vault: payload.encryptedVault)
+        let pngEncoder = DataShardPNGEncoder(dataShardBuilder: dataShardBuilder)
+        return try pngEncoder.makeQRCodePNGs(fromData: encodedVault)
     }
 }
