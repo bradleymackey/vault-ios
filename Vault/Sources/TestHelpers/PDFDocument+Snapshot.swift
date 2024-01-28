@@ -4,7 +4,7 @@ import SnapshotTesting
 
 extension Snapshotting where Value == PDFDocument, Format == UIImage {
     /// Snapshots a PDF as an image, so we don't worry about metadata/non-visible aspects of the PDF.
-    static func pdf(page: Int = 1) -> Snapshotting {
+    public static func pdf(page: Int = 1) -> Snapshotting {
         .init(
             pathExtension: "png",
             diffing: .image,
