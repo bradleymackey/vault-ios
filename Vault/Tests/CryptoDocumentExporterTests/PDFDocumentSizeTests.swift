@@ -20,7 +20,7 @@ final class PDFDocumentSizeTests: XCTestCase {
     func test_idealNumberOfHorizontalSquaresForPaperSize_isCorrect() {
         let number = makeSquares(USLetterDocumentSize())
 
-        XCTAssertEqual(number, 5)
+        XCTAssertEqual(number, 7)
     }
 
     func test_inchMargins_isStandardForUSLetter() {

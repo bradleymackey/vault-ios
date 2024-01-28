@@ -2,7 +2,8 @@ import Foundation
 
 struct DataShardBuilder {
     /// Max size of a QR code is actually 2953 bytes, but let's leave some headroom so the codes are not too compact.
-    private let maxDataBlockSize = 1500
+    /// We want to avoid the codes being too compact because it makes it harder to scan them.
+    private let maxDataBlockSize = 400
     private let groupIDGenerator: () -> UUID
 
     init(groupIDGenerator: @escaping () -> UUID = UUID.init) {

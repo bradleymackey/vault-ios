@@ -25,16 +25,16 @@ final class DataShardBuilderTests: XCTestCase {
         XCTAssertEqual(shards, [expected])
     }
 
-    func test_makeShards_maxChunkSizeIs1500Bytes() {
+    func test_makeShards_maxChunkSizeIs400Bytes() {
         let inputData = Array(repeating: UInt8(33), count: 4000)
         let sut = DataShardBuilder()
 
         let shards = sut.makeShards(from: Data(inputData))
 
-        XCTAssertEqual(shards.count, 3)
-        XCTAssertEqual(shards.map(\.data.count), [1500, 1500, 1000])
-        XCTAssertEqual(shards.map(\.group.totalNumber), [3, 3, 3])
-        XCTAssertEqual(shards.map(\.group.number), [0, 1, 2])
+        XCTAssertEqual(shards.count, 10)
+        XCTAssertEqual(shards.map(\.data.count), Array(repeating: 400, count: 10))
+        XCTAssertEqual(shards.map(\.group.totalNumber), Array(repeating: 10, count: 10))
+        XCTAssertEqual(shards.map(\.group.number), Array(0 ... 9))
     }
 
     func test_makeShards_doesNotMakeExtraShardsIfDividesExactly() {
@@ -43,9 +43,9 @@ final class DataShardBuilderTests: XCTestCase {
 
         let shards = sut.makeShards(from: Data(inputData))
 
-        XCTAssertEqual(shards.count, 3)
-        XCTAssertEqual(shards.map(\.data.count), [1500, 1500, 1500])
-        XCTAssertEqual(shards.map(\.group.totalNumber), [3, 3, 3])
-        XCTAssertEqual(shards.map(\.group.number), [0, 1, 2])
+        XCTAssertEqual(shards.count, 12)
+        XCTAssertEqual(shards.map(\.data.count), Array(repeating: 400, count: 11) + [100])
+        XCTAssertEqual(shards.map(\.group.totalNumber), Array(repeating: 12, count: 12))
+        XCTAssertEqual(shards.map(\.group.number), Array(0 ... 11))
     }
 }
