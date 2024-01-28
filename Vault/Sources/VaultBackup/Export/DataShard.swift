@@ -6,6 +6,11 @@ struct DataShard: Equatable, Codable {
     var group: GroupInfo
     /// The partial data, which should be concatented with all the other blocks in order.
     var data: Data
+
+    enum CodingKeys: String, CodingKey {
+        case group = "GROUP"
+        case data = "DATA"
+    }
 }
 
 extension DataShard {
@@ -18,5 +23,11 @@ extension DataShard {
         var number: Int
         /// The total number of blocks in the group.
         var totalNumber: Int
+
+        enum CodingKeys: String, CodingKey {
+            case id = "ID"
+            case number = "NUM"
+            case totalNumber = "TOT_NUM"
+        }
     }
 }
