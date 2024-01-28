@@ -21,8 +21,9 @@ struct VaultExportDataBlockGenerator {
         )
         document.content.append(.title(makeTitle()))
         document.content.append(contentsOf: makeUserDescriptionLabels().map { .title($0) })
-        document.content.append(.title(makeQRCodeHelperLabel()))
-        try document.content.append(.images(makeQRCodeImagesFromVault()))
+        let qrCodeImages = try makeQRCodeImagesFromVault()
+        document.content.append(.title(makeQRCodeHelperLabel(totalCodes: qrCodeImages.count)))
+        document.content.append(.images(qrCodeImages))
         return document
     }
 }
@@ -31,8 +32,8 @@ extension VaultExportDataBlockGenerator {
     private func makeTitle() -> DataBlockLabel {
         .init(
             text: localized(key: "Vault Export"),
-            font: .systemFont(ofSize: 18, weight: .bold),
-            padding: .init(top: 0, left: 0, bottom: 8, right: 0)
+            font: .systemFont(ofSize: 24, weight: .heavy),
+            padding: .init(top: 8, left: 0, bottom: 8, right: 0)
         )
     }
 
@@ -44,17 +45,19 @@ extension VaultExportDataBlockGenerator {
                 return .init(
                     text: String(text),
                     font: .systemFont(ofSize: 12),
-                    padding: .init(top: 8, left: 0, bottom: 0, right: 0)
+                    padding: .zero
                 )
             }
     }
 
-    private func makeQRCodeHelperLabel() -> DataBlockLabel {
+    private func makeQRCodeHelperLabel(totalCodes: Int) -> DataBlockLabel {
         .init(
-            text: localized(key: "To import this backup, scan all the QR codes below from all pages."),
+            text: localized(
+                key: "The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be \(totalCodes) in total."
+            ),
             font: .systemFont(ofSize: 10),
             textColor: .gray,
-            padding: .init(top: 12, left: 0, bottom: 12, right: 0)
+            padding: .init(top: 16, left: 0, bottom: 8, right: 0)
         )
     }
 
