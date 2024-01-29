@@ -7,10 +7,10 @@
     "Page %lld of %lld" : {
       "extractionState" : "manual"
     },
-    "The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be %lld in total." : {
+    "Vault Export" : {
       "extractionState" : "manual"
     },
-    "Vault Export" : {
+    "Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are %lld QR codes." : {
       "extractionState" : "manual"
     }
   },

@@ -32,7 +32,7 @@ extension VaultExportDataBlockGenerator {
     private func makeTitle() -> DataBlockLabel {
         .init(
             text: localized(key: "Vault Export"),
-            font: .systemFont(ofSize: 24, weight: .heavy),
+            font: .systemFont(ofSize: 26, weight: .heavy),
             padding: .init(top: 8, left: 0, bottom: 8, right: 0)
         )
     }
@@ -44,7 +44,7 @@ extension VaultExportDataBlockGenerator {
                 if text.isEmpty { return nil }
                 return .init(
                     text: String(text),
-                    font: .systemFont(ofSize: 12),
+                    font: .systemFont(ofSize: 10),
                     padding: .zero
                 )
             }
@@ -53,11 +53,11 @@ extension VaultExportDataBlockGenerator {
     private func makeQRCodeHelperLabel(totalCodes: Int) -> DataBlockLabel {
         .init(
             text: localized(
-                key: "The following data is encrypted and encoded as a series of QR codes. To import this backup, you should scan every single code in the Vault app. There should be \(totalCodes) in total."
+                key: "Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are \(totalCodes) QR codes."
             ),
-            font: .systemFont(ofSize: 10),
+            font: .systemFont(ofSize: 8),
             textColor: .gray,
-            padding: .init(top: 16, left: 0, bottom: 8, right: 0)
+            padding: .init(top: 12, left: 0, bottom: 8, right: 0)
         )
     }
 
