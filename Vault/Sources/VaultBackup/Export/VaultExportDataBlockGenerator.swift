@@ -20,7 +20,9 @@ struct VaultExportDataBlockGenerator {
             content: []
         )
         document.content.append(.title(makeTitle()))
-        document.content.append(contentsOf: makeUserDescriptionLabels().map { .title($0) })
+        for descriptionLabel in makeUserDescriptionLabels() {
+            document.content.append(.title(descriptionLabel))
+        }
         let qrCodeImages = try makeQRCodeImagesFromVault()
         document.content.append(.title(makeQRCodeHelperLabel(totalCodes: qrCodeImages.count)))
         document.content.append(.images(qrCodeImages))
