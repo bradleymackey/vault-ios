@@ -7,8 +7,8 @@ import VaultFeed
 import XCTest
 @testable import VaultiOS
 
-@MainActor
 final class TOTPPreviewViewGeneratorTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let factory = MockTOTPViewFactory()
         let timer = MockIntervalTimer()
@@ -18,6 +18,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(timer.recordedWaitedIntervals, [])
     }
 
+    @MainActor
     func test_makeOTPView_generatesViews() throws {
         let sut = makeSUT()
 
@@ -27,6 +28,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(foundText, "Hello, TOTP!")
     }
 
+    @MainActor
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -38,6 +40,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: viewModels)
     }
 
+    @MainActor
     func test_makeOTPView_returnsSameTimerPeriodStateUsingCachedModels() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -48,6 +51,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: models)
     }
 
+    @MainActor
     func test_previewActionForVaultItem_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
@@ -56,6 +60,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertNil(code)
     }
 
+    @MainActor
     func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -71,6 +76,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(code, .copyText("123456"))
     }
 
+    @MainActor
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -89,6 +95,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(sut.cachedTimerControllerCount, 1, "This is shared across codes, and should not be invalidated")
     }
 
+    @MainActor
     func test_recalculateAllTimers_recalculatesAllCachedTimers() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -98,6 +105,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_scenePhaseDidChange_activeRecalculatesAllCachedTimers() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -107,6 +115,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_didAppear_recalculatesAllCachedTimers() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
@@ -119,6 +128,8 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
 extension TOTPPreviewViewGeneratorTests {
     private typealias SUT = TOTPPreviewViewGenerator<MockTOTPViewFactory>
+
+    @MainActor
     private func makeSUT(
         factory: MockTOTPViewFactory = MockTOTPViewFactory(),
         updaterFactory: MockCodeTimerUpdaterFactory = MockCodeTimerUpdaterFactory(),
@@ -133,6 +144,7 @@ extension TOTPPreviewViewGeneratorTests {
         return .init(data: codeData)
     }
 
+    @MainActor
     private func expectRecalculatesCachedTimers(sut: SUT, factory: MockTOTPViewFactory, when action: () -> Void) {
         let updaters = collectCodeTimerUpdaters(sut: sut, factory: factory, ids: [UUID(), UUID(), UUID()])
 
@@ -170,6 +182,7 @@ extension TOTPPreviewViewGeneratorTests {
         }
     }
 
+    @MainActor
     private func collectFactoryParameters(
         sut: SUT,
         factory: MockTOTPViewFactory,
@@ -205,6 +218,7 @@ extension TOTPPreviewViewGeneratorTests {
         return models
     }
 
+    @MainActor
     private func collectCodePreviewViewModels(
         sut: SUT,
         factory: MockTOTPViewFactory,
@@ -216,6 +230,7 @@ extension TOTPPreviewViewGeneratorTests {
             .map(\.0)
     }
 
+    @MainActor
     private func collectCodeTimerPeriodState(
         sut: SUT,
         factory: MockTOTPViewFactory,
@@ -227,6 +242,7 @@ extension TOTPPreviewViewGeneratorTests {
             .map(\.1)
     }
 
+    @MainActor
     private func collectCodeTimerUpdaters(
         sut: SUT,
         factory: MockTOTPViewFactory,

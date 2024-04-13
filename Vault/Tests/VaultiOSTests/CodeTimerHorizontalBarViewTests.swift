@@ -7,10 +7,10 @@ import VaultFeed
 import XCTest
 @testable import VaultiOS
 
-@MainActor
 final class CodeTimerHorizontalBarViewTests: XCTestCase {
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(
         currentTime: Double = 100,
         file: StaticString = #filePath,

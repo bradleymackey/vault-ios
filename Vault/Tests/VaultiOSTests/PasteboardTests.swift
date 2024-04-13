@@ -3,8 +3,8 @@ import VaultiOS
 import VaultSettings
 import XCTest
 
-@MainActor
 final class PasteboardTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() async throws {
         let pasteboard = MockSystemPasteboard()
 
@@ -19,6 +19,7 @@ final class PasteboardTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     func test_copy_copiesToPasteboard() async throws {
         let pasteboard = MockSystemPasteboard()
         let sut = makeSUT(pasteboard: pasteboard)
@@ -35,6 +36,7 @@ final class PasteboardTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     func test_copy_emitsDidPasteEvent() async throws {
         let sut = makeSUT()
 
@@ -46,6 +48,7 @@ final class PasteboardTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_copy_usesTTLFromSettings() async throws {
         let ttl = PasteTTL(duration: 1234)
         let pasteboard = MockSystemPasteboard()
@@ -70,6 +73,7 @@ final class PasteboardTests: XCTestCase {
 // MARK: - Helpers
 
 extension PasteboardTests {
+    @MainActor
     private func makeSUT(
         pasteboard: MockSystemPasteboard = MockSystemPasteboard(),
         localSettings: LocalSettings = LocalSettings(defaults: .init(userDefaults: .standard)),

@@ -7,8 +7,8 @@ import VaultFeed
 import XCTest
 @testable import VaultiOS
 
-@MainActor
 final class SecureNotePreviewViewGeneratorTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let factory = MockSecureNoteViewFactory()
         _ = makeSUT(factory: factory)
@@ -16,6 +16,7 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(factory.makeSecureNoteViewExecutedCount, 0)
     }
 
+    @MainActor
     func test_makeVaultPreviewItem_generatesViews() throws {
         let factory = MockSecureNoteViewFactory()
         let sut = makeSUT(factory: factory)
@@ -27,6 +28,7 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(factory.makeSecureNoteViewExecutedCount, 1)
     }
 
+    @MainActor
     func test_previewActionForVaultItem_opensItemDetailForGivenID() {
         let sut = makeSUT()
         let itemID = UUID()
@@ -41,6 +43,8 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
 
 extension SecureNotePreviewViewGeneratorTests {
     private typealias SUT = SecureNotePreviewViewGenerator<MockSecureNoteViewFactory>
+
+    @MainActor
     private func makeSUT(
         factory: MockSecureNoteViewFactory = MockSecureNoteViewFactory()
     ) -> SUT {
