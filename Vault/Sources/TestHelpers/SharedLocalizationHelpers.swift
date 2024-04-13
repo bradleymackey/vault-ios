@@ -9,8 +9,8 @@ public func assertLocalizedKeyAndValuesExist(
     let localizationBundles = allLocalizationBundles(in: presentationBundle, file: file, line: line)
     let localizedStringKeys = allLocalizedStringKeys(in: localizationBundles, table: table, file: file, line: line)
 
-    localizationBundles.forEach { bundle, localization in
-        localizedStringKeys.forEach { key in
+    for (bundle, localization) in localizationBundles {
+        for key in localizedStringKeys {
             let localizedString = bundle.localizedString(forKey: key, value: nil, table: table)
 
             let language = Locale.current.localizedString(forLanguageCode: localization) ?? ""
