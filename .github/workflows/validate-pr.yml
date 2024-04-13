@@ -1,0 +1,16 @@
+name: Validate PR
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build on iOS 17
+    timeout-minutes: 5
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build App
+        run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -sdk iphonesimulator17.4 build
