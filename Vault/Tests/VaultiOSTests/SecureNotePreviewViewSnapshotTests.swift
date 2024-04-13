@@ -5,7 +5,6 @@ import VaultFeed
 import XCTest
 @testable import VaultiOS
 
-@MainActor
 final class SecureNotePreviewViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()

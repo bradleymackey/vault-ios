@@ -4,7 +4,6 @@ import TestHelpers
 import VaultFeed
 import XCTest
 
-@MainActor
 final class FeedViewModelTests: XCTestCase {
     // swiftlint:disable:next implicitly_unwrapped_optional
     private var cancellables: Set<AnyCancellable>!
@@ -19,6 +18,7 @@ final class FeedViewModelTests: XCTestCase {
         super.tearDown()
     }
 
+    @MainActor
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
         let sut = makeSUT(store: StubStore.empty)
 
@@ -28,6 +28,7 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(sut.codes, [])
     }
 
+    @MainActor
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
         let sut = makeSUT(store: StubStore.empty)
 
@@ -37,6 +38,7 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertNil(sut.retrievalError)
     }
 
+    @MainActor
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore(codes: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
         let sut = makeSUT(store: store)
@@ -47,6 +49,7 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(sut.codes, store.codes)
     }
 
+    @MainActor
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore(codes: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
         let sut = makeSUT(store: store)
@@ -57,6 +60,7 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertNil(sut.retrievalError)
     }
 
+    @MainActor
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
         let sut = makeSUT(store: ErrorStubStore(error: anyNSError()))
 
@@ -66,6 +70,7 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertNotNil(sut.retrievalError)
     }
 
+    @MainActor
     func test_updateCode_updatesStore() async throws {
         var store = StubStore()
         let exp = expectation(description: "Wait for store update")
@@ -80,6 +85,7 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_updateCode_reloadsAfterUpdate() async throws {
         var store = StubStore()
         let exp = expectation(description: "Wait for store retrieve")
@@ -94,6 +100,7 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_updateCode_doesNotReloadOnFailure() async throws {
         var store = ErrorStubStore(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
@@ -109,6 +116,7 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     func test_updateCode_invalidatesCaches() async throws {
         let cache1 = StubCodeCache()
         let cache2 = StubCodeCache()
@@ -121,6 +129,7 @@ final class FeedViewModelTests: XCTestCase {
         XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
     }
 
+    @MainActor
     func test_deleteCode_removesFromStore() async throws {
         var store = StubStore()
         let exp = expectation(description: "Wait for store delete")
@@ -135,6 +144,7 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_deleteCode_reloadsAfterDelete() async throws {
         var store = StubStore()
         let exp = expectation(description: "Wait for store retrieve")
@@ -149,6 +159,7 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_deleteCode_doesNotReloadOnFailure() async throws {
         var store = ErrorStubStore(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
@@ -164,6 +175,7 @@ final class FeedViewModelTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     func test_deleteCode_invalidatesCaches() async throws {
         let cache1 = StubCodeCache()
         let cache2 = StubCodeCache()
@@ -178,6 +190,7 @@ final class FeedViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT<T: VaultStoreReader>(
         store: T,
         caches: [any VaultItemCache] = [],

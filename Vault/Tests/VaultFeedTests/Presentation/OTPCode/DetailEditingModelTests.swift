@@ -2,7 +2,6 @@ import Foundation
 import XCTest
 @testable import VaultFeed
 
-@MainActor
 final class DetailEditingModelTests: XCTestCase {
     func test_isDirty_initiallyFalse() {
         let sut = makeSUT(detail: "hello")

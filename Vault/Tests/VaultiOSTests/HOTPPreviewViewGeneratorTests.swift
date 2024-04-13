@@ -6,8 +6,8 @@ import VaultFeed
 import XCTest
 @testable import VaultiOS
 
-@MainActor
 final class HOTPPreviewViewGeneratorTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let (_, timer, factory) = makeSUT()
 
@@ -15,6 +15,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(timer.recordedWaitedIntervals, [])
     }
 
+    @MainActor
     func test_makeOTPView_generatesViews() throws {
         let (sut, _, _) = makeSUT()
 
@@ -24,6 +25,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(foundText, "Hello, HOTP!")
     }
 
+    @MainActor
     func test_makeOTPView_viewModelsAreInitiallyObfuscated() {
         let (sut, _, factory) = makeSUT()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
@@ -32,6 +34,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
     }
 
+    @MainActor
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
         let sharedID = UUID()
@@ -42,6 +45,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: viewModels)
     }
 
+    @MainActor
     func test_makeOTPView_returnsSameIncrementerInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
         let sharedID = UUID()
@@ -51,6 +55,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         expectAllIdentical(in: viewModels)
     }
 
+    @MainActor
     func test_previewActionForVaultItem_isNilIfCacheEmpty() {
         let (sut, _, _) = makeSUT()
 
@@ -59,6 +64,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertNil(code)
     }
 
+    @MainActor
     func test_previewActionForVaultItem_isNilWhenCodeIsObfuscated() {
         let (sut, _, _) = makeSUT()
 
@@ -69,6 +75,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
     }
 
+    @MainActor
     func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let (sut, _, factory) = makeSUT()
         let id = UUID()
@@ -83,6 +90,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(code, .copyText("123456"))
     }
 
+    @MainActor
     func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {
         let (sut, _, factory) = makeSUT()
 
@@ -91,6 +99,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_scenePhaseDidChange_backgroundHidesAllCodesUntilNextUpdate() {
         let (sut, _, factory) = makeSUT()
 
@@ -99,6 +108,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
         let (sut, _, _) = makeSUT()
 
@@ -120,6 +130,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
 extension HOTPPreviewViewGeneratorTests {
     private typealias SUT = HOTPPreviewViewGenerator<MockHOTPViewFactory>
+    @MainActor
     private func makeSUT() -> (SUT, MockIntervalTimer, MockHOTPViewFactory) {
         let factory = MockHOTPViewFactory()
         let timer = MockIntervalTimer()
@@ -132,6 +143,7 @@ extension HOTPPreviewViewGeneratorTests {
         return .init(data: codeData)
     }
 
+    @MainActor
     private func expectHidesAllCodesUntilNextUpdate(sut: SUT, factory: MockHOTPViewFactory, when action: () -> Void) {
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
 
@@ -161,6 +173,7 @@ extension HOTPPreviewViewGeneratorTests {
         }
     }
 
+    @MainActor
     private func collectCodePreviewViewModels(
         sut: SUT,
         factory: MockHOTPViewFactory,
@@ -193,6 +206,7 @@ extension HOTPPreviewViewGeneratorTests {
         return viewModels
     }
 
+    @MainActor
     private func collectCodeIncrementerViewModels(
         sut: SUT,
         factory: MockHOTPViewFactory,

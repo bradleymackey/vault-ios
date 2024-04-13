@@ -2,7 +2,6 @@ import Foundation
 import FoundationExtensions
 import XCTest
 
-@MainActor
 final class PendingValueTests: XCTestCase {
     enum TestError: Error {
         case testCase

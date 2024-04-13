@@ -6,8 +6,8 @@ import VaultFeed
 import VaultiOS
 import XCTest
 
-@MainActor
 final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -19,6 +19,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(note.calledMethods, [])
     }
 
+    @MainActor
     func test_makeVaultPreviewView_makesTOTPViewForTOTP() throws {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -32,6 +33,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(text, "TOTP")
     }
 
+    @MainActor
     func test_makeVaultPreviewView_makesHOTPViewForHOTP() throws {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -45,6 +47,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(text, "HOTP")
     }
 
+    @MainActor
     func test_makeVaultPreviewView_makesSecureNoteView() throws {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -58,6 +61,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(text, "Secure Note")
     }
 
+    @MainActor
     func test_scenePhaseDidChange_callsOnAllCollaborators() {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -71,6 +75,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(note.calledMethods, ["scenePhaseDidChange(to:)"])
     }
 
+    @MainActor
     func test_didAppear_callsOnAllCollaborators() {
         let totp = MockTOTPGenerator()
         let hotp = MockHOTPGenerator()
@@ -84,6 +89,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(note.calledMethods, ["didAppear()"])
     }
 
+    @MainActor
     func test_previewActionForVaultItem_returnsNilIfNoGeneratorCanHandle() {
         let totp = MockTOTPGenerator()
         totp.previewActionForVaultItemValue = nil
@@ -98,6 +104,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertNil(action)
     }
 
+    @MainActor
     func test_previewActionForVaultItem_returnsIfTOTPCanHandle() {
         let totp = MockTOTPGenerator()
         totp.previewActionForVaultItemValue = .copyText("totp")
@@ -112,6 +119,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(action, .copyText("totp"))
     }
 
+    @MainActor
     func test_previewActionForVaultItem_returnsIfHOTPCanHandle() {
         let totp = MockTOTPGenerator()
         totp.previewActionForVaultItemValue = nil
@@ -126,6 +134,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(action, .copyText("hotp"))
     }
 
+    @MainActor
     func test_previewActionForVaultItem_returnsIfSecureNoteCanHandle() {
         let totp = MockTOTPGenerator()
         totp.previewActionForVaultItemValue = nil
@@ -147,6 +156,7 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         MockHOTPGenerator,
         MockSecureNoteGenerator
     >
+    @MainActor
     private func makeSUT(
         totp: MockTOTPGenerator,
         hotp: MockHOTPGenerator,

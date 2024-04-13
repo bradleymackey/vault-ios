@@ -6,13 +6,13 @@ import VaultiOS
 import VaultSettings
 import XCTest
 
-@MainActor
 final class VaultItemFeedViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
         isRecording = false
     }
 
+    @MainActor
     func test_layout_noCodes() async throws {
         let store = MockOTPCodeStore()
         let viewModel = FeedViewModel(store: store)
@@ -24,6 +24,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
+    @MainActor
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = MockOTPCodeStore()
         store.codesToRetrieve = [uniqueStoredVaultItem()]
@@ -36,6 +37,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
+    @MainActor
     func test_layout_multipleCodesAtMediumSize() async throws {
         let store = MockOTPCodeStore()
         store.codesToRetrieve = [uniqueStoredVaultItem(), uniqueStoredVaultItem(), uniqueStoredVaultItem()]
@@ -48,6 +50,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
+    @MainActor
     func test_layout_singleCodeAtLargeSize() async throws {
         let store = MockOTPCodeStore()
         store.codesToRetrieve = [uniqueStoredVaultItem()]
@@ -62,6 +65,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
+    @MainActor
     func test_layout_multipleCodesAtLargeSize() async throws {
         let store = MockOTPCodeStore()
         store.codesToRetrieve = [uniqueStoredVaultItem(), uniqueStoredVaultItem(), uniqueStoredVaultItem()]
@@ -81,6 +85,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
 extension VaultItemFeedViewSnapshotTests {
     typealias SUT = VaultItemFeedView<MockOTPCodeStore, MockGenericViewGenerator>
+
+    @MainActor
     private func makeSUT(
         viewModel: FeedViewModel<MockOTPCodeStore>,
         localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
