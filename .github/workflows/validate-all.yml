@@ -6,13 +6,28 @@ on:
   push:
     branches: [main]
 
+env:
+  IOS_PLATFORM: iOS Simulator
+  IOS_DEVICE: iPhone 15
+  IOS_VERSION: 17.4
+
 jobs:
   build:
-    name: Build on iOS 17
+    name: Build
     timeout-minutes: 5
     runs-on: macos-latest
 
     steps:
       - uses: actions/checkout@v4
       - name: Build App
-        run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -sdk iphonesimulator17.4 build
+        run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' build
+
+  test:
+    name: Test
+    timeout-minutes: 10
+    runs-on: macos-latest
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Run all Tests
+        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' test
