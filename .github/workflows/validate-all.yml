@@ -10,7 +10,7 @@ env:
   IOS_PLATFORM: iOS Simulator
   IOS_DEVICE: iPhone 15
   IOS_VERSION: 17.4
-  SWIFT_VERSION: "5.10"
+  XCODE_VERSION: "15.3"
 
 jobs:
   build:
@@ -20,9 +20,9 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: swift-actions/setup-swift@v2
+      - uses: maxim-lobanov/setup-xcode@v1
         with:
-          swift-version: ${{ env.SWIFT_VERSION }}
+          xcode-version: ${{ env.XCODE_VERSION }}
       - name: Build App
         run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' build
 
@@ -33,8 +33,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: swift-actions/setup-swift@v2
+      - uses: maxim-lobanov/setup-xcode@v1
         with:
-          swift-version: ${{ env.SWIFT_VERSION }}
+          xcode-version: ${{ env.XCODE_VERSION }}
       - name: Run all Tests
         run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' test
