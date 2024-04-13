@@ -23,12 +23,12 @@ let package = Package(
         .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.14.2"),
-        .package(url: "https://github.com/nalexn/ViewInspector", exact: "0.9.8"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.16.0"),
+        .package(url: "https://github.com/nalexn/ViewInspector", exact: "0.9.10"),
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.0"),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.2"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
-        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.2.3"),
+        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
         .package(url: "https://github.com/bradleymackey/swift-spyable", branch: "main"),
     ],
     targets: [
