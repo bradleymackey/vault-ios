@@ -23,12 +23,12 @@ let package = Package(
         .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.14.2"),
-        .package(url: "https://github.com/nalexn/ViewInspector", exact: "0.9.8"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.16.0"),
+        .package(url: "https://github.com/nalexn/ViewInspector", exact: "0.9.10"),
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.0"),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.2"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
-        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.2.3"),
+        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
         .package(url: "https://github.com/bradleymackey/swift-spyable", branch: "main"),
     ],
     targets: [
@@ -200,13 +200,13 @@ let package = Package(
 
         .binaryTarget(
             name: "swiftformat",
-            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.52.8/swiftformat.artifactbundle.zip",
-            checksum: "4ffc4d52d67feefa9576ceb1c83bbd1cb0832d735fa85ac580dc7453ce3face0"
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.53.6/swiftformat.artifactbundle.zip",
+            checksum: "588b4469708decd9944717fbd284095189f63c720de3bae781e6487004b18d90"
         ),
         .binaryTarget(
             name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.53.0/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "03416a4f75f023e10f9a76945806ddfe70ca06129b895455cc773c5c7d86b73e"
+            url: "https://github.com/realm/SwiftLint/releases/download/0.54.0/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: "963121d6babf2bf5fd66a21ac9297e86d855cbc9d28322790646b88dceca00f1"
         ),
     ]
 )
