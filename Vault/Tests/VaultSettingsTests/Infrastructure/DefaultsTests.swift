@@ -210,9 +210,9 @@ final class DefaultsKitTests: XCTestCase {
         let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
 
         let values: [Void] = try await awaitPublisher(publisher) {
-            try defaults.set("test1", for: Key<String>.init("test1"))
-            try defaults.set("test1", for: Key<String>.init("test1"))
-            try defaults.set("test1", for: Key<String>.init("test1"))
+            try defaults.set("test1", for: Key<String>("test1"))
+            try defaults.set("test1", for: Key<String>("test1"))
+            try defaults.set("test1", for: Key<String>("test1"))
         }
 
         XCTAssertEqual(values.count, 3)

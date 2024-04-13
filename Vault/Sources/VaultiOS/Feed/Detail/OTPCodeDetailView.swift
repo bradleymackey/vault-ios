@@ -133,7 +133,6 @@ public struct OTPCodeDetailView: View {
         }
         .lineLimit(2)
         .multilineTextAlignment(.center)
-
         .frame(maxWidth: .infinity)
         .listRowInsets(.none)
         .listRowBackground(EmptyView())
