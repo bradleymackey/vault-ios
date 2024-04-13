@@ -1,7 +1,9 @@
-name: Validate PR
+name: Validate
 
 on:
   pull_request:
+    branches: [main]
+  push:
     branches: [main]
 
 jobs:
