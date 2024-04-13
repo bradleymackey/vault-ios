@@ -5,8 +5,8 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-@MainActor
 final class OTPCodeDetailViewModelTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let editor = MockOTPCodeDetailEditor()
         _ = makeSUT(editor: editor)
@@ -14,6 +14,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(editor.operationsPerformed, [])
     }
 
+    @MainActor
     func test_init_editingModelUsesInitialData() {
         let code = OTPAuthCode(
             type: .totp(),
@@ -32,18 +33,21 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.description, "my description")
     }
 
+    @MainActor
     func test_detailMenuItems_hasOneExpectedItem() {
         let sut = makeSUT()
 
         XCTAssertEqual(sut.detailMenuItems.count, 1)
     }
 
+    @MainActor
     func test_isInEditMode_initiallyFalse() {
         let sut = makeSUT()
 
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    @MainActor
     func test_startEditing_setsEditModeTrue() async throws {
         let sut = makeSUT()
 
@@ -52,12 +56,14 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isInEditMode)
     }
 
+    @MainActor
     func test_isSaving_initiallyFalse() {
         let sut = makeSUT()
 
         XCTAssertFalse(sut.isSaving)
     }
 
+    @MainActor
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUT()
         sut.editingModel.detail.accountNameTitle = UUID().uuidString
@@ -68,6 +74,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.editingModel.isDirty)
     }
 
+    @MainActor
     func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
         let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
@@ -78,6 +85,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isSaving)
     }
 
+    @MainActor
     func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
         let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
@@ -90,6 +98,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertTrue(sut.editingModel.isDirty)
     }
 
+    @MainActor
     func test_saveChanges_sendsErrorIfSaveError() async throws {
         let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
@@ -103,6 +112,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(output.count, 1)
     }
 
+    @MainActor
     func test_deleteCode_setsBackToFalseAfterSuccessfulDelete() async throws {
         let sut = makeSUT()
 
@@ -111,6 +121,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.isSaving)
     }
 
+    @MainActor
     func test_deleteCode_sendsFinishSignalOnSuccessfulDeletion() async throws {
         let sut = makeSUT()
 
@@ -122,6 +133,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(output.count, 1)
     }
 
+    @MainActor
     func test_deleteCode_sendsErrorIfDeleteError() async throws {
         let editor = MockOTPCodeDetailEditor()
         editor.deleteCodeResult = .failure(anyNSError())
@@ -135,6 +147,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(output.count, 1)
     }
 
+    @MainActor
     func test_done_restoresInitialEditingStateIfInEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
@@ -147,6 +160,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertFalse(sut.editingModel.isDirty)
     }
 
+    @MainActor
     func test_editingModel_initialStateUsesData() {
         var code = uniqueCode()
         code.data.accountName = "account name test"
@@ -162,6 +176,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(editing.initialDetail.description, "description test")
     }
 
+    @MainActor
     func test_editingModel_editingStateUsesData() {
         var code = uniqueCode()
         code.data.accountName = "account name test"
@@ -179,6 +194,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 }
 
 extension OTPCodeDetailViewModelTests {
+    @MainActor
     private func makeSUT(
         code: OTPAuthCode = uniqueCode(),
         metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),

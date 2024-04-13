@@ -4,8 +4,8 @@ import TestHelpers
 import VaultFeed
 import XCTest
 
-@MainActor
 final class OTPCodePreviewViewModelTests: XCTestCase {
+    @MainActor
     func test_code_updatesWithCodes() async throws {
         let (renderer, sut) = makeSUT()
 
@@ -20,6 +20,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         XCTAssertEqual(sut.code, .visible("world"))
     }
 
+    @MainActor
     func test_code_goesToNoMoreCodesWhenFinished() async throws {
         let (renderer, sut) = makeSUT()
 
@@ -34,6 +35,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         XCTAssertEqual(sut.code, .finished)
     }
 
+    @MainActor
     func test_code_goesToErrorWhenErrors() async throws {
         let (renderer, sut) = makeSUT()
 
@@ -49,6 +51,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_hideCodeUntilNextUpdate_obfuscatesCode() async throws {
         let (_, sut) = makeSUT()
 
@@ -61,6 +64,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(
         file: StaticString = #filePath,
         line: UInt = #line

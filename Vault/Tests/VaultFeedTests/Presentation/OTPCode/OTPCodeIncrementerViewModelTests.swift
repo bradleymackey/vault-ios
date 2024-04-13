@@ -4,14 +4,15 @@ import TestHelpers
 import VaultFeed
 import XCTest
 
-@MainActor
 final class OTPCodeIncrementerViewModelTests: XCTestCase {
+    @MainActor
     func test_isButtonEnabled_isInitiallyTrue() {
         let (_, _, sut) = makeSUT()
 
         XCTAssertTrue(sut.isButtonEnabled)
     }
 
+    @MainActor
     func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
         let (_, _, sut) = makeSUT()
 
@@ -22,6 +23,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         XCTAssertEqual(sut.isButtonEnabled, false)
     }
 
+    @MainActor
     func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
         let (_, _, sut) = makeSUT()
 
@@ -35,6 +37,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_isButtonEnabled_enablesAfterTimerCompletion() async throws {
         let (_, timer, sut) = makeSUT()
 
@@ -49,6 +52,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         XCTAssertEqual(sut.isButtonEnabled, true)
     }
 
+    @MainActor
     func test_isButtonEnabled_timerCompletingMultipleTimesHasNoEffect() async throws {
         let (_, timer, sut) = makeSUT()
 
@@ -67,6 +71,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
         let (renderer, _, sut) = makeSUT()
         let publisher = renderer.counterIncrementedPublisher()
@@ -78,6 +83,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         XCTAssertEqual(incrementOperations.count, 1)
     }
 
+    @MainActor
     func test_incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
         let (renderer, _, sut) = makeSUT()
         let publisher = renderer.counterIncrementedPublisher()
@@ -93,6 +99,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, OTPCodeIncrementerViewModel) {
         let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()))
         let timer = MockIntervalTimer()

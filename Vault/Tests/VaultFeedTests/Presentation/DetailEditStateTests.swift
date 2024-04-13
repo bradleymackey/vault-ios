@@ -4,8 +4,8 @@ import TestHelpers
 import XCTest
 @testable import VaultFeed
 
-@MainActor
 final class DetailEditStateTests: XCTestCase {
+    @MainActor
     func test_init_isInitiallyNotPerformingAnyOperations() {
         let sut = makeSUT()
 
@@ -13,6 +13,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    @MainActor
     func test_startEditing_setsModeToEditing() {
         let sut = makeSUT()
 
@@ -21,6 +22,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertTrue(sut.isInEditMode)
     }
 
+    @MainActor
     func test_saveChanges_setsIsSavingToTrue() async throws {
         let sut = makeSUT()
 
@@ -41,6 +43,7 @@ final class DetailEditStateTests: XCTestCase {
         await pendingCall.fulfill()
     }
 
+    @MainActor
     func test_saveChanges_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
         let sut = makeSUT()
 
@@ -65,6 +68,7 @@ final class DetailEditStateTests: XCTestCase {
         await pendingCall.fulfill()
     }
 
+    @MainActor
     func test_saveChanges_successSetsEditModeToFalse() async throws {
         let sut = makeSUT()
         sut.startEditing()
@@ -74,6 +78,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    @MainActor
     func test_saveChanges_failureDoesNotChangeEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
@@ -83,6 +88,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertTrue(sut.isInEditMode)
     }
 
+    @MainActor
     func test_saveChanges_failureThrowsError() async {
         let sut = makeSUT()
 
@@ -91,6 +97,7 @@ final class DetailEditStateTests: XCTestCase {
         })
     }
 
+    @MainActor
     func test_deleteItem_setsIsSavingToTrue() async throws {
         let sut = makeSUT()
 
@@ -113,6 +120,7 @@ final class DetailEditStateTests: XCTestCase {
         await pendingCall.fulfill()
     }
 
+    @MainActor
     func test_deleteItem_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
         let sut = makeSUT()
 
@@ -139,6 +147,7 @@ final class DetailEditStateTests: XCTestCase {
         await pendingCall.fulfill()
     }
 
+    @MainActor
     func test_deleteItem_successExitsEditor() async throws {
         let sut = makeSUT()
 
@@ -153,6 +162,7 @@ final class DetailEditStateTests: XCTestCase {
         await fulfillment(of: [expDelete, expExit], enforceOrder: true)
     }
 
+    @MainActor
     func test_deleteItem_failureDoesNotExitEditor() async throws {
         let sut = makeSUT()
 
@@ -166,6 +176,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(exited)
     }
 
+    @MainActor
     func test_deleteItem_failureDoesNotChangeEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
@@ -179,6 +190,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertTrue(sut.isInEditMode)
     }
 
+    @MainActor
     func test_deleteItem_failureThrowsError() async {
         let sut = makeSUT()
 
@@ -189,6 +201,7 @@ final class DetailEditStateTests: XCTestCase {
         })
     }
 
+    @MainActor
     func test_exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() {
         let sut = makeSUT()
         sut.startEditing()
@@ -205,6 +218,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(exitedEditor, "Should not have exited editor")
     }
 
+    @MainActor
     func test_exitCurrentModeClearingDirtyState_disablesEditModeIfInEditMode() {
         let sut = makeSUT()
         sut.startEditing()
@@ -218,6 +232,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    @MainActor
     func test_exitCurrentModeClearingDirtyState_existsCurrentModeIfNotInEditMode() {
         let sut = makeSUT()
 
@@ -239,6 +254,7 @@ final class DetailEditStateTests: XCTestCase {
 extension DetailEditStateTests {
     typealias MockState = String
 
+    @MainActor
     private func makeSUT() -> DetailEditState<MockState> {
         DetailEditState<MockState>()
     }

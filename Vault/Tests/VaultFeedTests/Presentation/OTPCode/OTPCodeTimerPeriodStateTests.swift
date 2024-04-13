@@ -5,7 +5,6 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-@MainActor
 final class OTPCodeTimerPeriodStateTests: XCTestCase {
     func test_init_initialAnimationStateIsFrozen() {
         let sut = makeSUT(pub: PassthroughSubject().eraseToAnyPublisher())

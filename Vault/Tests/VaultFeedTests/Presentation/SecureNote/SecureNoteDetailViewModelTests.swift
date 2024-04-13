@@ -4,8 +4,8 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-@MainActor
 final class SecureNoteDetailViewModelTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let editor = MockSecureNoteDetailEditor()
         _ = makeSUT(editor: editor)
@@ -13,6 +13,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(editor.operationsPerformed, [])
     }
 
+    @MainActor
     func test_init_editingModelUsesInitialData() {
         let note = SecureNote(title: "my title", contents: "my contents")
         let metadata = uniqueStoredMetadata(userDescription: "my description")
@@ -23,12 +24,14 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.description, metadata.userDescription)
     }
 
+    @MainActor
     func test_isInEditMode_initiallyFalse() {
         let sut = makeSUT()
 
         XCTAssertFalse(sut.isInEditMode)
     }
 
+    @MainActor
     func test_startEditing_setsEditModeTrue() {
         let sut = makeSUT()
 
@@ -37,6 +40,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertTrue(sut.isInEditMode)
     }
 
+    @MainActor
     func test_isSaving_isInitiallyFalse() {
         let sut = makeSUT()
 
@@ -45,6 +49,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 }
 
 extension SecureNoteDetailViewModelTests {
+    @MainActor
     private func makeSUT(
         storedNote: SecureNote = anyStoredNote(),
         storedMetadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
