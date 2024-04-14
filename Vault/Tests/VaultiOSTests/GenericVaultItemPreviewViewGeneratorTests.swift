@@ -148,6 +148,66 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         XCTAssertEqual(action, .copyText("secure note"))
     }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsNilIfNoGeneratorCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = nil
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = nil
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = nil
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertNil(action)
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsIfTOTPCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = "totp"
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = nil
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = nil
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertEqual(action, "totp")
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsIfHOTPCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = nil
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = "hotp"
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = nil
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertEqual(action, "hotp")
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsIfSecureNoteCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = nil
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = nil
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = "secure note"
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertEqual(action, "secure note")
+    }
 }
 
 extension GenericVaultItemPreviewViewGeneratorTests {
