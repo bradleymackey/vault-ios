@@ -77,6 +77,31 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
+    func test_textToCopyForVaultItem_isNilIfCacheEmpty() {
+        let sut = makeSUT()
+
+        let code = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertNil(code)
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
+        let factory = MockTOTPViewFactory()
+        let sut = makeSUT(factory: factory)
+        let id = UUID()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .visible("123456"))
+        }
+
+        let code = sut.textToCopyForVaultItem(id: id)
+
+        XCTAssertEqual(code, "123456")
+    }
+
+    @MainActor
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
         let factory = MockTOTPViewFactory()
         let sut = makeSUT(factory: factory)
