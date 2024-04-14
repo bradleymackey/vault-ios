@@ -3,8 +3,8 @@ import TestHelpers
 import VaultCore
 import XCTest
 
-@MainActor
 final class LiveIntervalTimerTests: XCTestCase {
+    @MainActor
     func test_wait_publishesAfterWait() async throws {
         let sut = LiveIntervalTimer()
 
@@ -14,6 +14,7 @@ final class LiveIntervalTimerTests: XCTestCase {
         XCTAssertEqual(values.count, 1)
     }
 
+    @MainActor
     func test_wait_doesNotPublishBeforeWait() async throws {
         let sut = LiveIntervalTimer()
         let publisher = sut.wait(for: 5).collect(1).first()
