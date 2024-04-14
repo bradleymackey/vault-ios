@@ -8,8 +8,8 @@ import VaultCore
 public final class OTPCodeDetailViewModel {
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
-    private let storedCode: OTPAuthCode
-    private let storedMetdata: StoredVaultItem.Metadata
+    public let storedCode: OTPAuthCode
+    public let storedMetdata: StoredVaultItem.Metadata
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()

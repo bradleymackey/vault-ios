@@ -3,11 +3,17 @@ import SwiftUI
 import VaultCore
 import VaultFeed
 
-struct VaultDetailView<Store: VaultStore>: View {
+struct VaultDetailView<
+    Store: VaultStore,
+    PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
+>: View
+    where PreviewGenerator.PreviewItem == VaultItem
+{
     @Environment(\.dismiss) var dismiss
 
     var feedViewModel: FeedViewModel<Store>
-    let storedItem: StoredVaultItem
+    var storedItem: StoredVaultItem
+    var previewGenerator: PreviewGenerator
 
     var body: some View {
         switch storedItem.item {
@@ -17,7 +23,8 @@ struct VaultDetailView<Store: VaultStore>: View {
                     storedCode: storedCode,
                     storedMetadata: storedItem.metadata,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
-                )
+                ),
+                previewGenerator: previewGenerator
             )
         case .secureNote:
             Text("Secure Note")

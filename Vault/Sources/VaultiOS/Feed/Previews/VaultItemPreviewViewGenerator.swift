@@ -13,6 +13,10 @@ public protocol VaultItemPreviewViewGenerator {
     func didAppear()
 }
 
+public protocol VaultItemCopyActionHandler {
+    func textToCopyForVaultItem(id: UUID) -> String?
+}
+
 /// Handle a given action after interacting with a vault item.
 public protocol VaultItemPreviewActionHandler {
     func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction?

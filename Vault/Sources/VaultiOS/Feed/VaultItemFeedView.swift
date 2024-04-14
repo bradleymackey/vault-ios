@@ -84,12 +84,14 @@ public struct VaultItemFeedView<
                         metadata: storedItem.metadata,
                         behaviour: currentBehaviour
                     )
+                    .modifier(OTPCardViewModifier())
                 } previewContent: { storedItem in
                     viewGenerator.makeVaultPreviewView(
                         item: storedItem.item,
                         metadata: storedItem.metadata,
                         behaviour: reorderingBehaviour
                     )
+                    .modifier(OTPCardViewModifier())
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }

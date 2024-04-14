@@ -4,16 +4,28 @@ import VaultFeed
 import VaultUI
 
 @MainActor
-public struct OTPCodeDetailView: View {
+public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
+    where PreviewGenerator.PreviewItem == VaultItem
+{
     @Bindable public var viewModel: OTPCodeDetailViewModel
 
+    @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @Environment(\.dismiss) var dismiss
     @State private var isError = false
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
+    @State private var isShowingCopyPaste = false
+    private var previewGenerator: PreviewGenerator
 
-    public init(viewModel: OTPCodeDetailViewModel) {
+    private let toastOptions = SimpleToastOptions(
+        hideAfter: 1.5,
+        animation: .spring,
+        modifierType: .slide
+    )
+
+    public init(viewModel: OTPCodeDetailViewModel, previewGenerator: PreviewGenerator) {
         self.viewModel = viewModel
+        self.previewGenerator = previewGenerator
     }
 
     public var body: some View {
@@ -21,6 +33,9 @@ public struct OTPCodeDetailView: View {
             codeDetailSection
             if viewModel.isInEditMode {
                 descriptionSection
+            }
+            if !viewModel.isInEditMode {
+                codePreviewSection
             }
             metadataSection
         }
@@ -51,6 +66,13 @@ public struct OTPCodeDetailView: View {
             Button(localized(key: "codeDetail.action.error.confirm.title"), role: .cancel) {}
         } message: { error in
             Text(error.localizedDescription)
+        }
+        .onReceive(pasteboard.didPaste()) {
+            isShowingCopyPaste = true
+        }
+        .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
+            ToastAlertMessageView.copiedToClipboard()
+                .padding(.top, 24)
         }
         .toolbar {
             if viewModel.editingModel.isDirty {
@@ -176,12 +198,22 @@ public struct OTPCodeDetailView: View {
         }
     }
 
+    private var codePreviewSection: some View {
+        Section {
+            copyableViewGenerator().makeVaultPreviewView(
+                item: .otpCode(viewModel.storedCode),
+                metadata: viewModel.storedMetdata,
+                behaviour: .normal
+            )
+        }
+    }
+
     private var metadataSection: some View {
         Section {
             Label {
                 LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
             } icon: {
-                RowIcon(icon: Image(systemName: "clock.fill"), color: .green)
+                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
                     .foregroundColor(.white)
             }
             .padding(.vertical, 2)
@@ -192,8 +224,8 @@ public struct OTPCodeDetailView: View {
                         Label {
                             LabeledContent(entry.title, value: entry.detail)
                         } icon: {
-                            Image(systemName: entry.systemIconName)
-                                .foregroundColor(.primary)
+                            RowIcon(icon: Image(systemName: entry.systemIconName), color: .secondary)
+                                .foregroundColor(.white)
                         }
                     }
                 } label: {
@@ -233,6 +265,14 @@ public struct OTPCodeDetailView: View {
             ItemDeleteLabel()
         }
     }
+
+    func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {
+        VaultItemOnTapDecoratorViewGenerator(generator: previewGenerator) { id in
+            if let text = previewGenerator.textToCopyForVaultItem(id: id) {
+                pasteboard.copy(text)
+            }
+        }
+    }
 }
 
 struct OTPCodeDetailView_Previews: PreviewProvider {
@@ -252,7 +292,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                     userDescription: "Description"
                 ),
                 editor: StubEditor()
-            )
+            ),
+            previewGenerator: VaultItemPreviewViewGeneratorMock()
         )
     }
 

@@ -51,10 +51,14 @@ extension HOTPPreviewViewGenerator {
     }
 }
 
-extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler {
+extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
     public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
-        guard let visibleCode = previewViewModelCache[id]?.code.visibleCode else { return nil }
+        guard let visibleCode = textToCopyForVaultItem(id: id) else { return nil }
         return .copyText(visibleCode)
+    }
+
+    public func textToCopyForVaultItem(id: UUID) -> String? {
+        previewViewModelCache[id]?.code.visibleCode
     }
 }
 

@@ -4,7 +4,10 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler>: View
+struct VaultListView<
+    Store: VaultStore,
+    Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
+>: View
     where Generator.PreviewItem == VaultItem
 {
     var feedViewModel: FeedViewModel<Store>
@@ -72,7 +75,11 @@ struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator
                 }
             case let .detail(_, storedCode):
                 NavigationStack {
-                    VaultDetailView(feedViewModel: feedViewModel, storedItem: storedCode)
+                    VaultDetailView(
+                        feedViewModel: feedViewModel,
+                        storedItem: storedCode,
+                        previewGenerator: viewGenerator
+                    )
                 }
             }
         }

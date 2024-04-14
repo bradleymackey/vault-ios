@@ -148,6 +148,66 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         XCTAssertEqual(action, .copyText("secure note"))
     }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsNilIfNoGeneratorCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = nil
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = nil
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = nil
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertNil(action)
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsIfTOTPCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = "totp"
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = nil
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = nil
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertEqual(action, "totp")
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsIfHOTPCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = nil
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = "hotp"
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = nil
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertEqual(action, "hotp")
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_returnsIfSecureNoteCanHandle() {
+        let totp = MockTOTPGenerator()
+        totp.textToCopyForVaultItemValue = nil
+        let hotp = MockHOTPGenerator()
+        hotp.textToCopyForVaultItemValue = nil
+        let note = MockSecureNoteGenerator()
+        note.textToCopyForVaultItemValue = "secure note"
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        let action = sut.textToCopyForVaultItem(id: UUID())
+
+        XCTAssertEqual(action, "secure note")
+    }
 }
 
 extension GenericVaultItemPreviewViewGeneratorTests {
@@ -169,7 +229,9 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         )
     }
 
-    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler,
+        VaultItemCopyActionHandler
+    {
         typealias PreviewItem = HOTPAuthCode
         private(set) var calledMethods = [String]()
 
@@ -197,9 +259,17 @@ extension GenericVaultItemPreviewViewGeneratorTests {
             calledMethods.append(#function)
             return previewActionForVaultItemValue
         }
+
+        var textToCopyForVaultItemValue: String? = nil
+        func textToCopyForVaultItem(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return textToCopyForVaultItemValue
+        }
     }
 
-    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler,
+        VaultItemCopyActionHandler
+    {
         typealias PreviewItem = TOTPAuthCode
         private(set) var calledMethods = [String]()
 
@@ -227,9 +297,17 @@ extension GenericVaultItemPreviewViewGeneratorTests {
             calledMethods.append(#function)
             return previewActionForVaultItemValue
         }
+
+        var textToCopyForVaultItemValue: String? = nil
+        func textToCopyForVaultItem(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return textToCopyForVaultItemValue
+        }
     }
 
-    private class MockSecureNoteGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+    private class MockSecureNoteGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler,
+        VaultItemCopyActionHandler
+    {
         typealias PreviewItem = SecureNote
         private(set) var calledMethods = [String]()
 
@@ -256,6 +334,12 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
             calledMethods.append(#function)
             return previewActionForVaultItemValue
+        }
+
+        var textToCopyForVaultItemValue: String? = nil
+        func textToCopyForVaultItem(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return textToCopyForVaultItemValue
         }
     }
 }
