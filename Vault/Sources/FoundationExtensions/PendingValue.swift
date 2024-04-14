@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
