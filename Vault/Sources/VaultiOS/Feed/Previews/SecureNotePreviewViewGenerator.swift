@@ -36,8 +36,12 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
     }
 }
 
-extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler {
+extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
     public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
         .openItemDetail(id)
+    }
+
+    public func textToCopyForVaultItem(id _: UUID) -> String? {
+        "TODO"
     }
 }

@@ -23,7 +23,6 @@ public struct VaultItemOnTapDecoratorViewGenerator<
             onTap(metadata.id)
         } label: {
             generator.makeVaultPreviewView(item: item, metadata: metadata, behaviour: behaviour)
-                .modifier(OTPCardViewModifier())
         }
     }
 

@@ -3,7 +3,10 @@ import SwiftUI
 import VaultCore
 import VaultFeed
 
-struct VaultDetailView<Store: VaultStore, PreviewGenerator: VaultItemPreviewViewGenerator>: View
+struct VaultDetailView<
+    Store: VaultStore,
+    PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
+>: View
     where PreviewGenerator.PreviewItem == VaultItem
 {
     @Environment(\.dismiss) var dismiss

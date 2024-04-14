@@ -4,7 +4,10 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-struct VaultListView<Store: VaultStore, Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler>: View
+struct VaultListView<
+    Store: VaultStore,
+    Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
+>: View
     where Generator.PreviewItem == VaultItem
 {
     var feedViewModel: FeedViewModel<Store>

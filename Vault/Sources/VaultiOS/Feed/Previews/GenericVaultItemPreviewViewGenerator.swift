@@ -3,10 +3,13 @@ import SwiftUI
 import VaultCore
 import VaultFeed
 
+public typealias GeneratorWithActions = VaultItemCopyActionHandler & VaultItemPreviewActionHandler &
+    VaultItemPreviewViewGenerator
+
 public struct GenericVaultItemPreviewViewGenerator<
-    TOTP: VaultItemPreviewViewGenerator,
-    HOTP: VaultItemPreviewViewGenerator,
-    Note: VaultItemPreviewViewGenerator
+    TOTP: GeneratorWithActions,
+    HOTP: GeneratorWithActions,
+    Note: GeneratorWithActions
 >: VaultItemPreviewViewGenerator
     where TOTP.PreviewItem == TOTPAuthCode,
     HOTP.PreviewItem == HOTPAuthCode,
@@ -16,7 +19,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note
-    private let allGenerators: [any VaultItemPreviewViewGenerator]
+    private let allGenerators: [any GeneratorWithActions]
 
     public init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note) {
         self.totpGenerator = totpGenerator
@@ -69,12 +72,19 @@ public struct GenericVaultItemPreviewViewGenerator<
     }
 }
 
-extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler {
+extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
+    public func textToCopyForVaultItem(id: UUID) -> String? {
+        for generator in allGenerators {
+            if let text = generator.textToCopyForVaultItem(id: id) {
+                return text
+            }
+        }
+        return nil
+    }
+
     public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
         for generator in allGenerators {
-            if let actionHandler = generator as? any VaultItemPreviewActionHandler,
-               let action = actionHandler.previewActionForVaultItem(id: id)
-            {
+            if let action = generator.previewActionForVaultItem(id: id) {
                 return action
             }
         }

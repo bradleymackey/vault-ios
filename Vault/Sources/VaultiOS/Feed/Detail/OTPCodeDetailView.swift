@@ -4,11 +4,12 @@ import VaultFeed
 import VaultUI
 
 @MainActor
-public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator>: View
+public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
     where PreviewGenerator.PreviewItem == VaultItem
 {
     @Bindable public var viewModel: OTPCodeDetailViewModel
 
+    @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @Environment(\.dismiss) var dismiss
     @State private var isError = false
     @State private var currentError: (any Error)?
@@ -185,7 +186,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator>
 
     private var codePreviewSection: some View {
         Section {
-            previewGenerator.makeVaultPreviewView(
+            copyableViewGenerator().makeVaultPreviewView(
                 item: .otpCode(viewModel.storedCode),
                 metadata: viewModel.storedMetdata,
                 behaviour: .normal
@@ -248,6 +249,14 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator>
             isShowingDeleteConfirmation = true
         } label: {
             ItemDeleteLabel()
+        }
+    }
+
+    func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {
+        VaultItemOnTapDecoratorViewGenerator(generator: previewGenerator) { id in
+            if let text = previewGenerator.textToCopyForVaultItem(id: id) {
+                pasteboard.copy(text)
+            }
         }
     }
 }

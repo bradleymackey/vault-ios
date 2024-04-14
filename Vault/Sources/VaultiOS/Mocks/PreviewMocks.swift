@@ -90,7 +90,7 @@ struct CodeStoreFake: VaultStoreReader {
     }
 }
 
-struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator {
+struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator, VaultItemCopyActionHandler {
     typealias PreviewItem = VaultItem
 
     func makeVaultPreviewView(
@@ -99,6 +99,10 @@ struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator {
         behaviour _: VaultItemViewBehaviour
     ) -> some View {
         Text("Preview View")
+    }
+
+    func textToCopyForVaultItem(id _: UUID) -> String? {
+        nil
     }
 
     func scenePhaseDidChange(to _: ScenePhase) {
