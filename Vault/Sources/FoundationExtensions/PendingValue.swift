@@ -3,7 +3,8 @@ import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
 public actor PendingValue<Output> {
-    private var state: PipelineState = .notWaiting
+    private var stream: AsyncThrowingStream<Output, any Error>?
+    private var valuePipeline: ValuePipeline = .init()
     /// Internal pipeline listener.
     private var pipelineListener: AnyCancellable?
     /// Last remembered value, used if the value is fulfilled before
@@ -18,36 +19,29 @@ public actor PendingValue<Output> {
 extension PendingValue {
     /// Returns `true` if waiting on `waitToProduce` at this moment.
     public var isWaiting: Bool {
-        state.isWaiting
+        stream != nil
     }
 
     /// Cancel the `waitToProduce`, causing it to throw a `CancellationError`.
     public func cancel() {
-        switch state {
-        case .notWaiting: break
-        case let .waiting(pipeline): pipeline.cancel()
-        }
+        valuePipeline.cancel()
     }
 
     /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
     public func fulfill(_ value: Output) {
         lastValue = .success(value)
-        switch state {
-        case .notWaiting: break
-        case let .waiting(pipeline): pipeline.finish(result: .success(value))
-        }
+        valuePipeline.finish(result: .success(value))
     }
 
     /// Produces an error to cause `waitToForValue` to throw.
     public func reject(error: any Error) {
         lastValue = .failure(error)
-        switch state {
-        case .notWaiting: break
-        case let .waiting(pipeline): pipeline.finish(result: .failure(error))
-        }
+        valuePipeline.finish(result: .failure(error))
     }
 
     public struct AlreadyWaitingError: Error {}
+
+    public struct MissingValueError: Error {}
 
     /// Wait for the production of the target value, cancelling on a Task cancellation.
     /// Yields the value when `produceNow` is called, but waits until that moment.
@@ -57,57 +51,44 @@ extension PendingValue {
         if isWaiting {
             throw AlreadyWaitingError()
         }
+
         // If there's a pending value, get it.
         if let existing = lastValue {
             defer { lastValue = nil }
             return try existing.get()
         }
+
         // Otherwise, asynchronously wait for the production of the value.
         defer {
             pipelineListener?.cancel()
-            state = .notWaiting
+            stream = nil
         }
-        state = .waiting(.init())
-        return try await withTaskCancellationHandler {
-            try await withCheckedThrowingContinuation { cont in
-                guard case let .waiting(valuePipeline) = state else {
-                    return cont.resume(throwing: CancellationError())
+
+        var listener: AnyCancellable?
+        defer { listener?.cancel() }
+        stream = AsyncThrowingStream { continuation in
+            listener = valuePipeline.publisher().sink { completion in
+                switch completion {
+                case let .failure(error):
+                    continuation.finish(throwing: error)
+                case .finished:
+                    continuation.finish()
                 }
-                self.pipelineListener = valuePipeline.publisher().sink { completed in
-                    switch completed {
-                    case let .failure(error):
-                        cont.resume(throwing: error)
-                    case .finished:
-                        // already resolved with value in `recieveValue`.
-                        return
-                    }
-                } receiveValue: { value in
-                    cont.resume(returning: value)
-                }
-            }
-        } onCancel: {
-            Task {
-                await self.cancel()
+            } receiveValue: { value in
+                continuation.yield(value)
             }
         }
+
+        for try await value in stream! {
+            return value
+        }
+        throw MissingValueError()
     }
 }
 
 // MARK: - Internal
 
 extension PendingValue {
-    private enum PipelineState {
-        case notWaiting
-        case waiting(ValuePipeline)
-
-        var isWaiting: Bool {
-            switch self {
-            case .notWaiting: false
-            case .waiting: true
-            }
-        }
-    }
-
     private struct ValuePipeline {
         private var subject: PassthroughSubject<Output, any Error>
 
