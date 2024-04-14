@@ -169,7 +169,9 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         )
     }
 
-    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+    private class MockHOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler,
+        VaultItemCopyActionHandler
+    {
         typealias PreviewItem = HOTPAuthCode
         private(set) var calledMethods = [String]()
 
@@ -197,9 +199,17 @@ extension GenericVaultItemPreviewViewGeneratorTests {
             calledMethods.append(#function)
             return previewActionForVaultItemValue
         }
+
+        var textToCopyForVaultItemValue: String? = nil
+        func textToCopyForVaultItem(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return textToCopyForVaultItemValue
+        }
     }
 
-    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+    private class MockTOTPGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler,
+        VaultItemCopyActionHandler
+    {
         typealias PreviewItem = TOTPAuthCode
         private(set) var calledMethods = [String]()
 
@@ -227,9 +237,17 @@ extension GenericVaultItemPreviewViewGeneratorTests {
             calledMethods.append(#function)
             return previewActionForVaultItemValue
         }
+
+        var textToCopyForVaultItemValue: String? = nil
+        func textToCopyForVaultItem(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return textToCopyForVaultItemValue
+        }
     }
 
-    private class MockSecureNoteGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+    private class MockSecureNoteGenerator: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler,
+        VaultItemCopyActionHandler
+    {
         typealias PreviewItem = SecureNote
         private(set) var calledMethods = [String]()
 
@@ -256,6 +274,12 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
             calledMethods.append(#function)
             return previewActionForVaultItemValue
+        }
+
+        var textToCopyForVaultItemValue: String? = nil
+        func textToCopyForVaultItem(id _: UUID) -> String? {
+            calledMethods.append(#function)
+            return textToCopyForVaultItemValue
         }
     }
 }
