@@ -4,16 +4,20 @@ import VaultFeed
 import VaultUI
 
 @MainActor
-public struct OTPCodeDetailView: View {
+public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator>: View
+    where PreviewGenerator.PreviewItem == VaultItem
+{
     @Bindable public var viewModel: OTPCodeDetailViewModel
 
     @Environment(\.dismiss) var dismiss
     @State private var isError = false
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
+    private var previewGenerator: PreviewGenerator
 
-    public init(viewModel: OTPCodeDetailViewModel) {
+    public init(viewModel: OTPCodeDetailViewModel, previewGenerator: PreviewGenerator) {
         self.viewModel = viewModel
+        self.previewGenerator = previewGenerator
     }
 
     public var body: some View {
@@ -21,6 +25,9 @@ public struct OTPCodeDetailView: View {
             codeDetailSection
             if viewModel.isInEditMode {
                 descriptionSection
+            }
+            if !viewModel.isInEditMode {
+                codePreviewSection
             }
             metadataSection
         }
@@ -176,6 +183,16 @@ public struct OTPCodeDetailView: View {
         }
     }
 
+    private var codePreviewSection: some View {
+        Section {
+            previewGenerator.makeVaultPreviewView(
+                item: .otpCode(viewModel.storedCode),
+                metadata: viewModel.storedMetdata,
+                behaviour: .normal
+            )
+        }
+    }
+
     private var metadataSection: some View {
         Section {
             Label {
@@ -252,7 +269,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                     userDescription: "Description"
                 ),
                 editor: StubEditor()
-            )
+            ),
+            previewGenerator: VaultItemPreviewViewGeneratorMock()
         )
     }
 

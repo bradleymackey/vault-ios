@@ -1,5 +1,7 @@
 import Combine
 import Foundation
+import SwiftUI
+import VaultCore
 import VaultFeed
 
 final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
@@ -85,5 +87,25 @@ struct CodeStoreFake: VaultStoreReader {
 
     func retrieve() async throws -> [StoredVaultItem] {
         codes
+    }
+}
+
+struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator {
+    typealias PreviewItem = VaultItem
+
+    func makeVaultPreviewView(
+        item _: PreviewItem,
+        metadata _: StoredVaultItem.Metadata,
+        behaviour _: VaultItemViewBehaviour
+    ) -> some View {
+        Text("Preview View")
+    }
+
+    func scenePhaseDidChange(to _: ScenePhase) {
+        // noop
+    }
+
+    func didAppear() {
+        // noop
     }
 }
