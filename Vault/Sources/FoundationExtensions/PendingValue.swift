@@ -3,8 +3,7 @@ import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
 public actor PendingValue<Output> {
-    /// A one-shot publisher, on which we check it's completion.
-    private var valuePipeline: PassthroughSubject<Output, any Error>?
+    private var state: PipelineState = .notWaiting
     /// Internal pipeline listener.
     private var pipelineListener: AnyCancellable?
     /// Last remembered value, used if the value is fulfilled before
@@ -19,25 +18,33 @@ public actor PendingValue<Output> {
 extension PendingValue {
     /// Returns `true` if waiting on `waitToProduce` at this moment.
     public var isWaiting: Bool {
-        valuePipeline != nil
+        state.isWaiting
     }
 
     /// Cancel the `waitToProduce`, causing it to throw a `CancellationError`.
     public func cancel() {
-        valuePipeline?.send(completion: .failure(CancellationError()))
+        switch state {
+        case .notWaiting: break
+        case let .waiting(pipeline): pipeline.cancel()
+        }
     }
 
     /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
     public func fulfill(_ value: Output) {
         lastValue = .success(value)
-        valuePipeline?.send(value)
-        valuePipeline?.send(completion: .finished)
+        switch state {
+        case .notWaiting: break
+        case let .waiting(pipeline): pipeline.finish(result: .success(value))
+        }
     }
 
     /// Produces an error to cause `waitToForValue` to throw.
     public func reject(error: any Error) {
         lastValue = .failure(error)
-        valuePipeline?.send(completion: .failure(error))
+        switch state {
+        case .notWaiting: break
+        case let .waiting(pipeline): pipeline.finish(result: .failure(error))
+        }
     }
 
     public struct AlreadyWaitingError: Error {}
@@ -58,15 +65,15 @@ extension PendingValue {
         // Otherwise, asynchronously wait for the production of the value.
         defer {
             pipelineListener?.cancel()
-            valuePipeline = nil
+            state = .notWaiting
         }
-        valuePipeline = .init()
+        state = .waiting(.init())
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { cont in
-                guard let valuePipeline else {
+                guard case let .waiting(valuePipeline) = state else {
                     return cont.resume(throwing: CancellationError())
                 }
-                self.pipelineListener = valuePipeline.sink { completed in
+                self.pipelineListener = valuePipeline.publisher().sink { completed in
                     switch completed {
                     case let .failure(error):
                         cont.resume(throwing: error)
@@ -80,8 +87,50 @@ extension PendingValue {
             }
         } onCancel: {
             Task {
-                await valuePipeline?.send(completion: .failure(CancellationError()))
+                await self.cancel()
             }
+        }
+    }
+}
+
+// MARK: - Internal
+
+extension PendingValue {
+    private enum PipelineState {
+        case notWaiting
+        case waiting(ValuePipeline)
+
+        var isWaiting: Bool {
+            switch self {
+            case .notWaiting: false
+            case .waiting: true
+            }
+        }
+    }
+
+    private struct ValuePipeline {
+        private var subject: PassthroughSubject<Output, any Error>
+
+        init() {
+            subject = .init()
+        }
+
+        func cancel() {
+            subject.send(completion: .failure(CancellationError()))
+        }
+
+        func finish(result: Result<Output, any Error>) {
+            switch result {
+            case let .success(value):
+                subject.send(value)
+                subject.send(completion: .finished)
+            case let .failure(err):
+                subject.send(completion: .failure(err))
+            }
+        }
+
+        func publisher() -> AnyPublisher<Output, any Error> {
+            subject.eraseToAnyPublisher()
         }
     }
 }
