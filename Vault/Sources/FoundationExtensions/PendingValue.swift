@@ -14,7 +14,7 @@ public actor PendingValue<Output> {
     public init() {}
 }
 
-// MARK: - Helpers
+// MARK: - API
 
 extension PendingValue {
     /// Returns `true` if waiting on `waitToProduce` at this moment.
@@ -26,11 +26,7 @@ extension PendingValue {
     public func cancel() {
         valuePipeline?.send(completion: .failure(CancellationError()))
     }
-}
 
-// MARK: - API
-
-extension PendingValue {
     /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
     public func fulfill(_ value: Output) {
         lastValue = .success(value)

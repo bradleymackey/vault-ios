@@ -114,4 +114,112 @@ final class PendingValueTests: XCTestCase {
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
+
+    func test_isWaiting_initiallyFalse() async {
+        let producer = PendingValue<Int>()
+
+        let isWaiting = await producer.isWaiting
+        XCTAssertFalse(isWaiting)
+    }
+
+    func test_isWaiting_trueWhenWaiting() async {
+        let producer = PendingValue<Int>()
+        let exp = expectation(description: "Wait for task")
+
+        Task {
+            _ = try await producer.awaitValue()
+        }
+
+        Task {
+            try await allowTasksToProgress()
+            exp.fulfill()
+        }
+
+        await fulfillment(of: [exp])
+
+        let isWaiting = await producer.isWaiting
+        XCTAssertTrue(isWaiting)
+    }
+
+    func test_isWaiting_falseWhenFulfilled() async throws {
+        let producer = PendingValue<Int>()
+        let exp = expectation(description: "Wait for tasks")
+        exp.expectedFulfillmentCount = 2
+
+        Task {
+            _ = try await producer.awaitValue()
+            exp.fulfill()
+        }
+
+        Task {
+            try await allowTasksToProgress()
+            await producer.fulfill(42)
+            try await allowTasksToProgress()
+            exp.fulfill()
+        }
+
+        await fulfillment(of: [exp])
+
+        let isWaiting = await producer.isWaiting
+        XCTAssertFalse(isWaiting)
+    }
+
+    func test_isWaiting_falseWhenRejected() async throws {
+        let producer = PendingValue<Int>()
+        let exp = expectation(description: "Wait for tasks")
+        exp.expectedFulfillmentCount = 2
+
+        Task {
+            _ = try? await producer.awaitValue()
+            exp.fulfill()
+        }
+
+        Task {
+            try await allowTasksToProgress()
+            await producer.reject(error: anyError())
+            try await allowTasksToProgress()
+            exp.fulfill()
+        }
+
+        await fulfillment(of: [exp])
+
+        let isWaiting = await producer.isWaiting
+        XCTAssertFalse(isWaiting)
+    }
+
+    func test_isWaiting_falseWhenCancelled() async throws {
+        let producer = PendingValue<Int>()
+        let exp = expectation(description: "Wait for tasks")
+        exp.expectedFulfillmentCount = 2
+
+        Task {
+            _ = try? await producer.awaitValue()
+            exp.fulfill()
+        }
+
+        Task {
+            try await allowTasksToProgress()
+            await producer.cancel()
+            try await allowTasksToProgress()
+            exp.fulfill()
+        }
+
+        await fulfillment(of: [exp])
+
+        let isWaiting = await producer.isWaiting
+        XCTAssertFalse(isWaiting)
+    }
+}
+
+// MARK: Helpers
+
+extension PendingValueTests {
+    private func anyError() -> any Error {
+        struct SomeError: Error {}
+        return SomeError()
+    }
+
+    private func allowTasksToProgress() async throws {
+        try await Task.sleep(for: .milliseconds(200))
+    }
 }
