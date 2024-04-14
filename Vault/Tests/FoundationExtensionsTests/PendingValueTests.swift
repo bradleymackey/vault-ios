@@ -9,23 +9,6 @@ final class PendingValueTests: XCTestCase {
         case testCase2
     }
 
-    func test_fulfill_unsuspendsAwait() async throws {
-        let sut = makeSUT()
-
-        let exp = expectation(description: "waiting for value")
-        Task {
-            let result = try await sut.awaitValue()
-            XCTAssertEqual(result, 42)
-            exp.fulfill()
-        }
-        Task {
-            try await Task.sleep(for: .milliseconds(100))
-            await sut.fulfill(42)
-        }
-
-        await fulfillment(of: [exp], timeout: 1.0)
-    }
-
     func test_reject_unsuspendsAwait() async throws {
         let sut = makeSUT()
         let exp = expectation(description: "waiting for value")
@@ -41,6 +24,44 @@ final class PendingValueTests: XCTestCase {
         Task {
             try await Task.sleep(for: .milliseconds(100))
             await sut.reject(error: TestError.testCase)
+        }
+
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
+    func test_awaitValue_throwsCancellationErrorIfCancelled() async throws {
+        let sut = makeSUT()
+
+        let exp = expectation(description: "waiting for value")
+        let handle = Task {
+            do {
+                _ = try await sut.awaitValue()
+                XCTFail("Unexpected path")
+            } catch is CancellationError {
+                // good
+            } catch {
+                XCTFail("Unexpected path")
+            }
+            exp.fulfill()
+        }
+
+        handle.cancel()
+
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
+    func test_fulfill_unsuspendsAwait() async throws {
+        let sut = makeSUT()
+
+        let exp = expectation(description: "waiting for value")
+        Task {
+            let result = try await sut.awaitValue()
+            XCTAssertEqual(result, 42)
+            exp.fulfill()
+        }
+        Task {
+            try await Task.sleep(for: .milliseconds(100))
+            await sut.fulfill(42)
         }
 
         await fulfillment(of: [exp], timeout: 1.0)
