@@ -164,7 +164,7 @@ let package = Package(
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
-            dependencies: ["FoundationExtensions"],
+            dependencies: ["FoundationExtensions", "TestHelpers"],
             swiftSettings: swiftSettings
         ),
 
