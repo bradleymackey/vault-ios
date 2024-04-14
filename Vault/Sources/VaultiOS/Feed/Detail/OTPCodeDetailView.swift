@@ -14,7 +14,14 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     @State private var isError = false
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
+    @State private var isShowingCopyPaste = false
     private var previewGenerator: PreviewGenerator
+
+    private let toastOptions = SimpleToastOptions(
+        hideAfter: 1.5,
+        animation: .spring,
+        modifierType: .slide
+    )
 
     public init(viewModel: OTPCodeDetailViewModel, previewGenerator: PreviewGenerator) {
         self.viewModel = viewModel
@@ -59,6 +66,13 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             Button(localized(key: "codeDetail.action.error.confirm.title"), role: .cancel) {}
         } message: { error in
             Text(error.localizedDescription)
+        }
+        .onReceive(pasteboard.didPaste()) {
+            isShowingCopyPaste = true
+        }
+        .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
+            ToastAlertMessageView.copiedToClipboard()
+                .padding(.top, 24)
         }
         .toolbar {
             if viewModel.editingModel.isDirty {
