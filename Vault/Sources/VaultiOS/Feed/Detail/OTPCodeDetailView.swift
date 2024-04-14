@@ -199,7 +199,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             Label {
                 LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
             } icon: {
-                RowIcon(icon: Image(systemName: "clock.fill"), color: .green)
+                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
                     .foregroundColor(.white)
             }
             .padding(.vertical, 2)
@@ -210,8 +210,8 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                         Label {
                             LabeledContent(entry.title, value: entry.detail)
                         } icon: {
-                            Image(systemName: entry.systemIconName)
-                                .foregroundColor(.primary)
+                            RowIcon(icon: Image(systemName: entry.systemIconName), color: .secondary)
+                                .foregroundColor(.white)
                         }
                     }
                 } label: {
