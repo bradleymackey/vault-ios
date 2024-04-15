@@ -9,6 +9,44 @@ Development takes place in `/Vault`, so take a look in there.
 - `/Vault` Swift Package that defines targets used by the app, build settings, tooling.
 - `/VaultApp` minimal wrapper that packages this into an executable application.
 
+## TODO
+
+- [x] Use a modern structure, based on SPM
+  - [x] Enable Swift strict concurrency
+  - [x] Enable CI for builds (#54)
+- [x] OTP codes
+  - [x] Create OTP storage format, stored in CoreData
+  - [x] View TOTP previews
+  - [x] View HOTP previews
+  - [x] Show code preview in the code detail page (#59)
+  - [ ] Search for codes in the preview page (#67)
+  - [x] Edit metadata about codes
+  - [ ] Import codes manually (#70)
+  - [ ] Import codes with camera (#71)
+  - [ ] Simple widget for a single code (#69)
+- [ ] Secure notes
+  - [x] Create secure note storage format, stored in CoreData
+  - [x] View secure note previews
+  - [ ] View secure note detail page (#26)
+  - [ ] Create secure notes from the vault home page (#64)
+  - [ ] Edit secure notes (#65)
+- [ ] Cryptocurrency
+  - [ ] Create storage format, stored in CoreData
+  - [ ] View in preview
+  - [ ] View detail page
+  - [ ] Create from seed words
+- [ ] Backup
+  - [x] Create robust backup format
+  - [x] Support encrypting the backup format
+  - [x] Create PDF library to export backup manifest
+  - [ ] User can create passwrod, store password for encrypted backup in the keychain (#62)
+  - [ ] Export PDF when a paper backup is created (#63)
+  - [ ] Save backup manifest binary file to iCloud (#60)
+  - [ ] Automatic sync for iCloud backup (#72)
+  - [ ] Stats for last backup, in what format, when and where (#73)
+  - [ ] Restore from paper backup (#74)
+  - [ ] Restore from iCloud backup (#75)
+
 ## Tenets
 
 - **Platform native**: it should look like Apple made this app.
