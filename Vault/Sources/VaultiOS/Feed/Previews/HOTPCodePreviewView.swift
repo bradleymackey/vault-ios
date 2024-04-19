@@ -11,12 +11,15 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     @Namespace private var codeTimerAnimation
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 8) {
+        VStack(alignment: .center, spacing: 8) {
             labelsStack
+            Spacer()
             codeText
+            Spacer()
             timerSection
         }
         .animation(.easeOut, value: behaviour)
+        .aspectRatio(1, contentMode: .fill)
     }
 
     @ViewBuilder
@@ -68,7 +71,6 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
-            Spacer()
         }
     }
 
