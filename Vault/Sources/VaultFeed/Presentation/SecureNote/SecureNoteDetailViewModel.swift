@@ -55,4 +55,16 @@ public final class SecureNoteDetailViewModel {
             didEncounterErrorSubject.send(error)
         }
     }
+
+    public func deleteNote() async {
+        do {
+            try await detailEditState.deleteItem {
+                try await editor.deleteNote(id: storedMetadata.id)
+            } finished: {
+                isFinishedSubject.send()
+            }
+        } catch {
+            didEncounterErrorSubject.send(error)
+        }
+    }
 }

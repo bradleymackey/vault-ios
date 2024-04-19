@@ -95,6 +95,41 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(output.count, 1)
     }
+
+    @MainActor
+    func test_deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
+        let sut = makeSUT()
+
+        await sut.deleteNote()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    @MainActor
+    func test_deleteNote_sendsFinishSignalOnSuccessfulDeletion() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            await sut.deleteNote()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_deleteNote_sendsErrorIfDeleteError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.deleteNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.deleteNote()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {

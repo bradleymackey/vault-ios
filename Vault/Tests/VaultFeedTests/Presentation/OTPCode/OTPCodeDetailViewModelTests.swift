@@ -113,7 +113,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_deleteCode_setsBackToFalseAfterSuccessfulDelete() async throws {
+    func test_deleteCode_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
         let sut = makeSUT()
 
         await sut.deleteCode()
