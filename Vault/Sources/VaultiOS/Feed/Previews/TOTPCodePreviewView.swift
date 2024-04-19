@@ -14,10 +14,17 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
+            Spacer()
             codeSection
+            Spacer()
+            CodeStateTimerBarView(
+                timerView: activeTimerView,
+                codeState: previewViewModel.code,
+                behaviour: behaviour
+            )
         }
-        .frame(maxWidth: .infinity)
         .animation(.easeOut, value: behaviour)
+        .aspectRatio(1, contentMode: .fill)
     }
 
     private var labelsStack: some View {
@@ -49,14 +56,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 .fontWeight(.bold)
                 .padding(.horizontal, 2)
                 .foregroundColor(.primary)
-
-            CodeStateTimerBarView(
-                timerView: activeTimerView,
-                codeState: previewViewModel.code,
-                behaviour: behaviour
-            )
         }
-        .frame(maxWidth: .infinity, alignment: .leading)
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     @ViewBuilder
