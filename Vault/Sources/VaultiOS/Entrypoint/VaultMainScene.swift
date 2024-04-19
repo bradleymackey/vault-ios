@@ -7,9 +7,9 @@ import VaultSettings
 @MainActor
 public struct VaultMainScene: Scene {
     @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
-    @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<RealTOTPPreviewViewFactory>
-    @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<RealHOTPPreviewViewFactory>
-    @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<RealSecureNotePreviewViewFactory>
+    @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<TOTPPreviewViewFactoryImpl>
+    @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<HOTPPreviewViewFactoryImpl>
+    @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
     @State private var pasteboard: Pasteboard
     @State private var localSettings: LocalSettings
     @State private var settingsViewModel = SettingsViewModel()
@@ -35,16 +35,16 @@ public struct VaultMainScene: Scene {
             DemoVaultFactory.secureNote(title: "Secure Note 1", contents: "This is the contents..."),
         ])
         let totp = TOTPPreviewViewGenerator(
-            viewFactory: RealTOTPPreviewViewFactory(),
+            viewFactory: TOTPPreviewViewFactoryImpl(),
             updaterFactory: OTPCodeTimerControllerFactory(timer: timer, clock: clock),
             clock: clock,
             timer: timer
         )
         let hotp = HOTPPreviewViewGenerator(
-            viewFactory: RealHOTPPreviewViewFactory(),
+            viewFactory: HOTPPreviewViewFactoryImpl(),
             timer: timer
         )
-        let note = SecureNotePreviewViewGenerator(viewFactory: RealSecureNotePreviewViewFactory())
+        let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(LiveSystemPasteboard(clock: clock), localSettings: localSettings)
 

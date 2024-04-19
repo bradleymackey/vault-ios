@@ -7,7 +7,7 @@ public protocol SecureNotePreviewViewFactory {
     func makeSecureNoteView(viewModel: SecureNotePreviewViewModel) -> SecureNoteView
 }
 
-public struct RealSecureNotePreviewViewFactory: SecureNotePreviewViewFactory {
+public struct SecureNotePreviewViewFactoryImpl: SecureNotePreviewViewFactory {
     public init() {}
     public func makeSecureNoteView(viewModel: SecureNotePreviewViewModel) -> some View {
         SecureNotePreviewView(viewModel: viewModel)

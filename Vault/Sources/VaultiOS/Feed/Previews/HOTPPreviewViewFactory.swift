@@ -12,7 +12,7 @@ public protocol HOTPPreviewViewFactory {
         -> HOTPView
 }
 
-public struct RealHOTPPreviewViewFactory: HOTPPreviewViewFactory {
+public struct HOTPPreviewViewFactoryImpl: HOTPPreviewViewFactory {
     public init() {}
     public func makeHOTPView(
         viewModel: OTPCodePreviewViewModel,
