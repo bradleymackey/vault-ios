@@ -76,7 +76,7 @@ public final class OTPCodeDetailViewModel {
         do {
             try await detailEditState.deleteItem {
                 try await editor.deleteCode(id: storedMetdata.id)
-            } exitEditor: {
+            } finished: {
                 isFinishedSubject.send()
             }
         } catch {
@@ -87,7 +87,7 @@ public final class OTPCodeDetailViewModel {
     public func done() {
         detailEditState.exitCurrentModeClearingDirtyState {
             editingModel.restoreInitialState()
-        } exitEditor: {
+        } finished: {
             isFinishedSubject.send()
         }
     }
