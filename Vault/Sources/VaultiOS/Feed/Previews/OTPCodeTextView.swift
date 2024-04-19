@@ -71,7 +71,6 @@ extension [Character] {
         stride(from: startIndex, to: endIndex, by: chunkSize).map {
             let startIndex = $0
             let endIndex = Swift.min($0 + chunkSize, count)
-            let characters = endIndex - startIndex
             let actual = Array(self[startIndex ..< endIndex])
             return String(actual)
         }
