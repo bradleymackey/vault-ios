@@ -2,13 +2,31 @@ import Foundation
 import SwiftUI
 
 public struct OTPCardViewModifier: ViewModifier {
-    public init() {}
+    public enum Context {
+        case secondary
+        case tertiary
+        case editing
+    }
+
+    var context: Context
+    public init(context: Context = .secondary) {
+        self.context = context
+    }
+
     public func body(content: Content) -> some View {
         content
             .padding(8)
-            .background(Color(UIColor.secondarySystemBackground))
+            .background(backgroundColor)
             .clipShape(clipShape())
             .contentShape([.dragPreview], clipShape())
+    }
+
+    private var backgroundColor: Color {
+        switch context {
+        case .editing: Color(UIColor.secondarySystemFill)
+        case .secondary: Color(UIColor.secondarySystemBackground)
+        case .tertiary: Color(UIColor.tertiarySystemBackground)
+        }
     }
 
     private func clipShape() -> some Shape {

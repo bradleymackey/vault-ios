@@ -79,18 +79,26 @@ public struct VaultItemFeedView<
                     isDragging: $isReordering,
                     isEnabled: isEditing
                 ) { storedItem in
-                    viewGenerator.makeVaultPreviewView(
-                        item: storedItem.item,
-                        metadata: storedItem.metadata,
-                        behaviour: currentBehaviour
-                    )
-                    .modifier(OTPCardViewModifier())
+                    GeometryReader { geo in
+                        viewGenerator.makeVaultPreviewView(
+                            item: storedItem.item,
+                            metadata: storedItem.metadata,
+                            behaviour: currentBehaviour
+                        )
+                        .frame(width: geo.size.width, height: geo.size.height)
+                    }
+                    .aspectRatio(1, contentMode: .fit)
+                    .modifier(OTPCardViewModifier(context: isEditing ? .editing : .secondary))
                 } previewContent: { storedItem in
-                    viewGenerator.makeVaultPreviewView(
-                        item: storedItem.item,
-                        metadata: storedItem.metadata,
-                        behaviour: reorderingBehaviour
-                    )
+                    GeometryReader { geo in
+                        viewGenerator.makeVaultPreviewView(
+                            item: storedItem.item,
+                            metadata: storedItem.metadata,
+                            behaviour: reorderingBehaviour
+                        )
+                        .frame(width: geo.size.width, height: geo.size.height)
+                    }
+                    .aspectRatio(1, contentMode: .fit)
                     .modifier(OTPCardViewModifier())
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
@@ -101,16 +109,7 @@ public struct VaultItemFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: minimumGridSize), spacing: gridSpacing, alignment: .top)]
-    }
-
-    private var minimumGridSize: Double {
-        switch localSettings.state.previewSize {
-        case .medium:
-            150
-        case .large:
-            250
-        }
+        [GridItem(.adaptive(minimum: 150), spacing: gridSpacing, alignment: .top)]
     }
 }
 

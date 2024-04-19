@@ -36,8 +36,8 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             }
             if !viewModel.isInEditMode {
                 codePreviewSection
+                metadataSection
             }
-            metadataSection
         }
         .navigationTitle(localized(key: "codeDetail.title"))
         .navigationBarTitleDisplayMode(.inline)
@@ -120,7 +120,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     private var iconHeader: some View {
         HStack {
             Spacer()
-            OTPCodeIconPlaceholderView(iconFontSize: 22)
+            OTPCodeIconPlaceholderView(iconFontSize: viewModel.isInEditMode ? 44 : 22)
                 .clipShape(Circle())
             Spacer()
         }
@@ -195,17 +195,16 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             )
             .textCase(.none)
             .padding(.vertical, 8)
+        } footer: {
+            deleteButton
+                .modifier(HorizontallyCenter())
+                .padding()
+                .padding(.vertical, 16)
         }
     }
 
     private var codePreviewSection: some View {
-        Section {
-            copyableViewGenerator().makeVaultPreviewView(
-                item: .otpCode(viewModel.storedCode),
-                metadata: viewModel.storedMetdata,
-                behaviour: .normal
-            )
-        }
+        Section {}
     }
 
     private var metadataSection: some View {
@@ -238,23 +237,20 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 }
             }
             .padding(.vertical, 2)
+
         } header: {
-            DetailSubtitleView(
-                title: localized(key: "codeDetail.metadata.title"),
-                subtitle: localized(key: "codeDetail.metadata.subtitle")
-            )
-            .textCase(.none)
-            .padding(.vertical, 8)
-        } footer: {
-            HStack {
-                Spacer()
-                if viewModel.isInEditMode {
-                    deleteButton
-                }
-                Spacer()
+            VStack(alignment: .center) {
+                copyableViewGenerator().makeVaultPreviewView(
+                    item: .otpCode(viewModel.storedCode),
+                    metadata: viewModel.storedMetdata,
+                    behaviour: .normal
+                )
+                .frame(maxWidth: 200)
+                .modifier(OTPCardViewModifier(context: .tertiary))
+                .modifier(HorizontallyCenter())
+                .padding(.vertical, 24)
             }
-            .padding()
-            .padding(.vertical, 16)
+            .textCase(.none)
         }
     }
 

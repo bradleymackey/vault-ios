@@ -73,14 +73,14 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func test_textWrapping_longIssuerStaysOnOneLine() {
+    func test_textWrapping_longIssuerStaysOnTwoLines() {
         let sut = makeSUT(issuer: longMessage())
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     @MainActor
-    func test_textWrapping_longAccountNameStaysOnOneLine() {
+    func test_textWrapping_longAccountNameStaysOnTwoLines() {
         let sut = makeSUT(accountName: longMessage())
 
         assertSnapshot(matching: sut, as: .image)
@@ -101,7 +101,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
             previewViewModel: preview,
             behaviour: behaviour
         )
-        .frame(width: 250, height: 150)
+        .frame(width: 250)
     }
 
     private func longMessage() -> String {

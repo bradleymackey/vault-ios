@@ -73,14 +73,14 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
-    func test_textWrapping_longIssuerStaysOnOneLine() {
+    func test_textWrapping_longIssuerStaysOnTwoLines() {
         let sut = makeSUT(issuer: longMessage())
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     @MainActor
-    func test_textWrapping_longAccountNameStaysOnOneLine() {
+    func test_textWrapping_longAccountNameStaysOnTwoLines() {
         let sut = makeSUT(accountName: longMessage())
 
         assertSnapshot(matching: sut, as: .image)
@@ -101,7 +101,7 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
             timerView: testTimerGradient(),
             behaviour: behaviour
         )
-        .frame(width: 250, height: 150)
+        .frame(width: 250)
     }
 
     /// We use this specific gradient for the default timer so it's very clear if it's been overridden.

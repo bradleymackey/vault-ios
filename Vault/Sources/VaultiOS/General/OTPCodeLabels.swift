@@ -9,14 +9,14 @@ struct OTPCodeLabels: View {
             Text(issuerNameFormatted)
                 .font(.headline.bold())
                 .foregroundColor(.primary)
-                .lineLimit(1)
+                .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .truncationMode(.tail)
                 .minimumScaleFactor(0.8)
             Text(accountNameFormatted)
                 .font(.footnote)
                 .foregroundColor(.secondary)
-                .lineLimit(1)
+                .lineLimit(2)
                 .minimumScaleFactor(0.8)
         }
     }
