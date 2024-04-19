@@ -151,6 +151,38 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(output.count, 1)
     }
+
+    @MainActor
+    func test_editingModel_initialStateUsesData() {
+        var note = anyStoredNote()
+        note.contents = "this is my contents"
+        note.title = "this is my title"
+        var metadata = uniqueStoredMetadata()
+        metadata.userDescription = "description test"
+        let sut = makeSUT(storedNote: note, storedMetadata: metadata)
+
+        let editing = sut.editingModel
+
+        XCTAssertEqual(editing.initialDetail.contents, note.contents)
+        XCTAssertEqual(editing.initialDetail.title, note.title)
+        XCTAssertEqual(editing.initialDetail.description, metadata.userDescription)
+    }
+
+    @MainActor
+    func test_editingModel_editingStateUsesData() {
+        var note = anyStoredNote()
+        note.contents = "this is my contents"
+        note.title = "this is my title"
+        var metadata = uniqueStoredMetadata()
+        metadata.userDescription = "description test"
+        let sut = makeSUT(storedNote: note, storedMetadata: metadata)
+
+        let editing = sut.editingModel
+
+        XCTAssertEqual(editing.detail.contents, note.contents)
+        XCTAssertEqual(editing.detail.title, note.title)
+        XCTAssertEqual(editing.detail.description, metadata.userDescription)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
