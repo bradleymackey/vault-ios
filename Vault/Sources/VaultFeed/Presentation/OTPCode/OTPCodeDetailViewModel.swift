@@ -38,8 +38,8 @@ public final class OTPCodeDetailViewModel {
         detailEditState.isInEditMode
     }
 
-    public var detailMenuItems: [OTPCodeDetailMenuItem] {
-        let details = OTPCodeDetailMenuItem(
+    public var detailMenuItems: [DetailMenuItem] {
+        let details = DetailMenuItem(
             id: "detail",
             title: localized(key: "codeDetail.listSection.details.title"),
             systemIconName: "books.vertical.fill",
