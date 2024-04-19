@@ -46,6 +46,55 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertFalse(sut.isSaving)
     }
+
+    @MainActor
+    func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
+        let sut = makeSUT()
+        sut.editingModel.detail.contents = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.updateNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    @MainActor
+    func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.updateNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+        sut.editingModel.detail.contents = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
+
+        await sut.saveChanges()
+
+        XCTAssertTrue(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_saveChanges_sendsErrorIfSaveError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.updateNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.saveChanges()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {

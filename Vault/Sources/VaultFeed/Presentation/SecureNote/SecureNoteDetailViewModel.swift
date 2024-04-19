@@ -9,6 +9,8 @@ public final class SecureNoteDetailViewModel {
     private let storedNote: SecureNote
     private let storedMetadata: StoredVaultItem.Metadata
     private let detailEditState = DetailEditState<SecureNoteDetailEdits>()
+    private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
+    private let isFinishedSubject = PassthroughSubject<Void, Never>()
     private let editor: any SecureNoteDetailEditor
 
     public init(storedNote: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
@@ -27,10 +29,30 @@ public final class SecureNoteDetailViewModel {
     }
 
     public var isSaving: Bool {
-        false
+        detailEditState.isSaving
     }
 
     public func startEditing() {
         detailEditState.startEditing()
+    }
+
+    public func didEncounterErrorPublisher() -> AnyPublisher<any Error, Never> {
+        didEncounterErrorSubject.eraseToAnyPublisher()
+    }
+
+    /// When we are done looking at the detail page and should submit.
+    public func isFinishedPublisher() -> AnyPublisher<Void, Never> {
+        isFinishedSubject.eraseToAnyPublisher()
+    }
+
+    public func saveChanges() async {
+        do {
+            try await detailEditState.saveChanges {
+                try await editor.update(id: storedMetadata.id, item: storedNote, edits: editingModel.detail)
+                editingModel.didPersist()
+            }
+        } catch {
+            didEncounterErrorSubject.send(error)
+        }
     }
 }
