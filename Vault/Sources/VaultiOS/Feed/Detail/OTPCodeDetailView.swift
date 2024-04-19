@@ -199,13 +199,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     }
 
     private var codePreviewSection: some View {
-        Section {
-            copyableViewGenerator().makeVaultPreviewView(
-                item: .otpCode(viewModel.storedCode),
-                metadata: viewModel.storedMetdata,
-                behaviour: .normal
-            )
-        }
+        Section {}
     }
 
     private var metadataSection: some View {
@@ -239,12 +233,16 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             }
             .padding(.vertical, 2)
         } header: {
-            DetailSubtitleView(
-                title: localized(key: "codeDetail.metadata.title"),
-                subtitle: localized(key: "codeDetail.metadata.subtitle")
+            copyableViewGenerator().makeVaultPreviewView(
+                item: .otpCode(viewModel.storedCode),
+                metadata: viewModel.storedMetdata,
+                behaviour: .normal
             )
+            .frame(maxWidth: 200)
+            .modifier(OTPCardViewModifier(context: .primary))
+            .modifier(HorizontallyCenter())
+            .padding(16)
             .textCase(.none)
-            .padding(.vertical, 8)
         } footer: {
             HStack {
                 Spacer()
