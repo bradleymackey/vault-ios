@@ -14,11 +14,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
             codeText
-            CodeStateTimerBarView(
-                timerView: activeTimerView,
-                codeState: previewViewModel.code,
-                behaviour: behaviour
-            )
+            timerSection
         }
         .animation(.easeOut, value: behaviour)
     }
@@ -73,13 +69,23 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
             Spacer()
+        }
+    }
+
+    private var timerSection: some View {
+        HStack(alignment: .center, spacing: 4) {
+            CodeStateTimerBarView(
+                timerView: activeTimerView,
+                codeState: previewViewModel.code,
+                behaviour: behaviour
+            )
             buttonView
                 .font(canLoadNextCode ? .title.bold() : .title)
                 .disabled(!canLoadNextCode)
         }
     }
 
-    var canLoadNextCode: Bool {
+    private var canLoadNextCode: Bool {
         previewViewModel.code.allowsNextCodeToBeGenerated && behaviour == .normal
     }
 }
