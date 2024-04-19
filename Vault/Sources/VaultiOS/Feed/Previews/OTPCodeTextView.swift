@@ -4,7 +4,7 @@ import VaultFeed
 
 public struct OTPCodeTextView: View {
     var codeState: OTPCodeState
-    var scaledDigitSpacing: Double = 10
+    var scaledDigitSpacing: Double = 8
 
     public var body: some View {
         switch codeState {
@@ -19,10 +19,7 @@ public struct OTPCodeTextView: View {
     }
 
     private func placeholderCode(digits: Int) -> some View {
-        Text(String(repeating: "•", count: digits))
-            .lineLimit(1)
-            .minimumScaleFactor(0.1)
-            .multilineTextAlignment(.leading)
+        makeCodeView(text: String(repeating: "•", count: digits))
     }
 
     private func makeCodeView(text: String) -> some View {
@@ -75,10 +72,8 @@ extension [Character] {
             let startIndex = $0
             let endIndex = Swift.min($0 + chunkSize, count)
             let characters = endIndex - startIndex
-            let paddingRequired = chunkSize - characters
             let actual = Array(self[startIndex ..< endIndex])
-            let padding = Array(repeating: Character(" "), count: paddingRequired)
-            return String(actual + padding)
+            return String(actual)
         }
     }
 }
