@@ -13,7 +13,7 @@ public protocol TOTPPreviewViewFactory {
         -> TOTPView
 }
 
-public struct RealTOTPPreviewViewFactory: TOTPPreviewViewFactory {
+public struct TOTPPreviewViewFactoryImpl: TOTPPreviewViewFactory {
     public init() {}
     public func makeTOTPView(
         viewModel: OTPCodePreviewViewModel,
