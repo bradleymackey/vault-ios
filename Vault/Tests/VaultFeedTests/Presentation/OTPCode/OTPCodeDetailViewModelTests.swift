@@ -157,6 +157,18 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_done_finishesIfNotInEditMode() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            sut.done()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
     func test_editingModel_initialStateUsesData() {
         var code = uniqueCode()
         code.data.accountName = "account name test"
