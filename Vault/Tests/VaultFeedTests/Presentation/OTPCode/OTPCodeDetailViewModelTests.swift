@@ -66,8 +66,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     @MainActor
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUT()
-        sut.editingModel.detail.accountNameTitle = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        makeDirty(sut: sut)
 
         await sut.saveChanges()
 
@@ -90,8 +89,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let editor = MockOTPCodeDetailEditor()
         editor.updateCodeResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
-        sut.editingModel.detail.accountNameTitle = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        makeDirty(sut: sut)
 
         await sut.saveChanges()
 
@@ -151,9 +149,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_done_restoresInitialEditingStateIfInEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
-
-        sut.editingModel.detail.accountNameTitle = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        makeDirty(sut: sut)
 
         sut.done()
 
@@ -206,5 +202,11 @@ extension OTPCodeDetailViewModelTests {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
+    }
+
+    @MainActor
+    func makeDirty(sut: OTPCodeDetailViewModel) {
+        sut.editingModel.detail.accountNameTitle = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
     }
 }

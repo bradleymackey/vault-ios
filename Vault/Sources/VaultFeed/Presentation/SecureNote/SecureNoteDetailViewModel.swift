@@ -67,4 +67,12 @@ public final class SecureNoteDetailViewModel {
             didEncounterErrorSubject.send(error)
         }
     }
+
+    public func done() {
+        detailEditState.exitCurrentModeClearingDirtyState {
+            editingModel.restoreInitialState()
+        } finished: {
+            isFinishedSubject.send()
+        }
+    }
 }

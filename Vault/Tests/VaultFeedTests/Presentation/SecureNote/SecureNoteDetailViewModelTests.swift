@@ -50,8 +50,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     @MainActor
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUT()
-        sut.editingModel.detail.contents = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        makeDirty(sut: sut)
 
         await sut.saveChanges()
 
@@ -74,8 +73,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editor = MockSecureNoteDetailEditor()
         editor.updateNoteResult = .failure(anyNSError())
         let sut = makeSUT(editor: editor)
-        sut.editingModel.detail.contents = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        makeDirty(sut: sut)
 
         await sut.saveChanges()
 
@@ -130,6 +128,29 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(output.count, 1)
     }
+
+    @MainActor
+    func test_done_restoresInitialEditingStateIfInEditMode() async throws {
+        let sut = makeSUT()
+        sut.startEditing()
+        makeDirty(sut: sut)
+
+        sut.done()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_done_finishesIfNotInEditMode() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            sut.done()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
@@ -140,5 +161,11 @@ extension SecureNoteDetailViewModelTests {
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(storedNote: storedNote, storedMetadata: storedMetadata, editor: editor)
+    }
+
+    @MainActor
+    private func makeDirty(sut: SecureNoteDetailViewModel) {
+        sut.editingModel.detail.contents = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
     }
 }
