@@ -23,20 +23,6 @@ public struct SettingsHomeView: View {
 
     private var viewOptionsSection: some View {
         Section {
-            Picker(selection: $localSettings.state.previewSize) {
-                ForEach(PreviewSize.allCases) { previewSize in
-                    Text(previewSize.localizedName)
-                        .tag(previewSize)
-                }
-            } label: {
-                FormRow(
-                    image: Image(systemName: "rectangle.inset.filled"),
-                    color: .green
-                ) {
-                    Text(viewModel.previewSizeTitle)
-                }
-            }
-
             Picker(selection: $localSettings.state.pasteTimeToLive) {
                 ForEach(PasteTTL.defaultOptions) { option in
                     Text(option.localizedName)

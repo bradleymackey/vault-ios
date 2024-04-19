@@ -109,16 +109,7 @@ public struct VaultItemFeedView<
     }
 
     private var columns: [GridItem] {
-        [GridItem(.adaptive(minimum: minimumGridSize), spacing: gridSpacing, alignment: .top)]
-    }
-
-    private var minimumGridSize: Double {
-        switch localSettings.state.previewSize {
-        case .medium:
-            150
-        case .large:
-            250
-        }
+        [GridItem(.adaptive(minimum: 150), spacing: gridSpacing, alignment: .top)]
     }
 }
 

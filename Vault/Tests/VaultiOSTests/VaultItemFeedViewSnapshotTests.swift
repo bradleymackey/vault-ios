@@ -49,36 +49,6 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
         assertSnapshot(matching: sut, as: .image)
     }
-
-    @MainActor
-    func test_layout_singleCodeAtLargeSize() async throws {
-        let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredVaultItem()]
-        let viewModel = FeedViewModel(store: store)
-        let settings = LocalSettings(defaults: nonPersistentDefaults())
-        settings.state.previewSize = .large
-        let sut = makeSUT(viewModel: viewModel, localSettings: settings)
-            .framedToTestDeviceSize()
-
-        await viewModel.onAppear()
-
-        assertSnapshot(matching: sut, as: .image)
-    }
-
-    @MainActor
-    func test_layout_multipleCodesAtLargeSize() async throws {
-        let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredVaultItem(), uniqueStoredVaultItem(), uniqueStoredVaultItem()]
-        let viewModel = FeedViewModel(store: store)
-        let settings = LocalSettings(defaults: nonPersistentDefaults())
-        settings.state.previewSize = .large
-        let sut = makeSUT(viewModel: viewModel, localSettings: settings)
-            .framedToTestDeviceSize()
-
-        await viewModel.onAppear()
-
-        assertSnapshot(matching: sut, as: .image)
-    }
 }
 
 // MARK: - Helpers
