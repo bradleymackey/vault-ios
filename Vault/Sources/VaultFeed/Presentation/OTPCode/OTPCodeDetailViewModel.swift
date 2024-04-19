@@ -38,8 +38,8 @@ public final class OTPCodeDetailViewModel {
         detailEditState.isInEditMode
     }
 
-    public var detailMenuItems: [OTPCodeDetailMenuItem] {
-        let details = OTPCodeDetailMenuItem(
+    public var detailMenuItems: [DetailMenuItem] {
+        let details = DetailMenuItem(
             id: "detail",
             title: localized(key: "codeDetail.listSection.details.title"),
             systemIconName: "books.vertical.fill",
@@ -76,7 +76,7 @@ public final class OTPCodeDetailViewModel {
         do {
             try await detailEditState.deleteItem {
                 try await editor.deleteCode(id: storedMetdata.id)
-            } exitEditor: {
+            } finished: {
                 isFinishedSubject.send()
             }
         } catch {
@@ -87,7 +87,7 @@ public final class OTPCodeDetailViewModel {
     public func done() {
         detailEditState.exitCurrentModeClearingDirtyState {
             editingModel.restoreInitialState()
-        } exitEditor: {
+        } finished: {
             isFinishedSubject.send()
         }
     }

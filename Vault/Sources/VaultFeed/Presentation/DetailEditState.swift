@@ -26,24 +26,24 @@ final class DetailEditState<T: Equatable> {
         }
     }
 
-    func deleteItem(performDeletion: () async throws -> Void, exitEditor: () -> Void) async throws {
+    func deleteItem(performDeletion: () async throws -> Void, finished: () -> Void) async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
         do {
             try await performDeletion()
-            exitEditor()
+            finished()
         } catch {
             throw OperationError.delete
         }
     }
 
-    func exitCurrentModeClearingDirtyState(clearDirtyState: () -> Void, exitEditor: () -> Void) {
+    func exitCurrentModeClearingDirtyState(clearDirtyState: () -> Void, finished: () -> Void) {
         if isInEditMode {
             clearDirtyState()
             isInEditMode = false
         } else {
-            exitEditor()
+            finished()
         }
     }
 }

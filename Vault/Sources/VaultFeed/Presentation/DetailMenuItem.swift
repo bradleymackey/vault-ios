@@ -1,6 +1,6 @@
 import Foundation
 
-public struct OTPCodeDetailMenuItem: Identifiable {
+public struct DetailMenuItem: Identifiable {
     public var id: String
     public var title: String
     public var systemIconName: String

@@ -108,7 +108,7 @@ final class DetailEditStateTests: XCTestCase {
             try await sut.deleteItem {
                 exp.fulfill()
                 try? await pendingCall.awaitValue()
-            } exitEditor: {
+            } finished: {
                 /* noop */
             }
         }
@@ -134,7 +134,7 @@ final class DetailEditStateTests: XCTestCase {
                         try? await sut.deleteItem {
                             exp.fulfill()
                             try? await pendingCall.awaitValue()
-                        } exitEditor: {
+                        } finished: {
                             /* noop */
                         }
                     }
@@ -155,7 +155,7 @@ final class DetailEditStateTests: XCTestCase {
         let expExit = expectation(description: "Wait for exit current mode")
         try await sut.deleteItem {
             expDelete.fulfill()
-        } exitEditor: {
+        } finished: {
             expExit.fulfill()
         }
 
@@ -169,7 +169,7 @@ final class DetailEditStateTests: XCTestCase {
         var exited = false
         try? await sut.deleteItem {
             throw anyNSError()
-        } exitEditor: {
+        } finished: {
             exited = false
         }
 
@@ -183,7 +183,7 @@ final class DetailEditStateTests: XCTestCase {
 
         try? await sut.deleteItem {
             throw anyNSError()
-        } exitEditor: {
+        } finished: {
             // noop
         }
 
@@ -196,7 +196,7 @@ final class DetailEditStateTests: XCTestCase {
 
         await XCTAssertThrowsError(try await sut.deleteItem {
             throw anyNSError()
-        } exitEditor: {
+        } finished: {
             // noop
         })
     }
@@ -210,7 +210,7 @@ final class DetailEditStateTests: XCTestCase {
         var exitedEditor = false
         sut.exitCurrentModeClearingDirtyState {
             clearedState = true
-        } exitEditor: {
+        } finished: {
             exitedEditor = true
         }
 
@@ -225,7 +225,7 @@ final class DetailEditStateTests: XCTestCase {
 
         sut.exitCurrentModeClearingDirtyState {
             // noop
-        } exitEditor: {
+        } finished: {
             // noop
         }
 
@@ -240,7 +240,7 @@ final class DetailEditStateTests: XCTestCase {
         var exitedEditor = false
         sut.exitCurrentModeClearingDirtyState {
             clearedState = true
-        } exitEditor: {
+        } finished: {
             exitedEditor = true
         }
 

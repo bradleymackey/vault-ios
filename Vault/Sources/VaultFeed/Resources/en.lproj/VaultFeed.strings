@@ -25,5 +25,9 @@
 "codeDetail.listSection.algorithm.title" = "Algorithm";
 "codeDetail.listSection.secretFormat.title" = "Secret Format";
 
+"noteDetail.listSection.details.title" = "Note Information";
+"noteDetail.listSection.created.title" = "Created";
+"noteDetail.listSection.updated.title" = "Updated";
+
 "detail.operationError.save.description" = "An error was encountered during saving. Please quit the app and try again.";
 "detail.operationError.delete.description" = "An error was encountered during deletion. Please quit the app and try again.";

@@ -46,6 +46,143 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertFalse(sut.isSaving)
     }
+
+    @MainActor
+    func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
+        let sut = makeSUT()
+        makeDirty(sut: sut)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.updateNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    @MainActor
+    func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.updateNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+        makeDirty(sut: sut)
+
+        await sut.saveChanges()
+
+        XCTAssertTrue(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_saveChanges_sendsErrorIfSaveError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.updateNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.saveChanges()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
+        let sut = makeSUT()
+
+        await sut.deleteNote()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    @MainActor
+    func test_deleteNote_sendsFinishSignalOnSuccessfulDeletion() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            await sut.deleteNote()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_deleteNote_sendsErrorIfDeleteError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.deleteNoteResult = .failure(anyNSError())
+        let sut = makeSUT(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.deleteNote()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_done_restoresInitialEditingStateIfInEditMode() async throws {
+        let sut = makeSUT()
+        sut.startEditing()
+        makeDirty(sut: sut)
+
+        sut.done()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_done_finishesIfNotInEditMode() async throws {
+        let sut = makeSUT()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            sut.done()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_editingModel_initialStateUsesData() {
+        var note = anyStoredNote()
+        note.contents = "this is my contents"
+        note.title = "this is my title"
+        var metadata = uniqueStoredMetadata()
+        metadata.userDescription = "description test"
+        let sut = makeSUT(storedNote: note, storedMetadata: metadata)
+
+        let editing = sut.editingModel
+
+        XCTAssertEqual(editing.initialDetail.contents, note.contents)
+        XCTAssertEqual(editing.initialDetail.title, note.title)
+        XCTAssertEqual(editing.initialDetail.description, metadata.userDescription)
+    }
+
+    @MainActor
+    func test_editingModel_editingStateUsesData() {
+        var note = anyStoredNote()
+        note.contents = "this is my contents"
+        note.title = "this is my title"
+        var metadata = uniqueStoredMetadata()
+        metadata.userDescription = "description test"
+        let sut = makeSUT(storedNote: note, storedMetadata: metadata)
+
+        let editing = sut.editingModel
+
+        XCTAssertEqual(editing.detail.contents, note.contents)
+        XCTAssertEqual(editing.detail.title, note.title)
+        XCTAssertEqual(editing.detail.description, metadata.userDescription)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
@@ -56,5 +193,11 @@ extension SecureNoteDetailViewModelTests {
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(storedNote: storedNote, storedMetadata: storedMetadata, editor: editor)
+    }
+
+    @MainActor
+    private func makeDirty(sut: SecureNoteDetailViewModel) {
+        sut.editingModel.detail.contents = UUID().uuidString
+        XCTAssertTrue(sut.editingModel.isDirty)
     }
 }
