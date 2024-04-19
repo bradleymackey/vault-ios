@@ -76,3 +76,39 @@ public final class SecureNoteDetailViewModel {
         }
     }
 }
+
+// MARK: - Titles
+
+extension SecureNoteDetailViewModel {
+    public var createdDateTitle: String {
+        localized(key: "noteDetail.listSection.created.title")
+    }
+
+    public var createdDateValue: String {
+        storedMetadata.created.formatted(date: .abbreviated, time: .omitted)
+    }
+
+    public var updatedDateTitle: String {
+        localized(key: "noteDetail.listSection.updated.title")
+    }
+
+    public var updatedDateValue: String {
+        storedMetadata.updated.formatted(date: .abbreviated, time: .omitted)
+    }
+
+    public var doneEditingTitle: String {
+        localized(key: "feedViewModel.doneEditing.title")
+    }
+
+    public var saveEditsTitle: String {
+        localized(key: "feedViewModel.saveEdits.title")
+    }
+
+    public var cancelEditsTitle: String {
+        localized(key: "feedViewModel.cancelEdits.title")
+    }
+
+    public var startEditingTitle: String {
+        localized(key: "feedViewModel.edit.title")
+    }
+}

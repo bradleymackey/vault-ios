@@ -23,7 +23,7 @@ struct ItemDeleteLabel: View {
     }
 
     private var label: some View {
-        Text(localized(key: "item.action.delete.title"))
+        Text(localized(key: "action.delete.title"))
             .font(.caption.bold())
             .textCase(.uppercase)
     }

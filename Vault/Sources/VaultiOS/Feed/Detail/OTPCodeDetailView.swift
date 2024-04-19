@@ -62,8 +62,8 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         } message: {
             Text(localized(key: "codeDetail.action.delete.confirm.subtitle"))
         }
-        .alert(localized(key: "codeDetail.action.error.title"), isPresented: $isError, presenting: currentError) { _ in
-            Button(localized(key: "codeDetail.action.error.confirm.title"), role: .cancel) {}
+        .alert(localized(key: "action.error.title"), isPresented: $isError, presenting: currentError) { _ in
+            Button(localized(key: "action.error.confirm.title"), role: .cancel) {}
         } message: { error in
             Text(error.localizedDescription)
         }
