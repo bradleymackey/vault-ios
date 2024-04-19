@@ -33,6 +33,7 @@ public struct VaultMainScene: Scene {
             DemoVaultFactory.hotpCode(issuer: "Cool Company"),
             DemoVaultFactory.hotpCode(issuer: "Other Company"),
             DemoVaultFactory.secureNote(title: "Secure Note 1", contents: "This is the contents..."),
+            DemoVaultFactory.secureNote(title: "Secure Note With Longer Title", contents: "content thing"),
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),

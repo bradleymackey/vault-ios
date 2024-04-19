@@ -18,20 +18,23 @@ public struct SecureNotePreviewView: View {
     }
 
     private var titleLabel: some View {
-        HStack(alignment: .center, spacing: 4) {
+        HStack(alignment: .top, spacing: 4) {
             Image(systemName: "doc.text.fill")
-                .font(.footnote)
+                .font(.headline)
             Text(viewModel.title)
                 .font(.headline)
         }
         .padding(.vertical, 4)
+        .foregroundStyle(.primary)
+        .tint(.primary)
     }
 
     private func descriptionLabel(text: String) -> some View {
         Text(text)
-            .font(.callout)
-            .foregroundStyle(.secondary)
+            .font(.footnote)
             .lineLimit(5)
+            .foregroundStyle(.secondary)
+            .tint(.secondary)
     }
 }
 
