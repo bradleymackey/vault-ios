@@ -57,6 +57,10 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         }
     }
 
+    public func delete() async {
+        await deleteNote()
+    }
+
     public func deleteNote() async {
         do {
             try await detailEditState.deleteItem {
@@ -86,7 +90,7 @@ extension SecureNoteDetailViewModel {
         private init() {}
 
         public let title = localized(key: "noteDetail.title")
-        public let deleteNoteTitle = localized(key: "noteDetail.action.delete.confirm.title")
+        public let deleteItemTitle = localized(key: "noteDetail.action.delete.confirm.title")
         public let deleteConfirmTitle = localized(key: "noteDetail.action.delete.confirm.title")
         public let deleteConfirmSubtitle = localized(key: "noteDetail.action.delete.confirm.subtitle")
         public let descriptionTitle = localized(key: "noteDetail.description.title")

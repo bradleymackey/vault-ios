@@ -3,7 +3,7 @@ import Foundation
 
 /// Common behaviours for the view model of an item's detail.
 @MainActor
-public protocol DetailViewModel {
+public protocol DetailViewModel: AnyObject, Observable {
     associatedtype Edits: Equatable
     associatedtype Strings: DetailViewModelStrings
 
@@ -14,6 +14,7 @@ public protocol DetailViewModel {
 
     func startEditing()
     func saveChanges() async
+    func delete() async
     func done()
     func didEncounterErrorPublisher() -> AnyPublisher<any Error, Never>
     func isFinishedPublisher() -> AnyPublisher<Void, Never>
@@ -25,4 +26,7 @@ public protocol DetailViewModelStrings {
     var startEditingTitle: String { get }
     var saveEditsTitle: String { get }
     var doneEditingTitle: String { get }
+    var deleteConfirmTitle: String { get }
+    var deleteConfirmSubtitle: String { get }
+    var deleteItemTitle: String { get }
 }

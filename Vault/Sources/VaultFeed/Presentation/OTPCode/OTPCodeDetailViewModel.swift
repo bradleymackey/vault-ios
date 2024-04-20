@@ -72,6 +72,10 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         }
     }
 
+    public func delete() async {
+        await deleteCode()
+    }
+
     public func deleteCode() async {
         do {
             try await detailEditState.deleteItem {
@@ -102,7 +106,7 @@ extension OTPCodeDetailViewModel {
 
         public let title = localized(key: "codeDetail.title")
         public let deleteConfirmTitle = localized(key: "codeDetail.action.delete.confirm.title")
-        public let deleteCodeTitle = localized(key: "codeDetail.action.delete.entity.title")
+        public let deleteItemTitle = localized(key: "codeDetail.action.delete.entity.title")
         public let deleteConfirmSubtitle = localized(key: "codeDetail.action.delete.confirm.subtitle")
         public let createdDateTitle = localized(key: "codeDetail.listSection.created.title")
         public let updatedDateTitle = localized(key: "codeDetail.listSection.updated.title")
