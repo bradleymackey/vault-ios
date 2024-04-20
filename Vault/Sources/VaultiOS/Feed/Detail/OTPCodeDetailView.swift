@@ -148,6 +148,16 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             }
             .padding(.vertical, 2)
 
+            if viewModel.updatedDateValue != viewModel.createdDateValue {
+                Label {
+                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
+                } icon: {
+                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
+                        .foregroundColor(.white)
+                }
+                .padding(.vertical, 2)
+            }
+
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
