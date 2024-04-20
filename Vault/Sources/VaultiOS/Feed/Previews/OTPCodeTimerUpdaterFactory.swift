@@ -16,6 +16,6 @@ public final class OTPCodeTimerControllerFactory: OTPCodeTimerUpdaterFactory {
     }
 
     public func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater {
-        OTPCodeTimerController(timer: timer, period: period, clock: clock)
+        OTPCodeTimerUpdaterImpl(timer: timer, period: period, clock: clock)
     }
 }
