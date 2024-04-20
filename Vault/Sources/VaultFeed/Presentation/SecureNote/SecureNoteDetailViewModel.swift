@@ -90,7 +90,7 @@ extension SecureNoteDetailViewModel {
         private init() {}
 
         public let title = localized(key: "noteDetail.title")
-        public let deleteItemTitle = localized(key: "noteDetail.action.delete.confirm.title")
+        public let deleteItemTitle = localized(key: "noteDetail.action.delete.entity.title")
         public let deleteConfirmTitle = localized(key: "noteDetail.action.delete.confirm.title")
         public let deleteConfirmSubtitle = localized(key: "noteDetail.action.delete.confirm.subtitle")
         public let descriptionTitle = localized(key: "noteDetail.description.title")

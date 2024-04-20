@@ -99,6 +99,13 @@ struct SecureNoteDetailView: View {
             if viewModel.isInEditMode {
                 Text(viewModel.strings.noteContentsTitle)
             }
+        } footer: {
+            if viewModel.isInEditMode {
+                deleteButton
+                    .modifier(HorizontallyCenter())
+                    .padding()
+                    .padding(.vertical, 16)
+            }
         }
     }
 
@@ -121,6 +128,14 @@ struct SecureNoteDetailView: View {
                 }
                 .padding(.vertical, 2)
             }
+        }
+    }
+
+    private var deleteButton: some View {
+        Button {
+            isShowingDeleteConfirmation = true
+        } label: {
+            ItemDeleteLabel()
         }
     }
 }
