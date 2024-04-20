@@ -147,7 +147,11 @@ let package = Package(
         ),
         .target(
             name: "VaultFeed",
-            dependencies: ["VaultCore", "CryptoEngine"],
+            dependencies: [
+                "VaultCore",
+                "CryptoEngine",
+                .product(name: "Spyable", package: "swift-spyable"),
+            ],
             resources: [
                 .copy("Resources/VaultStore.xcdatamodeld"),
             ],

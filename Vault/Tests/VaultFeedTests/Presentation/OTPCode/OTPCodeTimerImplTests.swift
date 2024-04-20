@@ -76,10 +76,10 @@ final class OTPCodeTimerControllerTests: XCTestCase {
         period: UInt64,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (EpochClock, MockIntervalTimer, OTPCodeTimerController) {
+    ) -> (EpochClock, MockIntervalTimer, any OTPCodeTimerUpdater) {
         let timer = MockIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { clockTime })
-        let sut = OTPCodeTimerController(timer: timer, period: period, clock: clock)
+        let sut = OTPCodeTimerUpdaterImpl(timer: timer, period: period, clock: clock)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (clock, timer, sut)
     }

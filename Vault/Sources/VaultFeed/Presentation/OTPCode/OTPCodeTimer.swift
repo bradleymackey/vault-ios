@@ -8,7 +8,7 @@ public protocol OTPCodeTimerUpdater {
 }
 
 /// Controller for producing timers for a given code, according to a clock.
-public final class OTPCodeTimerController: OTPCodeTimerUpdater {
+public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
     private let period: UInt64
     private var timerPublisher: AnyCancellable?
@@ -37,7 +37,7 @@ public final class OTPCodeTimerController: OTPCodeTimerUpdater {
     }
 }
 
-extension OTPCodeTimerController {
+extension OTPCodeTimerUpdaterImpl {
     private func scheduleNextClock() {
         let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
         timerPublisher = timer.wait(for: remaining)

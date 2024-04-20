@@ -12,7 +12,7 @@ public protocol SystemPasteboard {
 }
 
 /// The live iOS system pasteboard.
-public struct LiveSystemPasteboard: SystemPasteboard {
+public struct SystemPasteboardImpl: SystemPasteboard {
     private let pasteboard = UIPasteboard.general
     private let clock: EpochClock
 

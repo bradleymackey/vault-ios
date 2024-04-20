@@ -37,7 +37,7 @@ public struct VaultMainScene: Scene {
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
-            updaterFactory: OTPCodeTimerControllerFactory(timer: timer, clock: clock),
+            updaterFactory: OTPCodeTimerUpdaterFactoryImpl(timer: timer, clock: clock),
             clock: clock,
             timer: timer
         )
@@ -47,7 +47,7 @@ public struct VaultMainScene: Scene {
         )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
-        let pasteboard = Pasteboard(LiveSystemPasteboard(clock: clock), localSettings: localSettings)
+        let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
