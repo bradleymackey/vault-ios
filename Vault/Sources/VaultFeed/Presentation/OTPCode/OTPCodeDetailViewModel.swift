@@ -125,11 +125,11 @@ extension OTPCodeDetailViewModel {
     }
 
     public var createdDateValue: String {
-        storedMetdata.created.formatted(date: .abbreviated, time: .omitted)
+        storedMetdata.created.formatted(date: .abbreviated, time: .shortened)
     }
 
     public var updatedDateValue: String {
-        storedMetdata.updated.formatted(date: .abbreviated, time: .omitted)
+        storedMetdata.updated.formatted(date: .abbreviated, time: .shortened)
     }
 }
 

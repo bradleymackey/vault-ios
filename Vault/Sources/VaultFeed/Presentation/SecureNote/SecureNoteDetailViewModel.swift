@@ -111,10 +111,10 @@ extension SecureNoteDetailViewModel {
     }
 
     public var createdDateValue: String {
-        storedMetadata.created.formatted(date: .abbreviated, time: .omitted)
+        storedMetadata.created.formatted(date: .abbreviated, time: .shortened)
     }
 
     public var updatedDateValue: String {
-        storedMetadata.updated.formatted(date: .abbreviated, time: .omitted)
+        storedMetadata.updated.formatted(date: .abbreviated, time: .shortened)
     }
 }
