@@ -118,15 +118,15 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_updateCode_invalidatesCaches() async throws {
-        let cache1 = StubCodeCache()
-        let cache2 = StubCodeCache()
+        let cache1 = VaultItemCacheSpy()
+        let cache2 = VaultItemCacheSpy()
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
         try await sut.update(id: invalidateId, item: uniqueWritableVaultItem())
 
-        XCTAssertEqual(cache1.calledInvalidate, [invalidateId])
-        XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
     }
 
     @MainActor
@@ -177,15 +177,15 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_invalidatesCaches() async throws {
-        let cache1 = StubCodeCache()
-        let cache2 = StubCodeCache()
+        let cache1 = VaultItemCacheSpy()
+        let cache2 = VaultItemCacheSpy()
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
         try await sut.delete(id: invalidateId)
 
-        XCTAssertEqual(cache1.calledInvalidate, [invalidateId])
-        XCTAssertEqual(cache2.calledInvalidate, [invalidateId])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
     }
 
     // MARK: - Helpers
@@ -200,13 +200,6 @@ final class FeedViewModelTests: XCTestCase {
         let sut = FeedViewModel(store: store, caches: caches)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
-    }
-
-    private final class StubCodeCache: VaultItemCache {
-        var calledInvalidate = [UUID]()
-        func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
-            calledInvalidate.append(id)
-        }
     }
 
     private struct StubStore: VaultStoreReader, VaultStoreWriter {
