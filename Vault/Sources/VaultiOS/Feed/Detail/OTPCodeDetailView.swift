@@ -1,3 +1,4 @@
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -9,9 +10,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
 {
     @Bindable public var viewModel: OTPCodeDetailViewModel
 
-    @Environment(Pasteboard.self) var pasteboard: Pasteboard
-    @Environment(\.dismiss) var dismiss
-    @State private var isError = false
+    @Environment(Pasteboard.self) private var pasteboard: Pasteboard
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
     @State private var isShowingCopyPaste = false
@@ -29,7 +28,11 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     }
 
     public var body: some View {
-        Form {
+        VaultItemDetailView(
+            viewModel: viewModel,
+            currentError: $currentError,
+            isShowingDeleteConfirmation: $isShowingDeleteConfirmation
+        ) {
             codeDetailSection
             if viewModel.isInEditMode {
                 descriptionSection
@@ -39,81 +42,12 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 metadataSection
             }
         }
-        .navigationTitle(localized(key: "codeDetail.title"))
-        .navigationBarTitleDisplayMode(.inline)
-        .interactiveDismissDisabled(viewModel.editingModel.isDirty)
-        .scrollDismissesKeyboard(.interactively)
-        .animation(.easeOut, value: viewModel.isInEditMode)
-        .onReceive(viewModel.isFinishedPublisher()) {
-            dismiss()
-        }
-        .onReceive(viewModel.didEncounterErrorPublisher()) { error in
-            currentError = error
-            isError = true
-        }
-        .confirmationDialog(
-            localized(key: "codeDetail.action.delete.confirm.title"),
-            isPresented: $isShowingDeleteConfirmation,
-            titleVisibility: .visible
-        ) {
-            Button(localized(key: "codeDetail.action.delete.entity.title"), role: .destructive) {
-                Task { await viewModel.deleteCode() }
-            }
-        } message: {
-            Text(localized(key: "codeDetail.action.delete.confirm.subtitle"))
-        }
-        .alert(localized(key: "action.error.title"), isPresented: $isError, presenting: currentError) { _ in
-            Button(localized(key: "action.error.confirm.title"), role: .cancel) {}
-        } message: { error in
-            Text(error.localizedDescription)
-        }
         .onReceive(pasteboard.didPaste()) {
             isShowingCopyPaste = true
         }
         .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
             ToastAlertMessageView.copiedToClipboard()
                 .padding(.top, 24)
-        }
-        .toolbar {
-            if viewModel.editingModel.isDirty {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        viewModel.done()
-                    } label: {
-                        Text(viewModel.cancelEditsTitle)
-                            .tint(.red)
-                    }
-                }
-            } else if !viewModel.isInEditMode {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        viewModel.startEditing()
-                    } label: {
-                        Text(viewModel.startEditingTitle)
-                            .tint(.accentColor)
-                    }
-                }
-            }
-
-            if viewModel.editingModel.isDirty {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        Task { await viewModel.saveChanges() }
-                    } label: {
-                        Text(viewModel.saveEditsTitle)
-                            .tint(.accentColor)
-                    }
-                }
-            } else {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        viewModel.done()
-                    } label: {
-                        Text(viewModel.doneEditingTitle)
-                            .tint(.accentColor)
-                    }
-                }
-            }
         }
     }
 
@@ -145,7 +79,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     @ViewBuilder
     private var codeDetailContent: some View {
         VStack(alignment: .center, spacing: 4) {
-            if !viewModel.editingModel.detail.issuerTitle.isEmpty {
+            if viewModel.editingModel.detail.issuerTitle.isNotEmpty {
                 Text(viewModel.editingModel.detail.issuerTitle)
                     .font(.title.bold())
             }
@@ -156,17 +90,14 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         .lineLimit(2)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
-        .listRowInsets(.none)
-        .listRowBackground(EmptyView())
-        .listRowSeparator(.hidden)
+        .noListBackground()
 
-        if !viewModel.editingModel.detail.description.isEmpty {
+        if viewModel.editingModel.detail.description.isNotEmpty {
             VStack(alignment: .center) {
                 Text(viewModel.editingModel.detail.description)
             }
             .frame(maxWidth: .infinity)
-            .listRowBackground(EmptyView())
-            .listRowSeparator(.hidden)
+            .noListBackground()
             .multilineTextAlignment(.center)
         }
     }
@@ -174,11 +105,11 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     @ViewBuilder
     private var codeDetailContentEditing: some View {
         TextField(
-            localized(key: "codeDetail.field.siteName.title"),
+            viewModel.strings.siteNameTitle,
             text: $viewModel.editingModel.detail.issuerTitle
         )
         TextField(
-            localized(key: "codeDetail.field.accountName.title"),
+            viewModel.strings.accountNameTitle,
             text: $viewModel.editingModel.detail.accountNameTitle
         )
     }
@@ -190,8 +121,8 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 .keyboardType(.default)
         } header: {
             DetailSubtitleView(
-                title: localized(key: "codeDetail.description.title"),
-                subtitle: localized(key: "codeDetail.description.subtitle")
+                title: viewModel.strings.descriptionTitle,
+                subtitle: viewModel.strings.descriptionSubtitle
             )
             .textCase(.none)
             .padding(.vertical, 8)
@@ -210,12 +141,22 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     private var metadataSection: some View {
         Section {
             Label {
-                LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
+                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
             } icon: {
                 RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
                     .foregroundColor(.white)
             }
             .padding(.vertical, 2)
+
+            if viewModel.updatedDateValue != viewModel.createdDateValue {
+                Label {
+                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
+                } icon: {
+                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
+                        .foregroundColor(.white)
+                }
+                .padding(.vertical, 2)
+            }
 
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {

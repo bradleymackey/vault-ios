@@ -5,7 +5,7 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class OTPCodeDetailViewModel {
+public final class OTPCodeDetailViewModel: DetailViewModel {
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
     public let storedCode: OTPAuthCode
@@ -72,6 +72,10 @@ public final class OTPCodeDetailViewModel {
         }
     }
 
+    public func delete() async {
+        await deleteCode()
+    }
+
     public func deleteCode() async {
         do {
             try await detailEditState.deleteItem {
@@ -96,36 +100,36 @@ public final class OTPCodeDetailViewModel {
 // MARK: - Titles
 
 extension OTPCodeDetailViewModel {
-    public var createdDateTitle: String {
-        localized(key: "codeDetail.listSection.created.title")
+    public struct Strings: DetailViewModelStrings {
+        static let shared = Strings()
+        private init() {}
+
+        public let title = localized(key: "codeDetail.title")
+        public let deleteConfirmTitle = localized(key: "codeDetail.action.delete.confirm.title")
+        public let deleteItemTitle = localized(key: "codeDetail.action.delete.entity.title")
+        public let deleteConfirmSubtitle = localized(key: "codeDetail.action.delete.confirm.subtitle")
+        public let createdDateTitle = localized(key: "codeDetail.listSection.created.title")
+        public let updatedDateTitle = localized(key: "codeDetail.listSection.updated.title")
+        public let doneEditingTitle = localized(key: "feedViewModel.doneEditing.title")
+        public let saveEditsTitle = localized(key: "feedViewModel.saveEdits.title")
+        public let cancelEditsTitle = localized(key: "feedViewModel.cancelEdits.title")
+        public let startEditingTitle = localized(key: "feedViewModel.edit.title")
+        public let siteNameTitle = localized(key: "codeDetail.field.siteName.title")
+        public let accountNameTitle = localized(key: "codeDetail.field.accountName.title")
+        public let descriptionTitle = localized(key: "codeDetail.description.title")
+        public let descriptionSubtitle = localized(key: "codeDetail.description.subtitle")
+    }
+
+    public var strings: Strings {
+        Strings.shared
     }
 
     public var createdDateValue: String {
-        storedMetdata.created.formatted(date: .abbreviated, time: .omitted)
-    }
-
-    public var updatedDateTitle: String {
-        localized(key: "codeDetail.listSection.updated.title")
+        storedMetdata.created.formatted(date: .abbreviated, time: .shortened)
     }
 
     public var updatedDateValue: String {
-        storedMetdata.updated.formatted(date: .abbreviated, time: .omitted)
-    }
-
-    public var doneEditingTitle: String {
-        localized(key: "feedViewModel.doneEditing.title")
-    }
-
-    public var saveEditsTitle: String {
-        localized(key: "feedViewModel.saveEdits.title")
-    }
-
-    public var cancelEditsTitle: String {
-        localized(key: "feedViewModel.cancelEdits.title")
-    }
-
-    public var startEditingTitle: String {
-        localized(key: "feedViewModel.edit.title")
+        storedMetdata.updated.formatted(date: .abbreviated, time: .shortened)
     }
 }
 

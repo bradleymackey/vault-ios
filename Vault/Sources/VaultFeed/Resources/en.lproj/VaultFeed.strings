@@ -12,9 +12,13 @@
 "codePreview.codeGenerationError.title" = "Error";
 "codePreview.codeGenerationError.description" = "There was an error generating this code.";
 
+"codeDetail.title" = "Code";
 "codeDetail.secretType.base32" = "Base 32";
 "codeDetail.typeName.totp" = "Timer (TOTP)";
 "codeDetail.typeName.hotp" = "Counter (HOTP)";
+
+"codeDetail.description.title" = "Description";
+"codeDetail.description.subtitle" = "Custom notes about this code";
 
 "codeDetail.listSection.created.title" = "Created";
 "codeDetail.listSection.updated.title" = "Updated";
@@ -25,9 +29,29 @@
 "codeDetail.listSection.algorithm.title" = "Algorithm";
 "codeDetail.listSection.secretFormat.title" = "Secret Format";
 
+"codeDetail.action.delete.entity.title" = "Delete This Code Forever";
+"codeDetail.action.delete.confirm.title" = "Delete Code?";
+"codeDetail.action.delete.confirm.subtitle" = "This will permanently delete this code. Unless you have made a backup, you may not be able to login on this site.";
+
+"codeDetail.field.siteName.title" = "Site Name";
+"codeDetail.field.accountName.title" = "Account Name";
+
 "noteDetail.listSection.details.title" = "Note Information";
 "noteDetail.listSection.created.title" = "Created";
 "noteDetail.listSection.updated.title" = "Updated";
+
+"noteDetail.title" = "Note";
+"noteDetail.description.title" = "Description";
+"noteDetail.description.subtitle" = "Summary of the contents of this note";
+"noteDetail.metadata.title" = "Metadata";
+"noteDetail.metadata.subtitle" = "Technical information about this note";
+"noteDetail.action.delete.entity.title" = "Delete This Note Forever";
+"noteDetail.action.delete.confirm.title" = "Delete Note?";
+"noteDetail.action.delete.confirm.subtitle" = "This will permanently delete this note. Unless you have made a backup, you will lose the contents forever.";
+
+"noteDetail.field.noteTitle.title" = "Title";
+"noteDetail.field.noteDescription.title" = "Description";
+"noteDetail.field.noteContents.title" = "Contents";
 
 "detail.operationError.save.description" = "An error was encountered during saving. Please quit the app and try again.";
 "detail.operationError.delete.description" = "An error was encountered during deletion. Please quit the app and try again.";

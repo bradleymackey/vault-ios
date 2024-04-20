@@ -6,11 +6,9 @@ public struct SecureNotePreviewView: View {
     var viewModel: SecureNotePreviewViewModel
 
     public var body: some View {
-        VStack(alignment: .leading) {
+        VStack(alignment: .leading, spacing: 4) {
             titleLabel
             if let description = viewModel.description {
-                Divider()
-                    .padding(.bottom, 2)
                 descriptionLabel(text: description)
             }
             Spacer()
@@ -23,12 +21,11 @@ public struct SecureNotePreviewView: View {
     private var titleLabel: some View {
         HStack(alignment: .top, spacing: 4) {
             Image(systemName: "doc.text.fill")
-                .font(.body)
             Text(viewModel.title)
-                .font(.callout)
-                .fontWeight(.medium)
                 .lineLimit(2)
         }
+        .font(.callout.bold())
+        .minimumScaleFactor(0.8)
         .padding(.vertical, 4)
         .foregroundStyle(.primary)
         .tint(.primary)
@@ -36,7 +33,7 @@ public struct SecureNotePreviewView: View {
 
     private func descriptionLabel(text: String) -> some View {
         Text(text)
-            .font(.caption)
+            .font(.footnote)
             .foregroundStyle(.secondary)
             .tint(.secondary)
     }
