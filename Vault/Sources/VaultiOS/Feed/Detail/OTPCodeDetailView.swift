@@ -90,17 +90,14 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         .lineLimit(2)
         .multilineTextAlignment(.center)
         .frame(maxWidth: .infinity)
-        .listRowInsets(.none)
-        .listRowBackground(EmptyView())
-        .listRowSeparator(.hidden)
+        .noListBackground()
 
         if viewModel.editingModel.detail.description.isNotEmpty {
             VStack(alignment: .center) {
                 Text(viewModel.editingModel.detail.description)
             }
             .frame(maxWidth: .infinity)
-            .listRowBackground(EmptyView())
-            .listRowSeparator(.hidden)
+            .noListBackground()
             .multilineTextAlignment(.center)
         }
     }
