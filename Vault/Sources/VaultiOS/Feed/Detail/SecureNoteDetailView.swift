@@ -22,6 +22,9 @@ struct SecureNoteDetailView: View {
                 noteDetailEditingSection
             }
             noteContentsSection
+            if !viewModel.isInEditMode {
+                metadataSection
+            }
         }
     }
 
@@ -95,6 +98,28 @@ struct SecureNoteDetailView: View {
         } header: {
             if viewModel.isInEditMode {
                 Text(viewModel.strings.noteContentsTitle)
+            }
+        }
+    }
+
+    private var metadataSection: some View {
+        Section {
+            Label {
+                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
+            } icon: {
+                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
+                    .foregroundColor(.white)
+            }
+            .padding(.vertical, 2)
+
+            if viewModel.updatedDateValue != viewModel.createdDateValue {
+                Label {
+                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
+                } icon: {
+                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
+                        .foregroundColor(.white)
+                }
+                .padding(.vertical, 2)
             }
         }
     }
