@@ -26,8 +26,14 @@ struct VaultDetailView<
                 ),
                 previewGenerator: previewGenerator
             )
-        case .secureNote:
-            Text("Secure Note")
+        case let .secureNote(storedNote):
+            SecureNoteDetailView(
+                viewModel: .init(
+                    storedNote: storedNote,
+                    storedMetadata: storedItem.metadata,
+                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
+                )
+            )
         }
     }
 }

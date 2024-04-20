@@ -3,6 +3,7 @@ import Foundation
 import VaultCore
 
 @MainActor
+@Observable
 public final class SecureNoteDetailViewModel {
     public var editingModel: DetailEditingModel<SecureNoteDetailEdits>
 
