@@ -4,7 +4,7 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class SecureNoteDetailViewModel {
+public final class SecureNoteDetailViewModel: DetailViewModel {
     public var editingModel: DetailEditingModel<SecureNoteDetailEdits>
 
     private let storedNote: SecureNote
@@ -81,7 +81,7 @@ public final class SecureNoteDetailViewModel {
 // MARK: - Titles
 
 extension SecureNoteDetailViewModel {
-    public struct Strings {
+    public struct Strings: DetailViewModelStrings {
         static let shared = Strings()
         private init() {}
 

@@ -5,7 +5,7 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class OTPCodeDetailViewModel {
+public final class OTPCodeDetailViewModel: DetailViewModel {
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
     public let storedCode: OTPAuthCode
@@ -96,7 +96,7 @@ public final class OTPCodeDetailViewModel {
 // MARK: - Titles
 
 extension OTPCodeDetailViewModel {
-    public struct Strings {
+    public struct Strings: DetailViewModelStrings {
         static let shared = Strings()
         private init() {}
 
