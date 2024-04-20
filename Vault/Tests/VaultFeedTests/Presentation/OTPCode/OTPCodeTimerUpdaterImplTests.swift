@@ -5,7 +5,7 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-final class OTPCodeTimerControllerTests: XCTestCase {
+final class OTPCodeTimerUpdaterImplTests: XCTestCase {
     func test_timerUpdatedPublisher_publishesInitialValueImmediately() async throws {
         let (_, _, sut) = makeSUT(clock: 62, period: 30)
 
