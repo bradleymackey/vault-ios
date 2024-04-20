@@ -49,5 +49,9 @@
 "noteDetail.action.delete.confirm.title" = "Delete Note?";
 "noteDetail.action.delete.confirm.subtitle" = "This will permanently delete this note. Unless you have made a backup, you will lose the contents forever.";
 
+"noteDetail.field.noteTitle.title" = "Title";
+"noteDetail.field.noteDescription.title" = "Description";
+"noteDetail.field.noteContents.title" = "Contents";
+
 "detail.operationError.save.description" = "An error was encountered during saving. Please quit the app and try again.";
 "detail.operationError.delete.description" = "An error was encountered during deletion. Please quit the app and try again.";

@@ -1,3 +1,4 @@
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -16,9 +17,85 @@ struct SecureNoteDetailView: View {
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
-            Text(viewModel.editingModel.detail.title)
-            Text(viewModel.editingModel.detail.description)
-            Text(viewModel.editingModel.detail.contents)
+            noteDetailSection
+            if viewModel.isInEditMode {
+                noteDetailEditingSection
+            }
+            noteContentsSection
+        }
+    }
+
+    private var noteDetailSection: some View {
+        Section {
+            if viewModel.isInEditMode {
+                noteDetailContentEditing
+            } else {
+                noteDetailContent
+            }
+        }
+        .keyboardType(.default)
+        .textInputAutocapitalization(.sentences)
+        .submitLabel(.done)
+    }
+
+    @ViewBuilder
+    private var noteDetailContent: some View {
+        VStack(alignment: .center, spacing: 4) {
+            if viewModel.editingModel.detail.title.isNotEmpty {
+                Text(viewModel.editingModel.detail.title)
+                    .font(.title.bold())
+            }
+        }
+        .lineLimit(5)
+        .multilineTextAlignment(.center)
+        .frame(maxWidth: .infinity)
+        .noListBackground()
+
+        if viewModel.editingModel.detail.description.isNotEmpty {
+            VStack(alignment: .center) {
+                Text(viewModel.editingModel.detail.description)
+            }
+            .frame(maxWidth: .infinity)
+            .noListBackground()
+            .multilineTextAlignment(.center)
+        }
+    }
+
+    @ViewBuilder
+    private var noteDetailContentEditing: some View {
+        TextField(
+            viewModel.strings.noteTitle,
+            text: $viewModel.editingModel.detail.title
+        )
+    }
+
+    private var noteDetailEditingSection: some View {
+        Section {
+            TextEditor(text: $viewModel.editingModel.detail.description)
+                .frame(minHeight: 100)
+        } header: {
+            Text(viewModel.strings.noteDescription)
+        }
+    }
+
+    private var noteContentsSection: some View {
+        Section {
+            if viewModel.isInEditMode {
+                TextEditor(text: $viewModel.editingModel.detail.contents)
+                    .frame(minHeight: 200)
+                    .font(.body)
+                    .fontDesign(.monospaced)
+            } else {
+                Text(viewModel.editingModel.detail.contents)
+                    .textSelection(.enabled)
+                    .font(.body)
+                    .fontDesign(.monospaced)
+                    .noListBackground()
+            }
+        } header: {
+            if viewModel.isInEditMode {
+                Text(viewModel.strings.noteContentsTitle)
+            }
         }
     }
 }

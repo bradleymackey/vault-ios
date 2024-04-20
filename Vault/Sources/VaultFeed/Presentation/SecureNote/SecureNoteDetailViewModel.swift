@@ -101,6 +101,9 @@ extension SecureNoteDetailViewModel {
         public let saveEditsTitle = localized(key: "feedViewModel.saveEdits.title")
         public let cancelEditsTitle = localized(key: "feedViewModel.cancelEdits.title")
         public let startEditingTitle = localized(key: "feedViewModel.edit.title")
+        public let noteTitle = localized(key: "noteDetail.field.noteTitle.title")
+        public let noteDescription = localized(key: "noteDetail.field.noteDescription.title")
+        public let noteContentsTitle = localized(key: "noteDetail.field.noteContents.title")
     }
 
     public var strings: Strings {

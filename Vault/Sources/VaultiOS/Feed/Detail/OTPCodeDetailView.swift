@@ -1,3 +1,4 @@
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -78,7 +79,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     @ViewBuilder
     private var codeDetailContent: some View {
         VStack(alignment: .center, spacing: 4) {
-            if !viewModel.editingModel.detail.issuerTitle.isEmpty {
+            if viewModel.editingModel.detail.issuerTitle.isNotEmpty {
                 Text(viewModel.editingModel.detail.issuerTitle)
                     .font(.title.bold())
             }
@@ -93,7 +94,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         .listRowBackground(EmptyView())
         .listRowSeparator(.hidden)
 
-        if !viewModel.editingModel.detail.description.isEmpty {
+        if viewModel.editingModel.detail.description.isNotEmpty {
             VStack(alignment: .center) {
                 Text(viewModel.editingModel.detail.description)
             }
