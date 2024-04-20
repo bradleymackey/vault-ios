@@ -39,7 +39,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 metadataSection
             }
         }
-        .navigationTitle(localized(key: "codeDetail.title"))
+        .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.editingModel.isDirty)
         .scrollDismissesKeyboard(.interactively)
@@ -52,15 +52,15 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             isError = true
         }
         .confirmationDialog(
-            localized(key: "codeDetail.action.delete.confirm.title"),
+            viewModel.strings.deleteConfirmTitle,
             isPresented: $isShowingDeleteConfirmation,
             titleVisibility: .visible
         ) {
-            Button(localized(key: "codeDetail.action.delete.entity.title"), role: .destructive) {
+            Button(viewModel.strings.deleteCodeTitle, role: .destructive) {
                 Task { await viewModel.deleteCode() }
             }
         } message: {
-            Text(localized(key: "codeDetail.action.delete.confirm.subtitle"))
+            Text(viewModel.strings.deleteConfirmSubtitle)
         }
         .alert(localized(key: "action.error.title"), isPresented: $isError, presenting: currentError) { _ in
             Button(localized(key: "action.error.confirm.title"), role: .cancel) {}
@@ -80,7 +80,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                     Button {
                         viewModel.done()
                     } label: {
-                        Text(viewModel.cancelEditsTitle)
+                        Text(viewModel.strings.cancelEditsTitle)
                             .tint(.red)
                     }
                 }
@@ -89,7 +89,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                     Button {
                         viewModel.startEditing()
                     } label: {
-                        Text(viewModel.startEditingTitle)
+                        Text(viewModel.strings.startEditingTitle)
                             .tint(.accentColor)
                     }
                 }
@@ -100,7 +100,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                     Button {
                         Task { await viewModel.saveChanges() }
                     } label: {
-                        Text(viewModel.saveEditsTitle)
+                        Text(viewModel.strings.saveEditsTitle)
                             .tint(.accentColor)
                     }
                 }
@@ -109,7 +109,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                     Button {
                         viewModel.done()
                     } label: {
-                        Text(viewModel.doneEditingTitle)
+                        Text(viewModel.strings.doneEditingTitle)
                             .tint(.accentColor)
                     }
                 }
@@ -174,11 +174,11 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     @ViewBuilder
     private var codeDetailContentEditing: some View {
         TextField(
-            localized(key: "codeDetail.field.siteName.title"),
+            viewModel.strings.siteNameTitle,
             text: $viewModel.editingModel.detail.issuerTitle
         )
         TextField(
-            localized(key: "codeDetail.field.accountName.title"),
+            viewModel.strings.accountNameTitle,
             text: $viewModel.editingModel.detail.accountNameTitle
         )
     }
@@ -190,8 +190,8 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 .keyboardType(.default)
         } header: {
             DetailSubtitleView(
-                title: localized(key: "codeDetail.description.title"),
-                subtitle: localized(key: "codeDetail.description.subtitle")
+                title: viewModel.strings.descriptionTitle,
+                subtitle: viewModel.strings.descriptionSubtitle
             )
             .textCase(.none)
             .padding(.vertical, 8)
@@ -210,7 +210,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
     private var metadataSection: some View {
         Section {
             Label {
-                LabeledContent(viewModel.createdDateTitle, value: viewModel.createdDateValue)
+                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
             } icon: {
                 RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
                     .foregroundColor(.white)

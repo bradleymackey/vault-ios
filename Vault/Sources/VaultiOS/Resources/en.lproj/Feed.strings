@@ -10,24 +10,4 @@
 "code.issuerPlaceholder" = "Code";
 "code.accountNamePlaceholder" = "No account";
 
-"codeDetail.title" = "Code";
-"codeDetail.description.title" = "Description";
-"codeDetail.description.subtitle" = "Custom notes about this code";
-"codeDetail.metadata.title" = "Metadata";
-"codeDetail.metadata.subtitle" = "Technical information about this code";
-"codeDetail.field.siteName.title" = "Site Name";
-"codeDetail.field.accountName.title" = "Account Name";
-"codeDetail.action.delete.entity.title" = "Delete This Code Forever";
-"codeDetail.action.delete.confirm.title" = "Delete Code?";
-"codeDetail.action.delete.confirm.subtitle" = "This will permanently delete this code. Unless you have made a backup, you may not be able to login on this site.";
-
-"noteDetail.title" = "Note";
-"noteDetail.description.title" = "Description";
-"noteDetail.description.subtitle" = "Summary of the contents of this note";
-"noteDetail.metadata.title" = "Metadata";
-"noteDetail.metadata.subtitle" = "Technical information about this note";
-"noteDetail.action.delete.entity.title" = "Delete This Note Forever";
-"noteDetail.action.delete.confirm.title" = "Delete Note?";
-"noteDetail.action.delete.confirm.subtitle" = "This will permanently delete this note. Unless you have made a backup, you will lose the contents forever.";
-
 "codeFeed.noCodes.title" = "No Codes";
