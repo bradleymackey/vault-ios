@@ -81,35 +81,33 @@ public final class SecureNoteDetailViewModel {
 // MARK: - Titles
 
 extension SecureNoteDetailViewModel {
-    public var createdDateTitle: String {
-        localized(key: "noteDetail.listSection.created.title")
+    public struct Strings {
+        static let shared = Strings()
+        private init() {}
+
+        public let title = localized(key: "noteDetail.title")
+        public let deleteNoteTitle = localized(key: "noteDetail.action.delete.confirm.title")
+        public let deleteConfirmTitle = localized(key: "noteDetail.action.delete.confirm.title")
+        public let deleteConfirmSubtitle = localized(key: "noteDetail.action.delete.confirm.subtitle")
+        public let descriptionTitle = localized(key: "noteDetail.description.title")
+        public let descriptionSubtitle = localized(key: "noteDetail.description.subtitle")
+        public let createdDateTitle = localized(key: "noteDetail.listSection.created.title")
+        public let updatedDateTitle = localized(key: "noteDetail.listSection.updated.title")
+        public let doneEditingTitle = localized(key: "feedViewModel.doneEditing.title")
+        public let saveEditsTitle = localized(key: "feedViewModel.saveEdits.title")
+        public let cancelEditsTitle = localized(key: "feedViewModel.cancelEdits.title")
+        public let startEditingTitle = localized(key: "feedViewModel.edit.title")
+    }
+
+    public var strings: Strings {
+        Strings.shared
     }
 
     public var createdDateValue: String {
         storedMetadata.created.formatted(date: .abbreviated, time: .omitted)
     }
 
-    public var updatedDateTitle: String {
-        localized(key: "noteDetail.listSection.updated.title")
-    }
-
     public var updatedDateValue: String {
         storedMetadata.updated.formatted(date: .abbreviated, time: .omitted)
-    }
-
-    public var doneEditingTitle: String {
-        localized(key: "feedViewModel.doneEditing.title")
-    }
-
-    public var saveEditsTitle: String {
-        localized(key: "feedViewModel.saveEdits.title")
-    }
-
-    public var cancelEditsTitle: String {
-        localized(key: "feedViewModel.cancelEdits.title")
-    }
-
-    public var startEditingTitle: String {
-        localized(key: "feedViewModel.edit.title")
     }
 }
