@@ -37,7 +37,7 @@ public struct VaultMainScene: Scene {
         ])
         let totp = TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
-            updaterFactory: OTPCodeTimerControllerFactory(timer: timer, clock: clock),
+            updaterFactory: OTPCodeTimerUpdaterFactoryImpl(timer: timer, clock: clock),
             clock: clock,
             timer: timer
         )

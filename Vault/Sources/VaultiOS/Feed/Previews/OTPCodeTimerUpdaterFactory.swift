@@ -6,7 +6,7 @@ public protocol OTPCodeTimerUpdaterFactory {
     func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater
 }
 
-public final class OTPCodeTimerControllerFactory: OTPCodeTimerUpdaterFactory {
+public final class OTPCodeTimerUpdaterFactoryImpl: OTPCodeTimerUpdaterFactory {
     let timer: any IntervalTimer
     let clock: EpochClock
 
