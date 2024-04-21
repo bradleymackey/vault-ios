@@ -38,7 +38,6 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 descriptionSection
             }
             if !viewModel.isInEditMode {
-                codePreviewSection
                 metadataSection
             }
         }
@@ -134,10 +133,6 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         }
     }
 
-    private var codePreviewSection: some View {
-        Section {}
-    }
-
     private var metadataSection: some View {
         Section {
             Label {
@@ -189,7 +184,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 .frame(maxWidth: 200)
                 .modifier(OTPCardViewModifier(context: .tertiary))
                 .modifier(HorizontallyCenter())
-                .padding(.vertical, 24)
+                .padding(.bottom, 24)
             }
             .textCase(.none)
         }
