@@ -67,18 +67,14 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             switch previewViewModel.code {
             case .visible:
                 timerView
-                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .finished, .notReady, .obfuscated:
                 Color.gray
                     .redacted(reason: .placeholder)
-                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .error:
                 Color.red
-                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             }
         case .obfuscate:
             Color.blue
-                .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
         }
     }
 }

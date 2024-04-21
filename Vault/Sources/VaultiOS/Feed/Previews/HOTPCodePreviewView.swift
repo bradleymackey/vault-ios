@@ -29,17 +29,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             switch previewViewModel.code {
             case .visible:
                 Color.blue
-                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .notReady, .obfuscated:
                 Color.gray
-                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             case .error, .finished:
                 Color.red
-                    .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
             }
         case .obfuscate:
             Color.blue
-                .matchedGeometryEffect(id: "Timer", in: codeTimerAnimation)
         }
     }
 
