@@ -100,6 +100,7 @@ public struct VaultItemFeedView<
                     }
                     .aspectRatio(1, contentMode: .fit)
                     .modifier(OTPCardViewModifier())
+                    .frame(width: 150)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }
