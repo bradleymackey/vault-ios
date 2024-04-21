@@ -93,12 +93,9 @@ struct SecureNoteDetailView: View {
                     .textSelection(.enabled)
                     .font(.callout)
                     .fontDesign(.monospaced)
-                    .noListBackground()
             }
         } header: {
-            if viewModel.isInEditMode {
-                Text(viewModel.strings.noteContentsTitle)
-            }
+            Text(viewModel.strings.noteContentsTitle)
         } footer: {
             if viewModel.isInEditMode {
                 deleteButton
