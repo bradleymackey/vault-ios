@@ -135,24 +135,6 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
 
     private var metadataSection: some View {
         Section {
-            Label {
-                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
-            } icon: {
-                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
-                    .foregroundColor(.white)
-            }
-            .padding(.vertical, 2)
-
-            if viewModel.updatedDateValue != viewModel.createdDateValue {
-                Label {
-                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
-                } icon: {
-                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
-                        .foregroundColor(.white)
-                }
-                .padding(.vertical, 2)
-            }
-
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
@@ -187,6 +169,24 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 .padding(.bottom, 24)
             }
             .textCase(.none)
+        } footer: {
+            VStack(alignment: .leading, spacing: 2) {
+                FooterInfoLabel(
+                    title: viewModel.strings.createdDateTitle,
+                    detail: viewModel.createdDateValue,
+                    systemImageName: "clock.fill"
+                )
+
+                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                    FooterInfoLabel(
+                        title: viewModel.strings.updatedDateTitle,
+                        detail: viewModel.updatedDateValue,
+                        systemImageName: "clock.arrow.2.circlepath"
+                    )
+                }
+            }
+            .font(.footnote)
+            .padding(.top, 8)
         }
     }
 

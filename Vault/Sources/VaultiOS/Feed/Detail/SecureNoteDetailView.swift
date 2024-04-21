@@ -17,13 +17,12 @@ struct SecureNoteDetailView: View {
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
-            noteDetailSection
             if viewModel.isInEditMode {
                 noteDetailEditingSection
-            }
-            noteContentsSection
-            if !viewModel.isInEditMode {
-                metadataSection
+                noteContentsEditingSection
+            } else {
+                noteDetailSection
+                noteContentsSection
             }
         }
     }
@@ -81,50 +80,50 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    private var noteContentsSection: some View {
+    private var noteContentsEditingSection: some View {
         Section {
-            if viewModel.isInEditMode {
-                TextEditor(text: $viewModel.editingModel.detail.contents)
-                    .frame(minHeight: 200)
-                    .font(.callout)
-                    .fontDesign(.monospaced)
-            } else {
-                Text(viewModel.editingModel.detail.contents)
-                    .textSelection(.enabled)
-                    .font(.callout)
-                    .fontDesign(.monospaced)
-            }
+            TextEditor(text: $viewModel.editingModel.detail.contents)
+                .frame(minHeight: 200)
+                .font(.callout)
+                .fontDesign(.monospaced)
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         } footer: {
-            if viewModel.isInEditMode {
-                deleteButton
-                    .modifier(HorizontallyCenter())
-                    .padding()
-                    .padding(.vertical, 16)
-            }
+            deleteButton
+                .modifier(HorizontallyCenter())
+                .padding()
+                .padding(.vertical, 16)
+                .transition(.opacity)
         }
     }
 
-    private var metadataSection: some View {
+    private var noteContentsSection: some View {
         Section {
-            Label {
-                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
-            } icon: {
-                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
-                    .foregroundColor(.white)
-            }
-            .padding(.vertical, 2)
+            Text(viewModel.editingModel.detail.contents)
+                .textSelection(.enabled)
+                .font(.callout)
+                .fontDesign(.monospaced)
+        } header: {
+            Text(viewModel.strings.noteContentsTitle)
+        } footer: {
+            VStack(alignment: .leading, spacing: 2) {
+                FooterInfoLabel(
+                    title: viewModel.strings.createdDateTitle,
+                    detail: viewModel.createdDateValue,
+                    systemImageName: "clock.fill"
+                )
 
-            if viewModel.updatedDateValue != viewModel.createdDateValue {
-                Label {
-                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
-                } icon: {
-                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
-                        .foregroundColor(.white)
+                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                    FooterInfoLabel(
+                        title: viewModel.strings.updatedDateTitle,
+                        detail: viewModel.updatedDateValue,
+                        systemImageName: "clock.arrow.2.circlepath"
+                    )
                 }
-                .padding(.vertical, 2)
             }
+            .font(.footnote)
+            .padding(.top, 8)
+            .transition(.opacity)
         }
     }
 
