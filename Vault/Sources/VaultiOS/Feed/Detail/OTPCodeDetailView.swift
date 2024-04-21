@@ -35,9 +35,9 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         ) {
             codeDetailSection
             if viewModel.isInEditMode {
+                descriptionEditingSection
+            } else {
                 descriptionSection
-            }
-            if !viewModel.isInEditMode {
                 metadataSection
             }
         }
@@ -69,36 +69,29 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         } header: {
             iconHeader
                 .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
+        } footer: {
+            if !viewModel.isInEditMode {
+                VStack(alignment: .center) {
+                    copyableViewGenerator().makeVaultPreviewView(
+                        item: .otpCode(viewModel.storedCode),
+                        metadata: viewModel.storedMetdata,
+                        behaviour: .normal
+                    )
+                    .frame(maxWidth: 200)
+                    .modifier(OTPCardViewModifier(context: .tertiary))
+                    .modifier(HorizontallyCenter())
+                    .padding(.top, 16)
+                }
+                .textCase(.none)
+            }
         }
         .keyboardType(.default)
         .textInputAutocapitalization(.words)
         .submitLabel(.done)
     }
 
-    @ViewBuilder
     private var codeDetailContent: some View {
-        VStack(alignment: .center, spacing: 4) {
-            if viewModel.editingModel.detail.issuerTitle.isNotEmpty {
-                Text(viewModel.editingModel.detail.issuerTitle)
-                    .font(.title.bold())
-            }
-            Text(viewModel.editingModel.detail.accountNameTitle)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
-        .lineLimit(2)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-        .noListBackground()
-
-        if viewModel.editingModel.detail.description.isNotEmpty {
-            VStack(alignment: .center) {
-                Text(viewModel.editingModel.detail.description)
-            }
-            .frame(maxWidth: .infinity)
-            .noListBackground()
-            .multilineTextAlignment(.center)
-        }
+        EmptyView()
     }
 
     @ViewBuilder
@@ -113,23 +106,26 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         )
     }
 
-    private var descriptionSection: some View {
+    private var descriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
                 .frame(height: 200)
                 .keyboardType(.default)
         } header: {
-            DetailSubtitleView(
-                title: viewModel.strings.descriptionTitle,
-                subtitle: viewModel.strings.descriptionSubtitle
-            )
-            .textCase(.none)
-            .padding(.vertical, 8)
+            Text(viewModel.strings.descriptionTitle)
         } footer: {
             deleteButton
                 .modifier(HorizontallyCenter())
                 .padding()
                 .padding(.vertical, 16)
+        }
+    }
+
+    private var descriptionSection: some View {
+        Section {
+            Text(viewModel.editingModel.detail.description)
+        } header: {
+            Text(viewModel.strings.descriptionTitle)
         }
     }
 
@@ -156,19 +152,6 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
             }
             .padding(.vertical, 2)
 
-        } header: {
-            VStack(alignment: .center) {
-                copyableViewGenerator().makeVaultPreviewView(
-                    item: .otpCode(viewModel.storedCode),
-                    metadata: viewModel.storedMetdata,
-                    behaviour: .normal
-                )
-                .frame(maxWidth: 200)
-                .modifier(OTPCardViewModifier(context: .tertiary))
-                .modifier(HorizontallyCenter())
-                .padding(.bottom, 24)
-            }
-            .textCase(.none)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
