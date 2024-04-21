@@ -86,12 +86,12 @@ struct SecureNoteDetailView: View {
             if viewModel.isInEditMode {
                 TextEditor(text: $viewModel.editingModel.detail.contents)
                     .frame(minHeight: 200)
-                    .font(.body)
+                    .font(.callout)
                     .fontDesign(.monospaced)
             } else {
                 Text(viewModel.editingModel.detail.contents)
                     .textSelection(.enabled)
-                    .font(.body)
+                    .font(.callout)
                     .fontDesign(.monospaced)
                     .noListBackground()
             }
