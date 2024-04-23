@@ -152,10 +152,10 @@ struct SecureNoteDetailView: View {
 
     private var noteContentsSection: some View {
         Section {
-            Text(viewModel.editingModel.detail.contents)
-                .textSelection(.enabled)
-                .font(.callout)
-                .fontDesign(.monospaced)
+            SelectableText(
+                viewModel.editingModel.detail.contents,
+                font: .monospacedSystemFont(ofSize: 16, weight: .regular)
+            )
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
