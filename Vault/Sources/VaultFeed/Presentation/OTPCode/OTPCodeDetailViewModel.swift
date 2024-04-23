@@ -116,6 +116,7 @@ extension OTPCodeDetailViewModel {
         public let startEditingTitle = localized(key: "feedViewModel.edit.title")
         public let siteNameTitle = localized(key: "codeDetail.field.siteName.title")
         public let accountNameTitle = localized(key: "codeDetail.field.accountName.title")
+        public let accountNameExample = localized(key: "codeDetail.field.accountName.example")
         public let descriptionTitle = localized(key: "codeDetail.description.title")
         public let descriptionSubtitle = localized(key: "codeDetail.description.subtitle")
     }

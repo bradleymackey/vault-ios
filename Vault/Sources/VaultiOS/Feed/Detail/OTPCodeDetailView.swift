@@ -38,11 +38,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
-            codeDetailSection
+            codeNameSection
             if viewModel.isInEditMode {
+                accountNameEditingSection
                 descriptionEditingSection
             } else {
-                descriptionSection
                 metadataSection
             }
         }
@@ -64,57 +64,56 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var codeDetailSection: some View {
+    private var codeNameSection: some View {
         Section {
             if viewModel.isInEditMode {
-                codeDetailContentEditing
+                TextField(
+                    viewModel.strings.siteNameTitle,
+                    text: $viewModel.editingModel.detail.issuerTitle
+                )
             } else {
-                codeDetailContent
+                VStack(alignment: .center, spacing: 2) {
+                    Text(viewModel.editingModel.detail.issuerTitle)
+                        .font(.title.bold())
+                        .lineLimit(5)
+                    Text(viewModel.editingModel.detail.accountNameTitle)
+                        .font(.callout.bold())
+                        .lineLimit(2)
+                }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .textSelection(.enabled)
+                .noListBackground()
+
+                Text(viewModel.editingModel.detail.description)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.leading)
+                    .textSelection(.enabled)
+                    .noListBackground()
             }
         } header: {
             iconHeader
                 .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
-        } footer: {
-            if !viewModel.isInEditMode {
-                VStack(alignment: .center) {
-                    copyableViewGenerator().makeVaultPreviewView(
-                        item: .otpCode(viewModel.storedCode),
-                        metadata: viewModel.storedMetdata,
-                        behaviour: .normal
-                    )
-                    .frame(maxWidth: 200)
-                    .modifier(OTPCardViewModifier(context: .tertiary))
-                    .modifier(HorizontallyCenter())
-                    .padding(.top, 16)
-                }
-                .textCase(.none)
-            }
         }
-        .keyboardType(.default)
-        .textInputAutocapitalization(.words)
-        .submitLabel(.done)
     }
 
-    private var codeDetailContent: some View {
-        EmptyView()
-    }
-
-    @ViewBuilder
-    private var codeDetailContentEditing: some View {
-        TextField(
-            viewModel.strings.siteNameTitle,
-            text: $viewModel.editingModel.detail.issuerTitle
-        )
-        TextField(
-            viewModel.strings.accountNameTitle,
-            text: $viewModel.editingModel.detail.accountNameTitle
-        )
+    private var accountNameEditingSection: some View {
+        Section {
+            TextField(text: $viewModel.editingModel.detail.accountNameTitle) {
+                Text(viewModel.strings.accountNameExample)
+            }
+        } header: {
+            Text(viewModel.strings.accountNameTitle)
+        }
     }
 
     private var descriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
-                .frame(height: 200)
+                .frame(height: 100)
                 .keyboardType(.default)
         } header: {
             Text(viewModel.strings.descriptionTitle)
@@ -123,14 +122,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .modifier(HorizontallyCenter())
                 .padding()
                 .padding(.vertical, 16)
-        }
-    }
-
-    private var descriptionSection: some View {
-        Section {
-            Text(viewModel.editingModel.detail.description)
-        } header: {
-            Text(viewModel.strings.descriptionTitle)
         }
     }
 
@@ -156,7 +147,18 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             }
             .padding(.vertical, 2)
-
+        } header: {
+            VStack(alignment: .center) {
+                copyableViewGenerator().makeVaultPreviewView(
+                    item: .otpCode(viewModel.storedCode),
+                    metadata: viewModel.storedMetdata,
+                    behaviour: .normal
+                )
+                .frame(maxWidth: 200)
+                .modifier(OTPCardViewModifier(context: .tertiary))
+                .modifier(HorizontallyCenter())
+            }
+            .textCase(.none)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
