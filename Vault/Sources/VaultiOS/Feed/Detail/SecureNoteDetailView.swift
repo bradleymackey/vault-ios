@@ -35,7 +35,7 @@ struct SecureNoteDetailView: View {
                 noteDescriptionEditingSection
                 noteContentsEditingSection
             } else {
-                noteDetailContent
+                noteMetadataContentSection
                 noteContentsSection
             }
         }
@@ -103,29 +103,24 @@ struct SecureNoteDetailView: View {
 
     // MARK: Title & Description
 
-    @ViewBuilder
-    private var noteDetailContent: some View {
-        VStack(alignment: .center, spacing: 4) {
+    private var noteMetadataContentSection: some View {
+        Section {
             if viewModel.editingModel.detail.title.isNotEmpty {
                 Text(viewModel.editingModel.detail.title)
                     .font(.title.bold())
-                    .textSelection(.enabled)
+                    .lineLimit(5)
+                    .frame(maxWidth: .infinity)
             }
-        }
-        .lineLimit(5)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-        .noListBackground()
 
-        if viewModel.editingModel.detail.description.isNotEmpty {
-            VStack(alignment: .center) {
+            if viewModel.editingModel.detail.description.isNotEmpty {
                 Text(viewModel.editingModel.detail.description)
+                    .font(.callout)
+                    .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
-            .noListBackground()
-            .multilineTextAlignment(.center)
-            .textSelection(.enabled)
         }
+        .multilineTextAlignment(.center)
+        .textSelection(.enabled)
+        .noListBackground()
     }
 
     private var noteTitleEditingSection: some View {
