@@ -128,7 +128,7 @@ struct SecureNoteDetailView: View {
             Button {
                 textEditingModal = .title
             } label: {
-                Text("Edit")
+                Text(viewModel.strings.startEditingTitle)
             }
         } header: {
             Text(viewModel.strings.noteTitle)
@@ -141,7 +141,7 @@ struct SecureNoteDetailView: View {
             Button {
                 textEditingModal = .description
             } label: {
-                Text("Edit")
+                Text(viewModel.strings.startEditingTitle)
             }
         } header: {
             Text(viewModel.strings.noteDescription)
@@ -187,7 +187,7 @@ struct SecureNoteDetailView: View {
             Button {
                 textEditingModal = .content
             } label: {
-                Text("Edit")
+                Text(viewModel.strings.startEditingTitle)
             }
         } header: {
             Text(viewModel.strings.noteContentsTitle)
