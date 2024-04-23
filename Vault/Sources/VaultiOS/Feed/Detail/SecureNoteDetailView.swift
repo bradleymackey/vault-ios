@@ -154,6 +154,7 @@ struct SecureNoteDetailView: View {
                 viewModel.editingModel.detail.contents,
                 font: .monospacedSystemFont(ofSize: 16, weight: .regular)
             )
+            .frame(minHeight: 250, alignment: .top)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
@@ -181,6 +182,7 @@ struct SecureNoteDetailView: View {
             TextEditor(text: $viewModel.editingModel.detail.contents)
                 .font(.callout)
                 .fontDesign(.monospaced)
+                .frame(minHeight: 250)
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         } footer: {
