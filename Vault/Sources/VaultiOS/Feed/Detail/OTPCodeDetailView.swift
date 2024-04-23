@@ -5,16 +5,26 @@ import VaultFeed
 import VaultUI
 
 @MainActor
-public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
+struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
     where PreviewGenerator.PreviewItem == VaultItem
 {
-    @Bindable public var viewModel: OTPCodeDetailViewModel
+    @State private var viewModel: OTPCodeDetailViewModel
+    private var previewGenerator: PreviewGenerator
+
+    init(
+        code: OTPAuthCode,
+        storedMetadata: StoredVaultItem.Metadata,
+        editor: any OTPCodeDetailEditor,
+        previewGenerator: PreviewGenerator
+    ) {
+        _viewModel = .init(initialValue: .init(storedCode: code, storedMetadata: storedMetadata, editor: editor))
+        self.previewGenerator = previewGenerator
+    }
 
     @Environment(Pasteboard.self) private var pasteboard: Pasteboard
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
     @State private var isShowingCopyPaste = false
-    private var previewGenerator: PreviewGenerator
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -22,12 +32,7 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         modifierType: .slide
     )
 
-    public init(viewModel: OTPCodeDetailViewModel, previewGenerator: PreviewGenerator) {
-        self.viewModel = viewModel
-        self.previewGenerator = previewGenerator
-    }
-
-    public var body: some View {
+    var body: some View {
         VaultItemDetailView(
             viewModel: viewModel,
             currentError: $currentError,
@@ -195,19 +200,17 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     static var previews: some View {
         OTPCodeDetailView(
-            viewModel: OTPCodeDetailViewModel(
-                storedCode: .init(
-                    type: .totp(),
-                    data: .init(secret: .empty(), accountName: "Test")
-                ),
-                storedMetadata: .init(
-                    id: UUID(),
-                    created: Date(),
-                    updated: Date(),
-                    userDescription: "Description"
-                ),
-                editor: StubEditor()
+            code: .init(
+                type: .totp(),
+                data: .init(secret: .empty(), accountName: "Test")
             ),
+            storedMetadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: "Description"
+            ),
+            editor: StubEditor(),
             previewGenerator: VaultItemPreviewViewGeneratorMock()
         )
     }

@@ -6,7 +6,11 @@ import VaultUI
 
 @MainActor
 struct SecureNoteDetailView: View {
-    @Bindable var viewModel: SecureNoteDetailViewModel
+    @State private var viewModel: SecureNoteDetailViewModel
+
+    init(note: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
+        _viewModel = .init(initialValue: .init(storedNote: note, storedMetadata: storedMetadata, editor: editor))
+    }
 
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
