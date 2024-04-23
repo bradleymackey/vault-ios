@@ -90,7 +90,7 @@ public struct VaultItemFeedView<
 
     private var vaultItemsList: some View {
         ReorderableForEach(
-            items: viewModel.codes,
+            items: viewModel.codes(filteredByQuery: searchQuery),
             isDragging: $isReordering,
             isEnabled: isEditing
         ) { storedItem in

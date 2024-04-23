@@ -19,6 +19,17 @@ public final class FeedViewModel<Store: VaultStore> {
         codes.first(where: { $0.id == id })
     }
 
+    public func codes(filteredByQuery query: String) -> [StoredVaultItem] {
+        if query.isEmpty {
+            codes
+        } else {
+            codes
+                .filter { item in
+                    item.metadata.userDescription?.localizedCaseInsensitiveContains(query) ?? false
+                }
+        }
+    }
+
     public var title: String {
         localized(key: "feedViewModel.list.title")
     }
