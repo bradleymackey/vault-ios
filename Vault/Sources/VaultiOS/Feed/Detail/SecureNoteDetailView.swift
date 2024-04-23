@@ -109,6 +109,7 @@ struct SecureNoteDetailView: View {
             if viewModel.editingModel.detail.title.isNotEmpty {
                 Text(viewModel.editingModel.detail.title)
                     .font(.title.bold())
+                    .textSelection(.enabled)
             }
         }
         .lineLimit(5)
@@ -123,6 +124,7 @@ struct SecureNoteDetailView: View {
             .frame(maxWidth: .infinity)
             .noListBackground()
             .multilineTextAlignment(.center)
+            .textSelection(.enabled)
         }
     }
 
