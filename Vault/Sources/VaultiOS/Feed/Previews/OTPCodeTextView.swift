@@ -10,11 +10,14 @@ public struct OTPCodeTextView: View {
         switch codeState {
         case .notReady, .finished, .obfuscated:
             placeholderCode(digits: 6)
+                .transition(.blurReplace(.downUp))
         case let .error(_, digits):
             placeholderCode(digits: digits)
                 .foregroundColor(.red)
+                .transition(.blurReplace(.downUp))
         case let .visible(code):
             makeCodeView(text: code)
+                .transition(.blurReplace(.downUp))
         }
     }
 

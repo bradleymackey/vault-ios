@@ -6,7 +6,11 @@ import VaultUI
 
 @MainActor
 struct SecureNoteDetailView: View {
-    @Bindable var viewModel: SecureNoteDetailViewModel
+    @State private var viewModel: SecureNoteDetailViewModel
+
+    init(note: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
+        _viewModel = .init(initialValue: .init(storedNote: note, storedMetadata: storedMetadata, editor: editor))
+    }
 
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
@@ -17,117 +21,104 @@ struct SecureNoteDetailView: View {
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
-            noteDetailSection
             if viewModel.isInEditMode {
-                noteDetailEditingSection
-            }
-            noteContentsSection
-            if !viewModel.isInEditMode {
-                metadataSection
-            }
-        }
-    }
-
-    private var noteDetailSection: some View {
-        Section {
-            if viewModel.isInEditMode {
-                noteDetailContentEditing
+                noteTitleEditingSection
+                noteDescriptionEditingSection
+                noteContentsEditingSection
             } else {
-                noteDetailContent
+                noteMetadataContentSection
+                noteContentsSection
             }
         }
-        .keyboardType(.default)
-        .textInputAutocapitalization(.sentences)
-        .submitLabel(.done)
     }
 
-    @ViewBuilder
-    private var noteDetailContent: some View {
-        VStack(alignment: .center, spacing: 4) {
+    // MARK: Title & Description
+
+    private var noteMetadataContentSection: some View {
+        Section {
             if viewModel.editingModel.detail.title.isNotEmpty {
                 Text(viewModel.editingModel.detail.title)
                     .font(.title.bold())
+                    .lineLimit(5)
+                    .frame(maxWidth: .infinity)
             }
-        }
-        .lineLimit(5)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-        .noListBackground()
 
-        if viewModel.editingModel.detail.description.isNotEmpty {
-            VStack(alignment: .center) {
+            if viewModel.editingModel.detail.description.isNotEmpty {
                 Text(viewModel.editingModel.detail.description)
+                    .font(.callout)
+                    .frame(maxWidth: .infinity)
             }
-            .frame(maxWidth: .infinity)
-            .noListBackground()
-            .multilineTextAlignment(.center)
+        }
+        .multilineTextAlignment(.center)
+        .textSelection(.enabled)
+        .noListBackground()
+    }
+
+    private var noteTitleEditingSection: some View {
+        Section {
+            TextField(text: $viewModel.editingModel.detail.title) {
+                Text(viewModel.strings.noteTitleExample)
+            }
+        } header: {
+            Text(viewModel.strings.noteTitle)
         }
     }
 
-    @ViewBuilder
-    private var noteDetailContentEditing: some View {
-        TextField(
-            viewModel.strings.noteTitle,
-            text: $viewModel.editingModel.detail.title
-        )
-    }
-
-    private var noteDetailEditingSection: some View {
+    private var noteDescriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
-                .frame(minHeight: 100)
+                .font(.callout)
+                .frame(minHeight: 60)
         } header: {
             Text(viewModel.strings.noteDescription)
         }
     }
 
+    // MARK: Contents
+
     private var noteContentsSection: some View {
         Section {
-            if viewModel.isInEditMode {
-                TextEditor(text: $viewModel.editingModel.detail.contents)
-                    .frame(minHeight: 200)
-                    .font(.body)
-                    .fontDesign(.monospaced)
-            } else {
-                Text(viewModel.editingModel.detail.contents)
-                    .textSelection(.enabled)
-                    .font(.body)
-                    .fontDesign(.monospaced)
-                    .noListBackground()
-            }
-        } header: {
-            if viewModel.isInEditMode {
-                Text(viewModel.strings.noteContentsTitle)
-            }
+            SelectableText(
+                viewModel.editingModel.detail.contents,
+                font: .monospacedSystemFont(ofSize: 16, weight: .regular)
+            )
+            .frame(minHeight: 250, alignment: .top)
         } footer: {
-            if viewModel.isInEditMode {
-                deleteButton
-                    .modifier(HorizontallyCenter())
-                    .padding()
-                    .padding(.vertical, 16)
+            VStack(alignment: .leading, spacing: 2) {
+                FooterInfoLabel(
+                    title: viewModel.strings.createdDateTitle,
+                    detail: viewModel.createdDateValue,
+                    systemImageName: "clock.fill"
+                )
+
+                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                    FooterInfoLabel(
+                        title: viewModel.strings.updatedDateTitle,
+                        detail: viewModel.updatedDateValue,
+                        systemImageName: "clock.arrow.2.circlepath"
+                    )
+                }
             }
+            .font(.footnote)
+            .padding(.top, 8)
+            .transition(.opacity)
         }
     }
 
-    private var metadataSection: some View {
+    private var noteContentsEditingSection: some View {
         Section {
-            Label {
-                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
-            } icon: {
-                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
-                    .foregroundColor(.white)
-            }
-            .padding(.vertical, 2)
-
-            if viewModel.updatedDateValue != viewModel.createdDateValue {
-                Label {
-                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
-                } icon: {
-                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
-                        .foregroundColor(.white)
-                }
-                .padding(.vertical, 2)
-            }
+            TextEditor(text: $viewModel.editingModel.detail.contents)
+                .font(.callout)
+                .fontDesign(.monospaced)
+                .frame(minHeight: 250)
+        } header: {
+            Text(viewModel.strings.noteContentsTitle)
+        } footer: {
+            deleteButton
+                .modifier(HorizontallyCenter())
+                .padding()
+                .padding(.vertical, 16)
+                .transition(.opacity)
         }
     }
 

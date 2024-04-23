@@ -35,6 +35,7 @@
 
 "codeDetail.field.siteName.title" = "Site Name";
 "codeDetail.field.accountName.title" = "Account Name";
+"codeDetail.field.accountName.example" = "user@example.com";
 
 "noteDetail.listSection.details.title" = "Note Information";
 "noteDetail.listSection.created.title" = "Created";
@@ -50,6 +51,7 @@
 "noteDetail.action.delete.confirm.subtitle" = "This will permanently delete this note. Unless you have made a backup, you will lose the contents forever.";
 
 "noteDetail.field.noteTitle.title" = "Title";
+"noteDetail.field.noteTitle.example" = "My Note";
 "noteDetail.field.noteDescription.title" = "Description";
 "noteDetail.field.noteContents.title" = "Contents";
 

@@ -88,7 +88,7 @@ public struct VaultItemFeedView<
                         .frame(width: geo.size.width, height: geo.size.height)
                     }
                     .aspectRatio(1, contentMode: .fit)
-                    .modifier(OTPCardViewModifier(context: isEditing ? .editing : .secondary))
+                    .modifier(OTPCardViewModifier(context: .secondary))
                 } previewContent: { storedItem in
                     GeometryReader { geo in
                         viewGenerator.makeVaultPreviewView(
@@ -100,6 +100,7 @@ public struct VaultItemFeedView<
                     }
                     .aspectRatio(1, contentMode: .fit)
                     .modifier(OTPCardViewModifier())
+                    .frame(width: 150)
                 } moveAction: { from, to in
                     viewModel.codes.move(fromOffsets: from, toOffset: to)
                 }

@@ -5,16 +5,26 @@ import VaultFeed
 import VaultUI
 
 @MainActor
-public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
+struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
     where PreviewGenerator.PreviewItem == VaultItem
 {
-    @Bindable public var viewModel: OTPCodeDetailViewModel
+    @State private var viewModel: OTPCodeDetailViewModel
+    private var previewGenerator: PreviewGenerator
+
+    init(
+        code: OTPAuthCode,
+        storedMetadata: StoredVaultItem.Metadata,
+        editor: any OTPCodeDetailEditor,
+        previewGenerator: PreviewGenerator
+    ) {
+        _viewModel = .init(initialValue: .init(storedCode: code, storedMetadata: storedMetadata, editor: editor))
+        self.previewGenerator = previewGenerator
+    }
 
     @Environment(Pasteboard.self) private var pasteboard: Pasteboard
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
     @State private var isShowingCopyPaste = false
-    private var previewGenerator: PreviewGenerator
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -22,23 +32,17 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         modifierType: .slide
     )
 
-    public init(viewModel: OTPCodeDetailViewModel, previewGenerator: PreviewGenerator) {
-        self.viewModel = viewModel
-        self.previewGenerator = previewGenerator
-    }
-
-    public var body: some View {
+    var body: some View {
         VaultItemDetailView(
             viewModel: viewModel,
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
-            codeDetailSection
+            codeNameSection
             if viewModel.isInEditMode {
-                descriptionSection
-            }
-            if !viewModel.isInEditMode {
-                codePreviewSection
+                accountNameEditingSection
+                descriptionEditingSection
+            } else {
                 metadataSection
             }
         }
@@ -60,72 +64,59 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         }
     }
 
-    private var codeDetailSection: some View {
+    private var codeNameSection: some View {
         Section {
             if viewModel.isInEditMode {
-                codeDetailContentEditing
+                TextField(
+                    viewModel.strings.siteNameTitle,
+                    text: $viewModel.editingModel.detail.issuerTitle
+                )
             } else {
-                codeDetailContent
+                VStack(alignment: .center, spacing: 2) {
+                    Text(viewModel.editingModel.detail.issuerTitle)
+                        .font(.title.bold())
+                        .lineLimit(5)
+                    Text(viewModel.editingModel.detail.accountNameTitle)
+                        .font(.callout.bold())
+                        .lineLimit(2)
+                }
+                .multilineTextAlignment(.center)
+                .frame(maxWidth: .infinity)
+                .textSelection(.enabled)
+                .noListBackground()
+
+                Text(viewModel.editingModel.detail.description)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .padding()
+                    .frame(maxWidth: .infinity)
+                    .multilineTextAlignment(.leading)
+                    .textSelection(.enabled)
+                    .noListBackground()
             }
         } header: {
             iconHeader
                 .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
         }
-        .keyboardType(.default)
-        .textInputAutocapitalization(.words)
-        .submitLabel(.done)
     }
 
-    @ViewBuilder
-    private var codeDetailContent: some View {
-        VStack(alignment: .center, spacing: 4) {
-            if viewModel.editingModel.detail.issuerTitle.isNotEmpty {
-                Text(viewModel.editingModel.detail.issuerTitle)
-                    .font(.title.bold())
+    private var accountNameEditingSection: some View {
+        Section {
+            TextField(text: $viewModel.editingModel.detail.accountNameTitle) {
+                Text(viewModel.strings.accountNameExample)
             }
-            Text(viewModel.editingModel.detail.accountNameTitle)
-                .font(.subheadline)
-                .foregroundColor(.secondary)
-        }
-        .lineLimit(2)
-        .multilineTextAlignment(.center)
-        .frame(maxWidth: .infinity)
-        .noListBackground()
-
-        if viewModel.editingModel.detail.description.isNotEmpty {
-            VStack(alignment: .center) {
-                Text(viewModel.editingModel.detail.description)
-            }
-            .frame(maxWidth: .infinity)
-            .noListBackground()
-            .multilineTextAlignment(.center)
+        } header: {
+            Text(viewModel.strings.accountNameTitle)
         }
     }
 
-    @ViewBuilder
-    private var codeDetailContentEditing: some View {
-        TextField(
-            viewModel.strings.siteNameTitle,
-            text: $viewModel.editingModel.detail.issuerTitle
-        )
-        TextField(
-            viewModel.strings.accountNameTitle,
-            text: $viewModel.editingModel.detail.accountNameTitle
-        )
-    }
-
-    private var descriptionSection: some View {
+    private var descriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
-                .frame(height: 200)
+                .frame(height: 100)
                 .keyboardType(.default)
         } header: {
-            DetailSubtitleView(
-                title: viewModel.strings.descriptionTitle,
-                subtitle: viewModel.strings.descriptionSubtitle
-            )
-            .textCase(.none)
-            .padding(.vertical, 8)
+            Text(viewModel.strings.descriptionTitle)
         } footer: {
             deleteButton
                 .modifier(HorizontallyCenter())
@@ -134,30 +125,8 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
         }
     }
 
-    private var codePreviewSection: some View {
-        Section {}
-    }
-
     private var metadataSection: some View {
         Section {
-            Label {
-                LabeledContent(viewModel.strings.createdDateTitle, value: viewModel.createdDateValue)
-            } icon: {
-                RowIcon(icon: Image(systemName: "clock.fill"), color: .blue)
-                    .foregroundColor(.white)
-            }
-            .padding(.vertical, 2)
-
-            if viewModel.updatedDateValue != viewModel.createdDateValue {
-                Label {
-                    LabeledContent(viewModel.strings.updatedDateTitle, value: viewModel.updatedDateValue)
-                } icon: {
-                    RowIcon(icon: Image(systemName: "clock.arrow.2.circlepath"), color: .green)
-                        .foregroundColor(.white)
-                }
-                .padding(.vertical, 2)
-            }
-
             ForEach(viewModel.detailMenuItems) { item in
                 DisclosureGroup {
                     ForEach(item.entries) { entry in
@@ -178,7 +147,6 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 }
             }
             .padding(.vertical, 2)
-
         } header: {
             VStack(alignment: .center) {
                 copyableViewGenerator().makeVaultPreviewView(
@@ -189,9 +157,26 @@ public struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator 
                 .frame(maxWidth: 200)
                 .modifier(OTPCardViewModifier(context: .tertiary))
                 .modifier(HorizontallyCenter())
-                .padding(.vertical, 24)
             }
             .textCase(.none)
+        } footer: {
+            VStack(alignment: .leading, spacing: 2) {
+                FooterInfoLabel(
+                    title: viewModel.strings.createdDateTitle,
+                    detail: viewModel.createdDateValue,
+                    systemImageName: "clock.fill"
+                )
+
+                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                    FooterInfoLabel(
+                        title: viewModel.strings.updatedDateTitle,
+                        detail: viewModel.updatedDateValue,
+                        systemImageName: "clock.arrow.2.circlepath"
+                    )
+                }
+            }
+            .font(.footnote)
+            .padding(.top, 8)
         }
     }
 
@@ -217,19 +202,17 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     static var previews: some View {
         OTPCodeDetailView(
-            viewModel: OTPCodeDetailViewModel(
-                storedCode: .init(
-                    type: .totp(),
-                    data: .init(secret: .empty(), accountName: "Test")
-                ),
-                storedMetadata: .init(
-                    id: UUID(),
-                    created: Date(),
-                    updated: Date(),
-                    userDescription: "Description"
-                ),
-                editor: StubEditor()
+            code: .init(
+                type: .totp(),
+                data: .init(secret: .empty(), accountName: "Test")
             ),
+            storedMetadata: .init(
+                id: UUID(),
+                created: Date(),
+                updated: Date(),
+                userDescription: "Description"
+            ),
+            editor: StubEditor(),
             previewGenerator: VaultItemPreviewViewGeneratorMock()
         )
     }

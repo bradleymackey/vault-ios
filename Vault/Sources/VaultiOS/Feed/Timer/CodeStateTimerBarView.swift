@@ -13,6 +13,7 @@ struct CodeStateTimerBarView<Timer: View>: View {
                 .frame(height: barHeight)
                 .clipShape(RoundedRectangle(cornerRadius: barHeight))
                 .frame(height: containerHeight)
+                .transition(.blurReplace())
 
             if let textToDisplay {
                 LoadingBarLabel(text: textToDisplay)

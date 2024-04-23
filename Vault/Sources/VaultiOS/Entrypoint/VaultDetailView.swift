@@ -19,20 +19,16 @@ struct VaultDetailView<
         switch storedItem.item {
         case let .otpCode(storedCode):
             OTPCodeDetailView(
-                viewModel: .init(
-                    storedCode: storedCode,
-                    storedMetadata: storedItem.metadata,
-                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
-                ),
+                code: storedCode,
+                storedMetadata: storedItem.metadata,
+                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 previewGenerator: previewGenerator
             )
         case let .secureNote(storedNote):
             SecureNoteDetailView(
-                viewModel: .init(
-                    storedNote: storedNote,
-                    storedMetadata: storedItem.metadata,
-                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
-                )
+                note: storedNote,
+                storedMetadata: storedItem.metadata,
+                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
             )
         }
     }
