@@ -7,6 +7,20 @@ final class SelectableTextView: UITextView {
     override func caretRect(for _: UITextPosition) -> CGRect {
         .zero
     }
+
+    override var contentSize: CGSize {
+        didSet {
+            invalidateIntrinsicContentSize()
+        }
+    }
+
+    override var canBecomeFirstResponder: Bool {
+        false
+    }
+
+    override var intrinsicContentSize: CGSize {
+        frame.height > 0 ? contentSize : super.intrinsicContentSize
+    }
 }
 
 extension SelectableTextView: UITextViewDelegate {}

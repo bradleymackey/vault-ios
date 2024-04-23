@@ -156,6 +156,7 @@ struct SecureNoteDetailView: View {
                 viewModel.editingModel.detail.contents,
                 font: .monospacedSystemFont(ofSize: 16, weight: .regular)
             )
+            .textSelection(.enabled)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(

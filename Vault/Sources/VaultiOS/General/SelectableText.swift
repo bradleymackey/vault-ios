@@ -20,11 +20,21 @@ struct SelectableText: UIViewRepresentable {
         textView.font = font
         textView.isEditable = false
         textView.isSelectable = true
+        textView.isScrollEnabled = true
         return textView
     }
 
     func updateUIView(_ uiView: SelectableTextView, context _: Context) {
         uiView.text = text
         uiView.font = font
+        uiView.invalidateIntrinsicContentSize()
+    }
+
+    func sizeThatFits(_ proposal: ProposedViewSize, uiView: SelectableTextView, context _: Context) -> CGSize? {
+        let size = CGSize(
+            width: proposal.width ?? .greatestFiniteMagnitude,
+            height: proposal.height ?? .greatestFiniteMagnitude
+        )
+        return uiView.sizeThatFits(size)
     }
 }
