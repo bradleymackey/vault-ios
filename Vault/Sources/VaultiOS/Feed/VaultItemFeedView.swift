@@ -74,41 +74,50 @@ public struct VaultItemFeedView<
 
     private var listOfCodesView: some View {
         ScrollView {
-            SearchTextField(title: viewModel.searchCodesPromptTitle, text: $searchQuery)
-                .padding(.horizontal)
-            LazyVGrid(columns: columns, content: {
-                ReorderableForEach(
-                    items: viewModel.codes,
-                    isDragging: $isReordering,
-                    isEnabled: isEditing
-                ) { storedItem in
-                    GeometryReader { geo in
-                        viewGenerator.makeVaultPreviewView(
-                            item: storedItem.item,
-                            metadata: storedItem.metadata,
-                            behaviour: currentBehaviour
-                        )
-                        .frame(width: geo.size.width, height: geo.size.height)
-                    }
-                    .aspectRatio(1, contentMode: .fit)
-                    .modifier(OTPCardViewModifier(context: .secondary))
-                } previewContent: { storedItem in
-                    GeometryReader { geo in
-                        viewGenerator.makeVaultPreviewView(
-                            item: storedItem.item,
-                            metadata: storedItem.metadata,
-                            behaviour: reorderingBehaviour
-                        )
-                        .frame(width: geo.size.width, height: geo.size.height)
-                    }
-                    .aspectRatio(1, contentMode: .fit)
-                    .modifier(OTPCardViewModifier())
-                    .frame(width: 150)
-                } moveAction: { from, to in
-                    viewModel.codes.move(fromOffsets: from, toOffset: to)
+            LazyVGrid(columns: columns, pinnedViews: [.sectionHeaders]) {
+                Section {
+                    vaultItemsList
+                } header: {
+                    SearchTextField(title: viewModel.searchCodesPromptTitle, text: $searchQuery)
+                        .padding(.vertical, 8)
+                        .background(Color(UIColor.systemBackground))
                 }
-            })
-            .padding()
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+        }
+    }
+
+    private var vaultItemsList: some View {
+        ReorderableForEach(
+            items: viewModel.codes,
+            isDragging: $isReordering,
+            isEnabled: isEditing
+        ) { storedItem in
+            GeometryReader { geo in
+                viewGenerator.makeVaultPreviewView(
+                    item: storedItem.item,
+                    metadata: storedItem.metadata,
+                    behaviour: currentBehaviour
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .modifier(OTPCardViewModifier(context: .secondary))
+        } previewContent: { storedItem in
+            GeometryReader { geo in
+                viewGenerator.makeVaultPreviewView(
+                    item: storedItem.item,
+                    metadata: storedItem.metadata,
+                    behaviour: reorderingBehaviour
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .modifier(OTPCardViewModifier())
+            .frame(width: 150)
+        } moveAction: { from, to in
+            viewModel.codes.move(fromOffsets: from, toOffset: to)
         }
     }
 

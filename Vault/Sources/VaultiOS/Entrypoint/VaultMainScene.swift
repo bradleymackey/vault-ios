@@ -29,6 +29,9 @@ public struct VaultMainScene: Scene {
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
         let store = InMemoryVaultStore(codes: [
             DemoVaultFactory.totpCode(issuer: "Ebay"),
+            DemoVaultFactory.totpCode(issuer: "Discord"),
+            DemoVaultFactory.totpCode(issuer: "Apple"),
+            DemoVaultFactory.totpCode(issuer: "Notify.ui"),
             DemoVaultFactory.totpCode(issuer: "Cloudflare"),
             DemoVaultFactory.hotpCode(issuer: "Cool Company"),
             DemoVaultFactory.hotpCode(issuer: "Other Company"),
