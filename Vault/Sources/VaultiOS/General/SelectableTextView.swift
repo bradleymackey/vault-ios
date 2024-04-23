@@ -15,7 +15,7 @@ final class SelectableTextView: UITextView {
     }
 
     override var canBecomeFirstResponder: Bool {
-        false
+        true
     }
 
     override var intrinsicContentSize: CGSize {
