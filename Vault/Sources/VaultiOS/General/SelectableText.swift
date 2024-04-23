@@ -20,7 +20,7 @@ struct SelectableText: UIViewRepresentable {
         textView.font = font
         textView.isEditable = false
         textView.isSelectable = true
-        textView.isScrollEnabled = true
+        textView.isScrollEnabled = false
         return textView
     }
 
