@@ -31,8 +31,8 @@ struct SecureNoteDetailView: View {
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
             if viewModel.isInEditMode {
-                noteDetailContentEditing
-                noteDetailEditingSection
+                noteTitleEditingSection
+                noteDescriptionEditingSection
                 noteContentsEditingSection
             } else {
                 noteDetailContent
@@ -126,27 +126,21 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    private var noteDetailContentEditing: some View {
+    private var noteTitleEditingSection: some View {
         Section {
-            Text(viewModel.editingModel.detail.title)
-            Button {
-                textEditingModal = .title
-            } label: {
-                Text(viewModel.strings.startEditingTitle)
+            TextField(text: $viewModel.editingModel.detail.title) {
+                Text(viewModel.strings.noteTitleExample)
             }
         } header: {
             Text(viewModel.strings.noteTitle)
         }
     }
 
-    private var noteDetailEditingSection: some View {
+    private var noteDescriptionEditingSection: some View {
         Section {
-            Text(viewModel.editingModel.detail.description)
-            Button {
-                textEditingModal = .description
-            } label: {
-                Text(viewModel.strings.startEditingTitle)
-            }
+            TextEditor(text: $viewModel.editingModel.detail.description)
+                .font(.callout)
+                .frame(minHeight: 60)
         } header: {
             Text(viewModel.strings.noteDescription)
         }
@@ -160,7 +154,6 @@ struct SecureNoteDetailView: View {
                 viewModel.editingModel.detail.contents,
                 font: .monospacedSystemFont(ofSize: 16, weight: .regular)
             )
-            .textSelection(.enabled)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
@@ -185,15 +178,9 @@ struct SecureNoteDetailView: View {
 
     private var noteContentsEditingSection: some View {
         Section {
-            Text(viewModel.editingModel.detail.contents)
-                .textSelection(.enabled)
+            TextEditor(text: $viewModel.editingModel.detail.contents)
                 .font(.callout)
                 .fontDesign(.monospaced)
-            Button {
-                textEditingModal = .content
-            } label: {
-                Text(viewModel.strings.startEditingTitle)
-            }
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         } footer: {
