@@ -10,6 +10,15 @@ struct SecureNoteDetailView: View {
 
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
+    @State private var textEditingModal: TextEditingModal?
+
+    enum TextEditingModal: String, Identifiable {
+        case title
+        case description
+        case content
+
+        var id: some Hashable { rawValue }
+    }
 
     var body: some View {
         VaultItemDetailView(
@@ -18,27 +27,77 @@ struct SecureNoteDetailView: View {
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation
         ) {
             if viewModel.isInEditMode {
+                noteDetailContentEditing
                 noteDetailEditingSection
                 noteContentsEditingSection
             } else {
-                noteDetailSection
+                noteDetailContent
                 noteContentsSection
+            }
+        }
+        .sheet(item: $textEditingModal) {
+            // ignore
+        } content: { item in
+            switch item {
+            case .title:
+                NavigationView {
+                    TextEditingView(
+                        text: $viewModel.editingModel.detail.title,
+                        font: .systemFont(ofSize: 16, weight: .regular)
+                    )
+                    .navigationTitle(Text(viewModel.strings.noteTitle))
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                textEditingModal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
+            case .description:
+                NavigationView {
+                    TextEditingView(
+                        text: $viewModel.editingModel.detail.description,
+                        font: .systemFont(ofSize: 16, weight: .regular)
+                    )
+                    .navigationTitle(Text(viewModel.strings.descriptionTitle))
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                textEditingModal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
+            case .content:
+                NavigationView {
+                    TextEditingView(
+                        text: $viewModel.editingModel.detail.contents,
+                        font: .monospacedSystemFont(ofSize: 16, weight: .regular)
+                    )
+                    .navigationTitle(Text(viewModel.strings.descriptionTitle))
+                    .navigationBarTitleDisplayMode(.inline)
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                textEditingModal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
 
-    private var noteDetailSection: some View {
-        Section {
-            if viewModel.isInEditMode {
-                noteDetailContentEditing
-            } else {
-                noteDetailContent
-            }
-        }
-        .keyboardType(.default)
-        .textInputAutocapitalization(.sentences)
-        .submitLabel(.done)
-    }
+    // MARK: Title & Description
 
     @ViewBuilder
     private var noteDetailContent: some View {
@@ -63,39 +122,33 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    @ViewBuilder
     private var noteDetailContentEditing: some View {
-        TextField(
-            viewModel.strings.noteTitle,
-            text: $viewModel.editingModel.detail.title
-        )
+        Section {
+            Text(viewModel.editingModel.detail.title)
+            Button {
+                textEditingModal = .title
+            } label: {
+                Text("Edit")
+            }
+        } header: {
+            Text(viewModel.strings.noteTitle)
+        }
     }
 
     private var noteDetailEditingSection: some View {
         Section {
-            TextEditor(text: $viewModel.editingModel.detail.description)
-                .frame(minHeight: 100)
+            Text(viewModel.editingModel.detail.description)
+            Button {
+                textEditingModal = .description
+            } label: {
+                Text("Edit")
+            }
         } header: {
             Text(viewModel.strings.noteDescription)
         }
     }
 
-    private var noteContentsEditingSection: some View {
-        Section {
-            TextEditor(text: $viewModel.editingModel.detail.contents)
-                .frame(minHeight: 200)
-                .font(.callout)
-                .fontDesign(.monospaced)
-        } header: {
-            Text(viewModel.strings.noteContentsTitle)
-        } footer: {
-            deleteButton
-                .modifier(HorizontallyCenter())
-                .padding()
-                .padding(.vertical, 16)
-                .transition(.opacity)
-        }
-    }
+    // MARK: Contents
 
     private var noteContentsSection: some View {
         Section {
@@ -103,8 +156,6 @@ struct SecureNoteDetailView: View {
                 .textSelection(.enabled)
                 .font(.callout)
                 .fontDesign(.monospaced)
-        } header: {
-            Text(viewModel.strings.noteContentsTitle)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
@@ -124,6 +175,28 @@ struct SecureNoteDetailView: View {
             .font(.footnote)
             .padding(.top, 8)
             .transition(.opacity)
+        }
+    }
+
+    private var noteContentsEditingSection: some View {
+        Section {
+            Text(viewModel.editingModel.detail.contents)
+                .textSelection(.enabled)
+                .font(.callout)
+                .fontDesign(.monospaced)
+            Button {
+                textEditingModal = .content
+            } label: {
+                Text("Edit")
+            }
+        } header: {
+            Text(viewModel.strings.noteContentsTitle)
+        } footer: {
+            deleteButton
+                .modifier(HorizontallyCenter())
+                .padding()
+                .padding(.vertical, 16)
+                .transition(.opacity)
         }
     }
 
