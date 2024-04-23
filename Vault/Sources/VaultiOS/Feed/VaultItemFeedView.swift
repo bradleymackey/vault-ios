@@ -18,6 +18,7 @@ public struct VaultItemFeedView<
     public var gridSpacing: Double
 
     @State private var isReordering = false
+    @State private var searchQuery = ""
 
     public init(
         viewModel: FeedViewModel<Store>,
@@ -73,6 +74,8 @@ public struct VaultItemFeedView<
 
     private var listOfCodesView: some View {
         ScrollView {
+            SearchTextField(title: viewModel.searchCodesPromptTitle, text: $searchQuery)
+                .padding(.horizontal)
             LazyVGrid(columns: columns, content: {
                 ReorderableForEach(
                     items: viewModel.codes,
