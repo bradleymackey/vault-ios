@@ -14,15 +14,6 @@ struct SecureNoteDetailView: View {
 
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
-    @State private var textEditingModal: TextEditingModal?
-
-    enum TextEditingModal: String, Identifiable {
-        case title
-        case description
-        case content
-
-        var id: some Hashable { rawValue }
-    }
 
     var body: some View {
         VaultItemDetailView(
@@ -37,66 +28,6 @@ struct SecureNoteDetailView: View {
             } else {
                 noteMetadataContentSection
                 noteContentsSection
-            }
-        }
-        .sheet(item: $textEditingModal) {
-            // ignore
-        } content: { item in
-            switch item {
-            case .title:
-                NavigationView {
-                    TextEditingView(
-                        text: $viewModel.editingModel.detail.title,
-                        font: .systemFont(ofSize: 16, weight: .regular)
-                    )
-                    .navigationTitle(Text(viewModel.strings.noteTitle))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button {
-                                textEditingModal = nil
-                            } label: {
-                                Text("Done")
-                            }
-                        }
-                    }
-                }
-            case .description:
-                NavigationView {
-                    TextEditingView(
-                        text: $viewModel.editingModel.detail.description,
-                        font: .systemFont(ofSize: 16, weight: .regular)
-                    )
-                    .navigationTitle(Text(viewModel.strings.descriptionTitle))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button {
-                                textEditingModal = nil
-                            } label: {
-                                Text("Done")
-                            }
-                        }
-                    }
-                }
-            case .content:
-                NavigationView {
-                    TextEditingView(
-                        text: $viewModel.editingModel.detail.contents,
-                        font: .monospacedSystemFont(ofSize: 16, weight: .regular)
-                    )
-                    .navigationTitle(Text(viewModel.strings.descriptionTitle))
-                    .navigationBarTitleDisplayMode(.inline)
-                    .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
-                            Button {
-                                textEditingModal = nil
-                            } label: {
-                                Text("Done")
-                            }
-                        }
-                    }
-                }
             }
         }
     }
