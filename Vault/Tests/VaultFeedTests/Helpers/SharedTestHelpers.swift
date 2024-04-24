@@ -44,6 +44,33 @@ func uniqueWritableVaultItem() -> StoredVaultItem.Write {
     .init(userDescription: "any", item: .otpCode(uniqueCode()))
 }
 
+func writableSearchableOTPVaultItem(
+    userDescription: String = "",
+    accountName: String = "",
+    issuerName: String? = nil
+) -> StoredVaultItem.Write {
+    .init(
+        userDescription: userDescription,
+        item: .otpCode(
+            .init(
+                type: .totp(period: 30),
+                data: .init(secret: .empty(), accountName: accountName, issuer: issuerName)
+            )
+        )
+    )
+}
+
+func writableSearchableNoteVaultItem(
+    userDescription: String = "",
+    title: String = "",
+    contents: String = ""
+) -> StoredVaultItem.Write {
+    .init(
+        userDescription: userDescription,
+        item: .secureNote(.init(title: title, contents: contents))
+    )
+}
+
 func hotpRfcSecretData() -> Data {
     Data([
         0x31,

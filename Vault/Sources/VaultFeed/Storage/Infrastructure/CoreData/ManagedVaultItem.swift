@@ -41,16 +41,36 @@ final class ManagedNoteDetails: NSManagedObject {
 
 extension ManagedVaultItem {
     static func fetchAll(in context: NSManagedObjectContext) throws -> [ManagedVaultItem] {
-        let request = NSFetchRequest<ManagedVaultItem>(entityName: entity().name!)
-        request.returnsObjectsAsFaults = false
+        let request = baseManagedVaultItemFetchRequest()
+        return try context.fetch(request)
+    }
+
+    static func fetch(matchingQuery query: String, in context: NSManagedObjectContext) throws -> [ManagedVaultItem] {
+        let request = baseManagedVaultItemFetchRequest()
+        let fieldsToSearch = [
+            "userDescription",
+            "otpDetails.accountName",
+            "otpDetails.issuer",
+            "noteDetails.title",
+            "noteDetails.rawContents",
+        ]
+        let fieldPredicates = fieldsToSearch.map { field in
+            NSPredicate(format: "%K CONTAINS[c] %@", field, query)
+        }
+        request.predicate = NSCompoundPredicate(orPredicateWithSubpredicates: fieldPredicates)
         return try context.fetch(request)
     }
 
     static func first(withID id: UUID, in context: NSManagedObjectContext) throws -> ManagedVaultItem? {
-        let request = NSFetchRequest<ManagedVaultItem>(entityName: entity().name!)
+        let request = baseManagedVaultItemFetchRequest()
         request.predicate = NSPredicate(format: "%K = %@", argumentArray: [#keyPath(ManagedVaultItem.id), id as NSUUID])
         request.fetchLimit = 1
-        request.returnsObjectsAsFaults = false
         return try context.fetch(request).first
+    }
+
+    private static func baseManagedVaultItemFetchRequest() -> NSFetchRequest<ManagedVaultItem> {
+        let request = NSFetchRequest<ManagedVaultItem>(entityName: entity().name!)
+        request.returnsObjectsAsFaults = false
+        return request
     }
 }
