@@ -44,6 +44,11 @@ public struct VaultItemFeedView<
         .task {
             await viewModel.onAppear()
         }
+        .onChange(of: viewModel.searchQuery) { _, _ in
+            Task {
+                await viewModel.reloadData()
+            }
+        }
     }
 
     private var noCodesView: some View {
