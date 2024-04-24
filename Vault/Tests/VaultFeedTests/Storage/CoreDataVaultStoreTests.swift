@@ -273,6 +273,25 @@ final class CoreDataVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.compactMap(\.item.secureNote?.contents), ["a", "----A----"])
     }
 
+    func test_retrieveMatchingQuery_combinesResultsFromDifferentFields() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(userDescription: "a"),
+            writableSearchableNoteVaultItem(title: "aa"),
+            writableSearchableNoteVaultItem(contents: "aaa"),
+            writableSearchableOTPVaultItem(userDescription: "aaaa"),
+            writableSearchableOTPVaultItem(accountName: "aaaaa"),
+            writableSearchableOTPVaultItem(issuerName: "aaaaaa"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.map(\.asWritable), codes, "All items should be matched on the specified fields")
+    }
+
     func test_insert_deliversNoErrorOnEmptyStore() async throws {
         let sut = try makeSUT()
 
