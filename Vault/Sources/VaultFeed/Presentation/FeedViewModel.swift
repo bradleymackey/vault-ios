@@ -63,7 +63,7 @@ extension FeedViewModel: VaultFeed {
     private var sanitizedQuery: String? {
         let trimmed = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isNotEmpty else { return nil }
-        return trimmed.lowercased(with: .current)
+        return trimmed
     }
 
     public func update(id: UUID, item: StoredVaultItem.Write) async throws {
