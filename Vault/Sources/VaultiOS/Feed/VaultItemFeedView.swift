@@ -35,11 +35,7 @@ public struct VaultItemFeedView<
 
     public var body: some View {
         VStack {
-            if viewModel.codes.isEmpty {
-                noCodesView
-            } else {
-                listOfCodesView
-            }
+            listOfCodesView
         }
         .task {
             await viewModel.onAppear()
@@ -51,15 +47,17 @@ public struct VaultItemFeedView<
         }
     }
 
-    private var noCodesView: some View {
+    private var noCodesFoundView: some View {
         VStack(alignment: .center, spacing: 12) {
             Image(systemName: "key.viewfinder")
                 .font(.largeTitle)
             Text(localized(key: "codeFeed.noCodes.title"))
                 .font(.headline.bold())
         }
-        .foregroundColor(.secondary)
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .modifier(OTPCardViewModifier())
+        .foregroundStyle(.secondary)
     }
 
     private var reorderingBehaviour: VaultItemViewBehaviour {
@@ -80,7 +78,11 @@ public struct VaultItemFeedView<
         ScrollView {
             LazyVGrid(columns: columns, pinnedViews: [.sectionHeaders]) {
                 Section {
-                    vaultItemsList
+                    if viewModel.codes.isNotEmpty {
+                        vaultItemsList
+                    } else {
+                        noCodesFoundView
+                    }
                 } header: {
                     SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
                         .padding(.vertical, 8)
