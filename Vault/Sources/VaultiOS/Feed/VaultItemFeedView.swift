@@ -37,6 +37,8 @@ public struct VaultItemFeedView<
         VStack {
             listOfCodesView
         }
+        .navigationTitle(Text(viewModel.title))
+        .navigationBarTitleDisplayMode(.large)
         .task {
             await viewModel.onAppear()
         }

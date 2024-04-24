@@ -41,8 +41,6 @@ struct VaultListView<
             isEditing: $isEditing,
             gridSpacing: 12
         )
-        .navigationTitle(Text(feedViewModel.title))
-        .navigationBarTitleDisplayMode(.large)
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {

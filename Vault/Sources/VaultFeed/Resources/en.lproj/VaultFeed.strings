@@ -1,6 +1,7 @@
 "TEST_KEY_DONT_CHANGE" = "TEST_VALUE_DONT_CHANGE";
 
 "feedViewModel.list.title" = "Vault";
+"feedViewModel.searching.title" = "Searching...";
 "feedViewModel.edit.title" = "Edit";
 "feedViewModel.doneEditing.title" = "Done";
 "feedViewModel.saveEdits.title" = "Save";

@@ -16,12 +16,20 @@ public final class FeedViewModel<Store: VaultStore> {
         self.caches = caches
     }
 
+    private var isSearching: Bool {
+        sanitizedQuery != nil
+    }
+
     public func code(id: UUID) -> StoredVaultItem? {
         codes.first(where: { $0.id == id })
     }
 
     public var title: String {
-        localized(key: "feedViewModel.list.title")
+        if isSearching {
+            localized(key: "feedViewModel.searching.title")
+        } else {
+            localized(key: "feedViewModel.list.title")
+        }
     }
 
     public var editTitle: String {
