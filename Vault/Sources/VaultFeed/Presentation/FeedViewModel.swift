@@ -4,6 +4,7 @@ import Foundation
 @MainActor
 @Observable
 public final class FeedViewModel<Store: VaultStore> {
+    public var searchQuery: String = ""
     public var codes = [StoredVaultItem]()
     public private(set) var retrievalError: PresentationError?
 
@@ -17,17 +18,6 @@ public final class FeedViewModel<Store: VaultStore> {
 
     public func code(id: UUID) -> StoredVaultItem? {
         codes.first(where: { $0.id == id })
-    }
-
-    public func codes(filteredByQuery query: String) -> [StoredVaultItem] {
-        if query.isEmpty {
-            codes
-        } else {
-            codes
-                .filter { item in
-                    item.metadata.userDescription?.localizedCaseInsensitiveContains(query) ?? false
-                }
-        }
     }
 
     public var title: String {
@@ -56,7 +46,11 @@ extension FeedViewModel: VaultFeed {
 
     public func reloadData() async {
         do {
-            codes = try await store.retrieve()
+            codes = if let query = sanitizedQuery {
+                try await store.retrieve(matching: query)
+            } else {
+                try await store.retrieve()
+            }
         } catch {
             retrievalError = PresentationError(
                 userTitle: localized(key: "feedRetrieval.error.title"),
@@ -64,6 +58,12 @@ extension FeedViewModel: VaultFeed {
                 debugDescription: error.localizedDescription
             )
         }
+    }
+
+    private var sanitizedQuery: String? {
+        let trimmed = searchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isNotEmpty else { return nil }
+        return trimmed.lowercased(with: .current)
     }
 
     public func update(id: UUID, item: StoredVaultItem.Write) async throws {

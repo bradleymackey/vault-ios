@@ -2,6 +2,11 @@ import Foundation
 import VaultCore
 
 extension CoreDataVaultStore: VaultStoreReader {
+    public func retrieve(matching _: String) async throws -> [StoredVaultItem] {
+        // FIXME: actually implement this
+        try await retrieve()
+    }
+
     public func retrieve() async throws -> [StoredVaultItem] {
         try await asyncPerform { context in
             let results = try ManagedVaultItem.fetchAll(in: context)

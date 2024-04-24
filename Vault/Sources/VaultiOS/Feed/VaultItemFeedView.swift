@@ -11,14 +11,13 @@ public struct VaultItemFeedView<
 >: View where
     ViewGenerator.PreviewItem == VaultItem
 {
-    public var viewModel: FeedViewModel<Store>
+    @Bindable public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
     public var viewGenerator: ViewGenerator
     @Binding public var isEditing: Bool
     public var gridSpacing: Double
 
     @State private var isReordering = false
-    @State private var searchQuery = ""
 
     public init(
         viewModel: FeedViewModel<Store>,
@@ -78,7 +77,7 @@ public struct VaultItemFeedView<
                 Section {
                     vaultItemsList
                 } header: {
-                    SearchTextField(title: viewModel.searchCodesPromptTitle, text: $searchQuery)
+                    SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
                         .padding(.vertical, 8)
                         .background(Color(UIColor.systemBackground))
                 }
@@ -90,7 +89,7 @@ public struct VaultItemFeedView<
 
     private var vaultItemsList: some View {
         ReorderableForEach(
-            items: viewModel.codes(filteredByQuery: searchQuery),
+            items: viewModel.codes,
             isDragging: $isReordering,
             isEnabled: isEditing
         ) { storedItem in

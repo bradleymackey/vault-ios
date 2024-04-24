@@ -12,6 +12,11 @@ extension InMemoryVaultStore: VaultStoreReader {
     public func retrieve() async throws -> [StoredVaultItem] {
         codes
     }
+
+    public func retrieve(matching _: String) async throws -> [StoredVaultItem] {
+        // FIXME: actually implement this
+        codes
+    }
 }
 
 extension InMemoryVaultStore: VaultStoreWriter {
