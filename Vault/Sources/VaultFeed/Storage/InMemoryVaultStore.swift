@@ -1,4 +1,5 @@
 import Foundation
+import RegexBuilder
 
 public final actor InMemoryVaultStore {
     private var codes: [StoredVaultItem]
@@ -13,9 +14,26 @@ extension InMemoryVaultStore: VaultStoreReader {
         codes
     }
 
-    public func retrieve(matching _: String) async throws -> [StoredVaultItem] {
-        // FIXME: actually implement this
-        codes
+    public func retrieve(matching query: String) async throws -> [StoredVaultItem] {
+        let pattern = Regex {
+            ZeroOrMore { .any }
+            query
+            ZeroOrMore { .any }
+        }.ignoresCase()
+        return codes.filter { $0.matches(pattern: pattern) }
+    }
+}
+
+extension StoredVaultItem {
+    fileprivate func matches(pattern: Regex<Substring>) -> Bool {
+        let fields: [String?] = [
+            metadata.userDescription,
+            item.otpCode?.data.accountName,
+            item.otpCode?.data.issuer,
+            item.secureNote?.title,
+            item.secureNote?.contents,
+        ]
+        return fields.contains(where: { $0?.contains(pattern) == true })
     }
 }
 
