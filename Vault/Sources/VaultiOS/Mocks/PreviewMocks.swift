@@ -88,6 +88,10 @@ struct CodeStoreFake: VaultStoreReader {
     func retrieve() async throws -> [StoredVaultItem] {
         codes
     }
+
+    func retrieve(matching _: String) async throws -> [StoredVaultItem] {
+        codes
+    }
 }
 
 struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator, VaultItemCopyActionHandler {

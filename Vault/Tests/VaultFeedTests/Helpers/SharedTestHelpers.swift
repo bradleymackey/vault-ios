@@ -33,6 +33,31 @@ func uniqueStoredVaultItem() -> StoredVaultItem {
     )
 }
 
+func searchableStoredOTPVaultItem(
+    userDescription: String = "",
+    accountName: String = "",
+    issuerName: String? = nil
+) -> StoredVaultItem {
+    StoredVaultItem(
+        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription),
+        item: .otpCode(.init(
+            type: .totp(period: 30),
+            data: .init(secret: .empty(), accountName: accountName, issuer: issuerName)
+        ))
+    )
+}
+
+func searchableStoredSecureNoteVaultItem(
+    userDescription: String = "",
+    title: String = "",
+    contents: String = ""
+) -> StoredVaultItem {
+    StoredVaultItem(
+        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription),
+        item: .secureNote(.init(title: title, contents: contents))
+    )
+}
+
 func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
     StoredVaultItem(
         metadata: uniqueStoredMetadata(),
@@ -42,6 +67,29 @@ func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {
     .init(userDescription: "any", item: .otpCode(uniqueCode()))
+}
+
+func writableSearchableOTPVaultItem(
+    userDescription: String = "",
+    accountName: String = "",
+    issuerName: String? = nil
+) -> StoredVaultItem.Write {
+    searchableStoredOTPVaultItem(
+        userDescription: userDescription,
+        accountName: accountName,
+        issuerName: issuerName
+    ).asWritable
+}
+
+func writableSearchableNoteVaultItem(
+    userDescription: String = "",
+    title: String = "",
+    contents: String = ""
+) -> StoredVaultItem.Write {
+    .init(
+        userDescription: userDescription,
+        item: .secureNote(.init(title: title, contents: contents))
+    )
 }
 
 func hotpRfcSecretData() -> Data {

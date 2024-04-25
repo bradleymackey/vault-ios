@@ -1,10 +1,12 @@
 "TEST_KEY_DONT_CHANGE" = "TEST_VALUE_DONT_CHANGE";
 
 "feedViewModel.list.title" = "Vault";
+"feedViewModel.searching.title" = "Searching...";
 "feedViewModel.edit.title" = "Edit";
 "feedViewModel.doneEditing.title" = "Done";
 "feedViewModel.saveEdits.title" = "Save";
 "feedViewModel.cancelEdits.title" = "Cancel";
+"feedViewModel.searchPrompt.title" = "Search";
 
 "feedRetrieval.error.title" = "Couldn't fetch codes";
 "feedRetrieval.error.description" = "We can't get your codes for some reason. Please reinstall the app and restore from a backup.";

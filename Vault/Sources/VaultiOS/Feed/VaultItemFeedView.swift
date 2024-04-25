@@ -11,7 +11,7 @@ public struct VaultItemFeedView<
 >: View where
     ViewGenerator.PreviewItem == VaultItem
 {
-    public var viewModel: FeedViewModel<Store>
+    @Bindable public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
     public var viewGenerator: ViewGenerator
     @Binding public var isEditing: Bool
@@ -35,26 +35,31 @@ public struct VaultItemFeedView<
 
     public var body: some View {
         VStack {
-            if viewModel.codes.isEmpty {
-                noCodesView
-            } else {
-                listOfCodesView
-            }
+            listOfCodesView
         }
+        .navigationTitle(Text(viewModel.title))
+        .navigationBarTitleDisplayMode(.large)
         .task {
             await viewModel.onAppear()
         }
+        .onChange(of: viewModel.searchQuery) { _, _ in
+            Task {
+                await viewModel.reloadData()
+            }
+        }
     }
 
-    private var noCodesView: some View {
+    private var noCodesFoundView: some View {
         VStack(alignment: .center, spacing: 12) {
             Image(systemName: "key.viewfinder")
                 .font(.largeTitle)
             Text(localized(key: "codeFeed.noCodes.title"))
                 .font(.headline.bold())
         }
-        .foregroundColor(.secondary)
-        .padding()
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .modifier(OTPCardViewModifier())
+        .foregroundStyle(.secondary)
     }
 
     private var reorderingBehaviour: VaultItemViewBehaviour {
@@ -73,39 +78,54 @@ public struct VaultItemFeedView<
 
     private var listOfCodesView: some View {
         ScrollView {
-            LazyVGrid(columns: columns, content: {
-                ReorderableForEach(
-                    items: viewModel.codes,
-                    isDragging: $isReordering,
-                    isEnabled: isEditing
-                ) { storedItem in
-                    GeometryReader { geo in
-                        viewGenerator.makeVaultPreviewView(
-                            item: storedItem.item,
-                            metadata: storedItem.metadata,
-                            behaviour: currentBehaviour
-                        )
-                        .frame(width: geo.size.width, height: geo.size.height)
+            LazyVGrid(columns: columns, pinnedViews: [.sectionHeaders]) {
+                Section {
+                    if viewModel.codes.isNotEmpty {
+                        vaultItemsList
+                    } else {
+                        noCodesFoundView
                     }
-                    .aspectRatio(1, contentMode: .fit)
-                    .modifier(OTPCardViewModifier(context: .secondary))
-                } previewContent: { storedItem in
-                    GeometryReader { geo in
-                        viewGenerator.makeVaultPreviewView(
-                            item: storedItem.item,
-                            metadata: storedItem.metadata,
-                            behaviour: reorderingBehaviour
-                        )
-                        .frame(width: geo.size.width, height: geo.size.height)
-                    }
-                    .aspectRatio(1, contentMode: .fit)
-                    .modifier(OTPCardViewModifier())
-                    .frame(width: 150)
-                } moveAction: { from, to in
-                    viewModel.codes.move(fromOffsets: from, toOffset: to)
+                } header: {
+                    SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
+                        .padding(.vertical, 8)
+                        .background(Color(UIColor.systemBackground))
                 }
-            })
-            .padding()
+            }
+            .padding(.horizontal)
+            .padding(.bottom)
+        }
+    }
+
+    private var vaultItemsList: some View {
+        ReorderableForEach(
+            items: viewModel.codes,
+            isDragging: $isReordering,
+            isEnabled: isEditing
+        ) { storedItem in
+            GeometryReader { geo in
+                viewGenerator.makeVaultPreviewView(
+                    item: storedItem.item,
+                    metadata: storedItem.metadata,
+                    behaviour: currentBehaviour
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .modifier(OTPCardViewModifier(context: .secondary))
+        } previewContent: { storedItem in
+            GeometryReader { geo in
+                viewGenerator.makeVaultPreviewView(
+                    item: storedItem.item,
+                    metadata: storedItem.metadata,
+                    behaviour: reorderingBehaviour
+                )
+                .frame(width: geo.size.width, height: geo.size.height)
+            }
+            .aspectRatio(1, contentMode: .fit)
+            .modifier(OTPCardViewModifier())
+            .frame(width: 150)
+        } moveAction: { from, to in
+            viewModel.codes.move(fromOffsets: from, toOffset: to)
         }
     }
 

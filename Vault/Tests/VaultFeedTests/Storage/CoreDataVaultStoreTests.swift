@@ -75,6 +75,223 @@ final class CoreDataVaultStoreTests: XCTestCase {
         }
     }
 
+    func test_retrieveMatchingQuery_returnsEmptyOnEmptyStoreAndEmptyQuery() async throws {
+        let sut = try makeSUT()
+
+        let result = try await sut.retrieve(matching: "")
+        XCTAssertEqual(result, [])
+    }
+
+    func test_retrieveMatchingQuery_returnsEmptyOnEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let result = try await sut.retrieve(matching: "any")
+        XCTAssertEqual(result, [])
+    }
+
+    func test_retrieveMatchingQuery_hasNoSideEffectsOnEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let result1 = try await sut.retrieve(matching: "any")
+        XCTAssertEqual(result1, [])
+        let result2 = try await sut.retrieve(matching: "any")
+        XCTAssertEqual(result2, [])
+    }
+
+    func test_retrieveMatchingQuery_returnsEmptyForNoQueryMatches() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(),
+            writableSearchableOTPVaultItem(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "any")
+        XCTAssertEqual(result, [])
+    }
+
+    func test_retrieveMatchingQuery_deliversSingleMatchOnMatchingQuery() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(userDescription: "yes"),
+            writableSearchableOTPVaultItem(userDescription: "no"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "yes")
+        XCTAssertEqual(result.count, 1)
+        XCTAssertEqual(result.compactMap(\.item.secureNote), codes.compactMap(\.item.secureNote))
+    }
+
+    func test_retrieveMatchingQuery_hasNoSideEffectsOnSingleMatch() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(userDescription: "yes"),
+            writableSearchableOTPVaultItem(userDescription: "no"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result1 = try await sut.retrieve(matching: "yes")
+        XCTAssertEqual(result1.count, 1)
+        XCTAssertEqual(result1.compactMap(\.item.secureNote), codes.compactMap(\.item.secureNote))
+        let result2 = try await sut.retrieve(matching: "yes")
+        XCTAssertEqual(result2.count, 1)
+        XCTAssertEqual(result2.compactMap(\.item.secureNote), codes.compactMap(\.item.secureNote))
+    }
+
+    func test_retrieveMatchingQuery_deliversMultipleMatchesOnMatchingQuery() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableOTPVaultItem(userDescription: "no"),
+            writableSearchableNoteVaultItem(userDescription: "yes"),
+            writableSearchableOTPVaultItem(userDescription: "no"),
+            writableSearchableOTPVaultItem(userDescription: "yess"),
+            writableSearchableOTPVaultItem(userDescription: "yesss"),
+            writableSearchableOTPVaultItem(userDescription: "no"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "yes")
+        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result.compactMap(\.metadata.userDescription), ["yes", "yess", "yesss"])
+    }
+
+    func test_retrieveMatchingQuery_deliversErrorOnRetrievalError() async throws {
+        let stub = NSManagedObjectContext.alwaysFailingFetchStub()
+        stub.startIntercepting()
+
+        let sut = try makeSUT()
+
+        await expectThrows(nsError: anyNSError()) {
+            _ = try await sut.retrieve(matching: "any")
+        }
+    }
+
+    func test_retrieveMatchingQuery_matchesUserDescription() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(),
+            writableSearchableOTPVaultItem(userDescription: "x"),
+            writableSearchableNoteVaultItem(userDescription: "a"),
+            writableSearchableOTPVaultItem(userDescription: "c"),
+            writableSearchableOTPVaultItem(userDescription: "b"),
+            writableSearchableOTPVaultItem(userDescription: "----a----"),
+            writableSearchableOTPVaultItem(userDescription: "----A----"),
+            writableSearchableOTPVaultItem(userDescription: "x"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 3)
+        XCTAssertEqual(result.compactMap(\.metadata.userDescription), ["a", "----a----", "----A----"])
+    }
+
+    func test_retrieveMatchingQuery_matchesOTPAccountName() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(),
+            writableSearchableOTPVaultItem(accountName: "a"),
+            writableSearchableOTPVaultItem(accountName: "x"),
+            writableSearchableOTPVaultItem(accountName: "----A----"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result.compactMap(\.item.otpCode?.data.accountName), ["a", "----A----"])
+    }
+
+    func test_retrieveMatchingQuery_matchesOTPIssuer() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(),
+            writableSearchableOTPVaultItem(issuerName: "a"),
+            writableSearchableOTPVaultItem(issuerName: "x"),
+            writableSearchableOTPVaultItem(issuerName: "----A----"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result.compactMap(\.item.otpCode?.data.issuer), ["a", "----A----"])
+    }
+
+    func test_retrieveMatchingQuery_matchesNoteDetailsTitle() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(),
+            writableSearchableNoteVaultItem(title: "a"),
+            writableSearchableNoteVaultItem(title: "x"),
+            writableSearchableNoteVaultItem(title: "----A----"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result.compactMap(\.item.secureNote?.title), ["a", "----A----"])
+    }
+
+    func test_retrieveMatchingQuery_matchesNoteDetailsContents() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(),
+            writableSearchableNoteVaultItem(contents: "a"),
+            writableSearchableNoteVaultItem(contents: "x"),
+            writableSearchableNoteVaultItem(contents: "----A----"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 2)
+        XCTAssertEqual(result.compactMap(\.item.secureNote?.contents), ["a", "----A----"])
+    }
+
+    func test_retrieveMatchingQuery_combinesResultsFromDifferentFields() async throws {
+        let sut = try makeSUT()
+
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(userDescription: "a"),
+            writableSearchableNoteVaultItem(title: "aa"),
+            writableSearchableNoteVaultItem(contents: "aaa"),
+            writableSearchableOTPVaultItem(userDescription: "aaaa"),
+            writableSearchableOTPVaultItem(accountName: "aaaaa"),
+            writableSearchableOTPVaultItem(issuerName: "aaaaaa"),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.map(\.asWritable), codes, "All items should be matched on the specified fields")
+    }
+
     func test_insert_deliversNoErrorOnEmptyStore() async throws {
         let sut = try makeSUT()
 
