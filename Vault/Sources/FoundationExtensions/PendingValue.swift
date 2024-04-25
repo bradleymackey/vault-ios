@@ -49,9 +49,12 @@ extension PendingValue {
             throw AlreadyWaitingError()
         }
 
+        // Always drop the last value after awaiting.
+        // We either return it right away or we already awaited the value live (no need to get it from lastValue).
+        defer { lastValue = nil }
+
         // If there's a pending value, get it.
         if let existing = lastValue {
-            defer { lastValue = nil }
             return try existing.get()
         }
 
