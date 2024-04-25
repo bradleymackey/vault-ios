@@ -174,18 +174,8 @@ final class PendingValueTests: XCTestCase {
 
     func test_isWaiting_trueWhenWaiting() async {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for task")
 
-        Task {
-            _ = try await sut.awaitValue()
-        }
-
-        Task {
-            try await allowTasksToProgress()
-            exp.fulfill()
-        }
-
-        await fulfillment(of: [exp])
+        await awaitNoValueProduced(on: sut)
 
         let isWaiting = await sut.isWaiting
         XCTAssertTrue(isWaiting)
@@ -204,9 +194,9 @@ final class PendingValueTests: XCTestCase {
         }
 
         Task {
-            try await allowTasksToProgress()
+            await Task.yield()
             await sut.fulfill(42)
-            try await allowTasksToProgress()
+            await Task.yield()
             exp.fulfill()
         }
 
@@ -227,9 +217,9 @@ final class PendingValueTests: XCTestCase {
         }
 
         Task {
-            try await allowTasksToProgress()
+            await Task.yield()
             await sut.reject(error: anyError())
-            try await allowTasksToProgress()
+            await Task.yield()
             exp.fulfill()
         }
 
@@ -250,9 +240,9 @@ final class PendingValueTests: XCTestCase {
         }
 
         Task {
-            try await allowTasksToProgress()
+            await Task.yield()
             await sut.cancel()
-            try await allowTasksToProgress()
+            await Task.yield()
             exp.fulfill()
         }
 
@@ -277,10 +267,6 @@ extension PendingValueTests {
     private func anyError() -> any Error {
         struct SomeError: Error {}
         return SomeError()
-    }
-
-    private func allowTasksToProgress() async throws {
-        try await Task.sleep(for: .milliseconds(200))
     }
 
     /// Forces the SUT to start awaiting before calling `action`.
