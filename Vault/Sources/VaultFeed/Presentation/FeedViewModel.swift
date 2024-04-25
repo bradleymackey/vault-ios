@@ -26,7 +26,7 @@ public final class FeedViewModel<Store: VaultStore> {
 
     public var title: String {
         if isSearching {
-            localized(key: "feedViewModel.searching.title")
+            localized(key: "feedViewModel.searching.title.\(codes.count)")
         } else {
             localized(key: "feedViewModel.list.title")
         }
