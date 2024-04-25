@@ -34,6 +34,11 @@ custom_rules:
     regex: "NSLocalizedString"
     message: "Use String.LocalizationValue"
     severity: error
+  no_NSRegularExpression:
+    name: "NSRegularExpression"
+    regex: "NSRegularExpression"
+    message: "Use String.Regex"
+    severity: error
   no_direct_standard_out_logs:
     name: "Writing log messages directly to standard out is disallowed"
     regex: "(\\bprint|\\bdebugPrint|\\bdump|Swift\\.print|Swift\\.debugPrint|Swift\\.dump)\\s*\\("
