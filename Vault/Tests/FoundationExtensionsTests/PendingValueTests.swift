@@ -50,6 +50,33 @@ final class PendingValueTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    func test_awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
+        let sut = makeSUT()
+
+        let result1 = await awaitValueForcingAsync(on: sut) {
+            await sut.fulfill(100)
+        }
+        XCTAssertEqual(result1?.withAnyEquatableError(), .success(100))
+
+        let result2 = await awaitValueForcingAsync(on: sut) {
+            await sut.fulfill(101)
+        }
+        XCTAssertEqual(result2?.withAnyEquatableError(), .success(101))
+    }
+
+    func test_awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
+        let sut = makeSUT()
+
+        let result1 = await awaitValueForcingAsync(on: sut) {
+            await sut.fulfill(100)
+        }
+        XCTAssertEqual(result1?.withAnyEquatableError(), .success(100))
+
+        await awaitNoValueProduced(on: sut)
+
+        await sut.cancel()
+    }
+
     func test_fulfill_unsuspendsAwait() async throws {
         let sut = makeSUT()
 
@@ -254,5 +281,52 @@ extension PendingValueTests {
 
     private func allowTasksToProgress() async throws {
         try await Task.sleep(for: .milliseconds(200))
+    }
+
+    /// Forces the SUT to start awaiting before calling `action`.
+    ///
+    /// This ensures the last value cache is checked before any action (fulfill/reject) is called.
+    @MainActor
+    private func awaitValueForcingAsync(on sut: SUT, action: () async -> Void) async -> Result<Int, any Error>? {
+        var capturedResult: Result<Int, any Error>?
+        let expStartedWaiting = expectation(description: "Started waiting")
+        let expInitial = expectation(description: "waiting for value")
+        Task {
+            expStartedWaiting.fulfill()
+            do {
+                let value = try await sut.awaitValue()
+                capturedResult = .success(value)
+            } catch {
+                capturedResult = .failure(error)
+            }
+            expInitial.fulfill()
+        }
+
+        // Wait for the task to start before the action, so we know that we hit the `awaitValue` call.
+        await fulfillment(of: [expStartedWaiting], timeout: 1.0)
+
+        await action()
+
+        // Make sure we captured the result of the value that we awaited.
+        await fulfillment(of: [expInitial], timeout: 1.0)
+
+        return capturedResult
+    }
+
+    private func awaitNoValueProduced(on sut: SUT) async {
+        let expNext = expectation(description: "Wait for no value")
+        expNext.isInverted = true
+        Task {
+            _ = try await sut.awaitValue()
+            expNext.fulfill()
+        }
+        await fulfillment(of: [expNext], timeout: 1.0)
+    }
+}
+
+extension Result {
+    struct AnyEquatableError: Error, Equatable {}
+    func withAnyEquatableError() -> Result<Success, AnyEquatableError> {
+        mapError { _ in AnyEquatableError() }
     }
 }
