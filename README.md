@@ -19,7 +19,7 @@ Development takes place in `/Vault`, so take a look in there.
   - [x] View TOTP previews
   - [x] View HOTP previews
   - [x] Show code preview in the code detail page (#59)
-  - [ ] Search for codes in the preview page (#67)
+  - [x] Search for codes in the preview page (#67)
   - [x] Edit metadata about codes
   - [ ] Import codes manually (#70)
   - [ ] Import codes with camera (#71)
@@ -27,9 +27,9 @@ Development takes place in `/Vault`, so take a look in there.
 - [ ] Secure notes
   - [x] Create secure note storage format, stored in CoreData
   - [x] View secure note previews
-  - [ ] View secure note detail page (#26)
+  - [x] View secure note detail page (#26)
   - [ ] Create secure notes from the vault home page (#64)
-  - [ ] Edit secure notes (#65)
+  - [x] Edit secure notes (#65)
 - [ ] Cryptocurrency
   - [ ] Create storage format, stored in CoreData
   - [ ] View in preview
