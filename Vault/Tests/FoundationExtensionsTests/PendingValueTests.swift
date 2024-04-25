@@ -55,6 +55,30 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    func test_awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
+        let sut = makeSUT()
+
+        let exp1 = expectation(description: "Start waiting 1")
+        let task = Task {
+            exp1.fulfill()
+            _ = try await sut.awaitValue()
+        }
+
+        await fulfillment(of: [exp1], timeout: 1.0)
+
+        do {
+            _ = try await sut.awaitValue()
+            XCTFail("Unexpected success")
+        } catch is SUT.AlreadyWaitingError {
+            // nice!
+        } catch {
+            XCTFail("Unexpected error")
+        }
+
+        task.cancel()
+        await sut.cancel()
+    }
+
     func test_fulfill_unsuspendsAwait() async throws {
         let sut = makeSUT()
 
