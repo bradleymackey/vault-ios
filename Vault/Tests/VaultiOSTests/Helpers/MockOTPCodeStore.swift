@@ -11,6 +11,13 @@ final class MockOTPCodeStore: VaultStore {
         return codesToRetrieve
     }
 
+    var codesToRetrieveMatchingQuery = [StoredVaultItem]()
+    var didRetrieveDataMatchingQuery: (String) -> Void = { _ in }
+    func retrieve(matching query: String) async throws -> [StoredVaultItem] {
+        didRetrieveDataMatchingQuery(query)
+        return codesToRetrieveMatchingQuery
+    }
+
     func delete(id _: UUID) async throws {
         // noop
     }
