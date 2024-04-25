@@ -101,7 +101,7 @@
       }
     },
     "TEST_KEY_DONT_CHANGE" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {

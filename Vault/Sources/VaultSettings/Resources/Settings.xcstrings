@@ -201,7 +201,7 @@
       }
     },
     "TEST_KEY_DONT_CHANGE" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -223,7 +223,7 @@
       }
     },
     "viewOptions.previewSize.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
