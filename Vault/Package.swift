@@ -42,6 +42,9 @@ let package = Package(
                 "FoundationExtensions",
                 .targetItem(name: "VaultUI", condition: .when(platforms: [.iOS])),
             ],
+            resources: [
+                .process("Resources/Feed.xcstrings"),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -138,6 +141,9 @@ let package = Package(
         .target(
             name: "VaultSettings",
             dependencies: ["FoundationExtensions"],
+            resources: [
+                .process("Resources/Settings.xcstrings"),
+            ],
             swiftSettings: swiftSettings
         ),
         .testTarget(
@@ -154,6 +160,7 @@ let package = Package(
             ],
             resources: [
                 .copy("Resources/VaultStore.xcdatamodeld"),
+                .process("Resources/VaultFeed.xcstrings"),
             ],
             swiftSettings: swiftSettings
         ),
