@@ -5,31 +5,55 @@ struct CodeAddView: View {
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        Form {
-            itemSelectionSection
+        ScrollView {
+            gridOfItems
+                .padding()
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .foregroundStyle(.red)
+                }
+            }
         }
     }
 
-    private var itemSelectionSection: some View {
-        Section {
+    private var gridOfItems: some View {
+        LazyVGrid(columns: columns) {
             NavigationLink(destination: Text("Coming Soon")) {
-                FormRow(image: Image(systemName: "qrcode"), color: .blue) {
-                    Text("2FA Code")
-                }
+                row(icon: "qrcode", title: "2FA Code")
             }
 
             NavigationLink(destination: Text("Coming Soon")) {
-                FormRow(image: Image(systemName: "text.alignleft"), color: .blue) {
-                    Text("Private Note")
-                }
+                row(icon: "text.alignleft", title: "Note")
             }
 
             NavigationLink(destination: Text("Coming Soon")) {
-                FormRow(image: Image(systemName: "bitcoinsign"), color: .blue) {
-                    Text("Cryptocurrency Seed Phrase")
-                }
+                row(icon: "bitcoinsign", title: "Seed Phrase")
             }
         }
-        .foregroundStyle(.primary)
+    }
+
+    private var columns: [GridItem] {
+        [
+            .init(.adaptive(minimum: 100, maximum: 150), spacing: 16),
+        ]
+    }
+
+    private func row(icon: String, title: String) -> some View {
+        VStack(alignment: .center, spacing: 8) {
+            Image(systemName: icon)
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .aspectRatio(1, contentMode: .fit)
+                .modifier(OTPCardViewModifier())
+            Text(title)
+                .font(.callout)
+                .foregroundStyle(.foreground)
+        }
     }
 }
