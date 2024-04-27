@@ -6,6 +6,14 @@ import XCTest
 
 final class SecureNoteDetailViewModelTests: XCTestCase {
     @MainActor
+    func test_init_creatingHasNoSideEffects() {
+        let editor = MockSecureNoteDetailEditor()
+        _ = makeSUTCreating()
+
+        XCTAssertEqual(editor.operationsPerformed, [])
+    }
+
+    @MainActor
     func test_init_editingHasNoSideEffects() {
         let editor = MockSecureNoteDetailEditor()
         _ = makeSUTEditing(editor: editor)
@@ -22,6 +30,15 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.title, note.title)
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
         XCTAssertEqual(sut.editingModel.detail.description, metadata.userDescription)
+    }
+
+    @MainActor
+    func test_init_creatingSetsBlankInitialData() {
+        let sut = makeSUTCreating()
+
+        XCTAssertEqual(sut.editingModel.detail.title, "")
+        XCTAssertEqual(sut.editingModel.detail.contents, "")
+        XCTAssertEqual(sut.editingModel.detail.description, "")
     }
 
     @MainActor
