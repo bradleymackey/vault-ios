@@ -8,18 +8,6 @@ struct CodeAddView: View {
         Form {
             itemSelectionSection
         }
-        .navigationTitle(Text("Add Item"))
-        .navigationBarTitleDisplayMode(.inline)
-        .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    dismiss()
-                } label: {
-                    Text("Cancel")
-                        .foregroundStyle(.red)
-                }
-            }
-        }
     }
 
     private var itemSelectionSection: some View {
@@ -41,9 +29,6 @@ struct CodeAddView: View {
                     Text("Cryptocurrency Seed Phrase")
                 }
             }
-        } footer: {
-            Text("Store a new item securely on your device.")
-                .foregroundStyle(.secondary)
         }
         .foregroundStyle(.primary)
     }

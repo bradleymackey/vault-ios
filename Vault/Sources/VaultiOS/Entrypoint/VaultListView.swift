@@ -71,6 +71,8 @@ struct VaultListView<
                 NavigationStack {
                     CodeAddView()
                 }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             case let .detail(_, storedCode):
                 NavigationStack {
                     VaultDetailView(
