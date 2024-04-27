@@ -8,7 +8,11 @@ public struct FileSystemLocalResourceFetcher: LocalResourceFetcher {
         try await Data(asyncContentsOf: url)
     }
 
-    public func fetchLocalResource(fromBundle bundle: Bundle, fileName: String, fileExtension: String) async throws -> Data {
+    public func fetchLocalResource(
+        fromBundle bundle: Bundle,
+        fileName: String,
+        fileExtension: String
+    ) async throws -> Data {
         guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
             throw LocalResourceFetcherError.fileDoesNotExist
         }
