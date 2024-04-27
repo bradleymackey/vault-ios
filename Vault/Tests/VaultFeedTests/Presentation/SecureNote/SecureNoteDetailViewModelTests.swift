@@ -294,6 +294,20 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(editing.detail.title, note.title)
         XCTAssertEqual(editing.detail.description, metadata.userDescription)
     }
+
+    @MainActor
+    func test_shouldShowDeleteButton_falseForCreating() {
+        let sut = makeSUTCreating()
+
+        XCTAssertFalse(sut.shouldShowDeleteButton)
+    }
+
+    @MainActor
+    func test_shouldShowDeleteButton_trueForEditing() {
+        let sut = makeSUTEditing()
+
+        XCTAssertTrue(sut.shouldShowDeleteButton)
+    }
 }
 
 extension SecureNoteDetailViewModelTests {

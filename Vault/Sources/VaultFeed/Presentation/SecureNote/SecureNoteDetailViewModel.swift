@@ -49,6 +49,13 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         detailEditState.isSaving
     }
 
+    public var shouldShowDeleteButton: Bool {
+        switch mode {
+        case .creating: false
+        case .editing: true
+        }
+    }
+
     public func startEditing() {
         detailEditState.startEditing()
     }

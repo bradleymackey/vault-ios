@@ -124,11 +124,13 @@ struct SecureNoteDetailView: View {
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         } footer: {
-            deleteButton
-                .modifier(HorizontallyCenter())
-                .padding()
-                .padding(.vertical, 16)
-                .transition(.opacity)
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .modifier(HorizontallyCenter())
+                    .padding()
+                    .padding(.vertical, 16)
+                    .transition(.opacity)
+            }
         }
     }
 
