@@ -17,18 +17,19 @@ struct VaultListView<
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
+    @State private var creatingItem: CreatingItem?
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Identifiable {
         case addItem
         case detail(UUID, StoredVaultItem)
+        case creatingItem(CreatingItem)
 
         var id: some Hashable {
             switch self {
-            case .addItem:
-                "add"
-            case let .detail(id, _):
-                id.uuidString
+            case .addItem: "add"
+            case let .creatingItem(item): "creating" + String(item.hashValue)
+            case let .detail(id, _): id.uuidString
             }
         }
     }
@@ -69,16 +70,31 @@ struct VaultListView<
             switch visible {
             case .addItem:
                 NavigationStack {
-                    CodeAddView()
+                    CodeAddView(creatingItem: $creatingItem)
                 }
+                .presentationDetents([.medium])
+                .presentationDragIndicator(.visible)
             case let .detail(_, storedCode):
                 NavigationStack {
-                    VaultDetailView(
+                    VaultDetailEditView(
                         feedViewModel: feedViewModel,
                         storedItem: storedCode,
                         previewGenerator: viewGenerator
                     )
                 }
+            case let .creatingItem(creatingItem):
+                NavigationStack {
+                    VaultDetailCreateView(
+                        feedViewModel: feedViewModel,
+                        creatingItem: creatingItem
+                    )
+                }
+            }
+        }
+        .onChange(of: creatingItem) { _, newValue in
+            if let newValue {
+                modal = .creatingItem(newValue)
+                creatingItem = nil // reset so we can detect further changes
             }
         }
         .onChange(of: scenePhase) { _, newValue in

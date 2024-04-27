@@ -45,44 +45,77 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             Text(error.localizedDescription)
         }
         .toolbar {
-            if viewModel.editingModel.isDirty {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        viewModel.done()
-                    } label: {
-                        Text(viewModel.strings.cancelEditsTitle)
-                            .tint(.red)
-                    }
-                }
-            } else if !viewModel.isInEditMode {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        viewModel.startEditing()
-                    } label: {
-                        Text(viewModel.strings.startEditingTitle)
-                            .tint(.accentColor)
-                    }
+            if viewModel.isInitialCreation {
+                cancelCreationItem
+            } else {
+                if viewModel.editingModel.isDirty {
+                    cancelEditsItem
+                } else if !viewModel.isInEditMode {
+                    startEditingItem
                 }
             }
 
             if viewModel.editingModel.isDirty {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        Task { await viewModel.saveChanges() }
-                    } label: {
-                        Text(viewModel.strings.saveEditsTitle)
-                            .tint(.accentColor)
-                    }
-                }
+                saveDirtyChangesItem
             } else {
-                ToolbarItem(placement: .confirmationAction) {
-                    Button {
-                        viewModel.done()
-                    } label: {
-                        Text(viewModel.strings.doneEditingTitle)
-                            .tint(.accentColor)
-                    }
-                }
+                doneItem
+            }
+        }
+    }
+
+    private var cancelCreationItem: some ToolbarContent {
+        // This button always dismisses immediately (without saving) if it's the initial creation.
+        // (Dirty or not!)
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                dismiss()
+            } label: {
+                Text(viewModel.strings.cancelEditsTitle)
+                    .tint(.red)
+            }
+        }
+    }
+
+    private var cancelEditsItem: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                viewModel.done()
+            } label: {
+                Text(viewModel.strings.cancelEditsTitle)
+                    .tint(.red)
+            }
+        }
+    }
+
+    private var startEditingItem: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                viewModel.startEditing()
+            } label: {
+                Text(viewModel.strings.startEditingTitle)
+                    .tint(.accentColor)
+            }
+        }
+    }
+
+    private var saveDirtyChangesItem: some ToolbarContent {
+        ToolbarItem(placement: .confirmationAction) {
+            Button {
+                Task { await viewModel.saveChanges() }
+            } label: {
+                Text(viewModel.strings.saveEditsTitle)
+                    .tint(.accentColor)
+            }
+        }
+    }
+
+    private var doneItem: some ToolbarContent {
+        ToolbarItem(placement: .confirmationAction) {
+            Button {
+                viewModel.done()
+            } label: {
+                Text(viewModel.strings.doneEditingTitle)
+                    .tint(.accentColor)
             }
         }
     }

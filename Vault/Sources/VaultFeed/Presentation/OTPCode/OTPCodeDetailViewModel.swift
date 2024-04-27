@@ -30,6 +30,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         ))
     }
 
+    public var isInitialCreation: Bool {
+        // TODO: define initial creation state
+        false
+    }
+
     public var isSaving: Bool {
         detailEditState.isSaving
     }

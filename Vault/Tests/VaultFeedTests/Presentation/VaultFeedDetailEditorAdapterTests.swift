@@ -76,7 +76,41 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await XCTAssertThrowsError(try await sut.deleteCode(id: UUID()))
     }
 
-    func test_updateNote_translatesCodeDataForCall() async throws {
+    func test_createNote_createsNoteInFeed() async throws {
+        let feed = MockVaultFeed()
+        let sut = makeSUT(feed: feed)
+        let initialEdits = SecureNoteDetailEdits(
+            description: "new description",
+            title: "new title",
+            contents: "new contents"
+        )
+
+        let exp = expectation(description: "Wait for creation")
+        feed.createCalled = { data in
+            defer { exp.fulfill() }
+            XCTAssertEqual(data.userDescription, "new description")
+            switch data.item {
+            case let .secureNote(note):
+                XCTAssertEqual(note.title, "new title")
+                XCTAssertEqual(note.contents, "new contents")
+            default:
+                XCTFail("invalid kind")
+            }
+        }
+
+        try await sut.create(initialEdits: initialEdits)
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_createNote_propagatesFailureOnError() async throws {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.create(initialEdits: .init()))
+    }
+
+    func test_updateNote_updatesNoteInFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
 
@@ -90,6 +124,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in
+            defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "new description")
             switch data.item {
             case let .secureNote(note):
@@ -98,7 +133,6 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             default:
                 XCTFail("invalid kind")
             }
-            exp.fulfill()
         }
 
         try await sut.update(id: item.metadata.id, item: note, edits: edits)

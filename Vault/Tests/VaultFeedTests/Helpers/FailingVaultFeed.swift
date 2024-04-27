@@ -8,6 +8,10 @@ class FailingVaultFeed: VaultFeed {
         // noop
     }
 
+    func create(item _: StoredVaultItem.Write) async throws {
+        throw StubError()
+    }
+
     func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
         throw StubError()
     }

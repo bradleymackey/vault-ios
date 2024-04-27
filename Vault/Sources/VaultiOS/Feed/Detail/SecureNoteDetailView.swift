@@ -8,8 +8,16 @@ import VaultUI
 struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
 
-    init(note: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
-        _viewModel = .init(initialValue: .init(storedNote: note, storedMetadata: storedMetadata, editor: editor))
+    init(
+        editingExistingNote note: SecureNote,
+        storedMetadata: StoredVaultItem.Metadata,
+        editor: any SecureNoteDetailEditor
+    ) {
+        _viewModel = .init(initialValue: .init(mode: .editing(note: note, metadata: storedMetadata), editor: editor))
+    }
+
+    init(newNoteWithEditor editor: any SecureNoteDetailEditor) {
+        _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
     }
 
     @State private var currentError: (any Error)?
@@ -85,18 +93,20 @@ struct SecureNoteDetailView: View {
             .frame(minHeight: 250, alignment: .top)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
-                FooterInfoLabel(
-                    title: viewModel.strings.createdDateTitle,
-                    detail: viewModel.createdDateValue,
-                    systemImageName: "clock.fill"
-                )
-
-                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                if let createdDate = viewModel.createdDateValue {
                     FooterInfoLabel(
-                        title: viewModel.strings.updatedDateTitle,
-                        detail: viewModel.updatedDateValue,
-                        systemImageName: "clock.arrow.2.circlepath"
+                        title: viewModel.strings.createdDateTitle,
+                        detail: createdDate,
+                        systemImageName: "clock.fill"
                     )
+
+                    if let updatedDate = viewModel.updatedDateValue, createdDate != updatedDate {
+                        FooterInfoLabel(
+                            title: viewModel.strings.updatedDateTitle,
+                            detail: updatedDate,
+                            systemImageName: "clock.arrow.2.circlepath"
+                        )
+                    }
                 }
             }
             .font(.footnote)
@@ -114,11 +124,13 @@ struct SecureNoteDetailView: View {
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         } footer: {
-            deleteButton
-                .modifier(HorizontallyCenter())
-                .padding()
-                .padding(.vertical, 16)
-                .transition(.opacity)
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .modifier(HorizontallyCenter())
+                    .padding()
+                    .padding(.vertical, 16)
+                    .transition(.opacity)
+            }
         }
     }
 

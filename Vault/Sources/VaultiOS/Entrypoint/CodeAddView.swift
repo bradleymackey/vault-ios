@@ -4,15 +4,17 @@ import VaultUI
 struct CodeAddView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @Binding var creatingItem: CreatingItem?
+
     var body: some View {
-        Form {
-            itemSelectionSection
+        ScrollView {
+            gridOfItems
+                .padding()
         }
-        .navigationTitle(Text("Add Item"))
-        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
+                    creatingItem = nil
                     dismiss()
                 } label: {
                     Text("Cancel")
@@ -22,29 +24,48 @@ struct CodeAddView: View {
         }
     }
 
-    private var itemSelectionSection: some View {
-        Section {
-            NavigationLink(destination: Text("Coming Soon")) {
-                FormRow(image: Image(systemName: "qrcode"), color: .blue) {
-                    Text("2FA Code")
-                }
+    private var gridOfItems: some View {
+        LazyVGrid(columns: columns) {
+            Button {
+                creatingItem = .otpCode
+                dismiss()
+            } label: {
+                row(icon: "qrcode", title: "2FA Code")
             }
 
-            NavigationLink(destination: Text("Coming Soon")) {
-                FormRow(image: Image(systemName: "text.alignleft"), color: .blue) {
-                    Text("Private Note")
-                }
+            Button {
+                creatingItem = .secureNote
+                dismiss()
+            } label: {
+                row(icon: "text.alignleft", title: "Note")
             }
 
-            NavigationLink(destination: Text("Coming Soon")) {
-                FormRow(image: Image(systemName: "bitcoinsign"), color: .blue) {
-                    Text("Cryptocurrency Seed Phrase")
-                }
+            Button {
+                creatingItem = .cryptoSeedPhrase
+                dismiss()
+            } label: {
+                row(icon: "bitcoinsign", title: "Seed Phrase")
             }
-        } footer: {
-            Text("Store a new item securely on your device.")
-                .foregroundStyle(.secondary)
         }
-        .foregroundStyle(.primary)
+    }
+
+    private var columns: [GridItem] {
+        [
+            .init(.adaptive(minimum: 100, maximum: 150), spacing: 16),
+        ]
+    }
+
+    private func row(icon: String, title: String) -> some View {
+        VStack(alignment: .center, spacing: 8) {
+            Image(systemName: icon)
+                .font(.largeTitle)
+                .fontWeight(.semibold)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .aspectRatio(1, contentMode: .fit)
+                .modifier(OTPCardViewModifier())
+            Text(title)
+                .font(.callout)
+                .foregroundStyle(.foreground)
+        }
     }
 }
