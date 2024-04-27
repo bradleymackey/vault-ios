@@ -19,8 +19,10 @@ class MockSecureNoteDetailEditor: SecureNoteDetailEditor {
         try createNoteResult.get()
     }
 
+    var updateNoteCalled: () -> Void = {}
     var updateNoteResult: Result<Void, any Error> = .success(())
     func update(id _: UUID, item _: SecureNote, edits _: SecureNoteDetailEdits) async throws {
+        updateNoteCalled()
         operationsPerformed.append(.update)
         try updateNoteResult.get()
     }

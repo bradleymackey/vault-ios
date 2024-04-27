@@ -110,6 +110,21 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_saveChanges_updatesEditor() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        let sut = makeSUT(editor: editor)
+
+        let exp = expectation(description: "Wait for note creation")
+        editor.updateNoteCalled = {
+            exp.fulfill()
+        }
+
+        await sut.saveChanges()
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUT()
         makeDirty(sut: sut)
