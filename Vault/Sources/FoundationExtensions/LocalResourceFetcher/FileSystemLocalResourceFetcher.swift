@@ -4,14 +4,18 @@ import Foundation
 public struct FileSystemLocalResourceFetcher: LocalResourceFetcher {
     public init() {}
 
-    public func fetchLocalResource(at url: URL) throws -> Data {
-        try Data(contentsOf: url)
+    public func fetchLocalResource(at url: URL) async throws -> Data {
+        try await Data(asyncContentsOf: url)
     }
 
-    public func fetchLocalResource(fromBundle bundle: Bundle, fileName: String, fileExtension: String) throws -> Data {
+    public func fetchLocalResource(
+        fromBundle bundle: Bundle,
+        fileName: String,
+        fileExtension: String
+    ) async throws -> Data {
         guard let url = bundle.url(forResource: fileName, withExtension: fileExtension) else {
             throw LocalResourceFetcherError.fileDoesNotExist
         }
-        return try fetchLocalResource(at: url)
+        return try await fetchLocalResource(at: url)
     }
 }

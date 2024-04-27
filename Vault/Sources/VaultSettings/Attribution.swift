@@ -12,10 +12,9 @@ public struct Attribution {
         self.libraries = libraries
     }
 
-    public static func parse(resourceFetcher: any LocalResourceFetcher) throws -> Attribution {
+    public static func parse(resourceFetcher: any LocalResourceFetcher) async throws -> Attribution {
         let loader = ThirdPartyLibraryLoader(resourceFetcher: resourceFetcher)
-        return try Attribution(
-            libraries: loader.load()
-        )
+        let libraries = try await loader.load()
+        return Attribution(libraries: libraries)
     }
 }

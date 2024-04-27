@@ -3,23 +3,23 @@ import XCTest
 @testable import FoundationExtensions
 
 final class StubLocalResourceFetcherTests: XCTestCase {
-    func test_fetchLocalResourceFromURL_fetchesStubbedData() throws {
+    func test_fetchLocalResourceFromURL_fetchesStubbedData() async throws {
         let stubData = Data("Hello world".utf8)
         let sut = makeSUT(data: stubData)
 
         let anyURL = try XCTUnwrap(URL(string: "https://google.com"))
-        let response = try sut.fetchLocalResource(at: anyURL)
+        let response = try await sut.fetchLocalResource(at: anyURL)
 
         XCTAssertEqual(response, stubData)
     }
 
-    func test_fetchLocalResourceFromBundle_fetchesStubbedData() throws {
+    func test_fetchLocalResourceFromBundle_fetchesStubbedData() async throws {
         let stubData = Data("Hello world".utf8)
         let sut = makeSUT(data: stubData)
 
         let bundlesToCheck: [Bundle] = [.main, .module]
         for bundle in bundlesToCheck {
-            let response = try sut.fetchLocalResource(
+            let response = try await sut.fetchLocalResource(
                 fromBundle: bundle,
                 fileName: "any",
                 fileExtension: "any"

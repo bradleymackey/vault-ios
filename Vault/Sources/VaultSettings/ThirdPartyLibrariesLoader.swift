@@ -12,8 +12,8 @@ struct ThirdPartyLibraryLoader {
         self.resourceFetcher = resourceFetcher
     }
 
-    func load() throws -> [ThirdPartyLibrary] {
-        let thirdPartyData = try resourceFetcher.fetchLocalResource(
+    func load() async throws -> [ThirdPartyLibrary] {
+        let thirdPartyData = try await resourceFetcher.fetchLocalResource(
             fromBundle: .module,
             fileName: "third-party-libraries",
             fileExtension: "json"
