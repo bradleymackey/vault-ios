@@ -25,12 +25,26 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
 }
 
 extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
-    public func update(id: UUID, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
-        var item = item
-        item.title = edits.title
-        item.contents = edits.contents
+    public func create(initialEdits: SecureNoteDetailEdits) async throws {
+        let newSecureNote = SecureNote(title: initialEdits.title, contents: initialEdits.contents)
+        let newStoredVaultItem = StoredVaultItem.Write(
+            userDescription: initialEdits.description,
+            item: .secureNote(newSecureNote)
+        )
 
-        try await vaultFeed.update(id: id, item: .init(userDescription: edits.description, item: .secureNote(item)))
+        try await vaultFeed.create(item: newStoredVaultItem)
+    }
+
+    public func update(id: UUID, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
+        var updatedItem = item
+        updatedItem.title = edits.title
+        updatedItem.contents = edits.contents
+        let updatedStoredVaultItem = StoredVaultItem.Write(
+            userDescription: edits.description,
+            item: .secureNote(updatedItem)
+        )
+
+        try await vaultFeed.update(id: id, item: updatedStoredVaultItem)
     }
 
     public func deleteNote(id: UUID) async throws {
