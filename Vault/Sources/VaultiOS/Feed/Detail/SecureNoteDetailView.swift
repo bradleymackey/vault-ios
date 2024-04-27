@@ -8,8 +8,16 @@ import VaultUI
 struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
 
-    init(note: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
+    init(
+        editingExistingNote note: SecureNote,
+        storedMetadata: StoredVaultItem.Metadata,
+        editor: any SecureNoteDetailEditor
+    ) {
         _viewModel = .init(initialValue: .init(mode: .editing(note: note, metadata: storedMetadata), editor: editor))
+    }
+
+    init(newNoteWithEditor editor: any SecureNoteDetailEditor) {
+        _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
     }
 
     @State private var currentError: (any Error)?

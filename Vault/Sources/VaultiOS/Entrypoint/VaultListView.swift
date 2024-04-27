@@ -76,7 +76,7 @@ struct VaultListView<
                 .presentationDragIndicator(.visible)
             case let .detail(_, storedCode):
                 NavigationStack {
-                    VaultDetailView(
+                    VaultDetailEditView(
                         feedViewModel: feedViewModel,
                         storedItem: storedCode,
                         previewGenerator: viewGenerator

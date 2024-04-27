@@ -3,7 +3,7 @@ import SwiftUI
 import VaultCore
 import VaultFeed
 
-struct VaultDetailView<
+struct VaultDetailEditView<
     Store: VaultStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View
@@ -26,7 +26,7 @@ struct VaultDetailView<
             )
         case let .secureNote(storedNote):
             SecureNoteDetailView(
-                note: storedNote,
+                editingExistingNote: storedNote,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
             )
