@@ -22,7 +22,6 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
     public init(mode: Mode, editor: any SecureNoteDetailEditor) {
         self.mode = mode
         self.editor = editor
-
         editingModel = switch mode {
         case .creating:
             .init(detail: .init())
@@ -32,6 +31,13 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 title: note.title,
                 contents: note.contents
             ))
+        }
+
+        switch mode {
+        case .creating:
+            startEditing()
+        case .editing:
+            break
         }
     }
 
