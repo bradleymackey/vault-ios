@@ -49,10 +49,10 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         detailEditState.isSaving
     }
 
-    public var shouldShowDeleteButton: Bool {
+    public var isInitialCreation: Bool {
         switch mode {
-        case .creating: false
-        case .editing: true
+        case .creating: true
+        case .editing: false
         }
     }
 

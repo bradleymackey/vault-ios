@@ -10,6 +10,7 @@ public protocol DetailViewModel: AnyObject, Observable {
     var editingModel: DetailEditingModel<Edits> { get set }
     var strings: Strings { get }
     var isInEditMode: Bool { get }
+    var isInitialCreation: Bool { get }
     var isSaving: Bool { get }
 
     func startEditing()
@@ -18,6 +19,12 @@ public protocol DetailViewModel: AnyObject, Observable {
     func done()
     func didEncounterErrorPublisher() -> AnyPublisher<any Error, Never>
     func isFinishedPublisher() -> AnyPublisher<Void, Never>
+}
+
+extension DetailViewModel {
+    public var shouldShowDeleteButton: Bool {
+        !isInitialCreation
+    }
 }
 
 public protocol DetailViewModelStrings {
