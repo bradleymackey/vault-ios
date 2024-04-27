@@ -3,17 +3,17 @@ import XCTest
 @testable import VaultSettings
 
 final class ThirdPartyLibrariesLoaderTests: XCTestCase {
-    func test_load_loadsLibrariesFileFromRealDiskFile() throws {
+    func test_load_loadsLibrariesFileFromRealDiskFile() async throws {
         let fetcher = FileSystemLocalResourceFetcher()
         let sut = makeSUT(resourceFetcher: fetcher)
 
-        let loaded = try sut.load()
+        let loaded = try await sut.load()
 
         XCTAssertEqual(loaded.count, 6)
         XCTAssertEqual(loaded.first?.name, "SwiftUI-Shimmer")
     }
 
-    func test_load_parsesValuesCorrectly() throws {
+    func test_load_parsesValuesCorrectly() async throws {
         let exampleFile = """
         {
             "libraries": [
@@ -33,7 +33,7 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
         let fetcher = StubLocalResourceFetcher(stubData: Data(exampleFile.utf8))
         let sut = makeSUT(resourceFetcher: fetcher)
 
-        let loaded = try sut.load()
+        let loaded = try await sut.load()
 
         XCTAssertEqual(loaded.map(\.name), ["First", "Second"])
         XCTAssertEqual(loaded.map(\.licence), ["My First Licence", "My Second Licence"])

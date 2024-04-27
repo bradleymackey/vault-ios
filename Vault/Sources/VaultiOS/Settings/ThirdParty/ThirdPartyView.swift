@@ -20,7 +20,7 @@ public struct ThirdPartyView: View {
         .task {
             do {
                 let fetcher = FileSystemLocalResourceFetcher()
-                let attribution = try Attribution.parse(resourceFetcher: fetcher)
+                let attribution = try await Attribution.parse(resourceFetcher: fetcher)
                 libraries = attribution.libraries
             } catch {
                 loadingError = true
