@@ -189,6 +189,16 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_deleteNote_hasNoActionIfCreatingNote() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        let sut = makeSUTCreating()
+
+        await sut.deleteNote()
+
+        XCTAssertEqual(editor.operationsPerformed, [])
+    }
+
+    @MainActor
     func test_deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
         let sut = makeSUTEditing()
 

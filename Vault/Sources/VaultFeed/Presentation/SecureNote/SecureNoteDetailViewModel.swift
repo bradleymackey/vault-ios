@@ -78,19 +78,19 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
     }
 
     public func deleteNote() async {
-        do {
-            try await detailEditState.deleteItem {
-                switch mode {
-                case .creating:
-                    assertionFailure("Not implemented")
-                case let .editing(_, metadata):
+        switch mode {
+        case .creating:
+            break // noop
+        case let .editing(_, metadata):
+            do {
+                try await detailEditState.deleteItem {
                     try await editor.deleteNote(id: metadata.id)
+                } finished: {
+                    isFinishedSubject.send()
                 }
-            } finished: {
-                isFinishedSubject.send()
+            } catch {
+                didEncounterErrorSubject.send(error)
             }
-        } catch {
-            didEncounterErrorSubject.send(error)
         }
     }
 
