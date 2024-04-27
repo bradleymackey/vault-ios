@@ -48,6 +48,68 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_saveChanges_creatingUpdatesEditor() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        let sut = makeSUTCreating(editor: editor)
+
+        let exp = expectation(description: "Wait for note creation")
+        editor.createNoteCalled = {
+            exp.fulfill()
+        }
+
+        await sut.saveChanges()
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
+    func test_saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
+        let sut = makeSUTCreating()
+        makeDirty(sut: sut)
+
+        await sut.saveChanges()
+
+        XCTAssertTrue(sut.editingModel.isDirty)
+    }
+
+    @MainActor
+    func test_saveChanges_creatingFinishesAfterCreation() async throws {
+        let sut = makeSUTCreating()
+
+        let publisher = sut.isFinishedPublisher().collectFirst(1)
+        let output: [Void] = try await awaitPublisher(publisher) {
+            await sut.saveChanges()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_saveChanges_creatingSendsErrorIfSaveError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.createNoteResult = .failure(anyNSError())
+        let sut = makeSUTCreating(editor: editor)
+
+        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
+        let output = try await awaitPublisher(publisher) {
+            await sut.saveChanges()
+        }
+
+        XCTAssertEqual(output.count, 1)
+    }
+
+    @MainActor
+    func test_saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
+        let editor = MockSecureNoteDetailEditor()
+        editor.createNoteResult = .failure(anyNSError())
+        let sut = makeSUTCreating(editor: editor)
+
+        await sut.saveChanges()
+
+        XCTAssertFalse(sut.isSaving)
+    }
+
+    @MainActor
     func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUT()
         makeDirty(sut: sut)
@@ -193,6 +255,13 @@ extension SecureNoteDetailViewModelTests {
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(mode: .editing(note: storedNote, metadata: storedMetadata), editor: editor)
+    }
+
+    @MainActor
+    private func makeSUTCreating(
+        editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
+    ) -> SecureNoteDetailViewModel {
+        SecureNoteDetailViewModel(mode: .creating, editor: editor)
     }
 
     @MainActor
