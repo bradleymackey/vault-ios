@@ -7,22 +7,32 @@ import VaultCore
 public final class SecureNoteDetailViewModel: DetailViewModel {
     public var editingModel: DetailEditingModel<SecureNoteDetailEdits>
 
-    private let storedNote: SecureNote
-    private let storedMetadata: StoredVaultItem.Metadata
+    public enum Mode {
+        case creating
+        case editing(note: SecureNote, metadata: StoredVaultItem.Metadata)
+    }
+
+    private let mode: Mode
     private let detailEditState = DetailEditState<SecureNoteDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
     private let editor: any SecureNoteDetailEditor
 
-    public init(storedNote: SecureNote, storedMetadata: StoredVaultItem.Metadata, editor: any SecureNoteDetailEditor) {
-        self.storedNote = storedNote
-        self.storedMetadata = storedMetadata
+    /// Create a view model for an existing note.
+    public init(mode: Mode, editor: any SecureNoteDetailEditor) {
+        self.mode = mode
         self.editor = editor
-        editingModel = .init(detail: .init(
-            description: storedMetadata.userDescription ?? "",
-            title: storedNote.title,
-            contents: storedNote.contents
-        ))
+
+        editingModel = switch mode {
+        case .creating:
+            .init(detail: .init())
+        case let .editing(note, metadata):
+            .init(detail: .init(
+                description: metadata.userDescription ?? "",
+                title: note.title,
+                contents: note.contents
+            ))
+        }
     }
 
     public var isInEditMode: Bool {
@@ -49,8 +59,13 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
     public func saveChanges() async {
         do {
             try await detailEditState.saveChanges {
-                try await editor.update(id: storedMetadata.id, item: storedNote, edits: editingModel.detail)
-                editingModel.didPersist()
+                switch mode {
+                case .creating:
+                    assertionFailure("Not implemented")
+                case let .editing(note, metadata):
+                    try await editor.update(id: metadata.id, item: note, edits: editingModel.detail)
+                    editingModel.didPersist()
+                }
             }
         } catch {
             didEncounterErrorSubject.send(error)
@@ -64,7 +79,12 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
     public func deleteNote() async {
         do {
             try await detailEditState.deleteItem {
-                try await editor.deleteNote(id: storedMetadata.id)
+                switch mode {
+                case .creating:
+                    assertionFailure("Not implemented")
+                case let .editing(_, metadata):
+                    try await editor.deleteNote(id: metadata.id)
+                }
             } finished: {
                 isFinishedSubject.send()
             }
@@ -111,11 +131,21 @@ extension SecureNoteDetailViewModel {
         Strings.shared
     }
 
-    public var createdDateValue: String {
-        storedMetadata.created.formatted(date: .abbreviated, time: .shortened)
+    public var createdDateValue: String? {
+        switch mode {
+        case .creating:
+            nil
+        case let .editing(_, metadata):
+            metadata.created.formatted(date: .abbreviated, time: .shortened)
+        }
     }
 
-    public var updatedDateValue: String {
-        storedMetadata.updated.formatted(date: .abbreviated, time: .shortened)
+    public var updatedDateValue: String? {
+        switch mode {
+        case .creating:
+            nil
+        case let .editing(_, metadata):
+            metadata.updated.formatted(date: .abbreviated, time: .shortened)
+        }
     }
 }

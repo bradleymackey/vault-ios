@@ -192,7 +192,7 @@ extension SecureNoteDetailViewModelTests {
         storedMetadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(storedNote: storedNote, storedMetadata: storedMetadata, editor: editor)
+        SecureNoteDetailViewModel(mode: .editing(note: storedNote, metadata: storedMetadata), editor: editor)
     }
 
     @MainActor
