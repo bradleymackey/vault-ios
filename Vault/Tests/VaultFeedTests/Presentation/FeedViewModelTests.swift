@@ -115,6 +115,64 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_createItem_updatesStore() async throws {
+        let store = StubStore()
+        let exp = expectation(description: "Wait for store update")
+        store.insertStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try await sut.create(item: uniqueWritableVaultItem())
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
+    func test_createItem_reloadsAfterUpdate() async throws {
+        let store = StubStore()
+        let exp = expectation(description: "Wait for store update")
+        store.retrieveStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try await sut.create(item: uniqueWritableVaultItem())
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
+    func test_createItem_doesNotReloadOnFailure() async throws {
+        let store = ErrorStubStore(error: anyNSError())
+        let exp = expectation(description: "Wait for store update")
+        exp.isInverted = true
+        store.retrieveStoreCalled = {
+            exp.fulfill()
+        }
+
+        let sut = makeSUT(store: store)
+
+        try? await sut.create(item: uniqueWritableVaultItem())
+
+        await fulfillment(of: [exp], timeout: 1.0)
+    }
+
+    @MainActor
+    func test_createItem_doesNotInvalidateAnyCaches() async throws {
+        let cache1 = VaultItemCacheSpy()
+        let cache2 = VaultItemCacheSpy()
+        let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
+
+        try await sut.create(item: uniqueWritableVaultItem())
+
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [])
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [])
+    }
+
+    @MainActor
     func test_updateCode_updatesStore() async throws {
         let store = StubStore()
         let exp = expectation(description: "Wait for store update")
@@ -146,7 +204,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_updateCode_doesNotReloadOnFailure() async throws {
-        var store = ErrorStubStore(error: anyNSError())
+        let store = ErrorStubStore(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
         exp.isInverted = true
         store.retrieveStoreCalled = {
@@ -205,7 +263,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_doesNotReloadOnFailure() async throws {
-        var store = ErrorStubStore(error: anyNSError())
+        let store = ErrorStubStore(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
         exp.isInverted = true
         store.retrieveStoreCalled = {
@@ -265,8 +323,10 @@ final class FeedViewModelTests: XCTestCase {
             .init()
         }
 
+        var insertStoreCalled: () -> Void = {}
         func insert(item _: StoredVaultItem.Write) async throws -> UUID {
-            UUID()
+            insertStoreCalled()
+            return UUID()
         }
 
         var updateStoreCalled: () -> Void = {}
@@ -280,8 +340,12 @@ final class FeedViewModelTests: XCTestCase {
         }
     }
 
-    private struct ErrorStubStore: VaultStoreReader, VaultStoreWriter {
+    private final class ErrorStubStore: VaultStoreReader, VaultStoreWriter {
         var error: any Error
+        init(error: any Error) {
+            self.error = error
+        }
+
         var retrieveStoreCalled: () -> Void = {}
         func retrieve() async throws -> [StoredVaultItem] {
             retrieveStoreCalled()
