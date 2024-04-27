@@ -17,18 +17,19 @@ struct VaultListView<
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
+    @State private var creatingItem: CreatingItem?
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Identifiable {
         case addItem
         case detail(UUID, StoredVaultItem)
+        case creatingItem
 
         var id: some Hashable {
             switch self {
-            case .addItem:
-                "add"
-            case let .detail(id, _):
-                id.uuidString
+            case .addItem: "add"
+            case .creatingItem: "creating"
+            case let .detail(id, _): id.uuidString
             }
         }
     }
@@ -69,7 +70,7 @@ struct VaultListView<
             switch visible {
             case .addItem:
                 NavigationStack {
-                    CodeAddView()
+                    CodeAddView(creatingItem: $creatingItem)
                 }
                 .presentationDetents([.medium])
                 .presentationDragIndicator(.visible)
@@ -81,6 +82,14 @@ struct VaultListView<
                         previewGenerator: viewGenerator
                     )
                 }
+            case .creatingItem:
+                Text("Creating item!")
+            }
+        }
+        .onChange(of: creatingItem) { _, newValue in
+            if let newValue {
+                modal = .creatingItem
+                creatingItem = nil // reset so we can detect further changes
             }
         }
         .onChange(of: scenePhase) { _, newValue in

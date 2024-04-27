@@ -4,6 +4,8 @@ import VaultUI
 struct CodeAddView: View {
     @Environment(\.dismiss) private var dismiss
 
+    @Binding var creatingItem: CreatingItem?
+
     var body: some View {
         ScrollView {
             gridOfItems
@@ -12,6 +14,7 @@ struct CodeAddView: View {
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
+                    creatingItem = nil
                     dismiss()
                 } label: {
                     Text("Cancel")
@@ -23,15 +26,24 @@ struct CodeAddView: View {
 
     private var gridOfItems: some View {
         LazyVGrid(columns: columns) {
-            NavigationLink(destination: Text("Coming Soon")) {
+            Button {
+                creatingItem = .otpCode
+                dismiss()
+            } label: {
                 row(icon: "qrcode", title: "2FA Code")
             }
 
-            NavigationLink(destination: Text("Coming Soon")) {
+            Button {
+                creatingItem = .secureNote
+                dismiss()
+            } label: {
                 row(icon: "text.alignleft", title: "Note")
             }
 
-            NavigationLink(destination: Text("Coming Soon")) {
+            Button {
+                creatingItem = .cryptoSeedPhrase
+                dismiss()
+            } label: {
                 row(icon: "bitcoinsign", title: "Seed Phrase")
             }
         }
