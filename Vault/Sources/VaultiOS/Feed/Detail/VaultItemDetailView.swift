@@ -58,7 +58,11 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             if viewModel.editingModel.isDirty {
                 saveDirtyChangesItem
             } else {
-                doneItem
+                // Don't show the "done" item during initial creation if not dirty
+                // The only option should be to cancel.
+                if !viewModel.isInitialCreation {
+                    doneItem
+                }
             }
         }
     }
