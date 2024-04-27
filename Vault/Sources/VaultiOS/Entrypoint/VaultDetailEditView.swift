@@ -9,8 +9,6 @@ struct VaultDetailEditView<
 >: View
     where PreviewGenerator.PreviewItem == VaultItem
 {
-    @Environment(\.dismiss) var dismiss
-
     var feedViewModel: FeedViewModel<Store>
     var storedItem: StoredVaultItem
     var previewGenerator: PreviewGenerator

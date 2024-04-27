@@ -23,12 +23,12 @@ struct VaultListView<
     enum Modal: Identifiable {
         case addItem
         case detail(UUID, StoredVaultItem)
-        case creatingItem
+        case creatingItem(CreatingItem)
 
         var id: some Hashable {
             switch self {
             case .addItem: "add"
-            case .creatingItem: "creating"
+            case let .creatingItem(item): "creating" + String(item.hashValue)
             case let .detail(id, _): id.uuidString
             }
         }
@@ -82,13 +82,18 @@ struct VaultListView<
                         previewGenerator: viewGenerator
                     )
                 }
-            case .creatingItem:
-                Text("Creating item!")
+            case let .creatingItem(creatingItem):
+                NavigationStack {
+                    VaultDetailCreateView(
+                        feedViewModel: feedViewModel,
+                        creatingItem: creatingItem
+                    )
+                }
             }
         }
         .onChange(of: creatingItem) { _, newValue in
             if let newValue {
-                modal = .creatingItem
+                modal = .creatingItem(newValue)
                 creatingItem = nil // reset so we can detect further changes
             }
         }
