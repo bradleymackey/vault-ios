@@ -44,12 +44,10 @@ struct SecureNoteDetailView: View {
 
     private var noteMetadataContentSection: some View {
         Section {
-            if viewModel.editingModel.detail.title.isNotEmpty {
-                Text(viewModel.editingModel.detail.title)
-                    .font(.title.bold())
-                    .lineLimit(5)
-                    .frame(maxWidth: .infinity)
-            }
+            Text(viewModel.visibleTitle)
+                .font(.title.bold())
+                .lineLimit(5)
+                .frame(maxWidth: .infinity)
 
             if viewModel.editingModel.detail.description.isNotEmpty {
                 Text(viewModel.editingModel.detail.description)

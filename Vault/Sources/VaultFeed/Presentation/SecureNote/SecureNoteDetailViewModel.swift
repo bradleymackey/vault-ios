@@ -49,6 +49,15 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         detailEditState.isSaving
     }
 
+    /// The configured title of the note, as viewed by the user.
+    public var visibleTitle: String {
+        if editingModel.detail.title.isNotEmpty {
+            editingModel.detail.title
+        } else {
+            strings.noteEmptyTitleTitle
+        }
+    }
+
     public var isInitialCreation: Bool {
         switch mode {
         case .creating: true
@@ -139,6 +148,7 @@ extension SecureNoteDetailViewModel {
         public let noteTitleExample = localized(key: "noteDetail.field.noteTitle.example")
         public let noteDescription = localized(key: "noteDetail.field.noteDescription.title")
         public let noteContentsTitle = localized(key: "noteDetail.field.noteContents.title")
+        public let noteEmptyTitleTitle = localized(key: "noteDetail.field.noteTitleEmpty.title")
     }
 
     public var strings: Strings {

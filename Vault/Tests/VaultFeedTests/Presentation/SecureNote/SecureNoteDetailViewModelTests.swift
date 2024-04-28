@@ -308,6 +308,22 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertTrue(sut.shouldShowDeleteButton)
     }
+
+    @MainActor
+    func test_visibleTitle_isPlaceholderIfUserTitleIsEmpty() {
+        let sut = makeSUT()
+        sut.editingModel.detail.title = ""
+
+        XCTAssertEqual(sut.visibleTitle, "Untitled Note")
+    }
+
+    @MainActor
+    func test_visibleTitle_isUserTitleIfNotEmpty() {
+        let sut = makeSUT()
+        sut.editingModel.detail.title = "my title"
+
+        XCTAssertEqual(sut.visibleTitle, "my title")
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
@@ -324,6 +340,13 @@ extension SecureNoteDetailViewModelTests {
     private func makeSUTCreating(
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
+        SecureNoteDetailViewModel(mode: .creating, editor: editor)
+    }
+
+    @MainActor
+    private func makeSUT(editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor())
+        -> SecureNoteDetailViewModel
+    {
         SecureNoteDetailViewModel(mode: .creating, editor: editor)
     }
 

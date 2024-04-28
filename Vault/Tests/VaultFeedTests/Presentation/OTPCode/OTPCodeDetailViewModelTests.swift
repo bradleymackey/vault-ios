@@ -199,6 +199,22 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(editing.detail.issuerTitle, "issuer test")
         XCTAssertEqual(editing.detail.description, "description test")
     }
+
+    @MainActor
+    func test_visibleIssuerTitle_isPlaceholderIfIssuerEmptyString() {
+        let sut = makeSUT()
+        sut.editingModel.detail.issuerTitle = ""
+
+        XCTAssertEqual(sut.visibleIssuerTitle, "Unnamed")
+    }
+
+    @MainActor
+    func test_visibleIssuerTitle_isUserDefinedTitleIfNotEmptyString() {
+        let sut = makeSUT()
+        sut.editingModel.detail.issuerTitle = "my issuer"
+
+        XCTAssertEqual(sut.visibleIssuerTitle, "my issuer")
+    }
 }
 
 extension OTPCodeDetailViewModelTests {

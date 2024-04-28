@@ -73,7 +73,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 )
             } else {
                 VStack(alignment: .center, spacing: 2) {
-                    Text(viewModel.editingModel.detail.issuerTitle)
+                    Text(viewModel.visibleIssuerTitle)
                         .font(.title.bold())
                         .lineLimit(5)
                     Text(viewModel.editingModel.detail.accountNameTitle)

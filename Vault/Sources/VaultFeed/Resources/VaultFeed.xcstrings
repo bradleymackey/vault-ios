@@ -78,6 +78,18 @@
         }
       }
     },
+    "codeDetail.field.siteName.empty.title" : {
+      "comment" : "User visible title that is used when the user defined title is empty",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unnamed"
+          }
+        }
+      }
+    },
     "codeDetail.field.siteName.title" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -471,6 +483,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Title"
+          }
+        }
+      }
+    },
+    "noteDetail.field.noteTitleEmpty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untitled Note"
           }
         }
       }

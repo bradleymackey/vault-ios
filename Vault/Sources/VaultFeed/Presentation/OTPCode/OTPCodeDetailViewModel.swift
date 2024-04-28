@@ -43,6 +43,14 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         detailEditState.isInEditMode
     }
 
+    public var visibleIssuerTitle: String {
+        if editingModel.detail.issuerTitle.isNotEmpty {
+            editingModel.detail.issuerTitle
+        } else {
+            strings.siteNameEmptyTitle
+        }
+    }
+
     public var detailMenuItems: [DetailMenuItem] {
         let details = DetailMenuItem(
             id: "detail",
@@ -120,6 +128,7 @@ extension OTPCodeDetailViewModel {
         public let cancelEditsTitle = localized(key: "feedViewModel.cancelEdits.title")
         public let startEditingTitle = localized(key: "feedViewModel.edit.title")
         public let siteNameTitle = localized(key: "codeDetail.field.siteName.title")
+        public let siteNameEmptyTitle = localized(key: "codeDetail.field.siteName.empty.title")
         public let accountNameTitle = localized(key: "codeDetail.field.accountName.title")
         public let accountNameExample = localized(key: "codeDetail.field.accountName.example")
         public let descriptionTitle = localized(key: "codeDetail.description.title")
