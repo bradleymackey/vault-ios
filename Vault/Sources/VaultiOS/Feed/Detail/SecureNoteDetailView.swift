@@ -42,17 +42,9 @@ struct SecureNoteDetailView: View {
 
     // MARK: Title & Description
 
-    private var titlePreviewText: String {
-        if viewModel.editingModel.detail.title.isEmpty {
-            viewModel.strings.noteEmptyTitleTitle
-        } else {
-            viewModel.editingModel.detail.title
-        }
-    }
-
     private var noteMetadataContentSection: some View {
         Section {
-            Text(titlePreviewText)
+            Text(viewModel.visibleTitle)
                 .font(.title.bold())
                 .lineLimit(5)
                 .frame(maxWidth: .infinity)

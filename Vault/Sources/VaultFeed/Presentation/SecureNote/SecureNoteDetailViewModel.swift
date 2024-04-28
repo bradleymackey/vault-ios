@@ -49,6 +49,15 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         detailEditState.isSaving
     }
 
+    /// The configured title of the note, as viewed by the user.
+    public var visibleTitle: String {
+        if editingModel.detail.title.isNotEmpty {
+            editingModel.detail.title
+        } else {
+            strings.noteEmptyTitleTitle
+        }
+    }
+
     public var isInitialCreation: Bool {
         switch mode {
         case .creating: true
