@@ -21,7 +21,7 @@ public struct SecureNotePreviewView: View {
     private var titleLabel: some View {
         HStack(alignment: .top, spacing: 4) {
             Image(systemName: "doc.text.fill")
-            Text(viewModel.title)
+            Text(viewModel.visibleTitle)
                 .lineLimit(2)
         }
         .font(.callout.bold())
