@@ -24,8 +24,16 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
     }
 
     func test_layout_titleAndDescriptionTruncation() {
-        let description = Array(repeating: "Testing", count: 50).joined(separator: " ")
+        let description = Array(repeating: "Testing description", count: 50).joined(separator: " ")
         let sut = makeSUT(title: "Title", description: description)
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
+    func test_layout_titleAndDescriptionTruncatesTitleFirst() {
+        let title = Array(repeating: "Title", count: 50).joined(separator: " ")
+        let description = Array(repeating: "Description", count: 50).joined(separator: " ")
+        let sut = makeSUT(title: title, description: description)
 
         assertSnapshot(matching: sut, as: .image)
     }

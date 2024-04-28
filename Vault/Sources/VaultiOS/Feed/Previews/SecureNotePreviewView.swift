@@ -8,21 +8,24 @@ public struct SecureNotePreviewView: View {
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             titleLabel
+                .layoutPriority(100)
             if let description = viewModel.description {
                 descriptionLabel(text: description)
+                    .layoutPriority(99)
             }
             Spacer()
         }
         .multilineTextAlignment(.leading)
         .padding(2)
         .aspectRatio(1, contentMode: .fill)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var titleLabel: some View {
         HStack(alignment: .top, spacing: 4) {
             Image(systemName: "doc.text.fill")
             Text(viewModel.visibleTitle)
-                .lineLimit(2)
+            Spacer()
         }
         .font(.callout.bold())
         .minimumScaleFactor(0.8)
