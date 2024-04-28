@@ -475,6 +475,17 @@
         }
       }
     },
+    "noteDetail.field.noteTitleEmpty.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Untitled Note"
+          }
+        }
+      }
+    },
     "noteDetail.listSection.created.title" : {
       "extractionState" : "migrated",
       "localizations" : {

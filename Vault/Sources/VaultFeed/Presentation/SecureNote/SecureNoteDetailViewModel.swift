@@ -139,6 +139,7 @@ extension SecureNoteDetailViewModel {
         public let noteTitleExample = localized(key: "noteDetail.field.noteTitle.example")
         public let noteDescription = localized(key: "noteDetail.field.noteDescription.title")
         public let noteContentsTitle = localized(key: "noteDetail.field.noteContents.title")
+        public let noteEmptyTitleTitle = localized(key: "noteDetail.field.noteTitleEmpty.title")
     }
 
     public var strings: Strings {
