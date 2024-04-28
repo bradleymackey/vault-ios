@@ -10,6 +10,14 @@ public final class OTPCodePreviewViewModel {
     public let issuer: String?
     public private(set) var code: OTPCodeState = .notReady
 
+    public var visibleIssuer: String {
+        if let issuer, issuer.isNotEmpty {
+            issuer
+        } else {
+            localized(key: "codeDetail.field.siteName.empty.title")
+        }
+    }
+
     private var cancellables = Set<AnyCancellable>()
 
     public init(

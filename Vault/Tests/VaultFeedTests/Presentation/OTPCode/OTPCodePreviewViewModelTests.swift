@@ -62,17 +62,32 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         XCTAssertEqual(sut.code, .obfuscated)
     }
 
+    @MainActor
+    func test_visibleIssuer_isPlaceholderIfIssuerEmpty() {
+        let (_, sut) = makeSUT(issuer: "")
+
+        XCTAssertEqual(sut.visibleIssuer, "Unnamed")
+    }
+
+    @MainActor
+    func test_visibleIssuer_isIssuerIfNotEmpty() {
+        let (_, sut) = makeSUT(issuer: "my issuer")
+
+        XCTAssertEqual(sut.visibleIssuer, "my issuer")
+    }
+
     // MARK: - Helpers
 
     @MainActor
     private func makeSUT(
+        issuer: String = "any",
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (MockCodeRenderer, OTPCodePreviewViewModel) {
         let renderer = MockCodeRenderer()
         let viewModel = OTPCodePreviewViewModel(
             accountName: "any",
-            issuer: "any",
+            issuer: issuer,
             renderer: renderer
         )
         trackForMemoryLeaks(viewModel, file: file, line: line)

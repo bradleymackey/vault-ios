@@ -43,7 +43,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         HStack(alignment: .top, spacing: 6) {
             icon
                 .padding(.top, 2)
-            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.issuer)
+            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.visibleIssuer)
             Spacer()
         }
         .padding(.horizontal, 2)

@@ -205,7 +205,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT()
         sut.editingModel.detail.issuerTitle = ""
 
-        XCTAssertEqual(sut.visibleIssuerTitle, "Unnamed Code")
+        XCTAssertEqual(sut.visibleIssuerTitle, "Unnamed")
     }
 
     @MainActor
