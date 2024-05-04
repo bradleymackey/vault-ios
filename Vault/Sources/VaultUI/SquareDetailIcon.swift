@@ -19,11 +19,11 @@ public struct SquareDetailIcon: View {
             ZStack {
                 color
                 image
-                    .font(.title)
+                    .font(.headline)
                     .foregroundStyle(.white)
             }
             .aspectRatio(1, contentMode: .fit)
-            .clipShape(RoundedRectangle(cornerRadius: 25.0))
+            .clipShape(RoundedRectangle(cornerRadius: 8.0))
             .frame(maxWidth: 100)
             
             labels
@@ -33,11 +33,10 @@ public struct SquareDetailIcon: View {
     private var labels: some View {
         VStack(alignment: .center) {
             Text(title)
-                .font(.headline)
+                .font(.callout)
                 .foregroundStyle(.primary)
             Text(subtitle)
                 .font(.footnote)
-                .fontDesign(.monospaced)
                 .foregroundStyle(.secondary)
         }
     }
