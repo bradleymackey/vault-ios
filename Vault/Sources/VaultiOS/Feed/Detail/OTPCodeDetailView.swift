@@ -128,25 +128,15 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var metadataSection: some View {
         Section {
             ForEach(viewModel.detailMenuItems) { item in
-                DisclosureGroup {
-                    ForEach(item.entries) { entry in
-                        Label {
-                            LabeledContent(entry.title, value: entry.detail)
-                        } icon: {
-                            RowIcon(icon: Image(systemName: entry.systemIconName), color: .secondary)
-                                .foregroundColor(.white)
-                        }
-                    }
-                } label: {
+                ForEach(item.entries) { entry in
                     Label {
-                        Text(item.title)
+                        LabeledContent(entry.title, value: entry.detail)
                     } icon: {
-                        RowIcon(icon: Image(systemName: item.systemIconName), color: .blue)
+                        RowIcon(icon: Image(systemName: entry.systemIconName), color: .accentColor)
                             .foregroundColor(.white)
                     }
                 }
             }
-            .padding(.vertical, 2)
         } header: {
             VStack(alignment: .center) {
                 copyableViewGenerator().makeVaultPreviewView(
@@ -159,6 +149,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .modifier(HorizontallyCenter())
             }
             .textCase(.none)
+            .padding(.bottom, 32)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 FooterInfoLabel(
