@@ -213,7 +213,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
             // noop
         }
 
-        func update(id _: UUID, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
+        func updateCode(id _: UUID, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
             // noop
         }
 

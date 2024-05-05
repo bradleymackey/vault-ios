@@ -68,7 +68,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             exp.fulfill()
         }
 
-        try await sut.update(id: item.metadata.id, item: code, edits: edits)
+        try await sut.updateCode(id: item.metadata.id, item: code, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -77,7 +77,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: uniqueCode(), edits: .init()))
+        await XCTAssertThrowsError(try await sut.updateCode(id: UUID(), item: uniqueCode(), edits: .init()))
     }
 
     func test_deleteCode_deletesFromFeed() async throws {
@@ -126,7 +126,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             }
         }
 
-        try await sut.create(initialEdits: initialEdits)
+        try await sut.createNote(initialEdits: initialEdits)
 
         await fulfillment(of: [exp])
     }
@@ -135,7 +135,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.create(initialEdits: .init()))
+        await XCTAssertThrowsError(try await sut.createNote(initialEdits: .init()))
     }
 
     func test_updateNote_updatesNoteInFeed() async throws {
@@ -163,7 +163,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             }
         }
 
-        try await sut.update(id: item.metadata.id, item: note, edits: edits)
+        try await sut.updateNote(id: item.metadata.id, item: note, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -172,7 +172,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: anyStoredNote(), edits: .init()))
+        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anyStoredNote(), edits: .init()))
     }
 
     func test_deleteNote_deletesFromFeed() async throws {

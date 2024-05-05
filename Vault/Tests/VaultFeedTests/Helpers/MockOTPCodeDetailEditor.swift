@@ -21,7 +21,7 @@ class MockOTPCodeDetailEditor: OTPCodeDetailEditor {
 
     var updateCodeResult: Result<Void, any Error> = .success(())
     var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
-    func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+    func updateCode(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
         operationsPerformed.append(.update)
         await updateCodeCalled(id, item, edits)
         try updateCodeResult.get()

@@ -77,7 +77,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     public func saveChanges() async {
         do {
             try await detailEditState.saveChanges {
-                try await editor.update(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
+                try await editor.updateCode(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
                 editingModel.didPersist()
             }
         } catch {
