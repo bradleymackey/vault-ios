@@ -11,6 +11,34 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         XCTAssertTrue(feed.calls.isEmpty)
     }
 
+    func test_createCode_createsOTPCodeInFeed_withDemoDataForNow() async throws {
+        let feed = MockVaultFeed()
+        let sut = makeSUT(feed: feed)
+        let initialEdits = OTPCodeDetailEdits()
+
+        let exp = expectation(description: "Wait for creation")
+        feed.createCalled = { data in
+            defer { exp.fulfill() }
+            switch data.item {
+            case let .otpCode(code):
+                XCTAssertEqual(code.type, .totp(period: 30), "This is just a placeholder for now")
+            default:
+                XCTFail("invalid kind")
+            }
+        }
+
+        try await sut.createCode(initialEdits: initialEdits)
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_createCode_propagatesFailureOnError() async throws {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.createCode(initialEdits: .init()))
+    }
+
     func test_updateCode_translatesCodeDataForCall() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
