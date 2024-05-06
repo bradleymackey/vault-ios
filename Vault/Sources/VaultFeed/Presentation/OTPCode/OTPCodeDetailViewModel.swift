@@ -163,6 +163,7 @@ extension OTPCodeDetailViewModel {
         public let accountNameExample = localized(key: "codeDetail.field.accountName.example")
         public let descriptionTitle = localized(key: "codeDetail.description.title")
         public let descriptionSubtitle = localized(key: "codeDetail.description.subtitle")
+        public let codeDetailsSectionTitle = localized(key: "codeDetail.section.codeDetails")
     }
 
     public var strings: Strings {

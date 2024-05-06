@@ -200,6 +200,17 @@
         }
       }
     },
+    "codeDetail.section.codeDetails" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code Details"
+          }
+        }
+      }
+    },
     "codeDetail.title" : {
       "extractionState" : "migrated",
       "localizations" : {

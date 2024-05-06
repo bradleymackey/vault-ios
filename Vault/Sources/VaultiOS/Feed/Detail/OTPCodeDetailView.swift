@@ -47,6 +47,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             if viewModel.isInEditMode {
                 accountNameEditingSection
                 descriptionEditingSection
+                if viewModel.isInitialCreation {
+                    codeMetadataEditingSection
+                    codeSecretEditingSection
+                }
             } else if case let .editing(code, metadata) = viewModel.mode {
                 metadataSection(code: code, metadata: metadata)
             }
@@ -129,6 +133,53 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     .padding()
                     .padding(.vertical, 16)
             }
+        }
+    }
+
+    private var codeMetadataEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.codeType) {
+                ForEach(OTPAuthType.Kind.allCases) { authType in
+                    Text("\(authType)")
+                        .tag(authType)
+                }
+            } label: {
+                Text("Type")
+            }
+
+            switch viewModel.editingModel.detail.codeType {
+            case .totp:
+                Stepper(value: $viewModel.editingModel.detail.totpPeriodLength, in: 1 ... UInt64(Int.max)) {
+                    LabeledContent("TOTP Period (s)", value: "\(viewModel.editingModel.detail.totpPeriodLength)")
+                }
+            case .hotp:
+                Stepper(value: $viewModel.editingModel.detail.hotpCounterValue, in: 0 ... UInt64(Int.max)) {
+                    LabeledContent("HOTP Counter", value: "\(viewModel.editingModel.detail.hotpCounterValue)")
+                }
+            }
+
+            Picker(selection: $viewModel.editingModel.detail.algorithm) {
+                ForEach(OTPAuthAlgorithm.allCases) { algorithm in
+                    Text("\(algorithm)")
+                        .tag(algorithm)
+                }
+            } label: {
+                Text("Algorithm")
+            }
+
+            Stepper(value: $viewModel.editingModel.detail.numberOfDigits, in: 1 ... UInt16.max) {
+                LabeledContent("Number of Digits", value: "\(viewModel.editingModel.detail.numberOfDigits)")
+            }
+        } header: {
+            Text(viewModel.strings.codeDetailsSectionTitle)
+        }
+    }
+
+    private var codeSecretEditingSection: some View {
+        Section {
+            Text("TODO: secret input")
+        } header: {
+            Text("Secret")
         }
     }
 

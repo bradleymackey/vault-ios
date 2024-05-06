@@ -58,20 +58,24 @@ extension OTPAuthDigits {
     public static var `default`: OTPAuthDigits { .init(value: 6) }
 }
 
-public enum OTPAuthAlgorithm: Equatable, Hashable {
+public enum OTPAuthAlgorithm: Equatable, Hashable, Identifiable, CaseIterable {
     case sha1
     case sha256
     case sha512
 
     public static var `default`: OTPAuthAlgorithm { .sha1 }
+
+    public var id: Self { self }
 }
 
 public enum OTPAuthType: Equatable, Hashable {
     case totp(period: UInt64 = 30)
     case hotp(counter: UInt64 = 0)
 
-    public enum Kind: Equatable {
+    public enum Kind: Equatable, Hashable, Identifiable, CaseIterable {
         case totp, hotp
+
+        public var id: Self { self }
     }
 
     public var kind: Kind {
