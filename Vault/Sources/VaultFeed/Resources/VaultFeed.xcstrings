@@ -78,6 +78,17 @@
         }
       }
     },
+    "codeDetail.field.hotpCounter.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HOTP Counter"
+          }
+        }
+      }
+    },
     "codeDetail.field.siteName.empty.title" : {
       "comment" : "User visible title that is used when the user defined title is empty",
       "extractionState" : "manual",
@@ -97,6 +108,50 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Site Name"
+          }
+        }
+      }
+    },
+    "codeDetail.field.totpPeriod.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "TOTP Period (s)"
+          }
+        }
+      }
+    },
+    "codeDetail.input.algorithm.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Algorithm"
+          }
+        }
+      }
+    },
+    "codeDetail.input.codeType.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Type"
+          }
+        }
+      }
+    },
+    "codeDetail.input.numberOfDigits.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Number of Digits"
           }
         }
       }

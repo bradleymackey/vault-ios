@@ -140,35 +140,44 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         Section {
             Picker(selection: $viewModel.editingModel.detail.codeType) {
                 ForEach(OTPAuthType.Kind.allCases) { authType in
-                    Text("\(authType)")
+                    Text(viewModel.strings.codeKindTitle(kind: authType))
                         .tag(authType)
                 }
             } label: {
-                Text("Type")
+                Text(viewModel.strings.inputCodeTypeTitle)
             }
 
             switch viewModel.editingModel.detail.codeType {
             case .totp:
                 Stepper(value: $viewModel.editingModel.detail.totpPeriodLength, in: 1 ... UInt64(Int.max)) {
-                    LabeledContent("TOTP Period (s)", value: "\(viewModel.editingModel.detail.totpPeriodLength)")
+                    LabeledContent(
+                        viewModel.strings.inputTotpPeriodTitle,
+                        value: "\(viewModel.editingModel.detail.totpPeriodLength)"
+                    )
                 }
             case .hotp:
                 Stepper(value: $viewModel.editingModel.detail.hotpCounterValue, in: 0 ... UInt64(Int.max)) {
-                    LabeledContent("HOTP Counter", value: "\(viewModel.editingModel.detail.hotpCounterValue)")
+                    LabeledContent(
+                        viewModel.strings.inputHotpCounterTitle,
+                        value: "\(viewModel.editingModel.detail.hotpCounterValue)"
+                    )
                 }
             }
 
             Picker(selection: $viewModel.editingModel.detail.algorithm) {
                 ForEach(OTPAuthAlgorithm.allCases) { algorithm in
-                    Text("\(algorithm)")
+                    Text(algorithm.stringValue)
                         .tag(algorithm)
                 }
             } label: {
-                Text("Algorithm")
+                Text(viewModel.strings.inputAlgorithmTitle)
             }
 
             Stepper(value: $viewModel.editingModel.detail.numberOfDigits, in: 1 ... UInt16.max) {
-                LabeledContent("Number of Digits", value: "\(viewModel.editingModel.detail.numberOfDigits)")
+                LabeledContent(
+                    viewModel.strings.inputNumberOfDigitsTitle,
+                    value: "\(viewModel.editingModel.detail.numberOfDigits)"
+                )
             }
         } header: {
             Text(viewModel.strings.codeDetailsSectionTitle)

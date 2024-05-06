@@ -66,6 +66,14 @@ public enum OTPAuthAlgorithm: Equatable, Hashable, Identifiable, CaseIterable {
     public static var `default`: OTPAuthAlgorithm { .sha1 }
 
     public var id: Self { self }
+
+    public var stringValue: String {
+        switch self {
+        case .sha1: "SHA1"
+        case .sha256: "SHA256"
+        case .sha512: "SHA512"
+        }
+    }
 }
 
 public enum OTPAuthType: Equatable, Hashable {

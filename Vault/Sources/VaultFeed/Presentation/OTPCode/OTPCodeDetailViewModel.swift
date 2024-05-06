@@ -164,6 +164,18 @@ extension OTPCodeDetailViewModel {
         public let descriptionTitle = localized(key: "codeDetail.description.title")
         public let descriptionSubtitle = localized(key: "codeDetail.description.subtitle")
         public let codeDetailsSectionTitle = localized(key: "codeDetail.section.codeDetails")
+        public let inputTotpPeriodTitle = localized(key: "codeDetail.field.totpPeriod.title")
+        public let inputHotpCounterTitle = localized(key: "codeDetail.field.hotpCounter.title")
+        public let inputCodeTypeTitle = localized(key: "codeDetail.input.codeType.title")
+        public let inputAlgorithmTitle = localized(key: "codeDetail.input.algorithm.title")
+        public let inputNumberOfDigitsTitle = localized(key: "codeDetail.input.numberOfDigits.title")
+
+        public func codeKindTitle(kind: OTPAuthType.Kind) -> String {
+            switch kind {
+            case .totp: localized(key: "codeDetail.typeName.totp")
+            case .hotp: localized(key: "codeDetail.typeName.hotp")
+            }
+        }
     }
 
     public var strings: Strings {
