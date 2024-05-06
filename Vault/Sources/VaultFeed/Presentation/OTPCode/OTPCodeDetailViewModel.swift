@@ -8,31 +8,45 @@ import VaultCore
 public final class OTPCodeDetailViewModel: DetailViewModel {
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
-    public let storedCode: OTPAuthCode
-    public let storedMetdata: StoredVaultItem.Metadata
+    public enum Mode {
+        case creating
+        case editing(code: OTPAuthCode, metadata: StoredVaultItem.Metadata)
+    }
+
+    private let mode: Mode
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
 
     public init(
-        storedCode: OTPAuthCode,
-        storedMetadata: StoredVaultItem.Metadata,
+        mode: Mode,
         editor: any OTPCodeDetailEditor
     ) {
-        self.storedCode = storedCode
-        storedMetdata = storedMetadata
+        self.mode = mode
         self.editor = editor
-        let detailEdits = OTPCodeDetailEdits(
-            hydratedFromCode: storedCode,
-            userDescription: storedMetadata.userDescription ?? ""
-        )
-        editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: detailEdits)
+
+        editingModel = switch mode {
+        case .creating:
+            .init(detail: .new())
+        case let .editing(code, metadata):
+            .init(detail: OTPCodeDetailEdits(
+                hydratedFromCode: code,
+                userDescription: metadata.userDescription ?? ""
+            ))
+        }
+
+        switch mode {
+        case .creating: startEditing()
+        case .editing: break
+        }
     }
 
     public var isInitialCreation: Bool {
-        // TODO: define initial creation state
-        false
+        switch mode {
+        case .creating: true
+        case .editing: false
+        }
     }
 
     public var isSaving: Bool {
@@ -52,13 +66,18 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     }
 
     public var detailMenuItems: [DetailMenuItem] {
-        let details = DetailMenuItem(
-            id: "detail",
-            title: localized(key: "codeDetail.listSection.details.title"),
-            systemIconName: "books.vertical.fill",
-            entries: Self.makeInfoEntries(storedCode)
-        )
-        return [details]
+        switch mode {
+        case .creating:
+            return []
+        case let .editing(code, _):
+            let details = DetailMenuItem(
+                id: "detail",
+                title: localized(key: "codeDetail.listSection.details.title"),
+                systemIconName: "books.vertical.fill",
+                entries: Self.makeInfoEntries(code)
+            )
+            return [details]
+        }
     }
 
     public func didEncounterErrorPublisher() -> AnyPublisher<any Error, Never> {
@@ -77,8 +96,14 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     public func saveChanges() async {
         do {
             try await detailEditState.saveChanges {
-                try await editor.updateCode(id: storedMetdata.id, item: storedCode, edits: editingModel.detail)
-                editingModel.didPersist()
+                switch mode {
+                case .creating:
+                    try await editor.createCode(initialEdits: editingModel.detail)
+                    isFinishedSubject.send()
+                case let .editing(code, metadata):
+                    try await editor.updateCode(id: metadata.id, item: code, edits: editingModel.detail)
+                    editingModel.didPersist()
+                }
             }
         } catch {
             didEncounterErrorSubject.send(error)
@@ -90,14 +115,19 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     }
 
     public func deleteCode() async {
-        do {
-            try await detailEditState.deleteItem {
-                try await editor.deleteCode(id: storedMetdata.id)
-            } finished: {
-                isFinishedSubject.send()
+        switch mode {
+        case .creating:
+            break // noop
+        case let .editing(_, metadata):
+            do {
+                try await detailEditState.deleteItem {
+                    try await editor.deleteCode(id: metadata.id)
+                } finished: {
+                    isFinishedSubject.send()
+                }
+            } catch {
+                didEncounterErrorSubject.send(error)
             }
-        } catch {
-            didEncounterErrorSubject.send(error)
         }
     }
 
@@ -139,12 +169,22 @@ extension OTPCodeDetailViewModel {
         Strings.shared
     }
 
-    public var createdDateValue: String {
-        storedMetdata.created.formatted(date: .abbreviated, time: .shortened)
+    public var createdDateValue: String? {
+        switch mode {
+        case .creating:
+            nil
+        case let .editing(_, metadata):
+            metadata.created.formatted(date: .abbreviated, time: .shortened)
+        }
     }
 
-    public var updatedDateValue: String {
-        storedMetdata.updated.formatted(date: .abbreviated, time: .shortened)
+    public var updatedDateValue: String? {
+        switch mode {
+        case .creating:
+            nil
+        case let .editing(_, metadata):
+            metadata.updated.formatted(date: .abbreviated, time: .shortened)
+        }
     }
 }
 

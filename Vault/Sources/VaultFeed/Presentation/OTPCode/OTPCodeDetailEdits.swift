@@ -78,3 +78,23 @@ public struct OTPCodeDetailEdits: Equatable {
         )
     }
 }
+
+// MARK: - Helpers
+
+extension OTPCodeDetailEdits {
+    /// Create an `OTPCodeDetailEdits` in a blank state with initial input values, for creation.
+    /// All initial values are sensible defaults.
+    public static func new() -> OTPCodeDetailEdits {
+        .init(
+            codeType: .totp,
+            totpPeriodLength: 30,
+            hotpCounterValue: 0,
+            secret: .empty(),
+            algorithm: .sha1,
+            numberOfDigits: 6,
+            issuerTitle: "",
+            accountNameTitle: "",
+            description: ""
+        )
+    }
+}
