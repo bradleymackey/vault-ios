@@ -23,11 +23,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         self.storedCode = storedCode
         storedMetdata = storedMetadata
         self.editor = editor
-        editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: .init(
-            issuerTitle: storedCode.data.issuer ?? "",
-            accountNameTitle: storedCode.data.accountName,
-            description: storedMetadata.userDescription ?? ""
-        ))
+        let detailEdits = OTPCodeDetailEdits(
+            hydratedFromCode: storedCode,
+            userDescription: storedMetadata.userDescription ?? ""
+        )
+        editingModel = DetailEditingModel<OTPCodeDetailEdits>(detail: detailEdits)
     }
 
     public var isInitialCreation: Bool {

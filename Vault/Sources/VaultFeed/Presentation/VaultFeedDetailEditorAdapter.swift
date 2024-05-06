@@ -12,10 +12,9 @@ public struct VaultFeedDetailEditorAdapter {
 
 extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
     public func createCode(initialEdits: OTPCodeDetailEdits) async throws {
-        let newCode = OTPAuthCode(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "TODO"))
         let newCodeVaultItem = StoredVaultItem.Write(
             userDescription: initialEdits.description,
-            item: .otpCode(newCode)
+            item: .otpCode(initialEdits.asOTPAuthCode())
         )
 
         try await vaultFeed.create(item: newCodeVaultItem)
