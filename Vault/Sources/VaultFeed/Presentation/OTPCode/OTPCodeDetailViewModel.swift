@@ -13,7 +13,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         case editing(code: OTPAuthCode, metadata: StoredVaultItem.Metadata)
     }
 
-    private let mode: Mode
+    public let mode: Mode
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()

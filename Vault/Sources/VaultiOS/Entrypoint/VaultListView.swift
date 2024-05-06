@@ -86,7 +86,8 @@ struct VaultListView<
                 NavigationStack {
                     VaultDetailCreateView(
                         feedViewModel: feedViewModel,
-                        creatingItem: creatingItem
+                        creatingItem: creatingItem,
+                        previewGenerator: viewGenerator
                     )
                 }
             }

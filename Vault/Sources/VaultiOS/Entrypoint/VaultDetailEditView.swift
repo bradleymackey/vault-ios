@@ -17,7 +17,7 @@ struct VaultDetailEditView<
         switch storedItem.item {
         case let .otpCode(storedCode):
             OTPCodeDetailView(
-                code: storedCode,
+                editingExistingCode: storedCode,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 previewGenerator: previewGenerator

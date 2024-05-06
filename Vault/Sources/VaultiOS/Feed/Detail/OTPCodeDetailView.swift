@@ -12,12 +12,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var previewGenerator: PreviewGenerator
 
     init(
-        code: OTPAuthCode,
+        editingExistingCode code: OTPAuthCode,
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator
     ) {
-        _viewModel = .init(initialValue: .init(storedCode: code, storedMetadata: storedMetadata, editor: editor))
+        _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
+        self.previewGenerator = previewGenerator
+    }
+
+    init(newCodeWithEditor editor: any OTPCodeDetailEditor, previewGenerator: PreviewGenerator) {
+        _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
         self.previewGenerator = previewGenerator
     }
 
@@ -42,8 +47,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             if viewModel.isInEditMode {
                 accountNameEditingSection
                 descriptionEditingSection
-            } else {
-                metadataSection
+            } else if case let .editing(code, metadata) = viewModel.mode {
+                metadataSection(code: code, metadata: metadata)
             }
         }
         .onReceive(pasteboard.didPaste()) {
@@ -118,14 +123,16 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         } header: {
             Text(viewModel.strings.descriptionTitle)
         } footer: {
-            deleteButton
-                .modifier(HorizontallyCenter())
-                .padding()
-                .padding(.vertical, 16)
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .modifier(HorizontallyCenter())
+                    .padding()
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var metadataSection: some View {
+    private func metadataSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
         Section {
             ForEach(viewModel.detailMenuItems) { item in
                 ForEach(item.entries) { entry in
@@ -140,8 +147,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         } header: {
             VStack(alignment: .center) {
                 copyableViewGenerator().makeVaultPreviewView(
-                    item: .otpCode(viewModel.storedCode),
-                    metadata: viewModel.storedMetdata,
+                    item: .otpCode(code),
+                    metadata: metadata,
                     behaviour: .normal
                 )
                 .frame(maxWidth: 200)
@@ -152,16 +159,18 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             .padding(.bottom, 32)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
-                FooterInfoLabel(
-                    title: viewModel.strings.createdDateTitle,
-                    detail: viewModel.createdDateValue,
-                    systemImageName: "clock.fill"
-                )
+                if let createdDateValue = viewModel.createdDateValue {
+                    FooterInfoLabel(
+                        title: viewModel.strings.createdDateTitle,
+                        detail: createdDateValue,
+                        systemImageName: "clock.fill"
+                    )
+                }
 
-                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                if let updatedDateValue = viewModel.updatedDateValue, updatedDateValue != viewModel.createdDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.updatedDateTitle,
-                        detail: viewModel.updatedDateValue,
+                        detail: updatedDateValue,
                         systemImageName: "clock.arrow.2.circlepath"
                     )
                 }
@@ -193,7 +202,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     static var previews: some View {
         OTPCodeDetailView(
-            code: .init(
+            editingExistingCode: .init(
                 type: .totp(),
                 data: .init(secret: .empty(), accountName: "Test")
             ),
