@@ -40,6 +40,15 @@ public struct OTPAuthSecret: Equatable, Hashable {
     public static func empty(_ format: Format = .base32) -> OTPAuthSecret {
         .init(data: Data(), format: format)
     }
+
+    public static func base32EncodedString(_ string: String) -> OTPAuthSecret {
+        let data = base32DecodeToData(string) ?? Data() // TODO: throw error if invalid
+        return .init(data: data, format: .base32)
+    }
+
+    public var base32EncodedString: String {
+        base32Encode(data)
+    }
 }
 
 public struct OTPAuthDigits: Equatable, Hashable, CustomStringConvertible {
@@ -58,20 +67,32 @@ extension OTPAuthDigits {
     public static var `default`: OTPAuthDigits { .init(value: 6) }
 }
 
-public enum OTPAuthAlgorithm: Equatable, Hashable {
+public enum OTPAuthAlgorithm: Equatable, Hashable, Identifiable, CaseIterable {
     case sha1
     case sha256
     case sha512
 
     public static var `default`: OTPAuthAlgorithm { .sha1 }
+
+    public var id: Self { self }
+
+    public var stringValue: String {
+        switch self {
+        case .sha1: "SHA1"
+        case .sha256: "SHA256"
+        case .sha512: "SHA512"
+        }
+    }
 }
 
 public enum OTPAuthType: Equatable, Hashable {
     case totp(period: UInt64 = 30)
     case hotp(counter: UInt64 = 0)
 
-    public enum Kind: Equatable {
+    public enum Kind: Equatable, Hashable, Identifiable, CaseIterable {
         case totp, hotp
+
+        public var id: Self { self }
     }
 
     public var kind: Kind {

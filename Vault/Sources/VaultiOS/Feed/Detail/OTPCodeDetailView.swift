@@ -12,12 +12,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var previewGenerator: PreviewGenerator
 
     init(
-        code: OTPAuthCode,
+        editingExistingCode code: OTPAuthCode,
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator
     ) {
-        _viewModel = .init(initialValue: .init(storedCode: code, storedMetadata: storedMetadata, editor: editor))
+        _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
+        self.previewGenerator = previewGenerator
+    }
+
+    init(newCodeWithEditor editor: any OTPCodeDetailEditor, previewGenerator: PreviewGenerator) {
+        _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
         self.previewGenerator = previewGenerator
     }
 
@@ -42,8 +47,12 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             if viewModel.isInEditMode {
                 accountNameEditingSection
                 descriptionEditingSection
-            } else {
-                metadataSection
+                if viewModel.isInitialCreation {
+                    codeSecretEditingSection
+                    codeMetadataEditingSection
+                }
+            } else if case let .editing(code, metadata) = viewModel.mode {
+                metadataSection(code: code, metadata: metadata)
             }
         }
         .onReceive(pasteboard.didPaste()) {
@@ -118,14 +127,76 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         } header: {
             Text(viewModel.strings.descriptionTitle)
         } footer: {
-            deleteButton
-                .modifier(HorizontallyCenter())
-                .padding()
-                .padding(.vertical, 16)
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .modifier(HorizontallyCenter())
+                    .padding()
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var metadataSection: some View {
+    private var codeMetadataEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.codeType) {
+                ForEach(OTPAuthType.Kind.allCases) { authType in
+                    Text(viewModel.strings.codeKindTitle(kind: authType))
+                        .tag(authType)
+                }
+            } label: {
+                Text(viewModel.strings.inputCodeTypeTitle)
+            }
+
+            DisclosureGroup {
+                switch viewModel.editingModel.detail.codeType {
+                case .totp:
+                    Stepper(value: $viewModel.editingModel.detail.totpPeriodLength, in: 1 ... UInt64(Int.max)) {
+                        LabeledContent(
+                            viewModel.strings.inputTotpPeriodTitle,
+                            value: "\(viewModel.editingModel.detail.totpPeriodLength)"
+                        )
+                    }
+                case .hotp:
+                    Stepper(value: $viewModel.editingModel.detail.hotpCounterValue, in: 0 ... UInt64(Int.max)) {
+                        LabeledContent(
+                            viewModel.strings.inputHotpCounterTitle,
+                            value: "\(viewModel.editingModel.detail.hotpCounterValue)"
+                        )
+                    }
+                }
+
+                Picker(selection: $viewModel.editingModel.detail.algorithm) {
+                    ForEach(OTPAuthAlgorithm.allCases) { algorithm in
+                        Text(algorithm.stringValue)
+                            .tag(algorithm)
+                    }
+                } label: {
+                    Text(viewModel.strings.inputAlgorithmTitle)
+                }
+
+                Stepper(value: $viewModel.editingModel.detail.numberOfDigits, in: 1 ... UInt16.max) {
+                    LabeledContent(
+                        viewModel.strings.inputNumberOfDigitsTitle,
+                        value: "\(viewModel.editingModel.detail.numberOfDigits)"
+                    )
+                }
+            } label: {
+                Text(viewModel.strings.advancedSectionTitle)
+            }
+        } header: {
+            Text(viewModel.strings.codeDetailsSectionTitle)
+        }
+    }
+
+    private var codeSecretEditingSection: some View {
+        Section {
+            TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
+        } header: {
+            Text(viewModel.strings.inputSecretTitle)
+        }
+    }
+
+    private func metadataSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
         Section {
             ForEach(viewModel.detailMenuItems) { item in
                 ForEach(item.entries) { entry in
@@ -140,8 +211,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         } header: {
             VStack(alignment: .center) {
                 copyableViewGenerator().makeVaultPreviewView(
-                    item: .otpCode(viewModel.storedCode),
-                    metadata: viewModel.storedMetdata,
+                    item: .otpCode(code),
+                    metadata: metadata,
                     behaviour: .normal
                 )
                 .frame(maxWidth: 200)
@@ -152,16 +223,18 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             .padding(.bottom, 32)
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
-                FooterInfoLabel(
-                    title: viewModel.strings.createdDateTitle,
-                    detail: viewModel.createdDateValue,
-                    systemImageName: "clock.fill"
-                )
+                if let createdDateValue = viewModel.createdDateValue {
+                    FooterInfoLabel(
+                        title: viewModel.strings.createdDateTitle,
+                        detail: createdDateValue,
+                        systemImageName: "clock.fill"
+                    )
+                }
 
-                if viewModel.updatedDateValue != viewModel.createdDateValue {
+                if let updatedDateValue = viewModel.updatedDateValue, updatedDateValue != viewModel.createdDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.updatedDateTitle,
-                        detail: viewModel.updatedDateValue,
+                        detail: updatedDateValue,
                         systemImageName: "clock.arrow.2.circlepath"
                     )
                 }
@@ -193,7 +266,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
 
     static var previews: some View {
         OTPCodeDetailView(
-            code: .init(
+            editingExistingCode: .init(
                 type: .totp(),
                 data: .init(secret: .empty(), accountName: "Test")
             ),
@@ -209,7 +282,11 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
     }
 
     class StubEditor: OTPCodeDetailEditor {
-        func update(id _: UUID, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
+        func createCode(initialEdits _: OTPCodeDetailEdits) async throws {
+            // noop
+        }
+
+        func updateCode(id _: UUID, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
             // noop
         }
 

@@ -8,7 +8,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     @MainActor
     func test_init_creatingHasNoSideEffects() {
         let editor = MockSecureNoteDetailEditor()
-        _ = makeSUTCreating()
+        _ = makeSUTCreating(editor: editor)
 
         XCTAssertEqual(editor.operationsPerformed, [])
     }
@@ -198,7 +198,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     @MainActor
     func test_deleteNote_hasNoActionIfCreatingNote() async throws {
         let editor = MockSecureNoteDetailEditor()
-        let sut = makeSUTCreating()
+        let sut = makeSUTCreating(editor: editor)
 
         await sut.deleteNote()
 

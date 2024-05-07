@@ -4,15 +4,24 @@ import VaultFeed
 
 class MockOTPCodeDetailEditor: OTPCodeDetailEditor {
     enum Operation: Equatable, Hashable {
+        case create
         case update
         case delete
     }
 
     private(set) var operationsPerformed = [Operation]()
 
+    var createCodeResult: Result<Void, any Error> = .success(())
+    var createCodeCalled: (OTPCodeDetailEdits) async -> Void = { _ in }
+    func createCode(initialEdits: OTPCodeDetailEdits) async throws {
+        operationsPerformed.append(.create)
+        await createCodeCalled(initialEdits)
+        try createCodeResult.get()
+    }
+
     var updateCodeResult: Result<Void, any Error> = .success(())
     var updateCodeCalled: (UUID, OTPAuthCode, OTPCodeDetailEdits) async -> Void = { _, _, _ in }
-    func update(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+    func updateCode(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
         operationsPerformed.append(.update)
         await updateCodeCalled(id, item, edits)
         try updateCodeResult.get()

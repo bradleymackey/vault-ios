@@ -83,10 +83,10 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
             try await detailEditState.saveChanges {
                 switch mode {
                 case .creating:
-                    try await editor.create(initialEdits: editingModel.detail)
+                    try await editor.createNote(initialEdits: editingModel.detail)
                     isFinishedSubject.send()
                 case let .editing(note, metadata):
-                    try await editor.update(id: metadata.id, item: note, edits: editingModel.detail)
+                    try await editor.updateNote(id: metadata.id, item: note, edits: editingModel.detail)
                     editingModel.didPersist()
                 }
             }

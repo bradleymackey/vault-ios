@@ -1,5 +1,6 @@
 import Foundation
 import TestHelpers
+import VaultCore
 import VaultFeed
 import XCTest
 
@@ -9,6 +10,45 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         _ = makeSUT(feed: feed)
 
         XCTAssertTrue(feed.calls.isEmpty)
+    }
+
+    func test_createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
+        let feed = MockVaultFeed()
+        let sut = makeSUT(feed: feed)
+        let initialCode = OTPAuthCode(
+            type: .totp(period: 40),
+            data: .init(secret: .empty(), algorithm: .sha256, digits: .default, accountName: "myacc", issuer: "myiss")
+        )
+        let initialEdits = OTPCodeDetailEdits(
+            hydratedFromCode: initialCode,
+            userDescription: "mydesc"
+        )
+
+        let exp = expectation(description: "Wait for creation")
+        feed.createCalled = { data in
+            defer { exp.fulfill() }
+            switch data.item {
+            case let .otpCode(code):
+                XCTAssertEqual(
+                    code,
+                    initialCode,
+                    "The code that is saved should be the same as the state from the edits"
+                )
+            default:
+                XCTFail("invalid kind")
+            }
+        }
+
+        try await sut.createCode(initialEdits: initialEdits)
+
+        await fulfillment(of: [exp])
+    }
+
+    func test_createCode_propagatesFailureOnError() async throws {
+        let feed = FailingVaultFeed()
+        let sut = makeSUT(feed: feed)
+
+        await XCTAssertThrowsError(try await sut.createCode(initialEdits: anyOTPCodeDetailEdits()))
     }
 
     func test_updateCode_translatesCodeDataForCall() async throws {
@@ -21,11 +61,13 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         var item = uniqueVaultItem(item: .otpCode(code))
         item.metadata.userDescription = "old description"
 
-        let edits = OTPCodeDetailEdits(
-            issuerTitle: "new issuer name",
-            accountNameTitle: "new account name",
-            description: "new description"
+        var edits = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc"
         )
+        edits.issuerTitle = "new issuer name"
+        edits.accountNameTitle = "new account name"
+        edits.description = "new description"
 
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in
@@ -40,7 +82,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             exp.fulfill()
         }
 
-        try await sut.update(id: item.metadata.id, item: code, edits: edits)
+        try await sut.updateCode(id: item.metadata.id, item: code, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -49,7 +91,11 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: uniqueCode(), edits: .init()))
+        await XCTAssertThrowsError(try await sut.updateCode(
+            id: UUID(),
+            item: uniqueCode(),
+            edits: anyOTPCodeDetailEdits()
+        ))
     }
 
     func test_deleteCode_deletesFromFeed() async throws {
@@ -98,7 +144,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             }
         }
 
-        try await sut.create(initialEdits: initialEdits)
+        try await sut.createNote(initialEdits: initialEdits)
 
         await fulfillment(of: [exp])
     }
@@ -107,7 +153,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.create(initialEdits: .init()))
+        await XCTAssertThrowsError(try await sut.createNote(initialEdits: .init()))
     }
 
     func test_updateNote_updatesNoteInFeed() async throws {
@@ -135,7 +181,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             }
         }
 
-        try await sut.update(id: item.metadata.id, item: note, edits: edits)
+        try await sut.updateNote(id: item.metadata.id, item: note, edits: edits)
 
         await fulfillment(of: [exp])
     }
@@ -144,7 +190,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.update(id: UUID(), item: anyStoredNote(), edits: .init()))
+        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anyStoredNote(), edits: .init()))
     }
 
     func test_deleteNote_deletesFromFeed() async throws {
@@ -175,5 +221,19 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 extension VaultFeedDetailEditorAdapterTests {
     private func makeSUT(feed: any VaultFeed) -> VaultFeedDetailEditorAdapter {
         VaultFeedDetailEditorAdapter(vaultFeed: feed)
+    }
+
+    private func anyOTPCodeDetailEdits() -> OTPCodeDetailEdits {
+        .init(
+            codeType: .totp,
+            totpPeriodLength: 30,
+            hotpCounterValue: 0,
+            secretBase32String: "",
+            algorithm: .sha1,
+            numberOfDigits: 6,
+            issuerTitle: "iss",
+            accountNameTitle: "acc",
+            description: "desc"
+        )
     }
 }
