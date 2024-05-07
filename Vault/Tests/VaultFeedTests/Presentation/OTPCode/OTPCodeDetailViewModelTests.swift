@@ -33,7 +33,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.codeType, .totp)
         XCTAssertEqual(sut.editingModel.detail.hotpCounterValue, 0)
         XCTAssertEqual(sut.editingModel.detail.totpPeriodLength, 30)
-        XCTAssertEqual(sut.editingModel.detail.secret, .empty())
+        XCTAssertEqual(sut.editingModel.detail.secretBase32String, "")
     }
 
     @MainActor

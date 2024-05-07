@@ -190,7 +190,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     private var codeSecretEditingSection: some View {
         Section {
-            Text("TODO: secret input")
+            TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
         } header: {
             Text(viewModel.strings.inputSecretTitle)
         }

@@ -12,7 +12,7 @@ public struct OTPCodeDetailEdits: Equatable {
     public var totpPeriodLength: UInt64
     /// Only used for HOTP type codes, ignored otherwise
     public var hotpCounterValue: UInt64
-    public var secret: OTPAuthSecret
+    public var secretBase32String: String
     public var algorithm: OTPAuthAlgorithm
     public var numberOfDigits: UInt16
     public var issuerTitle: String
@@ -23,7 +23,7 @@ public struct OTPCodeDetailEdits: Equatable {
         codeType: OTPAuthType.Kind,
         totpPeriodLength: UInt64,
         hotpCounterValue: UInt64,
-        secret: OTPAuthSecret,
+        secretBase32String: String,
         algorithm: OTPAuthAlgorithm,
         numberOfDigits: UInt16,
         issuerTitle: String,
@@ -33,7 +33,7 @@ public struct OTPCodeDetailEdits: Equatable {
         self.codeType = codeType
         self.totpPeriodLength = totpPeriodLength
         self.hotpCounterValue = hotpCounterValue
-        self.secret = secret
+        self.secretBase32String = secretBase32String
         self.algorithm = algorithm
         self.numberOfDigits = numberOfDigits
         self.issuerTitle = issuerTitle
@@ -51,7 +51,7 @@ public struct OTPCodeDetailEdits: Equatable {
         case .totp: .max
         case let .hotp(counter): counter
         }
-        secret = code.data.secret
+        secretBase32String = code.data.secret.base32EncodedString
         algorithm = code.data.algorithm
         numberOfDigits = code.data.digits.value
         issuerTitle = code.data.issuer ?? ""
@@ -66,7 +66,7 @@ public struct OTPCodeDetailEdits: Equatable {
         case .hotp: .hotp(counter: hotpCounterValue)
         }
         let otpAuthCodeData = OTPAuthCodeData(
-            secret: secret,
+            secret: .base32EncodedString(secretBase32String),
             algorithm: algorithm,
             digits: .init(value: numberOfDigits),
             accountName: accountNameTitle,
@@ -91,7 +91,7 @@ extension OTPCodeDetailEdits {
             codeType: .totp,
             totpPeriodLength: 30,
             hotpCounterValue: 0,
-            secret: .empty(),
+            secretBase32String: "",
             algorithm: .sha1,
             numberOfDigits: 6,
             issuerTitle: "",

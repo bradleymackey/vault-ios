@@ -228,7 +228,7 @@ extension VaultFeedDetailEditorAdapterTests {
             codeType: .totp,
             totpPeriodLength: 30,
             hotpCounterValue: 0,
-            secret: .empty(),
+            secretBase32String: "",
             algorithm: .sha1,
             numberOfDigits: 6,
             issuerTitle: "iss",
