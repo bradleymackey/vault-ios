@@ -146,8 +146,8 @@ final class Base32Tests: XCTestCase {
             ("MZXW6YTBO=======", "CPNMUOJ1E======="),
         ]
         for (test, testHex) in invalidVectorWithPaddings {
-            XCTAssertNil(base32DecodeToData(test), "base32Decode for \(test)")
-            XCTAssertNil(base32HexDecodeToData(testHex), "base32HexDecode for \(test)")
+            XCTAssertThrowsError(try base32DecodeToData(test), "base32Decode for \(test)")
+            XCTAssertThrowsError(try base32HexDecodeToData(testHex), "base32HexDecode for \(test)")
         }
 
         // invalid length string without padding
@@ -158,13 +158,13 @@ final class Base32Tests: XCTestCase {
             )
         }
         for (test, testHex) in invalidVectorWithoutPaddings {
-            XCTAssertNil(base32DecodeToData(test), "base32Decode for \(test)")
-            XCTAssertNil(base32HexDecodeToData(testHex), "base32HexDecode for \(test)")
+            XCTAssertThrowsError(try base32DecodeToData(test), "base32Decode for \(test)")
+            XCTAssertThrowsError(try base32HexDecodeToData(testHex), "base32HexDecode for \(test)")
         }
     }
 
-    func testBase32Decode() {
+    func testBase32Decode() throws {
         let b32 = "AY22KLPRBYJXNH6TRM4I3LPBYA======"
-        _ = b32.base32DecodedData
+        _ = try b32.base32DecodedData
     }
 }
