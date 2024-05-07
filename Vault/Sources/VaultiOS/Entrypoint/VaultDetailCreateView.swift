@@ -22,8 +22,6 @@ struct VaultDetailCreateView<
             SecureNoteDetailView(
                 newNoteWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
             )
-        case .cryptoSeedPhrase:
-            Text("TODO: Crypto seed phrase")
         }
     }
 }
