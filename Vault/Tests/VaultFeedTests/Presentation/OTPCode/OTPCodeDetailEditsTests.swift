@@ -63,22 +63,29 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.secretBase32String, "")
     }
 
-    func test_asOTPAuthCode_createsTOTPCode() {
+    func test_asOTPAuthCode_createsTOTPCode() throws {
         let code = anyTOTPAuthCode()
         let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc")
 
-        let newCode = sut.asOTPAuthCode()
+        let newCode = try sut.asOTPAuthCode()
 
         XCTAssertEqual(code, newCode)
     }
 
-    func test_asOTPAuthCode_createsHOTPCode() {
+    func test_asOTPAuthCode_createsHOTPCode() throws {
         let code = anyHOTPAuthCode()
         let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2")
 
-        let newCode = sut.asOTPAuthCode()
+        let newCode = try sut.asOTPAuthCode()
 
         XCTAssertEqual(code, newCode)
+    }
+
+    func test_asOTPAuthCode_throwsErrorIfBase32SecretIsInvalid() throws {
+        var sut = OTPCodeDetailEdits(hydratedFromCode: anyTOTPAuthCode(), userDescription: "any")
+        sut.secretBase32String = "e~~"
+
+        XCTAssertThrowsError(try sut.asOTPAuthCode())
     }
 }
 
