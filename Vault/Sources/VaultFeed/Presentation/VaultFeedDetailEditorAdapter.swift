@@ -12,7 +12,7 @@ public struct VaultFeedDetailEditorAdapter {
 
 extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
     public func createCode(initialEdits: OTPCodeDetailEdits) async throws {
-        let newCodeVaultItem = StoredVaultItem.Write(
+        let newCodeVaultItem = try StoredVaultItem.Write(
             userDescription: initialEdits.description,
             item: .otpCode(initialEdits.asOTPAuthCode())
         )

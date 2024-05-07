@@ -41,8 +41,8 @@ public struct OTPAuthSecret: Equatable, Hashable {
         .init(data: Data(), format: format)
     }
 
-    public static func base32EncodedString(_ string: String) -> OTPAuthSecret {
-        let data = base32DecodeToData(string) ?? Data() // TODO: throw error if invalid
+    public static func base32EncodedString(_ string: String) throws -> OTPAuthSecret {
+        let data = try string.base32DecodedData
         return .init(data: data, format: .base32)
     }
 

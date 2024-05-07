@@ -36,9 +36,10 @@ public struct OTPAuthURIDecoder {
 
 extension OTPAuthURIDecoder {
     private func decodeSecret(uri: URL) throws -> OTPAuthSecret {
-        guard let secret = uri.otpParameter(.secret), let data = base32DecodeToData(secret) else {
+        guard let secret = uri.otpParameter(.secret) else {
             return .empty(.base32)
         }
+        let data = try secret.base32DecodedData
         return .init(data: data, format: .base32)
     }
 

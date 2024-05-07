@@ -273,13 +273,11 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         XCTAssertEqual(code.data.secret.format, .base32)
     }
 
-    func test_decodeSecret_invalidBase32ReturnsNoDataInSecret() throws {
+    func test_decodeSecret_invalidBase32ThrowsDecodingError() throws {
         let value = "otpauth://totp/any?secret=ee~~~"
         let sut = makeSUT()
 
-        let code = try sut.decode(value)
-        XCTAssertEqual(code.data.secret.data, Data())
-        XCTAssertEqual(code.data.secret.format, .base32)
+        XCTAssertThrowsError(try sut.decode(value))
     }
 
     func test_decode_decodesAllParameters() throws {

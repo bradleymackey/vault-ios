@@ -60,13 +60,14 @@ public struct OTPCodeDetailEdits: Equatable {
     }
 
     /// Constructs an OTPAuthCode from the current state of the edits
-    public func asOTPAuthCode() -> OTPAuthCode {
+    public func asOTPAuthCode() throws -> OTPAuthCode {
         let otpAuthType: OTPAuthType = switch codeType {
         case .totp: .totp(period: totpPeriodLength)
         case .hotp: .hotp(counter: hotpCounterValue)
         }
+        let otpAuthSecret = try OTPAuthSecret.base32EncodedString(secretBase32String)
         let otpAuthCodeData = OTPAuthCodeData(
-            secret: .base32EncodedString(secretBase32String),
+            secret: otpAuthSecret,
             algorithm: algorithm,
             digits: .init(value: numberOfDigits),
             accountName: accountNameTitle,
