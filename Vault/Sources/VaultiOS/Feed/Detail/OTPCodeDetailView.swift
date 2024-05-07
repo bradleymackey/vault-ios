@@ -147,37 +147,41 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 Text(viewModel.strings.inputCodeTypeTitle)
             }
 
-            switch viewModel.editingModel.detail.codeType {
-            case .totp:
-                Stepper(value: $viewModel.editingModel.detail.totpPeriodLength, in: 1 ... UInt64(Int.max)) {
-                    LabeledContent(
-                        viewModel.strings.inputTotpPeriodTitle,
-                        value: "\(viewModel.editingModel.detail.totpPeriodLength)"
-                    )
+            DisclosureGroup {
+                switch viewModel.editingModel.detail.codeType {
+                case .totp:
+                    Stepper(value: $viewModel.editingModel.detail.totpPeriodLength, in: 1 ... UInt64(Int.max)) {
+                        LabeledContent(
+                            viewModel.strings.inputTotpPeriodTitle,
+                            value: "\(viewModel.editingModel.detail.totpPeriodLength)"
+                        )
+                    }
+                case .hotp:
+                    Stepper(value: $viewModel.editingModel.detail.hotpCounterValue, in: 0 ... UInt64(Int.max)) {
+                        LabeledContent(
+                            viewModel.strings.inputHotpCounterTitle,
+                            value: "\(viewModel.editingModel.detail.hotpCounterValue)"
+                        )
+                    }
                 }
-            case .hotp:
-                Stepper(value: $viewModel.editingModel.detail.hotpCounterValue, in: 0 ... UInt64(Int.max)) {
-                    LabeledContent(
-                        viewModel.strings.inputHotpCounterTitle,
-                        value: "\(viewModel.editingModel.detail.hotpCounterValue)"
-                    )
-                }
-            }
 
-            Picker(selection: $viewModel.editingModel.detail.algorithm) {
-                ForEach(OTPAuthAlgorithm.allCases) { algorithm in
-                    Text(algorithm.stringValue)
-                        .tag(algorithm)
+                Picker(selection: $viewModel.editingModel.detail.algorithm) {
+                    ForEach(OTPAuthAlgorithm.allCases) { algorithm in
+                        Text(algorithm.stringValue)
+                            .tag(algorithm)
+                    }
+                } label: {
+                    Text(viewModel.strings.inputAlgorithmTitle)
+                }
+
+                Stepper(value: $viewModel.editingModel.detail.numberOfDigits, in: 1 ... UInt16.max) {
+                    LabeledContent(
+                        viewModel.strings.inputNumberOfDigitsTitle,
+                        value: "\(viewModel.editingModel.detail.numberOfDigits)"
+                    )
                 }
             } label: {
-                Text(viewModel.strings.inputAlgorithmTitle)
-            }
-
-            Stepper(value: $viewModel.editingModel.detail.numberOfDigits, in: 1 ... UInt16.max) {
-                LabeledContent(
-                    viewModel.strings.inputNumberOfDigitsTitle,
-                    value: "\(viewModel.editingModel.detail.numberOfDigits)"
-                )
+                Text(viewModel.strings.advancedSectionTitle)
             }
         } header: {
             Text(viewModel.strings.codeDetailsSectionTitle)

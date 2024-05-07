@@ -255,6 +255,17 @@
         }
       }
     },
+    "codeDetail.section.advanced.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Advanced"
+          }
+        }
+      }
+    },
     "codeDetail.section.codeDetails" : {
       "extractionState" : "manual",
       "localizations" : {

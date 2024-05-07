@@ -84,6 +84,8 @@ public struct OTPCodeDetailEdits: Equatable {
 extension OTPCodeDetailEdits {
     /// Create an `OTPCodeDetailEdits` in a blank state with initial input values, for creation.
     /// All initial values are sensible defaults.
+    ///
+    /// Uses standards suggested by https://datatracker.ietf.org/doc/html/rfc6238
     public static func new() -> OTPCodeDetailEdits {
         .init(
             codeType: .totp,
