@@ -43,6 +43,14 @@ public final class FeedViewModel<Store: VaultStore> {
     public var searchCodesPromptTitle: String {
         localized(key: "feedViewModel.searchPrompt.title")
     }
+
+    public var createCodeTitle: String {
+        localized(key: "feedViewModel.create.code")
+    }
+
+    public var createNoteTitle: String {
+        localized(key: "feedViewModel.create.note")
+    }
 }
 
 // MARK: - Feed

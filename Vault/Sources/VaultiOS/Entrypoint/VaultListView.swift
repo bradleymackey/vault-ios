@@ -17,17 +17,14 @@ struct VaultListView<
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
-    @State private var creatingItem: CreatingItem?
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Identifiable {
-        case addItem
         case detail(UUID, StoredVaultItem)
         case creatingItem(CreatingItem)
 
         var id: some Hashable {
             switch self {
-            case .addItem: "add"
             case let .creatingItem(item): "creating" + String(item.hashValue)
             case let .detail(id, _): id.uuidString
             }
@@ -44,8 +41,26 @@ struct VaultListView<
         )
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    modal = .addItem
+                Menu {
+                    Button {
+                        modal = .creatingItem(.otpCode)
+                    } label: {
+                        LabeledContent {
+                            Text(feedViewModel.createCodeTitle)
+                        } label: {
+                            Image(systemName: "qrcode")
+                        }
+                    }
+
+                    Button {
+                        modal = .creatingItem(.secureNote)
+                    } label: {
+                        LabeledContent {
+                            Text(feedViewModel.createNoteTitle)
+                        } label: {
+                            Image(systemName: "text.alignleft")
+                        }
+                    }
                 } label: {
                     Image(systemName: "plus")
                 }
@@ -68,12 +83,6 @@ struct VaultListView<
         }
         .sheet(item: $modal, onDismiss: nil) { visible in
             switch visible {
-            case .addItem:
-                NavigationStack {
-                    CodeAddView(creatingItem: $creatingItem)
-                }
-                .presentationDetents([.medium])
-                .presentationDragIndicator(.visible)
             case let .detail(_, storedCode):
                 NavigationStack {
                     VaultDetailEditView(
@@ -90,12 +99,6 @@ struct VaultListView<
                         previewGenerator: viewGenerator
                     )
                 }
-            }
-        }
-        .onChange(of: creatingItem) { _, newValue in
-            if let newValue {
-                modal = .creatingItem(newValue)
-                creatingItem = nil // reset so we can detect further changes
             }
         }
         .onChange(of: scenePhase) { _, newValue in

@@ -398,6 +398,28 @@
         }
       }
     },
+    "feedViewModel.create.code" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Code"
+          }
+        }
+      }
+    },
+    "feedViewModel.create.note" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
     "feedViewModel.doneEditing.title" : {
       "extractionState" : "migrated",
       "localizations" : {
