@@ -39,13 +39,6 @@ struct CodeAddView: View {
             } label: {
                 row(icon: "text.alignleft", title: "Note")
             }
-
-            Button {
-                creatingItem = .cryptoSeedPhrase
-                dismiss()
-            } label: {
-                row(icon: "bitcoinsign", title: "Seed Phrase")
-            }
         }
     }
 
