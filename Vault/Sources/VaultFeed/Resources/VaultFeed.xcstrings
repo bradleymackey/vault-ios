@@ -89,6 +89,17 @@
         }
       }
     },
+    "codeDetail.field.secret.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Key"
+          }
+        }
+      }
+    },
     "codeDetail.field.siteName.empty.title" : {
       "comment" : "User visible title that is used when the user defined title is empty",
       "extractionState" : "manual",
@@ -217,7 +228,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Secret Format"
+            "value" : "Key Format"
           }
         }
       }

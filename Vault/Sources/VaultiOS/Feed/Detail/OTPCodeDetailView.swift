@@ -48,8 +48,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 accountNameEditingSection
                 descriptionEditingSection
                 if viewModel.isInitialCreation {
-                    codeMetadataEditingSection
                     codeSecretEditingSection
+                    codeMetadataEditingSection
                 }
             } else if case let .editing(code, metadata) = viewModel.mode {
                 metadataSection(code: code, metadata: metadata)
@@ -192,7 +192,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         Section {
             Text("TODO: secret input")
         } header: {
-            Text("Secret")
+            Text(viewModel.strings.inputSecretTitle)
         }
     }
 
