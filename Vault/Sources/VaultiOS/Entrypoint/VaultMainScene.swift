@@ -6,7 +6,7 @@ import VaultSettings
 /// Entrypoint scene for the vault app.
 @MainActor
 public struct VaultMainScene: Scene {
-    @State private var feedViewModel: FeedViewModel<InMemoryVaultStore>
+    @State private var feedViewModel: FeedViewModel<CoreDataVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<TOTPPreviewViewFactoryImpl>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<HOTPPreviewViewFactoryImpl>
     @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
@@ -27,17 +27,8 @@ public struct VaultMainScene: Scene {
         let localSettings = LocalSettings(defaults: defaults)
         let timer = LiveIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
-        let store = InMemoryVaultStore(codes: [
-            DemoVaultFactory.totpCode(issuer: "Ebay"),
-            DemoVaultFactory.totpCode(issuer: "Discord"),
-            DemoVaultFactory.totpCode(issuer: "Apple"),
-            DemoVaultFactory.totpCode(issuer: "Notify.ui"),
-            DemoVaultFactory.totpCode(issuer: "Cloudflare"),
-            DemoVaultFactory.hotpCode(issuer: "Cool Company"),
-            DemoVaultFactory.hotpCode(issuer: "Other Company"),
-            DemoVaultFactory.secureNote(title: "Secure Note 1", contents: "This is the contents..."),
-            DemoVaultFactory.secureNote(title: "Secure Note With Longer Title", contents: "content thing"),
-        ])
+        let storeFactory = CoreDataVaultStoreFactory(fileManager: .default)
+        let store = storeFactory.makeVaultStore()
         let totp = TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
             updaterFactory: OTPCodeTimerUpdaterFactoryImpl(timer: timer, clock: clock),
