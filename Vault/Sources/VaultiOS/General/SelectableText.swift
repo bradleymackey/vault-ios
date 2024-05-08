@@ -6,20 +6,20 @@ import UIKit
 struct SelectableText: UIViewRepresentable {
     typealias UIViewType = SelectableTextView
 
-    enum TextStyle {
+    enum FontStyle {
         case normal, monospace
     }
 
-    @Environment(\.dynamicTypeSize) private var realDynamicTypeSize
+    @Environment(\.dynamicTypeSize) private var dynamicTypeSize
 
     private var text: String
-    private var textStyle: TextStyle
-    private var dynamicTypeSize: UIFont.TextStyle
+    private var fontStyle: FontStyle
+    private var textStyle: UIFont.TextStyle
 
-    init(_ text: String, textStyle: TextStyle, dynamicTypeSize: UIFont.TextStyle) {
+    init(_ text: String, fontStyle: FontStyle, textStyle: UIFont.TextStyle) {
         self.text = text
+        self.fontStyle = fontStyle
         self.textStyle = textStyle
-        self.dynamicTypeSize = dynamicTypeSize
     }
 
     func makeUIView(context: Context) -> SelectableTextView {
@@ -27,7 +27,7 @@ struct SelectableText: UIViewRepresentable {
         textView.delegate = textView
         textView.text = text
         textView.adjustsFontForContentSizeCategory = true
-        textView.font = textStyle.makeFont(size: dynamicTypeSize, dynamicTypeSize: context.environment.dynamicTypeSize)
+        textView.font = fontStyle.makeFont(size: textStyle, dynamicTypeSize: context.environment.dynamicTypeSize)
         textView.isEditable = false
         textView.isSelectable = true
         textView.isScrollEnabled = false
@@ -37,7 +37,7 @@ struct SelectableText: UIViewRepresentable {
 
     func updateUIView(_ uiView: SelectableTextView, context: Context) {
         uiView.text = text
-        uiView.font = textStyle.makeFont(size: dynamicTypeSize, dynamicTypeSize: context.environment.dynamicTypeSize)
+        uiView.font = fontStyle.makeFont(size: textStyle, dynamicTypeSize: context.environment.dynamicTypeSize)
         uiView.invalidateIntrinsicContentSize()
     }
 
@@ -50,7 +50,7 @@ struct SelectableText: UIViewRepresentable {
     }
 }
 
-extension SelectableText.TextStyle {
+extension SelectableText.FontStyle {
     fileprivate var uifont: UIFont {
         switch self {
         case .normal: .systemFont(ofSize: 16)

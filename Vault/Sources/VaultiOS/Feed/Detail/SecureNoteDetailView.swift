@@ -86,8 +86,8 @@ struct SecureNoteDetailView: View {
         Section {
             SelectableText(
                 viewModel.editingModel.detail.contents,
-                textStyle: .monospace,
-                dynamicTypeSize: .body
+                fontStyle: .monospace,
+                textStyle: .body
             )
             .frame(minHeight: 250, alignment: .top)
         } footer: {
