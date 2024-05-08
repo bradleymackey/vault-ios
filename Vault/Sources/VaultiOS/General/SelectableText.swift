@@ -10,7 +10,7 @@ struct SelectableText: UIViewRepresentable {
         case normal, monospace
     }
 
-    @State private var currentFontSize: Double
+    @Environment(\.dynamicTypeSize) private var realDynamicTypeSize
 
     private var text: String
     private var textStyle: TextStyle
@@ -20,19 +20,14 @@ struct SelectableText: UIViewRepresentable {
         self.text = text
         self.textStyle = textStyle
         self.dynamicTypeSize = dynamicTypeSize
-        _currentFontSize = State(initialValue: dynamicTypeSize.currentSize)
     }
 
-    private var currentTextFont: UIFont {
-        textStyle.uifont.withSize(currentFontSize)
-    }
-
-    func makeUIView(context _: Context) -> SelectableTextView {
+    func makeUIView(context: Context) -> SelectableTextView {
         let textView = SelectableTextView(frame: .zero)
         textView.delegate = textView
         textView.text = text
         textView.adjustsFontForContentSizeCategory = true
-        textView.font = currentTextFont
+        textView.font = textStyle.makeFont(size: dynamicTypeSize, dynamicTypeSize: context.environment.dynamicTypeSize)
         textView.isEditable = false
         textView.isSelectable = true
         textView.isScrollEnabled = false
@@ -40,9 +35,9 @@ struct SelectableText: UIViewRepresentable {
         return textView
     }
 
-    func updateUIView(_ uiView: SelectableTextView, context _: Context) {
+    func updateUIView(_ uiView: SelectableTextView, context: Context) {
         uiView.text = text
-        uiView.font = currentTextFont
+        uiView.font = textStyle.makeFont(size: dynamicTypeSize, dynamicTypeSize: context.environment.dynamicTypeSize)
         uiView.invalidateIntrinsicContentSize()
     }
 
@@ -53,43 +48,18 @@ struct SelectableText: UIViewRepresentable {
         )
         return uiView.sizeThatFits(size)
     }
-
-    func makeCoordinator() -> Coordinator {
-        Coordinator(notificationCenter: .default, dynamicTypeSize: dynamicTypeSize, currentFontSize: $currentFontSize)
-    }
-
-    final class Coordinator {
-        @Binding var currentFontSize: Double
-
-        private var contentSizeListener: AnyCancellable?
-        private let dynamicTypeSize: UIFont.TextStyle
-        init(
-            notificationCenter: NotificationCenter,
-            dynamicTypeSize: UIFont.TextStyle,
-            currentFontSize: Binding<Double>
-        ) {
-            _currentFontSize = currentFontSize
-            self.dynamicTypeSize = dynamicTypeSize
-            contentSizeListener = notificationCenter.publisher(for: UIContentSizeCategory.didChangeNotification)
-                .sink { [weak self] _ in
-                    self?.currentFontSize = dynamicTypeSize.currentSize
-                }
-        }
-    }
 }
 
 extension SelectableText.TextStyle {
     fileprivate var uifont: UIFont {
-        // The size here is just a placeholder, it should be changed based on the current dynamic type size.
         switch self {
-        case .normal: .systemFont(ofSize: 1)
-        case .monospace: .monospacedSystemFont(ofSize: 1, weight: .regular)
+        case .normal: .systemFont(ofSize: 16)
+        case .monospace: .monospacedSystemFont(ofSize: 16, weight: .regular)
         }
     }
-}
 
-extension UIFont.TextStyle {
-    fileprivate var currentSize: Double {
-        UIFont.preferredFont(forTextStyle: self).pointSize
+    func makeFont(size: UIFont.TextStyle, dynamicTypeSize: DynamicTypeSize) -> UIFont {
+        let traitCollection = UITraitCollection(preferredContentSizeCategory: dynamicTypeSize.contentSizeCategory)
+        return UIFontMetrics(forTextStyle: size).scaledFont(for: uifont, compatibleWith: traitCollection)
     }
 }
