@@ -42,21 +42,21 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_layout_obfuscateWithoutMessage() {
-        let sut = makeSUT(state: .visible("123456"), behaviour: .obfuscate(message: nil))
+        let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: nil))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     @MainActor
     func test_layout_obfuscateWithMessage() {
-        let sut = makeSUT(state: .visible("123456"), behaviour: .obfuscate(message: "Custom message"))
+        let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: "Custom message"))
 
         assertSnapshot(matching: sut, as: .image)
     }
 
     @MainActor
     func test_layout_obfuscateWithLongMessage() {
-        let sut = makeSUT(state: .visible("123456"), behaviour: .obfuscate(message: longMessage()))
+        let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: longMessage()))
 
         assertSnapshot(matching: sut, as: .image)
     }

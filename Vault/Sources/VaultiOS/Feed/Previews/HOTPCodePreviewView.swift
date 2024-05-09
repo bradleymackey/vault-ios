@@ -34,7 +34,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             case .error, .finished:
                 Color.red
             }
-        case .obfuscate:
+        case .editingState:
             Color.blue
         }
     }
@@ -112,12 +112,16 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
                 }
 
-            makePreviewView(accountName: "Obfuscate", renderer: codeRenderer, behaviour: .obfuscate(message: "editing"))
+            makePreviewView(
+                accountName: "Obfuscate",
+                renderer: codeRenderer,
+                behaviour: .editingState(message: "editing")
+            )
 
             makePreviewView(
                 accountName: "Obfuscate (no msg)",
                 renderer: codeRenderer,
-                behaviour: .obfuscate(message: nil)
+                behaviour: .editingState(message: nil)
             )
         }
     }

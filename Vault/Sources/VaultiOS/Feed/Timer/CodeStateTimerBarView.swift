@@ -42,7 +42,7 @@ struct CodeStateTimerBarView<Timer: View>: View {
 
     private var textToDisplay: String? {
         switch behaviour {
-        case let .obfuscate(message):
+        case let .editingState(message):
             message
         case .normal:
             if case let .error(err, _) = codeState {

@@ -73,7 +73,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             case .error:
                 Color.red
             }
-        case .obfuscate:
+        case .editingState:
             Color.blue
         }
     }
@@ -111,12 +111,12 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                     finishedRenderer.subject.send(completion: .finished)
                 }
 
-            makePreview(issuer: "Obfuscated", renderer: codeRenderer, behaviour: .obfuscate(message: "Editing..."))
+            makePreview(issuer: "Obfuscated", renderer: codeRenderer, behaviour: .editingState(message: "Editing..."))
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }
 
-            makePreview(issuer: "Obfuscated (no msg)", renderer: codeRenderer, behaviour: .obfuscate(message: nil))
+            makePreview(issuer: "Obfuscated (no msg)", renderer: codeRenderer, behaviour: .editingState(message: nil))
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }
