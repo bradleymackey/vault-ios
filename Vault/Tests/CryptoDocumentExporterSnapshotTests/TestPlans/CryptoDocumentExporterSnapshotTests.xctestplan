@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "758C0506-143A-4915-9A30-3C3BB78D2CAD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CryptoDocumentExporterSnapshotTests",
+        "name" : "CryptoDocumentExporterSnapshotTests"
+      }
+    }
+  ],
+  "version" : 1
+}
