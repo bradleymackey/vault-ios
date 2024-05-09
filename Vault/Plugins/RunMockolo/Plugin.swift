@@ -2,7 +2,7 @@ import PackagePlugin
 
 @main
 struct MockoloPlugin: BuildToolPlugin {
-    func createBuildCommands(context: PluginContext, target _: Target) async throws -> [Command] {
+    func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
         let generatedSourcePath = context.pluginWorkDirectory.appending("GeneratedMocks.swift")
         let packageRoot = context.package.directory
 
@@ -11,7 +11,7 @@ struct MockoloPlugin: BuildToolPlugin {
                 displayName: "Run mockolo",
                 executable: context.tool(named: "mockolo").path,
                 arguments: [
-                    "-s", packageRoot.appending("Sources").string, packageRoot.appending("Tests").string,
+                    "-s", packageRoot.appending("Sources", target.name).string,
                     "-d", generatedSourcePath,
                     "--mock-final",
                 ],

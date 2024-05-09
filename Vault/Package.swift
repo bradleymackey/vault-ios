@@ -55,8 +55,7 @@ let package = Package(
                 "TestHelpers",
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "VaultBackup",
@@ -68,8 +67,7 @@ let package = Package(
             name: "VaultBackupTests",
             dependencies: ["VaultBackup", "TestHelpers", "CryptoEngine"],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "TestHelpers",
@@ -77,8 +75,7 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 .product(name: "ViewInspector", package: "ViewInspector"),
             ],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "VaultCore",
@@ -89,8 +86,7 @@ let package = Package(
         .testTarget(
             name: "VaultCoreTests",
             dependencies: ["VaultCore", "TestHelpers"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "VaultUI",
@@ -105,8 +101,7 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "CryptoDocumentExporter",
@@ -123,8 +118,7 @@ let package = Package(
                 "CryptoDocumentExporter",
                 "TestHelpers",
             ],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .testTarget(
             name: "CryptoDocumentExporterSnapshotTests",
@@ -137,8 +131,7 @@ let package = Package(
                 ),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "CryptoEngine",
@@ -149,8 +142,7 @@ let package = Package(
         .testTarget(
             name: "CryptoEngineTests",
             dependencies: ["CryptoEngine"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "VaultSettings",
@@ -164,8 +156,7 @@ let package = Package(
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "VaultFeed",
@@ -184,8 +175,7 @@ let package = Package(
         .testTarget(
             name: "VaultFeedTests",
             dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
         .target(
             name: "FoundationExtensions",
@@ -195,8 +185,7 @@ let package = Package(
         .testTarget(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            swiftSettings: swiftSettings
         ),
 
         // MARK: - TOOLING
