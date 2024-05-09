@@ -52,7 +52,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_isInEditMode_creatingInitiallyFalse() {
         let sut = makeSUTCreating()
 
-        XCTAssertTrue(sut.isInEditMode)
+        XCTAssertFalse(sut.isInEditMode, "Call startEditing manually!")
     }
 
     @MainActor

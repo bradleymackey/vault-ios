@@ -15,15 +15,22 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         editingExistingCode code: OTPAuthCode,
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
-        previewGenerator: PreviewGenerator
+        previewGenerator: PreviewGenerator,
+        openInEditMode: Bool
     ) {
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
+
+        if openInEditMode {
+            viewModel.startEditing()
+        }
     }
 
     init(newCodeWithEditor editor: any OTPCodeDetailEditor, previewGenerator: PreviewGenerator) {
         _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
         self.previewGenerator = previewGenerator
+
+        viewModel.startEditing()
     }
 
     @Environment(Pasteboard.self) private var pasteboard: Pasteboard
@@ -277,7 +284,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 userDescription: "Description"
             ),
             editor: StubEditor(),
-            previewGenerator: VaultItemPreviewViewGeneratorMock()
+            previewGenerator: VaultItemPreviewViewGeneratorMock(),
+            openInEditMode: false
         )
     }
 

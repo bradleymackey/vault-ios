@@ -11,13 +11,20 @@ struct SecureNoteDetailView: View {
     init(
         editingExistingNote note: SecureNote,
         storedMetadata: StoredVaultItem.Metadata,
-        editor: any SecureNoteDetailEditor
+        editor: any SecureNoteDetailEditor,
+        openInEditMode: Bool
     ) {
         _viewModel = .init(initialValue: .init(mode: .editing(note: note, metadata: storedMetadata), editor: editor))
+
+        if openInEditMode {
+            viewModel.startEditing()
+        }
     }
 
     init(newNoteWithEditor editor: any SecureNoteDetailEditor) {
         _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
+
+        viewModel.startEditing()
     }
 
     @State private var currentError: (any Error)?

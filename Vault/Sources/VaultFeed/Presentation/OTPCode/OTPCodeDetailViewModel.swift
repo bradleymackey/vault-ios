@@ -35,11 +35,6 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 userDescription: metadata.userDescription ?? ""
             ))
         }
-
-        switch mode {
-        case .creating: startEditing()
-        case .editing: break
-        }
     }
 
     public var isInitialCreation: Bool {
