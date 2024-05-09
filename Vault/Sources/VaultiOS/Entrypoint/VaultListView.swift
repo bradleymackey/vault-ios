@@ -19,16 +19,11 @@ struct VaultListView<
     @State private var modal: Modal?
     @Environment(\.scenePhase) private var scenePhase
 
-    enum Modal: Identifiable {
+    enum Modal: Identifiable, Hashable {
         case detail(UUID, StoredVaultItem)
         case creatingItem(CreatingItem)
 
-        var id: some Hashable {
-            switch self {
-            case let .creatingItem(item): "creating" + String(item.hashValue)
-            case let .detail(id, _): id.uuidString
-            }
-        }
+        var id: Self { self }
     }
 
     var body: some View {
@@ -100,6 +95,10 @@ struct VaultListView<
                     )
                 }
             }
+        }
+        .onChange(of: modal) { _, newValue in
+            // When the detail modal is dismissed, exit editing mode.
+            if newValue == nil { isEditing = false }
         }
         .onChange(of: scenePhase) { _, newValue in
             viewGenerator.scenePhaseDidChange(to: newValue)
