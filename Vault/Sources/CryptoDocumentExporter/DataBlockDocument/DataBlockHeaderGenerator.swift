@@ -1,8 +1,7 @@
 import Foundation
-import Spyable
 
 /// Creates a header for a given page when generating a document.
-@Spyable
+/// @mockable
 public protocol DataBlockHeaderGenerator {
     func makeHeader(pageNumber: Int) -> DataBlockHeader?
 }

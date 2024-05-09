@@ -65,7 +65,7 @@ extension PDFDataBlockDocumentRendererTests {
 
     private func anyDataBlockExportDocument() -> DataBlockDocument {
         DataBlockDocument(
-            headerGenerator: DataBlockHeaderGeneratorSpy(),
+            headerGenerator: DataBlockHeaderGeneratorMock(),
             content: []
         )
     }
