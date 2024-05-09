@@ -13,8 +13,11 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/VaultiOSTests/VaultiOSTests.xctestplan"
+            reference = "container:Tests/VaultiOSTests/TestPlans/VaultiOSTests.xctestplan"
             default = "YES">
+         </TestPlanReference>
+         <TestPlanReference
+            reference = "container:CI/ios_alltests.xctestplan">
          </TestPlanReference>
       </TestPlans>
       <Testables>
