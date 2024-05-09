@@ -69,6 +69,24 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
 
         await snapshotScenarios(view: sut)
     }
+
+    @MainActor
+    func test_contentUpdated() async {
+        let date = fixedTestDate()
+        let sut = SecureNoteDetailView(
+            editingExistingNote: .init(title: "My Title", contents: "My contents"),
+            storedMetadata: .init(
+                id: UUID(),
+                created: date,
+                updated: date.addingTimeInterval(1), // different updated date
+                userDescription: "My description"
+            ),
+            editor: SecureNoteDetailEditorSpy()
+        )
+        .framedToTestDeviceSize()
+
+        await snapshotScenarios(view: sut)
+    }
 }
 
 // MARK: - Helpers
