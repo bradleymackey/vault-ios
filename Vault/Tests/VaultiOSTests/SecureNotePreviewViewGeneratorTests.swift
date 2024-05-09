@@ -10,22 +10,23 @@ import XCTest
 final class SecureNotePreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
-        let factory = MockSecureNoteViewFactory()
+        let factory = SecureNotePreviewViewFactoryMock()
         _ = makeSUT(factory: factory)
 
-        XCTAssertEqual(factory.makeSecureNoteViewExecutedCount, 0)
+        XCTAssertEqual(factory.makeSecureNoteViewCallCount, 0)
     }
 
     @MainActor
     func test_makeVaultPreviewItem_generatesViews() throws {
-        let factory = MockSecureNoteViewFactory()
+        let factory = SecureNotePreviewViewFactoryMock()
+        factory.makeSecureNoteViewHandler = { _, _ in AnyView(Text("Hello, Secure Note!")) }
         let sut = makeSUT(factory: factory)
 
         let view = sut.makeVaultPreviewView(item: anySecureNote(), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let foundText = try view.inspect().text().string()
+        let foundText = try view.inspect().anyView().text().string()
         XCTAssertEqual(foundText, "Hello, Secure Note!")
-        XCTAssertEqual(factory.makeSecureNoteViewExecutedCount, 1)
+        XCTAssertEqual(factory.makeSecureNoteViewCallCount, 1)
     }
 
     @MainActor
@@ -42,27 +43,12 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
 // MARK: - Helpers
 
 extension SecureNotePreviewViewGeneratorTests {
-    private typealias SUT = SecureNotePreviewViewGenerator<MockSecureNoteViewFactory>
+    private typealias SUT = SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryMock>
 
     @MainActor
     private func makeSUT(
-        factory: MockSecureNoteViewFactory = MockSecureNoteViewFactory()
+        factory: SecureNotePreviewViewFactoryMock = SecureNotePreviewViewFactoryMock()
     ) -> SUT {
         SecureNotePreviewViewGenerator(viewFactory: factory)
-    }
-
-    private final class MockSecureNoteViewFactory: SecureNotePreviewViewFactory {
-        var makeSecureNoteViewExecutedCount = 0
-        var makeSecureNoteViewExecuted: (
-            SecureNotePreviewViewModel
-        )
-            -> Void = { _ in
-            }
-
-        func makeSecureNoteView(viewModel: SecureNotePreviewViewModel) -> some View {
-            makeSecureNoteViewExecutedCount += 1
-            makeSecureNoteViewExecuted(viewModel)
-            return Text("Hello, Secure Note!")
-        }
     }
 }
