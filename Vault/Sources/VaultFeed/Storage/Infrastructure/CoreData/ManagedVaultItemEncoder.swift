@@ -12,10 +12,11 @@ struct ManagedVaultItemEncoder {
     }
 
     func encode(item value: StoredVaultItem.Write, into existing: ManagedVaultItem? = nil) -> ManagedVaultItem {
+        let now = currentDate()
         let managed = existing ?? ManagedVaultItem(context: context)
         managed.id = existing?.id ?? UUID()
-        managed.createdDate = existing?.createdDate ?? currentDate()
-        managed.updatedDate = currentDate()
+        managed.createdDate = existing?.createdDate ?? now
+        managed.updatedDate = now
         managed.userDescription = value.userDescription
 
         switch value.item {

@@ -24,6 +24,19 @@ final class ManagedVaultItemEncoderTests: XCTestCase {
 // MARK: - Shared
 
 extension ManagedVaultItemEncoderTests {
+    func test_encodeNewItem_usesExactSameDateForCreatedAndUpdated() {
+        var currentEpochSeconds = 100.0
+        let sut1 = makeSUT(currentDate: {
+            // Ensures the time increments every time the date is fetched
+            currentEpochSeconds += 1
+            return Date(timeIntervalSince1970: currentEpochSeconds)
+        })
+
+        let newItem = sut1.encode(item: uniqueWritableVaultItem())
+
+        XCTAssertEqual(newItem.createdDate, newItem.updatedDate)
+    }
+
     func test_encodeExisting_retainsExistingUUID() {
         let sut = makeSUT()
 
