@@ -7,11 +7,11 @@ import XCTest
 
 final class VaultExportPDFDocumentRendererTests: XCTestCase {
     func test_init_doesNotHaveAnySideEffects() {
-        let renderer = RendererSpy()
+        let renderer = PDFDocumentRendererMock()
 
         _ = makeSUT(documentRenderer: renderer)
 
-        XCTAssertFalse(renderer.renderDocumentCalled)
+        XCTAssertEqual(renderer.renderCallCount, 0)
     }
 
     func test_render_rendersVaultParsedToDocument() throws {
@@ -20,18 +20,19 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
             userDescription: "my vault",
             created: Date(timeIntervalSince1970: 2000)
         )
-        let renderer = makeRendererSpy()
+        let pdfDocument = PDFDocument()
+        let renderer = makeRendererMock(pdfDocument: pdfDocument)
         let sut = makeSUT(documentRenderer: renderer)
 
         let document = try sut.render(document: exportPayload)
 
         XCTAssertIdentical(
             document,
-            renderer.renderDocumentReturnValue,
+            pdfDocument,
             "Document should be returned from the block renderer"
         )
-        XCTAssertEqual(renderer.renderDocumentCallsCount, 2, "Renders twice, first pass and final render")
-        XCTAssertEqual(renderer.renderDocumentReceivedDocument?.content.count, 4)
+        XCTAssertEqual(renderer.renderCallCount, 2, "Renders twice, first pass and final render")
+        XCTAssertEqual(renderer.renderArgValues.last?.content.count, 4)
     }
 }
 
@@ -39,19 +40,17 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
 
 extension VaultExportPDFDocumentRendererTests {
     private func makeSUT(
-        documentRenderer: RendererSpy = makeRendererSpy(),
+        documentRenderer: PDFDocumentRendererMock = makeRendererMock(),
         file _: StaticString = #filePath,
         line _: UInt = #line
-    ) -> VaultExportPDFDocumentRenderer<RendererSpy> {
+    ) -> VaultExportPDFDocumentRenderer<PDFDocumentRendererMock> {
         let sut = VaultExportPDFDocumentRenderer(renderer: documentRenderer, dataShardBuilder: DataShardBuilder())
         return sut
     }
 }
 
-private typealias RendererSpy = PDFDocumentRendererSpy<DataBlockDocument>
-
-private func makeRendererSpy() -> RendererSpy {
-    let renderer = RendererSpy()
-    renderer.renderDocumentReturnValue = PDFDocument()
+private func makeRendererMock(pdfDocument: PDFDocument = PDFDocument()) -> PDFDocumentRendererMock {
+    let renderer = PDFDocumentRendererMock()
+    renderer.renderHandler = { _ in pdfDocument }
     return renderer
 }
