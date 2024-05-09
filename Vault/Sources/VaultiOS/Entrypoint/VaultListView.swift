@@ -87,7 +87,8 @@ struct VaultListView<
                     VaultDetailEditView(
                         feedViewModel: feedViewModel,
                         storedItem: storedCode,
-                        previewGenerator: viewGenerator
+                        previewGenerator: viewGenerator,
+                        openInEditMode: isEditing
                     )
                 }
             case let .creatingItem(creatingItem):

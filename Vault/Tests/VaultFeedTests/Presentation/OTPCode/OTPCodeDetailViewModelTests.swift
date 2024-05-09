@@ -70,10 +70,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_isInEditMode_creatingInitiallyTrue() {
+    func test_isInEditMode_creatingInitiallyFalse() {
         let sut = makeSUTCreating()
 
-        XCTAssertTrue(sut.isInEditMode)
+        XCTAssertFalse(sut.isInEditMode, "Call startEditing manually!")
     }
 
     @MainActor

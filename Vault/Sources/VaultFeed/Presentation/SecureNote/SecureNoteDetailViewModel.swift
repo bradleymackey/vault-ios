@@ -32,13 +32,6 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 contents: note.contents
             ))
         }
-
-        switch mode {
-        case .creating:
-            startEditing()
-        case .editing:
-            break
-        }
     }
 
     public var isInEditMode: Bool {

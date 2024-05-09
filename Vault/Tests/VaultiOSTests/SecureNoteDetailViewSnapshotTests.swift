@@ -16,7 +16,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             storedMetadata: .init(id: UUID(), created: fixedTestDate(), updated: fixedTestDate(), userDescription: ""),
-            editor: SecureNoteDetailEditorMock()
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
         )
         .framedToTestDeviceSize()
 
@@ -28,7 +29,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
             storedMetadata: .init(id: UUID(), created: fixedTestDate(), updated: fixedTestDate(), userDescription: ""),
-            editor: SecureNoteDetailEditorMock()
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
         )
         .framedToTestDeviceSize()
 
@@ -45,7 +47,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 updated: fixedTestDate(),
                 userDescription: "My description"
             ),
-            editor: SecureNoteDetailEditorMock()
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
         )
         .framedToTestDeviceSize()
 
@@ -63,7 +66,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 updated: fixedTestDate(),
                 userDescription: "My description"
             ),
-            editor: SecureNoteDetailEditorMock()
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
         )
         .framedToTestDeviceSize()
 
@@ -81,7 +85,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 updated: date.addingTimeInterval(1), // different updated date
                 userDescription: "My description"
             ),
-            editor: SecureNoteDetailEditorMock()
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
         )
         .framedToTestDeviceSize()
 

@@ -12,6 +12,7 @@ struct VaultDetailEditView<
     var feedViewModel: FeedViewModel<Store>
     var storedItem: StoredVaultItem
     var previewGenerator: PreviewGenerator
+    var openInEditMode: Bool
 
     var body: some View {
         switch storedItem.item {
@@ -20,13 +21,15 @@ struct VaultDetailEditView<
                 editingExistingCode: storedCode,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
-                previewGenerator: previewGenerator
+                previewGenerator: previewGenerator,
+                openInEditMode: openInEditMode
             )
         case let .secureNote(storedNote):
             SecureNoteDetailView(
                 editingExistingNote: storedNote,
                 storedMetadata: storedItem.metadata,
-                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
+                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                openInEditMode: openInEditMode
             )
         }
     }
