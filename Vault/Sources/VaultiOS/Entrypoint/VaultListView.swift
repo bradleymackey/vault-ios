@@ -64,7 +64,6 @@ struct VaultListView<
                 } label: {
                     Image(systemName: "plus")
                 }
-                .disabled(isEditing)
             }
 
             if !feedViewModel.codes.isEmpty {
