@@ -6,6 +6,7 @@ import Foundation
 public enum VaultItemViewBehaviour: Equatable {
     /// Standard behaviour, the code should show the content it wants.
     case normal
-    /// Hide all code details from view, showing the optional message.
-    case obfuscate(message: String?)
+    /// The item is in an "edit" state.
+    /// Content may be modified to make it clear that an editing action is in progress.
+    case editingState(message: String?)
 }

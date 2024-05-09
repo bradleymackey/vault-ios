@@ -18,13 +18,13 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
     public func makeVaultPreviewView(
         item: SecureNote,
         metadata: StoredVaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: item.title,
             description: metadata.userDescription
         )
-        return viewFactory.makeSecureNoteView(viewModel: viewModel)
+        return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }
 
     public func scenePhaseDidChange(to _: ScenePhase) {

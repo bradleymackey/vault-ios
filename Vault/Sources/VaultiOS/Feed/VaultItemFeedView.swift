@@ -63,12 +63,12 @@ public struct VaultItemFeedView<
     }
 
     private var reorderingBehaviour: VaultItemViewBehaviour {
-        .obfuscate(message: nil)
+        .editingState(message: nil)
     }
 
     private var currentBehaviour: VaultItemViewBehaviour {
         if isEditing {
-            .obfuscate(message: localized(key: "action.tapToView"))
+            .editingState(message: localized(key: "action.tapToView"))
         } else if isReordering {
             reorderingBehaviour
         } else {

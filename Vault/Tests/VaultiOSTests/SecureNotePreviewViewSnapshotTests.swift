@@ -47,7 +47,7 @@ extension SecureNotePreviewViewSnapshotTests {
         description: String? = "Short Description"
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(title: title, description: description)
-        return SecureNotePreviewView(viewModel: viewModel)
+        return SecureNotePreviewView(viewModel: viewModel, behaviour: .normal)
             .frame(width: 250)
     }
 }

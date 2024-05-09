@@ -4,6 +4,7 @@ import VaultFeed
 @MainActor
 public struct SecureNotePreviewView: View {
     var viewModel: SecureNotePreviewViewModel
+    var behaviour: VaultItemViewBehaviour
 
     public var body: some View {
         VStack(alignment: .leading, spacing: 4) {
@@ -15,10 +16,18 @@ public struct SecureNotePreviewView: View {
             }
             Spacer()
         }
+        .shimmering(active: isShimmering)
         .multilineTextAlignment(.leading)
         .padding(2)
         .aspectRatio(1, contentMode: .fill)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private var isShimmering: Bool {
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
+        }
     }
 
     private var titleLabel: some View {
@@ -44,9 +53,12 @@ public struct SecureNotePreviewView: View {
 
 struct SecureNotePreviewView_Previews: PreviewProvider {
     static var previews: some View {
-        SecureNotePreviewView(viewModel: .init(title: "Test title", description: "desc"))
-            .frame(width: 200, height: 200)
-            .modifier(OTPCardViewModifier())
-            .padding()
+        SecureNotePreviewView(
+            viewModel: .init(title: "Test title", description: "desc"),
+            behaviour: .normal
+        )
+        .frame(width: 200, height: 200)
+        .modifier(OTPCardViewModifier())
+        .padding()
     }
 }

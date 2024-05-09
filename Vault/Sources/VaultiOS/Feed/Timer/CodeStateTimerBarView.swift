@@ -37,12 +37,15 @@ struct CodeStateTimerBarView<Timer: View>: View {
     }
 
     private var isShimmering: Bool {
-        behaviour != .normal
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
+        }
     }
 
     private var textToDisplay: String? {
         switch behaviour {
-        case let .obfuscate(message):
+        case let .editingState(message):
             message
         case .normal:
             if case let .error(err, _) = codeState {

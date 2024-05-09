@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
+/// @mockable(typealias: TOTPView = AnyView)
 public protocol TOTPPreviewViewFactory {
     associatedtype TOTPView: View
     func makeTOTPView(
