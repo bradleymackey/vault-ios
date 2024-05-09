@@ -9,7 +9,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
         _ = makeSUT(imageRenderer: imageRenderer)
 
-        XCTAssertFalse(imageRenderer.makeImageFromDataSizeCalled)
+        XCTAssertEqual(imageRenderer.makeImageCallCount, 0)
     }
 
     func test_init_rendersNoBlocks() {
@@ -90,12 +90,12 @@ private class LayoutSpy: RectSeriesLayout, PageLayout {
     }
 }
 
-private typealias ImageRenderer = PDFImageRendererSpy
+private typealias ImageRenderer = PDFImageRendererMock
 private typealias RendererFactory = PDFRendererFactorySpy
 
 private func makeImageRenderer() -> ImageRenderer {
     let stub = ImageRenderer()
-    stub.makeImageFromDataSizeReturnValue = nil
+    stub.makeImageHandler = { _, _ in nil }
     return stub
 }
 
