@@ -157,19 +157,19 @@ extension SecureNoteDetailViewModel {
 
     public var createdDateValue: String? {
         switch mode {
-        case .creating:
-            nil
         case let .editing(_, metadata):
             metadata.created.formatted(date: .abbreviated, time: .shortened)
+        default:
+            nil
         }
     }
 
     public var updatedDateValue: String? {
         switch mode {
-        case .creating:
-            nil
-        case let .editing(_, metadata):
+        case let .editing(_, metadata) where metadata.updated != metadata.created:
             metadata.updated.formatted(date: .abbreviated, time: .shortened)
+        default:
+            nil
         }
     }
 }

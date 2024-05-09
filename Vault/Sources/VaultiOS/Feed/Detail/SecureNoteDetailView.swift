@@ -99,7 +99,7 @@ struct SecureNoteDetailView: View {
                         systemImageName: "clock.fill"
                     )
 
-                    if let updatedDate = viewModel.updatedDateValue, createdDate != updatedDate {
+                    if let updatedDate = viewModel.updatedDateValue {
                         FooterInfoLabel(
                             title: viewModel.strings.updatedDateTitle,
                             detail: updatedDate,
