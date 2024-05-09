@@ -13,7 +13,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Sources/VaultUI/VaultUITests.xctestplan"
+            reference = "container:Tests/VaultUITests/VaultUITests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
