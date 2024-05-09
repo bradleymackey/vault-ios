@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1500"
+   LastUpgradeVersion = "1530"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
-      buildImplicitDependencies = "YES">
+      buildImplicitDependencies = "YES"
+      buildArchitectures = "Automatic">
    </BuildAction>
    <TestAction
       buildConfiguration = "Debug"
@@ -13,7 +14,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/FoundationExtensionsTests/TestPlans/FoundationExtensionsTests.xctestplan"
+            reference = "container:Tests/CryptoEngineTests/TestPlans/CryptoEngineTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -22,9 +23,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "FoundationExtensionsTests"
-               BuildableName = "FoundationExtensionsTests"
-               BlueprintName = "FoundationExtensionsTests"
+               BlueprintIdentifier = "CryptoEngineTests"
+               BuildableName = "CryptoEngineTests"
+               BlueprintName = "CryptoEngineTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
