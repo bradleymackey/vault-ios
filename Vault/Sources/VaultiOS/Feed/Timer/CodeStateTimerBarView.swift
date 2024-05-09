@@ -37,7 +37,10 @@ struct CodeStateTimerBarView<Timer: View>: View {
     }
 
     private var isShimmering: Bool {
-        behaviour != .normal
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
+        }
     }
 
     private var textToDisplay: String? {

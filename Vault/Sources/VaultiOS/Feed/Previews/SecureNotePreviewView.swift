@@ -24,7 +24,10 @@ public struct SecureNotePreviewView: View {
     }
 
     private var isShimmering: Bool {
-        behaviour != .normal
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
+        }
     }
 
     private var titleLabel: some View {
