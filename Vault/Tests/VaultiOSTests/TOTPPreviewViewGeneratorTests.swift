@@ -10,27 +10,29 @@ import XCTest
 final class TOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let timer = MockIntervalTimer()
         _ = makeSUT(factory: factory, timer: timer)
 
-        XCTAssertEqual(factory.makeTOTPViewExecutedCount, 0)
+        XCTAssertEqual(factory.makeTOTPViewCallCount, 0)
         XCTAssertEqual(timer.recordedWaitedIntervals, [])
     }
 
     @MainActor
     func test_makeOTPView_generatesViews() throws {
-        let sut = makeSUT()
+        let factory = TOTPPreviewViewFactoryMock()
+        factory.makeTOTPViewHandler = { _, _, _, _ in AnyView(Text("Hello, TOTP!")) }
+        let sut = makeSUT(factory: factory)
 
         let view = sut.makeVaultPreviewView(item: anyTOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let foundText = try view.inspect().text().string()
+        let foundText = try view.inspect().anyView().text().string()
         XCTAssertEqual(foundText, "Hello, TOTP!")
     }
 
     @MainActor
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
         let sharedID = UUID()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
@@ -42,7 +44,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_makeOTPView_returnsSameTimerPeriodStateUsingCachedModels() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
         let sharedID = UUID()
         let models = collectCodeTimerPeriodState(sut: sut, factory: factory, ids: [sharedID, sharedID])
@@ -62,7 +64,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
         let id = UUID()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
@@ -87,7 +89,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
         let id = UUID()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
@@ -103,7 +105,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
         let id = UUID()
 
@@ -122,7 +124,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_recalculateAllTimers_recalculatesAllCachedTimers() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
 
         expectRecalculatesCachedTimers(sut: sut, factory: factory) {
@@ -132,7 +134,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_scenePhaseDidChange_activeRecalculatesAllCachedTimers() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
 
         expectRecalculatesCachedTimers(sut: sut, factory: factory) {
@@ -142,7 +144,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
     @MainActor
     func test_didAppear_recalculatesAllCachedTimers() {
-        let factory = MockTOTPViewFactory()
+        let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
 
         expectRecalculatesCachedTimers(sut: sut, factory: factory) {
@@ -152,11 +154,11 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 }
 
 extension TOTPPreviewViewGeneratorTests {
-    private typealias SUT = TOTPPreviewViewGenerator<MockTOTPViewFactory>
+    private typealias SUT = TOTPPreviewViewGenerator<TOTPPreviewViewFactoryMock>
 
     @MainActor
     private func makeSUT(
-        factory: MockTOTPViewFactory = MockTOTPViewFactory(),
+        factory: TOTPPreviewViewFactoryMock = makeTOTPPreviewViewFactoryMock(),
         updaterFactory: MockCodeTimerUpdaterFactory = MockCodeTimerUpdaterFactory(),
         clock: EpochClock = EpochClock { 100 },
         timer: MockIntervalTimer = MockIntervalTimer()
@@ -170,7 +172,11 @@ extension TOTPPreviewViewGeneratorTests {
     }
 
     @MainActor
-    private func expectRecalculatesCachedTimers(sut: SUT, factory: MockTOTPViewFactory, when action: () -> Void) {
+    private func expectRecalculatesCachedTimers(
+        sut: SUT,
+        factory: TOTPPreviewViewFactoryMock,
+        when action: () -> Void
+    ) {
         let updaters = collectCodeTimerUpdaters(sut: sut, factory: factory, ids: [UUID(), UUID(), UUID()])
 
         for updater in updaters {
@@ -184,33 +190,10 @@ extension TOTPPreviewViewGeneratorTests {
         }
     }
 
-    private final class MockTOTPViewFactory: TOTPPreviewViewFactory {
-        var makeTOTPViewExecutedCount = 0
-        var makeTOTPViewExecuted: (
-            OTPCodePreviewViewModel,
-            OTPCodeTimerPeriodState,
-            any OTPCodeTimerUpdater,
-            VaultItemViewBehaviour
-        )
-            -> Void = { _, _, _, _ in
-            }
-
-        func makeTOTPView(
-            viewModel: OTPCodePreviewViewModel,
-            periodState: OTPCodeTimerPeriodState,
-            updater: any OTPCodeTimerUpdater,
-            behaviour: VaultItemViewBehaviour
-        ) -> some View {
-            makeTOTPViewExecutedCount += 1
-            makeTOTPViewExecuted(viewModel, periodState, updater, behaviour)
-            return Text("Hello, TOTP!")
-        }
-    }
-
     @MainActor
     private func collectFactoryParameters(
         sut: SUT,
-        factory: MockTOTPViewFactory,
+        factory: TOTPPreviewViewFactoryMock,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -218,12 +201,13 @@ extension TOTPPreviewViewGeneratorTests {
         var models = [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, MockCodeTimerUpdater)]()
 
         let group = DispatchGroup()
-        factory.makeTOTPViewExecuted = { viewModel, periodState, updater, _ in
+        factory.makeTOTPViewHandler = { viewModel, periodState, updater, _ in
             defer { group.leave() }
             guard let mockUpdater = updater as? MockCodeTimerUpdater else {
-                return
+                return AnyView(Text("Hello, TOTP!"))
             }
             models.append((viewModel, periodState, mockUpdater))
+            return AnyView(Text("Hello, TOTP!"))
         }
 
         for id in ids {
@@ -246,7 +230,7 @@ extension TOTPPreviewViewGeneratorTests {
     @MainActor
     private func collectCodePreviewViewModels(
         sut: SUT,
-        factory: MockTOTPViewFactory,
+        factory: TOTPPreviewViewFactoryMock,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -258,7 +242,7 @@ extension TOTPPreviewViewGeneratorTests {
     @MainActor
     private func collectCodeTimerPeriodState(
         sut: SUT,
-        factory: MockTOTPViewFactory,
+        factory: TOTPPreviewViewFactoryMock,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -270,7 +254,7 @@ extension TOTPPreviewViewGeneratorTests {
     @MainActor
     private func collectCodeTimerUpdaters(
         sut: SUT,
-        factory: MockTOTPViewFactory,
+        factory: TOTPPreviewViewFactoryMock,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -301,4 +285,10 @@ extension TOTPPreviewViewGeneratorTests {
             timerUpdatedPublisherSubject.eraseToAnyPublisher()
         }
     }
+}
+
+private func makeTOTPPreviewViewFactoryMock() -> TOTPPreviewViewFactoryMock {
+    let mock = TOTPPreviewViewFactoryMock()
+    mock.makeTOTPViewHandler = { _, _, _, _ in AnyView(Text("Nice")) }
+    return mock
 }
