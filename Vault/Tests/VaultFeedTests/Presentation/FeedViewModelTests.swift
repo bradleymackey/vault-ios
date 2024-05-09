@@ -1,8 +1,8 @@
 import Combine
 import Foundation
 import TestHelpers
-import VaultFeed
 import XCTest
+@testable import VaultFeed
 
 final class FeedViewModelTests: XCTestCase {
     // swiftlint:disable:next implicitly_unwrapped_optional
@@ -162,14 +162,14 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_createItem_doesNotInvalidateAnyCaches() async throws {
-        let cache1 = VaultItemCacheSpy()
-        let cache2 = VaultItemCacheSpy()
+        let cache1 = VaultItemCacheMock()
+        let cache2 = VaultItemCacheMock()
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         try await sut.create(item: uniqueWritableVaultItem())
 
-        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [])
-        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [])
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheArgValues, [])
     }
 
     @MainActor
@@ -220,15 +220,15 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_updateCode_invalidatesCaches() async throws {
-        let cache1 = VaultItemCacheSpy()
-        let cache2 = VaultItemCacheSpy()
+        let cache1 = VaultItemCacheMock()
+        let cache2 = VaultItemCacheMock()
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
         try await sut.update(id: invalidateId, item: uniqueWritableVaultItem())
 
-        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
-        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [invalidateId])
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheArgValues, [invalidateId])
     }
 
     @MainActor
@@ -279,15 +279,15 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_invalidatesCaches() async throws {
-        let cache1 = VaultItemCacheSpy()
-        let cache2 = VaultItemCacheSpy()
+        let cache1 = VaultItemCacheMock()
+        let cache2 = VaultItemCacheMock()
         let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
         try await sut.delete(id: invalidateId)
 
-        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
-        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheForVaultItemWithIDReceivedInvocations, [invalidateId])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [invalidateId])
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheArgValues, [invalidateId])
     }
 
     // MARK: - Helpers

@@ -1,8 +1,7 @@
-import Spyable
 import UIKit
 
 /// Creates a rendering context where PDFs will be drawn onto.
-@Spyable
+/// @mockable
 public protocol PDFRendererFactory {
     var size: any PDFDocumentSize { get }
     func makeRenderer() -> UIGraphicsPDFRenderer
