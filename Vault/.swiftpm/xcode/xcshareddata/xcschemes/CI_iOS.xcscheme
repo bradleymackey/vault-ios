@@ -25,7 +25,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:CI/ios_alltests.xctestplan"
+            reference = "container:TestPlans/CI/iOSAllTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
@@ -59,15 +59,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <MacroExpansion>
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "CryptoDocumentExporterSnapshotTests"
-            BuildableName = "CryptoDocumentExporterSnapshotTests"
-            BlueprintName = "CryptoDocumentExporterSnapshotTests"
-            ReferencedContainer = "container:">
-         </BuildableReference>
-      </MacroExpansion>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

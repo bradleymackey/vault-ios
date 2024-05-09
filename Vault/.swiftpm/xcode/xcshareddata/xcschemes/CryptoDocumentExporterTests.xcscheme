@@ -13,7 +13,7 @@
       shouldUseLaunchSchemeArgsEnv = "YES">
       <TestPlans>
          <TestPlanReference
-            reference = "container:Tests/CryptoDocumentExporterTests/TestPlans/CryptoDocumentExporterTests.xctestplan"
+            reference = "container:TestPlans/Individual/CryptoDocumentExporterTests.xctestplan"
             default = "YES">
          </TestPlanReference>
       </TestPlans>
