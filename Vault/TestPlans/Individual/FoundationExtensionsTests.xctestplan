@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "EDBBBB07-ED39-4FE8-9172-254A54711731",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FoundationExtensionsTests",
+        "name" : "FoundationExtensionsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

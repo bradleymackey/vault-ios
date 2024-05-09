@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "70BC0C53-D037-4ECE-8900-57B5B500EB29",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultFeedTests",
+        "name" : "VaultFeedTests"
+      }
+    }
+  ],
+  "version" : 1
+}

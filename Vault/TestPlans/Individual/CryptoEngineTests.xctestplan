@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "725AFE23-57D6-4F1A-8174-978B0C0ED450",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CryptoEngineTests",
+        "name" : "CryptoEngineTests"
+      }
+    }
+  ],
+  "version" : 1
+}
