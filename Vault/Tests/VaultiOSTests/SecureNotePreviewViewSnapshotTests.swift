@@ -17,6 +17,12 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
         assertSnapshot(matching: sut, as: .image)
     }
 
+    func test_layout_titleOnlyLong() {
+        let sut = makeSUT(title: "Title that is a little bit long, but's that's OK", description: nil)
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
     func test_layout_titleAndDescription() {
         let sut = makeSUT(title: "Title", description: "Short description")
 

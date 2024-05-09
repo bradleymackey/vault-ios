@@ -7,18 +7,27 @@ public struct SecureNotePreviewView: View {
     var behaviour: VaultItemViewBehaviour
 
     public var body: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            titleLabel
-                .layoutPriority(100)
-            if let description = viewModel.description {
+        VStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .center, spacing: 4) {
+                Image(systemName: "doc.text.fill")
+                    .font(.title3)
+                Text(viewModel.visibleTitle)
+                    .font(.headline)
+            }
+            .foregroundStyle(.primary)
+            .tint(.primary)
+            .multilineTextAlignment(.center)
+            .layoutPriority(100)
+
+            if let description = viewModel.description, description.isNotEmpty {
                 descriptionLabel(text: description)
                     .layoutPriority(99)
+                    .multilineTextAlignment(.leading)
             }
-            Spacer()
         }
-        .shimmering(active: isShimmering)
-        .multilineTextAlignment(.leading)
+        .frame(maxHeight: .infinity)
         .padding(2)
+        .shimmering(active: isShimmering)
         .aspectRatio(1, contentMode: .fill)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -28,19 +37,6 @@ public struct SecureNotePreviewView: View {
         case .normal: false
         case .editingState: true
         }
-    }
-
-    private var titleLabel: some View {
-        HStack(alignment: .top, spacing: 4) {
-            Image(systemName: "doc.text.fill")
-            Text(viewModel.visibleTitle)
-            Spacer()
-        }
-        .font(.callout.bold())
-        .minimumScaleFactor(0.8)
-        .padding(.vertical, 4)
-        .foregroundStyle(.primary)
-        .tint(.primary)
     }
 
     private func descriptionLabel(text: String) -> some View {
