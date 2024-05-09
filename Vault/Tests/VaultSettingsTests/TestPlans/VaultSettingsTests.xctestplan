@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "E3D4F40A-2FD6-4A0D-82C1-3C57448A3C28",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultSettingsTests",
+        "name" : "VaultSettingsTests"
+      }
+    }
+  ],
+  "version" : 1
+}
