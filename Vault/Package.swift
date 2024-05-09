@@ -8,7 +8,6 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
-    .define("SPYABLE", .when(configuration: .debug)),
 ]
 
 let package = Package(
@@ -29,7 +28,6 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.2"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
-        .package(url: "https://github.com/bradleymackey/swift-spyable", branch: "main"),
     ],
     targets: [
         .target(
@@ -107,7 +105,6 @@ let package = Package(
             name: "CryptoDocumentExporter",
             dependencies: [
                 "CryptoEngine",
-                .product(name: "Spyable", package: "swift-spyable"),
             ],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
@@ -163,7 +160,6 @@ let package = Package(
             dependencies: [
                 "VaultCore",
                 "CryptoEngine",
-                .product(name: "Spyable", package: "swift-spyable"),
             ],
             resources: [
                 .copy("Resources/VaultStore.xcdatamodeld"),

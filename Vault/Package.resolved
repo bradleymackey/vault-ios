@@ -1,4 +1,5 @@
 {
+  "originHash" : "51f64e112c4534e465f55bc46e1077c5a273e53191d4bcf3c0b2f79235b527e3",
   "pins" : [
     {
       "identity" : "bigint",
@@ -46,15 +47,6 @@
       }
     },
     {
-      "identity" : "swift-spyable",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/bradleymackey/swift-spyable",
-      "state" : {
-        "branch" : "main",
-        "revision" : "66750a8bffc4685a05b8f7af8eac0237f49df41d"
-      }
-    },
-    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
@@ -73,5 +65,5 @@
       }
     }
   ],
-  "version" : 2
+  "version" : 3
 }
