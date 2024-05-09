@@ -1,8 +1,7 @@
 import Foundation
-import Spyable
 import VaultCore
 
-@Spyable
+/// @mockable
 public protocol SecureNoteDetailEditor {
     func createNote(initialEdits: SecureNoteDetailEdits) async throws
     func updateNote(id: UUID, item: SecureNote, edits: SecureNoteDetailEdits) async throws
