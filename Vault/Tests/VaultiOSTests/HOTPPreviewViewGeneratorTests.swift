@@ -11,7 +11,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let (_, timer, factory) = makeSUT()
 
-        XCTAssertEqual(factory.makeHOTPViewExecutedCount, 0)
+        XCTAssertEqual(factory.makeHOTPViewCallCount, 0)
         XCTAssertEqual(timer.recordedWaitedIntervals, [])
     }
 
@@ -21,7 +21,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let view = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let foundText = try view.inspect().text().string()
+        let foundText = try view.inspect().anyView().text().string()
         XCTAssertEqual(foundText, "Hello, HOTP!")
     }
 
@@ -164,10 +164,11 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 }
 
 extension HOTPPreviewViewGeneratorTests {
-    private typealias SUT = HOTPPreviewViewGenerator<MockHOTPViewFactory>
+    private typealias SUT = HOTPPreviewViewGenerator<HOTPPreviewViewFactoryMock>
     @MainActor
-    private func makeSUT() -> (SUT, MockIntervalTimer, MockHOTPViewFactory) {
-        let factory = MockHOTPViewFactory()
+    private func makeSUT() -> (SUT, MockIntervalTimer, HOTPPreviewViewFactoryMock) {
+        let factory = HOTPPreviewViewFactoryMock()
+        factory.makeHOTPViewHandler = { _, _, _ in AnyView(Text("Hello, HOTP!")) }
         let timer = MockIntervalTimer()
         let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer)
         return (sut, timer, factory)
@@ -179,7 +180,11 @@ extension HOTPPreviewViewGeneratorTests {
     }
 
     @MainActor
-    private func expectHidesAllCodesUntilNextUpdate(sut: SUT, factory: MockHOTPViewFactory, when action: () -> Void) {
+    private func expectHidesAllCodesUntilNextUpdate(
+        sut: SUT,
+        factory: HOTPPreviewViewFactoryMock,
+        when action: () -> Void
+    ) {
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
 
         for viewModel in viewModels {
@@ -193,25 +198,10 @@ extension HOTPPreviewViewGeneratorTests {
         XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
     }
 
-    private final class MockHOTPViewFactory: HOTPPreviewViewFactory {
-        var makeHOTPViewExecutedCount = 0
-        var makeHOTPViewExecuted: (OTPCodePreviewViewModel, OTPCodeIncrementerViewModel, VaultItemViewBehaviour)
-            -> Void = { _, _, _ in }
-        func makeHOTPView(
-            viewModel: OTPCodePreviewViewModel,
-            incrementer: OTPCodeIncrementerViewModel,
-            behaviour: VaultItemViewBehaviour
-        ) -> some View {
-            makeHOTPViewExecutedCount += 1
-            makeHOTPViewExecuted(viewModel, incrementer, behaviour)
-            return Text("Hello, HOTP!")
-        }
-    }
-
     @MainActor
     private func collectCodePreviewViewModels(
         sut: SUT,
-        factory: MockHOTPViewFactory,
+        factory: HOTPPreviewViewFactoryMock,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -219,9 +209,10 @@ extension HOTPPreviewViewGeneratorTests {
         var viewModels = [OTPCodePreviewViewModel]()
 
         let group = DispatchGroup()
-        factory.makeHOTPViewExecuted = { viewModel, _, _ in
+        factory.makeHOTPViewHandler = { viewModel, _, _ in
             viewModels.append(viewModel)
             group.leave()
+            return AnyView(Text("Hello, HOTP!"))
         }
 
         for id in ids {
@@ -244,7 +235,7 @@ extension HOTPPreviewViewGeneratorTests {
     @MainActor
     private func collectCodeIncrementerViewModels(
         sut: SUT,
-        factory: MockHOTPViewFactory,
+        factory: HOTPPreviewViewFactoryMock,
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -252,9 +243,10 @@ extension HOTPPreviewViewGeneratorTests {
         var viewModels = [OTPCodeIncrementerViewModel]()
 
         let group = DispatchGroup()
-        factory.makeHOTPViewExecuted = { _, incrementer, _ in
+        factory.makeHOTPViewHandler = { _, incrementer, _ in
             viewModels.append(incrementer)
             group.leave()
+            return AnyView(Text("Hello, HOTP!"))
         }
 
         for id in ids {
