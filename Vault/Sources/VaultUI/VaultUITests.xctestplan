@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "4EC4BFF2-27DC-418F-9005-B0CFAD4CDF97",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultUITests",
+        "name" : "VaultUITests"
+      }
+    }
+  ],
+  "version" : 1
+}

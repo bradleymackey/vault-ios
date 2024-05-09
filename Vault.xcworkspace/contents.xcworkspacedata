@@ -10,4 +10,7 @@
    <FileRef
       location = "group:Vault/Tests/VaultiOSTests/VaultiOSTests.xctestplan">
    </FileRef>
+   <FileRef
+      location = "group:Vault/Sources/VaultUI/VaultUITests.xctestplan">
+   </FileRef>
 </Workspace>
