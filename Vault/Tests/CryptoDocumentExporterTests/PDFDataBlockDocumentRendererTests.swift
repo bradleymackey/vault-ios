@@ -26,7 +26,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
         _ = try? sut.render(document: anyDataBlockExportDocument())
 
-        XCTAssertEqual(rendererFactory.makeRendererCallsCount, 1)
+        XCTAssertEqual(rendererFactory.makeRendererCallCount, 1)
     }
 
     func test_render_returnsPDFDocumentForValidData() {
@@ -51,10 +51,10 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
 extension PDFDataBlockDocumentRendererTests {
     private func makeSUT(
-        rendererFactory: RendererFactory = makeRendererFactory(),
-        imageRenderer: ImageRenderer = makeImageRenderer(),
+        rendererFactory: PDFRendererFactoryMock = makeRendererFactory(),
+        imageRenderer: PDFImageRendererMock = makeImageRenderer(),
         rectLayout: LayoutSpy = LayoutSpy()
-    ) -> PDFDataBlockDocumentRenderer<ImageRenderer, LayoutSpy> {
+    ) -> PDFDataBlockDocumentRenderer<PDFImageRendererMock, LayoutSpy> {
         PDFDataBlockDocumentRenderer(
             documentSize: USLetterDocumentSize(),
             rendererFactory: rendererFactory,
@@ -90,17 +90,16 @@ private class LayoutSpy: RectSeriesLayout, PageLayout {
     }
 }
 
-private typealias ImageRenderer = PDFImageRendererMock
-private typealias RendererFactory = PDFRendererFactorySpy
-
-private func makeImageRenderer() -> ImageRenderer {
-    let stub = ImageRenderer()
+private func makeImageRenderer() -> PDFImageRendererMock {
+    let stub = PDFImageRendererMock()
     stub.makeImageHandler = { _, _ in nil }
     return stub
 }
 
-private func makeRendererFactory(renderer: UIGraphicsPDFRenderer = UIGraphicsPDFRendererStub()) -> RendererFactory {
-    let stub = RendererFactory()
-    stub.makeRendererReturnValue = renderer
+private func makeRendererFactory(renderer: UIGraphicsPDFRenderer = UIGraphicsPDFRendererStub())
+    -> PDFRendererFactoryMock
+{
+    let stub = PDFRendererFactoryMock()
+    stub.makeRendererHandler = { renderer }
     return stub
 }
