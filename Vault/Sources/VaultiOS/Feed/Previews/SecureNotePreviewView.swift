@@ -7,6 +7,33 @@ public struct SecureNotePreviewView: View {
     var behaviour: VaultItemViewBehaviour
 
     public var body: some View {
+        Group {
+            if let description = viewModel.description, description.isNotEmpty {
+                noteWithTitleAndDescriptionBody(description: description)
+            } else {
+                noteWithTitleOnlyBody()
+            }
+        }
+        .shimmering(active: isShimmering)
+        .aspectRatio(1, contentMode: .fill)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+    }
+
+    private func noteWithTitleOnlyBody() -> some View {
+        VStack(alignment: .center, spacing: 4) {
+            Image(systemName: "doc.text.fill")
+                .font(.title3)
+            Text(viewModel.visibleTitle)
+                .font(.headline)
+        }
+        .foregroundStyle(.primary)
+        .tint(.primary)
+        .frame(maxHeight: .infinity)
+        .multilineTextAlignment(.center)
+        .padding(2)
+    }
+
+    private func noteWithTitleAndDescriptionBody(description _: String) -> some View {
         VStack(alignment: .leading, spacing: 4) {
             titleLabel
                 .layoutPriority(100)
@@ -16,11 +43,8 @@ public struct SecureNotePreviewView: View {
             }
             Spacer()
         }
-        .shimmering(active: isShimmering)
         .multilineTextAlignment(.leading)
         .padding(2)
-        .aspectRatio(1, contentMode: .fill)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
     private var isShimmering: Bool {
