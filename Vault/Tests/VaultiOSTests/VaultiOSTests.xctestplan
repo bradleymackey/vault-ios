@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "38151A77-1A8E-4FCF-9CFC-81ABE663D1F5",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultiOSTests",
+        "name" : "VaultiOSTests"
+      }
+    }
+  ],
+  "version" : 1
+}
