@@ -231,7 +231,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     )
                 }
 
-                if let updatedDateValue = viewModel.updatedDateValue, updatedDateValue != viewModel.createdDateValue {
+                if let updatedDateValue = viewModel.updatedDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.updatedDateTitle,
                         detail: updatedDateValue,
