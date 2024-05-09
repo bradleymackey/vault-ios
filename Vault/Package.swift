@@ -45,7 +45,8 @@ let package = Package(
             resources: [
                 .process("Resources/Feed.xcstrings"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "VaultiOSTests",
@@ -54,18 +55,21 @@ let package = Package(
                 "TestHelpers",
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "VaultBackup",
             dependencies: ["CryptoDocumentExporter"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "VaultBackupTests",
             dependencies: ["VaultBackup", "TestHelpers", "CryptoEngine"],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "TestHelpers",
@@ -73,22 +77,26 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
                 .product(name: "ViewInspector", package: "ViewInspector"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "VaultCore",
             dependencies: ["CryptoEngine"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "VaultCoreTests",
             dependencies: ["VaultCore", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "VaultUI",
             dependencies: [],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "VaultUITests",
@@ -97,7 +105,8 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "CryptoDocumentExporter",
@@ -105,7 +114,8 @@ let package = Package(
                 "CryptoEngine",
                 .product(name: "Spyable", package: "swift-spyable"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "CryptoDocumentExporterTests",
@@ -113,7 +123,8 @@ let package = Package(
                 "CryptoDocumentExporter",
                 "TestHelpers",
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "CryptoDocumentExporterSnapshotTests",
@@ -126,17 +137,20 @@ let package = Package(
                 ),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "CryptoEngine",
             dependencies: ["CryptoSwift", "BigInt"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "CryptoEngineTests",
             dependencies: ["CryptoEngine"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "VaultSettings",
@@ -144,12 +158,14 @@ let package = Package(
             resources: [
                 .process("Resources/Settings.xcstrings"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "VaultFeed",
@@ -162,24 +178,39 @@ let package = Package(
                 .copy("Resources/VaultStore.xcdatamodeld"),
                 .process("Resources/VaultFeed.xcstrings"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "VaultFeedTests",
             dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .target(
             name: "FoundationExtensions",
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
         ),
 
         // MARK: - TOOLING
+
+        .plugin(
+            name: "RunMockolo",
+            capability: .buildTool(),
+            dependencies: [.target(name: "mockolo")]
+        ),
+        .binaryTarget(
+            name: "mockolo",
+            url: "https://github.com/uber/mockolo/releases/download/2.1.1/mockolo.artifactbundle.zip",
+            checksum: "e3aa6e3aacec6b75ee971d7ba1ed326ff22372a8dc60a581cec742441cdbd9db"
+        ),
 
         .plugin(
             name: "FormatSwift",
