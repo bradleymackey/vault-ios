@@ -684,6 +684,28 @@
           }
         }
       }
+    },
+    "validation.rule.stringRequiringContent.isBlank" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter some actual text, not just blanks!"
+          }
+        }
+      }
+    },
+    "validation.rule.stringRequiringContent.isEmpty" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter some text!"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
