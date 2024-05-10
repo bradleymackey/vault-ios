@@ -1,5 +1,6 @@
 import Foundation
 import FoundationExtensions
+import VaultCore
 
 /// A value that can perform validation on the value that is input with some custom logic.
 @propertyWrapper
@@ -47,6 +48,19 @@ extension FieldValidationLogic {
     /// The validation always an error, no matter the value.
     public static var alwaysError: Self {
         FieldValidationLogic { _ in .error() }
+    }
+}
+
+extension FieldValidationLogic where T == String {
+    public static var otpSecretBase32: Self {
+        FieldValidationLogic { currentValue in
+            do {
+                _ = try OTPAuthSecret.base32EncodedString(currentValue)
+                return .valid
+            } catch {
+                return .error(message: localized(key: "validation.rule.otpSecretBase32.invalidData"))
+            }
+        }
     }
 }
 
