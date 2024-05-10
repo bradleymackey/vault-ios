@@ -4,7 +4,7 @@ import FoundationExtensions
 /// Encapsulates editing state for a given note.
 ///
 /// This is a partial edit, which will be merged with the current model to form an update.
-public struct SecureNoteDetailEdits: Equatable {
+public struct SecureNoteDetailEdits: EditableState {
     /// The title, which validates that there is actually content in the string.
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var title: String = ""
@@ -19,5 +19,9 @@ public struct SecureNoteDetailEdits: Equatable {
         self.description = description
         self.title = title
         self.contents = contents
+    }
+
+    public var isValid: Bool {
+        $title.isValid && $description.isValid && $contents.isValid
     }
 }

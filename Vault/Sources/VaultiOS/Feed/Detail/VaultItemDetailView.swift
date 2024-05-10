@@ -110,6 +110,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                 Text(viewModel.strings.saveEditsTitle)
                     .tint(.accentColor)
             }
+            .disabled(!viewModel.editingModel.isValid)
         }
     }
 
