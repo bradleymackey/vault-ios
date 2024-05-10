@@ -74,6 +74,14 @@ struct SecureNoteDetailView: View {
             }
         } header: {
             Text(viewModel.strings.noteTitle)
+        } footer: {
+            switch viewModel.editingModel.detail.$title {
+            case let .error(.some(message)):
+                Text(message)
+                    .foregroundStyle(Color.red)
+            case _:
+                EmptyView()
+            }
         }
     }
 

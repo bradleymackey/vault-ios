@@ -4,7 +4,7 @@ import Foundation
 /// Common behaviours for the view model of an item's detail.
 @MainActor
 public protocol DetailViewModel: AnyObject, Observable {
-    associatedtype Edits: Equatable
+    associatedtype Edits: EditableState
     associatedtype Strings: DetailViewModelStrings
 
     var editingModel: DetailEditingModel<Edits> { get set }
