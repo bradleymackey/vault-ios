@@ -685,6 +685,17 @@
         }
       }
     },
+    "validation.rule.otpSecretBase32.invalidData" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid data"
+          }
+        }
+      }
+    },
     "validation.rule.stringRequiringContent.isBlank" : {
       "extractionState" : "manual",
       "localizations" : {

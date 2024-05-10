@@ -55,6 +55,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 accountNameEditingSection
                 descriptionEditingSection
                 if viewModel.isInitialCreation {
+                    Divider()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(EmptyView())
                     codeSecretEditingSection
                     codeMetadataEditingSection
                 }
@@ -198,8 +201,22 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var codeSecretEditingSection: some View {
         Section {
             TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
+                .foregroundStyle(viewModel.editingModel.detail.$secretBase32String.isError ? .red : .primary)
         } header: {
-            Text(viewModel.strings.inputSecretTitle)
+            HStack(alignment: .center, spacing: 8) {
+                Text(viewModel.strings.inputSecretTitle)
+
+                Spacer()
+
+                switch viewModel.editingModel.detail.$secretBase32String {
+                case let .error(.some(message)):
+                    Text(message)
+                        .foregroundStyle(Color.red)
+                        .bold()
+                case _:
+                    EmptyView()
+                }
+            }
         }
     }
 

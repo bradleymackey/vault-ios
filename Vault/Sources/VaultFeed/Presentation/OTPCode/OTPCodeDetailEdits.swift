@@ -12,7 +12,8 @@ public struct OTPCodeDetailEdits: EditableState {
     public var totpPeriodLength: UInt64
     /// Only used for HOTP type codes, ignored otherwise
     public var hotpCounterValue: UInt64
-    public var secretBase32String: String
+    @FieldValidated(validationLogic: .otpSecretBase32)
+    public var secretBase32String: String = ""
     public var algorithm: OTPAuthAlgorithm
     public var numberOfDigits: UInt16
     public var issuerTitle: String
@@ -80,8 +81,7 @@ public struct OTPCodeDetailEdits: EditableState {
     }
 
     public var isValid: Bool {
-        // TODO: define valid state
-        true
+        $secretBase32String.isValid
     }
 }
 
