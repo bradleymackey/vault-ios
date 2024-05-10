@@ -126,8 +126,8 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
         let initialEdits = SecureNoteDetailEdits(
-            description: "new description",
             title: "new title",
+            description: "new description",
             contents: "new contents"
         )
 
@@ -166,7 +166,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         var item = uniqueVaultItem(item: .secureNote(note))
         item.metadata.userDescription = "old description"
 
-        let edits = SecureNoteDetailEdits(description: "new description", title: "new title", contents: "new contents")
+        let edits = SecureNoteDetailEdits(title: "new title", description: "new description", contents: "new contents")
 
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in

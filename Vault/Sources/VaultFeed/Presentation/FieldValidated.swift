@@ -54,7 +54,7 @@ extension FieldValidationLogic where T: StringProtocol {
     public static var stringRequiringContent: Self {
         FieldValidationLogic { currentValue in
             if currentValue.isEmpty {
-                return .error(message: localized(key: "validation.rule.stringRequiringContent.isEmpty"))
+                return .invalid
             }
             if currentValue.isBlank {
                 return .error(message: localized(key: "validation.rule.stringRequiringContent.isBlank"))
