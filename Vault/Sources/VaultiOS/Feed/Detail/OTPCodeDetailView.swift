@@ -55,6 +55,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 accountNameEditingSection
                 descriptionEditingSection
                 if viewModel.isInitialCreation {
+                    Divider()
+                        .listRowInsets(EdgeInsets())
+                        .listRowBackground(EmptyView())
                     codeSecretEditingSection
                     codeMetadataEditingSection
                 }
