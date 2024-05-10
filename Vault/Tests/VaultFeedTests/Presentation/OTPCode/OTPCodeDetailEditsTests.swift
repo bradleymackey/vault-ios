@@ -80,6 +80,42 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertTrue(sut.isValid)
     }
 
+    func test_isValid_invalidForEmptySecret() throws {
+        let code = OTPAuthCode(
+            type: .hotp(counter: 12345),
+            data: .init(
+                secret: makeExampleSecret(),
+                algorithm: .sha256,
+                digits: .default,
+                accountName: "myacc2",
+                issuer: "myiss2"
+            )
+        )
+
+        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2")
+        sut.secretBase32String = ""
+
+        XCTAssertFalse(sut.isValid)
+    }
+
+    func test_isValid_invalidForEmptyIssuer() throws {
+        let code = OTPAuthCode(
+            type: .hotp(counter: 12345),
+            data: .init(
+                secret: makeExampleSecret(),
+                algorithm: .sha256,
+                digits: .default,
+                accountName: "myacc2",
+                issuer: "myiss2"
+            )
+        )
+
+        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2")
+        sut.issuerTitle = ""
+
+        XCTAssertFalse(sut.isValid)
+    }
+
     func test_isValid_invalidSecretIsInvalid() throws {
         let code = OTPAuthCode(
             type: .hotp(counter: 12345),

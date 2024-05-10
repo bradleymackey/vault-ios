@@ -201,7 +201,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var codeSecretEditingSection: some View {
         Section {
             TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
-                .foregroundStyle(viewModel.editingModel.detail.$secretBase32String.isError ? .red : .primary)
         } header: {
             HStack(alignment: .center, spacing: 8) {
                 Text(viewModel.strings.inputSecretTitle)
