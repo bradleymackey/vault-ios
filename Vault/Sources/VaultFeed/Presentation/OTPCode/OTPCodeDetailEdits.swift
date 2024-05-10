@@ -16,7 +16,8 @@ public struct OTPCodeDetailEdits: EditableState {
     public var secretBase32String: String = ""
     public var algorithm: OTPAuthAlgorithm
     public var numberOfDigits: UInt16
-    public var issuerTitle: String
+    @FieldValidated(validationLogic: .stringRequiringContent)
+    public var issuerTitle: String = ""
     public var accountNameTitle: String
     public var description: String
 
@@ -81,7 +82,7 @@ public struct OTPCodeDetailEdits: EditableState {
     }
 
     public var isValid: Bool {
-        $secretBase32String.isValid
+        $secretBase32String.isValid && $issuerTitle.isValid
     }
 }
 

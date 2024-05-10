@@ -54,6 +54,8 @@ extension FieldValidationLogic {
 extension FieldValidationLogic where T == String {
     public static var otpSecretBase32: Self {
         FieldValidationLogic { currentValue in
+            if currentValue.isEmpty { return .invalid }
+            if currentValue.isBlank { return .invalid }
             do {
                 _ = try OTPAuthSecret.base32EncodedString(currentValue)
                 return .valid
