@@ -28,6 +28,7 @@ let package = Package(
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.2"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
+        .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.4.1"),
     ],
     targets: [
         .target(
@@ -37,6 +38,7 @@ let package = Package(
                 "VaultSettings",
                 "VaultCore",
                 "SimpleToast",
+                "CodeScanner",
                 "FoundationExtensions",
                 .targetItem(name: "VaultUI", condition: .when(platforms: [.iOS])),
             ],
