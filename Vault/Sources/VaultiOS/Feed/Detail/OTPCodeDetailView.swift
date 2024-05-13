@@ -27,7 +27,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     }
 
     init(newCodeWithEditor editor: any OTPCodeDetailEditor, previewGenerator: PreviewGenerator) {
-        _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
+        _viewModel = .init(initialValue: .init(mode: .creating(), editor: editor))
         self.previewGenerator = previewGenerator
 
         viewModel.startEditing()

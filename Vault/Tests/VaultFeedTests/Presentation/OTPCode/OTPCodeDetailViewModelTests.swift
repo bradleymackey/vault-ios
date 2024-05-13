@@ -37,6 +37,24 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_init_creatingWithCodeUsesInitialData() {
+        let code = OTPAuthCode(
+            type: .totp(),
+            data: .init(
+                secret: .init(data: Data(), format: .base32),
+                accountName: "my account",
+                issuer: "my issuer"
+            )
+        )
+
+        let sut = makeSUTCreating(initialCode: code)
+
+        XCTAssertEqual(sut.editingModel.detail.accountNameTitle, "my account")
+        XCTAssertEqual(sut.editingModel.detail.issuerTitle, "my issuer")
+        XCTAssertEqual(sut.editingModel.detail.description, "")
+    }
+
+    @MainActor
     func test_init_editingModelUsesInitialData() {
         let code = OTPAuthCode(
             type: .totp(),
@@ -343,10 +361,11 @@ extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUTCreating(
         editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
+        initialCode: OTPAuthCode? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(mode: .creating, editor: editor)
+        let sut = OTPCodeDetailViewModel(mode: .creating(initialCode: initialCode), editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
