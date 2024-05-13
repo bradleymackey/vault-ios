@@ -42,12 +42,14 @@ struct OTPCodeCreateView<
             switch newDestination {
             case .manually:
                 OTPCodeDetailView(
-                    newCodeWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                    newCodeWithContext: nil,
+                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator
                 )
             case let .cameraResult(scannedCode):
                 OTPCodeDetailView(
-                    newCodeWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                    newCodeWithContext: scannedCode,
+                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator
                 )
             }
