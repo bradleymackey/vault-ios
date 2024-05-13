@@ -30,7 +30,10 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         case .creating(.none):
             .init(detail: .new())
         case let .creating(.some(initialCode)):
-            .init(detail: OTPCodeDetailEdits(hydratedFromCode: initialCode, userDescription: ""))
+            .init(
+                detail: OTPCodeDetailEdits(hydratedFromCode: initialCode, userDescription: ""),
+                isInitiallyDirty: true
+            )
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
                 hydratedFromCode: code,

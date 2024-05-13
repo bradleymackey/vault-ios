@@ -327,6 +327,33 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_editingModel_creatingWithoutCodeIsNotInitiallyDirty() {
+        let sut = makeSUTCreating(initialCode: nil)
+
+        XCTAssertFalse(
+            sut.editingModel.isDirty,
+            "This is not initially dirty because we need the user to input data before we can save."
+        )
+    }
+
+    @MainActor
+    func test_editingModel_creatingWithCodeIsInitiallyDirty() {
+        let sut = makeSUTCreating(initialCode: uniqueCode())
+
+        XCTAssertTrue(
+            sut.editingModel.isDirty,
+            "This is initially dirty as the data has been input from elsewhere. The initial state is hydrated with dirty data."
+        )
+    }
+
+    @MainActor
+    func test_editingModel_editingIsNotInitiallyDirty() {
+        let sut = makeSUTEditing()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    @MainActor
     func test_shouldShowDeleteButton_falseForCreating() {
         let sut = makeSUTCreating()
 
