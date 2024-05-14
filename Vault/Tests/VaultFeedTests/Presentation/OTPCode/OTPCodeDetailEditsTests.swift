@@ -21,7 +21,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         XCTAssertEqual(sut.codeType, .totp)
         XCTAssertEqual(sut.totpPeriodLength, 1234)
-        XCTAssertEqual(sut.hotpCounterValue, .max, "Defaults HOTP to max for TOTP code")
+        XCTAssertEqual(sut.hotpCounterValue, 0, "Defaults HOTP to default for TOTP code")
         XCTAssertEqual(sut.algorithm, .sha1)
         XCTAssertEqual(sut.numberOfDigits, 6)
         XCTAssertEqual(sut.issuerTitle, "myiss")
@@ -45,7 +45,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2")
 
         XCTAssertEqual(sut.codeType, .hotp)
-        XCTAssertEqual(sut.totpPeriodLength, .max, "Defaults TOTP to max for HOTP code")
+        XCTAssertEqual(sut.totpPeriodLength, 30, "Defaults TOTP to default for HOTP code")
         XCTAssertEqual(sut.hotpCounterValue, 12345, "Defaults HOTP to max for TOTP code")
         XCTAssertEqual(sut.algorithm, .sha256)
         XCTAssertEqual(sut.numberOfDigits, 6)
