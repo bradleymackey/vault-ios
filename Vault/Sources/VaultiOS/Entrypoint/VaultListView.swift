@@ -1,3 +1,4 @@
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -19,11 +20,9 @@ struct VaultListView<
     @State private var modal: Modal?
     @Environment(\.scenePhase) private var scenePhase
 
-    enum Modal: Identifiable, Hashable {
+    enum Modal: Hashable, IdentifiableSelf {
         case detail(UUID, StoredVaultItem)
         case creatingItem(CreatingItem)
-
-        var id: Self { self }
     }
 
     var body: some View {

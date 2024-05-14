@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// Common internal data used by OTP codes.
 public struct OTPAuthCodeData: Equatable, Hashable {
@@ -67,14 +68,12 @@ extension OTPAuthDigits {
     public static var `default`: OTPAuthDigits { .init(value: 6) }
 }
 
-public enum OTPAuthAlgorithm: Equatable, Hashable, Identifiable, CaseIterable {
+public enum OTPAuthAlgorithm: Equatable, Hashable, IdentifiableSelf, CaseIterable {
     case sha1
     case sha256
     case sha512
 
     public static var `default`: OTPAuthAlgorithm { .sha1 }
-
-    public var id: Self { self }
 
     public var stringValue: String {
         switch self {
@@ -97,10 +96,8 @@ public enum OTPAuthType: Equatable, Hashable {
         public static var defaultCounter: UInt64 { 0 }
     }
 
-    public enum Kind: Equatable, Hashable, Identifiable, CaseIterable {
+    public enum Kind: Equatable, Hashable, IdentifiableSelf, CaseIterable {
         case totp, hotp
-
-        public var id: Self { self }
     }
 
     public var kind: Kind {
