@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 
 /// Manages the edit/saving state for specific editing specific vault items.
 @MainActor
@@ -49,7 +50,7 @@ final class DetailEditState<T: Equatable> {
 }
 
 extension DetailEditState {
-    enum OperationError: String, Error, Identifiable, LocalizedError, Equatable {
+    enum OperationError: Error, LocalizedError, Equatable, IdentifiableSelf {
         case save
         case delete
 
@@ -64,10 +65,6 @@ extension DetailEditState {
 
         var errorDescription: String? {
             description
-        }
-
-        var id: some Hashable {
-            rawValue
         }
     }
 }

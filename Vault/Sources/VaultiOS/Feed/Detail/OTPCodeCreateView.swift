@@ -1,5 +1,6 @@
 import CodeScanner
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -14,11 +15,9 @@ struct OTPCodeCreateView<
     @State private var isPresentingScanner = false
     @State private var creationMode: CreationMode?
 
-    enum CreationMode: Hashable, Identifiable {
+    enum CreationMode: Hashable, IdentifiableSelf {
         case manually
         case cameraResult(OTPAuthCode)
-
-        var id: Self { self }
     }
 
     var body: some View {

@@ -1,7 +1,8 @@
 import Foundation
+import FoundationExtensions
 
 /// The size that an OTP preview window will be when presented.
-public enum PreviewSize: String, Codable, Equatable, Hashable, CaseIterable {
+public enum PreviewSize: String, Codable, Equatable, Hashable, CaseIterable, IdentifiableSelf {
     case medium
     case large
 }
@@ -9,12 +10,6 @@ public enum PreviewSize: String, Codable, Equatable, Hashable, CaseIterable {
 extension PreviewSize {
     /// The default suggested size to use as a preview size.
     public static let `default`: PreviewSize = .medium
-}
-
-extension PreviewSize: Identifiable {
-    public var id: some Hashable {
-        rawValue
-    }
 }
 
 extension PreviewSize {
