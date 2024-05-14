@@ -82,6 +82,7 @@ struct OTPCodeCreateView<
             codeTypes: [.qr],
             scanMode: .continuous,
             scanInterval: 0.1,
+            showViewfinder: false,
             requiresPhotoOutput: false,
             simulatedData: OTPAuthURI.exampleCodeString,
             shouldVibrateOnSuccess: false,
