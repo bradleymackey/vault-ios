@@ -21,14 +21,14 @@ Development takes place in `/Vault`, so take a look in there.
   - [x] Show code preview in the code detail page (#59)
   - [x] Search for codes in the preview page (#67)
   - [x] Edit metadata about codes
-  - [ ] Import codes manually (#70)
-  - [ ] Import codes with camera (#71)
+  - [x] Import codes manually (#70)
+  - [x] Import codes with camera (#71)
   - [ ] Simple widget for a single code (#69)
 - [ ] Secure notes
   - [x] Create secure note storage format, stored in CoreData
   - [x] View secure note previews
   - [x] View secure note detail page (#26)
-  - [ ] Create secure notes from the vault home page (#64)
+  - [x] Create secure notes from the vault home page (#64)
   - [x] Edit secure notes (#65)
 - [ ] Cryptocurrency
   - [ ] Create storage format, stored in CoreData
@@ -39,7 +39,7 @@ Development takes place in `/Vault`, so take a look in there.
   - [x] Create robust backup format
   - [x] Support encrypting the backup format
   - [x] Create PDF library to export backup manifest
-  - [ ] User can create passwrod, store password for encrypted backup in the keychain (#62)
+  - [ ] User can create password, store password for encrypted backup in the keychain (#62)
   - [ ] Export PDF when a paper backup is created (#63)
   - [ ] Save backup manifest binary file to iCloud (#60)
   - [ ] Automatic sync for iCloud backup (#72)
