@@ -11,7 +11,9 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
     @Binding var navigationPath: NavigationPath
     @ViewBuilder var contents: () -> ContentsView
 
-    @Environment(\.dismiss) private var dismiss
+    // Using 'dismiss' causes a hang here!
+    // See OTPCodeCreateView for more information.
+    @Environment(\.presentationMode) private var presentationMode
     @State private var isError = false
 
     var body: some View {
@@ -23,7 +25,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
         .interactiveDismissDisabled(viewModel.editingModel.isDirty)
         .animation(.easeOut, value: viewModel.isInEditMode)
         .onReceive(viewModel.isFinishedPublisher()) {
-            dismiss()
+            presentationMode.wrappedValue.dismiss()
         }
         .onReceive(viewModel.didEncounterErrorPublisher()) { error in
             currentError = error
@@ -78,7 +80,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
         // (Dirty or not!)
         ToolbarItem(placement: .cancellationAction) {
             Button {
-                dismiss()
+                presentationMode.wrappedValue.dismiss()
             } label: {
                 Text(viewModel.strings.cancelEditsTitle)
                     .tint(.red)

@@ -14,7 +14,15 @@ struct OTPCodeCreateView<
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
 
-    @Environment(\.dismiss) private var dismiss
+    // Using 'dismiss' causes a hang here!
+    //
+    // This was the cause of a very strange bug that caused an infinite hang on trying to
+    // present the next OTP code detail editing view.
+    //
+    // Checking the SwiftUI update profiler, there was an infinite loop being caused (for some reason)
+    // because the `@Environment(\.dismiss)` trigger was recursively called between this view and
+    // other views that get pushed that also used the same environment variable.
+    @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
 
     enum CreationMode: Hashable, IdentifiableSelf {
@@ -31,7 +39,7 @@ struct OTPCodeCreateView<
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
-                    dismiss()
+                    presentationMode.wrappedValue.dismiss()
                 } label: {
                     Text("Cancel")
                         .foregroundStyle(.red)
