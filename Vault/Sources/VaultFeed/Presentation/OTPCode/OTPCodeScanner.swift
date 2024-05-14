@@ -27,9 +27,7 @@ public final class OTPCodeScanner {
     }
 
     public func navigateToScannedCodePublisher() -> AnyPublisher<OTPAuthCode, Never> {
-        scannedCodeSubject
-            .debounce(for: 0.5, scheduler: DispatchQueue.main)
-            .eraseToAnyPublisher()
+        scannedCodeSubject.eraseToAnyPublisher()
     }
 
     struct CodeFormatError: Error {}
