@@ -24,7 +24,21 @@ struct OTPCodeCreateView<
     // other views that get pushed that also used the same environment variable.
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
-    @State private var isScannerActive = false
+    @State private var scanningState = CodeScanningState.disabled
+
+    enum CodeScanningState: Hashable, IdentifiableSelf {
+        case disabled
+        case scanning
+        case success
+        case invalidCodeScanned
+
+        var isPaused: Bool {
+            switch self {
+            case .disabled, .success, .invalidCodeScanned: true
+            case .scanning: false
+            }
+        }
+    }
 
     enum CreationMode: Hashable, IdentifiableSelf {
         case manually
@@ -48,12 +62,10 @@ struct OTPCodeCreateView<
             }
         }
         .onAppear {
-            withAnimation(.easeInOut) {
-                isScannerActive = true
-            }
+            scanningState = .scanning
         }
         .onDisappear {
-            isScannerActive = false
+            scanningState = .disabled
         }
         .navigationDestination(for: CreationMode.self, destination: { newDestination in
             switch newDestination {
@@ -96,15 +108,53 @@ struct OTPCodeCreateView<
 
     @ViewBuilder
     private var scanningView: some View {
-        if isScannerActive {
-            scannerViewWindow
-                .transition(.blurReplace)
-        } else {
+        switch scanningState {
+        case .disabled:
+            scanningDisabledView
+        case .scanning, .invalidCodeScanned:
+            scannerView
+        case .success:
+            scanningSuccessView
+        }
+    }
+
+    private var scanningDisabledView: some View {
+        ZStack {
             Color.black
-                .transition(.blurReplace)
-                .onTapGesture {
-                    isScannerActive = true
-                }
+            Image(systemName: "camera.fill")
+                .foregroundStyle(.white)
+                .font(.largeTitle.bold())
+        }
+        .onTapGesture {
+            scanningState = .scanning
+        }
+    }
+
+    private var scanningSuccessView: some View {
+        ZStack {
+            Color.green
+            Image(systemName: "checkmark.circle.fill")
+                .foregroundStyle(.white)
+                .font(.largeTitle.bold())
+        }
+    }
+
+    private var scanningFailedView: some View {
+        ZStack {
+            Color.red
+            Image(systemName: "xmark.circle.fill")
+                .foregroundStyle(.white)
+                .font(.largeTitle.bold())
+        }
+    }
+
+    private var scannerView: some View {
+        ZStack {
+            scannerViewWindow
+
+            if scanningState == .invalidCodeScanned {
+                scanningFailedView
+            }
         }
     }
 
@@ -112,16 +162,22 @@ struct OTPCodeCreateView<
         CodeScannerView(
             codeTypes: [.qr],
             scanMode: .continuous,
-            scanInterval: 0.1,
+            scanInterval: 2.0,
             showViewfinder: false,
             requiresPhotoOutput: false,
             simulatedData: OTPAuthURI.exampleCodeString,
             shouldVibrateOnSuccess: false,
-            isPaused: !isScannerActive,
+            isPaused: scanningState.isPaused,
             isGalleryPresented: $isCodeImagePickerGalleryVisible
         ) { response in
-            if case let .success(result) = response {
-                try? decodeOTPAuthURI(string: result.string)
+            do {
+                let result = try response.get()
+                try decodeOTPAuthURI(string: result.string)
+            } catch {
+                scanningState = .invalidCodeScanned
+                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                    scanningState = .scanning
+                }
             }
         }
         #if targetEnvironment(simulator)
@@ -141,7 +197,9 @@ struct OTPCodeCreateView<
         }
         let decoder = OTPAuthURIDecoder()
         let decoded = try decoder.decode(uri: uri)
-        isScannerActive = false
-        navigationPath.append(CreationMode.cameraResult(decoded))
+        scanningState = .success
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+            navigationPath.append(CreationMode.cameraResult(decoded))
+        }
     }
 }
