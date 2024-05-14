@@ -15,6 +15,7 @@ struct OTPCodeCreateView<
     @Binding var navigationPath: NavigationPath
 
     @Environment(\.dismiss) private var dismiss
+    @State private var isCodeImagePickerGalleryVisible = false
 
     enum CreationMode: Hashable, IdentifiableSelf {
         case manually
@@ -59,6 +60,12 @@ struct OTPCodeCreateView<
 
     private var section: some View {
         Section {
+            Button {
+                isCodeImagePickerGalleryVisible = true
+            } label: {
+                Text("Pick image from photos")
+            }
+
             NavigationLink("Enter Key Manually", value: CreationMode.manually)
         } header: {
             scannerViewWindow
@@ -77,7 +84,8 @@ struct OTPCodeCreateView<
             scanInterval: 0.1,
             requiresPhotoOutput: false,
             simulatedData: OTPAuthURI.exampleCodeString,
-            shouldVibrateOnSuccess: false
+            shouldVibrateOnSuccess: false,
+            isGalleryPresented: $isCodeImagePickerGalleryVisible
         ) { response in
             if case let .success(result) = response {
                 try? decodeOTPAuthURI(string: result.string)
