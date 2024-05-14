@@ -58,7 +58,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             if viewModel.isInEditMode {
                 accountNameEditingSection
                 descriptionEditingSection
-                if viewModel.isInitialCreation {
+                if viewModel.showsKeyEditingFields {
                     Divider()
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(EmptyView())
