@@ -6,6 +6,7 @@ import VaultCore
 import VaultFeed
 import VaultUI
 
+@MainActor
 struct OTPCodeCreateView<
     Store: VaultStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
@@ -24,22 +25,8 @@ struct OTPCodeCreateView<
     // other views that get pushed that also used the same environment variable.
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
-    @State private var scanningState = CodeScanningState.disabled
-
-    enum CodeScanningState: Hashable, IdentifiableSelf {
-        case disabled
-        case scanning
-        case success
-        case cameraError
-        case invalidCodeScanned
-
-        var isPaused: Bool {
-            switch self {
-            case .disabled, .success, .invalidCodeScanned, .cameraError: true
-            case .scanning: false
-            }
-        }
-    }
+    @State private var scanner = OTPCodeScanner(intervalTimer: LiveIntervalTimer())
+    @State private var isCameraError = false
 
     enum CreationMode: Hashable, IdentifiableSelf {
         case manually
@@ -63,11 +50,14 @@ struct OTPCodeCreateView<
             }
         }
         .onAppear {
-            scanningState = .scanning
+            scanner.startScanning()
         }
         .onDisappear {
-            scanningState = .disabled
+            scanner.disable()
         }
+        .onReceive(scanner.navigateToScannedCodePublisher(), perform: { scannedCode in
+            navigationPath.append(CreationMode.cameraResult(scannedCode))
+        })
         .navigationDestination(for: CreationMode.self, destination: { newDestination in
             switch newDestination {
             case .manually:
@@ -109,15 +99,17 @@ struct OTPCodeCreateView<
 
     @ViewBuilder
     private var scanningView: some View {
-        switch scanningState {
-        case .disabled:
-            scanningDisabledView
-        case .scanning, .invalidCodeScanned:
-            scannerView
-        case .cameraError:
+        if isCameraError {
             cameraErrorView
-        case .success:
-            scanningSuccessView
+        } else {
+            switch scanner.scanningState {
+            case .disabled:
+                scanningDisabledView
+            case .scanning, .invalidCodeScanned:
+                scannerView
+            case .success:
+                scanningSuccessView
+            }
         }
     }
 
@@ -129,7 +121,7 @@ struct OTPCodeCreateView<
                 .font(.largeTitle.bold())
         }
         .onTapGesture {
-            scanningState = .scanning
+            scanner.startScanning()
         }
     }
 
@@ -180,7 +172,7 @@ struct OTPCodeCreateView<
         ZStack {
             scannerViewWindow
 
-            if scanningState == .invalidCodeScanned {
+            if scanner.scanningState == .invalidCodeScanned {
                 scanningFailedView
             }
         }
@@ -195,19 +187,14 @@ struct OTPCodeCreateView<
             requiresPhotoOutput: false,
             simulatedData: OTPAuthURI.exampleCodeString,
             shouldVibrateOnSuccess: false,
-            isPaused: scanningState.isPaused,
+            isPaused: scanner.scanningState.pausesCamera,
             isGalleryPresented: $isCodeImagePickerGalleryVisible
         ) { response in
             do {
                 let result = try response.get()
-                try decodeOTPAuthURI(string: result.string)
-            } catch is CodeFormatError {
-                scanningState = .invalidCodeScanned
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
-                    scanningState = .scanning
-                }
+                scanner.scan(text: result.string)
             } catch {
-                scanningState = .cameraError
+                isCameraError = true
             }
         }
         #if targetEnvironment(simulator)
@@ -218,22 +205,13 @@ struct OTPCodeCreateView<
         )
         #endif
     }
+}
 
-    struct CodeFormatError: Error {}
-
-    private func decodeOTPAuthURI(string: String) throws {
-        do {
-            guard let uri = OTPAuthURI(string: string) else {
-                throw CodeFormatError()
-            }
-            let decoder = OTPAuthURIDecoder()
-            let decoded = try decoder.decode(uri: uri)
-            scanningState = .success
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                navigationPath.append(CreationMode.cameraResult(decoded))
-            }
-        } catch {
-            throw CodeFormatError()
+extension OTPCodeScanningState {
+    fileprivate var pausesCamera: Bool {
+        switch self {
+        case .disabled, .success, .invalidCodeScanned: true
+        case .scanning: false
         }
     }
 }
