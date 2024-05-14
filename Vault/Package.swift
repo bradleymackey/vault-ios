@@ -59,7 +59,7 @@ let package = Package(
         ),
         .target(
             name: "VaultBackup",
-            dependencies: ["CryptoDocumentExporter"],
+            dependencies: ["CryptoDocumentExporter", "FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
@@ -79,7 +79,7 @@ let package = Package(
         ),
         .target(
             name: "VaultCore",
-            dependencies: ["CryptoEngine"],
+            dependencies: ["CryptoEngine", "FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
@@ -90,7 +90,7 @@ let package = Package(
         ),
         .target(
             name: "VaultUI",
-            dependencies: [],
+            dependencies: ["FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
@@ -107,6 +107,7 @@ let package = Package(
             name: "CryptoDocumentExporter",
             dependencies: [
                 "CryptoEngine",
+                "FoundationExtensions",
             ],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
@@ -134,7 +135,7 @@ let package = Package(
         ),
         .target(
             name: "CryptoEngine",
-            dependencies: ["CryptoSwift", "BigInt"],
+            dependencies: ["FoundationExtensions", "CryptoSwift", "BigInt"],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
@@ -162,6 +163,7 @@ let package = Package(
             dependencies: [
                 "VaultCore",
                 "CryptoEngine",
+                "FoundationExtensions",
             ],
             resources: [
                 .copy("Resources/VaultStore.xcdatamodeld"),
