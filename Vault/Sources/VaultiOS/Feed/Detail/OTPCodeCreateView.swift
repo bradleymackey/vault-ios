@@ -24,6 +24,7 @@ struct OTPCodeCreateView<
     // other views that get pushed that also used the same environment variable.
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
+    @State private var isScannerActive = false
 
     enum CreationMode: Hashable, IdentifiableSelf {
         case manually
@@ -45,6 +46,14 @@ struct OTPCodeCreateView<
                         .foregroundStyle(.red)
                 }
             }
+        }
+        .onAppear {
+            withAnimation(.easeInOut) {
+                isScannerActive = true
+            }
+        }
+        .onDisappear {
+            isScannerActive = false
         }
         .navigationDestination(for: CreationMode.self, destination: { newDestination in
             switch newDestination {
@@ -76,12 +85,26 @@ struct OTPCodeCreateView<
 
             NavigationLink("Enter Key Manually", value: CreationMode.manually)
         } header: {
-            scannerViewWindow
+            scanningView
                 .aspectRatio(1, contentMode: .fill)
                 .frame(minWidth: 150, maxWidth: 250, minHeight: 150, maxHeight: 250, alignment: .center)
                 .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10), style: .continuous))
                 .padding()
                 .modifier(HorizontallyCenter())
+        }
+    }
+
+    @ViewBuilder
+    private var scanningView: some View {
+        if isScannerActive {
+            scannerViewWindow
+                .transition(.blurReplace)
+        } else {
+            Color.black
+                .transition(.blurReplace)
+                .onTapGesture {
+                    isScannerActive = true
+                }
         }
     }
 
@@ -94,6 +117,7 @@ struct OTPCodeCreateView<
             requiresPhotoOutput: false,
             simulatedData: OTPAuthURI.exampleCodeString,
             shouldVibrateOnSuccess: false,
+            isPaused: !isScannerActive,
             isGalleryPresented: $isCodeImagePickerGalleryVisible
         ) { response in
             if case let .success(result) = response {
@@ -117,6 +141,7 @@ struct OTPCodeCreateView<
         }
         let decoder = OTPAuthURIDecoder()
         let decoded = try decoder.decode(uri: uri)
+        isScannerActive = false
         navigationPath.append(CreationMode.cameraResult(decoded))
     }
 }
