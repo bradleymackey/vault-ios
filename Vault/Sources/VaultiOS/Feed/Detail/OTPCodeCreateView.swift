@@ -30,11 +30,12 @@ struct OTPCodeCreateView<
         case disabled
         case scanning
         case success
+        case cameraError
         case invalidCodeScanned
 
         var isPaused: Bool {
             switch self {
-            case .disabled, .success, .invalidCodeScanned: true
+            case .disabled, .success, .invalidCodeScanned, .cameraError: true
             case .scanning: false
             }
         }
@@ -113,6 +114,8 @@ struct OTPCodeCreateView<
             scanningDisabledView
         case .scanning, .invalidCodeScanned:
             scannerView
+        case .cameraError:
+            cameraErrorView
         case .success:
             scanningSuccessView
         }
@@ -142,9 +145,34 @@ struct OTPCodeCreateView<
     private var scanningFailedView: some View {
         ZStack {
             Color.red
-            Image(systemName: "xmark.circle.fill")
-                .foregroundStyle(.white)
-                .font(.largeTitle.bold())
+            VStack(spacing: 8) {
+                Image(systemName: "xmark.circle.fill")
+                    .font(.largeTitle.bold())
+                Text("Invalid Code")
+                    .font(.callout.bold())
+                    .textCase(.uppercase)
+            }
+            .foregroundStyle(.white)
+        }
+    }
+
+    private var cameraErrorView: some View {
+        ZStack {
+            Color.red
+            VStack(spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.largeTitle.bold())
+                VStack(spacing: 4) {
+                    Text("Camera Error")
+                        .fontWeight(.bold)
+                        .textCase(.uppercase)
+                    Text("Check your device and permissions")
+                }
+                .font(.callout)
+            }
+            .multilineTextAlignment(.center)
+            .foregroundStyle(.white)
+            .padding()
         }
     }
 
@@ -173,11 +201,13 @@ struct OTPCodeCreateView<
             do {
                 let result = try response.get()
                 try decodeOTPAuthURI(string: result.string)
-            } catch {
+            } catch is CodeFormatError {
                 scanningState = .invalidCodeScanned
                 DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
                     scanningState = .scanning
                 }
+            } catch {
+                scanningState = .cameraError
             }
         }
         #if targetEnvironment(simulator)
@@ -189,17 +219,21 @@ struct OTPCodeCreateView<
         #endif
     }
 
-    struct ScanError: Error {}
+    struct CodeFormatError: Error {}
 
     private func decodeOTPAuthURI(string: String) throws {
-        guard let uri = OTPAuthURI(string: string) else {
-            throw ScanError()
-        }
-        let decoder = OTPAuthURIDecoder()
-        let decoded = try decoder.decode(uri: uri)
-        scanningState = .success
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-            navigationPath.append(CreationMode.cameraResult(decoded))
+        do {
+            guard let uri = OTPAuthURI(string: string) else {
+                throw CodeFormatError()
+            }
+            let decoder = OTPAuthURIDecoder()
+            let decoded = try decoder.decode(uri: uri)
+            scanningState = .success
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                navigationPath.append(CreationMode.cameraResult(decoded))
+            }
+        } catch {
+            throw CodeFormatError()
         }
     }
 }
