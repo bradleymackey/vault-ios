@@ -13,12 +13,14 @@ struct VaultDetailEditView<
     var storedItem: StoredVaultItem
     var previewGenerator: PreviewGenerator
     var openInEditMode: Bool
+    @Binding var navigationPath: NavigationPath
 
     var body: some View {
         switch storedItem.item {
         case let .otpCode(storedCode):
             OTPCodeDetailView(
                 editingExistingCode: storedCode,
+                navigationPath: $navigationPath,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 previewGenerator: previewGenerator,
@@ -27,6 +29,7 @@ struct VaultDetailEditView<
         case let .secureNote(storedNote):
             SecureNoteDetailView(
                 editingExistingNote: storedNote,
+                navigationPath: $navigationPath,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 openInEditMode: openInEditMode

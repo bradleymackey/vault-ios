@@ -10,14 +10,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 {
     @State private var viewModel: OTPCodeDetailViewModel
     private var previewGenerator: PreviewGenerator
+    @Binding var navigationPath: NavigationPath
 
     init(
         editingExistingCode code: OTPAuthCode,
+        navigationPath: Binding<NavigationPath>,
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
         openInEditMode: Bool
     ) {
+        _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
 
@@ -28,9 +31,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     init(
         newCodeWithContext initialCode: OTPAuthCode?,
+        navigationPath: Binding<NavigationPath>,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator
     ) {
+        _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
         self.previewGenerator = previewGenerator
 
@@ -52,7 +57,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         VaultItemDetailView(
             viewModel: viewModel,
             currentError: $currentError,
-            isShowingDeleteConfirmation: $isShowingDeleteConfirmation
+            isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
+            navigationPath: $navigationPath
         ) {
             codeNameSection
             if viewModel.isInEditMode {
@@ -297,6 +303,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 type: .totp(),
                 data: .init(secret: .empty(), accountName: "Test")
             ),
+            navigationPath: .constant(.init()),
             storedMetadata: .init(
                 id: UUID(),
                 created: Date(),

@@ -7,13 +7,16 @@ import VaultUI
 @MainActor
 struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
+    @Binding private var navigationPath: NavigationPath
 
     init(
         editingExistingNote note: SecureNote,
+        navigationPath: Binding<NavigationPath>,
         storedMetadata: StoredVaultItem.Metadata,
         editor: any SecureNoteDetailEditor,
         openInEditMode: Bool
     ) {
+        _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .editing(note: note, metadata: storedMetadata), editor: editor))
 
         if openInEditMode {
@@ -21,7 +24,8 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    init(newNoteWithEditor editor: any SecureNoteDetailEditor) {
+    init(newNoteWithEditor editor: any SecureNoteDetailEditor, navigationPath: Binding<NavigationPath>) {
+        _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
 
         viewModel.startEditing()
@@ -34,7 +38,8 @@ struct SecureNoteDetailView: View {
         VaultItemDetailView(
             viewModel: viewModel,
             currentError: $currentError,
-            isShowingDeleteConfirmation: $isShowingDeleteConfirmation
+            isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
+            navigationPath: $navigationPath
         ) {
             if viewModel.isInEditMode {
                 noteTitleEditingSection

@@ -12,9 +12,9 @@ struct OTPCodeCreateView<
 >: View where PreviewGenerator.PreviewItem == VaultItem {
     var feedViewModel: FeedViewModel<Store>
     var previewGenerator: PreviewGenerator
+    @Binding var navigationPath: NavigationPath
 
     @Environment(\.dismiss) private var dismiss
-    @State private var creationMode: CreationMode?
 
     enum CreationMode: Hashable, IdentifiableSelf {
         case manually
@@ -37,31 +37,29 @@ struct OTPCodeCreateView<
                 }
             }
         }
-        .navigationDestination(item: $creationMode) { newDestination in
+        .navigationDestination(for: CreationMode.self, destination: { newDestination in
             switch newDestination {
             case .manually:
                 OTPCodeDetailView(
                     newCodeWithContext: nil,
+                    navigationPath: $navigationPath,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator
                 )
             case let .cameraResult(scannedCode):
                 OTPCodeDetailView(
                     newCodeWithContext: scannedCode,
+                    navigationPath: $navigationPath,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator
                 )
             }
-        }
+        })
     }
 
     private var section: some View {
         Section {
-            Button {
-                creationMode = .manually
-            } label: {
-                Text("Enter Key Manually")
-            }
+            NavigationLink("Enter Key Manually", value: CreationMode.manually)
         } header: {
             scannerViewWindow
                 .aspectRatio(1, contentMode: .fill)
@@ -102,6 +100,6 @@ struct OTPCodeCreateView<
         }
         let decoder = OTPAuthURIDecoder()
         let decoded = try decoder.decode(uri: uri)
-        creationMode = .cameraResult(decoded)
+        navigationPath.append(CreationMode.cameraResult(decoded))
     }
 }

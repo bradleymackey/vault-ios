@@ -8,6 +8,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
     @Bindable var viewModel: ChildViewModel
     @Binding var currentError: (any Error)?
     @Binding var isShowingDeleteConfirmation: Bool
+    @Binding var navigationPath: NavigationPath
     @ViewBuilder var contents: () -> ContentsView
 
     @Environment(\.dismiss) private var dismiss
@@ -45,13 +46,18 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             Text(error.localizedDescription)
         }
         .toolbar {
-            if viewModel.isInitialCreation {
-                cancelCreationItem
-            } else {
-                if viewModel.editingModel.isDirty {
-                    cancelEditsItem
-                } else if !viewModel.isInEditMode {
-                    startEditingItem
+            // Only if this view is the root of the navigation stack should we show these actions.
+            // If it isn't, it implies going back to the original context is more likely the correct
+            // action to take.
+            if navigationPath.isEmpty {
+                if viewModel.isInitialCreation {
+                    cancelCreationItem
+                } else {
+                    if viewModel.editingModel.isDirty {
+                        cancelEditsItem
+                    } else if !viewModel.isInEditMode {
+                        startEditingItem
+                    }
                 }
             }
 

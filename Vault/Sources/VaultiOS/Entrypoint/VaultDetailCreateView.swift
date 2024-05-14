@@ -10,17 +10,20 @@ struct VaultDetailCreateView<
     var feedViewModel: FeedViewModel<Store>
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator
+    @Binding var navigationPath: NavigationPath
 
     var body: some View {
         switch creatingItem {
         case .otpCode:
             OTPCodeCreateView(
                 feedViewModel: feedViewModel,
-                previewGenerator: previewGenerator
+                previewGenerator: previewGenerator,
+                navigationPath: $navigationPath
             )
         case .secureNote:
             SecureNoteDetailView(
-                newNoteWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel)
+                newNoteWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                navigationPath: $navigationPath
             )
         }
     }
