@@ -86,8 +86,16 @@ public enum OTPAuthAlgorithm: Equatable, Hashable, Identifiable, CaseIterable {
 }
 
 public enum OTPAuthType: Equatable, Hashable {
-    case totp(period: UInt64 = 30)
-    case hotp(counter: UInt64 = 0)
+    case totp(period: UInt64 = TOTP.defaultPeriod)
+    case hotp(counter: UInt64 = HOTP.defaultCounter)
+
+    public enum TOTP {
+        public static var defaultPeriod: UInt64 { 30 }
+    }
+
+    public enum HOTP {
+        public static var defaultCounter: UInt64 { 0 }
+    }
 
     public enum Kind: Equatable, Hashable, Identifiable, CaseIterable {
         case totp, hotp

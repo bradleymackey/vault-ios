@@ -9,7 +9,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     public var editingModel: DetailEditingModel<OTPCodeDetailEdits>
 
     public enum Mode {
-        case creating
+        case creating(initialCode: OTPAuthCode? = nil)
         case editing(code: OTPAuthCode, metadata: StoredVaultItem.Metadata)
     }
 
@@ -27,8 +27,13 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         self.editor = editor
 
         editingModel = switch mode {
-        case .creating:
+        case .creating(.none):
             .init(detail: .new())
+        case let .creating(.some(initialCode)):
+            .init(
+                detail: OTPCodeDetailEdits(hydratedFromCode: initialCode, userDescription: ""),
+                isInitiallyDirty: true
+            )
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
                 hydratedFromCode: code,

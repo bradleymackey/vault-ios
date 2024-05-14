@@ -5,10 +5,14 @@ import Foundation
 public struct DetailEditingModel<T: EditableState> {
     public var detail: T
     public private(set) var initialDetail: T
+    private let isInitiallyDirty: Bool
+    private var overrideIsDirty: Bool
 
-    public init(detail: T) {
+    public init(detail: T, isInitiallyDirty: Bool = false) {
         initialDetail = detail
         self.detail = detail
+        overrideIsDirty = isInitiallyDirty
+        self.isInitiallyDirty = isInitiallyDirty
     }
 
     public var isValid: Bool {
@@ -16,14 +20,20 @@ public struct DetailEditingModel<T: EditableState> {
     }
 
     public var isDirty: Bool {
-        detail != initialDetail
+        if overrideIsDirty {
+            true
+        } else {
+            detail != initialDetail
+        }
     }
 
     public mutating func restoreInitialState() {
+        overrideIsDirty = isInitiallyDirty
         detail = initialDetail
     }
 
     public mutating func didPersist() {
+        overrideIsDirty = false
         initialDetail = detail
     }
 }

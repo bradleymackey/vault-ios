@@ -47,11 +47,11 @@ public struct OTPCodeDetailEdits: EditableState {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
         case let .totp(period): period
-        case .hotp: .max
+        case .hotp: OTPAuthType.TOTP.defaultPeriod
         }
         hotpCounterValue = switch code.type {
-        case .totp: .max
         case let .hotp(counter): counter
+        case .totp: OTPAuthType.HOTP.defaultCounter
         }
         secretBase32String = code.data.secret.base32EncodedString
         algorithm = code.data.algorithm
@@ -96,11 +96,11 @@ extension OTPCodeDetailEdits {
     public static func new() -> OTPCodeDetailEdits {
         .init(
             codeType: .totp,
-            totpPeriodLength: 30,
-            hotpCounterValue: 0,
+            totpPeriodLength: OTPAuthType.TOTP.defaultPeriod,
+            hotpCounterValue: OTPAuthType.HOTP.defaultCounter,
             secretBase32String: "",
-            algorithm: .sha1,
-            numberOfDigits: 6,
+            algorithm: OTPAuthAlgorithm.default,
+            numberOfDigits: OTPAuthDigits.default.value,
             issuerTitle: "",
             accountNameTitle: "",
             description: ""

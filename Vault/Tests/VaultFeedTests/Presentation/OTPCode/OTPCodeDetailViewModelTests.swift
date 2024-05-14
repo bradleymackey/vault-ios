@@ -37,6 +37,24 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_init_creatingWithCodeUsesInitialData() {
+        let code = OTPAuthCode(
+            type: .totp(),
+            data: .init(
+                secret: .init(data: Data(), format: .base32),
+                accountName: "my account",
+                issuer: "my issuer"
+            )
+        )
+
+        let sut = makeSUTCreating(initialCode: code)
+
+        XCTAssertEqual(sut.editingModel.detail.accountNameTitle, "my account")
+        XCTAssertEqual(sut.editingModel.detail.issuerTitle, "my issuer")
+        XCTAssertEqual(sut.editingModel.detail.description, "")
+    }
+
+    @MainActor
     func test_init_editingModelUsesInitialData() {
         let code = OTPAuthCode(
             type: .totp(),
@@ -309,6 +327,33 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_editingModel_creatingWithoutCodeIsNotInitiallyDirty() {
+        let sut = makeSUTCreating(initialCode: nil)
+
+        XCTAssertFalse(
+            sut.editingModel.isDirty,
+            "This is not initially dirty because we need the user to input data before we can save."
+        )
+    }
+
+    @MainActor
+    func test_editingModel_creatingWithCodeIsInitiallyDirty() {
+        let sut = makeSUTCreating(initialCode: uniqueCode())
+
+        XCTAssertTrue(
+            sut.editingModel.isDirty,
+            "This is initially dirty as the data has been input from elsewhere. The initial state is hydrated with dirty data."
+        )
+    }
+
+    @MainActor
+    func test_editingModel_editingIsNotInitiallyDirty() {
+        let sut = makeSUTEditing()
+
+        XCTAssertFalse(sut.editingModel.isDirty)
+    }
+
+    @MainActor
     func test_shouldShowDeleteButton_falseForCreating() {
         let sut = makeSUTCreating()
 
@@ -343,10 +388,11 @@ extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUTCreating(
         editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
+        initialCode: OTPAuthCode? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(mode: .creating, editor: editor)
+        let sut = OTPCodeDetailViewModel(mode: .creating(initialCode: initialCode), editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut

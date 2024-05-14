@@ -14,8 +14,8 @@ struct VaultDetailCreateView<
     var body: some View {
         switch creatingItem {
         case .otpCode:
-            OTPCodeDetailView(
-                newCodeWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+            OTPCodeCreateView(
+                feedViewModel: feedViewModel,
                 previewGenerator: previewGenerator
             )
         case .secureNote:
