@@ -4,6 +4,7 @@ import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
+import VaultUI
 
 struct OTPCodeCreateView<
     Store: VaultStore,
@@ -12,7 +13,7 @@ struct OTPCodeCreateView<
     var feedViewModel: FeedViewModel<Store>
     var previewGenerator: PreviewGenerator
 
-    @State private var isPresentingScanner = false
+    @Environment(\.dismiss) private var dismiss
     @State private var creationMode: CreationMode?
 
     enum CreationMode: Hashable, IdentifiableSelf {
@@ -22,20 +23,19 @@ struct OTPCodeCreateView<
 
     var body: some View {
         Form {
-            Button {
-                isPresentingScanner = true
-            } label: {
-                Text("Camera")
-            }
-
-            Button {
-                creationMode = .manually
-            } label: {
-                Text("Enter Code")
-            }
+            section
         }
-        .sheet(isPresented: $isPresentingScanner, onDismiss: nil) {
-            codeScanner
+        .navigationTitle(Text("Scan Code"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .foregroundStyle(.red)
+                }
+            }
         }
         .navigationDestination(item: $creationMode) { newDestination in
             switch newDestination {
@@ -55,7 +55,24 @@ struct OTPCodeCreateView<
         }
     }
 
-    private var codeScanner: some View {
+    private var section: some View {
+        Section {
+            Button {
+                creationMode = .manually
+            } label: {
+                Text("Enter Key Manually")
+            }
+        } header: {
+            scannerViewWindow
+                .aspectRatio(1, contentMode: .fill)
+                .frame(minWidth: 150, maxWidth: 250, minHeight: 150, maxHeight: 250, alignment: .center)
+                .clipShape(RoundedRectangle(cornerSize: CGSize(width: 20, height: 10), style: .continuous))
+                .padding()
+                .modifier(HorizontallyCenter())
+        }
+    }
+
+    private var scannerViewWindow: some View {
         CodeScannerView(
             codeTypes: [.qr],
             scanMode: .continuous,
@@ -68,6 +85,13 @@ struct OTPCodeCreateView<
                 try? decodeOTPAuthURI(string: result.string)
             }
         }
+        #if targetEnvironment(simulator)
+        .background(
+            LinearGradient(colors: [.red, .blue, .green], startPoint: .topLeading, endPoint: .bottomTrailing)
+                .saturation(0.8)
+                .opacity(0.4)
+        )
+        #endif
     }
 
     struct ScanError: Error {}
@@ -78,7 +102,6 @@ struct OTPCodeCreateView<
         }
         let decoder = OTPAuthURIDecoder()
         let decoded = try decoder.decode(uri: uri)
-        isPresentingScanner = false
         creationMode = .cameraResult(decoded)
     }
 }
