@@ -50,7 +50,7 @@ final class DetailEditState<T: Equatable> {
 }
 
 extension DetailEditState {
-    enum OperationError: String, Error, LocalizedError, Equatable, IdentifiableSelf {
+    enum OperationError: Error, LocalizedError, Equatable, IdentifiableSelf {
         case save
         case delete
 
