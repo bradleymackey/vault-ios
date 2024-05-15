@@ -37,14 +37,14 @@ struct OTPCodeCreateView<
         Form {
             section
         }
-        .navigationTitle(Text("Scan Code"))
+        .navigationTitle(Text(feedViewModel.scanCodeTitle))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Text("Cancel")
+                    Text(feedViewModel.cancelEditsTitle)
                         .foregroundStyle(.red)
                 }
             }
@@ -83,10 +83,14 @@ struct OTPCodeCreateView<
             Button {
                 isCodeImagePickerGalleryVisible = true
             } label: {
-                Text("Pick image from photos")
+                Label(feedViewModel.inputSelectImageFromLibraryTitle, systemImage: "qrcode.viewfinder")
             }
+            .foregroundStyle(.primary)
 
-            NavigationLink("Enter Key Manually", value: CreationMode.manually)
+            NavigationLink(value: CreationMode.manually) {
+                Label(feedViewModel.inputEnterCodeManuallyTitle, systemImage: "entry.lever.keypad")
+            }
+            .foregroundStyle(.primary)
         } header: {
             scanningView
                 .aspectRatio(1, contentMode: .fill)
@@ -155,10 +159,10 @@ struct OTPCodeCreateView<
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.largeTitle.bold())
                 VStack(spacing: 4) {
-                    Text("Camera Error")
+                    Text(feedViewModel.cameraErrorTitle)
                         .fontWeight(.bold)
                         .textCase(.uppercase)
-                    Text("Check your device and permissions")
+                    Text(feedViewModel.cameraErrorDescription)
                 }
                 .font(.callout)
             }

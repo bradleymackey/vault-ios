@@ -48,8 +48,32 @@ public final class FeedViewModel<Store: VaultStore> {
         localized(key: "feedViewModel.create.code")
     }
 
+    public var cancelEditsTitle: String {
+        localized(key: "feedViewModel.cancelEdits.title")
+    }
+
     public var createNoteTitle: String {
         localized(key: "feedViewModel.create.note")
+    }
+
+    public var inputEnterCodeManuallyTitle: String {
+        localized(key: "feedViewModel.create.code.enterKeyManually.title")
+    }
+
+    public var inputSelectImageFromLibraryTitle: String {
+        localized(key: "feedViewModel.create.selectImageFromLibrary.title")
+    }
+
+    public var scanCodeTitle: String {
+        localized(key: "feedViewModel.create.code.scanCode.title")
+    }
+
+    public var cameraErrorTitle: String {
+        localized(key: "feedViewModel.error.camera.title")
+    }
+
+    public var cameraErrorDescription: String {
+        localized(key: "feedViewModel.error.camera.description")
     }
 }
 

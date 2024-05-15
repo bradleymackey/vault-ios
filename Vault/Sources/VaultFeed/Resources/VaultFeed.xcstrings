@@ -409,6 +409,28 @@
         }
       }
     },
+    "feedViewModel.create.code.enterKeyManually.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter details manually"
+          }
+        }
+      }
+    },
+    "feedViewModel.create.code.scanCode.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scan Code"
+          }
+        }
+      }
+    },
     "feedViewModel.create.note" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -416,6 +438,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Note"
+          }
+        }
+      }
+    },
+    "feedViewModel.create.selectImageFromLibrary.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select image from library"
           }
         }
       }
@@ -438,6 +471,28 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Edit"
+          }
+        }
+      }
+    },
+    "feedViewModel.error.camera.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check your device and permissions"
+          }
+        }
+      }
+    },
+    "feedViewModel.error.camera.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Camera Error"
           }
         }
       }
