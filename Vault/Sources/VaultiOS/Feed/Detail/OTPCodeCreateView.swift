@@ -15,7 +15,7 @@ struct OTPCodeCreateView<
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
 
-    // Using 'dismiss' causes a hang here!
+    // Using 'dismiss' here and in a child will cause a hang here!
     //
     // This was the cause of a very strange bug that caused an infinite hang on trying to
     // present the next OTP code detail editing view.
@@ -23,6 +23,8 @@ struct OTPCodeCreateView<
     // Checking the SwiftUI update profiler, there was an infinite loop being caused (for some reason)
     // because the `@Environment(\.dismiss)` trigger was recursively called between this view and
     // other views that get pushed that also used the same environment variable.
+
+    // 'dismiss' applies in the context that it's defined in!
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
     @State private var scanner = OTPCodeScanner(intervalTimer: LiveIntervalTimer())
@@ -37,14 +39,14 @@ struct OTPCodeCreateView<
         Form {
             section
         }
-        .navigationTitle(Text("Scan Code"))
+        .navigationTitle(Text(feedViewModel.scanCodeTitle))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Text("Cancel")
+                    Text(feedViewModel.cancelEditsTitle)
                         .foregroundStyle(.red)
                 }
             }
@@ -65,14 +67,16 @@ struct OTPCodeCreateView<
                     newCodeWithContext: nil,
                     navigationPath: $navigationPath,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
-                    previewGenerator: previewGenerator
+                    previewGenerator: previewGenerator,
+                    presentationMode: presentationMode
                 )
             case let .cameraResult(scannedCode):
                 OTPCodeDetailView(
                     newCodeWithContext: scannedCode,
                     navigationPath: $navigationPath,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
-                    previewGenerator: previewGenerator
+                    previewGenerator: previewGenerator,
+                    presentationMode: presentationMode
                 )
             }
         })
@@ -83,10 +87,14 @@ struct OTPCodeCreateView<
             Button {
                 isCodeImagePickerGalleryVisible = true
             } label: {
-                Text("Pick image from photos")
+                Label(feedViewModel.inputSelectImageFromLibraryTitle, systemImage: "qrcode.viewfinder")
             }
+            .foregroundStyle(.primary)
 
-            NavigationLink("Enter Key Manually", value: CreationMode.manually)
+            NavigationLink(value: CreationMode.manually) {
+                Label(feedViewModel.inputEnterCodeManuallyTitle, systemImage: "entry.lever.keypad")
+            }
+            .foregroundStyle(.primary)
         } header: {
             scanningView
                 .aspectRatio(1, contentMode: .fill)
@@ -155,10 +163,10 @@ struct OTPCodeCreateView<
                 Image(systemName: "exclamationmark.triangle.fill")
                     .font(.largeTitle.bold())
                 VStack(spacing: 4) {
-                    Text("Camera Error")
+                    Text(feedViewModel.cameraErrorTitle)
                         .fontWeight(.bold)
                         .textCase(.uppercase)
-                    Text("Check your device and permissions")
+                    Text(feedViewModel.cameraErrorDescription)
                 }
                 .font(.callout)
             }

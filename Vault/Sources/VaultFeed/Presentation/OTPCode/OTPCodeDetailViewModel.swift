@@ -179,6 +179,11 @@ extension OTPCodeDetailViewModel {
         public let inputNumberOfDigitsTitle = localized(key: "codeDetail.input.numberOfDigits.title")
         public let advancedSectionTitle = localized(key: "codeDetail.section.advanced.title")
         public let inputSecretTitle = localized(key: "codeDetail.field.secret.title")
+        public let inputEnterCodeManually = localized(key: "codeDetail.input.enterCodeManually.title")
+        public let inputPickScannerImage = localized(key: "codeDetail.input.pickScannerImage.title")
+        public let inputKeyValidTitle = localized(key: "codeDetail.input.key.valid.title")
+        public let inputKeyErrorTitle = localized(key: "codeDetail.input.key.error.title")
+        public let inputKeyEmptyTitle = localized(key: "codeDetail.input.key.enterText.title")
 
         public func codeKindTitle(kind: OTPAuthType.Kind) -> String {
             switch kind {

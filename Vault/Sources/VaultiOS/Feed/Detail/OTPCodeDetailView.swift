@@ -11,6 +11,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     @State private var viewModel: OTPCodeDetailViewModel
     private var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
+    private var presentationMode: Binding<PresentationMode>?
 
     init(
         editingExistingCode code: OTPAuthCode,
@@ -18,11 +19,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
-        openInEditMode: Bool
+        openInEditMode: Bool,
+        presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
+        self.presentationMode = presentationMode
 
         if openInEditMode {
             viewModel.startEditing()
@@ -33,11 +36,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         newCodeWithContext initialCode: OTPAuthCode?,
         navigationPath: Binding<NavigationPath>,
         editor: any OTPCodeDetailEditor,
-        previewGenerator: PreviewGenerator
+        previewGenerator: PreviewGenerator,
+        presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
         self.previewGenerator = previewGenerator
+        self.presentationMode = presentationMode
 
         viewModel.startEditing()
     }
@@ -58,22 +63,29 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             viewModel: viewModel,
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
-            navigationPath: $navigationPath
+            navigationPath: $navigationPath,
+            presentationMode: presentationMode
         ) {
+            if viewModel.isInEditMode, viewModel.showsKeyEditingFields {
+                keyEditingSection
+            }
+
             codeNameSection
             if viewModel.isInEditMode {
                 accountNameEditingSection
                 descriptionEditingSection
-                if viewModel.showsKeyEditingFields {
-                    Divider()
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(EmptyView())
-                    codeSecretEditingSection
-                    codeMetadataEditingSection
-                }
             } else if case let .editing(code, metadata) = viewModel.mode {
                 metadataSection(code: code, metadata: metadata)
             }
+        }
+        .onDisappear {
+            // Clear the state of the navigation path, if any.
+            // This is because of a BUG where (when we use the injected presentationMode to dismiss the navigation
+            // stack), launching the navigation stack the next time (to view another code) might have the detail
+            // already presented!!!
+            //
+            // Some weird cache issue or something, but this fixes it.
+            navigationPath.removeLast(navigationPath.count)
         }
         .onReceive(pasteboard.didPaste()) {
             isShowingCopyPaste = true
@@ -156,8 +168,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var codeMetadataEditingSection: some View {
+    private var keyEditingSection: some View {
         Section {
+            TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
+
             Picker(selection: $viewModel.editingModel.detail.codeType) {
                 ForEach(OTPAuthType.Kind.allCases) { authType in
                     Text(viewModel.strings.codeKindTitle(kind: authType))
@@ -204,28 +218,14 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 Text(viewModel.strings.advancedSectionTitle)
             }
         } header: {
-            Text(viewModel.strings.codeDetailsSectionTitle)
-        }
-    }
-
-    private var codeSecretEditingSection: some View {
-        Section {
-            TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
-        } header: {
-            HStack(alignment: .center, spacing: 8) {
-                Text(viewModel.strings.inputSecretTitle)
-
-                Spacer()
-
-                switch viewModel.editingModel.detail.$secretBase32String {
-                case let .error(.some(message)):
-                    Text(message)
-                        .foregroundStyle(Color.red)
-                        .bold()
-                case _:
-                    EmptyView()
-                }
-            }
+            OTPKeyValidationView(
+                validationState: viewModel.editingModel.detail.$secretBase32String,
+                validTitle: viewModel.strings.inputKeyValidTitle,
+                invalidTitle: viewModel.strings.inputKeyEmptyTitle,
+                errorTitle: viewModel.strings.inputKeyErrorTitle
+            )
+            .padding()
+            .modifier(HorizontallyCenter())
         }
     }
 
@@ -312,7 +312,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
             ),
             editor: StubEditor(),
             previewGenerator: VaultItemPreviewViewGeneratorMock(),
-            openInEditMode: false
+            openInEditMode: false,
+            presentationMode: nil
         )
     }
 

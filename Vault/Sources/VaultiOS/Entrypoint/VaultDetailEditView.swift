@@ -15,6 +15,8 @@ struct VaultDetailEditView<
     var openInEditMode: Bool
     @Binding var navigationPath: NavigationPath
 
+    @Environment(\.presentationMode) private var presentationMode
+
     var body: some View {
         switch storedItem.item {
         case let .otpCode(storedCode):
@@ -24,7 +26,8 @@ struct VaultDetailEditView<
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 previewGenerator: previewGenerator,
-                openInEditMode: openInEditMode
+                openInEditMode: openInEditMode,
+                presentationMode: presentationMode
             )
         case let .secureNote(storedNote):
             SecureNoteDetailView(

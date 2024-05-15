@@ -8,6 +8,7 @@ import VaultUI
 struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
     @Binding private var navigationPath: NavigationPath
+    @Environment(\.presentationMode) private var presentationMode
 
     init(
         editingExistingNote note: SecureNote,
@@ -39,7 +40,8 @@ struct SecureNoteDetailView: View {
             viewModel: viewModel,
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
-            navigationPath: $navigationPath
+            navigationPath: $navigationPath,
+            presentationMode: presentationMode
         ) {
             if viewModel.isInEditMode {
                 noteTitleEditingSection

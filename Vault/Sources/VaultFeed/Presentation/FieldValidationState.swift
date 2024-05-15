@@ -1,6 +1,6 @@
 import Foundation
 
-public enum FieldValidationState {
+public enum FieldValidationState: Equatable {
     case valid
     case invalid
     case error(message: String? = nil)
