@@ -60,16 +60,14 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
             navigationPath: $navigationPath
         ) {
+            if viewModel.isInEditMode, viewModel.showsKeyEditingFields {
+                keyEditingSection
+            }
+
             codeNameSection
             if viewModel.isInEditMode {
                 accountNameEditingSection
                 descriptionEditingSection
-                if viewModel.showsKeyEditingFields {
-                    Divider()
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(EmptyView())
-                    keyEditingSection
-                }
             } else if case let .editing(code, metadata) = viewModel.mode {
                 metadataSection(code: code, metadata: metadata)
             }
