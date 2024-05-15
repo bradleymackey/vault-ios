@@ -305,7 +305,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Counter (HOTP)"
+            "value" : "Counter"
           }
         }
       }
@@ -316,7 +316,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Timer (TOTP)"
+            "value" : "Timer"
           }
         }
       }
