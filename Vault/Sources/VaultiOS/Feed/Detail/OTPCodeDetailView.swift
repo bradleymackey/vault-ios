@@ -205,20 +205,14 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 Text(viewModel.strings.advancedSectionTitle)
             }
         } header: {
-            HStack(alignment: .center, spacing: 8) {
-                Text(viewModel.strings.inputSecretTitle)
-
-                Spacer()
-
-                switch viewModel.editingModel.detail.$secretBase32String {
-                case let .error(.some(message)):
-                    Text(message)
-                        .foregroundStyle(Color.red)
-                        .bold()
-                case _:
-                    EmptyView()
-                }
-            }
+            OTPKeyValidationView(
+                validationState: viewModel.editingModel.detail.$secretBase32String,
+                validTitle: viewModel.strings.inputKeyValidTitle,
+                invalidTitle: viewModel.strings.inputKeyEmptyTitle,
+                errorTitle: viewModel.strings.inputKeyErrorTitle
+            )
+            .padding()
+            .modifier(HorizontallyCenter())
         }
     }
 
