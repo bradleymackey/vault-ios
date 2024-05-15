@@ -78,6 +78,15 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 metadataSection(code: code, metadata: metadata)
             }
         }
+        .onDisappear {
+            // Clear the state of the navigation path, if any.
+            // This is because of a BUG where (when we use the injected presentationMode to dismiss the navigation
+            // stack), launching the navigation stack the next time (to view another code) might have the detail
+            // already presented!!!
+            //
+            // Some weird cache issue or something, but this fixes it.
+            navigationPath.removeLast(navigationPath.count)
+        }
         .onReceive(pasteboard.didPaste()) {
             isShowingCopyPaste = true
         }
