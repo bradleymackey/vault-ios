@@ -18,6 +18,7 @@ struct VaultListView<
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
+    @State private var navigationPath = NavigationPath()
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Hashable, IdentifiableSelf {
@@ -77,20 +78,22 @@ struct VaultListView<
         .sheet(item: $modal, onDismiss: nil) { visible in
             switch visible {
             case let .detail(_, storedCode):
-                NavigationStack {
+                NavigationStack(path: $navigationPath) {
                     VaultDetailEditView(
                         feedViewModel: feedViewModel,
                         storedItem: storedCode,
                         previewGenerator: viewGenerator,
-                        openInEditMode: isEditing
+                        openInEditMode: isEditing,
+                        navigationPath: $navigationPath
                     )
                 }
             case let .creatingItem(creatingItem):
-                NavigationStack {
+                NavigationStack(path: $navigationPath) {
                     VaultDetailCreateView(
                         feedViewModel: feedViewModel,
                         creatingItem: creatingItem,
-                        previewGenerator: viewGenerator
+                        previewGenerator: viewGenerator,
+                        navigationPath: $navigationPath
                     )
                 }
             }

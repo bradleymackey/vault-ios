@@ -15,6 +15,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_emptyState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
+            navigationPath: .constant(NavigationPath()),
             storedMetadata: .init(id: UUID(), created: fixedTestDate(), updated: fixedTestDate(), userDescription: ""),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
@@ -28,6 +29,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_titleOnly() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
+            navigationPath: .constant(NavigationPath()),
             storedMetadata: .init(id: UUID(), created: fixedTestDate(), updated: fixedTestDate(), userDescription: ""),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
@@ -41,6 +43,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_titleDescriptionAndShortContent() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
+            navigationPath: .constant(NavigationPath()),
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -60,6 +63,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let longContent = Array(repeating: "My content is cool.", count: 100).joined(separator: " ")
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: longContent),
+            navigationPath: .constant(NavigationPath()),
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -79,6 +83,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
+            navigationPath: .constant(NavigationPath()),
             storedMetadata: .init(
                 id: UUID(),
                 created: date,
