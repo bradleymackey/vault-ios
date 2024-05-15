@@ -68,8 +68,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     Divider()
                         .listRowInsets(EdgeInsets())
                         .listRowBackground(EmptyView())
-                    codeSecretEditingSection
-                    codeMetadataEditingSection
+                    keyEditingSection
                 }
             } else if case let .editing(code, metadata) = viewModel.mode {
                 metadataSection(code: code, metadata: metadata)
@@ -156,8 +155,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var codeMetadataEditingSection: some View {
+    private var keyEditingSection: some View {
         Section {
+            TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
+
             Picker(selection: $viewModel.editingModel.detail.codeType) {
                 ForEach(OTPAuthType.Kind.allCases) { authType in
                     Text(viewModel.strings.codeKindTitle(kind: authType))
@@ -203,14 +204,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             } label: {
                 Text(viewModel.strings.advancedSectionTitle)
             }
-        } header: {
-            Text(viewModel.strings.codeDetailsSectionTitle)
-        }
-    }
-
-    private var codeSecretEditingSection: some View {
-        Section {
-            TextField(viewModel.strings.inputSecretTitle, text: $viewModel.editingModel.detail.secretBase32String)
         } header: {
             HStack(alignment: .center, spacing: 8) {
                 Text(viewModel.strings.inputSecretTitle)
