@@ -11,6 +11,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     @State private var viewModel: OTPCodeDetailViewModel
     private var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
+    private var presentationMode: Binding<PresentationMode>?
 
     init(
         editingExistingCode code: OTPAuthCode,
@@ -18,11 +19,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         storedMetadata: StoredVaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
-        openInEditMode: Bool
+        openInEditMode: Bool,
+        presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
+        self.presentationMode = presentationMode
 
         if openInEditMode {
             viewModel.startEditing()
@@ -33,11 +36,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         newCodeWithContext initialCode: OTPAuthCode?,
         navigationPath: Binding<NavigationPath>,
         editor: any OTPCodeDetailEditor,
-        previewGenerator: PreviewGenerator
+        previewGenerator: PreviewGenerator,
+        presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
         self.previewGenerator = previewGenerator
+        self.presentationMode = presentationMode
 
         viewModel.startEditing()
     }
@@ -58,7 +63,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             viewModel: viewModel,
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
-            navigationPath: $navigationPath
+            navigationPath: $navigationPath,
+            presentationMode: presentationMode
         ) {
             if viewModel.isInEditMode, viewModel.showsKeyEditingFields {
                 keyEditingSection
@@ -297,7 +303,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
             ),
             editor: StubEditor(),
             previewGenerator: VaultItemPreviewViewGeneratorMock(),
-            openInEditMode: false
+            openInEditMode: false,
+            presentationMode: nil
         )
     }
 
