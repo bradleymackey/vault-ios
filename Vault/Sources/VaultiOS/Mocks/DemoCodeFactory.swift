@@ -8,7 +8,8 @@ enum DemoVaultFactory {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: "My Cool Code"
+                userDescription: "My Cool Code",
+                color: nil
             ),
             item: .otpCode(.init(
                 type: .totp(),
@@ -27,7 +28,8 @@ enum DemoVaultFactory {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: "My Other Cool code"
+                userDescription: "My Other Cool code",
+                color: VaultItemColor(color: .green)
             ),
             item: .otpCode(.init(
                 type: .hotp(),
@@ -46,7 +48,8 @@ enum DemoVaultFactory {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: "This is a secure note which I made. The contents should be very secret."
+                userDescription: "This is a secure note which I made. The contents should be very secret.",
+                color: VaultItemColor(color: .red)
             ),
             item: .secureNote(.init(title: title, contents: contents))
         )

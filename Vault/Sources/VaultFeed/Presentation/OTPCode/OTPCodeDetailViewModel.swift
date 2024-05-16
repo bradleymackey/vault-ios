@@ -31,13 +31,14 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
             .init(detail: .new())
         case let .creating(.some(initialCode)):
             .init(
-                detail: OTPCodeDetailEdits(hydratedFromCode: initialCode, userDescription: ""),
+                detail: OTPCodeDetailEdits(hydratedFromCode: initialCode, userDescription: "", color: nil),
                 isInitiallyDirty: true
             )
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
                 hydratedFromCode: code,
-                userDescription: metadata.userDescription ?? ""
+                userDescription: metadata.userDescription ?? "",
+                color: metadata.color
             ))
         }
     }

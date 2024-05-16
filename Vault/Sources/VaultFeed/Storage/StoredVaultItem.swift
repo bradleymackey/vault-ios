@@ -21,7 +21,7 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable {
 
     /// Maps this object to a `StoredVaultItem.Write` for writing.
     public var asWritable: StoredVaultItem.Write {
-        .init(userDescription: metadata.userDescription, item: item)
+        .init(userDescription: metadata.userDescription, color: metadata.color, item: item)
     }
 }
 
@@ -36,12 +36,15 @@ extension StoredVaultItem {
         public var updated: Date
         /// User-provided description about the item.
         public var userDescription: String?
+        /// The color tint for this item.
+        public var color: VaultItemColor?
 
-        public init(id: UUID, created: Date, updated: Date, userDescription: String?) {
+        public init(id: UUID, created: Date, updated: Date, userDescription: String?, color: VaultItemColor?) {
             self.id = id
             self.created = created
             self.updated = updated
             self.userDescription = userDescription
+            self.color = color
         }
     }
 }
@@ -50,10 +53,12 @@ extension StoredVaultItem {
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable {
         public var userDescription: String?
+        public var color: VaultItemColor?
         public var item: VaultItem
 
-        public init(userDescription: String? = nil, item: VaultItem) {
+        public init(userDescription: String? = nil, color: VaultItemColor?, item: VaultItem) {
             self.userDescription = userDescription
+            self.color = color
             self.item = item
         }
     }

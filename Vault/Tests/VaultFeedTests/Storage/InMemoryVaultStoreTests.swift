@@ -146,13 +146,18 @@ final class InMemoryVaultStoreTests: XCTestCase {
 
         let newCode = uniqueCode()
         let newUserDescription = UUID().uuidString
-        try await sut.update(id: code1.id, item: .init(userDescription: newUserDescription, item: .otpCode(newCode)))
+        let newColor = VaultItemColor(red: 0.1, green: 0.1, blue: 0.1)
+        try await sut.update(
+            id: code1.id,
+            item: .init(userDescription: newUserDescription, color: newColor, item: .otpCode(newCode))
+        )
 
         let retrieved = try await sut.retrieve()
         XCTAssertEqual(retrieved.count, 1)
         let item = try XCTUnwrap(retrieved.first)
         XCTAssertEqual(item.id, code1.id)
         XCTAssertEqual(item.metadata.userDescription, newUserDescription)
+        XCTAssertEqual(item.metadata.color, newColor)
         XCTAssertEqual(item.item, .otpCode(newCode))
     }
 

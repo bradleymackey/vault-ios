@@ -15,10 +15,13 @@ public struct SecureNoteDetailEdits: EditableState {
     @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
-    public init(title: String = "", description: String = "", contents: String = "") {
+    public var color: VaultItemColor?
+
+    public init(title: String = "", description: String = "", contents: String = "", color: VaultItemColor? = nil) {
         self.description = description
         self.title = title
         self.contents = contents
+        self.color = color
     }
 
     public var isValid: Bool {

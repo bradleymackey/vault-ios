@@ -96,6 +96,27 @@ extension ManagedVaultItemEncoderTests {
         let encoded = sut.encode(item: code)
         XCTAssertEqual(encoded.userDescription, desc)
     }
+
+    func test_encodeColor_ignoresForNoColor() {
+        let sut = makeSUT()
+        let code = makeWritable(code: uniqueCode(), color: nil)
+
+        let encoded = sut.encode(item: code)
+        XCTAssertNil(encoded.colorRed)
+        XCTAssertNil(encoded.colorBlue)
+        XCTAssertNil(encoded.colorGreen)
+    }
+
+    func test_encodeColor_writesColorValues() {
+        let sut = makeSUT()
+        let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
+        let code = makeWritable(code: uniqueCode(), color: color)
+
+        let encoded = sut.encode(item: code)
+        XCTAssertEqual(encoded.colorRed, 0.5)
+        XCTAssertEqual(encoded.colorGreen, 0.6)
+        XCTAssertEqual(encoded.colorBlue, 0.7)
+    }
 }
 
 // MARK: - OTP Code
@@ -261,9 +282,10 @@ extension ManagedVaultItemEncoderTests {
 
     private func makeWritable(
         userDescription: String? = nil,
-        code: OTPAuthCode
+        code: OTPAuthCode,
+        color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(userDescription: userDescription, item: .otpCode(code))
+        StoredVaultItem.Write(userDescription: userDescription, color: color, item: .otpCode(code))
     }
 
     private func makeCodeValue(
@@ -288,9 +310,10 @@ extension ManagedVaultItemEncoderTests {
 
     private func makeWritable(
         userDescription: String? = nil,
-        note: SecureNote
+        note: SecureNote,
+        color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(userDescription: userDescription, item: .secureNote(note))
+        StoredVaultItem.Write(userDescription: userDescription, color: color, item: .secureNote(note))
     }
 
     private func makeSecretNoteValue(

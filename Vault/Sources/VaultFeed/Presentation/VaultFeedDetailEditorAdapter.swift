@@ -14,6 +14,7 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
     public func createCode(initialEdits: OTPCodeDetailEdits) async throws {
         let newCodeVaultItem = try StoredVaultItem.Write(
             userDescription: initialEdits.description,
+            color: initialEdits.color,
             item: .otpCode(initialEdits.asOTPAuthCode())
         )
 
@@ -25,7 +26,10 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
         item.data.accountName = edits.accountNameTitle
         item.data.issuer = edits.issuerTitle
 
-        try await vaultFeed.update(id: id, item: .init(userDescription: edits.description, item: .otpCode(item)))
+        try await vaultFeed.update(
+            id: id,
+            item: .init(userDescription: edits.description, color: edits.color, item: .otpCode(item))
+        )
     }
 
     public func deleteCode(id: UUID) async throws {
@@ -38,6 +42,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         let newSecureNote = SecureNote(title: initialEdits.title, contents: initialEdits.contents)
         let newStoredVaultItem = StoredVaultItem.Write(
             userDescription: initialEdits.description,
+            color: initialEdits.color,
             item: .secureNote(newSecureNote)
         )
 
@@ -50,6 +55,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         updatedItem.contents = edits.contents
         let updatedStoredVaultItem = StoredVaultItem.Write(
             userDescription: edits.description,
+            color: edits.color,
             item: .secureNote(updatedItem)
         )
 

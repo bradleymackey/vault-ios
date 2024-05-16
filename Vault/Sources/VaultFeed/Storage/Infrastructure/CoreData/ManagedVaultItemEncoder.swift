@@ -18,6 +18,11 @@ struct ManagedVaultItemEncoder {
         managed.createdDate = existing?.createdDate ?? now
         managed.updatedDate = now
         managed.userDescription = value.userDescription
+        if let color = value.color {
+            managed.colorRed = NSNumber(floatLiteral: color.red)
+            managed.colorBlue = NSNumber(floatLiteral: color.blue)
+            managed.colorGreen = NSNumber(floatLiteral: color.green)
+        }
 
         switch value.item {
         case let .otpCode(code):

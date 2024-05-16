@@ -7,6 +7,9 @@ final class ManagedVaultItem: NSManagedObject {
     @NSManaged var createdDate: Date
     @NSManaged var updatedDate: Date
     @NSManaged var userDescription: String?
+    @NSManaged var colorBlue: NSNumber?
+    @NSManaged var colorRed: NSNumber?
+    @NSManaged var colorGreen: NSNumber?
 
     /// Details for an OTP code.
     @NSManaged var otpDetails: ManagedOTPDetails?

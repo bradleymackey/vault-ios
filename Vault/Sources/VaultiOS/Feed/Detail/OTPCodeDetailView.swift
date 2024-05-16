@@ -310,7 +310,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: "Description"
+                userDescription: "Description",
+                color: VaultItemColor(color: .green)
             ),
             editor: StubEditor(),
             previewGenerator: VaultItemPreviewViewGeneratorMock(),
