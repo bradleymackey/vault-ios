@@ -12,7 +12,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
-    @State private var selectedColor: Color = .red
+    @State private var selectedColor: Color
 
     init(
         editingExistingCode code: OTPAuthCode,
@@ -27,6 +27,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
+        if let color = storedMetadata.color {
+            _selectedColor = State(initialValue: color.color)
+        } else {
+            _selectedColor = State(initialValue: .red)
+        }
 
         if openInEditMode {
             viewModel.startEditing()
@@ -44,6 +49,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
+        _selectedColor = .init(initialValue: .red)
 
         viewModel.startEditing()
     }
@@ -79,6 +85,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 codeDetailsSection
             }
+        }
+        .onChange(of: selectedColor.hashValue) { _, _ in
+            viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
         .onDisappear {
             // Clear the state of the navigation path, if any.
