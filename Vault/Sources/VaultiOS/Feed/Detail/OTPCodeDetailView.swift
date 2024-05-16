@@ -66,16 +66,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             navigationPath: $navigationPath,
             presentationMode: presentationMode
         ) {
-            if viewModel.isInEditMode, viewModel.showsKeyEditingFields {
-                keyEditingSection
-            }
-
-            codeNameSection
             if viewModel.isInEditMode {
-                accountNameEditingSection
+                if viewModel.showsKeyEditingFields {
+                    keyEditingSection
+                }
+                nameEditingSection
                 descriptionEditingSection
-            } else if case let .editing(code, metadata) = viewModel.mode {
-                metadataSection(code: code, metadata: metadata)
+            } else {
+                if case let .editing(code, metadata) = viewModel.mode {
+                    codeInformationSection(code: code, metadata: metadata)
+                }
+                codeDetailsSection
             }
         }
         .onDisappear {
@@ -105,49 +106,18 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var codeNameSection: some View {
+    private var nameEditingSection: some View {
         Section {
-            if viewModel.isInEditMode {
-                TextField(
-                    viewModel.strings.siteNameTitle,
-                    text: $viewModel.editingModel.detail.issuerTitle
-                )
-            } else {
-                VStack(alignment: .center, spacing: 2) {
-                    Text(viewModel.visibleIssuerTitle)
-                        .font(.title.bold())
-                        .lineLimit(5)
-                    Text(viewModel.editingModel.detail.accountNameTitle)
-                        .font(.callout.bold())
-                        .lineLimit(2)
-                }
-                .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
-                .textSelection(.enabled)
-                .noListBackground()
-
-                Text(viewModel.editingModel.detail.description)
-                    .font(.callout)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                    .frame(maxWidth: .infinity)
-                    .multilineTextAlignment(.leading)
-                    .textSelection(.enabled)
-                    .noListBackground()
-            }
-        } header: {
-            iconHeader
-                .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
-        }
-    }
-
-    private var accountNameEditingSection: some View {
-        Section {
+            TextField(
+                viewModel.strings.siteNameTitle,
+                text: $viewModel.editingModel.detail.issuerTitle
+            )
             TextField(text: $viewModel.editingModel.detail.accountNameTitle) {
                 Text(viewModel.strings.accountNameExample)
             }
         } header: {
-            Text(viewModel.strings.accountNameTitle)
+            iconHeader
+                .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
         }
     }
 
@@ -229,31 +199,55 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private func metadataSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
+    private func codeInformationSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
         Section {
-            ForEach(viewModel.detailMenuItems) { item in
-                ForEach(item.entries) { entry in
-                    Label {
-                        LabeledContent(entry.title, value: entry.detail)
-                    } icon: {
-                        RowIcon(icon: Image(systemName: entry.systemIconName), color: .accentColor)
-                            .foregroundColor(.white)
-                    }
-                }
-            }
-        } header: {
             VStack(alignment: .center) {
                 copyableViewGenerator().makeVaultPreviewView(
                     item: .otpCode(code),
                     metadata: metadata,
                     behaviour: .normal
                 )
-                .frame(maxWidth: 200)
-                .modifier(OTPCardViewModifier(context: .tertiary))
+                .frame(maxWidth: 220)
+                .padding(.horizontal, 8) // some additional padding because it's bigger
+                .modifier(OTPCardViewModifier(context: .secondary))
+                .clipShape(RoundedRectangle(cornerRadius: 16)) // make it a bit more rounded because it's bigger
+                .shadow(color: .black.opacity(0.3), radius: 20)
+                .padding()
                 .modifier(HorizontallyCenter())
             }
-            .textCase(.none)
-            .padding(.bottom, 32)
+            .padding(.vertical, 32)
+            .listRowSeparator(.hidden)
+
+            if !viewModel.editingModel.detail.description.isBlank {
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(viewModel.strings.descriptionTitle)
+                        .foregroundStyle(.primary)
+
+                    Text(viewModel.editingModel.detail.description)
+                        .foregroundStyle(.secondary)
+                        .textSelection(.enabled)
+
+                    HStack { Spacer() }
+                }
+                .font(.callout)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity)
+            }
+        }
+    }
+
+    private var codeDetailsSection: some View {
+        Section {
+            ForEach(viewModel.detailMenuItems) { item in
+                ForEach(item.entries) { entry in
+                    Label {
+                        LabeledContent(entry.title, value: entry.detail)
+                    } icon: {
+                        RowIcon(icon: Image(systemName: entry.systemIconName), color: .clear)
+                            .foregroundColor(.primary)
+                    }
+                }
+            }
         } footer: {
             VStack(alignment: .leading, spacing: 2) {
                 if let createdDateValue = viewModel.createdDateValue {
@@ -315,6 +309,10 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
             openInEditMode: false,
             presentationMode: nil
         )
+        .environment(Pasteboard(
+            SystemPasteboardImpl(clock: .init(makeCurrentTime: { 100 })),
+            localSettings: .init(defaults: .init(userDefaults: .standard))
+        ))
     }
 
     class StubEditor: OTPCodeDetailEditor {

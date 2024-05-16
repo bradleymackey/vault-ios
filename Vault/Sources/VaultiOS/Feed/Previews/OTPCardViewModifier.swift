@@ -5,7 +5,6 @@ public struct OTPCardViewModifier: ViewModifier {
     public enum Context {
         case secondary
         case tertiary
-        case editing
     }
 
     var context: Context
@@ -23,7 +22,6 @@ public struct OTPCardViewModifier: ViewModifier {
 
     private var backgroundColor: Color {
         switch context {
-        case .editing: Color(UIColor.secondarySystemFill)
         case .secondary: Color(UIColor.secondarySystemBackground)
         case .tertiary: Color(UIColor.tertiarySystemBackground)
         }
