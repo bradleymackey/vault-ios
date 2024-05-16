@@ -26,7 +26,7 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         viewFactory.makeHOTPView(
-            viewModel: makePreviewViewModel(id: metadata.id, code: item),
+            viewModel: makePreviewViewModel(metadata: metadata, code: item),
             incrementer: makeIncrementerViewModel(id: metadata.id, code: item),
             behaviour: behaviour
         )
@@ -99,12 +99,16 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
         }
     }
 
-    private func makePreviewViewModel(id: UUID, code: HOTPAuthCode) -> OTPCodePreviewViewModel {
-        previewViewModelCache.getOrCreateValue(for: id) {
+    private func makePreviewViewModel(
+        metadata: StoredVaultItem.Metadata,
+        code: HOTPAuthCode
+    ) -> OTPCodePreviewViewModel {
+        previewViewModelCache.getOrCreateValue(for: metadata.id) {
             let viewModel = OTPCodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
-                renderer: makeRenderer(id: id, code: code)
+                color: metadata.color ?? .default,
+                renderer: makeRenderer(id: metadata.id, code: code)
             )
             viewModel.hideCodeUntilNextUpdate()
             return viewModel

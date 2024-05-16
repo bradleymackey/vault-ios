@@ -44,7 +44,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             PreviewErrorIcon()
                 .font(.callout)
         } else {
-            OTPCodeIconPlaceholderView(iconFontSize: 8)
+            OTPCodeIconPlaceholderView(iconFontSize: 8, backgroundColor: previewViewModel.color.color)
                 .clipShape(Circle())
         }
     }
@@ -134,6 +134,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         let previewViewModel = OTPCodePreviewViewModel(
             accountName: "test@example.com",
             issuer: issuer,
+            color: .default,
             renderer: renderer
         )
         return TOTPCodePreviewView(

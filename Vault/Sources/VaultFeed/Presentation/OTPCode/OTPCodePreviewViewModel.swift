@@ -8,6 +8,7 @@ import VaultCore
 public final class OTPCodePreviewViewModel {
     public let accountName: String
     public let issuer: String?
+    public let color: VaultItemColor
     public private(set) var code: OTPCodeState = .notReady
 
     public var visibleIssuer: String {
@@ -23,19 +24,23 @@ public final class OTPCodePreviewViewModel {
     public init(
         accountName: String,
         issuer: String?,
+        color: VaultItemColor,
         fixedCodeState: OTPCodeState
     ) {
         self.accountName = accountName
         self.issuer = issuer
+        self.color = color
         code = fixedCodeState
     }
 
     public init(
         accountName: String,
         issuer: String?,
+        color: VaultItemColor,
         renderer: some OTPCodeRenderer
     ) {
         self.accountName = accountName
+        self.color = color
         self.issuer = issuer
         renderer.renderedCodePublisher()
             .sink { [weak self] completion in

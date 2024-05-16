@@ -39,7 +39,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         viewFactory.makeTOTPView(
-            viewModel: makeViewModelForCode(id: metadata.id, code: item),
+            viewModel: makeViewModelForCode(metadata: metadata, code: item),
             periodState: makeTimerPeriodState(period: item.period),
             updater: makeTimerController(period: item.period),
             behaviour: behaviour
@@ -111,10 +111,10 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
     }
 
     private func makeViewModelForCode(
-        id: UUID,
+        metadata: StoredVaultItem.Metadata,
         code: TOTPAuthCode
     ) -> OTPCodePreviewViewModel {
-        viewModelCache.getOrCreateValue(for: id) {
+        viewModelCache.getOrCreateValue(for: metadata.id) {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
             let renderer = TOTPCodeRenderer(
                 timer: makeTimerController(period: code.period),
@@ -123,6 +123,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
             return OTPCodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
+                color: metadata.color ?? .default,
                 renderer: renderer
             )
         }
