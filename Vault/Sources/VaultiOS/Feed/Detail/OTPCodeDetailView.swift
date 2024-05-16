@@ -27,11 +27,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
-        if let color = storedMetadata.color {
-            _selectedColor = State(initialValue: color.color)
-        } else {
-            _selectedColor = State(initialValue: .black)
-        }
+        _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
 
         if openInEditMode {
             viewModel.startEditing()
@@ -49,7 +45,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
-        _selectedColor = .init(initialValue: .black)
+        _selectedColor = .init(initialValue: VaultItemColor.default.color)
 
         viewModel.startEditing()
     }
