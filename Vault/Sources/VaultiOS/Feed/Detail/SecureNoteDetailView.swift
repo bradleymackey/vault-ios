@@ -9,6 +9,7 @@ struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
     @Binding private var navigationPath: NavigationPath
     @Environment(\.presentationMode) private var presentationMode
+    @State private var selectedColor: Color = .red
 
     init(
         editingExistingNote note: SecureNote,
@@ -58,13 +59,19 @@ struct SecureNoteDetailView: View {
 
     private var noteMetadataContentSection: some View {
         Section {
+            noteIconHeader
+                .padding(.vertical, 8)
+                .frame(maxWidth: .infinity)
+
             Text(viewModel.visibleTitle)
+                .foregroundStyle(.primary)
                 .font(.title.bold())
                 .lineLimit(5)
                 .frame(maxWidth: .infinity)
 
             if viewModel.editingModel.detail.description.isNotEmpty {
                 Text(viewModel.editingModel.detail.description)
+                    .foregroundStyle(.secondary)
                     .font(.callout)
                     .frame(maxWidth: .infinity)
             }
@@ -77,10 +84,10 @@ struct SecureNoteDetailView: View {
     private var noteTitleEditingSection: some View {
         Section {
             TextField(text: $viewModel.editingModel.detail.title) {
-                Text(viewModel.strings.noteTitleExample)
+                Text(viewModel.strings.noteTitle)
             }
         } header: {
-            Text(viewModel.strings.noteTitle)
+            noteIconPickerHeader
         } footer: {
             switch viewModel.editingModel.detail.$title {
             case let .error(.some(message)):
@@ -90,6 +97,25 @@ struct SecureNoteDetailView: View {
                 EmptyView()
             }
         }
+    }
+
+    private var noteIconHeader: some View {
+        Image(systemName: "doc.text.fill")
+            .font(.largeTitle)
+            .foregroundStyle(selectedColor)
+    }
+
+    private var noteIconPickerHeader: some View {
+        VStack(spacing: 8) {
+            noteIconHeader
+
+            ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
+                EmptyView()
+            })
+            .labelsHidden()
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 16)
     }
 
     private var noteDescriptionEditingSection: some View {
