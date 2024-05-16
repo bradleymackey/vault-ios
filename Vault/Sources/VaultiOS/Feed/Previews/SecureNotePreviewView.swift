@@ -11,6 +11,7 @@ public struct SecureNotePreviewView: View {
             VStack(alignment: .center, spacing: 4) {
                 Image(systemName: "doc.text.fill")
                     .font(.title3)
+                    .foregroundStyle(viewModel.color.color)
                 Text(viewModel.visibleTitle)
                     .font(.headline)
             }
@@ -50,7 +51,7 @@ public struct SecureNotePreviewView: View {
 struct SecureNotePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         SecureNotePreviewView(
-            viewModel: .init(title: "Test title", description: "desc"),
+            viewModel: .init(title: "Test title", description: "desc", color: .init(red: 0, green: 0, blue: 0)),
             behaviour: .normal
         )
         .frame(width: 200, height: 200)

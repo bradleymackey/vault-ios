@@ -22,7 +22,8 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: item.title,
-            description: metadata.userDescription
+            description: metadata.userDescription,
+            color: metadata.color ?? .default
         )
         return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }

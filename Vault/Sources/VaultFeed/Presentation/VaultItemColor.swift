@@ -11,3 +11,9 @@ public struct VaultItemColor: Equatable, Hashable {
         self.blue = blue
     }
 }
+
+extension VaultItemColor {
+    public static var `default`: VaultItemColor {
+        VaultItemColor(red: 0, green: 0, blue: 0)
+    }
+}
