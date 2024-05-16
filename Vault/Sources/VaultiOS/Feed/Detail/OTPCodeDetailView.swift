@@ -12,6 +12,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
+    @State private var selectedColor: Color = .red
 
     init(
         editingExistingCode code: OTPAuthCode,
@@ -98,12 +99,19 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     }
 
     private var iconHeader: some View {
-        HStack {
-            Spacer()
-            OTPCodeIconPlaceholderView(iconFontSize: viewModel.isInEditMode ? 44 : 22)
-                .clipShape(Circle())
-            Spacer()
+        VStack(spacing: 8) {
+            OTPCodeIconPlaceholderView(
+                iconFontSize: viewModel.isInEditMode ? 44 : 22,
+                backgroundColor: selectedColor
+            )
+            .clipShape(Circle())
+
+            ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
+                EmptyView()
+            })
+            .labelsHidden()
         }
+        .frame(maxWidth: .infinity)
     }
 
     private var nameEditingSection: some View {

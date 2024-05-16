@@ -3,10 +3,11 @@ import SwiftUI
 
 public struct OTPCodeIconPlaceholderView: View {
     public let iconFontSize: Double
+    public var backgroundColor: Color = .gray
 
     public var body: some View {
         ZStack(alignment: .center) {
-            Color.gray
+            backgroundColor
             Image(systemName: "key.horizontal.fill")
                 .foregroundColor(.white)
                 .font(.system(size: iconFontSize))
