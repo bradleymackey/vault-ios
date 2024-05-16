@@ -16,7 +16,13 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            storedMetadata: .init(id: UUID(), created: fixedTestDate(), updated: fixedTestDate(), userDescription: ""),
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                color: nil
+            ),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
@@ -30,7 +36,13 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            storedMetadata: .init(id: UUID(), created: fixedTestDate(), updated: fixedTestDate(), userDescription: ""),
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                color: nil
+            ),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
@@ -48,7 +60,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 id: UUID(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
-                userDescription: "My description"
+                userDescription: "My description",
+                color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
@@ -68,7 +81,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 id: UUID(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
-                userDescription: "My description"
+                userDescription: "My description",
+                color: .gray
             ),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
@@ -88,7 +102,8 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 id: UUID(),
                 created: date,
                 updated: date.addingTimeInterval(1), // different updated date
-                userDescription: "My description"
+                userDescription: "My description",
+                color: .black
             ),
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
