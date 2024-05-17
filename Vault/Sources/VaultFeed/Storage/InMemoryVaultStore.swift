@@ -48,7 +48,8 @@ extension InMemoryVaultStore: VaultStoreWriter {
             id: UUID(),
             created: currentDate,
             updated: currentDate,
-            userDescription: item.userDescription
+            userDescription: item.userDescription,
+            color: item.color
         )
         let code = StoredVaultItem(
             metadata: metadata,
@@ -67,7 +68,8 @@ extension InMemoryVaultStore: VaultStoreWriter {
             id: id,
             created: existingCode.metadata.created,
             updated: Date(),
-            userDescription: item.userDescription
+            userDescription: item.userDescription,
+            color: item.color
         )
         let newCode = StoredVaultItem(
             metadata: metadata,

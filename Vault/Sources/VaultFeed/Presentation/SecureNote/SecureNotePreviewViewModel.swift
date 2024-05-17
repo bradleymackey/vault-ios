@@ -6,10 +6,12 @@ public struct SecureNotePreviewViewModel {
     public let title: String
     /// The user-definied description of this note.
     public let description: String?
+    public let color: VaultItemColor
 
-    public init(title: String, description: String?) {
+    public init(title: String, description: String?, color: VaultItemColor) {
         self.title = title
         self.description = description
+        self.color = color
     }
 
     /// The title that is displayed in the preview.

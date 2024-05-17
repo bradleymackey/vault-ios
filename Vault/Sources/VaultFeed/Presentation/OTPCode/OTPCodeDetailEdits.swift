@@ -20,6 +20,7 @@ public struct OTPCodeDetailEdits: EditableState {
     public var issuerTitle: String = ""
     public var accountNameTitle: String
     public var description: String
+    public var color: VaultItemColor?
 
     public init(
         codeType: OTPAuthType.Kind,
@@ -30,7 +31,8 @@ public struct OTPCodeDetailEdits: EditableState {
         numberOfDigits: UInt16,
         issuerTitle: String,
         accountNameTitle: String,
-        description: String
+        description: String,
+        color: VaultItemColor?
     ) {
         self.codeType = codeType
         self.totpPeriodLength = totpPeriodLength
@@ -41,9 +43,10 @@ public struct OTPCodeDetailEdits: EditableState {
         self.issuerTitle = issuerTitle
         self.accountNameTitle = accountNameTitle
         self.description = description
+        self.color = color
     }
 
-    public init(hydratedFromCode code: OTPAuthCode, userDescription: String) {
+    public init(hydratedFromCode code: OTPAuthCode, userDescription: String, color: VaultItemColor?) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
         case let .totp(period): period
@@ -59,6 +62,7 @@ public struct OTPCodeDetailEdits: EditableState {
         issuerTitle = code.data.issuer ?? ""
         accountNameTitle = code.data.accountName
         description = userDescription
+        self.color = color
     }
 
     /// Constructs an OTPAuthCode from the current state of the edits
@@ -103,7 +107,8 @@ extension OTPCodeDetailEdits {
             numberOfDigits: OTPAuthDigits.default.value,
             issuerTitle: "",
             accountNameTitle: "",
-            description: ""
+            description: "",
+            color: nil
         )
     }
 }

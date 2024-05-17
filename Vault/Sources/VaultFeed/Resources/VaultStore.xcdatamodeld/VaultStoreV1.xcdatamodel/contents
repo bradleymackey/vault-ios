@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22222" systemVersion="23A344" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="VaultStoreV1">
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="22758" systemVersion="23E224" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="VaultStoreV1">
     <entity name="ManagedNoteDetails" representedClassName="ManagedNoteDetails" syncable="YES">
         <attribute name="rawContents" optional="YES" attributeType="String"/>
         <attribute name="title" attributeType="String"/>
@@ -18,6 +18,9 @@
         <relationship name="vaultItem" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="ManagedVaultItem" inverseName="otpDetails" inverseEntity="ManagedVaultItem"/>
     </entity>
     <entity name="ManagedVaultItem" representedClassName="ManagedVaultItem" syncable="YES">
+        <attribute name="colorBlue" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="colorGreen" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
+        <attribute name="colorRed" optional="YES" attributeType="Double" usesScalarValueType="YES"/>
         <attribute name="createdDate" attributeType="Date" usesScalarValueType="NO"/>
         <attribute name="id" attributeType="UUID" usesScalarValueType="NO"/>
         <attribute name="updatedDate" attributeType="Date" usesScalarValueType="NO"/>

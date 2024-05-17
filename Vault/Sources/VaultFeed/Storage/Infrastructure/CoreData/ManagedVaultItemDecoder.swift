@@ -7,7 +7,8 @@ struct ManagedVaultItemDecoder {
             id: item.id,
             created: item.createdDate,
             updated: item.updatedDate,
-            userDescription: item.userDescription
+            userDescription: item.userDescription,
+            color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {
             let otpCode = try decodeOTPCode(details: otp)
@@ -18,6 +19,14 @@ struct ManagedVaultItemDecoder {
         } else {
             // Not any kind of item that we recognise!
             throw DecodingError.missingDataInModel
+        }
+    }
+
+    private func decodeColor(item: ManagedVaultItem) -> VaultItemColor? {
+        if let red = item.colorRed, let green = item.colorGreen, let blue = item.colorBlue {
+            VaultItemColor(red: red.doubleValue, green: green.doubleValue, blue: blue.doubleValue)
+        } else {
+            nil
         }
     }
 

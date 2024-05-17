@@ -143,7 +143,8 @@ struct VaultItemFeedView_Previews: PreviewProvider {
                         id: UUID(),
                         created: Date(),
                         updated: Date(),
-                        userDescription: "My Cool Code"
+                        userDescription: "My Cool Code",
+                        color: VaultItemColor(color: .green)
                     ),
                     item: .otpCode(.init(
                         type: .totp(),

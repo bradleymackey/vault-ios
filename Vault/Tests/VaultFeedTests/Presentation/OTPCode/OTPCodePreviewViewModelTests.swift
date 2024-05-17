@@ -88,6 +88,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         let viewModel = OTPCodePreviewViewModel(
             accountName: "any",
             issuer: issuer,
+            color: .default,
             renderer: renderer
         )
         trackForMemoryLeaks(viewModel, file: file, line: line)

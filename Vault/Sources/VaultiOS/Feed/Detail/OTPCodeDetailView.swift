@@ -12,7 +12,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
-    @State private var selectedColor: Color = .red
+    @State private var selectedColor: Color
 
     init(
         editingExistingCode code: OTPAuthCode,
@@ -27,6 +27,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
+        _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
 
         if openInEditMode {
             viewModel.startEditing()
@@ -44,6 +45,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
+        _selectedColor = .init(initialValue: VaultItemColor.default.color)
 
         viewModel.startEditing()
     }
@@ -79,6 +81,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 codeDetailsSection
             }
+        }
+        .onChange(of: selectedColor.hashValue) { _, _ in
+            viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
         .onDisappear {
             // Clear the state of the navigation path, if any.
@@ -310,7 +315,8 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: "Description"
+                userDescription: "Description",
+                color: VaultItemColor(color: .green)
             ),
             editor: StubEditor(),
             previewGenerator: VaultItemPreviewViewGeneratorMock(),

@@ -9,7 +9,7 @@ struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
     @Binding private var navigationPath: NavigationPath
     @Environment(\.presentationMode) private var presentationMode
-    @State private var selectedColor: Color = .red
+    @State private var selectedColor: Color
 
     init(
         editingExistingNote note: SecureNote,
@@ -20,6 +20,7 @@ struct SecureNoteDetailView: View {
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .editing(note: note, metadata: storedMetadata), editor: editor))
+        _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
 
         if openInEditMode {
             viewModel.startEditing()
@@ -29,6 +30,7 @@ struct SecureNoteDetailView: View {
     init(newNoteWithEditor editor: any SecureNoteDetailEditor, navigationPath: Binding<NavigationPath>) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
+        _selectedColor = .init(initialValue: VaultItemColor.default.color)
 
         viewModel.startEditing()
     }
@@ -52,6 +54,9 @@ struct SecureNoteDetailView: View {
                 noteMetadataContentSection
                 noteContentsSection
             }
+        }
+        .onChange(of: selectedColor.hashValue) { _, _ in
+            viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
     }
 

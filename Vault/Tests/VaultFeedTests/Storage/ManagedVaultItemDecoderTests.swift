@@ -63,6 +63,46 @@ extension ManagedVaultItemDecoderTests {
         let decoded = try sut.decode(item: code)
         XCTAssertEqual(decoded.metadata.userDescription, description)
     }
+
+    func test_decodeMetadataColor_decodesNilIfAllMissing() throws {
+        let sut = makeSUT()
+
+        let code = makeManagedCode(
+            colorRed: nil,
+            colorBlue: nil,
+            colorGreen: nil
+        )
+
+        let decoded = try sut.decode(item: code)
+        XCTAssertNil(decoded.metadata.color)
+    }
+
+    func test_decodeMetadataColor_decodesNilIfAnyMissing() throws {
+        let sut = makeSUT()
+
+        let code = makeManagedCode(
+            colorRed: 0.5 as NSNumber,
+            colorBlue: nil,
+            colorGreen: nil
+        )
+
+        let decoded = try sut.decode(item: code)
+        XCTAssertNil(decoded.metadata.color)
+    }
+
+    func test_decodeMetadataColor_decodesColorValues() throws {
+        let sut = makeSUT()
+
+        let code = makeManagedCode(
+            colorRed: 0.5 as NSNumber,
+            colorBlue: 0.6 as NSNumber,
+            colorGreen: 0.7 as NSNumber
+        )
+
+        let decoded = try sut.decode(item: code)
+        let expectedColor = VaultItemColor(red: 0.5, green: 0.7, blue: 0.6)
+        XCTAssertEqual(decoded.metadata.color, expectedColor)
+    }
 }
 
 // MARK: - OTP Code
@@ -256,7 +296,10 @@ extension ManagedVaultItemDecoderTests {
         issuer: String? = "issuer",
         period: NSNumber? = UInt32(30) as NSNumber,
         secretData: Data = Data(),
-        secretFormat: String = "BASE_32"
+        secretFormat: String = "BASE_32",
+        colorRed: NSNumber? = nil,
+        colorBlue: NSNumber? = nil,
+        colorGreen: NSNumber? = nil
     ) -> ManagedVaultItem {
         let context = anyContext()
         let item = ManagedVaultItem(context: context)
@@ -264,6 +307,9 @@ extension ManagedVaultItemDecoderTests {
         item.createdDate = createdDate
         item.updatedDate = updatedDate
         item.userDescription = userDescription
+        item.colorRed = colorRed
+        item.colorBlue = colorBlue
+        item.colorGreen = colorGreen
 
         let otp = ManagedOTPDetails(context: context)
         otp.accountName = accountName

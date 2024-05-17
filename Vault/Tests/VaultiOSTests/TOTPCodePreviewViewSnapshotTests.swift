@@ -95,7 +95,12 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
         state: OTPCodeState = .visible("123456"),
         behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {
-        let preview = OTPCodePreviewViewModel(accountName: accountName, issuer: issuer, fixedCodeState: state)
+        let preview = OTPCodePreviewViewModel(
+            accountName: accountName,
+            issuer: issuer,
+            color: .default,
+            fixedCodeState: state
+        )
         return TOTPCodePreviewView(
             previewViewModel: preview,
             timerView: testTimerGradient(),

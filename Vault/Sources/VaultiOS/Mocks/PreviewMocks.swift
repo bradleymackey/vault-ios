@@ -34,7 +34,8 @@ struct CodeStoreFake: VaultStoreReader {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: ""
+                userDescription: "",
+                color: VaultItemColor(color: .green)
             ),
             item: .otpCode(
                 .init(
@@ -52,7 +53,8 @@ struct CodeStoreFake: VaultStoreReader {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: ""
+                userDescription: "",
+                color: VaultItemColor(color: .green)
             ),
             item: .otpCode(
                 .init(
@@ -70,7 +72,8 @@ struct CodeStoreFake: VaultStoreReader {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
-                userDescription: ""
+                userDescription: "",
+                color: VaultItemColor(color: .green)
             ),
             item: .otpCode(
                 .init(

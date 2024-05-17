@@ -23,7 +23,7 @@ func anyStoredNote() -> SecureNote {
 }
 
 func uniqueStoredMetadata(userDescription: String = "any") -> StoredVaultItem.Metadata {
-    .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription)
+    .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil)
 }
 
 func uniqueStoredVaultItem() -> StoredVaultItem {
@@ -39,7 +39,7 @@ func searchableStoredOTPVaultItem(
     issuerName: String? = nil
 ) -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription),
+        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil),
         item: .otpCode(.init(
             type: .totp(period: 30),
             data: .init(secret: .empty(), accountName: accountName, issuer: issuerName)
@@ -53,7 +53,7 @@ func searchableStoredSecureNoteVaultItem(
     contents: String = ""
 ) -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription),
+        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil),
         item: .secureNote(.init(title: title, contents: contents))
     )
 }
@@ -66,7 +66,7 @@ func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {
-    .init(userDescription: "any", item: .otpCode(uniqueCode()))
+    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()))
 }
 
 func writableSearchableOTPVaultItem(
@@ -88,6 +88,7 @@ func writableSearchableNoteVaultItem(
 ) -> StoredVaultItem.Write {
     .init(
         userDescription: userDescription,
+        color: nil,
         item: .secureNote(.init(title: title, contents: contents))
     )
 }

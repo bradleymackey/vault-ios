@@ -56,7 +56,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             PreviewErrorIcon()
                 .font(.callout)
         } else {
-            OTPCodeIconPlaceholderView(iconFontSize: 8)
+            OTPCodeIconPlaceholderView(iconFontSize: 8, backgroundColor: previewViewModel.color.color)
                 .clipShape(Circle())
         }
     }
@@ -134,6 +134,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
         let previewViewModel = OTPCodePreviewViewModel(
             accountName: accountName,
             issuer: "Authority",
+            color: .default,
             renderer: renderer
         )
         return HOTPCodePreviewView(
