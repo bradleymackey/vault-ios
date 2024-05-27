@@ -25,7 +25,8 @@ final class VaultBackupDecoderTests: XCTestCase {
             version: .v1,
             created: Date(timeIntervalSince1970: 1_700_575_468),
             userDescription: "my description",
-            items: []
+            items: [],
+            obfuscationPadding: Data()
         )
         let encoder = VaultBackupEncoder()
 
@@ -101,7 +102,8 @@ extension VaultBackupDecoderTests {
             version: .v1,
             created: created,
             userDescription: userDescription,
-            items: items
+            items: items,
+            obfuscationPadding: Data()
         )
     }
 }

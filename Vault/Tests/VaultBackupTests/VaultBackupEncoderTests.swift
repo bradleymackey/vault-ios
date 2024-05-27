@@ -4,6 +4,11 @@ import XCTest
 @testable import VaultBackup
 
 final class VaultBackupEncoderTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        isRecording = false
+    }
+
     func test_encodeVault_encodesToJSONFormat_emptyVault() throws {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)
@@ -141,7 +146,8 @@ extension VaultBackupEncoderTests {
             version: .v1,
             created: created,
             userDescription: userDescription,
-            items: items
+            items: items,
+            obfuscationPadding: Data(hex: "abababa")
         )
     }
 }
