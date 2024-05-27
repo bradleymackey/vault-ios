@@ -22,6 +22,7 @@
       "updated_date" : 12445000
     }
   ],
+  "obfuscation_padding" : "q6urCg==",
   "user_description" : "Example vault with a single otp code",
   "version" : "1.0"
 }

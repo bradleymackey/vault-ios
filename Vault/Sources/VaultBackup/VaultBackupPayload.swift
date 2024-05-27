@@ -15,6 +15,12 @@ public struct VaultBackupPayload: Codable, Equatable {
     public var userDescription: String
     /// The individual items from the vault.
     public var items: [VaultBackupItem]
+    /// Arbitrary padding used to disguise the actual size of the payload.
+    /// This is a security requirement as users may have hidden items in their vault.
+    ///
+    /// This should be sufficient to disguise the number of items in the payload, but not
+    /// so large to make the payload hard to handle.
+    public var obfuscationPadding: Data
 }
 
 // MARK: - Item

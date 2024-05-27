@@ -3,6 +3,7 @@
   "items" : [
 
   ],
+  "obfuscation_padding" : "q6urCg==",
   "user_description" : "my description",
   "version" : "1.0"
 }
