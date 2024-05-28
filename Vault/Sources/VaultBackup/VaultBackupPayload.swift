@@ -20,7 +20,7 @@ public struct VaultBackupPayload: Codable, Equatable {
     ///
     /// This should be sufficient to disguise the number of items in the payload, but not
     /// so large to make the payload hard to handle.
-    public var obfuscationPadding: Data
+    var obfuscationPadding: Data
 }
 
 // MARK: - Item
