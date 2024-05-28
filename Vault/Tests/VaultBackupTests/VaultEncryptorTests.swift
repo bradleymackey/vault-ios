@@ -1,12 +1,12 @@
 import Foundation
 import TestHelpers
-import VaultBackup
 import XCTest
+@testable import VaultBackup
 
 final class VaultEncryptorTests: XCTestCase {
     func test_encrypt_emptyDataGivesEmptyEncryption() throws {
         let sut = try makeSUT(key: anyVaultKey())
-        let encodedVault = EncodedVault(data: Data())
+        let encodedVault = IntermediateEncodedVault(data: Data())
 
         let result = try sut.encrypt(encodedVault: encodedVault)
 
@@ -21,7 +21,7 @@ final class VaultEncryptorTests: XCTestCase {
         )
         let sut = makeSUT(key: knownKey)
         let plainData = Data(hex: "0x41414141414141")
-        let encodedVault = EncodedVault(data: plainData)
+        let encodedVault = IntermediateEncodedVault(data: plainData)
 
         let result = try sut.encrypt(encodedVault: encodedVault)
 

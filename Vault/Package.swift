@@ -59,7 +59,7 @@ let package = Package(
         ),
         .target(
             name: "VaultBackup",
-            dependencies: ["CryptoDocumentExporter", "FoundationExtensions"],
+            dependencies: ["VaultCore", "CryptoDocumentExporter", "FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
@@ -161,6 +161,7 @@ let package = Package(
         .target(
             name: "VaultFeed",
             dependencies: [
+                "VaultBackup",
                 "VaultCore",
                 "CryptoEngine",
                 "FoundationExtensions",

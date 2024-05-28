@@ -2,11 +2,11 @@ import Foundation
 import XCTest
 @testable import VaultBackup
 
-final class VaultBackupDecoderTests: XCTestCase {
+final class IntermediateEncodedVaultDecoderTests: XCTestCase {
     func test_decodeVault_throwsForEmptyData() {
         let sut = makeSUT()
         let data = Data()
-        let vault = EncodedVault(data: data)
+        let vault = IntermediateEncodedVault(data: data)
 
         XCTAssertThrowsError(try sut.decode(encodedVault: vault))
     }
@@ -14,7 +14,7 @@ final class VaultBackupDecoderTests: XCTestCase {
     func test_decodeVault_throwsForInvalidJSON() {
         let sut = makeSUT()
         let data = Data("{}".utf8)
-        let vault = EncodedVault(data: data)
+        let vault = IntermediateEncodedVault(data: data)
 
         XCTAssertThrowsError(try sut.decode(encodedVault: vault))
     }
@@ -28,7 +28,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             items: [],
             obfuscationPadding: Data()
         )
-        let encoder = VaultBackupEncoder()
+        let encoder = IntermediateEncodedVaultEncoder()
 
         let decoded = try sut.decode(encodedVault: encoder.encode(vaultBackup: input))
 
@@ -76,7 +76,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             userDescription: "my description again",
             items: [item1, item2, item3]
         )
-        let encoder = VaultBackupEncoder()
+        let encoder = IntermediateEncodedVaultEncoder()
 
         let decoded = try sut.decode(encodedVault: encoder.encode(vaultBackup: input))
 
@@ -86,9 +86,9 @@ final class VaultBackupDecoderTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension VaultBackupDecoderTests {
-    private func makeSUT() -> VaultBackupDecoder {
-        let sut = VaultBackupDecoder()
+extension IntermediateEncodedVaultDecoderTests {
+    private func makeSUT() -> IntermediateEncodedVaultDecoder {
+        let sut = IntermediateEncodedVaultDecoder()
         trackForMemoryLeaks(sut)
         return sut
     }

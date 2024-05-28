@@ -3,7 +3,7 @@ import TestHelpers
 import XCTest
 @testable import VaultBackup
 
-final class VaultBackupEncoderTests: XCTestCase {
+final class IntermediateEncodedVaultEncoderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         isRecording = false
@@ -32,6 +32,7 @@ final class VaultBackupEncoderTests: XCTestCase {
             id: uuid,
             createdDate: date,
             updatedDate: date.addingTimeInterval(7000),
+            tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "Example Note", rawContents: "Example note"))
         )
         let backup = anyBackupPayload(
@@ -54,6 +55,7 @@ final class VaultBackupEncoderTests: XCTestCase {
             id: uuid,
             createdDate: date,
             updatedDate: date.addingTimeInterval(100),
+            tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "any",
                 secretData: Data(repeating: 0x41, count: 20),
@@ -103,6 +105,7 @@ final class VaultBackupEncoderTests: XCTestCase {
             id: uuid3,
             createdDate: date3,
             updatedDate: date3.addingTimeInterval(100),
+            tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "any",
                 secretData: Data(repeating: 0xFE, count: 20),
@@ -130,9 +133,9 @@ final class VaultBackupEncoderTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension VaultBackupEncoderTests {
-    private func makeSUT() -> VaultBackupEncoder {
-        let sut = VaultBackupEncoder()
+extension IntermediateEncodedVaultEncoderTests {
+    private func makeSUT() -> IntermediateEncodedVaultEncoder {
+        let sut = IntermediateEncodedVaultEncoder()
         trackForMemoryLeaks(sut)
         return sut
     }

@@ -51,10 +51,8 @@ struct ManagedVaultItemEncoder {
 
     private func authTypeString(authType: OTPAuthType) -> String {
         switch authType {
-        case .totp:
-            "totp"
-        case .hotp:
-            "hotp"
+        case .totp: VaultEncodingConstants.OTPAuthType.totp
+        case .hotp: VaultEncodingConstants.OTPAuthType.hotp
         }
     }
 
@@ -78,19 +76,15 @@ struct ManagedVaultItemEncoder {
 
     private func encoded(algorithm: OTPAuthAlgorithm) -> String {
         switch algorithm {
-        case .sha1:
-            "SHA1"
-        case .sha256:
-            "SHA256"
-        case .sha512:
-            "SHA512"
+        case .sha1: VaultEncodingConstants.OTPAuthAlgorithm.sha1
+        case .sha256: VaultEncodingConstants.OTPAuthAlgorithm.sha256
+        case .sha512: VaultEncodingConstants.OTPAuthAlgorithm.sha512
         }
     }
 
     private func encoded(secretFormat: OTPAuthSecret.Format) -> String {
         switch secretFormat {
-        case .base32:
-            "BASE_32"
+        case .base32: VaultEncodingConstants.OTPAuthSecret.Format.base32
         }
     }
 }

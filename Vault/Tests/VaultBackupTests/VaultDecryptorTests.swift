@@ -1,7 +1,7 @@
 import Foundation
 import TestHelpers
-import VaultBackup
 import XCTest
+@testable import VaultBackup
 
 final class VaultDecryptorTests: XCTestCase {
     func test_decrypt_emptyDataDecryptsToEmpty() throws {

@@ -44,6 +44,11 @@
           }
         }
       },
+      "tint_color" : {
+        "blue" : 0.3,
+        "green" : 0.2,
+        "red" : 0.1
+      },
       "updated_date" : 345652448000
     }
   ],

@@ -5,11 +5,11 @@ import Foundation
 /// In this form, the vault is ready for either:
 ///  - encryption (for backup)
 ///  - converting to a vault payload (for the application)
-public struct EncodedVault: Equatable {
+struct IntermediateEncodedVault: Equatable {
     /// The raw encoded vault data.
-    public var data: Data
+    var data: Data
 
-    public init(data: Data) {
+    init(data: Data) {
         self.data = data
     }
 }
