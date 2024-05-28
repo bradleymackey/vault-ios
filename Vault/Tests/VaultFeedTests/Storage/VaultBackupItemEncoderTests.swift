@@ -20,7 +20,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                color: nil
+                color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .secureNote(note)
         )
@@ -34,6 +34,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.userDescription, description)
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
+        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
     }
 
     func test_encode_encodesTOTPCode() {
@@ -58,7 +59,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                color: nil
+                color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
         )
@@ -79,6 +80,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.item.codeData?.digits, 8)
         XCTAssertEqual(encodedItem.item.codeData?.secretData, Data(hex: "ababa"))
         XCTAssertEqual(encodedItem.item.codeData?.secretFormat, "BASE_32")
+        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
     }
 
     func test_encode_encodesHOTPCode() {
@@ -103,7 +105,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                color: nil
+                color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
         )
@@ -124,9 +126,18 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.item.codeData?.digits, 8)
         XCTAssertEqual(encodedItem.item.codeData?.secretData, Data(hex: "ababa"))
         XCTAssertEqual(encodedItem.item.codeData?.secretFormat, "BASE_32")
+        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
     }
 
     // MARK: Cases
+
+    func test_encode_missingColor() {
+        let sut = makeSUT()
+
+        let code1 = anyOTPVaultItem(color: nil)
+        let encoded1 = sut.encode(storedItem: code1)
+        XCTAssertNil(encoded1.tintColor, "No encoded color, it should be nil")
+    }
 
     func test_encode_otpAlgorithmTypes() {
         let sut = makeSUT()
@@ -152,7 +163,7 @@ extension VaultBackupItemEncoderTests {
         VaultBackupItemEncoder()
     }
 
-    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm) -> StoredVaultItem {
+    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm = .sha1, color: VaultItemColor? = nil) -> StoredVaultItem {
         let code = OTPAuthCode(
             type: .hotp(counter: 69),
             data: .init(
@@ -164,7 +175,7 @@ extension VaultBackupItemEncoderTests {
             )
         )
         return StoredVaultItem(
-            metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: "any", color: nil),
+            metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: "any", color: color),
             item: .otpCode(code)
         )
     }

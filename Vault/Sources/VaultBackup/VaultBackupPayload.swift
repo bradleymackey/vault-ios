@@ -31,14 +31,24 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var createdDate: Date
     public var updatedDate: Date
     public var userDescription: String?
+    /// The tint color associated with the item.
+    public var tintColor: RGBColor?
     /// The item's data that is used to reconstruct the item.
     public var item: Item
 
-    public init(id: UUID, createdDate: Date, updatedDate: Date, userDescription: String? = nil, item: Item) {
+    public init(
+        id: UUID,
+        createdDate: Date,
+        updatedDate: Date,
+        userDescription: String? = nil,
+        tintColor: RGBColor? = nil,
+        item: Item
+    ) {
         self.id = id
         self.createdDate = createdDate
         self.updatedDate = updatedDate
         self.userDescription = userDescription
+        self.tintColor = tintColor
         self.item = item
     }
 }
@@ -48,6 +58,16 @@ extension VaultBackupItem {
     public enum Item: Codable, Equatable {
         case otp(data: OTP)
         case note(data: Note)
+    }
+
+    public struct RGBColor: Codable, Equatable {
+        public var red, green, blue: Double
+
+        public init(red: Double, green: Double, blue: Double) {
+            self.red = red
+            self.green = green
+            self.blue = blue
+        }
     }
 
     /// A backed up OTP code.

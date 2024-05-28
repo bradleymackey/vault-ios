@@ -18,8 +18,14 @@ final class VaultBackupItemEncoder {
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
             userDescription: storedItem.metadata.userDescription,
+            tintColor: encodeTintColor(meta: storedItem.metadata),
             item: itemDetail
         )
+    }
+
+    private func encodeTintColor(meta: StoredVaultItem.Metadata) -> VaultBackupItem.RGBColor? {
+        guard let color = meta.color else { return nil }
+        return .init(red: color.red, green: color.green, blue: color.blue)
     }
 }
 
