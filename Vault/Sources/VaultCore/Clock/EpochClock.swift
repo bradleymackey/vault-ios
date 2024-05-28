@@ -15,4 +15,8 @@ public final class EpochClock {
     public var currentTime: Double {
         makeCurrentTime()
     }
+
+    public var currentDate: Date {
+        Date(timeIntervalSince1970: currentTime)
+    }
 }
