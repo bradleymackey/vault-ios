@@ -3,7 +3,7 @@ import TestHelpers
 import XCTest
 @testable import VaultBackup
 
-final class VaultBackupEncoderTests: XCTestCase {
+final class IntermediateEncodedVaultEncoderTests: XCTestCase {
     override func setUp() {
         super.setUp()
         isRecording = false
@@ -130,9 +130,9 @@ final class VaultBackupEncoderTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension VaultBackupEncoderTests {
-    private func makeSUT() -> VaultBackupEncoder {
-        let sut = VaultBackupEncoder()
+extension IntermediateEncodedVaultEncoderTests {
+    private func makeSUT() -> IntermediateEncodedVaultEncoder {
+        let sut = IntermediateEncodedVaultEncoder()
         trackForMemoryLeaks(sut)
         return sut
     }

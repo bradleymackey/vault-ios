@@ -1,10 +1,10 @@
 import Foundation
 
 /// Decodes raw data to a vault backup payload object.
-final class VaultBackupDecoder {
+final class IntermediateEncodedVaultDecoder {
     init() {}
 
-    func decode(encodedVault: EncodedVault) throws -> VaultBackupPayload {
+    func decode(encodedVault: IntermediateEncodedVault) throws -> VaultBackupPayload {
         try makeDecoder().decode(VaultBackupPayload.self, from: encodedVault.data)
     }
 

@@ -1,12 +1,12 @@
 import Foundation
 
 /// Encodes an vault backup object to raw data for backup.
-final class VaultBackupEncoder {
+final class IntermediateEncodedVaultEncoder {
     init() {}
 
-    func encode(vaultBackup: VaultBackupPayload) throws -> EncodedVault {
+    func encode(vaultBackup: VaultBackupPayload) throws -> IntermediateEncodedVault {
         let data = try makeEncoder().encode(vaultBackup)
-        return EncodedVault(data: data)
+        return IntermediateEncodedVault(data: data)
     }
 
     private func makeEncoder() -> JSONEncoder {

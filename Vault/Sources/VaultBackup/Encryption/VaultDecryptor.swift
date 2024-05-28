@@ -7,10 +7,10 @@ final class VaultDecryptor {
         decryptor = AESGCMDecryptor(key: key.key, iv: key.iv)
     }
 
-    func decrypt(encryptedVault: EncryptedVault) throws -> EncodedVault {
+    func decrypt(encryptedVault: EncryptedVault) throws -> IntermediateEncodedVault {
         let decrypted = try decryptor.decrypt(
             message: .init(ciphertext: encryptedVault.data, authenticationTag: encryptedVault.authentication)
         )
-        return EncodedVault(data: decrypted)
+        return IntermediateEncodedVault(data: decrypted)
     }
 }
