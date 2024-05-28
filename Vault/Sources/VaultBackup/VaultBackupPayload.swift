@@ -33,6 +33,14 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var userDescription: String?
     /// The item's data that is used to reconstruct the item.
     public var item: Item
+
+    public init(id: UUID, createdDate: Date, updatedDate: Date, userDescription: String? = nil, item: Item) {
+        self.id = id
+        self.createdDate = createdDate
+        self.updatedDate = updatedDate
+        self.userDescription = userDescription
+        self.item = item
+    }
 }
 
 extension VaultBackupItem {
@@ -44,20 +52,47 @@ extension VaultBackupItem {
 
     /// A backed up OTP code.
     public struct OTP: Codable, Equatable {
-        var secretFormat: String
-        var secretData: Data
-        var authType: String
-        var period: Int?
-        var counter: Int?
-        var algorithm: String
-        var digits: Int
-        var accountName: String
-        var issuer: String?
+        public var secretFormat: String
+        public var secretData: Data
+        public var authType: String
+        public var period: UInt64?
+        public var counter: UInt64?
+        public var algorithm: String
+        public var digits: UInt16
+        public var accountName: String
+        public var issuer: String?
+
+        public init(
+            secretFormat: String,
+            secretData: Data,
+            authType: String,
+            period: UInt64? = nil,
+            counter: UInt64? = nil,
+            algorithm: String,
+            digits: UInt16,
+            accountName: String,
+            issuer: String? = nil
+        ) {
+            self.secretFormat = secretFormat
+            self.secretData = secretData
+            self.authType = authType
+            self.period = period
+            self.counter = counter
+            self.algorithm = algorithm
+            self.digits = digits
+            self.accountName = accountName
+            self.issuer = issuer
+        }
     }
 
     /// A backed up secure note.
     public struct Note: Codable, Equatable {
-        var title: String
-        var rawContents: String?
+        public var title: String
+        public var rawContents: String?
+
+        public init(title: String, rawContents: String? = nil) {
+            self.title = title
+            self.rawContents = rawContents
+        }
     }
 }
