@@ -161,6 +161,7 @@ let package = Package(
         .target(
             name: "VaultFeed",
             dependencies: [
+                "VaultBackup",
                 "VaultCore",
                 "CryptoEngine",
                 "FoundationExtensions",
