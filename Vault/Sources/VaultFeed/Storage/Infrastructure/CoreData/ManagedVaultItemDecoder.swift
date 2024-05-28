@@ -63,12 +63,12 @@ struct ManagedVaultItemDecoder {
 
     private func decodeType(otp: ManagedOTPDetails) throws -> OTPAuthType {
         switch otp.authType {
-        case "totp":
+        case VaultEncodingConstants.OTPAuthType.totp:
             guard let period = otp.period?.uint64Value else {
                 throw DecodingError.missingPeriodForTOTP
             }
             return .totp(period: period)
-        case "hotp":
+        case VaultEncodingConstants.OTPAuthType.hotp:
             guard let counter = otp.counter?.uint64Value else {
                 throw DecodingError.missingCounterForHOTP
             }
@@ -80,23 +80,17 @@ struct ManagedVaultItemDecoder {
 
     private func decodeAlgorithm(value: String) throws -> OTPAuthAlgorithm {
         switch value {
-        case "SHA1":
-            return .sha1
-        case "SHA256":
-            return .sha256
-        case "SHA512":
-            return .sha512
-        default:
-            throw DecodingError.invalidAlgorithm
+        case VaultEncodingConstants.OTPAuthAlgorithm.sha1: .sha1
+        case VaultEncodingConstants.OTPAuthAlgorithm.sha256: .sha256
+        case VaultEncodingConstants.OTPAuthAlgorithm.sha512: .sha512
+        default: throw DecodingError.invalidAlgorithm
         }
     }
 
     private func decodeSecretFormat(value: String) throws -> OTPAuthSecret.Format {
         switch value {
-        case "BASE_32":
-            return .base32
-        default:
-            throw DecodingError.invalidSecretFormat
+        case VaultEncodingConstants.OTPAuthSecret.Format.base32: .base32
+        default: throw DecodingError.invalidSecretFormat
         }
     }
 }

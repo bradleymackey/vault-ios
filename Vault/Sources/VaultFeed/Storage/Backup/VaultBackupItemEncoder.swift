@@ -33,7 +33,7 @@ extension VaultBackupItemEncoder {
     }
 }
 
-// MARK: - Codes
+// MARK: - OTP Codes
 
 extension VaultBackupItemEncoder {
     private func encodeOTPCode(code: OTPAuthCode) -> VaultBackupItem.OTP {
@@ -52,14 +52,14 @@ extension VaultBackupItemEncoder {
 
     private func encodedAuthType(type: OTPAuthType) -> String {
         switch type {
-        case .totp: "TOTP"
-        case .hotp: "HOTP"
+        case .totp: VaultEncodingConstants.OTPAuthType.totp
+        case .hotp: VaultEncodingConstants.OTPAuthType.hotp
         }
     }
 
     private func encodedSecretFormat(format: OTPAuthSecret.Format) -> String {
         switch format {
-        case .base32: "BASE_32"
+        case .base32: VaultEncodingConstants.OTPAuthSecret.Format.base32
         }
     }
 
@@ -83,9 +83,9 @@ extension VaultBackupItemEncoder {
 
     private func encodedAlgorithm(algorithm: OTPAuthAlgorithm) -> String {
         switch algorithm {
-        case .sha1: "SHA1"
-        case .sha256: "SHA256"
-        case .sha512: "SHA512"
+        case .sha1: VaultEncodingConstants.OTPAuthAlgorithm.sha1
+        case .sha256: VaultEncodingConstants.OTPAuthAlgorithm.sha256
+        case .sha512: VaultEncodingConstants.OTPAuthAlgorithm.sha512
         }
     }
 }
