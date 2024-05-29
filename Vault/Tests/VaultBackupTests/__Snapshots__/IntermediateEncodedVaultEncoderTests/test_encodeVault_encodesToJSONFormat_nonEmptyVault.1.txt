@@ -54,5 +54,5 @@
   ],
   "obfuscation_padding" : "q6urCg==",
   "user_description" : "my description again",
-  "version" : "1.0"
+  "version" : "1.0.0"
 }

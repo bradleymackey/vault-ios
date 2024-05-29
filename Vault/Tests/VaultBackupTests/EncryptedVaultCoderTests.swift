@@ -19,6 +19,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
             """
             {
               "ENCRYPTED_DATA" : "ZGF0YQ==",
+              "ENCRYPTED_VAULT_VERSION" : "1.0.0",
               "ENCRYPTION_AUTHENTICATION" : "YXV0aA==",
               "ENCRYPTION_IV" : "aXY="
             }
