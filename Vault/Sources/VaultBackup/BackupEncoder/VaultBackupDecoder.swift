@@ -8,8 +8,8 @@ public final class VaultBackupDecoder {
         self.key = key
     }
 
-    public func extractBackupPayload(from payload: VaultExportPayload) throws -> VaultBackupPayload {
-        let encodedVault = try VaultDecryptor(key: key).decrypt(encryptedVault: payload.encryptedVault)
+    public func extractBackupPayload(from encryptedVault: EncryptedVault) throws -> VaultBackupPayload {
+        let encodedVault = try VaultDecryptor(key: key).decrypt(encryptedVault: encryptedVault)
         let backupPayload = try IntermediateEncodedVaultDecoder().decode(encodedVault: encodedVault)
         return backupPayload
     }

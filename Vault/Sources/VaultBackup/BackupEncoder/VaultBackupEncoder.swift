@@ -20,25 +20,16 @@ public final class VaultBackupEncoder {
     }
 
     /// Encodes and encrypts a vault providing a payload.
-    public func createExportPayload(
-        items: [VaultBackupItem],
-        userDescription: String
-    ) throws -> VaultExportPayload {
-        let currentDate = clock.currentDate
+    public func createExportPayload(items: [VaultBackupItem], userDescription: String) throws -> EncryptedVault {
         let payload = VaultBackupPayload(
             version: .v1_0_0,
-            created: currentDate,
+            created: clock.currentDate,
             userDescription: userDescription,
             items: items,
             obfuscationPadding: makePadding(itemsCount: items.count)
         )
         let intermediateEncoding = try IntermediateEncodedVaultEncoder().encode(vaultBackup: payload)
-        let encryptedVault = try VaultEncryptor(key: key).encrypt(encodedVault: intermediateEncoding)
-        return VaultExportPayload(
-            encryptedVault: encryptedVault,
-            userDescription: userDescription,
-            created: currentDate
-        )
+        return try VaultEncryptor(key: key).encrypt(encodedVault: intermediateEncoding)
     }
 
     private func makePadding(itemsCount: Int) -> Data {

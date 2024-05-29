@@ -24,13 +24,8 @@ final class VaultBackupDecoderTests: XCTestCase {
             abababababababababababababababababababababababababababababababab
             """)
         )
-        let payload = VaultExportPayload(
-            encryptedVault: encryptedVault,
-            userDescription: "my description",
-            created: Date(timeIntervalSince1970: 1234)
-        )
 
-        let backup = try sut.extractBackupPayload(from: payload)
+        let backup = try sut.extractBackupPayload(from: encryptedVault)
 
         XCTAssertEqual(backup.items, [])
         XCTAssertEqual(backup.obfuscationPadding, Data())
@@ -57,13 +52,8 @@ final class VaultBackupDecoderTests: XCTestCase {
             abababababababababababababababababababababababababababababababab
             """)
         )
-        let payload = VaultExportPayload(
-            encryptedVault: encryptedVault,
-            userDescription: "my description",
-            created: Date(timeIntervalSince1970: 1234)
-        )
 
-        XCTAssertThrowsError(try sut.extractBackupPayload(from: payload))
+        XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
     }
 
     func test_extractBackupPayload_failsToDecryptMalformedAuthentication() throws {
@@ -86,13 +76,8 @@ final class VaultBackupDecoderTests: XCTestCase {
             abababababababababababababababababababababababababababababababab
             """)
         )
-        let payload = VaultExportPayload(
-            encryptedVault: encryptedVault,
-            userDescription: "my description",
-            created: Date(timeIntervalSince1970: 1234)
-        )
 
-        XCTAssertThrowsError(try sut.extractBackupPayload(from: payload))
+        XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
     }
 }
 
