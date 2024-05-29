@@ -8,16 +8,16 @@ final class AESGCMEncryptorTests: XCTestCase {
         let key = Data("a".utf8)
         let sut = makeSUT(key: key)
 
-        XCTAssertThrowsError(try sut.encrypt(plaintext: anyData()))
+        XCTAssertThrowsError(try sut.encrypt(plaintext: anyData(), iv: Data()))
     }
 
     func test_encrypt_performsKnownGoodOperationWithZero() throws {
         let key = Data(hex: "0x00000000000000000000000000000000")
         let iv = Data(hex: "0x000000000000000000000000")
-        let sut = makeSUT(key: key, iv: iv)
+        let sut = makeSUT(key: key)
 
         let message = Data()
-        let result = try sut.encrypt(plaintext: message)
+        let result = try sut.encrypt(plaintext: message, iv: iv)
 
         XCTAssertEqual(result.ciphertext, Data([]))
         XCTAssertEqual(result.authenticationTag, Data(hex: "58e2fccefa7e3061367f1d57a4e7455a"))
@@ -26,13 +26,13 @@ final class AESGCMEncryptorTests: XCTestCase {
     func test_encrypt_performsKnownGoodOperationWithMessage() throws {
         let key = Data(hex: "0xfeffe9928665731c6d6a8f9467308308")
         let iv = Data(hex: "0xcafebabefacedbaddecaf888")
-        let sut = makeSUT(key: key, iv: iv)
+        let sut = makeSUT(key: key)
 
         let message =
             Data(
                 hex: "0xd9313225f88406e5a55909c5aff5269a86a7a9531534f7da2e4c303d8a318a721c3c0c95956809532fcf0e2449a6b525b16aedf5aa0de657ba637b391aafd255"
             )
-        let result = try sut.encrypt(plaintext: message)
+        let result = try sut.encrypt(plaintext: message, iv: iv)
 
         XCTAssertEqual(
             result.ciphertext,
@@ -45,7 +45,7 @@ final class AESGCMEncryptorTests: XCTestCase {
 
     // MARK: - Helpers
 
-    private func makeSUT(key: Data = anyData(), iv: Data = anyData()) -> AESGCMEncryptor {
-        AESGCMEncryptor(key: key, iv: iv)
+    private func makeSUT(key: Data = anyData()) -> AESGCMEncryptor {
+        AESGCMEncryptor(key: key)
     }
 }

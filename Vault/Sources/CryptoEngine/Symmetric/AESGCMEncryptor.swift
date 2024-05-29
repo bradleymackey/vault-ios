@@ -8,20 +8,18 @@ public struct AESGCMEncryptor: Encryptor {
     public typealias Message = AESGCMEncryptedMessage
 
     private let key: Data
-    private let iv: Data
 
     public enum EncryptionError: Error {
         /// Due to an internal error, a tag was not generated.
         case noGCMTagGenerated
     }
 
-    public init(key: Data, iv: Data) {
+    public init(key: Data) {
         self.key = key
-        self.iv = iv
     }
 
     /// - Parameter plaintext: the message to be encrypted with AES-GCM.
-    public func encrypt(plaintext: Data) throws -> AESGCMEncryptedMessage {
+    public func encrypt(plaintext: Data, iv: Data) throws -> AESGCMEncryptedMessage {
         let gcm = GCM(iv: iv.bytes, mode: .detached)
         let aes = try AES(key: key.bytes, blockMode: gcm, padding: .noPadding)
         let ciphertextBytes = try aes.encrypt(plaintext.bytes)
