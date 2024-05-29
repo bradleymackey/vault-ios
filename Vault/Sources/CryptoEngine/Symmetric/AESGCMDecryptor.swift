@@ -9,16 +9,14 @@ public struct AESGCMDecryptor: Decryptor {
     public typealias Message = AESGCMEncryptedMessage
 
     private let key: Data
-    private let iv: Data
 
-    public init(key: Data, iv: Data) {
+    public init(key: Data) {
         self.key = key
-        self.iv = iv
     }
 
     /// - Parameter ciphertext: The encrypted message.
     /// - Parameter tag: AES-GCM authentication tag that verifies the message
-    public func decrypt(message: Message) throws -> Data {
+    public func decrypt(message: Message, iv: Data) throws -> Data {
         let gcm = GCM(iv: iv.bytes, authenticationTag: message.authenticationTag.bytes, mode: .detached)
         let aes = try AES(key: key.bytes, blockMode: gcm, padding: .noPadding)
         if message.ciphertext.isEmpty { return Data() }

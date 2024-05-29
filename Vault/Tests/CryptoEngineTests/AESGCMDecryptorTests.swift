@@ -12,8 +12,8 @@ final class AESGCMDecryptorTests: XCTestCase {
             authenticationTag: Data(hex: "anytag")
         )
 
-        let sut = makeSUT(key: key, iv: iv)
-        let decrypted = try sut.decrypt(message: message)
+        let sut = makeSUT(key: key)
+        let decrypted = try sut.decrypt(message: message, iv: iv)
 
         XCTAssertEqual(decrypted, plaintext)
     }
@@ -32,8 +32,8 @@ final class AESGCMDecryptorTests: XCTestCase {
             authenticationTag: Data(hex: "0x4d5c2af327cd64a62cf35abd2ba6fab4")
         )
 
-        let sut = makeSUT(key: key, iv: iv)
-        let decrypted = try sut.decrypt(message: message)
+        let sut = makeSUT(key: key)
+        let decrypted = try sut.decrypt(message: message, iv: iv)
 
         XCTAssertEqual(decrypted, plaintext)
     }
@@ -48,13 +48,13 @@ final class AESGCMDecryptorTests: XCTestCase {
             authenticationTag: Data(hex: "0x4d5c2af327cd64a62cf35abd2ba6fab5") // tag is slightly off
         )
 
-        let sut = makeSUT(key: key, iv: iv)
-        XCTAssertThrowsError(try sut.decrypt(message: message))
+        let sut = makeSUT(key: key)
+        XCTAssertThrowsError(try sut.decrypt(message: message, iv: iv))
     }
 
     // MARK: - Helpers
 
-    private func makeSUT(key: Data = anyData(), iv: Data = anyData()) -> AESGCMDecryptor {
-        AESGCMDecryptor(key: key, iv: iv)
+    private func makeSUT(key: Data = anyData()) -> AESGCMDecryptor {
+        AESGCMDecryptor(key: key)
     }
 }
