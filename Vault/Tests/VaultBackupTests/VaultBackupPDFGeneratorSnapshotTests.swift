@@ -5,13 +5,19 @@ import VaultBackup
 import XCTest
 
 final class VaultExportSnapshotTests: XCTestCase {
+    override func setUp() {
+        super.setUp()
+        isRecording = false
+    }
+
     func test_makeDocument_createsExpectedContent() throws {
         let encryptedData = Data(repeating: 0x45, count: 10000)
         let authData = Data(repeating: 0x23, count: 200)
+        let ivData = Data(repeating: 0xAF, count: 30)
         let userDescription = Array(repeating: "User description.", count: 20).joined(separator: " ")
         let createdDate = Date(timeIntervalSince1970: 1_706_462_841)
         let payload = VaultExportPayload(
-            encryptedVault: .init(data: encryptedData, authentication: authData),
+            encryptedVault: .init(data: encryptedData, authentication: authData, encryptionIV: ivData),
             userDescription: userDescription,
             created: createdDate
         )

@@ -7,7 +7,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
     func test_encodeVault_encodesToExpectedFormat() throws {
         let vault = EncryptedVault(
             data: Data("data".utf8),
-            authentication: Data("auth".utf8)
+            authentication: Data("auth".utf8),
+            encryptionIV: Data("iv".utf8)
         )
         let sut = EncryptedVaultCoder()
 
@@ -18,7 +19,9 @@ final class EncryptedVaultCoderTests: XCTestCase {
             """
             {
               "ENCRYPTED_DATA" : "ZGF0YQ==",
-              "ENCRYPTION_AUTHENTICATION" : "YXV0aA=="
+              "ENCRYPTED_VAULT_VERSION" : "1.0.0",
+              "ENCRYPTION_AUTHENTICATION" : "YXV0aA==",
+              "ENCRYPTION_IV" : "aXY="
             }
             """
         )
@@ -26,7 +29,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
     func test_decodeVault_decodesFromExpectedFormat() {
         let vaultData = Data("""
-        {"ENCRYPTED_DATA":"ZGF0YQ==","ENCRYPTION_AUTHENTICATION":"YXV0aA=="}
+        {"ENCRYPTED_DATA":"ZGF0YQ==","ENCRYPTION_AUTHENTICATION":"YXV0aA==","ENCRYPTION_IV":"aXY="}
         """.utf8)
         let sut = EncryptedVaultCoder()
 
@@ -34,7 +37,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
         XCTAssertEqual(result, EncryptedVault(
             data: Data("data".utf8),
-            authentication: Data("auth".utf8)
+            authentication: Data("auth".utf8),
+            encryptionIV: Data("iv".utf8)
         ))
     }
 

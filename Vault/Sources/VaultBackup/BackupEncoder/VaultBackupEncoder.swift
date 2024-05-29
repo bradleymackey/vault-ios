@@ -1,6 +1,7 @@
 import Foundation
 import VaultCore
 
+/// Used to create a full, encrypted backup of a vault for export.
 public final class VaultBackupEncoder {
     private let clock: EpochClock
 

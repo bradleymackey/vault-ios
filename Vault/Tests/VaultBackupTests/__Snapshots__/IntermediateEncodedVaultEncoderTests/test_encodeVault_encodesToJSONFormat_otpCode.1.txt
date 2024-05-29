@@ -29,5 +29,5 @@
   ],
   "obfuscation_padding" : "q6urCg==",
   "user_description" : "Example vault with a single otp code",
-  "version" : "1.0"
+  "version" : "1.0.0"
 }
