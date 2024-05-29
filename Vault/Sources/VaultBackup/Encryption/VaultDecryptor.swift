@@ -3,8 +3,8 @@ import Foundation
 
 final class VaultDecryptor {
     private let decryptor: AESGCMDecryptor
-    init(key: VaultKey) {
-        decryptor = AESGCMDecryptor(key: key.key)
+    init(key: Data) {
+        decryptor = AESGCMDecryptor(key: key)
     }
 
     func decrypt(encryptedVault: EncryptedVault) throws -> IntermediateEncodedVault {
