@@ -10,7 +10,11 @@ public final class VaultBackupEncoder {
     }
 
     /// Encodes and encrypts a vault providing a payload.
-    public func createExportPayload(items _: [VaultBackupItem], userDescription _: String) {
-        // TODO: - return VaultExportPayload and implement
+    public func createExportPayload(items _: [VaultBackupItem], userDescription: String) -> VaultExportPayload {
+        VaultExportPayload(
+            encryptedVault: .init(data: Data(), authentication: Data(), encryptionIV: Data()),
+            userDescription: userDescription,
+            created: clock.currentDate
+        )
     }
 }
