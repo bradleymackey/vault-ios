@@ -8,6 +8,7 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
+    .enableExperimentalFeature("AccessLevelOnImport"),
 ]
 
 let package = Package(

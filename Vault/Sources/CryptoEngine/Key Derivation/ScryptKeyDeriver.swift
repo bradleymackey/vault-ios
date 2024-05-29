@@ -1,4 +1,4 @@
-import CryptoSwift
+internal import CryptoSwift
 import Foundation
 
 /// Derives keys using the *scrypt* algorithm.
