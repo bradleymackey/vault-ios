@@ -66,9 +66,10 @@ final class VaultBackupEncoderTests: XCTestCase {
 extension VaultBackupEncoderTests {
     private func makeSUT(
         clock: EpochClock = anyClock(),
-        key: VaultKey
+        key: VaultKey,
+        paddingMode: VaultBackupEncoder.PaddingMode = .none
     ) -> VaultBackupEncoder {
-        VaultBackupEncoder(clock: clock, key: key)
+        VaultBackupEncoder(clock: clock, key: key, paddingMode: paddingMode)
     }
 }
 

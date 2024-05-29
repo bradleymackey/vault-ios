@@ -5,10 +5,18 @@ import VaultCore
 public final class VaultBackupEncoder {
     private let clock: EpochClock
     private let key: VaultKey
+    private let paddingMode: PaddingMode
 
-    public init(clock: EpochClock, key: VaultKey) {
+    public enum PaddingMode: Equatable {
+        case none
+        case fixed(bytes: Int)
+        case random
+    }
+
+    public init(clock: EpochClock, key: VaultKey, paddingMode: PaddingMode = .random) {
         self.clock = clock
         self.key = key
+        self.paddingMode = paddingMode
     }
 
     /// Encodes and encrypts a vault providing a payload.
@@ -22,7 +30,7 @@ public final class VaultBackupEncoder {
             created: currentDate,
             userDescription: userDescription,
             items: items,
-            obfuscationPadding: Data()
+            obfuscationPadding: makePadding()
         )
         let intermediateEncoding = try IntermediateEncodedVaultEncoder().encode(vaultBackup: payload)
         let encryptedVault = try VaultEncryptor(key: key).encrypt(encodedVault: intermediateEncoding)
@@ -31,5 +39,13 @@ public final class VaultBackupEncoder {
             userDescription: userDescription,
             created: currentDate
         )
+    }
+
+    private func makePadding() -> Data {
+        switch paddingMode {
+        case .none: Data()
+        case let .fixed(bytes): Data.random(count: bytes)
+        case .random: Data.random(count: Int.random(in: 30 ..< 30000))
+        }
     }
 }
