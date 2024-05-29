@@ -9,7 +9,7 @@ public final class VaultBackupEncoder {
 
     public enum PaddingMode: Equatable {
         case none
-        case fixed(bytes: Int)
+        case fixed(data: Data)
         case random
     }
 
@@ -30,7 +30,7 @@ public final class VaultBackupEncoder {
             created: currentDate,
             userDescription: userDescription,
             items: items,
-            obfuscationPadding: makePadding()
+            obfuscationPadding: makePadding(itemsCount: items.count)
         )
         let intermediateEncoding = try IntermediateEncodedVaultEncoder().encode(vaultBackup: payload)
         let encryptedVault = try VaultEncryptor(key: key).encrypt(encodedVault: intermediateEncoding)
@@ -41,11 +41,23 @@ public final class VaultBackupEncoder {
         )
     }
 
-    private func makePadding() -> Data {
+    private func makePadding(itemsCount: Int) -> Data {
         switch paddingMode {
         case .none: Data()
-        case let .fixed(bytes): Data.random(count: bytes)
-        case .random: Data.random(count: Int.random(in: 30 ..< 30000))
+        case let .fixed(data): data
+        case .random: Data.random(count: randomBytesToGenerate(itemsCount: itemsCount))
+        }
+    }
+
+    private func randomBytesToGenerate(itemsCount: Int) -> Int {
+        if itemsCount == 0 {
+            Int.random(in: 400 ..< 2700)
+        } else if itemsCount < 10 {
+            Int.random(in: 300 ..< 3300)
+        } else if itemsCount < 40 {
+            Int.random(in: 600 ..< 4500)
+        } else {
+            Int.random(in: 200 ..< 6000)
         }
     }
 }
