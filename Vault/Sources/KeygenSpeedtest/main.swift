@@ -9,7 +9,7 @@ import Foundation
 // Latest results (M1 Pro MacBook Pro - Firestorm Core):
 // - RELEASE
 //      - Fast = ~0.02s
-//      - Secure = ~25s
+//      - Secure = ~30s
 // - DEBUG
 //      - Fast = ~2s
 //      - Secure = ???
