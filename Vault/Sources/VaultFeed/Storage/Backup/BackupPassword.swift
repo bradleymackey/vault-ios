@@ -19,9 +19,10 @@ extension BackupPassword {
         text: String,
         salt: Data
     ) async throws -> BackupPassword {
-        // FIXME: this will be way too slow to run in DEBUG, but don't want different behaviour between
-        // the two builds. Need some application-layer toggle to swap these parameters out.
-        // Debug can be up to 100x slower.
+        // FIXME: use PBKDF2, scrypt is way too memory intensive
+
+        // FIXME: make sure parameters are applicable to DEBUG and RELEASE builds as appropriate
+        // Need some application-layer toggle to swap these parameters out. Debug can be up to 100x slower.
         //
         // Maybe have a selector so users can just pick a specific version of the key?
         // Possible options could be:
@@ -29,7 +30,6 @@ extension BackupPassword {
         //  - Secure (These parameters)
         //  - Highly Secure (Even stronger, like a minute to derive the key?)
 
-        // Derived from KeygenSpeedtest - fixed parameters for V1 of this encryption.
         let deriver = try ScryptKeyDeriver(
             password: Data(text.utf8),
             salt: salt,
@@ -40,10 +40,11 @@ extension BackupPassword {
     }
 
     private static var secureParametersV1: ScryptKeyDeriver.Parameters {
+        // Insecure dummy parameters, will change when we use PBKDF2
         ScryptKeyDeriver.Parameters(
             outputLengthBytes: 32,
-            costFactor: 1 << 20,
-            blockSizeFactor: 16,
+            costFactor: 1 << 10,
+            blockSizeFactor: 8,
             parallelizationFactor: 1
         )
     }

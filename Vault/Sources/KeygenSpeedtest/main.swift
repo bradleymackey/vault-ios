@@ -8,6 +8,10 @@ import Foundation
 
 // On my M1 Pro MacBook Pro, these paramters take about 15s to resolve.
 
+// scrypt uses too much memory with these parameters, we should try PBKDF2 instead.
+// We can't seem to get security + low memory with scrypt.
+// We need memory usage to stay <1GB, which just
+
 let parameters = ScryptKeyDeriver.Parameters(
     outputLengthBytes: 32,
     costFactor: 1 << 20,
