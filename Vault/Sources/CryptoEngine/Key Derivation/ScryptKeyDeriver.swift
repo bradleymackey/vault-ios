@@ -26,7 +26,7 @@ public struct ScryptKeyDeriver: KeyDeriver {
     /// current thread.
     public func key() async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .utility).async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 continuation.resume(with: Result {
                     try Data(engine.calculate())
                 })
