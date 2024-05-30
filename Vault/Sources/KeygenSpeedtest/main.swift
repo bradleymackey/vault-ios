@@ -11,7 +11,7 @@ import Foundation
 //      - Fast = ~0.02s
 //      - Secure = ~25s
 // - DEBUG
-//      - Fast = ~10s
+//      - Fast = ~2s
 //      - Secure = ???
 
 func buildConfigString() -> String {
