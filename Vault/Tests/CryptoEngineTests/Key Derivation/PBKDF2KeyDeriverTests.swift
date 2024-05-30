@@ -4,13 +4,13 @@ import XCTest
 @testable import CryptoEngine
 
 final class PBKDF2KeyDeriverTests: XCTestCase {
-    func test_init_doesNotThrowForValidParameters() async {
+    func test_key_doesNotThrowForValidParameters() async {
         let sut = PBKDF2KeyDeriver(parameters: .fastForTesting)
 
         await XCTAssertNoThrow(try sut.key(password: anyData(), salt: anyData()))
     }
 
-    func test_init_throwsIfMissingSalt() async {
+    func test_key_throwsIfMissingSalt() async {
         let sut = PBKDF2KeyDeriver(parameters: .fastForTesting)
 
         await XCTAssertThrowsError(try sut.key(password: anyData(), salt: emptyData()))
