@@ -8,6 +8,7 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
+    .enableExperimentalFeature("AccessLevelOnImport"),
 ]
 
 let package = Package(
@@ -20,6 +21,10 @@ let package = Package(
             targets: ["VaultiOS"]
         ),
         .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
+        .executable(
+            name: "KeygenSpeedtest",
+            targets: ["KeygenSpeedtest"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.16.0"),
@@ -239,6 +244,14 @@ let package = Package(
             name: "swiftlint",
             url: "https://github.com/realm/SwiftLint/releases/download/0.54.0/SwiftLintBinary-macos.artifactbundle.zip",
             checksum: "963121d6babf2bf5fd66a21ac9297e86d855cbc9d28322790646b88dceca00f1"
+        ),
+        .executableTarget(
+            name: "KeygenSpeedtest",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "CryptoEngine",
+            ],
+            swiftSettings: swiftSettings
         ),
     ]
 )

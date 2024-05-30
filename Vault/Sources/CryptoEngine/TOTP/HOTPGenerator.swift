@@ -1,5 +1,5 @@
 import BigInt
-import CryptoSwift
+internal import CryptoSwift
 import Foundation
 
 /// # HMAC-based one-time password

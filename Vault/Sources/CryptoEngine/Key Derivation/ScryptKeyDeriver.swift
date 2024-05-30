@@ -1,4 +1,4 @@
-import CryptoSwift
+internal import CryptoSwift
 import Foundation
 
 /// Derives keys using the *scrypt* algorithm.
@@ -26,7 +26,7 @@ public struct ScryptKeyDeriver: KeyDeriver {
     /// current thread.
     public func key() async throws -> Data {
         try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .utility).async {
+            DispatchQueue.global(qos: .userInitiated).async {
                 continuation.resume(with: Result {
                     try Data(engine.calculate())
                 })
@@ -63,16 +63,5 @@ extension ScryptKeyDeriver {
             self.blockSizeFactor = blockSizeFactor
             self.parallelizationFactor = parallelizationFactor
         }
-    }
-}
-
-extension ScryptKeyDeriver.Parameters {
-    public static var aes256Strong: Self {
-        .init(
-            outputLengthBytes: 32,
-            costFactor: 16384,
-            blockSizeFactor: 8,
-            parallelizationFactor: 1
-        )
     }
 }
