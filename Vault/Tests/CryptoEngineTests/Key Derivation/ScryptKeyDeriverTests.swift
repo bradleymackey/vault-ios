@@ -13,7 +13,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         )
         let sut = ScryptKeyDeriver(parameters: params)
 
-        await XCTAssertNoThrow(try await sut.key(password: anyData(), salt: anyData()))
+        await XCTAssertNoThrow(try sut.key(password: anyData(), salt: anyData()))
     }
 
     func test_key_throwsForInvalidParameters() async {
@@ -25,13 +25,13 @@ final class ScryptKeyDeriverTests: XCTestCase {
         )
         let sut = ScryptKeyDeriver(parameters: params)
 
-        await XCTAssertThrowsError(try await sut.key(password: anyData(), salt: anyData()))
+        await XCTAssertThrowsError(try sut.key(password: anyData(), salt: anyData()))
     }
 
     func test_key_throwsIfMissingSalt() async {
         let sut = makeSUT(parameters: .fastForTesting)
 
-        await XCTAssertThrowsError(try await sut.key(password: anyData(), salt: Data()))
+        await XCTAssertThrowsError(try sut.key(password: anyData(), salt: Data()))
     }
 
     func test_key_generatesValidKeyWithSalt() async throws {
@@ -39,7 +39,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
 
-        let key = try await sut.key(password: password, salt: salt)
+        let key = try sut.key(password: password, salt: salt)
         XCTAssertEqual(key, Data(hex: "14a1ba9b9236df39"))
     }
 
@@ -48,7 +48,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
 
-        let key = try await sut.key(password: password, salt: salt)
+        let key = try sut.key(password: password, salt: salt)
         XCTAssertEqual(key, Data(hex: "fa09cf2f564fb137"))
     }
 
@@ -58,7 +58,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         let sut = makeSUT(parameters: .fastForTesting)
 
         let expected = Data(hex: "fa09cf2f564fb137")
-        let keys = try await [
+        let keys = try [
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),

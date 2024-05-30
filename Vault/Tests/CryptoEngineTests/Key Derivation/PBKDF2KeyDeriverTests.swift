@@ -7,13 +7,13 @@ final class PBKDF2KeyDeriverTests: XCTestCase {
     func test_init_doesNotThrowForValidParameters() async {
         let sut = PBKDF2KeyDeriver(parameters: .fastForTesting)
 
-        await XCTAssertNoThrow(try await sut.key(password: anyData(), salt: anyData()))
+        await XCTAssertNoThrow(try sut.key(password: anyData(), salt: anyData()))
     }
 
     func test_init_throwsIfMissingSalt() async {
         let sut = PBKDF2KeyDeriver(parameters: .fastForTesting)
 
-        await XCTAssertThrowsError(try await sut.key(password: anyData(), salt: emptyData()))
+        await XCTAssertThrowsError(try sut.key(password: anyData(), salt: emptyData()))
     }
 
     func test_key_generatesValidKeyWithSalt() async throws {
@@ -21,7 +21,7 @@ final class PBKDF2KeyDeriverTests: XCTestCase {
         let salt = Data(hex: "ABCDEF")
         let sut = PBKDF2KeyDeriver(parameters: .fastForTesting)
 
-        let key = try await sut.key(password: password, salt: salt)
+        let key = try sut.key(password: password, salt: salt)
         XCTAssertEqual(key.toHexString(), "98daafce2dc5444d")
     }
 
@@ -31,7 +31,7 @@ final class PBKDF2KeyDeriverTests: XCTestCase {
         let sut = PBKDF2KeyDeriver(parameters: .fastForTesting)
 
         let expected = Data(hex: "98daafce2dc5444d")
-        let keys = try await [
+        let keys = try [
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),

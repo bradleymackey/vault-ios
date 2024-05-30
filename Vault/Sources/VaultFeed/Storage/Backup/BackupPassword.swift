@@ -31,7 +31,7 @@ extension BackupPassword {
         //  - Highly Secure (Even stronger, like a minute to derive the key?)
 
         let deriver = ScryptKeyDeriver(parameters: secureParametersV1)
-        let key = try await deriver.key(password: Data(text.utf8), salt: salt)
+        let key = try deriver.key(password: Data(text.utf8), salt: salt)
         return BackupPassword(key: key, salt: salt)
     }
 

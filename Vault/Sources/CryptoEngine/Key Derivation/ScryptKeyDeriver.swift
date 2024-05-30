@@ -15,7 +15,7 @@ public struct ScryptKeyDeriver: KeyDeriver {
     ///
     /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
     /// current thread.
-    public func key(password: Data, salt: Data) async throws -> Data {
+    public func key(password: Data, salt: Data) throws -> Data {
         let engine = try Scrypt(
             password: password.bytes,
             salt: salt.bytes,
@@ -24,9 +24,7 @@ public struct ScryptKeyDeriver: KeyDeriver {
             r: parameters.blockSizeFactor,
             p: parameters.parallelizationFactor
         )
-        return try await computeOnBackgroundThread {
-            try Data(engine.calculate())
-        }
+        return try Data(engine.calculate())
     }
 }
 

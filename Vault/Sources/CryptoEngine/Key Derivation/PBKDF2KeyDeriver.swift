@@ -8,7 +8,7 @@ public struct PBKDF2KeyDeriver: KeyDeriver {
         self.parameters = parameters
     }
 
-    public func key(password: Data, salt: Data) async throws -> Data {
+    public func key(password: Data, salt: Data) throws -> Data {
         let engine = try PKCS5.PBKDF2(
             password: password.bytes,
             salt: salt.bytes,
@@ -16,9 +16,7 @@ public struct PBKDF2KeyDeriver: KeyDeriver {
             keyLength: parameters.keyLength,
             variant: parameters.variant.hmacVariant
         )
-        return try await computeOnBackgroundThread {
-            try Data(engine.calculate())
-        }
+        return try Data(engine.calculate())
     }
 }
 
