@@ -2,25 +2,23 @@ import Foundation
 internal import CryptoSwift
 
 public struct PBKDF2KeyDeriver: KeyDeriver {
-    private let engine: PKCS5.PBKDF2
     public let parameters: Parameters
 
-    init(password: Data, salt: Data, parameters: Parameters) throws {
+    init(parameters: Parameters) {
         self.parameters = parameters
-        engine = try PKCS5.PBKDF2(
+    }
+
+    public func key(password: Data, salt: Data) async throws -> Data {
+        let engine = try PKCS5.PBKDF2(
             password: password.bytes,
             salt: salt.bytes,
             iterations: parameters.iterations,
             keyLength: parameters.keyLength,
             variant: parameters.variant.hmacVariant
         )
-    }
-
-    public func key() async throws -> Data {
-        let bytes = try await computeOnBackgroundThread {
-            try engine.calculate()
+        return try await computeOnBackgroundThread {
+            try Data(engine.calculate())
         }
-        return Data(bytes)
     }
 }
 

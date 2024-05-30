@@ -4,7 +4,7 @@ import Foundation
 ///
 /// https://en.wikipedia.org/wiki/Key_derivation_function
 public protocol KeyDeriver {
-    func key() async throws -> Data
+    func key(password: Data, salt: Data) async throws -> Data
 }
 
 extension KeyDeriver {

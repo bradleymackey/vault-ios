@@ -5,12 +5,18 @@ import Foundation
 ///
 /// https://en.wikipedia.org/wiki/Scrypt
 public struct ScryptKeyDeriver: KeyDeriver {
-    private let engine: Scrypt
     public let parameters: Parameters
 
-    public init(password: Data, salt: Data, parameters: Parameters) throws {
+    public init(parameters: Parameters) {
         self.parameters = parameters
-        engine = try Scrypt(
+    }
+
+    /// Generate a the key using the provided data and parameters.
+    ///
+    /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
+    /// current thread.
+    public func key(password: Data, salt: Data) async throws -> Data {
+        let engine = try Scrypt(
             password: password.bytes,
             salt: salt.bytes,
             dkLen: parameters.outputLengthBytes,
@@ -18,17 +24,9 @@ public struct ScryptKeyDeriver: KeyDeriver {
             r: parameters.blockSizeFactor,
             p: parameters.parallelizationFactor
         )
-    }
-
-    /// Generate a the key using the provided data and parameters.
-    ///
-    /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
-    /// current thread.
-    public func key() async throws -> Data {
-        let result = try await computeOnBackgroundThread {
-            try engine.calculate()
+        return try await computeOnBackgroundThread {
+            try Data(engine.calculate())
         }
-        return Data(result)
     }
 }
 
