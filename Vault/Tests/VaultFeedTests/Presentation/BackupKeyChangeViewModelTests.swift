@@ -54,10 +54,10 @@ extension BackupKeyChangeViewModelTests {
     }
 
     private func anyBackupPassword() -> BackupPassword {
-        BackupPassword(key: Data(repeating: 0x45, count: 10))
+        BackupPassword(key: Data(repeating: 0x45, count: 10), salt: Data())
     }
 
     private func randomBackupPassword() -> BackupPassword {
-        BackupPassword(key: Data.random(count: 10))
+        BackupPassword(key: Data.random(count: 10), salt: Data())
     }
 }
