@@ -8,7 +8,7 @@ import Foundation
 
 // Latest results (M1 Pro MacBook Pro - Firestorm Core):
 // - RELEASE
-//      - Fast = ~0.02s
+//      - Fast = ~0.01s
 //      - Secure = ~30s
 // - DEBUG
 //      - Fast = ~2s
@@ -32,5 +32,5 @@ func benchmark(keyDeriver: any KeyDeriver, description: String) throws {
     print("Derived '\(description)' key \(key.toHexString()) in \(time)")
 }
 
-try benchmark(keyDeriver: CustomKeyDerivers.v1_fast, description: "Fast")
-try benchmark(keyDeriver: CustomKeyDerivers.v1_secure, description: "Secure")
+try benchmark(keyDeriver: CustomKeyDerivers.V1.fast, description: "Fast")
+try benchmark(keyDeriver: CustomKeyDerivers.V1.secure, description: "Secure")

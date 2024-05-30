@@ -1,7 +1,7 @@
 import Foundation
 
 public enum CustomKeyDerivers {
-    enum V1 {
+    public enum V1 {
         /// V1 fast key deriver.
         ///
         /// It's fast to run and to bruteforce (especially for a weak password), but not trivial.
@@ -10,10 +10,9 @@ public enum CustomKeyDerivers {
         /// This should be used in places where security is not required or for testing.
         public static let fast: CombinationKeyDeriver = {
             var derivers = [any KeyDeriver]()
-            derivers.append(contentsOf: Array(repeating: HKDF_sha3_512_single, count: 50))
             derivers.append(PBKDF2_fast)
+            derivers.append(HKDF_sha3_512_single)
             derivers.append(scrypt_fast)
-            derivers.append(PBKDF2_fast)
             return CombinationKeyDeriver(derivers: derivers)
         }()
 
@@ -29,16 +28,11 @@ public enum CustomKeyDerivers {
         /// This is intended to be the initial production version of the KDF for the Vault app.
         public static let secure: CombinationKeyDeriver = {
             var derivers = [any KeyDeriver]()
-            derivers.append(contentsOf: Array(repeating: HKDF_sha3_512_single, count: 100))
+            // Initial PBKDF2 for strong password hashing
             derivers.append(PBKDF2_secure)
-            derivers.append(scrypt_secure)
-            derivers.append(PBKDF2_secure)
-            derivers.append(scrypt_secure)
-            derivers.append(PBKDF2_secure)
-            derivers.append(scrypt_secure)
-            derivers.append(PBKDF2_secure)
-            derivers.append(scrypt_secure)
             derivers.append(HKDF_sha3_512_single)
+            // Scrypt for memory-hard key derivation
+            derivers.append(scrypt_secure)
             return CombinationKeyDeriver(derivers: derivers)
         }()
     }
@@ -49,7 +43,7 @@ public enum CustomKeyDerivers {
 extension CustomKeyDerivers.V1 {
     private static let PBKDF2_fast = PBKDF2KeyDeriver(parameters: .init(
         keyLength: 32,
-        iterations: 1000,
+        iterations: 2000,
         variant: .sha384
     ))
 
@@ -67,7 +61,7 @@ extension CustomKeyDerivers.V1 {
     /// length-extension attacks.
     private static let PBKDF2_secure = PBKDF2KeyDeriver(parameters: .init(
         keyLength: 32,
-        iterations: 1_284_568,
+        iterations: 5_452_351,
         variant: .sha384
     ))
 
