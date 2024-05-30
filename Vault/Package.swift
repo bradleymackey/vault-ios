@@ -146,7 +146,7 @@ let package = Package(
         ),
         .testTarget(
             name: "CryptoEngineTests",
-            dependencies: ["CryptoEngine"],
+            dependencies: ["CryptoEngine", "TestHelpers"],
             swiftSettings: swiftSettings
         ),
         .target(
