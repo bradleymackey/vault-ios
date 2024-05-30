@@ -1,0 +1,76 @@
+import Foundation
+import TestHelpers
+import XCTest
+@testable import CryptoEngine
+
+final class CombinationKeyDeriverTests: XCTestCase {
+    func test_key_throwsErrorIfNoKeyDerivers() {
+        let sut = CombinationKeyDeriver(derivers: [])
+
+        XCTAssertThrowsError(try sut.key(password: anyData(), salt: anyData()))
+    }
+
+    func test_key_returnsResultOfSingleKeyDeriver() throws {
+        let expectedData = Data(hex: "ababdfdf1234")
+        let deriver = KeyDeriverMock()
+        deriver.keyHandler = { _, _ in
+            expectedData
+        }
+        let sut = CombinationKeyDeriver(derivers: [deriver])
+
+        let result = try sut.key(password: anyData(), salt: anyData())
+        XCTAssertEqual(result, expectedData)
+        XCTAssertEqual(deriver.keyCallCount, 1)
+    }
+
+    func test_key_returnsResultOfLastKeyDervier() throws {
+        let deriver1 = mockKeyDeriver(returning: Data(hex: "0000"))
+        let deriver2 = mockKeyDeriver(returning: Data(hex: "1111"))
+        let deriver3 = mockKeyDeriver(returning: Data(hex: "2222"))
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
+
+        let result = try sut.key(password: anyData(), salt: anyData())
+        XCTAssertEqual(result, Data(hex: "2222"))
+        XCTAssertEqual(deriver1.keyCallCount, 1)
+        XCTAssertEqual(deriver2.keyCallCount, 1)
+        XCTAssertEqual(deriver3.keyCallCount, 1)
+    }
+
+    func test_key_usesKeyFromPreviousDeriverInNextDeriver() throws {
+        let deriver1 = mockKeyDeriver(returning: Data(hex: "0000"))
+        let deriver2 = mockKeyDeriver(returning: Data(hex: "1111"))
+        let deriver3 = mockKeyDeriver(returning: Data(hex: "2222"))
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
+
+        let initialPassword = Data(hex: "deadbeef")
+        _ = try sut.key(password: initialPassword, salt: anyData())
+        XCTAssertEqual(deriver1.keyArgValues.first?.0, initialPassword)
+        XCTAssertEqual(deriver2.keyArgValues.first?.0, Data(hex: "0000"))
+        XCTAssertEqual(deriver3.keyArgValues.first?.0, Data(hex: "1111"))
+    }
+
+    func test_key_usesSameSaltForAllDerivers() throws {
+        let deriver1 = mockKeyDeriver(returning: Data(hex: "0000"))
+        let deriver2 = mockKeyDeriver(returning: Data(hex: "1111"))
+        let deriver3 = mockKeyDeriver(returning: Data(hex: "2222"))
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
+
+        let salt = Data(hex: "123456789aaaa")
+        _ = try sut.key(password: anyData(), salt: salt)
+        XCTAssertEqual(deriver1.keyArgValues.first?.1, salt)
+        XCTAssertEqual(deriver2.keyArgValues.first?.1, salt)
+        XCTAssertEqual(deriver3.keyArgValues.first?.1, salt)
+    }
+}
+
+// MARK: - Helpers
+
+extension CombinationKeyDeriverTests {
+    private func mockKeyDeriver(returning: Data) -> KeyDeriverMock {
+        let deriver1 = KeyDeriverMock()
+        deriver1.keyHandler = { _, _ in
+            returning
+        }
+        return deriver1
+    }
+}

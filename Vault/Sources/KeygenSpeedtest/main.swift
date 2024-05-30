@@ -6,25 +6,31 @@ import Foundation
 // To test this, run:
 // `swift run -c release KeygenSpeedtest`
 
-// On my M1 Pro MacBook Pro, these paramters take about 15s to resolve.
+// Latest results (M1 Pro MacBook Pro - Firestorm Core):
+// - RELEASE
+//      - Fast = ~0.01s
+//      - Secure = ~30s
+// - DEBUG
+//      - Fast = ~2s
+//      - Secure = ???
 
-// scrypt uses too much memory with these parameters, we should try PBKDF2 instead.
-// We can't seem to get security + low memory with scrypt.
-// We need memory usage to stay <1GB, which just
+func buildConfigString() -> String {
+    #if DEBUG
+    return "DEBUG"
+    #else
+    return "RELEASE"
+    #endif
+}
 
-let parameters = ScryptKeyDeriver.Parameters(
-    outputLengthBytes: 32,
-    costFactor: 1 << 20,
-    blockSizeFactor: 16,
-    parallelizationFactor: 1
-)
-let deriver = try ScryptKeyDeriver(
-    password: Data("hello world".utf8),
-    salt: Data("salt".utf8),
-    parameters: parameters
-)
-let start = Date()
-print("Starting deriving...")
-let key = try await deriver.key()
-let end = Date()
-print("Generated \(key.toHexString()) in \(end.timeIntervalSince1970 - start.timeIntervalSince1970)s")
+print("Running derivation test!")
+print("Build configuration:", buildConfigString())
+
+func benchmark(keyDeriver: any KeyDeriver, description: String) throws {
+    let start = Date()
+    let key = try keyDeriver.key(password: Data("hello world".utf8), salt: Data("salt".utf8))
+    let time = Date().timeIntervalSince(start)
+    print("Derived '\(description)' key \(key.toHexString()) in \(time)")
+}
+
+try benchmark(keyDeriver: CustomKeyDerivers.V1.fast, description: "Fast")
+try benchmark(keyDeriver: CustomKeyDerivers.V1.secure, description: "Secure")
