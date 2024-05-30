@@ -41,3 +41,31 @@ public func XCTAssertThrowsError(
         errorHandler(error)
     }
 }
+
+/// Asserts that an asynchronous expression does not throw an error.
+/// (Intended to function as a drop-in asynchronous version of `XCTAssertNoThrow`.)
+///
+/// - Parameters:
+///   - expression: An asynchronous expression that can throw an error.
+///   - message: An optional description of a failure.
+///   - file: The file where the failure occurs.
+///     The default is the filename of the test case where you call this function.
+///   - line: The line number where the failure occurs.
+///     The default is the line number where you call this function.
+public func XCTAssertNoThrow(
+    _ expression: @autoclosure () async throws -> some Any,
+    _ message: @autoclosure () -> String = "",
+    file: StaticString = #filePath,
+    line: UInt = #line
+) async {
+    do {
+        _ = try await expression()
+    } catch {
+        let customMessage = message()
+        if customMessage.isEmpty {
+            XCTFail("Asynchronous call threw an error", file: file, line: line)
+        } else {
+            XCTFail(customMessage, file: file, line: line)
+        }
+    }
+}
