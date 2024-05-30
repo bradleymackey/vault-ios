@@ -7,8 +7,12 @@ import Foundation
 // `swift run -c release KeygenSpeedtest`
 
 // Latest results (M1 Pro MacBook Pro - Firestorm Core):
-//  - Fast = ~0.2s
-//  - Secure = ~30s
+// - RELEASE
+//      - Fast = ~0.02s
+//      - Secure = ~25s
+// - DEBUG
+//      - Fast = ~10s
+//      - Secure = ???
 
 func buildConfigString() -> String {
     #if DEBUG

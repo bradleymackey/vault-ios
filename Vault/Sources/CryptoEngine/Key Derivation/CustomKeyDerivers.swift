@@ -23,19 +23,20 @@ public enum CustomKeyDerivers {
 extension CustomKeyDerivers {
     private static let PBKDF2_fast = PBKDF2KeyDeriver(parameters: .init(
         keyLength: 32,
-        iterations: 10000,
-        variant: .sha384
-    ))
-    private static let PBKDF2_secure = PBKDF2KeyDeriver(parameters: .init(
-        keyLength: 32,
-        iterations: 1_234_567,
+        iterations: 1000,
         variant: .sha384
     ))
     private static let scrypt_fast = ScryptKeyDeriver(parameters: .init(
         outputLengthBytes: 32,
-        costFactor: 1 << 14,
-        blockSizeFactor: 8,
+        costFactor: 1 << 6,
+        blockSizeFactor: 4,
         parallelizationFactor: 1
+    ))
+
+    private static let PBKDF2_secure = PBKDF2KeyDeriver(parameters: .init(
+        keyLength: 32,
+        iterations: 1_234_567,
+        variant: .sha384
     ))
     private static let scrypt_secure = ScryptKeyDeriver(parameters: .init(
         outputLengthBytes: 32,
