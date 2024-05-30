@@ -25,13 +25,10 @@ public struct ScryptKeyDeriver: KeyDeriver {
     /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
     /// current thread.
     public func key() async throws -> Data {
-        try await withCheckedThrowingContinuation { continuation in
-            DispatchQueue.global(qos: .userInitiated).async {
-                continuation.resume(with: Result {
-                    try Data(engine.calculate())
-                })
-            }
+        let result = try await computeOnBackgroundThread {
+            try engine.calculate()
         }
+        return Data(result)
     }
 }
 

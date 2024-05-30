@@ -6,3 +6,16 @@ import Foundation
 public protocol KeyDeriver {
     func key() async throws -> Data
 }
+
+extension KeyDeriver {
+    /// Asychronously perform some computation on a background thread.
+    func computeOnBackgroundThread<T>(closure: @escaping () throws -> T) async throws -> T {
+        try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(with: Result {
+                    try closure()
+                })
+            }
+        }
+    }
+}
