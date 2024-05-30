@@ -6,11 +6,11 @@ import Foundation
 // To test this, run:
 // `swift run -c release KeygenSpeedtest`
 
-// On my M1 Pro MacBook Pro, these paramters take about 20s to resolve.
+// On my M1 Pro MacBook Pro, these paramters take about 15s to resolve.
 
 let parameters = ScryptKeyDeriver.Parameters(
     outputLengthBytes: 32,
-    costFactor: 1 << 21,
+    costFactor: 1 << 20,
     blockSizeFactor: 16,
     parallelizationFactor: 1
 )

@@ -30,18 +30,21 @@ extension BackupPassword {
         //  - Highly Secure (Even stronger, like a minute to derive the key?)
 
         // Derived from KeygenSpeedtest - fixed parameters for V1 of this encryption.
-        let parametersV1 = ScryptKeyDeriver.Parameters(
-            outputLengthBytes: 32,
-            costFactor: 1 << 21,
-            blockSizeFactor: 16,
-            parallelizationFactor: 1
-        )
         let deriver = try ScryptKeyDeriver(
             password: Data(text.utf8),
             salt: salt,
-            parameters: parametersV1
+            parameters: secureParametersV1
         )
         let key = try await deriver.key()
         return BackupPassword(key: key, salt: salt)
+    }
+
+    private static var secureParametersV1: ScryptKeyDeriver.Parameters {
+        ScryptKeyDeriver.Parameters(
+            outputLengthBytes: 32,
+            costFactor: 1 << 20,
+            blockSizeFactor: 16,
+            parallelizationFactor: 1
+        )
     }
 }
