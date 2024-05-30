@@ -13,10 +13,6 @@ final class ScryptKeyDeriverTests: XCTestCase {
         XCTAssertNoThrow(try ScryptKeyDeriver(password: anyData(), salt: anyData(), parameters: params))
     }
 
-    func test_init_doesNotThrowForAES256StrongVariant() {
-        XCTAssertNoThrow(try ScryptKeyDeriver(password: anyData(), salt: anyData(), parameters: .aes256Strong))
-    }
-
     func test_init_throwsForInvalidParameters() {
         let params = ScryptKeyDeriver.Parameters(
             outputLengthBytes: 32,

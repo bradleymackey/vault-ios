@@ -65,14 +65,3 @@ extension ScryptKeyDeriver {
         }
     }
 }
-
-extension ScryptKeyDeriver.Parameters {
-    public static var aes256Strong: Self {
-        .init(
-            outputLengthBytes: 32,
-            costFactor: 16384,
-            blockSizeFactor: 8,
-            parallelizationFactor: 1
-        )
-    }
-}
