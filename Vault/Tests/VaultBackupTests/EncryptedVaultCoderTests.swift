@@ -8,7 +8,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
         let vault = EncryptedVault(
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
-            encryptionIV: Data("iv".utf8)
+            encryptionIV: Data("iv".utf8),
+            keySalt: Data("keySalt".utf8)
         )
         let sut = EncryptedVaultCoder()
 
@@ -21,7 +22,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
               "ENCRYPTED_DATA" : "ZGF0YQ==",
               "ENCRYPTED_VAULT_VERSION" : "1.0.0",
               "ENCRYPTION_AUTHENTICATION" : "YXV0aA==",
-              "ENCRYPTION_IV" : "aXY="
+              "ENCRYPTION_IV" : "aXY=",
+              "KEY_SALT" : "a2V5U2FsdA=="
             }
             """
         )
@@ -29,7 +31,13 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
     func test_decodeVault_decodesFromExpectedFormat() {
         let vaultData = Data("""
-        {"ENCRYPTED_DATA":"ZGF0YQ==","ENCRYPTION_AUTHENTICATION":"YXV0aA==","ENCRYPTION_IV":"aXY="}
+        {
+          "ENCRYPTED_DATA" : "ZGF0YQ==",
+          "ENCRYPTED_VAULT_VERSION" : "1.0.0",
+          "ENCRYPTION_AUTHENTICATION" : "YXV0aA==",
+          "ENCRYPTION_IV" : "aXY=",
+          "KEY_SALT" : "a2V5U2FsdA=="
+        }
         """.utf8)
         let sut = EncryptedVaultCoder()
 
@@ -38,7 +46,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
         XCTAssertEqual(result, EncryptedVault(
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
-            encryptionIV: Data("iv".utf8)
+            encryptionIV: Data("iv".utf8),
+            keySalt: Data("keySalt".utf8)
         ))
     }
 

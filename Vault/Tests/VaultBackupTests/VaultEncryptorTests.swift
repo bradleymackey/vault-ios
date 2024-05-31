@@ -28,13 +28,24 @@ final class VaultEncryptorTests: XCTestCase {
         XCTAssertEqual(result.data, Data(hex: "0x4126987aceb598"))
         XCTAssertEqual(result.authentication, Data(hex: "0x4343890cb716dfb9915f8f7c050829ca"))
     }
+
+    func test_encrypt_placesKeySaltIntoPayloadUnchanged() throws {
+        let plainData = Data(hex: "0x41414141414141")
+        let encodedVault = IntermediateEncodedVault(data: plainData)
+        let keySalt = Data.random(count: 30)
+        let sut = try makeSUT(key: anyVaultKey(), keySalt: keySalt)
+
+        let result = try sut.encrypt(encodedVault: encodedVault)
+
+        XCTAssertEqual(result.keySalt, keySalt)
+    }
 }
 
 // MARK: - Helpers
 
 extension VaultEncryptorTests {
-    private func makeSUT(key: VaultKey) -> VaultEncryptor {
-        let sut = VaultEncryptor(key: key)
+    private func makeSUT(key: VaultKey, keySalt: Data = Data()) -> VaultEncryptor {
+        let sut = VaultEncryptor(key: key, keySalt: keySalt)
         trackForMemoryLeaks(sut)
         return sut
     }

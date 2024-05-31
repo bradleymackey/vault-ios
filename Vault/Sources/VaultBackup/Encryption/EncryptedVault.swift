@@ -10,11 +10,19 @@ public struct EncryptedVault: Equatable, Codable {
     /// Initialization vector used for the encryption.
     /// This is required, along with the key, to actually decrypt the `data`.
     public var encryptionIV: Data
+    /// The salt that was used to generate the encryption key.
+    ///
+    /// This is part of the keygen process that should be used when restoring from backup.
+    /// The idea is the `EncryptedVault` is imported to the device, `keySalt` is read, then `keySalt` is combined
+    /// with the keygen function to generate the key needed to decrypt this `EncryptedVault` payload.
+    /// If we didn't store the salt in the payload, we would be unable to derive the encryption key.
+    public var keySalt: Data
 
-    public init(data: Data, authentication: Data, encryptionIV: Data) {
+    public init(data: Data, authentication: Data, encryptionIV: Data, keySalt: Data) {
         self.data = data
         self.authentication = authentication
         self.encryptionIV = encryptionIV
+        self.keySalt = keySalt
     }
 
     public enum CodingKeys: String, CodingKey {
@@ -22,6 +30,7 @@ public struct EncryptedVault: Equatable, Codable {
         case data = "ENCRYPTED_DATA"
         case authentication = "ENCRYPTION_AUTHENTICATION"
         case encryptionIV = "ENCRYPTION_IV"
+        case keySalt = "KEY_SALT"
     }
 }
 

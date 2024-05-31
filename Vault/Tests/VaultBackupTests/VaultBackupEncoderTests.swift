@@ -79,6 +79,15 @@ final class VaultBackupEncoderTests: XCTestCase {
         abababababababababababababababababababababababababababababababab
         """)
     }
+
+    func test_createExportPayload_includesKeySaltUnmodifiedInPayload() throws {
+        let salt = Data.random(count: 34)
+        let sut = try makeSUT(key: anyKey(), keySalt: salt)
+
+        let encryptedVault = try sut.createExportPayload(items: [], userDescription: "hello world")
+
+        XCTAssertEqual(encryptedVault.keySalt, salt)
+    }
 }
 
 // MARK: - Helpers
@@ -87,9 +96,10 @@ extension VaultBackupEncoderTests {
     private func makeSUT(
         clock: EpochClock = anyClock(),
         key: VaultKey,
+        keySalt: Data = Data(),
         paddingMode: VaultBackupEncoder.PaddingMode = .none
     ) -> VaultBackupEncoder {
-        VaultBackupEncoder(clock: clock, key: key, paddingMode: paddingMode)
+        VaultBackupEncoder(clock: clock, key: key, keySalt: keySalt, paddingMode: paddingMode)
     }
 }
 
