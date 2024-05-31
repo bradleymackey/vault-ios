@@ -1,20 +1,21 @@
 import Foundation
 
-final class KeychainBackupPasswordStore: BackupPasswordStore {
+@Observable
+public final class KeychainBackupPasswordStore: BackupPasswordStore {
     private let keychain: SimpleKeychain
 
-    init(keychain: SimpleKeychain) {
+    public init(keychain: SimpleKeychain) {
         self.keychain = keychain
     }
 
-    func fetchPassword() throws -> BackupPassword? {
+    public func fetchPassword() throws -> BackupPassword? {
         let key = try fetchFromKeychainIfPresent(key: KeychainKey.key)
         let salt = try fetchFromKeychainIfPresent(key: KeychainKey.salt)
         guard let key, let salt else { return nil }
         return BackupPassword(key: key, salt: salt)
     }
 
-    func set(password: BackupPassword) throws {
+    public func set(password: BackupPassword) throws {
         try keychain.set(password.key, forKey: KeychainKey.key)
         try keychain.set(password.salt, forKey: KeychainKey.salt)
     }

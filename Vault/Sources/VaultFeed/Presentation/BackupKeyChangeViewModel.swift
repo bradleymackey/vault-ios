@@ -17,6 +17,13 @@ public final class BackupKeyChangeViewModel {
         case creating
         case error
         case success
+
+        public var isLoading: Bool {
+            switch self {
+            case .neutral, .error, .success: false
+            case .creating: true
+            }
+        }
     }
 
     public var newlyEnteredPassword = ""
@@ -42,16 +49,23 @@ public final class BackupKeyChangeViewModel {
 
     public func saveEnteredPassword() async {
         do {
-            let enteredPassword = newlyEnteredPassword
             newPassword = .creating
-            let keygenTask = Task.detached(priority: .background) {
-                try BackupPassword.createEncryptionKey(text: enteredPassword)
-            }
-            let createdBackupPassword = try await keygenTask.value
+            let createdBackupPassword = try await computeNewKey(text: newlyEnteredPassword)
             try store.set(password: createdBackupPassword)
             newPassword = .success
+            existingPassword = .hasExistingPassword(createdBackupPassword)
         } catch {
             newPassword = .error
+        }
+    }
+
+    private nonisolated func computeNewKey(text: String) async throws -> BackupPassword {
+        try await withCheckedThrowingContinuation { cont in
+            DispatchQueue.global(qos: .utility).async {
+                cont.resume(with: Result {
+                    try BackupPassword.createEncryptionKey(text: text)
+                })
+            }
         }
     }
 }
