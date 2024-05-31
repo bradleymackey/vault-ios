@@ -4,10 +4,12 @@ import Foundation
 final class VaultEncryptor {
     private let encryptor: AESGCMEncryptor
     private let iv: Data
+    private let keySalt: Data
 
-    init(key: VaultKey) {
+    init(key: VaultKey, keySalt: Data) {
         encryptor = AESGCMEncryptor(key: key.key)
         iv = key.iv
+        self.keySalt = keySalt
     }
 
     func encrypt(encodedVault: IntermediateEncodedVault) throws -> EncryptedVault {
@@ -15,7 +17,8 @@ final class VaultEncryptor {
         return EncryptedVault(
             data: encrypted.ciphertext,
             authentication: encrypted.authenticationTag,
-            encryptionIV: iv
+            encryptionIV: iv,
+            keySalt: keySalt
         )
     }
 }

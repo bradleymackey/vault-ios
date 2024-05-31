@@ -6,7 +6,7 @@ import XCTest
 final class VaultDecryptorTests: XCTestCase {
     func test_decrypt_emptyDataDecryptsToEmpty() throws {
         let sut = try makeSUT(key: anyVaultKey())
-        let vault = EncryptedVault(data: Data(), authentication: Data(), encryptionIV: Data())
+        let vault = EncryptedVault(data: Data(), authentication: Data(), encryptionIV: Data(), keySalt: Data())
 
         let decrypted = try sut.decrypt(encryptedVault: vault)
 
@@ -18,7 +18,8 @@ final class VaultDecryptorTests: XCTestCase {
         let vault = EncryptedVault(
             data: Data(hex: "0x1234"),
             authentication: Data(hex: "0x1234"),
-            encryptionIV: Data(hex: "0x1234")
+            encryptionIV: Data(hex: "0x1234"),
+            keySalt: Data(hex: "0x11")
         )
 
         XCTAssertThrowsError(try sut.decrypt(encryptedVault: vault))
@@ -31,7 +32,12 @@ final class VaultDecryptorTests: XCTestCase {
         let sut = makeSUT(key: key)
         let encryptedData = Data(hex: "0x4126987aceb598")
         let authentication = Data(hex: "0x4343890cb716dfb9915f8f7c050829ca")
-        let vault = EncryptedVault(data: encryptedData, authentication: authentication, encryptionIV: iv)
+        let vault = EncryptedVault(
+            data: encryptedData,
+            authentication: authentication,
+            encryptionIV: iv,
+            keySalt: Data()
+        )
 
         let decrypted = try sut.decrypt(encryptedVault: vault)
 

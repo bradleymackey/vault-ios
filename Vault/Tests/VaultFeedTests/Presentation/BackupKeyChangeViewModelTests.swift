@@ -9,7 +9,8 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
         let store = BackupPasswordStoreMock()
         _ = makeSUT(store: store)
 
-        XCTAssertEqual(store.passwordSetCallCount, 0)
+        XCTAssertEqual(store.fetchPasswordCallCount, 0)
+        XCTAssertEqual(store.setCallCount, 0)
     }
 
     @MainActor
@@ -23,7 +24,7 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     func test_loadInitialData_loadsKeyIfItExists() {
         let store = BackupPasswordStoreMock()
         let password = randomBackupPassword()
-        store.password = password
+        store.fetchPasswordHandler = { password }
         let sut = makeSUT(store: store)
 
         sut.loadInitialData()
@@ -34,7 +35,7 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     @MainActor
     func test_loadInitialData_doesNotLoadKeyIfItDoesNotExist() {
         let store = BackupPasswordStoreMock()
-        store.password = nil
+        store.fetchPasswordHandler = { nil }
         let sut = makeSUT(store: store)
 
         sut.loadInitialData()

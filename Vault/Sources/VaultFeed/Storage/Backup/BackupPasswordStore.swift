@@ -2,7 +2,8 @@ import Foundation
 
 /// Storage for the password used to encrypt backups.
 ///
-/// @mockable(history: password = true)
-public protocol BackupPasswordStore {
-    var password: BackupPassword? { get set }
+/// @mockable(history: fetchPassword = true; history: set = true)
+public protocol BackupPasswordStore: Observable {
+    func fetchPassword() throws -> BackupPassword?
+    func set(password: BackupPassword) throws
 }

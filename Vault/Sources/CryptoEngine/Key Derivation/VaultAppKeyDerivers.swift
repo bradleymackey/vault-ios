@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CustomKeyDerivers {
+public enum VaultAppKeyDerivers {
     public enum V1 {
         /// V1 fast key deriver.
         ///
@@ -8,7 +8,7 @@ public enum CustomKeyDerivers {
         /// It still uses a combination of key derivation functions for increased security.
         ///
         /// This should be used in places where security is not required or for testing.
-        public static let fast: CombinationKeyDeriver = {
+        public static let fast: some KeyDeriver = {
             var derivers = [any KeyDeriver]()
             derivers.append(PBKDF2_fast)
             derivers.append(HKDF_sha3_512_single)
@@ -26,7 +26,7 @@ public enum CustomKeyDerivers {
         /// in the event that an offline encrypted vault is obtained by a bad actor.
         ///
         /// This is intended to be the initial production version of the KDF for the Vault app.
-        public static let secure: CombinationKeyDeriver = {
+        public static let secure: some KeyDeriver = {
             var derivers = [any KeyDeriver]()
             // Initial PBKDF2 for strong password hashing
             derivers.append(PBKDF2_secure)
@@ -40,7 +40,7 @@ public enum CustomKeyDerivers {
 
 // MARK: - Atoms
 
-extension CustomKeyDerivers.V1 {
+extension VaultAppKeyDerivers.V1 {
     private static let PBKDF2_fast = PBKDF2KeyDeriver(parameters: .init(
         keyLength: 32,
         iterations: 2000,
@@ -48,7 +48,7 @@ extension CustomKeyDerivers.V1 {
     ))
 
     private static let scrypt_fast = ScryptKeyDeriver(parameters: .init(
-        outputLengthBytes: 32,
+        keyLength: 32,
         costFactor: 1 << 6,
         blockSizeFactor: 4,
         parallelizationFactor: 1
@@ -68,7 +68,7 @@ extension CustomKeyDerivers.V1 {
     /// Requires ~250MB of memory at peak with these current parameters.
     /// This should be fine for most iOS devices to perform locally.
     private static let scrypt_secure = ScryptKeyDeriver(parameters: .init(
-        outputLengthBytes: 32,
+        keyLength: 32,
         costFactor: 1 << 18,
         blockSizeFactor: 8,
         parallelizationFactor: 1

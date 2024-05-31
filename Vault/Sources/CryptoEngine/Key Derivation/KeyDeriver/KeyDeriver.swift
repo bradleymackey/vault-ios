@@ -7,4 +7,5 @@ import Foundation
 /// @mockable(history: key = true)
 public protocol KeyDeriver {
     func key(password: Data, salt: Data) throws -> Data
+    var uniqueAlgorithmIdentifier: String { get }
 }

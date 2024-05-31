@@ -4,25 +4,68 @@ import VaultBackup
 
 @MainActor
 @Observable
-final class BackupKeyChangeViewModel {
-    enum ExistingPasswordState: Equatable, Hashable {
+public final class BackupKeyChangeViewModel {
+    public enum ExistingPasswordState: Equatable, Hashable {
         case loading
         case hasExistingPassword(BackupPassword)
         case noExistingPassword
+        case errorFetching
     }
 
-    private(set) var existingPassword: ExistingPasswordState = .loading
+    public enum NewPasswordState: Equatable, Hashable {
+        case neutral
+        case creating
+        case error
+        case success
+
+        public var isLoading: Bool {
+            switch self {
+            case .neutral, .error, .success: false
+            case .creating: true
+            }
+        }
+    }
+
+    public var newlyEnteredPassword = ""
+    public private(set) var existingPassword: ExistingPasswordState = .loading
+    public private(set) var newPassword: NewPasswordState = .neutral
     private let store: any BackupPasswordStore
 
-    init(store: any BackupPasswordStore) {
+    public init(store: any BackupPasswordStore) {
         self.store = store
     }
 
-    func loadInitialData() {
-        if let password = store.password {
-            existingPassword = .hasExistingPassword(password)
-        } else {
-            existingPassword = .noExistingPassword
+    public func loadInitialData() {
+        do {
+            if let password = try store.fetchPassword() {
+                existingPassword = .hasExistingPassword(password)
+            } else {
+                existingPassword = .noExistingPassword
+            }
+        } catch {
+            existingPassword = .errorFetching
+        }
+    }
+
+    public func saveEnteredPassword() async {
+        do {
+            newPassword = .creating
+            let createdBackupPassword = try await computeNewKey(text: newlyEnteredPassword)
+            try store.set(password: createdBackupPassword)
+            newPassword = .success
+            existingPassword = .hasExistingPassword(createdBackupPassword)
+        } catch {
+            newPassword = .error
+        }
+    }
+
+    private nonisolated func computeNewKey(text: String) async throws -> BackupPassword {
+        try await withCheckedThrowingContinuation { cont in
+            DispatchQueue.global(qos: .utility).async {
+                cont.resume(with: Result {
+                    try BackupPassword.createEncryptionKey(text: text)
+                })
+            }
         }
     }
 }

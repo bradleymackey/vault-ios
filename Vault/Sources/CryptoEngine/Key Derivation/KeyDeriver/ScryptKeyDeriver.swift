@@ -19,12 +19,23 @@ public struct ScryptKeyDeriver: KeyDeriver {
         let engine = try Scrypt(
             password: password.bytes,
             salt: salt.bytes,
-            dkLen: parameters.outputLengthBytes,
+            dkLen: parameters.keyLength,
             N: parameters.costFactor,
             r: parameters.blockSizeFactor,
             p: parameters.parallelizationFactor
         )
         return try Data(engine.calculate())
+    }
+
+    public var uniqueAlgorithmIdentifier: String {
+        let parameters = [
+            "keyLength=\(parameters.keyLength)",
+            "costFactor=\(parameters.costFactor)",
+            "blockSizeFactor=\(parameters.blockSizeFactor)",
+            "parallelizationFactor=\(parameters.parallelizationFactor)",
+        ]
+        let parameterDescription = parameters.joined(separator: ";")
+        return "SCRYPT<\(parameterDescription)>"
     }
 }
 
@@ -36,7 +47,7 @@ extension ScryptKeyDeriver {
         ///
         /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer
         /// satisfying dkLen ≤ (232− 1) * hLen.)
-        public var outputLengthBytes: Int
+        public var keyLength: Int
         /// **N**
         ///
         /// CPU/memory cost parameter – Must be a power of 2 (e.g. 1024)
@@ -50,8 +61,8 @@ extension ScryptKeyDeriver {
         /// Parallelization parameter. (1 .. 232-1 * hLen/MFlen)
         public var parallelizationFactor: Int
 
-        public init(outputLengthBytes: Int, costFactor: Int, blockSizeFactor: Int, parallelizationFactor: Int) {
-            self.outputLengthBytes = outputLengthBytes
+        public init(keyLength: Int, costFactor: Int, blockSizeFactor: Int, parallelizationFactor: Int) {
+            self.keyLength = keyLength
             self.costFactor = costFactor
             self.blockSizeFactor = blockSizeFactor
             self.parallelizationFactor = parallelizationFactor

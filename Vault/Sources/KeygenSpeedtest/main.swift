@@ -32,5 +32,5 @@ func benchmark(keyDeriver: any KeyDeriver, description: String) throws {
     print("Derived '\(description)' key \(key.toHexString()) in \(time)")
 }
 
-try benchmark(keyDeriver: CustomKeyDerivers.V1.fast, description: "Fast")
-try benchmark(keyDeriver: CustomKeyDerivers.V1.secure, description: "Secure")
+try benchmark(keyDeriver: VaultAppKeyDerivers.V1.fast, description: "Fast")
+try benchmark(keyDeriver: VaultAppKeyDerivers.V1.secure, description: "Secure")

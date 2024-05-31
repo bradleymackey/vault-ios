@@ -18,6 +18,16 @@ public struct PBKDF2KeyDeriver: KeyDeriver {
         )
         return try Data(engine.calculate())
     }
+
+    public var uniqueAlgorithmIdentifier: String {
+        let parameters = [
+            "keyLength=\(parameters.keyLength)",
+            "iterations=\(parameters.iterations)",
+            "variant=\(parameters.variant)",
+        ]
+        let parametersDescription = parameters.joined(separator: ";")
+        return "PBKDF2<\(parametersDescription)>"
+    }
 }
 
 // MARK: - Parameters
