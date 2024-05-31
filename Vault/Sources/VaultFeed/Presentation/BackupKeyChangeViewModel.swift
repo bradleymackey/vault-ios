@@ -9,6 +9,7 @@ final class BackupKeyChangeViewModel {
         case loading
         case hasExistingPassword(BackupPassword)
         case noExistingPassword
+        case errorFetching
     }
 
     private(set) var existingPassword: ExistingPasswordState = .loading
@@ -19,10 +20,14 @@ final class BackupKeyChangeViewModel {
     }
 
     func loadInitialData() {
-        if let password = store.password {
-            existingPassword = .hasExistingPassword(password)
-        } else {
-            existingPassword = .noExistingPassword
+        do {
+            if let password = try store.fetchPassword() {
+                existingPassword = .hasExistingPassword(password)
+            } else {
+                existingPassword = .noExistingPassword
+            }
+        } catch {
+            existingPassword = .errorFetching
         }
     }
 }
