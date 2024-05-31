@@ -48,7 +48,7 @@ extension VaultAppKeyDerivers.V1 {
     ))
 
     private static let scrypt_fast = ScryptKeyDeriver(parameters: .init(
-        outputLengthBytes: 32,
+        keyLength: 32,
         costFactor: 1 << 6,
         blockSizeFactor: 4,
         parallelizationFactor: 1
@@ -68,7 +68,7 @@ extension VaultAppKeyDerivers.V1 {
     /// Requires ~250MB of memory at peak with these current parameters.
     /// This should be fine for most iOS devices to perform locally.
     private static let scrypt_secure = ScryptKeyDeriver(parameters: .init(
-        outputLengthBytes: 32,
+        keyLength: 32,
         costFactor: 1 << 18,
         blockSizeFactor: 8,
         parallelizationFactor: 1

@@ -6,7 +6,7 @@ import XCTest
 final class ScryptKeyDeriverTests: XCTestCase {
     func test_key_doesNotThrowForValidParameters() async {
         let params = ScryptKeyDeriver.Parameters(
-            outputLengthBytes: 32,
+            keyLength: 32,
             costFactor: 1 << 4,
             blockSizeFactor: 2,
             parallelizationFactor: 1
@@ -18,7 +18,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
     func test_key_throwsForInvalidParameters() async {
         let params = ScryptKeyDeriver.Parameters(
-            outputLengthBytes: 32,
+            keyLength: 32,
             costFactor: 16385,
             blockSizeFactor: 8,
             parallelizationFactor: 1
@@ -68,7 +68,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
     func test_uniqueAlgorithmIdentifier_matchesParameters() {
         let sut = makeSUT(parameters: .init(
-            outputLengthBytes: 123,
+            keyLength: 123,
             costFactor: 998,
             blockSizeFactor: 432,
             parallelizationFactor: 555
@@ -76,7 +76,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
         XCTAssertEqual(
             sut.uniqueAlgorithmIdentifier,
-            "SCRYPT<outputLengthBytes=123;costFactor=998;blockSizeFactor=432;parallelizationFactor=432>"
+            "SCRYPT<keyLength=123;costFactor=998;blockSizeFactor=432;parallelizationFactor=432>"
         )
     }
 
@@ -90,7 +90,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
 extension ScryptKeyDeriver.Parameters {
     static var fastForTesting: Self {
         .init(
-            outputLengthBytes: 8,
+            keyLength: 8,
             costFactor: 16,
             blockSizeFactor: 2,
             parallelizationFactor: 1
