@@ -19,8 +19,6 @@ extension BackupPassword {
         text: String,
         salt: Data
     ) async throws -> BackupPassword {
-        // FIXME: use PBKDF2, scrypt is way too memory intensive
-
         // FIXME: make sure parameters are applicable to DEBUG and RELEASE builds as appropriate
         // Need some application-layer toggle to swap these parameters out. Debug can be up to 100x slower.
         //
@@ -29,19 +27,14 @@ extension BackupPassword {
         //  - Insecure (for DEBUG)
         //  - Secure (These parameters)
         //  - Highly Secure (Even stronger, like a minute to derive the key?)
-
-        let deriver = ScryptKeyDeriver(parameters: secureParametersV1)
-        let key = try deriver.key(password: Data(text.utf8), salt: salt)
+        let deriver = CustomKeyDerivers.V1.fast
+        let key = try await withCheckedThrowingContinuation { continuation in
+            DispatchQueue.global(qos: .userInitiated).async {
+                continuation.resume(with: Result {
+                    try deriver.key(password: Data(text.utf8), salt: salt)
+                })
+            }
+        }
         return BackupPassword(key: key, salt: salt)
-    }
-
-    private static var secureParametersV1: ScryptKeyDeriver.Parameters {
-        // Insecure dummy parameters, will change when we use PBKDF2
-        ScryptKeyDeriver.Parameters(
-            outputLengthBytes: 32,
-            costFactor: 1 << 10,
-            blockSizeFactor: 8,
-            parallelizationFactor: 1
-        )
     }
 }
