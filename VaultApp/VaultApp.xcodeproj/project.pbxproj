@@ -18,6 +18,7 @@
 		1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		1C1318012AD75008006F14F5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultAppMain.swift; sourceTree = "<group>"; };
+		1C648DFB2C0A884500163D41 /* VaultApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VaultApp.entitlements; sourceTree = "<group>"; };
 		1CDA9C912A057A8B00555E7A /* VaultApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VaultApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -36,6 +37,7 @@
 		1C1317F62AD75008006F14F5 /* VaultApp */ = {
 			isa = PBXGroup;
 			children = (
+				1C648DFB2C0A884500163D41 /* VaultApp.entitlements */,
 				1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */,
 				1C1317FB2AD75008006F14F5 /* Assets.xcassets */,
 				1C1317FD2AD75008006F14F5 /* Preview Content */,
@@ -279,6 +281,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = VaultApp/VaultApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"VaultApp/Preview Content/\"";
@@ -311,6 +314,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = VaultApp/VaultApp.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"VaultApp/Preview Content/\"";
