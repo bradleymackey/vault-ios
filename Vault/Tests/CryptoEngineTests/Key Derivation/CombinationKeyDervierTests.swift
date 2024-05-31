@@ -61,6 +61,16 @@ final class CombinationKeyDeriverTests: XCTestCase {
         XCTAssertEqual(deriver2.keyArgValues.first?.1, salt)
         XCTAssertEqual(deriver3.keyArgValues.first?.1, salt)
     }
+
+    func test_test_uniqueAlgorithmIdentifier_matchesParametersOfPassedAlgorithms() {
+        let deriver1 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg1")
+        let deriver2 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg2")
+        let deriver3 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
+
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
+
+        XCTAssertEqual(sut.uniqueAlgorithmIdentifier, "COMBINATION<alg1|alg2|alg3>")
+    }
 }
 
 // MARK: - Helpers
@@ -70,6 +80,15 @@ extension CombinationKeyDeriverTests {
         let deriver1 = KeyDeriverMock()
         deriver1.keyHandler = { _, _ in
             returning
+        }
+        return deriver1
+    }
+
+    private func mockKeyDeriver(uniqueAlgorithmIdentifier: String) -> KeyDeriverMock {
+        let deriver1 = KeyDeriverMock()
+        deriver1.uniqueAlgorithmIdentifier = uniqueAlgorithmIdentifier
+        deriver1.keyHandler = { _, _ in
+            Data()
         }
         return deriver1
     }

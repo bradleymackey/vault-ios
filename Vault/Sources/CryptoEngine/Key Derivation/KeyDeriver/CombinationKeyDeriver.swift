@@ -18,4 +18,9 @@ public struct CombinationKeyDeriver: KeyDeriver {
             try keyDeriver.key(password: currentKey, salt: salt)
         }
     }
+
+    public var uniqueAlgorithmIdentifier: String {
+        let childIdentifiers = derivers.map(\.uniqueAlgorithmIdentifier).joined(separator: "|")
+        return "COMBINATION<\(childIdentifiers)>"
+    }
 }

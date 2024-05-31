@@ -25,6 +25,15 @@ final class HKDFKeyDeriverTests: XCTestCase {
         let key = try sut.key(password: password, salt: salt)
         XCTAssertEqual(key.toHexString(), "e8fd40d5582c09ee")
     }
+
+    func test_uniqueAlgorithmIdentifier_matchesParameters() {
+        let sut = HKDFKeyDeriver(parameters: .init(
+            keyLength: 456,
+            variant: .sha3_sha512
+        ))
+
+        XCTAssertEqual(sut.uniqueAlgorithmIdentifier, "HKDF<keyLength=456;variant=sha3_sha512>")
+    }
 }
 
 extension HKDFKeyDeriver.Parameters {

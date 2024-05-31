@@ -18,6 +18,15 @@ public struct HKDFKeyDeriver: KeyDeriver {
         )
         return try Data(engine.calculate())
     }
+
+    public var uniqueAlgorithmIdentifier: String {
+        let parameters = [
+            "keyLength=\(parameters.keyLength)",
+            "variant=\(parameters.variant)",
+        ]
+        let parameterDescription = parameters.joined(separator: ";")
+        return "HKDF<\(parameterDescription)>"
+    }
 }
 
 // MARK: - Parameters

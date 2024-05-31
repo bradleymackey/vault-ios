@@ -38,6 +38,16 @@ final class PBKDF2KeyDeriverTests: XCTestCase {
         ]
         XCTAssertEqual(keys, [expected, expected, expected])
     }
+
+    func test_uniqueAlgorithmIdentifier_matchesParameters() {
+        let sut = PBKDF2KeyDeriver(parameters: .init(
+            keyLength: 123,
+            iterations: 456,
+            variant: .sha384
+        ))
+
+        XCTAssertEqual(sut.uniqueAlgorithmIdentifier, "PBKDF2<keyLength=123;iterations=456;variant=sha384>")
+    }
 }
 
 extension PBKDF2KeyDeriver.Parameters {

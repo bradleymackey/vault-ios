@@ -66,6 +66,20 @@ final class ScryptKeyDeriverTests: XCTestCase {
         XCTAssertEqual(keys, [expected, expected, expected])
     }
 
+    func test_uniqueAlgorithmIdentifier_matchesParameters() {
+        let sut = makeSUT(parameters: .init(
+            outputLengthBytes: 123,
+            costFactor: 998,
+            blockSizeFactor: 432,
+            parallelizationFactor: 555
+        ))
+
+        XCTAssertEqual(
+            sut.uniqueAlgorithmIdentifier,
+            "SCRYPT<outputLengthBytes=123;costFactor=998;blockSizeFactor=432;parallelizationFactor=432>"
+        )
+    }
+
     // MARK: - Helpers
 
     private func makeSUT(parameters: ScryptKeyDeriver.Parameters = .fastForTesting) -> ScryptKeyDeriver {

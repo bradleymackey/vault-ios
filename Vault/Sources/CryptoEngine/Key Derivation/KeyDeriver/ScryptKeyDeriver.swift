@@ -26,6 +26,17 @@ public struct ScryptKeyDeriver: KeyDeriver {
         )
         return try Data(engine.calculate())
     }
+
+    public var uniqueAlgorithmIdentifier: String {
+        let parameters = [
+            "outputLengthBytes=\(parameters.outputLengthBytes)",
+            "costFactor=\(parameters.costFactor)",
+            "blockSizeFactor=\(parameters.blockSizeFactor)",
+            "parallelizationFactor=\(parameters.blockSizeFactor)",
+        ]
+        let parameterDescription = parameters.joined(separator: ";")
+        return "SCRYPT<\(parameterDescription)>"
+    }
 }
 
 // MARK: - Parameters
