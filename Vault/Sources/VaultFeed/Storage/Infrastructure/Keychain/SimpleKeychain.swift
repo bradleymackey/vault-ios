@@ -156,7 +156,7 @@ extension SimpleKeychain {
 // MARK: - Store items
 
 extension SimpleKeychain {
-    /// Saves a `String` value with the type `kSecClassGenericPassword` in the Keychain.
+    /// Saves a `String` value with the type `kSecClassKey` in the Keychain.
     ///
     /// ```swift
     /// try simpleKeychain.set("some string", forKey: "your_key")
@@ -169,7 +169,7 @@ extension SimpleKeychain {
         try set(Data(string.utf8), forKey: key)
     }
 
-    /// Saves a `Data` value with the type `kSecClassGenericPassword` in the Keychain.
+    /// Saves a `Data` value with the type `kSecClassKey` in the Keychain.
     ///
     /// ```swift
     /// try simpleKeychain.set(data, forKey: "your_key")
@@ -287,7 +287,7 @@ extension SimpleKeychain {
 extension SimpleKeychain {
     func baseQuery(withKey key: String? = nil, data: Data? = nil) -> [String: Any] {
         var query = attributes
-        query[kSecClass as String] = kSecClassGenericPassword
+        query[kSecClass as String] = kSecClassKey
         query[kSecAttrService as String] = service
 
         if let key = key {
