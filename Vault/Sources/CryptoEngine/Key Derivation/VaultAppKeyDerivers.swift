@@ -1,6 +1,6 @@
 import Foundation
 
-public enum CustomKeyDerivers {
+public enum VaultAppKeyDerivers {
     public enum V1 {
         /// V1 fast key deriver.
         ///
@@ -40,7 +40,7 @@ public enum CustomKeyDerivers {
 
 // MARK: - Atoms
 
-extension CustomKeyDerivers.V1 {
+extension VaultAppKeyDerivers.V1 {
     private static let PBKDF2_fast = PBKDF2KeyDeriver(parameters: .init(
         keyLength: 32,
         iterations: 2000,

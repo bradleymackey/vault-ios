@@ -27,7 +27,7 @@ extension BackupPassword {
         //  - Insecure (for DEBUG)
         //  - Secure (These parameters)
         //  - Highly Secure (Even stronger, like a minute to derive the key?)
-        let deriver = CustomKeyDerivers.V1.fast
+        let deriver = VaultAppKeyDerivers.V1.fast
         let key = try await withCheckedThrowingContinuation { continuation in
             DispatchQueue.global(qos: .userInitiated).async {
                 continuation.resume(with: Result {
