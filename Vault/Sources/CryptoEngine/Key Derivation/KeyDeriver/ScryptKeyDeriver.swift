@@ -32,7 +32,7 @@ public struct ScryptKeyDeriver: KeyDeriver {
             "keyLength=\(parameters.keyLength)",
             "costFactor=\(parameters.costFactor)",
             "blockSizeFactor=\(parameters.blockSizeFactor)",
-            "parallelizationFactor=\(parameters.blockSizeFactor)",
+            "parallelizationFactor=\(parameters.parallelizationFactor)",
         ]
         let parameterDescription = parameters.joined(separator: ";")
         return "SCRYPT<\(parameterDescription)>"

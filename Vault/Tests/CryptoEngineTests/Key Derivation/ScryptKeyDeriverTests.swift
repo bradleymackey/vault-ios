@@ -76,7 +76,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
         XCTAssertEqual(
             sut.uniqueAlgorithmIdentifier,
-            "SCRYPT<keyLength=123;costFactor=998;blockSizeFactor=432;parallelizationFactor=432>"
+            "SCRYPT<keyLength=123;costFactor=998;blockSizeFactor=432;parallelizationFactor=555>"
         )
     }
 

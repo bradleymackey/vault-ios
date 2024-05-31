@@ -15,7 +15,7 @@ final class VaultAppKeyDeriversTests: XCTestCase {
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=2000;variant=sha384>|\
         HKDF<keyLength=32;variant=sha3_sha512>|\
-        SCRYPT<keyLength=32;costFactor=64;blockSizeFactor=4;parallelizationFactor=4>\
+        SCRYPT<keyLength=32;costFactor=64;blockSizeFactor=4;parallelizationFactor=1>\
         >
         """)
     }
@@ -27,7 +27,7 @@ final class VaultAppKeyDeriversTests: XCTestCase {
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=5452351;variant=sha384>|\
         HKDF<keyLength=32;variant=sha3_sha512>|\
-        SCRYPT<keyLength=32;costFactor=262144;blockSizeFactor=8;parallelizationFactor=8>\
+        SCRYPT<keyLength=32;costFactor=262144;blockSizeFactor=8;parallelizationFactor=1>\
         >
         """)
     }
