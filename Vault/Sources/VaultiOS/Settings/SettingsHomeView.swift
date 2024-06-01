@@ -41,25 +41,12 @@ public struct SettingsHomeView: View {
             NavigationLink {
                 BackupView()
             } label: {
-                VStack(alignment: .center) {
-                    Text("Last Backup")
-                        .foregroundColor(.secondary)
-                        .font(.footnote)
-                    Text("23 days ago")
-                        .foregroundColor(.primary)
-                        .font(.title)
-                    Text("iCloud is storing the most recent backup")
-                        .foregroundColor(.secondary)
-                        .font(.footnote)
-                    Text("12 codes backed up")
-                        .foregroundColor(.secondary)
-                        .font(.footnote)
-                    Text("2 codes not yet backed up")
-                        .foregroundColor(.red)
-                        .font(.footnote.bold())
+                FormRow(
+                    image: Image(systemName: "doc.on.doc.fill"),
+                    color: .blue
+                ) {
+                    Text("Backups")
                 }
-                .frame(maxWidth: .infinity)
-                .padding()
             }
 
             NavigationLink {
@@ -72,6 +59,8 @@ public struct SettingsHomeView: View {
                     Text(viewModel.restoreBackupTitle)
                 }
             }
+        } header: {
+            Text("Backups")
         }
     }
 
