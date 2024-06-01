@@ -13,17 +13,13 @@ struct BackupKeyChangeView: View {
     var body: some View {
         Form {
             Section {
-                switch viewModel.newPassword {
-                case .neutral, .error, .creating:
-                    TextField("Password", text: $viewModel.newlyEnteredPassword)
-                        .disabled(viewModel.newPassword.isLoading)
-                case .success:
-                    Text("Updated!")
-                }
+                TextField("Password", text: $viewModel.newlyEnteredPassword)
+                    .disabled(viewModel.newPassword.isLoading)
 
                 Button {
                     Task {
                         await viewModel.saveEnteredPassword()
+                        viewModel.newlyEnteredPassword = ""
                     }
                 } label: {
                     Text(viewModel.newPassword.isLoading ? "Generating" : "Update")
@@ -32,6 +28,8 @@ struct BackupKeyChangeView: View {
                 .shimmering(active: viewModel.newPassword.isLoading)
             } header: {
                 Text("Update password")
+            } footer: {
+                Text(viewModel.encryptionKeyDeriverDescription)
             }
 
             Section {
@@ -47,7 +45,7 @@ struct BackupKeyChangeView: View {
                     Text("Error")
                 }
             } header: {
-                Text("Existing key")
+                Text("Current encryption key and salt")
             }
         }
         .task {

@@ -29,10 +29,16 @@ public final class BackupKeyChangeViewModel {
     public var newlyEnteredPassword = ""
     public private(set) var existingPassword: ExistingPasswordState = .loading
     public private(set) var newPassword: NewPasswordState = .neutral
+    private let encryptionKeyDeriver: any KeyDeriver
     private let store: any BackupPasswordStore
 
     public init(store: any BackupPasswordStore) {
         self.store = store
+        encryptionKeyDeriver = BackupPassword.makeAppropriateEncryptionKeyDeriver()
+    }
+
+    public var encryptionKeyDeriverDescription: String {
+        encryptionKeyDeriver.userVisibleDescription
     }
 
     public func loadInitialData() {
@@ -60,10 +66,11 @@ public final class BackupKeyChangeViewModel {
     }
 
     private nonisolated func computeNewKey(text: String) async throws -> BackupPassword {
-        try await withCheckedThrowingContinuation { cont in
+        let deriver = encryptionKeyDeriver
+        return try await withCheckedThrowingContinuation { cont in
             DispatchQueue.global(qos: .utility).async {
                 cont.resume(with: Result {
-                    try BackupPassword.createEncryptionKey(text: text)
+                    try BackupPassword.createEncryptionKey(deriver: deriver, text: text)
                 })
             }
         }
