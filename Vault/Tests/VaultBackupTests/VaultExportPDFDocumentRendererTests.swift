@@ -16,7 +16,13 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
 
     func test_render_rendersVaultParsedToDocument() throws {
         let exportPayload = VaultExportPayload(
-            encryptedVault: EncryptedVault(data: Data(), authentication: Data(), encryptionIV: Data(), keySalt: Data()),
+            encryptedVault: EncryptedVault(
+                data: Data(),
+                authentication: Data(),
+                encryptionIV: Data(),
+                keygenSalt: Data(),
+                keygenSignature: .fastV1
+            ),
             userDescription: "my vault",
             created: Date(timeIntervalSince1970: 2000)
         )

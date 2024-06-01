@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import TestHelpers
 import VaultCore
@@ -82,11 +83,11 @@ final class VaultBackupEncoderTests: XCTestCase {
 
     func test_createExportPayload_includesKeySaltUnmodifiedInPayload() throws {
         let salt = Data.random(count: 34)
-        let sut = try makeSUT(key: anyKey(), keySalt: salt)
+        let sut = try makeSUT(key: anyKey(), keygenSalt: salt)
 
         let encryptedVault = try sut.createExportPayload(items: [], userDescription: "hello world")
 
-        XCTAssertEqual(encryptedVault.keySalt, salt)
+        XCTAssertEqual(encryptedVault.keygenSalt, salt)
     }
 }
 
@@ -96,10 +97,17 @@ extension VaultBackupEncoderTests {
     private func makeSUT(
         clock: EpochClock = anyClock(),
         key: VaultKey,
-        keySalt: Data = Data(),
+        keygenSalt: Data = Data(),
+        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1,
         paddingMode: VaultBackupEncoder.PaddingMode = .none
     ) -> VaultBackupEncoder {
-        VaultBackupEncoder(clock: clock, key: key, keySalt: keySalt, paddingMode: paddingMode)
+        VaultBackupEncoder(
+            clock: clock,
+            key: key,
+            keygenSalt: keygenSalt,
+            keygenSignature: keygenSignature,
+            paddingMode: paddingMode
+        )
     }
 }
 

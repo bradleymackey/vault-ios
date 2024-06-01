@@ -6,7 +6,13 @@ import XCTest
 final class VaultExportDataBlockGeneratorTests: XCTestCase {
     func test_makeDocument_createsExpectedContent() throws {
         let sut = VaultExportDataBlockGenerator(payload: .init(
-            encryptedVault: .init(data: Data(), authentication: Data(), encryptionIV: Data(), keySalt: Data()),
+            encryptedVault: .init(
+                data: Data(),
+                authentication: Data(),
+                encryptionIV: Data(),
+                keygenSalt: Data(),
+                keygenSignature: .fastV1
+            ),
             userDescription: "my desc",
             created: Date()
         ))
@@ -33,7 +39,13 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
         nice
         """
         let sut = VaultExportDataBlockGenerator(payload: .init(
-            encryptedVault: .init(data: Data(), authentication: Data(), encryptionIV: Data(), keySalt: Data()),
+            encryptedVault: .init(
+                data: Data(),
+                authentication: Data(),
+                encryptionIV: Data(),
+                keygenSalt: Data(),
+                keygenSignature: .fastV1
+            ),
             userDescription: description,
             created: Date()
         ))

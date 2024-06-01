@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 
 /// The encrypted vault that contains enough information to decrypt, given that the user only knows the key.
@@ -17,21 +18,31 @@ public struct EncryptedVault: Equatable, Codable {
     /// The idea is the `EncryptedVault` is imported to the device, `keySalt` is read, then `keySalt` is combined
     /// with the keygen function to generate the key needed to decrypt this `EncryptedVault` payload.
     /// If we didn't store the salt in the payload, we would be unable to derive the encryption key.
-    public var keySalt: Data
+    public var keygenSalt: Data
+    /// The signature of the algorithm that was used to generate the encryption key.
+    public var keygenSignature: ApplicationKeyDeriver.Signature
 
-    public init(data: Data, authentication: Data, encryptionIV: Data, keySalt: Data) {
+    public init(
+        data: Data,
+        authentication: Data,
+        encryptionIV: Data,
+        keygenSalt: Data,
+        keygenSignature: ApplicationKeyDeriver.Signature
+    ) {
         self.data = data
         self.authentication = authentication
         self.encryptionIV = encryptionIV
-        self.keySalt = keySalt
+        self.keygenSalt = keygenSalt
+        self.keygenSignature = keygenSignature
     }
 
     public enum CodingKeys: String, CodingKey {
-        case version = "ENCRYPTED_VAULT_VERSION"
-        case data = "ENCRYPTED_DATA"
-        case authentication = "ENCRYPTION_AUTHENTICATION"
+        case version = "ENCRYPTION_VERSION"
+        case data = "ENCRYPTION_DATA"
+        case authentication = "ENCRYPTION_AUTH_TAG"
         case encryptionIV = "ENCRYPTION_IV"
-        case keySalt = "KEY_SALT"
+        case keygenSalt = "KEYGEN_SALT"
+        case keygenSignature = "KEYGEN_SIGNATURE"
     }
 }
 

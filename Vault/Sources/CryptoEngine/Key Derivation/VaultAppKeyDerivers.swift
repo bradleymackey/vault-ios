@@ -18,7 +18,7 @@ public enum VaultAppKeyDerivers {
                     derivers: derivers,
                     userVisibleDescription: "Vault Default – FAST v1"
                 ),
-                signature: "vault.keygen.default.fast-v1"
+                signature: .fastV1
             )
         }()
 
@@ -44,7 +44,7 @@ public enum VaultAppKeyDerivers {
                     derivers: derivers,
                     userVisibleDescription: "Vault Default – SECURE v1"
                 ),
-                signature: "vault.keygen.default.secure-v1"
+                signature: .secureV1
             )
         }()
     }

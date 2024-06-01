@@ -9,11 +9,11 @@ public struct ApplicationKeyDeriver: KeyDeriver {
     ///
     /// Using the signature, this allows us to lookup the algorithm that was used
     /// during the key generation.
-    public let signature: String
+    public let signature: Signature
 
     private let deriver: any KeyDeriver
 
-    public init(deriver: any KeyDeriver, signature: String) {
+    public init(deriver: any KeyDeriver, signature: Signature) {
         self.deriver = deriver
         self.signature = signature
     }
@@ -28,5 +28,14 @@ public struct ApplicationKeyDeriver: KeyDeriver {
 
     public var userVisibleDescription: String {
         deriver.userVisibleDescription
+    }
+}
+
+extension ApplicationKeyDeriver {
+    /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
+    /// so a given key can be recreated.
+    public enum Signature: String, Equatable, Codable {
+        case fastV1 = "vault.keygen.default.fast-v1"
+        case secureV1 = "vault.keygen.default.secure-v1"
     }
 }

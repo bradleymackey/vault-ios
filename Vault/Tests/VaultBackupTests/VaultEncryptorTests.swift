@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import TestHelpers
 import XCTest
@@ -29,23 +30,37 @@ final class VaultEncryptorTests: XCTestCase {
         XCTAssertEqual(result.authentication, Data(hex: "0x4343890cb716dfb9915f8f7c050829ca"))
     }
 
-    func test_encrypt_placesKeySaltIntoPayloadUnchanged() throws {
+    func test_encrypt_placesKeygenSaltIntoPayloadUnchanged() throws {
         let plainData = Data(hex: "0x41414141414141")
         let encodedVault = IntermediateEncodedVault(data: plainData)
-        let keySalt = Data.random(count: 30)
-        let sut = try makeSUT(key: anyVaultKey(), keySalt: keySalt)
+        let keygenSalt = Data.random(count: 30)
+        let sut = try makeSUT(key: anyVaultKey(), keygenSalt: keygenSalt)
 
         let result = try sut.encrypt(encodedVault: encodedVault)
 
-        XCTAssertEqual(result.keySalt, keySalt)
+        XCTAssertEqual(result.keygenSalt, keygenSalt)
+    }
+
+    func test_encrypt_placesKeygenSignatureIntoPayloadUnchanged() throws {
+        let plainData = Data(hex: "0x41414141414141")
+        let encodedVault = IntermediateEncodedVault(data: plainData)
+        let sut = try makeSUT(key: anyVaultKey(), keygenSignature: .secureV1)
+
+        let result = try sut.encrypt(encodedVault: encodedVault)
+
+        XCTAssertEqual(result.keygenSignature, .secureV1)
     }
 }
 
 // MARK: - Helpers
 
 extension VaultEncryptorTests {
-    private func makeSUT(key: VaultKey, keySalt: Data = Data()) -> VaultEncryptor {
-        let sut = VaultEncryptor(key: key, keySalt: keySalt)
+    private func makeSUT(
+        key: VaultKey,
+        keygenSalt: Data = Data(),
+        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1
+    ) -> VaultEncryptor {
+        let sut = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
         trackForMemoryLeaks(sut)
         return sut
     }
