@@ -8,12 +8,15 @@ public enum VaultAppKeyDerivers {
         /// It still uses a combination of key derivation functions for increased security.
         ///
         /// This should be used in places where security is not required or for testing.
-        public static let fast: some KeyDeriver = {
+        public static let fast: ApplicationKeyDeriver = {
             var derivers = [any KeyDeriver]()
             derivers.append(PBKDF2_fast)
             derivers.append(HKDF_sha3_512_single)
             derivers.append(scrypt_fast)
-            return CombinationKeyDeriver(derivers: derivers)
+            return ApplicationKeyDeriver(
+                deriver: CombinationKeyDeriver(derivers: derivers),
+                signature: .fastV1
+            )
         }()
 
         /// V1 secure key deriver.
@@ -26,14 +29,17 @@ public enum VaultAppKeyDerivers {
         /// in the event that an offline encrypted vault is obtained by a bad actor.
         ///
         /// This is intended to be the initial production version of the KDF for the Vault app.
-        public static let secure: some KeyDeriver = {
+        public static let secure: ApplicationKeyDeriver = {
             var derivers = [any KeyDeriver]()
             // Initial PBKDF2 for strong password hashing
             derivers.append(PBKDF2_secure)
             derivers.append(HKDF_sha3_512_single)
             // Scrypt for memory-hard key derivation
             derivers.append(scrypt_secure)
-            return CombinationKeyDeriver(derivers: derivers)
+            return ApplicationKeyDeriver(
+                deriver: CombinationKeyDeriver(derivers: derivers),
+                signature: .secureV1
+            )
         }()
     }
 }

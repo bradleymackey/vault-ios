@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import VaultCore
 
@@ -5,7 +6,8 @@ import VaultCore
 public final class VaultBackupEncoder {
     private let clock: EpochClock
     private let key: VaultKey
-    private let keySalt: Data
+    private let keygenSalt: Data
+    private let keygenSignature: ApplicationKeyDeriver.Signature
     private let paddingMode: PaddingMode
 
     public enum PaddingMode: Equatable {
@@ -14,10 +16,17 @@ public final class VaultBackupEncoder {
         case random
     }
 
-    public init(clock: EpochClock, key: VaultKey, keySalt: Data, paddingMode: PaddingMode = .random) {
+    public init(
+        clock: EpochClock,
+        key: VaultKey,
+        keygenSalt: Data,
+        keygenSignature: ApplicationKeyDeriver.Signature,
+        paddingMode: PaddingMode = .random
+    ) {
         self.clock = clock
         self.key = key
-        self.keySalt = keySalt
+        self.keygenSalt = keygenSalt
+        self.keygenSignature = keygenSignature
         self.paddingMode = paddingMode
     }
 
@@ -31,7 +40,8 @@ public final class VaultBackupEncoder {
             obfuscationPadding: makePadding(itemsCount: items.count)
         )
         let intermediateEncoding = try IntermediateEncodedVaultEncoder().encode(vaultBackup: payload)
-        return try VaultEncryptor(key: key, keySalt: keySalt).encrypt(encodedVault: intermediateEncoding)
+        let encryptor = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
+        return try encryptor.encrypt(encodedVault: intermediateEncoding)
     }
 
     private func makePadding(itemsCount: Int) -> Data {

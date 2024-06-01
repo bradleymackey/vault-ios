@@ -22,7 +22,8 @@ final class VaultExportSnapshotTests: XCTestCase {
                 data: encryptedData,
                 authentication: authData,
                 encryptionIV: ivData,
-                keySalt: keySalt
+                keygenSalt: keySalt,
+                keygenSignature: .fastV1
             ),
             userDescription: userDescription,
             created: createdDate

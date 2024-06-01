@@ -9,7 +9,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
-            keySalt: Data("keySalt".utf8)
+            keygenSalt: Data("keySalt".utf8),
+            keygenSignature: .fastV1
         )
         let sut = EncryptedVaultCoder()
 
@@ -19,11 +20,12 @@ final class EncryptedVaultCoderTests: XCTestCase {
             String(data: result, encoding: .utf8),
             """
             {
-              "ENCRYPTED_DATA" : "ZGF0YQ==",
-              "ENCRYPTED_VAULT_VERSION" : "1.0.0",
-              "ENCRYPTION_AUTHENTICATION" : "YXV0aA==",
+              "ENCRYPTION_AUTH_TAG" : "YXV0aA==",
+              "ENCRYPTION_DATA" : "ZGF0YQ==",
               "ENCRYPTION_IV" : "aXY=",
-              "KEY_SALT" : "a2V5U2FsdA=="
+              "ENCRYPTION_VERSION" : "1.0.0",
+              "KEYGEN_SALT" : "a2V5U2FsdA==",
+              "KEYGEN_SIGNATURE" : "vault.keygen.default.fast-v1"
             }
             """
         )
@@ -32,11 +34,12 @@ final class EncryptedVaultCoderTests: XCTestCase {
     func test_decodeVault_decodesFromExpectedFormat() {
         let vaultData = Data("""
         {
-          "ENCRYPTED_DATA" : "ZGF0YQ==",
-          "ENCRYPTED_VAULT_VERSION" : "1.0.0",
-          "ENCRYPTION_AUTHENTICATION" : "YXV0aA==",
+          "ENCRYPTION_AUTH_TAG" : "YXV0aA==",
+          "ENCRYPTION_DATA" : "ZGF0YQ==",
           "ENCRYPTION_IV" : "aXY=",
-          "KEY_SALT" : "a2V5U2FsdA=="
+          "ENCRYPTION_VERSION" : "1.0.0",
+          "KEYGEN_SALT" : "a2V5U2FsdA==",
+          "KEYGEN_SIGNATURE" : "vault.keygen.default.fast-v1"
         }
         """.utf8)
         let sut = EncryptedVaultCoder()
@@ -47,7 +50,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
-            keySalt: Data("keySalt".utf8)
+            keygenSalt: Data("keySalt".utf8),
+            keygenSignature: .fastV1
         ))
     }
 
