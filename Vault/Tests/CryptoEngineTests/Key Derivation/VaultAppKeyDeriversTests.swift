@@ -11,6 +11,7 @@ final class VaultAppKeyDeriversTests: XCTestCase {
     func test_V1_fast() {
         let fast = VaultAppKeyDerivers.V1.fast
 
+        XCTAssertEqual(fast.signature, "vault.keygen.default.fast-v1")
         XCTAssertEqual(fast.userVisibleDescription, "Vault Default – FAST v1")
         XCTAssertEqual(fast.uniqueAlgorithmIdentifier, """
         COMBINATION<\
@@ -24,6 +25,7 @@ final class VaultAppKeyDeriversTests: XCTestCase {
     func test_V1_secure() {
         let secure = VaultAppKeyDerivers.V1.secure
 
+        XCTAssertEqual(secure.signature, "vault.keygen.default.secure-v1")
         XCTAssertEqual(secure.userVisibleDescription, "Vault Default – SECURE v1")
         XCTAssertEqual(secure.uniqueAlgorithmIdentifier, """
         COMBINATION<\

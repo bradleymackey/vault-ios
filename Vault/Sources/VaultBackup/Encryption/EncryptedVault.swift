@@ -1,5 +1,6 @@
 import Foundation
 
+/// The encrypted vault that contains enough information to decrypt, given that the user only knows the key.
 public struct EncryptedVault: Equatable, Codable {
     /// The version of the encrypted vault.
     private let version: Version = .v1_0_0
