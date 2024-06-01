@@ -14,7 +14,7 @@ public struct BackupPassword: Equatable, Hashable {
 // MARK: - Keygen
 
 extension BackupPassword {
-    public static func makeAppropriateEncryptionKeyDeriver() -> some KeyDeriver {
+    public static func makeAppropriateEncryptionKeyDeriver() -> ApplicationKeyDeriver {
         #if DEBUG
         // A fast key dervier that is relatively insecure, but runs in <5s in DEBUG on any reasonable hardware.
         return VaultAppKeyDerivers.V1.fast

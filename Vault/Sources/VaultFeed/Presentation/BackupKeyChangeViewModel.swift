@@ -29,7 +29,7 @@ public final class BackupKeyChangeViewModel {
     public var newlyEnteredPassword = ""
     public private(set) var existingPassword: ExistingPasswordState = .loading
     public private(set) var newPassword: NewPasswordState = .neutral
-    private let encryptionKeyDeriver: any KeyDeriver
+    private let encryptionKeyDeriver: ApplicationKeyDeriver
     private let store: any BackupPasswordStore
 
     public init(store: any BackupPasswordStore) {

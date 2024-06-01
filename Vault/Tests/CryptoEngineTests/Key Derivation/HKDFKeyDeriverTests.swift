@@ -34,12 +34,6 @@ final class HKDFKeyDeriverTests: XCTestCase {
 
         XCTAssertEqual(sut.uniqueAlgorithmIdentifier, "HKDF<keyLength=456;variant=sha3_sha512>")
     }
-
-    func test_userVisibleDescription_isHKDF() {
-        let sut = HKDFKeyDeriver(parameters: .fastForTesting)
-
-        XCTAssertEqual(sut.userVisibleDescription, "HKDF")
-    }
 }
 
 extension HKDFKeyDeriver.Parameters {

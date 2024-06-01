@@ -14,10 +14,7 @@ public enum VaultAppKeyDerivers {
             derivers.append(HKDF_sha3_512_single)
             derivers.append(scrypt_fast)
             return ApplicationKeyDeriver(
-                deriver: CombinationKeyDeriver(
-                    derivers: derivers,
-                    userVisibleDescription: "Vault Default – FAST v1"
-                ),
+                deriver: CombinationKeyDeriver(derivers: derivers),
                 signature: .fastV1
             )
         }()
@@ -40,10 +37,7 @@ public enum VaultAppKeyDerivers {
             // Scrypt for memory-hard key derivation
             derivers.append(scrypt_secure)
             return ApplicationKeyDeriver(
-                deriver: CombinationKeyDeriver(
-                    derivers: derivers,
-                    userVisibleDescription: "Vault Default – SECURE v1"
-                ),
+                deriver: CombinationKeyDeriver(derivers: derivers),
                 signature: .secureV1
             )
         }()

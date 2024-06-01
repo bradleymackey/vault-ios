@@ -8,5 +8,4 @@ import Foundation
 public protocol KeyDeriver {
     func key(password: Data, salt: Data) throws -> Data
     var uniqueAlgorithmIdentifier: String { get }
-    var userVisibleDescription: String { get }
 }

@@ -80,12 +80,6 @@ final class ScryptKeyDeriverTests: XCTestCase {
         )
     }
 
-    func test_userVisibleDescription_isScrypt() {
-        let sut = makeSUT(parameters: .fastForTesting)
-
-        XCTAssertEqual(sut.userVisibleDescription, "scrypt")
-    }
-
     // MARK: - Helpers
 
     private func makeSUT(parameters: ScryptKeyDeriver.Parameters = .fastForTesting) -> ScryptKeyDeriver {

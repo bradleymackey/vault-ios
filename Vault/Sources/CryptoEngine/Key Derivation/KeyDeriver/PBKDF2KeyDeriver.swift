@@ -28,10 +28,6 @@ public struct PBKDF2KeyDeriver: KeyDeriver {
         let parametersDescription = parameters.joined(separator: ";")
         return "PBKDF2<\(parametersDescription)>"
     }
-
-    public var userVisibleDescription: String {
-        "PBKDF2"
-    }
 }
 
 // MARK: - Parameters

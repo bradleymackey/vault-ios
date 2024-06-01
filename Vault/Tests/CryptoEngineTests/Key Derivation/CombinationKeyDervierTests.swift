@@ -5,7 +5,7 @@ import XCTest
 
 final class CombinationKeyDeriverTests: XCTestCase {
     func test_key_throwsErrorIfNoKeyDerivers() {
-        let sut = CombinationKeyDeriver(derivers: [], userVisibleDescription: "any")
+        let sut = CombinationKeyDeriver(derivers: [])
 
         XCTAssertThrowsError(try sut.key(password: anyData(), salt: anyData()))
     }
@@ -16,7 +16,7 @@ final class CombinationKeyDeriverTests: XCTestCase {
         deriver.keyHandler = { _, _ in
             expectedData
         }
-        let sut = CombinationKeyDeriver(derivers: [deriver], userVisibleDescription: "any")
+        let sut = CombinationKeyDeriver(derivers: [deriver])
 
         let result = try sut.key(password: anyData(), salt: anyData())
         XCTAssertEqual(result, expectedData)
@@ -27,7 +27,7 @@ final class CombinationKeyDeriverTests: XCTestCase {
         let deriver1 = mockKeyDeriver(returning: Data(hex: "0000"))
         let deriver2 = mockKeyDeriver(returning: Data(hex: "1111"))
         let deriver3 = mockKeyDeriver(returning: Data(hex: "2222"))
-        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3], userVisibleDescription: "any")
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
 
         let result = try sut.key(password: anyData(), salt: anyData())
         XCTAssertEqual(result, Data(hex: "2222"))
@@ -40,7 +40,7 @@ final class CombinationKeyDeriverTests: XCTestCase {
         let deriver1 = mockKeyDeriver(returning: Data(hex: "0000"))
         let deriver2 = mockKeyDeriver(returning: Data(hex: "1111"))
         let deriver3 = mockKeyDeriver(returning: Data(hex: "2222"))
-        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3], userVisibleDescription: "any")
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
 
         let initialPassword = Data(hex: "deadbeef")
         _ = try sut.key(password: initialPassword, salt: anyData())
@@ -53,7 +53,7 @@ final class CombinationKeyDeriverTests: XCTestCase {
         let deriver1 = mockKeyDeriver(returning: Data(hex: "0000"))
         let deriver2 = mockKeyDeriver(returning: Data(hex: "1111"))
         let deriver3 = mockKeyDeriver(returning: Data(hex: "2222"))
-        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3], userVisibleDescription: "any")
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
 
         let salt = Data(hex: "123456789aaaa")
         _ = try sut.key(password: anyData(), salt: salt)
@@ -67,15 +67,9 @@ final class CombinationKeyDeriverTests: XCTestCase {
         let deriver2 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg2")
         let deriver3 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
 
-        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3], userVisibleDescription: "any")
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
 
         XCTAssertEqual(sut.uniqueAlgorithmIdentifier, "COMBINATION<alg1|alg2|alg3>")
-    }
-
-    func test_sdf_isProvidedParameter() {
-        let sut = CombinationKeyDeriver(derivers: [], userVisibleDescription: "my desc")
-
-        XCTAssertEqual(sut.userVisibleDescription, "my desc")
     }
 }
 

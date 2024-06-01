@@ -4,6 +4,10 @@ import Foundation
 ///
 /// It contains a resilient `signature`, such that we can lookup the exact
 /// algorithm and all parameters when we decrypt.
+///
+/// Things should only be made into an `ApplicationKeyDeriver` if they are deemed
+/// to be good enough for encryption. This helps to prevent accidental errors like
+/// using some random `KeyDeriver` at the application level.
 public struct ApplicationKeyDeriver: KeyDeriver {
     /// The resilient signature that identifies this key deriver.
     ///
@@ -27,7 +31,7 @@ public struct ApplicationKeyDeriver: KeyDeriver {
     }
 
     public var userVisibleDescription: String {
-        deriver.userVisibleDescription
+        signature.userVisibleDescription
     }
 }
 
@@ -37,5 +41,12 @@ extension ApplicationKeyDeriver {
     public enum Signature: String, Equatable, Codable {
         case fastV1 = "vault.keygen.default.fast-v1"
         case secureV1 = "vault.keygen.default.secure-v1"
+
+        public var userVisibleDescription: String {
+            switch self {
+            case .fastV1: "Vault Default – FAST v1"
+            case .secureV1: "Vault Default – SECURE v1"
+            }
+        }
     }
 }
