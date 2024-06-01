@@ -11,6 +11,7 @@ final class VaultAppKeyDeriversTests: XCTestCase {
     func test_V1_fast() {
         let fast = VaultAppKeyDerivers.V1.fast
 
+        XCTAssertEqual(fast.userVisibleDescription, "Vault Default – FAST v1")
         XCTAssertEqual(fast.uniqueAlgorithmIdentifier, """
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=2000;variant=sha384>|\
@@ -23,6 +24,7 @@ final class VaultAppKeyDeriversTests: XCTestCase {
     func test_V1_secure() {
         let secure = VaultAppKeyDerivers.V1.secure
 
+        XCTAssertEqual(secure.userVisibleDescription, "Vault Default – SECURE v1")
         XCTAssertEqual(secure.uniqueAlgorithmIdentifier, """
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=5452351;variant=sha384>|\

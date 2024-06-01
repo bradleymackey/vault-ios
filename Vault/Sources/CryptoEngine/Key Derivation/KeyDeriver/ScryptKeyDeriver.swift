@@ -37,6 +37,10 @@ public struct ScryptKeyDeriver: KeyDeriver {
         let parameterDescription = parameters.joined(separator: ";")
         return "SCRYPT<\(parameterDescription)>"
     }
+
+    public var userVisibleDescription: String {
+        "scrypt"
+    }
 }
 
 // MARK: - Parameters

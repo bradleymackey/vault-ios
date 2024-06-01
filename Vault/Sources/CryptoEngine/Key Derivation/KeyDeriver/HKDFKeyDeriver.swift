@@ -27,6 +27,10 @@ public struct HKDFKeyDeriver: KeyDeriver {
         let parameterDescription = parameters.joined(separator: ";")
         return "HKDF<\(parameterDescription)>"
     }
+
+    public var userVisibleDescription: String {
+        "HKDF"
+    }
 }
 
 // MARK: - Parameters

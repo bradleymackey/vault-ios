@@ -13,7 +13,10 @@ public enum VaultAppKeyDerivers {
             derivers.append(PBKDF2_fast)
             derivers.append(HKDF_sha3_512_single)
             derivers.append(scrypt_fast)
-            return CombinationKeyDeriver(derivers: derivers)
+            return CombinationKeyDeriver(
+                derivers: derivers,
+                userVisibleDescription: "Vault Default – FAST v1"
+            )
         }()
 
         /// V1 secure key deriver.
@@ -33,7 +36,10 @@ public enum VaultAppKeyDerivers {
             derivers.append(HKDF_sha3_512_single)
             // Scrypt for memory-hard key derivation
             derivers.append(scrypt_secure)
-            return CombinationKeyDeriver(derivers: derivers)
+            return CombinationKeyDeriver(
+                derivers: derivers,
+                userVisibleDescription: "Vault Default – SECURE v1"
+            )
         }()
     }
 }

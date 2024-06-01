@@ -3,9 +3,11 @@ import Foundation
 /// A key deriver that is composed of a sequence of other `KeyDeriver`s
 public struct CombinationKeyDeriver: KeyDeriver {
     private let derivers: [any KeyDeriver]
+    public let userVisibleDescription: String
 
-    public init(derivers: [any KeyDeriver]) {
+    public init(derivers: [any KeyDeriver], userVisibleDescription: String) {
         self.derivers = derivers
+        self.userVisibleDescription = userVisibleDescription
     }
 
     public enum KeyDeriverError: Error {
