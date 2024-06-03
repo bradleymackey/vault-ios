@@ -16,12 +16,13 @@ public final class BackupKeyChangeViewModel {
         case neutral
         case creating
         case keygenError
+        case keygenCancelled
         case passwordConfirmError
         case success
 
         public var isLoading: Bool {
             switch self {
-            case .neutral, .keygenError, .passwordConfirmError, .success: false
+            case .neutral, .keygenError, .keygenCancelled, .passwordConfirmError, .success: false
             case .creating: true
             }
         }
@@ -72,6 +73,8 @@ public final class BackupKeyChangeViewModel {
             newlyEnteredPasswordConfirm = ""
         } catch is PasswordConfirmError {
             newPassword = .passwordConfirmError
+        } catch is CancellationError {
+            newPassword = .keygenCancelled
         } catch {
             newPassword = .keygenError
         }
@@ -79,12 +82,14 @@ public final class BackupKeyChangeViewModel {
 
     private nonisolated func computeNewKey(text: String) async throws -> BackupPassword {
         let deriver = encryptionKeyDeriver
-        return try await withCheckedThrowingContinuation { cont in
+        let generatedPassword = try await withCheckedThrowingContinuation { cont in
             DispatchQueue.global(qos: .utility).async {
                 cont.resume(with: Result {
                     try BackupPassword.createEncryptionKey(deriver: deriver, text: text)
                 })
             }
         }
+        try Task.checkCancellation()
+        return generatedPassword
     }
 }
