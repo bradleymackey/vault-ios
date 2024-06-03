@@ -51,7 +51,7 @@ extension BackupKeyChangeViewModelTests {
     private func makeSUT(
         store: BackupPasswordStoreMock = BackupPasswordStoreMock()
     ) -> BackupKeyChangeViewModel {
-        BackupKeyChangeViewModel(store: store)
+        BackupKeyChangeViewModel(store: store, deriverFactory: TestApplicationKeyDeriverFactory())
     }
 
     private func anyBackupPassword() -> BackupPassword {

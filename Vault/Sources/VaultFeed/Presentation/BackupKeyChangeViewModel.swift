@@ -34,9 +34,9 @@ public final class BackupKeyChangeViewModel {
     private let encryptionKeyDeriver: ApplicationKeyDeriver
     private let store: any BackupPasswordStore
 
-    public init(store: any BackupPasswordStore) {
+    public init(store: any BackupPasswordStore, deriverFactory: some ApplicationKeyDeriverFactory) {
         self.store = store
-        encryptionKeyDeriver = BackupPassword.makeAppropriateEncryptionKeyDeriver()
+        encryptionKeyDeriver = deriverFactory.makeApplicationKeyDeriver()
     }
 
     public var encryptionKeyDeriverSignature: ApplicationKeyDeriver.Signature {

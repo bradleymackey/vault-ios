@@ -7,7 +7,7 @@ struct BackupKeyChangeView: View {
     @State private var viewModel: BackupKeyChangeViewModel
 
     init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(store: store))
+        _viewModel = .init(initialValue: .init(store: store, deriverFactory: ApplicationKeyDeriverFactoryImpl()))
     }
 
     var body: some View {

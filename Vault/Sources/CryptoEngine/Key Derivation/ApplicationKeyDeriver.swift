@@ -35,6 +35,7 @@ extension ApplicationKeyDeriver {
     /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
     /// so a given key can be recreated.
     public enum Signature: String, Equatable, Codable, Identifiable {
+        case testing = "vault.keygen.default.testing"
         case fastV1 = "vault.keygen.default.fast-v1"
         case secureV1 = "vault.keygen.default.secure-v1"
 
@@ -44,6 +45,7 @@ extension ApplicationKeyDeriver {
 
         public var userVisibleDescription: String {
             switch self {
+            case .testing: "Vault Default • Testing"
             case .fastV1: "Vault Default – FAST v1"
             case .secureV1: "Vault Default – SECURE v1"
             }
