@@ -1,8 +1,11 @@
 import SwiftUI
+import VaultFeed
 import VaultSettings
 import VaultUI
 
+@MainActor
 public struct SettingsHomeView: View {
+    @Environment(KeychainBackupPasswordStore.self) var backupStore
     private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 
@@ -39,7 +42,7 @@ public struct SettingsHomeView: View {
     private var exportSection: some View {
         Section {
             NavigationLink {
-                BackupView()
+                BackupView(store: backupStore)
             } label: {
                 FormRow(
                     image: Image(systemName: "doc.on.doc.fill"),
