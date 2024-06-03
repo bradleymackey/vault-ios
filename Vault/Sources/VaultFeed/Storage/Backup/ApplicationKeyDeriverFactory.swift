@@ -1,6 +1,7 @@
 import CryptoEngine
 import Foundation
 
+/// @mockable
 public protocol ApplicationKeyDeriverFactory {
     func makeApplicationKeyDeriver() -> ApplicationKeyDeriver
 }
