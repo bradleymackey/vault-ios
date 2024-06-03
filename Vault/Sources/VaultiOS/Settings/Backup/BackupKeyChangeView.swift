@@ -6,6 +6,9 @@ import VaultUI
 @MainActor
 struct BackupKeyChangeView: View {
     @State private var viewModel: BackupKeyChangeViewModel
+    @State private var keyGenerationTask: Task<Void, Never>?
+
+    @Environment(\.dismiss) private var dismiss
 
     init(store: any BackupPasswordStore) {
         _viewModel = .init(initialValue: .init(store: store, deriverFactory: ApplicationKeyDeriverFactoryImpl()))
@@ -24,6 +27,17 @@ struct BackupKeyChangeView: View {
         .task {
             viewModel.loadInitialData()
         }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    keyGenerationTask?.cancel()
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .tint(.red)
+                }
+            }
+        }
     }
 
     private var passwordSection: some View {
@@ -38,7 +52,10 @@ struct BackupKeyChangeView: View {
 
         } footer: {
             StandaloneButton {
-                await viewModel.saveEnteredPassword()
+                keyGenerationTask?.cancel()
+                keyGenerationTask = Task {
+                    await viewModel.saveEnteredPassword()
+                }
             } content: {
                 if !viewModel.newPassword.isLoading {
                     Text("Update Password")
