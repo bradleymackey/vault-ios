@@ -25,7 +25,9 @@ struct BackupView: View {
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case .updatePassword:
-                BackupKeyChangeView(store: backupStore)
+                NavigationStack {
+                    BackupKeyChangeView(store: backupStore)
+                }
             }
         }
         .task {
