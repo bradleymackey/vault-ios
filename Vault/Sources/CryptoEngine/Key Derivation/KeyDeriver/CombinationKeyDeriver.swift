@@ -15,7 +15,8 @@ public struct CombinationKeyDeriver: KeyDeriver {
     public func key(password: Data, salt: Data) throws -> Data {
         guard derivers.isNotEmpty else { throw KeyDeriverError.noKeyDerviers }
         return try derivers.reduce(password) { currentKey, keyDeriver in
-            try keyDeriver.key(password: currentKey, salt: salt)
+            try Task.checkCancellation()
+            return try keyDeriver.key(password: currentKey, salt: salt)
         }
     }
 

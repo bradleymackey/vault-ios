@@ -62,7 +62,46 @@ final class CombinationKeyDeriverTests: XCTestCase {
         XCTAssertEqual(deriver3.keyArgValues.first?.1, salt)
     }
 
-    func test_test_uniqueAlgorithmIdentifier_matchesParametersOfPassedAlgorithms() {
+    func test_key_checksCancellationBetweenAlgs() async throws {
+        let exp1 = expectation(description: "Wait for signal")
+        let exp2 = expectation(description: "Wait for signal")
+        let deriver1 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg1")
+        let deriver2 = signalKeyDeriver {
+            exp1.fulfill()
+        }
+        let deriver3 = signalKeyDeriver {
+            self.wait(for: [exp2])
+        }
+        let deriver4 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
+
+        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3, deriver4])
+
+        let exp3 = expectation(description: "Wait for task")
+        let task = Task {
+            defer { exp3.fulfill() }
+            do {
+                _ = try sut.key(password: Data(), salt: Data())
+                XCTFail("Expected cancellation")
+            } catch {
+                XCTAssertTrue(error is CancellationError)
+            }
+        }
+
+        // Wait for the second deriver to get hit. This will give us the opportunity to make sure we can
+        // actually cancel it before the test code ends.
+        await fulfillment(of: [exp1])
+
+        // Cancel the alg.
+        task.cancel()
+
+        // Now, fire deriver3, which ensures that the sut keeps running and we hit the cancellation check.
+        exp2.fulfill()
+
+        // Final wait for task to complete, so we're sure the expectations run
+        await fulfillment(of: [exp3])
+    }
+
+    func test_uniqueAlgorithmIdentifier_matchesParametersOfPassedAlgorithms() {
         let deriver1 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg1")
         let deriver2 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg2")
         let deriver3 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
@@ -89,6 +128,15 @@ extension CombinationKeyDeriverTests {
         deriver1.uniqueAlgorithmIdentifier = uniqueAlgorithmIdentifier
         deriver1.keyHandler = { _, _ in
             Data()
+        }
+        return deriver1
+    }
+
+    private func signalKeyDeriver(signal: @escaping () -> Void) -> KeyDeriverMock {
+        let deriver1 = KeyDeriverMock()
+        deriver1.keyHandler = { _, _ in
+            signal()
+            return Data()
         }
         return deriver1
     }
