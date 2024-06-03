@@ -21,7 +21,7 @@ struct BackupView: View {
         Form {
             createPasswordSection
         }
-        .navigationTitle(Text("Backup"))
+        .navigationTitle(Text(viewModel.strings.homeTitle))
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case .updatePassword:
@@ -37,21 +37,25 @@ struct BackupView: View {
         Section {
             switch viewModel.passwordState {
             case .loading:
-                Text("Loading...")
+                Text(viewModel.strings.backupPasswordLoadingTitle)
             case .hasExistingPassword:
                 Button {
                     modal = .updatePassword
                 } label: {
-                    Text("Update Backup Password")
+                    Text(viewModel.strings.backupPasswordUpdateTitle)
                 }
             case .noExistingPassword:
                 Button {
                     modal = .updatePassword
                 } label: {
-                    Text("Set Backup Password")
+                    Text(viewModel.strings.backupPasswordCreateTitle)
                 }
             case .error:
-                Text("Error fetching backup password state")
+                Text(viewModel.strings.backupPasswordErrorTitle)
+            }
+        } footer: {
+            if viewModel.passwordState == .error {
+                Text(viewModel.strings.backupPasswordErrorDetail)
             }
         }
     }
