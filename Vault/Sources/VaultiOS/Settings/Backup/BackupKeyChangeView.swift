@@ -14,6 +14,7 @@ struct BackupKeyChangeView: View {
         Form {
             passwordSection
             keySection
+            detailsSection
         }
         .navigationTitle(Text("Backup Password"))
         .navigationBarTitleDisplayMode(.inline)
@@ -24,7 +25,10 @@ struct BackupKeyChangeView: View {
 
     private var passwordSection: some View {
         Section {
-            TextField("Password", text: $viewModel.newlyEnteredPassword)
+            TextField("New Password", text: $viewModel.newlyEnteredPassword)
+                .disabled(viewModel.newPassword.isLoading)
+
+            TextField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
                 .disabled(viewModel.newPassword.isLoading)
 
             Button {
@@ -37,10 +41,6 @@ struct BackupKeyChangeView: View {
             }
             .disabled(viewModel.newPassword.isLoading)
             .shimmering(active: viewModel.newPassword.isLoading)
-        } header: {
-            Text("Update password")
-        } footer: {
-            Text(viewModel.encryptionKeyDeriverDescription)
         }
     }
 
@@ -59,6 +59,44 @@ struct BackupKeyChangeView: View {
             }
         } header: {
             Text("Current encryption key and salt")
+        }
+    }
+
+    private var detailsSection: some View {
+        Section {
+            DisclosureGroup {
+                Group {
+                    Text("Your password is used to generate an encryption key that is used to secure your vault.")
+                    Text(
+                        "For security, this key generation process may take up to 3 minutes, even on a very fast device."
+                    )
+                    Text(
+                        "The encryption key is not automatically synced between devices, it must be shared manually. This is also for security."
+                    )
+                }
+                .font(.callout)
+                .foregroundStyle(.secondary)
+            } label: {
+                Label("About", systemImage: "questionmark.circle.fill")
+            }
+
+            DisclosureGroup {
+                LabeledContent {
+                    Text(viewModel.encryptionKeyDeriverSignature.userVisibleDescription)
+                } label: {
+                    Text("Algorithm")
+                }
+
+                LabeledContent {
+                    Text(viewModel.encryptionKeyDeriverSignature.id)
+                        .font(.caption2)
+                        .fontDesign(.monospaced)
+                } label: {
+                    Text("ID")
+                }
+            } label: {
+                Label("Keygen Information", systemImage: "questionmark.key.filled")
+            }
         }
     }
 }

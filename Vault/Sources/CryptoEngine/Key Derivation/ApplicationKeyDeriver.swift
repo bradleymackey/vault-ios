@@ -29,18 +29,18 @@ public struct ApplicationKeyDeriver: KeyDeriver {
     public var uniqueAlgorithmIdentifier: String {
         deriver.uniqueAlgorithmIdentifier
     }
-
-    public var userVisibleDescription: String {
-        signature.userVisibleDescription
-    }
 }
 
 extension ApplicationKeyDeriver {
     /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
     /// so a given key can be recreated.
-    public enum Signature: String, Equatable, Codable {
+    public enum Signature: String, Equatable, Codable, Identifiable {
         case fastV1 = "vault.keygen.default.fast-v1"
         case secureV1 = "vault.keygen.default.secure-v1"
+
+        public var id: String {
+            rawValue
+        }
 
         public var userVisibleDescription: String {
             switch self {

@@ -27,6 +27,7 @@ public final class BackupKeyChangeViewModel {
     }
 
     public var newlyEnteredPassword = ""
+    public var newlyEnteredPasswordConfirm = ""
     public private(set) var existingPassword: ExistingPasswordState = .loading
     public private(set) var newPassword: NewPasswordState = .neutral
     private let encryptionKeyDeriver: ApplicationKeyDeriver
@@ -37,8 +38,8 @@ public final class BackupKeyChangeViewModel {
         encryptionKeyDeriver = BackupPassword.makeAppropriateEncryptionKeyDeriver()
     }
 
-    public var encryptionKeyDeriverDescription: String {
-        encryptionKeyDeriver.userVisibleDescription
+    public var encryptionKeyDeriverSignature: ApplicationKeyDeriver.Signature {
+        encryptionKeyDeriver.signature
     }
 
     public func loadInitialData() {
