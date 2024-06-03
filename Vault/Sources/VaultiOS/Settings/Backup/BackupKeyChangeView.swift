@@ -26,11 +26,11 @@ struct BackupKeyChangeView: View {
 
     private var passwordSection: some View {
         Section {
-            TextField("New Password", text: $viewModel.newlyEnteredPassword)
+            SecureField("New Password", text: $viewModel.newlyEnteredPassword)
                 .disabled(viewModel.newPassword.isLoading)
 
             if viewModel.newlyEnteredPassword.isNotEmpty {
-                TextField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
+                SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
                     .disabled(viewModel.newPassword.isLoading)
             }
 
