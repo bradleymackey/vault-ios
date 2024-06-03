@@ -18,6 +18,7 @@ struct BackupKeyChangeView: View {
         }
         .navigationTitle(Text("Backup Password"))
         .navigationBarTitleDisplayMode(.inline)
+        .interactiveDismissDisabled(viewModel.newPassword.isLoading)
         .task {
             viewModel.loadInitialData()
         }
@@ -28,8 +29,10 @@ struct BackupKeyChangeView: View {
             TextField("New Password", text: $viewModel.newlyEnteredPassword)
                 .disabled(viewModel.newPassword.isLoading)
 
-            TextField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
-                .disabled(viewModel.newPassword.isLoading)
+            if viewModel.newlyEnteredPassword.isNotEmpty {
+                TextField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
+                    .disabled(viewModel.newPassword.isLoading)
+            }
 
             Button {
                 Task {
@@ -42,6 +45,8 @@ struct BackupKeyChangeView: View {
             .disabled(viewModel.newPassword.isLoading)
             .shimmering(active: viewModel.newPassword.isLoading)
         }
+        .animation(.easeOut, value: viewModel.newlyEnteredPassword)
+        .transition(.move(edge: .leading))
     }
 
     private var keySection: some View {
