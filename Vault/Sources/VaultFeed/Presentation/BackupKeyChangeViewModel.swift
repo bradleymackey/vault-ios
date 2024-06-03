@@ -15,30 +15,33 @@ public final class BackupKeyChangeViewModel {
     public enum NewPasswordState: Equatable, Hashable {
         case neutral
         case creating
-        case error
+        case keygenError
+        case keygenCancelled
+        case passwordConfirmError
         case success
 
         public var isLoading: Bool {
             switch self {
-            case .neutral, .error, .success: false
+            case .neutral, .keygenError, .keygenCancelled, .passwordConfirmError, .success: false
             case .creating: true
             }
         }
     }
 
     public var newlyEnteredPassword = ""
+    public var newlyEnteredPasswordConfirm = ""
     public private(set) var existingPassword: ExistingPasswordState = .loading
     public private(set) var newPassword: NewPasswordState = .neutral
     private let encryptionKeyDeriver: ApplicationKeyDeriver
     private let store: any BackupPasswordStore
 
-    public init(store: any BackupPasswordStore) {
+    public init(store: any BackupPasswordStore, deriverFactory: some ApplicationKeyDeriverFactory) {
         self.store = store
-        encryptionKeyDeriver = BackupPassword.makeAppropriateEncryptionKeyDeriver()
+        encryptionKeyDeriver = deriverFactory.makeApplicationKeyDeriver()
     }
 
-    public var encryptionKeyDeriverDescription: String {
-        encryptionKeyDeriver.userVisibleDescription
+    public var encryptionKeyDeriverSignature: ApplicationKeyDeriver.Signature {
+        encryptionKeyDeriver.signature
     }
 
     public func loadInitialData() {
@@ -53,26 +56,40 @@ public final class BackupKeyChangeViewModel {
         }
     }
 
+    private struct PasswordConfirmError: Error {}
+
     public func saveEnteredPassword() async {
         do {
+            guard newlyEnteredPassword == newlyEnteredPasswordConfirm else {
+                throw PasswordConfirmError()
+            }
+
             newPassword = .creating
             let createdBackupPassword = try await computeNewKey(text: newlyEnteredPassword)
             try store.set(password: createdBackupPassword)
             newPassword = .success
             existingPassword = .hasExistingPassword(createdBackupPassword)
+            newlyEnteredPassword = ""
+            newlyEnteredPasswordConfirm = ""
+        } catch is PasswordConfirmError {
+            newPassword = .passwordConfirmError
+        } catch is CancellationError {
+            newPassword = .keygenCancelled
         } catch {
-            newPassword = .error
+            newPassword = .keygenError
         }
     }
 
     private nonisolated func computeNewKey(text: String) async throws -> BackupPassword {
         let deriver = encryptionKeyDeriver
-        return try await withCheckedThrowingContinuation { cont in
+        let generatedPassword = try await withCheckedThrowingContinuation { cont in
             DispatchQueue.global(qos: .utility).async {
                 cont.resume(with: Result {
                     try BackupPassword.createEncryptionKey(deriver: deriver, text: text)
                 })
             }
         }
+        try Task.checkCancellation()
+        return generatedPassword
     }
 }

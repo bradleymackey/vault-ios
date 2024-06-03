@@ -1,6 +1,15 @@
 import Foundation
 
 public enum VaultAppKeyDerivers {
+    /// A key deriver that's really fast, just for testing.
+    public static let testing: ApplicationKeyDeriver = {
+        let deriver = HKDFKeyDeriver(parameters: .init(keyLength: 32, variant: .sha3_sha512))
+        return ApplicationKeyDeriver(
+            deriver: deriver,
+            signature: .fastV1
+        )
+    }()
+
     public enum V1 {
         /// V1 fast key deriver.
         ///
