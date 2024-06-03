@@ -37,7 +37,6 @@ struct BackupKeyChangeView: View {
             Button {
                 Task {
                     await viewModel.saveEnteredPassword()
-                    viewModel.newlyEnteredPassword = ""
                 }
             } label: {
                 Text(viewModel.newPassword.isLoading ? "Generating" : "Update")

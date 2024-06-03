@@ -15,12 +15,13 @@ public final class BackupKeyChangeViewModel {
     public enum NewPasswordState: Equatable, Hashable {
         case neutral
         case creating
-        case error
+        case keygenError
+        case passwordConfirmError
         case success
 
         public var isLoading: Bool {
             switch self {
-            case .neutral, .error, .success: false
+            case .neutral, .keygenError, .passwordConfirmError, .success: false
             case .creating: true
             }
         }
@@ -54,15 +55,25 @@ public final class BackupKeyChangeViewModel {
         }
     }
 
+    private struct PasswordConfirmError: Error {}
+
     public func saveEnteredPassword() async {
         do {
+            guard newlyEnteredPassword == newlyEnteredPasswordConfirm else {
+                throw PasswordConfirmError()
+            }
+
             newPassword = .creating
             let createdBackupPassword = try await computeNewKey(text: newlyEnteredPassword)
             try store.set(password: createdBackupPassword)
             newPassword = .success
             existingPassword = .hasExistingPassword(createdBackupPassword)
+            newlyEnteredPassword = ""
+            newlyEnteredPasswordConfirm = ""
+        } catch is PasswordConfirmError {
+            newPassword = .passwordConfirmError
         } catch {
-            newPassword = .error
+            newPassword = .keygenError
         }
     }
 
