@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import VaultFeed
+import VaultUI
 
 @MainActor
 struct BackupKeyChangeView: View {
@@ -19,6 +20,7 @@ struct BackupKeyChangeView: View {
         .navigationTitle(Text("Backup Password"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.newPassword.isLoading)
+        .animation(.easeOut, value: viewModel.newlyEnteredPassword.isNotEmpty)
         .task {
             viewModel.loadInitialData()
         }
@@ -34,15 +36,24 @@ struct BackupKeyChangeView: View {
                     .disabled(viewModel.newPassword.isLoading)
             }
 
-            Button {
-                Task {
-                    await viewModel.saveEnteredPassword()
+        } footer: {
+            StandaloneButton {
+                await viewModel.saveEnteredPassword()
+            } content: {
+                if !viewModel.newPassword.isLoading {
+                    Text("Update Password")
+                } else {
+                    HStack(alignment: .center, spacing: 8) {
+                        ProgressView()
+                        Text("Generating")
+                            .shimmering(active: viewModel.newPassword.isLoading)
+                    }
                 }
-            } label: {
-                Text(viewModel.newPassword.isLoading ? "Generating" : "Update")
             }
+            .animation(.none, value: viewModel.newPassword)
             .disabled(viewModel.newPassword.isLoading)
-            .shimmering(active: viewModel.newPassword.isLoading)
+            .padding()
+            .modifier(HorizontallyCenter())
         }
         .animation(.easeOut, value: viewModel.newlyEnteredPassword)
         .transition(.move(edge: .leading))
