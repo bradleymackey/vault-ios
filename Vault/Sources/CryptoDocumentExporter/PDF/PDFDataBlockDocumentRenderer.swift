@@ -3,7 +3,7 @@ import PDFKit
 import UIKit
 
 public struct PDFDataBlockDocumentRenderer<
-    ImageRenderer: PDFImageRenderer,
+    ImageRenderer: DataToImageRenderer,
     RectLayout: RectSeriesLayout & PageLayout
 >: PDFDocumentRenderer {
     public typealias Document = DataBlockDocument
@@ -110,7 +110,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
 
     func draw(
         images: [Data],
-        imageRenderer: some PDFImageRenderer,
+        imageRenderer: some DataToImageRenderer,
         rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout
     ) {
         var currentImageNumberOnPage: UInt = 0

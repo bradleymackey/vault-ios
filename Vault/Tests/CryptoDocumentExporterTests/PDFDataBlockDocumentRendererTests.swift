@@ -52,9 +52,9 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 extension PDFDataBlockDocumentRendererTests {
     private func makeSUT(
         rendererFactory: PDFRendererFactoryMock = makeRendererFactory(),
-        imageRenderer: PDFImageRendererMock = makeImageRenderer(),
+        imageRenderer: DataToImageRendererMock = makeImageRenderer(),
         rectLayout: LayoutSpy = LayoutSpy()
-    ) -> PDFDataBlockDocumentRenderer<PDFImageRendererMock, LayoutSpy> {
+    ) -> PDFDataBlockDocumentRenderer<DataToImageRendererMock, LayoutSpy> {
         PDFDataBlockDocumentRenderer(
             documentSize: USLetterDocumentSize(),
             rendererFactory: rendererFactory,
@@ -90,8 +90,8 @@ private class LayoutSpy: RectSeriesLayout, PageLayout {
     }
 }
 
-private func makeImageRenderer() -> PDFImageRendererMock {
-    let stub = PDFImageRendererMock()
+private func makeImageRenderer() -> DataToImageRendererMock {
+    let stub = DataToImageRendererMock()
     stub.makeImageHandler = { _, _ in nil }
     return stub
 }

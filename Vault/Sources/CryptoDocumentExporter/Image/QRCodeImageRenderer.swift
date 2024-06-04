@@ -2,7 +2,7 @@ import Foundation
 import UIKit
 
 /// Image renderer for QR codes.
-public struct QRCodeImageRenderer: PDFImageRenderer {
+public struct QRCodeImageRenderer: DataToImageRenderer {
     public init() {}
 
     public func makeImage(fromData data: Data, size: CGSize) -> UIImage? {
