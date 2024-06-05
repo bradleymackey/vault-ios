@@ -146,7 +146,7 @@ extension IntermediateEncodedVaultEncoderTests {
         items: [VaultBackupItem] = []
     ) -> VaultBackupPayload {
         VaultBackupPayload(
-            version: .v1_0_0,
+            version: "1.0.0",
             created: created,
             userDescription: userDescription,
             items: items,

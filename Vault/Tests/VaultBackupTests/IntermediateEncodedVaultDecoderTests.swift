@@ -22,7 +22,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
     func test_decodeVault_decodesZeroItems() throws {
         let sut = makeSUT()
         let input = VaultBackupPayload(
-            version: .v1_0_0,
+            version: "1.0.0",
             created: Date(timeIntervalSince1970: 1_700_575_468),
             userDescription: "my description",
             items: [],
@@ -99,7 +99,7 @@ extension IntermediateEncodedVaultDecoderTests {
         items: [VaultBackupItem] = []
     ) -> VaultBackupPayload {
         VaultBackupPayload(
-            version: .v1_0_0,
+            version: "1.0.0",
             created: created,
             userDescription: userDescription,
             items: items,
