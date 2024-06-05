@@ -1,7 +1,7 @@
 import Foundation
 import FoundationExtensions
 
-struct BackupPasswordExport {
+public struct BackupPasswordExport {
     /// The version for this export, since it may be exported and imported
     /// by different versions of the vault app binary.
     var version: SemVer
@@ -14,5 +14,17 @@ extension BackupPasswordExport: Codable {
         case version = "VERSION"
         case key = "KEY"
         case salt = "SALT"
+    }
+}
+
+// MARK: - Versions
+
+extension BackupPasswordExport {
+    static func createV1Export(key: Data, salt: Data) -> BackupPasswordExport {
+        BackupPasswordExport(
+            version: "1.0.0",
+            key: key,
+            salt: salt
+        )
     }
 }
