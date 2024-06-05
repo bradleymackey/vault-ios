@@ -33,7 +33,7 @@ public final class VaultBackupEncoder {
     /// Encodes and encrypts a vault providing a payload.
     public func createExportPayload(items: [VaultBackupItem], userDescription: String) throws -> EncryptedVault {
         let payload = VaultBackupPayload(
-            version: .v1_0_0,
+            version: "1.0.0",
             created: clock.currentDate,
             userDescription: userDescription,
             items: items,

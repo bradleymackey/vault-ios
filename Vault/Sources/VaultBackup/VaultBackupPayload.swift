@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// A full backup of the user's vault.
 ///
@@ -8,7 +9,7 @@ public struct VaultBackupPayload: Codable, Equatable {
     /// Version of this backup, determined when the backup was initially created.
     ///
     /// Determines the decoding structure. This allows for future breaking changes.
-    public var version: VaultBackupVersion
+    public var version: SemVer
     /// The date that the backup was created.
     public var created: Date
     /// Custom user provided desciption attached to the backup.

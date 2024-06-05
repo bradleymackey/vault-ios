@@ -5,6 +5,22 @@ import XCTest
 @testable import VaultBackup
 
 final class VaultBackupDecoderTests: XCTestCase {
+    func test_extractBackupPayload_throwsForIncompatibleVersion() throws {
+        let key = Data(repeating: 0xAA, count: 32)
+        let sut = makeSUT(key: key)
+
+        var encryptedVault = EncryptedVault(
+            data: Data(),
+            authentication: Data(),
+            encryptionIV: Data(),
+            keygenSalt: Data(),
+            keygenSignature: .fastV1
+        )
+        encryptedVault.version = "2.0.0"
+
+        XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
+    }
+
     func test_extractBackupPayload_decryptsVaultWithCorrectKey() throws {
         let key = Data(repeating: 0xAA, count: 32)
         let sut = makeSUT(key: key)
@@ -31,7 +47,7 @@ final class VaultBackupDecoderTests: XCTestCase {
 
         XCTAssertEqual(backup.items, [])
         XCTAssertEqual(backup.obfuscationPadding, Data())
-        XCTAssertEqual(backup.version, .v1_0_0)
+        XCTAssertEqual(backup.version, "1.0.0")
         XCTAssertEqual(backup.created, .init(timeIntervalSince1970: 1234))
     }
 

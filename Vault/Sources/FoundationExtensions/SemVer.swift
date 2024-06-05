@@ -1,5 +1,6 @@
 import Foundation
 
+/// Semantic Version number to indicate versioning and compatibility.
 public struct SemVer: Equatable, Hashable {
     public var major: Int
     public var minor: Int
