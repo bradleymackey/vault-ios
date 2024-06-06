@@ -26,9 +26,9 @@ final class UIImageResizerTests: XCTestCase {
     }
 
     private func exampleSmallImage() throws -> UIImage {
-        let qr = QRCodeGenerator()
+        let qr = QRCodeImageRenderer()
         let data = Data(repeating: 0xFF, count: 200)
-        let imageData = try XCTUnwrap(qr.generatePNG(data: data))
-        return try XCTUnwrap(UIImage(data: imageData))
+        let image = try XCTUnwrap(qr.makeImage(fromData: data, size: nil))
+        return image
     }
 }

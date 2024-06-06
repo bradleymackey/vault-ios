@@ -41,8 +41,12 @@ public struct PDFDataBlockDocumentRenderer<
                 switch content {
                 case let .title(label):
                     drawer.draw(label: label)
-                case let .images(imageData):
-                    drawer.draw(images: imageData, imageRenderer: imageRenderer, rectSeriesLayout: blockLayout)
+                case let .dataBlock(imageData):
+                    drawer.draw(
+                        images: imageData,
+                        imageRenderer: imageRenderer,
+                        rectSeriesLayout: blockLayout
+                    )
                 }
             }
         }

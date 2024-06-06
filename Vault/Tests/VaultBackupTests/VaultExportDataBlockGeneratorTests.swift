@@ -23,7 +23,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
             "TITLE: Vault Export",
             "TITLE: my desc",
             "TITLE: Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are 1 QR codes.",
-            "IMAGES: count:1",
+            "DATA BLOCK: count:1",
         ])
     }
 
@@ -59,7 +59,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
             "TITLE: I think everyone is lame",
             "TITLE: nice",
             "TITLE: Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are 1 QR codes.",
-            "IMAGES: count:1",
+            "DATA BLOCK: count:1",
         ])
     }
 }
