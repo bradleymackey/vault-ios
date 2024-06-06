@@ -10,13 +10,14 @@ public struct DataBlockDocument {
     public enum Content: CustomDebugStringConvertible {
         /// A piece of text rendered as a label.
         case title(DataBlockLabel)
-        /// A series of images, which will draw the PNG data to the document as a sqaure, tiling the images.
-        case images([Data])
+        /// A series of data blobs, which should be rendered in a user-visible format to the document.
+        /// A QR code for each data item might be a good idea :)
+        case dataBlock([Data])
 
         public var debugDescription: String {
             switch self {
             case let .title(label): "TITLE: \(label.text)"
-            case let .images(data): "IMAGES: count:\(data.count)"
+            case let .dataBlock(data): "DATA BLOCK: count:\(data.count)"
             }
         }
     }

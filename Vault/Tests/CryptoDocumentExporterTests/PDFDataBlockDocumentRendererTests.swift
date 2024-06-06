@@ -1,5 +1,6 @@
 import CryptoDocumentExporter
 import Foundation
+import ImageTools
 import TestHelpers
 import XCTest
 
@@ -52,9 +53,9 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 extension PDFDataBlockDocumentRendererTests {
     private func makeSUT(
         rendererFactory: PDFRendererFactoryMock = makeRendererFactory(),
-        imageRenderer: DataToImageRendererMock = makeImageRenderer(),
+        imageRenderer: ImageDataRendererMock = makeImageRenderer(),
         rectLayout: LayoutSpy = LayoutSpy()
-    ) -> PDFDataBlockDocumentRenderer<DataToImageRendererMock, LayoutSpy> {
+    ) -> PDFDataBlockDocumentRenderer<ImageDataRendererMock, LayoutSpy> {
         PDFDataBlockDocumentRenderer(
             documentSize: USLetterDocumentSize(),
             rendererFactory: rendererFactory,
@@ -90,8 +91,8 @@ private class LayoutSpy: RectSeriesLayout, PageLayout {
     }
 }
 
-private func makeImageRenderer() -> DataToImageRendererMock {
-    let stub = DataToImageRendererMock()
+private func makeImageRenderer() -> ImageDataRendererMock {
+    let stub = ImageDataRendererMock()
     stub.makeImageHandler = { _, _ in nil }
     return stub
 }

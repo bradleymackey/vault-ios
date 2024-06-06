@@ -1,4 +1,5 @@
 import CryptoDocumentExporter
+import ImageTools
 import PDFKit
 import TestHelpers
 import XCTest
@@ -18,7 +19,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsSingleImage() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockDocument(content: [.images([anyData()])])
+        let document = DataBlockDocument(content: [.dataBlock([anyData()])])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -26,7 +27,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsRowOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 3))])
+        let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 3))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -68,11 +69,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     func test_render_drawsIntersposedImagesAndTitles() throws {
         let sut = makeSUT(tilesPerRow: 10)
         let document = DataBlockDocument(content: [
-            .images(Array(repeating: anyData(), count: 10)),
+            .dataBlock(Array(repeating: anyData(), count: 10)),
             .title(longSubtitle(padding: .zero)),
-            .images(Array(repeating: anyData(), count: 3)),
+            .dataBlock(Array(repeating: anyData(), count: 3)),
             .title(longSubtitle(padding: .zero)),
-            .images(Array(repeating: anyData(), count: 2)),
+            .dataBlock(Array(repeating: anyData(), count: 2)),
             .title(longSubtitle(padding: .zero)),
         ])
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -83,11 +84,11 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
     func test_render_drawsLabelsOnNextPageIfNotEnoughRoom() throws {
         let sut = makeSUT(tilesPerRow: 10)
         let document = DataBlockDocument(content: [
-            .images(Array(repeating: anyData(), count: 10)),
+            .dataBlock(Array(repeating: anyData(), count: 10)),
             .title(longSubtitle(padding: .zero)),
-            .images(Array(repeating: anyData(), count: 3)),
+            .dataBlock(Array(repeating: anyData(), count: 3)),
             .title(longSubtitle(padding: .zero)),
-            .images(Array(repeating: anyData(), count: 2)),
+            .dataBlock(Array(repeating: anyData(), count: 2)),
             .title(longSubtitle(padding: .zero)),
             .title(longSubtitle(padding: .zero)),
             .title(longSubtitle(padding: .zero)),
@@ -105,7 +106,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
         let sut = makeSUT(tilesPerRow: 10)
-        let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 24))])
+        let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 24))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf())
@@ -113,7 +114,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
     func test_render_drawsMultiplePagesOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let document = DataBlockDocument(content: [.images(Array(repeating: anyData(), count: 14))])
+        let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 14))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
         assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
@@ -130,7 +131,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -149,7 +150,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -168,7 +169,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -187,7 +188,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -206,7 +207,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             content: [
                 .title(titleLabel),
                 .title(longSubtitle()),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -221,7 +222,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(
             content: [
                 .title(label),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -236,7 +237,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(
             content: [
                 .title(label),
-                .images(Array(repeating: anyData(), count: 14)),
+                .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -252,7 +253,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             content: [
                 .title(title),
                 .title(subtitle),
-                .images(Array(repeating: anyData(), count: 0)),
+                .dataBlock(Array(repeating: anyData(), count: 0)),
             ]
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
@@ -363,7 +364,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
             content: [
                 .title(title),
                 .title(subtitle),
-                .images(Array(repeating: anyData(), count: numberOfImages)),
+                .dataBlock(Array(repeating: anyData(), count: numberOfImages)),
             ]
         )
         return try XCTUnwrap(sut.render(document: document))
@@ -395,19 +396,23 @@ private struct StubPDFRendererFactory: PDFRendererFactory {
     var size: any PDFDocumentSize = USLetterDocumentSize()
 }
 
-private class RGBCyclingStubColorImageRenderer: DataToImageRenderer {
+private class RGBCyclingStubColorImageRenderer: ImageDataRenderer {
     var states: [UIColor] = [.red, .green, .blue]
     var currentState = 0
-    func makeImage(fromData _: Data, size: CGSize) -> UIImage? {
+    func makeImage(fromData _: Data, size: CGSize?) -> UIImage? {
         defer { currentState += 1 }
         let image = UIImage.from(color: states[currentState % states.count])
-        let resizer = UIImageResizer(mode: .noSmoothing)
-        return resizer.resize(image: image, to: size)
+        if let size {
+            let resizer = UIImageResizer(mode: .noSmoothing)
+            return resizer.resize(image: image, to: size)
+        } else {
+            return image
+        }
     }
 }
 
-private class PlainBlackColorImageRenderer: DataToImageRenderer {
-    func makeImage(fromData _: Data, size _: CGSize) -> UIImage? {
+private class PlainBlackColorImageRenderer: ImageDataRenderer {
+    func makeImage(fromData _: Data, size _: CGSize?) -> UIImage? {
         UIImage.from(color: .black)
     }
 }

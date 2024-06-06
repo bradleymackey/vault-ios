@@ -23,9 +23,9 @@ struct VaultExportDataBlockGenerator {
         for descriptionLabel in makeUserDescriptionLabels() {
             document.content.append(.title(descriptionLabel))
         }
-        let qrCodeImages = try makeQRCodeImagesFromVault()
-        document.content.append(.title(makeQRCodeHelperLabel(totalCodes: qrCodeImages.count)))
-        document.content.append(.images(qrCodeImages))
+        let encodedShards = try makeEncodedShardsFromVault()
+        document.content.append(.title(makeQRCodeHelperLabel(totalCodes: encodedShards.count)))
+        document.content.append(.dataBlock(encodedShards))
         return document
     }
 }
@@ -63,10 +63,10 @@ extension VaultExportDataBlockGenerator {
         )
     }
 
-    private func makeQRCodeImagesFromVault() throws -> [Data] {
+    private func makeEncodedShardsFromVault() throws -> [Data] {
         let coder = EncryptedVaultCoder()
         let encodedVault = try coder.encode(vault: payload.encryptedVault)
-        let pngEncoder = DataShardPNGEncoder(dataShardBuilder: dataShardBuilder)
-        return try pngEncoder.makeQRCodePNGs(fromData: encodedVault)
+        let shardEncoder = DataShardEncoder(dataShardBuilder: dataShardBuilder)
+        return try shardEncoder.makeEncodedShards(fromData: encodedVault)
     }
 }

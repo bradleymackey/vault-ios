@@ -1,0 +1,25 @@
+{
+  "configurations" : [
+    {
+      "id" : "8ABD21A2-441B-431B-A524-CFFECB9A7E37",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "language" : "en",
+    "region" : "US"
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "ImageToolsTests",
+        "name" : "ImageToolsTests"
+      }
+    }
+  ],
+  "version" : 1
+}

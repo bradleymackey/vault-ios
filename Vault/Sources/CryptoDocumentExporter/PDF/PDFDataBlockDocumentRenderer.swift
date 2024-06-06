@@ -1,9 +1,10 @@
 import Foundation
+import ImageTools
 import PDFKit
 import UIKit
 
 public struct PDFDataBlockDocumentRenderer<
-    ImageRenderer: DataToImageRenderer,
+    ImageRenderer: ImageDataRenderer,
     RectLayout: RectSeriesLayout & PageLayout
 >: PDFDocumentRenderer {
     public typealias Document = DataBlockDocument
@@ -40,8 +41,12 @@ public struct PDFDataBlockDocumentRenderer<
                 switch content {
                 case let .title(label):
                     drawer.draw(label: label)
-                case let .images(imageData):
-                    drawer.draw(images: imageData, imageRenderer: imageRenderer, rectSeriesLayout: blockLayout)
+                case let .dataBlock(imageData):
+                    drawer.draw(
+                        images: imageData,
+                        imageRenderer: imageRenderer,
+                        rectSeriesLayout: blockLayout
+                    )
                 }
             }
         }
@@ -110,7 +115,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
 
     func draw(
         images: [Data],
-        imageRenderer: some DataToImageRenderer,
+        imageRenderer: some ImageDataRenderer,
         rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout
     ) {
         var currentImageNumberOnPage: UInt = 0

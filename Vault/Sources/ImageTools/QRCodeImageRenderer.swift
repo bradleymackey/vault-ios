@@ -1,15 +1,29 @@
 import CoreGraphics
 import CoreImage
 import Foundation
+import UIKit
 
-public struct QRCodeGenerator {
+/// Renders the provided data into a QR code.
+public struct QRCodeImageRenderer: ImageDataRenderer {
     public init() {}
 
-    /// Generates PNG data for a QR code containing the provided `data`.
-    public func generatePNG(data: Data) -> Data? {
-        CIFilter.qrCode(data: data)?.outputImage?.asPNG()
+    public func makeImage(fromData data: Data, size: CGSize?) -> UIImage? {
+        guard
+            let qrCodePNGData = CIFilter.qrCode(data: data)?.outputImage?.asPNG(),
+            let image = UIImage(data: qrCodePNGData)
+        else {
+            return nil
+        }
+        if let size {
+            let resizer = UIImageResizer(mode: .noSmoothing)
+            return resizer.resize(image: image, to: size)
+        } else {
+            return image
+        }
     }
 }
+
+// MARK: - QR code generation
 
 extension CIFilter {
     /// Create a filter to produce a QRCode from the provided data.
