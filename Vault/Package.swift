@@ -113,6 +113,7 @@ let package = Package(
             dependencies: [
                 "CryptoEngine",
                 "FoundationExtensions",
+                "ImageTools",
             ],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
@@ -121,6 +122,7 @@ let package = Package(
             name: "CryptoDocumentExporterTests",
             dependencies: [
                 "CryptoDocumentExporter",
+                "ImageTools",
                 "TestHelpers",
             ],
             swiftSettings: swiftSettings
@@ -129,6 +131,28 @@ let package = Package(
             name: "CryptoDocumentExporterSnapshotTests",
             dependencies: [
                 "CryptoDocumentExporter",
+                "ImageTools",
+                "TestHelpers",
+                .product(
+                    name: "SnapshotTesting",
+                    package: "swift-snapshot-testing"
+                ),
+            ],
+            exclude: ["__Snapshots__"],
+            swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "ImageTools",
+            dependencies: [
+                "FoundationExtensions",
+            ],
+            swiftSettings: swiftSettings,
+            plugins: [.plugin(name: "RunMockolo")]
+        ),
+        .testTarget(
+            name: "ImageToolsTests",
+            dependencies: [
+                "ImageTools",
                 "TestHelpers",
                 .product(
                     name: "SnapshotTesting",

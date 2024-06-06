@@ -1,5 +1,6 @@
 import CryptoDocumentExporter
 import Foundation
+import ImageTools
 
 struct DataShardPNGEncoder {
     private let dataShardBuilder: DataShardBuilder

@@ -1,5 +1,6 @@
 import CryptoDocumentExporter
 import Foundation
+import ImageTools
 import PDFKit
 
 public struct VaultBackupPDFGenerator {

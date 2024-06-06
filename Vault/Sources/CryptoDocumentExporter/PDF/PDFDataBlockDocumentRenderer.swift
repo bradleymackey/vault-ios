@@ -1,4 +1,5 @@
 import Foundation
+import ImageTools
 import PDFKit
 import UIKit
 

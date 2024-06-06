@@ -1,4 +1,5 @@
 import CryptoDocumentExporter
+import ImageTools
 import PDFKit
 import TestHelpers
 import XCTest
