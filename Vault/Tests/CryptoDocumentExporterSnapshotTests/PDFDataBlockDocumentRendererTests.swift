@@ -396,7 +396,7 @@ private struct StubPDFRendererFactory: PDFRendererFactory {
     var size: any PDFDocumentSize = USLetterDocumentSize()
 }
 
-private class RGBCyclingStubColorImageRenderer: DataToImageRenderer {
+private class RGBCyclingStubColorImageRenderer: ImageDataRenderer {
     var states: [UIColor] = [.red, .green, .blue]
     var currentState = 0
     func makeImage(fromData _: Data, size: CGSize) -> UIImage? {
@@ -407,7 +407,7 @@ private class RGBCyclingStubColorImageRenderer: DataToImageRenderer {
     }
 }
 
-private class PlainBlackColorImageRenderer: DataToImageRenderer {
+private class PlainBlackColorImageRenderer: ImageDataRenderer {
     func makeImage(fromData _: Data, size _: CGSize) -> UIImage? {
         UIImage.from(color: .black)
     }
