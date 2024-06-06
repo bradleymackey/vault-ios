@@ -91,6 +91,13 @@
         "identifier" : "VaultBackupTests",
         "name" : "VaultBackupTests"
       }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "ImageToolsTests",
+        "name" : "ImageToolsTests"
+      }
     }
   ],
   "version" : 1
