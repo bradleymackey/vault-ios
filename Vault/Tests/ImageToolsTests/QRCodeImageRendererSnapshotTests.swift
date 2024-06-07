@@ -5,28 +5,19 @@ import UIKit
 import XCTest
 
 final class QRCodeImageRendererSnapshotTests: XCTestCase {
-    func test_makeImage_generatesNaturalSizeWithEmptyData() throws {
+    func test_makeImage_generatesWithEmptyData() throws {
         let sut = makeSUT()
 
-        let image = try XCTUnwrap(sut.makeImage(fromData: Data(), size: nil))
+        let image = try XCTUnwrap(sut.makeImage(fromData: Data()))
 
         assertSnapshot(matching: image, as: .image)
     }
 
-    func test_makeImage_generatesNaturalSizeWithSomeData() throws {
+    func test_makeImage_generatesWithSomeData() throws {
         let sut = makeSUT()
 
         let data = Data(repeating: 0xFF, count: 200)
-        let image = try XCTUnwrap(sut.makeImage(fromData: data, size: nil))
-
-        assertSnapshot(matching: image, as: .image)
-    }
-
-    func test_makeImage_generatesResizedWithSomeData() throws {
-        let sut = makeSUT()
-
-        let data = Data(repeating: 0xFF, count: 200)
-        let image = try XCTUnwrap(sut.makeImage(fromData: data, size: CGSize(width: 200, height: 200)))
+        let image = try XCTUnwrap(sut.makeImage(fromData: data))
 
         assertSnapshot(matching: image, as: .image)
     }

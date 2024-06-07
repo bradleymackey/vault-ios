@@ -7,19 +7,11 @@ import UIKit
 public struct QRCodeImageRenderer: ImageDataRenderer {
     public init() {}
 
-    public func makeImage(fromData data: Data, size: CGSize?) -> UIImage? {
-        guard
-            let qrCodePNGData = CIFilter.qrCode(data: data)?.outputImage?.asPNG(),
-            let image = UIImage(data: qrCodePNGData)
-        else {
+    public func makeImage(fromData data: Data) -> UIImage? {
+        guard let pngData = CIFilter.qrCode(data: data)?.outputImage?.asPNG() else {
             return nil
         }
-        if let size {
-            let resizer = UIImageResizer(mode: .noSmoothing)
-            return resizer.resize(image: image, to: size)
-        } else {
-            return image
-        }
+        return UIImage(data: pngData)
     }
 }
 

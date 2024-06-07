@@ -128,7 +128,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 guard let rect = currentLayoutEngine.rect(atIndex: currentImageNumberOnPage) else {
                     return .failure(.insufficientSpace)
                 }
-                guard let image = imageRenderer.makeImage(fromData: imageData, size: rect.size) else {
+                guard let image = imageRenderer.resizing(to: rect.size).makeImage(fromData: imageData) else {
                     return .failure(.contentMissing)
                 }
                 image.draw(in: rect)
