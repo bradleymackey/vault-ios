@@ -93,7 +93,7 @@ private class LayoutSpy: RectSeriesLayout, PageLayout {
 
 private func makeImageRenderer() -> ImageDataRendererMock {
     let stub = ImageDataRendererMock()
-    stub.makeImageHandler = { _, _ in nil }
+    stub.makeImageHandler = { _ in nil }
     return stub
 }
 

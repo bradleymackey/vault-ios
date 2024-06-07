@@ -399,20 +399,14 @@ private struct StubPDFRendererFactory: PDFRendererFactory {
 private class RGBCyclingStubColorImageRenderer: ImageDataRenderer {
     var states: [UIColor] = [.red, .green, .blue]
     var currentState = 0
-    func makeImage(fromData _: Data, size: CGSize?) -> UIImage? {
+    func makeImage(fromData _: Data) -> UIImage? {
         defer { currentState += 1 }
-        let image = UIImage.from(color: states[currentState % states.count])
-        if let size {
-            let resizer = UIImageResizer(mode: .noSmoothing)
-            return resizer.resize(image: image, to: size)
-        } else {
-            return image
-        }
+        return UIImage.from(color: states[currentState % states.count])
     }
 }
 
 private class PlainBlackColorImageRenderer: ImageDataRenderer {
-    func makeImage(fromData _: Data, size _: CGSize?) -> UIImage? {
+    func makeImage(fromData _: Data) -> UIImage? {
         UIImage.from(color: .black)
     }
 }
