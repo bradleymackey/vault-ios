@@ -1,17 +1,13 @@
 import UIKit
 
-public struct UIImageResizer {
-    public enum Mode {
-        case noSmoothing
+public struct ResizeImageTransformer: ImageTransformer {
+    public let size: CGSize
+
+    public init(size: CGSize) {
+        self.size = size
     }
 
-    public let mode: Mode
-
-    public init(mode: Mode) {
-        self.mode = mode
-    }
-
-    public func resize(image: UIImage, to size: CGSize) -> UIImage {
+    public func tranform(image: UIImage) -> UIImage {
         let renderer = UIGraphicsImageRenderer(size: size)
         return renderer.image { context in
             context.cgContext.interpolationQuality = .none
