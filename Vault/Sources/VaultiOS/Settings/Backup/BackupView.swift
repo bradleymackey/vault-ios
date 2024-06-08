@@ -15,6 +15,7 @@ struct BackupView: View {
 
     enum Modal: IdentifiableSelf {
         case updatePassword
+        case exportPassword
     }
 
     var body: some View {
@@ -27,6 +28,10 @@ struct BackupView: View {
             case .updatePassword:
                 NavigationStack {
                     BackupKeyChangeView(store: backupStore)
+                }
+            case .exportPassword:
+                NavigationStack {
+                    BackupKeyExportView()
                 }
             }
         }
@@ -41,17 +46,10 @@ struct BackupView: View {
             case .loading:
                 Text(viewModel.strings.backupPasswordLoadingTitle)
             case .hasExistingPassword:
-                Button {
-                    modal = .updatePassword
-                } label: {
-                    Text(viewModel.strings.backupPasswordUpdateTitle)
-                }
+                updateButton
+                exportButton
             case .noExistingPassword:
-                Button {
-                    modal = .updatePassword
-                } label: {
-                    Text(viewModel.strings.backupPasswordCreateTitle)
-                }
+                createButton
             case .error:
                 Text(viewModel.strings.backupPasswordErrorTitle)
             }
@@ -59,6 +57,30 @@ struct BackupView: View {
             if viewModel.passwordState == .error {
                 Text(viewModel.strings.backupPasswordErrorDetail)
             }
+        }
+    }
+
+    private var createButton: some View {
+        Button {
+            modal = .updatePassword
+        } label: {
+            Text(viewModel.strings.backupPasswordCreateTitle)
+        }
+    }
+
+    private var updateButton: some View {
+        Button {
+            modal = .updatePassword
+        } label: {
+            Text(viewModel.strings.backupPasswordUpdateTitle)
+        }
+    }
+
+    private var exportButton: some View {
+        Button {
+            modal = .exportPassword
+        } label: {
+            Text(viewModel.strings.backupPasswordExportTitle)
         }
     }
 }
