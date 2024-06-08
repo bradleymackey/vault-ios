@@ -24,10 +24,15 @@ final class BackupPasswordExporterTests: XCTestCase {
 
         let export = try sut.makeExport()
 
-        XCTAssertEqual(export.version, "1.0.0")
-        XCTAssertEqual(export.key, keyData)
-        XCTAssertEqual(export.salt, saltData)
-        XCTAssertEqual(store.setCallCount, 0)
+        let str = try XCTUnwrap(String(data: export, encoding: .utf8))
+
+        XCTAssertEqual(str, """
+        {
+          "KEY" : "aGhoaGhoaGhoaA==",
+          "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
+          "VERSION" : "1.0.0"
+        }
+        """)
     }
 
     func test_makeExport_throwsIfNoPassword() {
