@@ -1,12 +1,20 @@
 import Foundation
+import ImageTools
 import SwiftUI
+import VaultFeed
 
+@MainActor
 struct BackupKeyExportView: View {
+    @State private var viewModel: BackupKeyExportViewModel
     @Environment(\.dismiss) private var dismiss
+
+    init(store: any BackupPasswordStore) {
+        _viewModel = .init(initialValue: .init(exporter: .init(store: store)))
+    }
 
     var body: some View {
         Form {
-            Text("Export")
+            exportSection
         }
         .navigationTitle(Text("Export Password"))
         .navigationBarTitleDisplayMode(.inline)
@@ -18,6 +26,50 @@ struct BackupKeyExportView: View {
                     Text("Done")
                 }
             }
+        }
+    }
+
+    private var exportSection: some View {
+        Section {
+            switch viewModel.exportState {
+            case .waiting:
+                exportButton
+            case let .exported(data):
+                makeImage(data: data)
+                    .modifier(HorizontallyCenter())
+            case let .error(error):
+                exportButton
+                Text(error.localizedDescription)
+                    .font(.caption2)
+                    .foregroundStyle(.red)
+            }
+        } footer: {
+            Text(
+                "Be careful showing your exported private key. It can be used to gain access to your encrypted vault backups."
+            )
+        }
+    }
+
+    @ViewBuilder
+    private func makeImage(data: Data) -> some View {
+        let renderer = QRCodeImageRenderer()
+        if let image = renderer.makeImage(fromData: data) {
+            Image(uiImage: image)
+                .interpolation(.none)
+                .resizable()
+                .aspectRatio(1, contentMode: .fit)
+                .frame(maxWidth: 200)
+        } else {
+            Text("Rendering error")
+                .foregroundStyle(.red)
+        }
+    }
+
+    private var exportButton: some View {
+        Button {
+            viewModel.createExport()
+        } label: {
+            Text("Show Private Key")
         }
     }
 }

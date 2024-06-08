@@ -32,7 +32,7 @@ struct BackupView: View {
                 }
             case .exportPassword:
                 NavigationStack {
-                    BackupKeyExportView()
+                    BackupKeyExportView(store: backupStore)
                 }
             }
         }
