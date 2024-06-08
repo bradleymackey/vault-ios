@@ -2,6 +2,7 @@ import Foundation
 import ImageTools
 import SwiftUI
 import VaultFeed
+import VaultUI
 
 @MainActor
 struct BackupKeyExportView: View {
@@ -35,7 +36,8 @@ struct BackupKeyExportView: View {
             case .waiting:
                 exportButton
             case let .exported(data):
-                makeImage(data: data)
+                QRCodeImage(data: data)
+                    .frame(maxWidth: 200)
                     .modifier(HorizontallyCenter())
             case let .error(error):
                 exportButton
@@ -47,21 +49,6 @@ struct BackupKeyExportView: View {
             Text(
                 "Be careful showing your exported private key. It can be used to gain access to your encrypted vault backups."
             )
-        }
-    }
-
-    @ViewBuilder
-    private func makeImage(data: Data) -> some View {
-        let renderer = QRCodeImageRenderer()
-        if let image = renderer.makeImage(fromData: data) {
-            Image(uiImage: image)
-                .interpolation(.none)
-                .resizable()
-                .aspectRatio(1, contentMode: .fit)
-                .frame(maxWidth: 200)
-        } else {
-            Text("Rendering error")
-                .foregroundStyle(.red)
         }
     }
 
