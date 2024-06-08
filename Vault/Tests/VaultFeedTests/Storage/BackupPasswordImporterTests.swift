@@ -16,21 +16,32 @@ final class BackupPasswordImporterTests: XCTestCase {
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(store: store)
 
-        let export = BackupPasswordExport(version: "0.0.0", key: Data(), salt: Data())
+        let export = Data("""
+        {
+          "KEY" : "aGhoaGhoaGhoaA==",
+          "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
+          "VERSION" : "0.0.0"
+        }
+        """.utf8)
 
         XCTAssertThrowsError(try sut.importAndOverridePassword(from: export))
     }
 
     func test_import_setsPasswordForValidData() throws {
-        let keyData = Data(repeating: 0x33, count: 10)
-        let saltData = Data(repeating: 0x34, count: 10)
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(store: store)
 
-        let export = BackupPasswordExport(version: "1.0.0", key: keyData, salt: saltData)
-
+        let export = Data("""
+        {
+          "KEY" : "aGhoaGhoaGhoaA==",
+          "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
+          "VERSION" : "1.0.0"
+        }
+        """.utf8)
         try sut.importAndOverridePassword(from: export)
 
+        let keyData = Data(repeating: 0x68, count: 10)
+        let saltData = Data(repeating: 0x69, count: 20)
         XCTAssertEqual(store.setArgValues, [BackupPassword(key: keyData, salt: saltData)])
     }
 
@@ -41,7 +52,13 @@ final class BackupPasswordImporterTests: XCTestCase {
         }
         let sut = makeSUT(store: store)
 
-        let export = BackupPasswordExport(version: "0.0.0", key: Data(), salt: Data())
+        let export = Data("""
+        {
+          "KEY" : "aGhoaGhoaGhoaA==",
+          "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
+          "VERSION" : "1.0.0"
+        }
+        """.utf8)
 
         XCTAssertThrowsError(try sut.importAndOverridePassword(from: export))
     }

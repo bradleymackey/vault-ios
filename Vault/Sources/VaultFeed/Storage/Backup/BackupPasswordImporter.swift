@@ -11,11 +11,19 @@ public final class BackupPasswordImporter {
         case incompatibleVersion
     }
 
-    public func importAndOverridePassword(from export: BackupPasswordExport) throws {
+    public func importAndOverridePassword(from data: Data) throws {
+        let export = try makeImportDecoder().decode(BackupPasswordExport.self, from: data)
         guard export.version.isCompatible(with: "1.0.0") else {
             throw ImportError.incompatibleVersion
         }
         let newPassword = BackupPassword(key: export.key, salt: export.salt)
         try store.set(password: newPassword)
+    }
+
+    private func makeImportDecoder() -> JSONDecoder {
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .millisecondsSince1970
+        decoder.dataDecodingStrategy = .base64
+        return decoder
     }
 }
