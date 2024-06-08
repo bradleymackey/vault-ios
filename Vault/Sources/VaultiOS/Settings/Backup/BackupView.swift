@@ -2,6 +2,7 @@ import Foundation
 import FoundationExtensions
 import SwiftUI
 import VaultFeed
+import VaultUI
 
 @MainActor
 struct BackupView: View {
@@ -64,7 +65,9 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            Text(viewModel.strings.backupPasswordCreateTitle)
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue) {
+                Text(viewModel.strings.backupPasswordCreateTitle)
+            }
         }
     }
 
@@ -72,7 +75,9 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            Text(viewModel.strings.backupPasswordUpdateTitle)
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue) {
+                Text(viewModel.strings.backupPasswordUpdateTitle)
+            }
         }
     }
 
@@ -80,7 +85,9 @@ struct BackupView: View {
         Button {
             modal = .exportPassword
         } label: {
-            Text(viewModel.strings.backupPasswordExportTitle)
+            FormRow(image: Image(systemName: "qrcode"), color: .purple) {
+                Text(viewModel.strings.backupPasswordExportTitle)
+            }
         }
     }
 }
