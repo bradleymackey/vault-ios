@@ -1,6 +1,11 @@
 import Foundation
 
-public final class BackupPasswordImporter {
+/// @mockable
+public protocol BackupPasswordImporter {
+    func importAndOverridePassword(from data: Data) throws
+}
+
+public final class BackupPasswordImporterImpl: BackupPasswordImporter {
     private let store: any BackupPasswordStore
 
     public init(store: any BackupPasswordStore) {

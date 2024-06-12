@@ -3,7 +3,7 @@ import TestHelpers
 import XCTest
 @testable import VaultFeed
 
-final class BackupPasswordImporterTests: XCTestCase {
+final class BackupPasswordImporterImplTests: XCTestCase {
     func test_init_hasNoStoreSideEffects() {
         let store = BackupPasswordStoreMock()
         _ = makeSUT(store: store)
@@ -66,10 +66,10 @@ final class BackupPasswordImporterTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension BackupPasswordImporterTests {
+extension BackupPasswordImporterImplTests {
     private func makeSUT(
         store: BackupPasswordStoreMock = BackupPasswordStoreMock()
-    ) -> BackupPasswordImporter {
-        BackupPasswordImporter(store: store)
+    ) -> BackupPasswordImporterImpl {
+        BackupPasswordImporterImpl(store: store)
     }
 }
