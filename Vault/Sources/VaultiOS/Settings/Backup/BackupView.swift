@@ -17,6 +17,7 @@ struct BackupView: View {
     enum Modal: IdentifiableSelf {
         case updatePassword
         case exportPassword
+        case importPassword
     }
 
     var body: some View {
@@ -34,6 +35,10 @@ struct BackupView: View {
                 NavigationStack {
                     BackupKeyExportView(store: backupStore)
                 }
+            case .importPassword:
+                NavigationStack {
+                    BackupKeyImportView()
+                }
             }
         }
         .task {
@@ -49,8 +54,10 @@ struct BackupView: View {
             case .hasExistingPassword:
                 updateButton
                 exportButton
+                importButton
             case .noExistingPassword:
                 createButton
+                importButton
             case .error:
                 Text(viewModel.strings.backupPasswordErrorTitle)
             }
@@ -75,7 +82,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }
@@ -85,8 +92,18 @@ struct BackupView: View {
         Button {
             modal = .exportPassword
         } label: {
-            FormRow(image: Image(systemName: "qrcode"), color: .purple) {
+            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue) {
                 Text(viewModel.strings.backupPasswordExportTitle)
+            }
+        }
+    }
+
+    private var importButton: some View {
+        Button {
+            modal = .importPassword
+        } label: {
+            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .blue) {
+                Text(viewModel.strings.backupPasswordImportTitle)
             }
         }
     }
