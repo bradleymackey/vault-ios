@@ -7,16 +7,12 @@ import VaultFeed
 struct BackupKeyImportView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: BackupKeyImportViewModel
-    @State private var scanner = SingleCodeScanner(intervalTimer: LiveIntervalTimer()) { string in
-        if let data = string.data(using: .utf8) {
-            return data
-        } else {
-            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: ""))
-        }
+    @State private var scanner = SingleCodeScanner(intervalTimer: LiveIntervalTimer()) { qrCode in
+        try BackupPasswordDecoder().decode(qrCode: qrCode)
     }
 
     init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(importer: BackupPasswordImporterImpl(store: store)))
+        _viewModel = .init(initialValue: .init(store: store))
     }
 
     var body: some View {

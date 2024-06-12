@@ -1,28 +1,24 @@
 import Foundation
 
-/// @mockable
-public protocol BackupPasswordImporter {
-    func importAndOverridePassword(from data: Data) throws
-}
-
-public final class BackupPasswordImporterImpl: BackupPasswordImporter {
-    private let store: any BackupPasswordStore
-
-    public init(store: any BackupPasswordStore) {
-        self.store = store
-    }
-
+/// Decodes `Data` or a `String` from a QR code into a `BackupPassword`.
+public final class BackupPasswordDecoder {
+    public init() {}
     public enum ImportError: Error {
         case incompatibleVersion
+        case badStringEncoding
     }
 
-    public func importAndOverridePassword(from data: Data) throws {
+    public func decode(qrCode: String) throws -> BackupPassword {
+        guard let data = qrCode.data(using: .utf8) else { throw ImportError.badStringEncoding }
+        return try decode(data: data)
+    }
+
+    public func decode(data: Data) throws -> BackupPassword {
         let export = try makeImportDecoder().decode(BackupPasswordExport.self, from: data)
         guard export.version.isCompatible(with: "1.0.0") else {
             throw ImportError.incompatibleVersion
         }
-        let newPassword = BackupPassword(key: export.key, salt: export.salt)
-        try store.set(password: newPassword)
+        return BackupPassword(key: export.key, salt: export.salt)
     }
 
     private func makeImportDecoder() -> JSONDecoder {

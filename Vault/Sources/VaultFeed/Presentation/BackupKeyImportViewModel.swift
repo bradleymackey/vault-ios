@@ -4,23 +4,30 @@ import VaultBackup
 @MainActor
 @Observable
 public final class BackupKeyImportViewModel {
-    public enum ImportState {
+    public enum ImportState: Equatable {
         case waiting
+        /// Data is ready to import
+        case staged(BackupPassword)
         case imported
         case error
     }
 
     public private(set) var importState: ImportState = .waiting
 
-    private let importer: any BackupPasswordImporter
+    private let store: any BackupPasswordStore
 
-    public init(importer: any BackupPasswordImporter) {
-        self.importer = importer
+    public init(store: any BackupPasswordStore) {
+        self.store = store
     }
 
-    public func importPassword(data: Data) {
+    public func stageImport(password: BackupPassword) {
+        importState = .staged(password)
+    }
+
+    public func commitStagedImport() {
+        guard case let .staged(password) = importState else { return }
         do {
-            try importer.importAndOverridePassword(from: data)
+            try store.set(password: password)
             importState = .imported
         } catch {
             importState = .error

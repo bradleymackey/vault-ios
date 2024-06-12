@@ -7,10 +7,11 @@ import XCTest
 final class BackupKeyImportViewModelTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
-        let importer = BackupPasswordImporterMock()
-        _ = makeSUT(importer: importer)
+        let store = BackupPasswordStoreMock()
+        _ = makeSUT(store: store)
 
-        XCTAssertEqual(importer.importAndOverridePasswordCallCount, 0)
+        XCTAssertEqual(store.fetchPasswordCallCount, 0)
+        XCTAssertEqual(store.setCallCount, 0)
     }
 
     @MainActor
@@ -21,28 +22,42 @@ final class BackupKeyImportViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_importPassword_importsAndUpdatesState() {
+    func test_commitStagedImport_noActionIfNothingStagedd() {
+        let store = BackupPasswordStoreMock()
+        let sut = makeSUT(store: store)
+
+        sut.commitStagedImport()
+
+        XCTAssertEqual(store.setArgValues, [])
+        XCTAssertEqual(sut.importState, .waiting)
+    }
+
+    @MainActor
+    func test_commitStagedImport_importsAndUpdatesState() {
         let importData = Data(repeating: 0x44, count: 13)
-        let importer = BackupPasswordImporterMock()
-        let sut = makeSUT(importer: importer)
+        let store = BackupPasswordStoreMock()
+        let sut = makeSUT(store: store)
+        let password = BackupPassword(key: importData, salt: importData)
 
-        sut.importPassword(data: importData)
+        sut.stageImport(password: password)
+        sut.commitStagedImport()
 
-        XCTAssertEqual(importer.importAndOverridePasswordArgValues, [importData])
+        XCTAssertEqual(store.setArgValues, [password])
         XCTAssertEqual(sut.importState, .imported)
     }
 
     @MainActor
     func test_importPassword_setsStateToErrorIfOperationFails() {
-        let importer = BackupPasswordImporterMock()
-        importer.importAndOverridePasswordHandler = { _ in
+        let store = BackupPasswordStoreMock()
+        store.setHandler = { _ in
             throw anyNSError()
         }
-        let sut = makeSUT(importer: importer)
+        let sut = makeSUT(store: store)
 
-        sut.importPassword(data: Data())
+        sut.stageImport(password: .init(key: Data(), salt: Data()))
+        sut.commitStagedImport()
 
-        XCTAssertEqual(importer.importAndOverridePasswordCallCount, 1)
+        XCTAssertEqual(store.setCallCount, 1)
         XCTAssertEqual(sut.importState, .error)
     }
 }
@@ -52,8 +67,8 @@ final class BackupKeyImportViewModelTests: XCTestCase {
 extension BackupKeyImportViewModelTests {
     @MainActor
     private func makeSUT(
-        importer: BackupPasswordImporterMock = BackupPasswordImporterMock()
+        store: BackupPasswordStoreMock = BackupPasswordStoreMock()
     ) -> BackupKeyImportViewModel {
-        BackupKeyImportViewModel(importer: importer)
+        BackupKeyImportViewModel(store: store)
     }
 }
