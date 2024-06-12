@@ -27,7 +27,13 @@ struct OTPCodeCreateView<
     // 'dismiss' applies in the context that it's defined in!
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
-    @State private var scanner = OTPCodeScanner(intervalTimer: LiveIntervalTimer())
+    @State private var scanner = SingleCodeScanner(intervalTimer: LiveIntervalTimer()) { string in
+        guard let uri = OTPAuthURI(string: string) else {
+            throw URLError(.badURL)
+        }
+        return try OTPAuthURIDecoder().decode(uri: uri)
+    }
+
     @State private var isCameraError = false
 
     enum CreationMode: Hashable, IdentifiableSelf {
@@ -57,9 +63,9 @@ struct OTPCodeCreateView<
         .onDisappear {
             scanner.disable()
         }
-        .onReceive(scanner.navigateToScannedCodePublisher(), perform: { scannedCode in
+        .onReceive(scanner.itemScannedPublisher()) { scannedCode in
             navigationPath.append(CreationMode.cameraResult(scannedCode))
-        })
+        }
         .navigationDestination(for: CreationMode.self, destination: { newDestination in
             switch newDestination {
             case .manually:
@@ -215,7 +221,7 @@ struct OTPCodeCreateView<
     }
 }
 
-extension OTPCodeScanningState {
+extension CodeScanningState {
     fileprivate var pausesCamera: Bool {
         switch self {
         case .disabled, .success, .invalidCodeScanned: true

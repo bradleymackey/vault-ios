@@ -4,7 +4,7 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-final class OTPCodeScannerTests: XCTestCase {
+final class SingleCodeScannerTests: XCTestCase {
     @MainActor
     func test_init_initialStateIsDisabled() {
         let sut = makeSUT()
@@ -34,9 +34,11 @@ final class OTPCodeScannerTests: XCTestCase {
     @MainActor
     func test_scan_setsStateToInvalidForInvalidCode() {
         let timer = MockIntervalTimer()
-        let sut = makeSUT(intervalTimer: timer)
+        let sut = makeSUT(intervalTimer: timer, mapper: { _ in
+            throw anyNSError()
+        })
 
-        sut.scan(text: "invalid")
+        sut.scan(text: "any")
 
         XCTAssertEqual(sut.scanningState, .invalidCodeScanned)
     }
@@ -44,7 +46,9 @@ final class OTPCodeScannerTests: XCTestCase {
     @MainActor
     func test_scan_returnsToScanningAfterInvalidCodeFailure() {
         let timer = MockIntervalTimer()
-        let sut = makeSUT(intervalTimer: timer)
+        let sut = makeSUT(intervalTimer: timer, mapper: { _ in
+            throw anyNSError()
+        })
 
         sut.scan(text: "invalid")
         timer.finishTimer()
@@ -70,7 +74,7 @@ final class OTPCodeScannerTests: XCTestCase {
         sut.scan(text: OTPAuthURI.exampleCodeString)
 
         let exp = expectation(description: "Wait for code")
-        let results = sut.navigateToScannedCodePublisher().collectFirst(1).sink { _ in
+        let results = sut.itemScannedPublisher().collectFirst(1).sink { _ in
             exp.fulfill()
         }
 
@@ -81,14 +85,17 @@ final class OTPCodeScannerTests: XCTestCase {
     }
 }
 
-extension OTPCodeScannerTests {
+extension SingleCodeScannerTests {
+    private struct DummyModel {}
+
     @MainActor
     private func makeSUT(
         intervalTimer: MockIntervalTimer = MockIntervalTimer(),
+        mapper: @escaping (String) throws -> DummyModel = { _ in DummyModel() },
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> OTPCodeScanner {
-        let sut = OTPCodeScanner(intervalTimer: intervalTimer)
+    ) -> SingleCodeScanner<DummyModel> {
+        let sut = SingleCodeScanner(intervalTimer: intervalTimer, mapper: mapper)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
