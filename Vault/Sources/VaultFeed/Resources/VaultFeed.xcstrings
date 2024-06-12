@@ -596,28 +596,6 @@
         }
       }
     },
-    "feedViewModel.error.camera.description" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check your device and permissions"
-          }
-        }
-      }
-    },
-    "feedViewModel.error.camera.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Camera Error"
-          }
-        }
-      }
-    },
     "feedViewModel.list.title" : {
       "extractionState" : "migrated",
       "localizations" : {
