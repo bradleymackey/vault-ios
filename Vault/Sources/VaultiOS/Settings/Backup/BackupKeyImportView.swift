@@ -1,11 +1,19 @@
 import Foundation
 import SwiftUI
+import VaultCore
 import VaultFeed
 
 @MainActor
 struct BackupKeyImportView: View {
-    @State private var viewModel: BackupKeyImportViewModel
     @Environment(\.dismiss) private var dismiss
+    @State private var viewModel: BackupKeyImportViewModel
+    @State private var scanner = SingleCodeScanner(intervalTimer: LiveIntervalTimer()) { string in
+        if let data = string.data(using: .utf8) {
+            return data
+        } else {
+            throw DecodingError.dataCorrupted(.init(codingPath: [], debugDescription: ""))
+        }
+    }
 
     init(store: any BackupPasswordStore) {
         _viewModel = .init(initialValue: .init(importer: BackupPasswordImporterImpl(store: store)))
@@ -26,13 +34,24 @@ struct BackupKeyImportView: View {
                 }
             }
         }
+        .onAppear {
+            scanner.startScanning()
+        }
+        .onDisappear {
+            scanner.disable()
+        }
+        .onReceive(scanner.itemScannedPublisher()) { _ in
+            // TODO: use scanned imported data
+        }
     }
 
     private var importSection: some View {
         Section {
-            Text("Import")
+            Text("Scan the code from your other device")
         } header: {
-            Text("Scanner UI here")
+            SingleCodeScannerView(scanner: scanner, isImagePickerVisible: .constant(false))
+                .padding()
+                .modifier(HorizontallyCenter())
         }
     }
 }
