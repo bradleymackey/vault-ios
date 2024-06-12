@@ -37,7 +37,7 @@ struct BackupView: View {
                 }
             case .importPassword:
                 NavigationStack {
-                    BackupKeyImportView()
+                    BackupKeyImportView(store: backupStore)
                 }
             }
         }
