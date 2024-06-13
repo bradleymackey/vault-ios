@@ -6,11 +6,11 @@ import XCTest
 
 final class BackupKeyImportViewModelTests: XCTestCase {
     @MainActor
-    func test_init_hasNoSideEffects() {
+    func test_init_loadsFromStoreInitially() {
         let store = BackupPasswordStoreMock()
         _ = makeSUT(store: store)
 
-        XCTAssertEqual(store.fetchPasswordCallCount, 0)
+        XCTAssertEqual(store.fetchPasswordCallCount, 1)
         XCTAssertEqual(store.setCallCount, 0)
     }
 
