@@ -95,7 +95,7 @@ let package = Package(
         ),
         .target(
             name: "VaultUI",
-            dependencies: ["FoundationExtensions"],
+            dependencies: ["FoundationExtensions", "ImageTools"],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
