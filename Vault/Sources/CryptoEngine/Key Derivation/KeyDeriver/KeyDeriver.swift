@@ -4,7 +4,7 @@ import Foundation
 ///
 /// https://en.wikipedia.org/wiki/Key_derivation_function
 ///
-/// @mockable(history: key = true)
+/// @mockable
 public protocol KeyDeriver {
     func key(password: Data, salt: Data) throws -> Data
     var uniqueAlgorithmIdentifier: String { get }
