@@ -1,7 +1,7 @@
 import Foundation
 import FoundationExtensions
 
-public enum OTPCodeScanningState: Hashable, IdentifiableSelf {
+public enum CodeScanningState: Hashable, IdentifiableSelf {
     case disabled
     case scanning
     case success

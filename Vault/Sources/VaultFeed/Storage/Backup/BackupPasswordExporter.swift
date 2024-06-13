@@ -10,13 +10,22 @@ public final class BackupPasswordExporter {
 
     public struct NoPasswordError: Error {}
 
-    public func makeExport() throws -> BackupPasswordExport {
+    public func makeExport() throws -> Data {
         guard let password = try store.fetchPassword() else {
             throw NoPasswordError()
         }
-        return BackupPasswordExport.createV1Export(
+        let backupExport = BackupPasswordExport.createV1Export(
             key: password.key,
             salt: password.salt
         )
+        return try makeExportEncoder().encode(backupExport)
+    }
+
+    private func makeExportEncoder() -> JSONEncoder {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .millisecondsSince1970
+        encoder.dataEncodingStrategy = .base64
+        encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+        return encoder
     }
 }

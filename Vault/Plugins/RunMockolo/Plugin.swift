@@ -14,6 +14,7 @@ struct MockoloPlugin: BuildToolPlugin {
                     "-s", packageRoot.appending("Sources", target.name).string,
                     "-d", generatedSourcePath,
                     "--mock-final",
+                    "--enable-args-history",
                 ],
                 outputFilesDirectory: context.pluginWorkDirectory
             ),

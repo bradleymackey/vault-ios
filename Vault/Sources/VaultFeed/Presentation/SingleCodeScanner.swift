@@ -2,20 +2,25 @@ import Combine
 import Foundation
 import VaultCore
 
-/// Encapsultes view-level code scanning logic and error states.
+/// Encapsultes view-level scanning logic and error states of a single code.
+/// This encourages a single code to be scanned, allowing a custom `mapper` to
+/// define either a successful scan, or a scanning error.
+///
 /// The current state of the scanner is `scanningState`.
-/// The scanned code is broadcast at `navigateToScannedCodePublisher`.
+/// The scanned model is broadcast at `itemScannedPublisher`.
 @MainActor
 @Observable
-public final class OTPCodeScanner {
-    public private(set) var scanningState: OTPCodeScanningState = .disabled
-    private let scannedCodeSubject = PassthroughSubject<OTPAuthCode, Never>()
+public final class SingleCodeScanner<Model> {
+    public private(set) var scanningState: CodeScanningState = .disabled
+    private let scannedCodeSubject = PassthroughSubject<Model, Never>()
 
     private let intervalTimer: any IntervalTimer
+    private let mapper: (String) throws -> Model
     private var timerBag = Set<AnyCancellable>()
 
-    public init(intervalTimer: any IntervalTimer) {
+    public init(intervalTimer: any IntervalTimer, mapper: @escaping (String) throws -> Model) {
         self.intervalTimer = intervalTimer
+        self.mapper = mapper
     }
 
     public func startScanning() {
@@ -26,19 +31,13 @@ public final class OTPCodeScanner {
         scanningState = .disabled
     }
 
-    public func navigateToScannedCodePublisher() -> AnyPublisher<OTPAuthCode, Never> {
+    public func itemScannedPublisher() -> AnyPublisher<Model, Never> {
         scannedCodeSubject.eraseToAnyPublisher()
     }
 
-    struct CodeFormatError: Error {}
-
     public func scan(text string: String) {
         do {
-            guard let uri = OTPAuthURI(string: string) else {
-                throw CodeFormatError()
-            }
-            let decoder = OTPAuthURIDecoder()
-            let decoded = try decoder.decode(uri: uri)
+            let decoded = try mapper(string)
             scanningState = .success
             intervalTimer.wait(for: 0.5).sink { [scannedCodeSubject] in
                 scannedCodeSubject.send(decoded)

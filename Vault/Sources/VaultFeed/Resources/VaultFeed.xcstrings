@@ -23,6 +23,28 @@
         }
       }
     },
+    "backupPasswordState.export.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Export Backup Password"
+          }
+        }
+      }
+    },
+    "backupPasswordState.import.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Import Backup Password"
+          }
+        }
+      }
+    },
     "backupPasswordState.loading.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -570,28 +592,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Edit"
-          }
-        }
-      }
-    },
-    "feedViewModel.error.camera.description" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Check your device and permissions"
-          }
-        }
-      }
-    },
-    "feedViewModel.error.camera.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Camera Error"
           }
         }
       }

@@ -1,0 +1,62 @@
+import Foundation
+import ImageTools
+import SwiftUI
+import VaultFeed
+import VaultUI
+
+@MainActor
+struct BackupKeyExportView: View {
+    @State private var viewModel: BackupKeyExportViewModel
+    @Environment(\.dismiss) private var dismiss
+
+    init(store: any BackupPasswordStore) {
+        _viewModel = .init(initialValue: .init(exporter: .init(store: store)))
+    }
+
+    var body: some View {
+        Form {
+            exportSection
+        }
+        .navigationTitle(Text("Export Password"))
+        .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                }
+            }
+        }
+    }
+
+    private var exportSection: some View {
+        Section {
+            switch viewModel.exportState {
+            case .waiting:
+                exportButton
+            case let .exported(data):
+                QRCodeImage(data: data)
+                    .frame(maxWidth: 200)
+                    .modifier(HorizontallyCenter())
+            case let .error(error):
+                exportButton
+                Text(error.localizedDescription)
+                    .font(.caption2)
+                    .foregroundStyle(.red)
+            }
+        } footer: {
+            Text(
+                "Be careful showing your exported private key. It can be used to gain access to your encrypted vault backups."
+            )
+        }
+    }
+
+    private var exportButton: some View {
+        Button {
+            viewModel.createExport()
+        } label: {
+            Text("Show Private Key")
+        }
+    }
+}
