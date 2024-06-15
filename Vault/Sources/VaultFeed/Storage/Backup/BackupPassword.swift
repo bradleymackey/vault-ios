@@ -21,9 +21,9 @@ public struct BackupPassword: Equatable, Hashable {
 
 extension BackupPassword {
     /// Creates a new encryption key.
-    public static func createEncryptionKey(deriver: ApplicationKeyDeriver, text: String) throws -> BackupPassword {
+    public static func createEncryptionKey(deriver: ApplicationKeyDeriver, password: String) throws -> BackupPassword {
         let salt = Data.random(count: 48)
-        let key = try deriver.key(password: Data(text.utf8), salt: salt)
+        let key = try deriver.key(password: Data(password.utf8), salt: salt)
         return BackupPassword(key: key, salt: salt, keyDervier: deriver.signature)
     }
 }
