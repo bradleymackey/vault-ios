@@ -2,7 +2,10 @@ import CryptoEngine
 import Foundation
 
 public struct BackupPassword: Equatable, Hashable {
+    /// The derived key (via keygen) from the user's password.
+    /// (We don't store the password, only the derived key).
     public var key: Data
+    /// The salt used in the keygen process to derive `key`.
     public var salt: Data
 
     public init(key: Data, salt: Data) {
