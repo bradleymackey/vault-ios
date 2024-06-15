@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 
@@ -7,6 +8,7 @@ public struct BackupPasswordExport {
     var version: SemVer
     var key: Data
     var salt: Data
+    var keyDeriver: ApplicationKeyDeriver.Signature
 }
 
 extension BackupPasswordExport: Codable {
@@ -14,17 +16,23 @@ extension BackupPasswordExport: Codable {
         case version = "VERSION"
         case key = "KEY"
         case salt = "SALT"
+        case keyDeriver = "KEY_DERIVER"
     }
 }
 
 // MARK: - Versions
 
 extension BackupPasswordExport {
-    static func createV1Export(key: Data, salt: Data) -> BackupPasswordExport {
+    static func createV1Export(
+        key: Data,
+        salt: Data,
+        keyDeriver: ApplicationKeyDeriver.Signature
+    ) -> BackupPasswordExport {
         BackupPasswordExport(
             version: "1.0.0",
             key: key,
-            salt: salt
+            salt: salt,
+            keyDeriver: keyDeriver
         )
     }
 }

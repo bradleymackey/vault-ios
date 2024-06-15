@@ -18,7 +18,7 @@ public final class BackupPasswordDecoder {
         guard export.version.isCompatible(with: "1.0.0") else {
             throw ImportError.incompatibleVersion
         }
-        return BackupPassword(key: export.key, salt: export.salt)
+        return BackupPassword(key: export.key, salt: export.salt, keyDervier: export.keyDeriver)
     }
 
     private func makeImportDecoder() -> JSONDecoder {

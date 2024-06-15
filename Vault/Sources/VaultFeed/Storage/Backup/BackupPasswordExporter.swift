@@ -16,7 +16,8 @@ public final class BackupPasswordExporter {
         }
         let backupExport = BackupPasswordExport.createV1Export(
             key: password.key,
-            salt: password.salt
+            salt: password.salt,
+            keyDeriver: password.keyDervier
         )
         return try makeExportEncoder().encode(backupExport)
     }
