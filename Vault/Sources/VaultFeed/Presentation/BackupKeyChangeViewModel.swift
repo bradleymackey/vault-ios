@@ -65,7 +65,7 @@ public final class BackupKeyChangeViewModel {
             }
 
             newPassword = .creating
-            let createdBackupPassword = try await computeNewKey(text: newlyEnteredPassword)
+            let createdBackupPassword = try await computeNewKey(password: newlyEnteredPassword)
             try store.set(password: createdBackupPassword)
             newPassword = .success
             existingPassword = .hasExistingPassword(createdBackupPassword)
@@ -80,12 +80,12 @@ public final class BackupKeyChangeViewModel {
         }
     }
 
-    private nonisolated func computeNewKey(text: String) async throws -> BackupPassword {
+    private nonisolated func computeNewKey(password: String) async throws -> BackupPassword {
         let deriver = encryptionKeyDeriver
         let generatedPassword = try await withCheckedThrowingContinuation { cont in
             DispatchQueue.global(qos: .utility).async {
                 cont.resume(with: Result {
-                    try BackupPassword.createEncryptionKey(deriver: deriver, text: text)
+                    try BackupPassword.createEncryptionKey(deriver: deriver, password: password)
                 })
             }
         }

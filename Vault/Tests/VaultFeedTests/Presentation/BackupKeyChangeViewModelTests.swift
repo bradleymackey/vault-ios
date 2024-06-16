@@ -127,11 +127,11 @@ extension BackupKeyChangeViewModelTests {
     }
 
     private func anyBackupPassword() -> BackupPassword {
-        BackupPassword(key: Data(repeating: 0x45, count: 10), salt: Data())
+        BackupPassword(key: Data(repeating: 0x45, count: 10), salt: Data(), keyDervier: .testing)
     }
 
     private func randomBackupPassword() -> BackupPassword {
-        BackupPassword(key: Data.random(count: 10), salt: Data())
+        BackupPassword(key: Data.random(count: 10), salt: Data(), keyDervier: .testing)
     }
 
     private struct KeyDeriverErroring: KeyDeriver {

@@ -30,7 +30,7 @@ final class BackupViewModelTests: XCTestCase {
     func test_fetchContent_setsToExistingPasswordIfOneExists() {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = {
-            BackupPassword(key: Data(), salt: Data())
+            BackupPassword(key: Data(), salt: Data(), keyDervier: .testing)
         }
         let sut = makeSUT(store: store)
 

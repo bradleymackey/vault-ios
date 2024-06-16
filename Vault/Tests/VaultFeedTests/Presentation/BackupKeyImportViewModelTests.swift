@@ -37,7 +37,7 @@ final class BackupKeyImportViewModelTests: XCTestCase {
         let importData = Data(repeating: 0x44, count: 13)
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(store: store)
-        let password = BackupPassword(key: importData, salt: importData)
+        let password = BackupPassword(key: importData, salt: importData, keyDervier: .testing)
 
         sut.stageImport(password: password)
         sut.commitStagedImport()
@@ -54,7 +54,7 @@ final class BackupKeyImportViewModelTests: XCTestCase {
         }
         let sut = makeSUT(store: store)
 
-        sut.stageImport(password: .init(key: Data(), salt: Data()))
+        sut.stageImport(password: .init(key: Data(), salt: Data(), keyDervier: .testing))
         sut.commitStagedImport()
 
         XCTAssertEqual(store.setCallCount, 1)
