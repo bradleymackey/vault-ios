@@ -6,9 +6,10 @@ import XCTest
 final class IntermediateEncodedVaultEncoderTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        isRecording = false
+//        isRecording = true
     }
 
+    @MainActor
     func test_encodeVault_encodesToJSONFormat_emptyVault() throws {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)
@@ -24,6 +25,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         assertSnapshot(of: encoded, as: .lines)
     }
 
+    @MainActor
     func test_encodeVault_encodesToJSONFormat_secureNote() throws {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)
@@ -47,6 +49,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         assertSnapshot(of: encoded, as: .lines)
     }
 
+    @MainActor
     func test_encodeVault_encodesToJSONFormat_otpCode() throws {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)
@@ -81,6 +84,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         assertSnapshot(of: encoded, as: .lines)
     }
 
+    @MainActor
     func test_encodeVault_encodesToJSONFormat_nonEmptyVault() throws {
         let sut = makeSUT()
         let date1 = Date(timeIntervalSince1970: 12345)
@@ -134,6 +138,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 // MARK: - Helpers
 
 extension IntermediateEncodedVaultEncoderTests {
+    @MainActor
     private func makeSUT() -> IntermediateEncodedVaultEncoder {
         let sut = IntermediateEncodedVaultEncoder()
         trackForMemoryLeaks(sut)

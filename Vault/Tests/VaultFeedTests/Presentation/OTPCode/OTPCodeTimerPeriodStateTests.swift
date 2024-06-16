@@ -6,12 +6,14 @@ import VaultFeed
 import XCTest
 
 final class OTPCodeTimerPeriodStateTests: XCTestCase {
+    @MainActor
     func test_init_initialAnimationStateIsFrozen() {
         let sut = makeSUT(pub: PassthroughSubject().eraseToAnyPublisher())
 
         XCTAssertEqual(sut.animationState, .freeze(fraction: 0))
     }
 
+    @MainActor
     func test_animationState_assignsValueToState() async throws {
         let valueSubject = PassthroughSubject<OTPCodeTimerState, Never>()
         let sut = makeSUT(pub: valueSubject.eraseToAnyPublisher())

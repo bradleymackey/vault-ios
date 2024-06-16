@@ -4,6 +4,7 @@ import VaultSettings
 import XCTest
 
 final class LocalSettingsTests: XCTestCase {
+    @MainActor
     func test_pasteTimeToLive_sendsObservableChangeOnValueChange() async throws {
         let defaults = try makeDefaults()
         let sut = try makeSUT(defaults: defaults)
@@ -17,6 +18,7 @@ final class LocalSettingsTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_pasteTimeToLive_defaultsToDefaultValue() throws {
         let defaults = try makeDefaults()
         let sut = try makeSUT(defaults: defaults)
@@ -24,6 +26,7 @@ final class LocalSettingsTests: XCTestCase {
         XCTAssertEqual(sut.state.pasteTimeToLive, .default)
     }
 
+    @MainActor
     func test_pasteTimeToLive_savesStateAfterStateChanged() throws {
         let defaults = try makeDefaults()
         let sutSave = try makeSUT(defaults: defaults)
@@ -37,8 +40,11 @@ final class LocalSettingsTests: XCTestCase {
 // MARK: - Helpers
 
 extension LocalSettingsTests {
+    @MainActor
     private func makeSUT(defaults: Defaults) throws -> LocalSettings {
-        LocalSettings(defaults: defaults)
+        let settings = LocalSettings(defaults: defaults)
+        trackForMemoryLeaks(settings)
+        return settings
     }
 
     private func makeDefaults() throws -> Defaults {

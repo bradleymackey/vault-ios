@@ -7,6 +7,7 @@ import XCTest
 @testable import VaultFeed
 
 final class TOTPCodeRendererTests: XCTestCase {
+    @MainActor
     func test_renderedCodePublisher_publishesCodesOnEpochSecondsTick() async throws {
         let (timer, sut) = makeSUT(digits: 8)
 
@@ -24,6 +25,7 @@ final class TOTPCodeRendererTests: XCTestCase {
         ])
     }
 
+    @MainActor
     func test_renderedCodePublisher_rendersZeroLengthCodes() async throws {
         let (timer, sut) = makeSUT(digits: 0)
 
@@ -39,6 +41,7 @@ final class TOTPCodeRendererTests: XCTestCase {
         ])
     }
 
+    @MainActor
     func test_renderedCodePublisher_rendersCodesWithLeadingZeros() async throws {
         let (timer, sut) = makeSUT(digits: 20)
 
@@ -56,6 +59,7 @@ final class TOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(
         digits: UInt16,
         file: StaticString = #filePath,

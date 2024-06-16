@@ -7,7 +7,7 @@ import XCTest
 final class PDFDataBlockDocumentRendererTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        isRecording = false
+//        isRecording = true
     }
 
     func test_render_drawsEmptyPDFDocument() throws {

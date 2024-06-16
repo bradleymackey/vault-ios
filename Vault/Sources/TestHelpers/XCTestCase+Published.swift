@@ -4,10 +4,14 @@ import XCTest
 
 extension XCTestCase {
     /// Asserts that the given publisher completes before continuing.
+    ///
+    /// Your test will likely need to be isolated to the `MainActor` to ensure that
+    /// we aren't passing values across isolation boundries whilst awaiting.
+    @MainActor
     public func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 1,
-        when perform: () async throws -> Void,
+        when perform: @MainActor () async throws -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> T.Output {
@@ -46,10 +50,14 @@ extension XCTestCase {
     }
 
     /// Asserts that the given publisher does not output any values.
+    ///
+    /// Your test will likely need to be isolated to the `MainActor` to ensure that
+    /// we aren't passing values across isolation boundries whilst awaiting.
+    @MainActor
     public func awaitNoPublish(
         publisher: some Publisher,
         timeout: Double = 1.0,
-        when perform: () async throws -> Void
+        when perform: @MainActor () async throws -> Void
     ) async rethrows {
         var isFulfilled = false
         let expectation = expectation(description: "Wait for no publish")

@@ -5,6 +5,7 @@ import XCTest
 @testable import VaultBackup
 
 final class VaultEncryptorTests: XCTestCase {
+    @MainActor
     func test_encrypt_emptyDataGivesEmptyEncryption() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let encodedVault = IntermediateEncodedVault(data: Data())
@@ -15,6 +16,7 @@ final class VaultEncryptorTests: XCTestCase {
     }
 
     /// Reference test case: https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'3131313131313131313131313131313131313131313131313131313131313131'%7D,%7B'option':'Hex','string':'3232323232323232323232323232323232323232323232323232323232323232'%7D,'GCM','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=NDE0MTQxNDE0MTQxNDE
+    @MainActor
     func test_encrypt_expectedDataReturnedUsingAESGCM() throws {
         let knownKey = try VaultKey(
             key: Data(repeating: 0x31, count: 32),
@@ -30,6 +32,7 @@ final class VaultEncryptorTests: XCTestCase {
         XCTAssertEqual(result.authentication, Data(hex: "0x4343890cb716dfb9915f8f7c050829ca"))
     }
 
+    @MainActor
     func test_encrypt_placesKeygenSaltIntoPayloadUnchanged() throws {
         let plainData = Data(hex: "0x41414141414141")
         let encodedVault = IntermediateEncodedVault(data: plainData)
@@ -41,6 +44,7 @@ final class VaultEncryptorTests: XCTestCase {
         XCTAssertEqual(result.keygenSalt, keygenSalt)
     }
 
+    @MainActor
     func test_encrypt_placesKeygenSignatureIntoPayloadUnchanged() throws {
         let plainData = Data(hex: "0x41414141414141")
         let encodedVault = IntermediateEncodedVault(data: plainData)
@@ -55,6 +59,7 @@ final class VaultEncryptorTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultEncryptorTests {
+    @MainActor
     private func makeSUT(
         key: VaultKey,
         keygenSalt: Data = Data(),

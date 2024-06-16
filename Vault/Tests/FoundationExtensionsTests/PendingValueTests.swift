@@ -9,11 +9,12 @@ final class PendingValueTests: XCTestCase {
         case testCase2
     }
 
+    @MainActor
     func test_awaitValue_throwsCancellationErrorIfCancelled() async throws {
         let sut = makeSUT()
 
         let exp = expectation(description: "waiting for value")
-        let handle = Task {
+        let handle = Task.detached {
             do {
                 _ = try await sut.awaitValue()
             } catch is CancellationError {
@@ -28,6 +29,7 @@ final class PendingValueTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     func test_awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
         let sut = makeSUT()
 
@@ -42,6 +44,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(result2?.withAnyEquatableError(), .success(101))
     }
 
+    @MainActor
     func test_awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
         let sut = makeSUT()
 
@@ -55,11 +58,12 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    @MainActor
     func test_awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
         let sut = makeSUT()
 
         let exp1 = expectation(description: "Start waiting 1")
-        let task = Task {
+        let task = Task.detached {
             exp1.fulfill()
             _ = try await sut.awaitValue()
         }
@@ -79,6 +83,7 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    @MainActor
     func test_fulfill_unsuspendsAwait() async throws {
         let sut = makeSUT()
 
@@ -89,6 +94,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(result?.withAnyEquatableError(), .success(42))
     }
 
+    @MainActor
     func test_fulfill_beforeAwaitingReturnsInitialValue() async throws {
         let sut = makeSUT()
         await sut.fulfill(42)
@@ -98,6 +104,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(value, 42)
     }
 
+    @MainActor
     func test_fulfill_remembersMostRecentValueOnly() async throws {
         let sut = makeSUT()
         await sut.fulfill(42)
@@ -108,6 +115,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(value, 44)
     }
 
+    @MainActor
     func test_reject_unsuspendsAwait() async throws {
         let sut = makeSUT()
 
@@ -123,6 +131,7 @@ final class PendingValueTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_reject_beforeAwaitResolvesWithInitialError() async throws {
         let sut = makeSUT()
         await sut.reject(error: TestError.testCase)
@@ -137,6 +146,7 @@ final class PendingValueTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_reject_resolvesWithMostRecentError() async throws {
         let sut = makeSUT()
         await sut.reject(error: TestError.testCase)
@@ -152,6 +162,7 @@ final class PendingValueTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_isWaiting_initiallyFalse() async {
         let sut = makeSUT()
 
@@ -159,6 +170,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertFalse(isWaiting)
     }
 
+    @MainActor
     func test_isWaiting_trueWhenWaiting() async {
         let sut = makeSUT()
 
@@ -170,6 +182,7 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    @MainActor
     func test_isWaiting_falseWhenFulfilled() async throws {
         let sut = makeSUT()
 
@@ -181,6 +194,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertFalse(isWaiting)
     }
 
+    @MainActor
     func test_isWaiting_falseWhenRejected() async throws {
         let sut = makeSUT()
 
@@ -192,6 +206,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertFalse(isWaiting)
     }
 
+    @MainActor
     func test_isWaiting_falseWhenCancelled() async throws {
         let sut = makeSUT()
 
@@ -209,6 +224,7 @@ final class PendingValueTests: XCTestCase {
 extension PendingValueTests {
     private typealias SUT = PendingValue<Int>
 
+    @MainActor
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> SUT {
         let sut = PendingValue<Int>()
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -225,7 +241,10 @@ extension PendingValueTests {
     /// This ensures the last value cache is checked before any action (fulfill/reject) is called.
     /// Without this, you might acidentally call `fulfill`/`reject` before await, and thus the value will be cached.
     @MainActor
-    private func awaitValueForcingAsync(on sut: SUT, action: () async -> Void) async -> Result<Int, any Error>? {
+    private func awaitValueForcingAsync(
+        on sut: SUT,
+        action: @MainActor () async -> Void
+    ) async -> Result<Int, any Error>? {
         var capturedResult: Result<Int, any Error>?
         let expStartedWaiting = expectation(description: "Started waiting")
         let expInitial = expectation(description: "waiting for value")
@@ -251,10 +270,11 @@ extension PendingValueTests {
         return capturedResult
     }
 
+    @MainActor
     private func awaitNoValueProduced(on sut: SUT) async {
         let expNext = expectation(description: "Wait for no value")
         expNext.isInverted = true
-        Task {
+        Task.detached {
             _ = try await sut.awaitValue()
             expNext.fulfill()
         }

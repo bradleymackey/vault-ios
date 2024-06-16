@@ -2,6 +2,7 @@ import Foundation
 import VaultCore
 
 /// A `OTPCodeDetailEditor` that uses a feed for updating after a given edit.
+@MainActor
 public struct VaultFeedDetailEditorAdapter {
     private let vaultFeed: any VaultFeed
 

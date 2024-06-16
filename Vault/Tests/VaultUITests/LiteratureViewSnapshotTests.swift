@@ -6,7 +6,7 @@ import XCTest
 final class LiteratureViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        isRecording = false
+//        isRecording = true
     }
 
     @MainActor

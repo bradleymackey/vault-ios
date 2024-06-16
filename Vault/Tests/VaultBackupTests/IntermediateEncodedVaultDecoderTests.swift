@@ -3,6 +3,7 @@ import XCTest
 @testable import VaultBackup
 
 final class IntermediateEncodedVaultDecoderTests: XCTestCase {
+    @MainActor
     func test_decodeVault_throwsForEmptyData() {
         let sut = makeSUT()
         let data = Data()
@@ -11,6 +12,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
         XCTAssertThrowsError(try sut.decode(encodedVault: vault))
     }
 
+    @MainActor
     func test_decodeVault_throwsForInvalidJSON() {
         let sut = makeSUT()
         let data = Data("{}".utf8)
@@ -19,6 +21,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
         XCTAssertThrowsError(try sut.decode(encodedVault: vault))
     }
 
+    @MainActor
     func test_decodeVault_decodesZeroItems() throws {
         let sut = makeSUT()
         let input = VaultBackupPayload(
@@ -35,6 +38,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
         XCTAssertEqual(decoded, input, "Decoded backup differs from input")
     }
 
+    @MainActor
     func test_decodeVault_decodesNonZeroItems() throws {
         let sut = makeSUT()
         let date1 = Date(timeIntervalSince1970: 12345)
@@ -87,6 +91,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
 // MARK: - Helpers
 
 extension IntermediateEncodedVaultDecoderTests {
+    @MainActor
     private func makeSUT() -> IntermediateEncodedVaultDecoder {
         let sut = IntermediateEncodedVaultDecoder()
         trackForMemoryLeaks(sut)
