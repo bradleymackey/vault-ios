@@ -9,6 +9,7 @@ final class LiteratureViewSnapshotTests: XCTestCase {
         isRecording = false
     }
 
+    @MainActor
     func test_layout_bodyWithSecondaryText() {
         let view = NavigationStack {
             LiteratureView(title: "Title", bodyText: "Body\n\nText\nTest", bodyColor: .secondary)
