@@ -266,7 +266,7 @@ extension PendingValueTests {
     private func awaitNoValueProduced(on sut: SUT) async {
         let expNext = expectation(description: "Wait for no value")
         expNext.isInverted = true
-        Task {
+        Task.detached {
             _ = try await sut.awaitValue()
             expNext.fulfill()
         }
