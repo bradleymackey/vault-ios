@@ -14,7 +14,7 @@ final class PendingValueTests: XCTestCase {
         let sut = makeSUT()
 
         let exp = expectation(description: "waiting for value")
-        let handle = Task {
+        let handle = Task.detached {
             do {
                 _ = try await sut.awaitValue()
             } catch is CancellationError {
@@ -63,7 +63,7 @@ final class PendingValueTests: XCTestCase {
         let sut = makeSUT()
 
         let exp1 = expectation(description: "Start waiting 1")
-        let task = Task {
+        let task = Task.detached {
             exp1.fulfill()
             _ = try await sut.awaitValue()
         }
