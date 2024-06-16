@@ -96,7 +96,7 @@ public enum OTPAuthType: Equatable, Hashable, Sendable {
         public static var defaultCounter: UInt64 { 0 }
     }
 
-    public enum Kind: Equatable, Hashable, IdentifiableSelf, CaseIterable {
+    public enum Kind: Equatable, Hashable, IdentifiableSelf, CaseIterable, Sendable {
         case totp, hotp
     }
 

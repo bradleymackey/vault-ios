@@ -27,7 +27,7 @@ extension FieldValidated: Equatable where T: Equatable {
 // MARK: - Validation Logic
 
 /// Encapsulates the validator for `FieldValidated<T>`
-public struct FieldValidationLogic<T> {
+public struct FieldValidationLogic<T: Sendable> {
     public let validate: (T) -> FieldValidationState
     public init(validate: @escaping (T) -> FieldValidationState) {
         self.validate = validate

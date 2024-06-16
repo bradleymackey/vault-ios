@@ -6,7 +6,7 @@ import VaultCore
 /// This is a partial edit to the code, as seen from the user's point of view.
 /// Fields are separated from the raw model type to make them easier to edit in place.
 /// From this model, they are merged with an existing model or written to a new model, as needed.
-public struct OTPCodeDetailEdits: EditableState {
+public struct OTPCodeDetailEdits: EditableState, Sendable {
     public var codeType: OTPAuthType.Kind
     /// Only used for TOTP type codes, ignored otherwise
     public var totpPeriodLength: UInt64
