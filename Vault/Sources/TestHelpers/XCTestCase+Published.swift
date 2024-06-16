@@ -8,7 +8,7 @@ extension XCTestCase {
     public func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 1,
-        when perform: @Sendable () async throws -> Void,
+        when perform: @MainActor () async throws -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> T.Output {
@@ -47,10 +47,11 @@ extension XCTestCase {
     }
 
     /// Asserts that the given publisher does not output any values.
+    @MainActor
     public func awaitNoPublish(
         publisher: some Publisher,
         timeout: Double = 1.0,
-        when perform: () async throws -> Void
+        when perform: @MainActor () async throws -> Void
     ) async rethrows {
         var isFulfilled = false
         let expectation = expectation(description: "Wait for no publish")
