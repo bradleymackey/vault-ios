@@ -304,6 +304,7 @@ final class FeedViewModelTests: XCTestCase {
         return sut
     }
 
+    @MainActor
     private final class StubStore: VaultStoreReader, VaultStoreWriter {
         var codes = [StoredVaultItem]()
         var retrieveStoreCalled: () -> Void = {}
@@ -340,6 +341,7 @@ final class FeedViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
     private final class ErrorStubStore: VaultStoreReader, VaultStoreWriter {
         var error: any Error
         init(error: any Error) {

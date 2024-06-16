@@ -4,6 +4,6 @@ import Foundation
 /// If a given vault item changes, it's entry in this cache will need to be invalidated.
 ///
 /// @mockable
-public protocol VaultItemCache {
+public protocol VaultItemCache: Sendable {
     func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) async
 }

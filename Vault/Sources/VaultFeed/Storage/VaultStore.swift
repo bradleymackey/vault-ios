@@ -3,7 +3,7 @@ import VaultCore
 
 public typealias VaultStore = VaultStoreReader & VaultStoreWriter
 
-public protocol VaultStoreReader {
+public protocol VaultStoreReader: Sendable {
     /// Retrieve all stored codes from storage.
     func retrieve() async throws -> [StoredVaultItem]
 
@@ -11,7 +11,7 @@ public protocol VaultStoreReader {
     func retrieve(matching query: String) async throws -> [StoredVaultItem]
 }
 
-public protocol VaultStoreWriter {
+public protocol VaultStoreWriter: Sendable {
     /// Insert an `OTPAuthCode` with a unique `id`.
     ///
     /// - Returns: The underlying ID of the entry in the store.
