@@ -56,6 +56,7 @@ final class HOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(
         digits: UInt16,
         file: StaticString = #filePath,

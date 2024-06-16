@@ -9,6 +9,7 @@ final class PendingValueTests: XCTestCase {
         case testCase2
     }
 
+    @MainActor
     func test_awaitValue_throwsCancellationErrorIfCancelled() async throws {
         let sut = makeSUT()
 
@@ -57,6 +58,7 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    @MainActor
     func test_awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
         let sut = makeSUT()
 
@@ -92,6 +94,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(result?.withAnyEquatableError(), .success(42))
     }
 
+    @MainActor
     func test_fulfill_beforeAwaitingReturnsInitialValue() async throws {
         let sut = makeSUT()
         await sut.fulfill(42)
@@ -101,6 +104,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(value, 42)
     }
 
+    @MainActor
     func test_fulfill_remembersMostRecentValueOnly() async throws {
         let sut = makeSUT()
         await sut.fulfill(42)
@@ -127,6 +131,7 @@ final class PendingValueTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_reject_beforeAwaitResolvesWithInitialError() async throws {
         let sut = makeSUT()
         await sut.reject(error: TestError.testCase)
@@ -141,6 +146,7 @@ final class PendingValueTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_reject_resolvesWithMostRecentError() async throws {
         let sut = makeSUT()
         await sut.reject(error: TestError.testCase)
@@ -156,6 +162,7 @@ final class PendingValueTests: XCTestCase {
         }
     }
 
+    @MainActor
     func test_isWaiting_initiallyFalse() async {
         let sut = makeSUT()
 
@@ -217,6 +224,7 @@ final class PendingValueTests: XCTestCase {
 extension PendingValueTests {
     private typealias SUT = PendingValue<Int>
 
+    @MainActor
     private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> SUT {
         let sut = PendingValue<Int>()
         trackForMemoryLeaks(sut, file: file, line: line)

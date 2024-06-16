@@ -75,6 +75,7 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(
         clock clockTime: Double,
         period: UInt64,

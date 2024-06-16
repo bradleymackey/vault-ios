@@ -4,6 +4,7 @@ import XCTest
 @testable import VaultBackup
 
 final class VaultDecryptorTests: XCTestCase {
+    @MainActor
     func test_decrypt_emptyDataDecryptsToEmpty() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let vault = EncryptedVault(
@@ -19,6 +20,7 @@ final class VaultDecryptorTests: XCTestCase {
         XCTAssertEqual(decrypted.data, Data())
     }
 
+    @MainActor
     func test_decrypt_invalidDataFails() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let vault = EncryptedVault(
@@ -33,6 +35,7 @@ final class VaultDecryptorTests: XCTestCase {
     }
 
     /// Reference test case: https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'3131313131313131313131313131313131313131313131313131313131313131'%7D,%7B'option':'Hex','string':'3232323232323232323232323232323232323232323232323232323232323232'%7D,'GCM','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=NDE0MTQxNDE0MTQxNDE
+    @MainActor
     func test_decrypt_expectedDataIsDecrypted() throws {
         let iv = Data(repeating: 0x32, count: 32)
         let key = Data(repeating: 0x31, count: 32)
@@ -57,6 +60,7 @@ final class VaultDecryptorTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultDecryptorTests {
+    @MainActor
     private func makeSUT(key: Data) -> VaultDecryptor {
         let sut = VaultDecryptor(key: key)
         trackForMemoryLeaks(sut)

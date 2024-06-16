@@ -59,6 +59,7 @@ final class TOTPCodeRendererTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(
         digits: UInt16,
         file: StaticString = #filePath,
