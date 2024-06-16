@@ -32,8 +32,8 @@ public struct HKDFKeyDeriver: KeyDeriver {
 // MARK: - Parameters
 
 extension HKDFKeyDeriver {
-    public struct Parameters {
-        public enum Variant {
+    public struct Parameters: Sendable {
+        public enum Variant: Sendable {
             case sha256
             case sha3_sha512
         }

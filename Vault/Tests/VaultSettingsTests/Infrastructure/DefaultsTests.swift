@@ -222,16 +222,16 @@ final class DefaultsKitTests: XCTestCase {
 // MARK: - Helpers
 
 extension DefaultsKey {
-    fileprivate static let integerKey = Key<Int>("integerKey")
-    fileprivate static let floatKey = Key<Float>("floatKey")
-    fileprivate static let doubleKey = Key<Double>("doubleKey")
-    fileprivate static let stringKey = Key<String>("stringKey")
-    fileprivate static let boolKey = Key<Bool>("boolKey")
-    fileprivate static let dateKey = Key<Date>("dateKey")
-    fileprivate static let enumKey = Key<EnumMock>("enumKey")
-    fileprivate static let optionSetKey = Key<OptionSetMock>("optionSetKey")
-    fileprivate static let arrayOfIntegersKey = Key<[Int]>("arrayOfIntegersKey")
-    fileprivate static let personMockKey = Key<PersonMock>("personMockKey")
+    fileprivate static var integerKey: Key<Int> { .init("integerKey") }
+    fileprivate static var floatKey: Key<Float> { .init("floatKey") }
+    fileprivate static var doubleKey: Key<Double> { .init("doubleKey") }
+    fileprivate static var stringKey: Key<String> { .init("stringKey") }
+    fileprivate static var boolKey: Key<Bool> { .init("boolKey") }
+    fileprivate static var dateKey: Key<Date> { .init("dateKey") }
+    fileprivate static var enumKey: Key<EnumMock> { .init("enumKey") }
+    fileprivate static var optionSetKey: Key<OptionSetMock> { .init("optionSetKey") }
+    fileprivate static var arrayOfIntegersKey: Key<[Int]> { .init("arrayOfIntegersKey") }
+    fileprivate static var personMockKey: Key<PersonMock> { .init("personMockKey") }
 }
 
 struct PersonMock: Codable {

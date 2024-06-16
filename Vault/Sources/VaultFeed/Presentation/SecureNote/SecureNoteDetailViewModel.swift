@@ -121,6 +121,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
 // MARK: - Titles
 
 extension SecureNoteDetailViewModel {
+    @MainActor
     public struct Strings: DetailViewModelStrings {
         static let shared = Strings()
         private init() {}

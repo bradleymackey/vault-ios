@@ -44,6 +44,7 @@ extension BackupViewModel {
 // MARK: - Strings
 
 extension BackupViewModel {
+    @MainActor
     public struct Strings {
         fileprivate static var shared = Strings()
         private init() {}

@@ -33,8 +33,8 @@ public struct PBKDF2KeyDeriver: KeyDeriver {
 // MARK: - Parameters
 
 extension PBKDF2KeyDeriver {
-    public struct Parameters {
-        public enum Variant: Equatable {
+    public struct Parameters: Sendable {
+        public enum Variant: Equatable, Sendable {
             case sha384
         }
 

@@ -2,7 +2,7 @@ import Foundation
 import FoundationExtensions
 
 /// The size that an OTP preview window will be when presented.
-public enum PreviewSize: String, Codable, Equatable, Hashable, CaseIterable, IdentifiableSelf {
+public enum PreviewSize: String, Codable, Equatable, Hashable, CaseIterable, Sendable, IdentifiableSelf {
     case medium
     case large
 }

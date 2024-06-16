@@ -25,13 +25,13 @@
 import Combine
 import Foundation
 
-public class DefaultsKey {}
+public protocol DefaultsKey: Sendable {}
 
 /// Represents a `Key` with an associated generic value type conforming to the
 /// `Codable` protocol.
 ///
 ///     static let someKey = Key<ValueType>("someKey")
-public final class Key<ValueType: Codable>: DefaultsKey {
+public struct Key<ValueType: Codable>: DefaultsKey {
     fileprivate let storageName: String
     public init(_ storageName: String) {
         self.storageName = storageName
