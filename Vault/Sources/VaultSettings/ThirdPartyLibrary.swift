@@ -1,6 +1,6 @@
 import Foundation
 
-public struct ThirdPartyLibrary: Decodable {
+public struct ThirdPartyLibrary: Decodable, Sendable {
     public var name: String
     public var url: URL
     public var licence: String
