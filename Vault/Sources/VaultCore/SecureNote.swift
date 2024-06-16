@@ -1,7 +1,7 @@
 import Foundation
 
 /// Model type for a secure note.
-public struct SecureNote: Equatable, Hashable {
+public struct SecureNote: Equatable, Hashable, Sendable {
     public var title: String
     public var contents: String
 
