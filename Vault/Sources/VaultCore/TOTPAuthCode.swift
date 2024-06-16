@@ -1,6 +1,6 @@
 import Foundation
 
-public struct TOTPAuthCode {
+public struct TOTPAuthCode: Sendable {
     public var period: UInt64
     public var data: OTPAuthCodeData
 

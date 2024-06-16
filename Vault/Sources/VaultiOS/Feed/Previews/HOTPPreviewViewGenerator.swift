@@ -65,10 +65,12 @@ extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopy
 // MARK: - Caching
 
 extension HOTPPreviewViewGenerator: VaultItemCache {
-    public func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
-        rendererCache.remove(key: id)
-        previewViewModelCache.remove(key: id)
-        incrementerViewModelCache.remove(key: id)
+    public nonisolated func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) async {
+        await MainActor.run {
+            rendererCache.remove(key: id)
+            previewViewModelCache.remove(key: id)
+            incrementerViewModelCache.remove(key: id)
+        }
     }
 
     var cachedViewsCount: Int {

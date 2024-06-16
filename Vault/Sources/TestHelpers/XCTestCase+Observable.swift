@@ -2,6 +2,7 @@ import Foundation
 import XCTest
 
 extension XCTestCase {
+    @MainActor
     public func expectSingleMutation<T: Observable>(
         observable object: T,
         keyPath: KeyPath<T, some Any>,
@@ -20,6 +21,7 @@ extension XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     public func expectNoMutation<T: Observable>(
         observable object: T,
         keyPath: KeyPath<T, some Any>,

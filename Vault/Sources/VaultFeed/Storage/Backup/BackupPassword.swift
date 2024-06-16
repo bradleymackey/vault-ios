@@ -1,7 +1,7 @@
 import CryptoEngine
 import Foundation
 
-public struct BackupPassword: Equatable, Hashable {
+public struct BackupPassword: Equatable, Hashable, Sendable {
     /// The derived key (via keygen) from the user's password.
     /// (We don't store the password, only the derived key).
     public var key: Data

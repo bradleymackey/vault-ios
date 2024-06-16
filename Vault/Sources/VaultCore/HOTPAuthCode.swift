@@ -1,6 +1,6 @@
 import Foundation
 
-public struct HOTPAuthCode {
+public struct HOTPAuthCode: Sendable {
     public var counter: UInt64 = 0
     public var data: OTPAuthCodeData
 

@@ -5,5 +5,5 @@ import Foundation
 ///
 /// @mockable
 public protocol VaultItemCache {
-    func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID)
+    func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) async
 }

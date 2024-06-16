@@ -2,7 +2,7 @@ import Foundation
 import FoundationExtensions
 
 /// Common internal data used by OTP codes.
-public struct OTPAuthCodeData: Equatable, Hashable {
+public struct OTPAuthCodeData: Equatable, Hashable, Sendable {
     public var secret: OTPAuthSecret
     public var algorithm: OTPAuthAlgorithm
     public var digits: OTPAuthDigits
@@ -24,12 +24,12 @@ public struct OTPAuthCodeData: Equatable, Hashable {
     }
 }
 
-public struct OTPAuthSecret: Equatable, Hashable {
+public struct OTPAuthSecret: Equatable, Hashable, Sendable {
     public var data: Data
     /// The format that the secret was stored in.
     public var format: Format
 
-    public enum Format: Equatable, Hashable {
+    public enum Format: Equatable, Hashable, Sendable {
         case base32
     }
 
@@ -52,7 +52,7 @@ public struct OTPAuthSecret: Equatable, Hashable {
     }
 }
 
-public struct OTPAuthDigits: Equatable, Hashable, CustomStringConvertible {
+public struct OTPAuthDigits: Equatable, Hashable, CustomStringConvertible, Sendable {
     public var value: UInt16
 
     public init(value: UInt16) {
@@ -68,7 +68,7 @@ extension OTPAuthDigits {
     public static var `default`: OTPAuthDigits { .init(value: 6) }
 }
 
-public enum OTPAuthAlgorithm: Equatable, Hashable, IdentifiableSelf, CaseIterable {
+public enum OTPAuthAlgorithm: Equatable, Hashable, IdentifiableSelf, CaseIterable, Sendable {
     case sha1
     case sha256
     case sha512
@@ -84,7 +84,7 @@ public enum OTPAuthAlgorithm: Equatable, Hashable, IdentifiableSelf, CaseIterabl
     }
 }
 
-public enum OTPAuthType: Equatable, Hashable {
+public enum OTPAuthType: Equatable, Hashable, Sendable {
     case totp(period: UInt64 = TOTP.defaultPeriod)
     case hotp(counter: UInt64 = HOTP.defaultCounter)
 
@@ -96,7 +96,7 @@ public enum OTPAuthType: Equatable, Hashable {
         public static var defaultCounter: UInt64 { 0 }
     }
 
-    public enum Kind: Equatable, Hashable, IdentifiableSelf, CaseIterable {
+    public enum Kind: Equatable, Hashable, IdentifiableSelf, CaseIterable, Sendable {
         case totp, hotp
     }
 

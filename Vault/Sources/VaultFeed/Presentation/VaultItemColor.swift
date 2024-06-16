@@ -1,6 +1,6 @@
 import Foundation
 
-public struct VaultItemColor: Equatable, Hashable {
+public struct VaultItemColor: Equatable, Hashable, Sendable {
     public var red: Double
     public var green: Double
     public var blue: Double

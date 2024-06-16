@@ -1,7 +1,7 @@
 import Foundation
 
 /// An item of data that can be stored in the Vault.
-public enum VaultItem: Equatable, Hashable {
+public enum VaultItem: Equatable, Hashable, Sendable {
     case otpCode(OTPAuthCode)
     case secureNote(SecureNote)
 }

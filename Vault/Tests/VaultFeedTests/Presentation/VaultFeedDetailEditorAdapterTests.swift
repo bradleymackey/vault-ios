@@ -5,6 +5,7 @@ import VaultFeed
 import XCTest
 
 final class VaultFeedDetailEditorAdapterTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSideEffects() {
         let feed = MockVaultFeed()
         _ = makeSUT(feed: feed)
@@ -12,6 +13,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         XCTAssertTrue(feed.calls.isEmpty)
     }
 
+    @MainActor
     func test_createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -45,6 +47,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_createCode_propagatesFailureOnError() async throws {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -52,6 +55,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await XCTAssertThrowsError(try await sut.createCode(initialEdits: anyOTPCodeDetailEdits()))
     }
 
+    @MainActor
     func test_updateCode_translatesCodeDataForCall() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -91,6 +95,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_updateCode_propagatesFailureOnError() async {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -102,6 +107,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         ))
     }
 
+    @MainActor
     func test_deleteCode_deletesFromFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -119,6 +125,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_deleteCode_propagatesFailureOnError() async {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -126,6 +133,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await XCTAssertThrowsError(try await sut.deleteCode(id: UUID()))
     }
 
+    @MainActor
     func test_createNote_createsNoteInFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -153,6 +161,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_createNote_propagatesFailureOnError() async throws {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -160,6 +169,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await XCTAssertThrowsError(try await sut.createNote(initialEdits: .init()))
     }
 
+    @MainActor
     func test_updateNote_updatesNoteInFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -190,6 +200,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_updateNote_propagatesFailureOnError() async {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -197,6 +208,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anyStoredNote(), edits: .init()))
     }
 
+    @MainActor
     func test_deleteNote_deletesFromFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -214,6 +226,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
     func test_deleteNote_propagatesFailureOnError() async {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
@@ -223,6 +236,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 }
 
 extension VaultFeedDetailEditorAdapterTests {
+    @MainActor
     private func makeSUT(feed: any VaultFeed) -> VaultFeedDetailEditorAdapter {
         VaultFeedDetailEditorAdapter(vaultFeed: feed)
     }

@@ -1,7 +1,7 @@
 import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
-public actor PendingValue<Output> {
+public actor PendingValue<Output: Sendable> {
     /// The stream that outputs the value internally within `awaitValue`.
     private var streamContinuation: AsyncThrowingStream<Output, any Error>.Continuation?
 

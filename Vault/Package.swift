@@ -7,13 +7,14 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("BareSlashRegexLiterals"),
     .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("StrictConcurrency"),
     .enableUpcomingFeature("GlobalConcurrency"),
     .enableUpcomingFeature("IsolatedDefaultValues"),
     .enableUpcomingFeature("DisableOutwardActorInference"),
     .enableUpcomingFeature("ImportObjcForwardDeclarations"),
     .enableUpcomingFeature("DeprecateApplicationMain"),
     .enableUpcomingFeature("ImplicitOpenExistentials"),
+    .enableUpcomingFeature("StrictConcurrency"), // For Swift 6
+    .enableExperimentalFeature("StrictConcurrency"), // For Swift 5.10
     .enableExperimentalFeature("AccessLevelOnImport"),
 ]
 

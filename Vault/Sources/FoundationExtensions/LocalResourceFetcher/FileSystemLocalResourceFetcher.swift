@@ -1,7 +1,7 @@
 import Foundation
 
 /// A `LocalResourceFetcher` that actually fetches the file from disk.
-public struct FileSystemLocalResourceFetcher: LocalResourceFetcher {
+public struct FileSystemLocalResourceFetcher: LocalResourceFetcher, Sendable {
     public init() {}
 
     public func fetchLocalResource(at url: URL) async throws -> Data {
