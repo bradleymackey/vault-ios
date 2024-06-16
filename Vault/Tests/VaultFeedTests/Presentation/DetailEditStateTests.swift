@@ -29,7 +29,7 @@ final class DetailEditStateTests: XCTestCase {
         let exp = expectation(description: "Wait for performUpdate")
         let pendingCall = PendingValue<Void>()
         // Save changes in a different task, so we don't suspend the current (test) task
-        Task.detached(priority: .background) {
+        Task.detached(priority: .background) { @MainActor in
             try await sut.saveChanges {
                 exp.fulfill()
                 try? await pendingCall.awaitValue()
@@ -41,6 +41,7 @@ final class DetailEditStateTests: XCTestCase {
         XCTAssertTrue(sut.isSaving)
 
         await pendingCall.fulfill()
+        await pendingCall.cancel()
     }
 
     @MainActor
@@ -53,7 +54,7 @@ final class DetailEditStateTests: XCTestCase {
             await withTaskGroup(of: Void.self) { group in
                 for _ in 0 ..< 3 {
                     // Multiple calls being made, concurrently.
-                    group.addTask {
+                    group.addTask { @MainActor in
                         try? await sut.saveChanges {
                             exp.fulfill()
                             try? await pendingCall.awaitValue()
@@ -104,7 +105,7 @@ final class DetailEditStateTests: XCTestCase {
         let exp = expectation(description: "Wait for performDeletion")
         let pendingCall = PendingValue<Void>()
         // Save changes in a different task, so we don't suspend the current (test) task
-        Task.detached(priority: .background) {
+        Task.detached(priority: .background) { @MainActor in
             try await sut.deleteItem {
                 exp.fulfill()
                 try? await pendingCall.awaitValue()
@@ -130,7 +131,7 @@ final class DetailEditStateTests: XCTestCase {
             await withTaskGroup(of: Void.self) { group in
                 for _ in 0 ..< 3 {
                     // Multiple calls being made, concurrently.
-                    group.addTask {
+                    group.addTask { @MainActor in
                         try? await sut.deleteItem {
                             exp.fulfill()
                             try? await pendingCall.awaitValue()

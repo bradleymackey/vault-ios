@@ -15,7 +15,7 @@ final class DetailEditState<T: Equatable> {
         isInEditMode = true
     }
 
-    func saveChanges(performUpdate: () async throws -> Void) async throws {
+    func saveChanges(performUpdate: @MainActor () async throws -> Void) async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
@@ -27,7 +27,7 @@ final class DetailEditState<T: Equatable> {
         }
     }
 
-    func deleteItem(performDeletion: () async throws -> Void, finished: () -> Void) async throws {
+    func deleteItem(performDeletion: @MainActor () async throws -> Void, finished: @MainActor () -> Void) async throws {
         guard !isSaving else { return }
         isSaving = true
         defer { isSaving = false }
@@ -39,7 +39,7 @@ final class DetailEditState<T: Equatable> {
         }
     }
 
-    func exitCurrentModeClearingDirtyState(clearDirtyState: () -> Void, finished: () -> Void) {
+    func exitCurrentModeClearingDirtyState(clearDirtyState: @MainActor () -> Void, finished: @MainActor () -> Void) {
         if isInEditMode {
             clearDirtyState()
             isInEditMode = false
