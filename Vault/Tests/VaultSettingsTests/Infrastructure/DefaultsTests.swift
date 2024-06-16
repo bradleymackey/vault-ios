@@ -182,6 +182,7 @@ final class DefaultsKitTests: XCTestCase {
         XCTAssertEqual(savedPerson?.children.first?.age, 30)
     }
 
+    @MainActor
     func test_clear_didChangeDefaults() async throws {
         let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
 
@@ -194,6 +195,7 @@ final class DefaultsKitTests: XCTestCase {
         XCTAssertEqual(values.count, 3)
     }
 
+    @MainActor
     func test_removeAll_didChangeDefaults() async throws {
         let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
 
@@ -206,6 +208,7 @@ final class DefaultsKitTests: XCTestCase {
         XCTAssertEqual(values.count, 3)
     }
 
+    @MainActor
     func test_set_didChangeDefaults() async throws {
         let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
 
