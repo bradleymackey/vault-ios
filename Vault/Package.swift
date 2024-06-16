@@ -8,6 +8,12 @@ let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
     .enableUpcomingFeature("StrictConcurrency"),
+    .enableUpcomingFeature("GlobalConcurrency"),
+    .enableUpcomingFeature("IsolatedDefaultValues"),
+    .enableUpcomingFeature("DisableOutwardActorInference"),
+    .enableUpcomingFeature("ImportObjcForwardDeclarations"),
+    .enableUpcomingFeature("DeprecateApplicationMain"),
+    .enableUpcomingFeature("ImplicitOpenExistentials"),
     .enableExperimentalFeature("AccessLevelOnImport"),
 ]
 
