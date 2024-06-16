@@ -113,19 +113,19 @@ extension FeedViewModel: VaultFeed {
 
     public func update(id: UUID, item: StoredVaultItem.Write) async throws {
         try await store.update(id: id, item: item)
-        invalidateCaches(id: id)
+        await invalidateCaches(id: id)
         await reloadData()
     }
 
     public func delete(id: UUID) async throws {
         try await store.delete(id: id)
-        invalidateCaches(id: id)
+        await invalidateCaches(id: id)
         await reloadData()
     }
 
-    private func invalidateCaches(id: UUID) {
+    private func invalidateCaches(id: UUID) async {
         for cache in caches {
-            cache.invalidateVaultItemDetailCache(forVaultItemWithID: id)
+            await cache.invalidateVaultItemDetailCache(forVaultItemWithID: id)
         }
     }
 }
