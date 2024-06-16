@@ -4,10 +4,11 @@ import XCTest
 
 extension XCTestCase {
     /// Asserts that the given publisher completes before continuing.
+    @MainActor
     public func awaitPublisher<T: Publisher>(
         _ publisher: T,
         timeout: TimeInterval = 1,
-        when perform: () async throws -> Void,
+        when perform: @Sendable () async throws -> Void,
         file: StaticString = #filePath,
         line: UInt = #line
     ) async throws -> T.Output {

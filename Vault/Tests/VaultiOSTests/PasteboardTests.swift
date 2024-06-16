@@ -42,9 +42,9 @@ final class PasteboardTests: XCTestCase {
 
         let output = sut.didPaste().collectFirst(3)
         _ = try await awaitPublisher(output) {
-            sut.copy("any")
-            sut.copy("any")
-            sut.copy("any")
+            await sut.copy("any")
+            await sut.copy("any")
+            await sut.copy("any")
         }
     }
 

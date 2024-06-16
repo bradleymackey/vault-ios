@@ -28,6 +28,7 @@ final class PendingValueTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
     }
 
+    @MainActor
     func test_awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
         let sut = makeSUT()
 
@@ -42,6 +43,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(result2?.withAnyEquatableError(), .success(101))
     }
 
+    @MainActor
     func test_awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
         let sut = makeSUT()
 
@@ -170,6 +172,7 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    @MainActor
     func test_isWaiting_falseWhenFulfilled() async throws {
         let sut = makeSUT()
 
@@ -181,6 +184,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertFalse(isWaiting)
     }
 
+    @MainActor
     func test_isWaiting_falseWhenRejected() async throws {
         let sut = makeSUT()
 
@@ -192,6 +196,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertFalse(isWaiting)
     }
 
+    @MainActor
     func test_isWaiting_falseWhenCancelled() async throws {
         let sut = makeSUT()
 

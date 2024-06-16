@@ -78,7 +78,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             .collectFirst(1)
 
         let incrementOperations: [Void] = try await awaitPublisher(publisher) {
-            sut.incrementCounter()
+            await sut.incrementCounter()
         }
         XCTAssertEqual(incrementOperations.count, 1)
     }

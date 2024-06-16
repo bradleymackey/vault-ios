@@ -257,7 +257,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         let publisher = sut.isFinishedPublisher().collectFirst(1)
         let output: [Void] = try await awaitPublisher(publisher) {
-            sut.done()
+            await sut.done()
         }
 
         XCTAssertEqual(output.count, 1)
