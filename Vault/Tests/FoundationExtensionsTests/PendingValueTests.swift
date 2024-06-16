@@ -81,6 +81,7 @@ final class PendingValueTests: XCTestCase {
         await sut.cancel()
     }
 
+    @MainActor
     func test_fulfill_unsuspendsAwait() async throws {
         let sut = makeSUT()
 
@@ -110,6 +111,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertEqual(value, 44)
     }
 
+    @MainActor
     func test_reject_unsuspendsAwait() async throws {
         let sut = makeSUT()
 
@@ -161,6 +163,7 @@ final class PendingValueTests: XCTestCase {
         XCTAssertFalse(isWaiting)
     }
 
+    @MainActor
     func test_isWaiting_trueWhenWaiting() async {
         let sut = makeSUT()
 
@@ -230,7 +233,10 @@ extension PendingValueTests {
     /// This ensures the last value cache is checked before any action (fulfill/reject) is called.
     /// Without this, you might acidentally call `fulfill`/`reject` before await, and thus the value will be cached.
     @MainActor
-    private func awaitValueForcingAsync(on sut: SUT, action: () async -> Void) async -> Result<Int, any Error>? {
+    private func awaitValueForcingAsync(
+        on sut: SUT,
+        action: @MainActor () async -> Void
+    ) async -> Result<Int, any Error>? {
         var capturedResult: Result<Int, any Error>?
         let expStartedWaiting = expectation(description: "Started waiting")
         let expInitial = expectation(description: "waiting for value")
@@ -256,6 +262,7 @@ extension PendingValueTests {
         return capturedResult
     }
 
+    @MainActor
     private func awaitNoValueProduced(on sut: SUT) async {
         let expNext = expectation(description: "Wait for no value")
         expNext.isInverted = true

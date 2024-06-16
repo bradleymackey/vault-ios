@@ -288,7 +288,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         let publisher = sut.isFinishedPublisher().collectFirst(1)
         let output: [Void] = try await awaitPublisher(publisher) {
-            await sut.done()
+            sut.done()
         }
 
         XCTAssertEqual(output.count, 1)

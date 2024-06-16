@@ -5,6 +5,7 @@ import XCTest
 @testable import VaultFeed
 
 final class HOTPCodeRendererTests: XCTestCase {
+    @MainActor
     func test_renderedCodePublisher_doesNotPublishesInitialCodeImmediately() async throws {
         let sut = makeSUT(digits: 8)
         let publisher = sut.renderedCodePublisher().collectFirst(1)
@@ -14,6 +15,7 @@ final class HOTPCodeRendererTests: XCTestCase {
         })
     }
 
+    @MainActor
     func test_renderedCodePublisher_publishesCodesOnCounterChangeOnly() async throws {
         let sut = makeSUT(digits: 8)
 
@@ -26,6 +28,7 @@ final class HOTPCodeRendererTests: XCTestCase {
         XCTAssertEqual(values, ["94287082", "37359152"])
     }
 
+    @MainActor
     func test_renderedCodePublisher_publishesZeroLengthCode() async throws {
         let sut = makeSUT(digits: 0)
 
@@ -38,6 +41,7 @@ final class HOTPCodeRendererTests: XCTestCase {
         XCTAssertEqual(values, ["", ""])
     }
 
+    @MainActor
     func test_renderedCodePublisher_publishesCodesWithLeadingZeros() async throws {
         let sut = makeSUT(digits: 20)
 

@@ -6,6 +6,7 @@ import VaultFeed
 import XCTest
 
 final class OTPCodeTimerUpdaterImplTests: XCTestCase {
+    @MainActor
     func test_timerUpdatedPublisher_publishesInitialValueImmediately() async throws {
         let (_, _, sut) = makeSUT(clock: 62, period: 30)
 
@@ -17,6 +18,7 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         XCTAssertEqual(values, [OTPCodeTimerState(startTime: 60, endTime: 90)])
     }
 
+    @MainActor
     func test_timerUpdatedPublisher_publishesStateForCurrentTimeOnTimerFinish() async throws {
         let (clock, timer, sut) = makeSUT(clock: 32, period: 30)
 
@@ -35,6 +37,7 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         ])
     }
 
+    @MainActor
     func test_recalculate_forcesPublishOfCurrentTimerState() async throws {
         let (clock, _, sut) = makeSUT(clock: 32, period: 30)
 
@@ -53,6 +56,7 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         ])
     }
 
+    @MainActor
     func test_recalculate_publishesDuplicateStatesIfRecalculatingInSamePeriod() async throws {
         let (_, _, sut) = makeSUT(clock: 32, period: 30)
 

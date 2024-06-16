@@ -52,7 +52,8 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.createCode(initialEdits: anyOTPCodeDetailEdits()))
+        let edits = anyOTPCodeDetailEdits()
+        await XCTAssertThrowsError(try await sut.createCode(initialEdits: edits))
     }
 
     @MainActor
@@ -100,10 +101,11 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
+        let edits = anyOTPCodeDetailEdits()
         await XCTAssertThrowsError(try await sut.updateCode(
             id: UUID(),
             item: uniqueCode(),
-            edits: anyOTPCodeDetailEdits()
+            edits: edits
         ))
     }
 
