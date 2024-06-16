@@ -1,6 +1,7 @@
 import Foundation
 
 /// A feed of vault items.
+@MainActor
 public protocol VaultFeed {
     /// The feed should load all initial data.
     func reloadData() async
