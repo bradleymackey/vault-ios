@@ -2,6 +2,7 @@ import Foundation
 import VaultFeed
 import VaultiOS
 
+@MainActor
 final class MockOTPCodeStore: VaultStore {
     init() {}
     var codesToRetrieve = [StoredVaultItem]()
