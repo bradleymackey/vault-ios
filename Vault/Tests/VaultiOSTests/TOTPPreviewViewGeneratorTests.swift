@@ -287,6 +287,7 @@ extension TOTPPreviewViewGeneratorTests {
     }
 }
 
+@MainActor
 private func makeTOTPPreviewViewFactoryMock() -> TOTPPreviewViewFactoryMock {
     let mock = TOTPPreviewViewFactoryMock()
     mock.makeTOTPViewHandler = { _, _, _, _ in AnyView(Text("Nice")) }

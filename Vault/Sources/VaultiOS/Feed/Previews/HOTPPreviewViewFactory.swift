@@ -3,6 +3,7 @@ import SwiftUI
 import VaultFeed
 
 /// @mockable(typealias: HOTPView = AnyView)
+@MainActor
 public protocol HOTPPreviewViewFactory {
     associatedtype HOTPView: View
     func makeHOTPView(
