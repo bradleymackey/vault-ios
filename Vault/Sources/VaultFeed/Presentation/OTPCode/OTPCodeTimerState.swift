@@ -1,6 +1,6 @@
 import Foundation
 
-public struct OTPCodeTimerState: Equatable {
+public struct OTPCodeTimerState: Equatable, Sendable {
     /// The number of epoch seconds when the timer started.
     public var startTime: Double
     /// The number of epoch seconds when the timer will end.
