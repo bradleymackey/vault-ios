@@ -6,7 +6,7 @@ import XCTest
 final class RowIconSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        isRecording = false
+//        isRecording = true
     }
 
     func test_layout_smallFontSize() {

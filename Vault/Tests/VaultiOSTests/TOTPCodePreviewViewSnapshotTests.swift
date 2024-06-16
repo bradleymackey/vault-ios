@@ -8,7 +8,7 @@ import XCTest
 final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
     override func setUp() {
         super.setUp()
-        isRecording = false
+//        isRecording = true
     }
 
     @MainActor
