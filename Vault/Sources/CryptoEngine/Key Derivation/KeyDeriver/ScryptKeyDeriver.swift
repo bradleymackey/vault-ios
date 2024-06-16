@@ -42,7 +42,7 @@ public struct ScryptKeyDeriver: KeyDeriver {
 // MARK: - Parameters
 
 extension ScryptKeyDeriver {
-    public struct Parameters {
+    public struct Parameters: Sendable {
         /// **dkLen**
         ///
         /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer

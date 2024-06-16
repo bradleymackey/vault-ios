@@ -152,6 +152,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
 // MARK: - Titles
 
 extension OTPCodeDetailViewModel {
+    @MainActor
     public struct Strings: DetailViewModelStrings {
         static let shared = Strings()
         private init() {}

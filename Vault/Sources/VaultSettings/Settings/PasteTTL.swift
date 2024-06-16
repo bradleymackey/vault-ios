@@ -1,6 +1,6 @@
 import Foundation
 
-public struct PasteTTL: Equatable, Hashable, Codable {
+public struct PasteTTL: Equatable, Hashable, Codable, Sendable {
     public let duration: Double?
 
     public init(duration: Double?) {
