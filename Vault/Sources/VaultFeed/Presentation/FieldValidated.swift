@@ -4,7 +4,7 @@ import VaultCore
 
 /// A value that can perform validation on the value that is input with some custom logic.
 @propertyWrapper
-public struct FieldValidated<T> {
+public struct FieldValidated<T: Sendable>: Sendable {
     public var wrappedValue: T
     private let validationLogic: FieldValidationLogic<T>
 
@@ -27,9 +27,9 @@ extension FieldValidated: Equatable where T: Equatable {
 // MARK: - Validation Logic
 
 /// Encapsulates the validator for `FieldValidated<T>`
-public struct FieldValidationLogic<T: Sendable> {
-    public let validate: (T) -> FieldValidationState
-    public init(validate: @escaping (T) -> FieldValidationState) {
+public struct FieldValidationLogic<T: Sendable>: Sendable {
+    public let validate: @Sendable (T) -> FieldValidationState
+    public init(validate: @Sendable @escaping (T) -> FieldValidationState) {
         self.validate = validate
     }
 }
