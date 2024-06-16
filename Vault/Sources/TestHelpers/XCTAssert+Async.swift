@@ -22,8 +22,9 @@ import XCTest
 ///   - line: The line number where the failure occurs.
 ///     The default is the line number where you call this function.
 ///   - errorHandler: An optional handler for errors that expression throws.
+@MainActor
 public func XCTAssertThrowsError(
-    _ expression: @Sendable @autoclosure () async throws -> some Any,
+    _ expression: @MainActor @Sendable @autoclosure () async throws -> some Any,
     _ message: @Sendable @autoclosure () -> String = "",
     file: StaticString = #filePath,
     line: UInt = #line,
@@ -52,8 +53,9 @@ public func XCTAssertThrowsError(
 ///     The default is the filename of the test case where you call this function.
 ///   - line: The line number where the failure occurs.
 ///     The default is the line number where you call this function.
+@MainActor
 public func XCTAssertNoThrow(
-    _ expression: @Sendable @autoclosure () async throws -> some Any,
+    _ expression: @MainActor @Sendable @autoclosure () async throws -> some Any,
     _ message: @Sendable @autoclosure () -> String = "",
     file: StaticString = #filePath,
     line: UInt = #line

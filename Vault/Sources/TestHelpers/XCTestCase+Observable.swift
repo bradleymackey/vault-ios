@@ -6,7 +6,7 @@ extension XCTestCase {
     public func expectSingleMutation<T: Observable>(
         observable object: T,
         keyPath: KeyPath<T, some Any>,
-        when action: () async throws -> Void
+        when action: @MainActor () async throws -> Void
     ) async rethrows {
         let exp = expectation(description: "Wait for expectation")
         withObservationTracking {
@@ -26,7 +26,7 @@ extension XCTestCase {
         observable object: T,
         keyPath: KeyPath<T, some Any>,
         timeout: Double = 1.0,
-        when action: () async throws -> Void
+        when action: @MainActor () async throws -> Void
     ) async rethrows {
         let exp = expectation(description: "Wait for expectation")
         exp.isInverted = true
