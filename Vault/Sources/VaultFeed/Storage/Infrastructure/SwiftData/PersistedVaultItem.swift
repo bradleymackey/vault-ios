@@ -1,7 +1,8 @@
 import Foundation
 import SwiftData
 
-@Model class PersistedVaultItem {
+@Model
+final class PersistedVaultItem {
     var id: UUID
     var colorBlue: Double?
     var colorGreen: Double?
@@ -34,7 +35,8 @@ import SwiftData
     }
 }
 
-@Model class PersistedOTPDetails {
+@Model
+final class PersistedOTPDetails {
     var accountName: String?
     var algorithm: String
     var authType: String
@@ -56,7 +58,8 @@ import SwiftData
     }
 }
 
-@Model class PersistedNoteDetails {
+@Model
+final class PersistedNoteDetails {
     var rawContents: String?
     var title: String
 
