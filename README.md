@@ -1,5 +1,8 @@
 # Vault
 
+> WARNING: Version 1.0 has been used during initial development and is considered unstable.
+> We will increment to 2.0 when the app is storage-resilient.
+
 A secret storage manager (2FA codes, secret notes) with built-in encrypted backup.
 It can backup to iCloud and paper, making it a secure, simple and robust backup solution.
 
