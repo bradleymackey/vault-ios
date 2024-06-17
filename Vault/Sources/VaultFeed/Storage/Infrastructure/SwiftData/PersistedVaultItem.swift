@@ -18,10 +18,15 @@ import SwiftData
         self.updatedDate = updatedDate
     }
 
-    func matches(query: String) -> Bool {
-        userDescription?.contains(query) == true ||
-            noteDetails?.matches(query: query) == true ||
-            otpDetails?.matches(query: query) == true
+    var queryableStrings: [String] {
+        let strings = [
+            userDescription,
+            noteDetails?.title,
+            noteDetails?.rawContents,
+            otpDetails?.accountName,
+            otpDetails?.issuer,
+        ]
+        return strings.compactMap { $0 }
     }
 }
 
@@ -43,10 +48,6 @@ import SwiftData
         self.secretData = secretData
         self.secretFormat = secretFormat
     }
-
-    func matches(query: String) -> Bool {
-        accountName?.contains(query) == true || issuer?.contains(query) == true
-    }
 }
 
 @Model class PersistedNoteDetails {
@@ -56,10 +57,6 @@ import SwiftData
 
     init(title: String) {
         self.title = title
-    }
-
-    func matches(query: String) -> Bool {
-        title.contains(query) || rawContents?.contains(query) == true
     }
 }
 
@@ -71,7 +68,7 @@ extension PersistedVaultItem {
 
     static func fetch(matchingQuery query: String, in context: ModelContext) throws -> [PersistedVaultItem] {
         let predicate: Predicate<PersistedVaultItem> = #Predicate { item in
-            item.matches(query: query)
+            item.queryableStrings.contains { $0.contains(query) }
         }
         let descriptor = FetchDescriptor(predicate: predicate, sortBy: [SortDescriptor(\.updatedDate)])
         return try context.fetch(descriptor)
