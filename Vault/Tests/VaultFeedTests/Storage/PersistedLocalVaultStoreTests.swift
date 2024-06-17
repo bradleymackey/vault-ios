@@ -10,6 +10,26 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     func test_init_createsStoreForTestingWithoutError() throws {
         _ = try makeSUT()
     }
+
+    @MainActor
+    func test_retrieve_deliversEmptyOnEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result, [])
+    }
+
+    @MainActor
+    func test_retrieve_hasNoSideEffectsOnEmptyStore() async throws {
+        let sut = try makeSUT()
+
+        let result1 = try await sut.retrieve()
+        XCTAssertEqual(result1, [])
+        let result2 = try await sut.retrieve()
+        XCTAssertEqual(result2, [])
+    }
+
+    // TODO: finish adding retrieve tests
 }
 
 // MARK: - Helpers
