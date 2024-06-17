@@ -9,8 +9,12 @@ import SwiftData
     var createdDate: Date
     var updatedDate: Date
     var userDescription: String?
-    @Relationship(deleteRule: .cascade) var noteDetails: PersistedNoteDetails?
-    @Relationship(deleteRule: .cascade) var otpDetails: PersistedOTPDetails?
+
+    @Relationship(deleteRule: .cascade)
+    var noteDetails: PersistedNoteDetails?
+
+    @Relationship(deleteRule: .cascade)
+    var otpDetails: PersistedOTPDetails?
 
     init(createdDate: Date, id: UUID, updatedDate: Date) {
         self.createdDate = createdDate
@@ -40,7 +44,9 @@ import SwiftData
     var period: Int64? = 0
     var secretData: Data
     var secretFormat: String
-    @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.otpDetails) var vaultItem: PersistedVaultItem?
+
+    @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.otpDetails)
+    var vaultItem: PersistedVaultItem?
 
     init(algorithm: String, authType: String, secretData: Data, secretFormat: String) {
         self.algorithm = algorithm
@@ -53,7 +59,9 @@ import SwiftData
 @Model class PersistedNoteDetails {
     var rawContents: String?
     var title: String
-    @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.noteDetails) var vaultItem: PersistedVaultItem?
+
+    @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.noteDetails)
+    var vaultItem: PersistedVaultItem?
 
     init(title: String) {
         self.title = title
