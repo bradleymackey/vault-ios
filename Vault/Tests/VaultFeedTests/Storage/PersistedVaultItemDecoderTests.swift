@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 import TestHelpers
+import VaultCore
 import XCTest
 @testable import VaultFeed
 
@@ -122,6 +123,168 @@ extension PersistedVaultItemDecoderTests {
     }
 }
 
+// MARK: - OTP Code
+
+extension PersistedVaultItemDecoderTests {
+    func test_decodeOTP_digits() throws {
+        let samples: [OTPAuthDigits: Int32] = [
+            OTPAuthDigits(value: 0): 0,
+            OTPAuthDigits(value: 6): 6,
+            OTPAuthDigits(value: 7): 7,
+            OTPAuthDigits(value: 8): 8,
+            OTPAuthDigits(value: 100): 100,
+            OTPAuthDigits(value: 1024): 1024,
+        ]
+        for (digits, value) in samples {
+            let sut = makeSUT()
+            let otpDetails = makePersistedOTPDetails(digits: value)
+            let item = makePersistedItem(otpDetails: otpDetails)
+
+            let decoded = try sut.decode(item: item)
+            XCTAssertEqual(decoded.item.otpCode?.data.digits, digits)
+        }
+    }
+
+    func test_decodeOTP_invalidDigits() throws {
+        let unsupported: [Int32] = [-33, 333_333]
+        for value in unsupported {
+            let sut = makeSUT()
+            let otpDetails = makePersistedOTPDetails(digits: value)
+            let item = makePersistedItem(otpDetails: otpDetails)
+
+            XCTAssertThrowsError(try sut.decode(item: item))
+        }
+    }
+
+    func test_decodeOTP_accountName() throws {
+        let accountName = UUID().uuidString
+        let otpDetails = makePersistedOTPDetails(accountName: accountName)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.otpCode?.data.accountName, accountName)
+    }
+
+    func test_decodeOTP_issuer() throws {
+        let issuerName = UUID().uuidString
+        let otpDetails = makePersistedOTPDetails(issuer: issuerName)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.otpCode?.data.issuer, issuerName)
+    }
+
+    func test_decodeOTP_issuerDecodesNilIfDoesNotExist() throws {
+        let otpDetails = makePersistedOTPDetails(issuer: nil)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertNil(decoded.item.otpCode?.data.issuer)
+    }
+
+    func test_decodeOTP_authTypeTOTPWithPeriod() throws {
+        let otpDetails = makePersistedOTPDetails(authType: "totp", period: 69)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.otpCode?.type, .totp(period: 69))
+    }
+
+    func test_decodeOTP_authTypeTOTPWithoutPeriodThrows() throws {
+        let otpDetails = makePersistedOTPDetails(authType: "totp", period: nil)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
+
+    func test_decodeOTP_authTypeHOTPWithCounter() throws {
+        let otpDetails = makePersistedOTPDetails(authType: "hotp", counter: 69)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.otpCode?.type, .hotp(counter: 69))
+    }
+
+    func test_decodeOTP_authTypeHOTPWithoutCounterThrows() throws {
+        let otpDetails = makePersistedOTPDetails(authType: "hotp", counter: nil)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
+
+    func test_decodeOTP_algorithm() throws {
+        let expected: [OTPAuthAlgorithm: String] = [
+            .sha1: "SHA1",
+            .sha256: "SHA256",
+            .sha512: "SHA512",
+        ]
+        for (algo, string) in expected {
+            let otpDetails = makePersistedOTPDetails(algorithm: string)
+            let item = makePersistedItem(otpDetails: otpDetails)
+            let sut = makeSUT()
+
+            let decoded = try sut.decode(item: item)
+            XCTAssertEqual(decoded.item.otpCode?.data.algorithm, algo)
+        }
+    }
+
+    func test_decodeOTP_invalidAlgorithmThrows() throws {
+        let otpDetails = makePersistedOTPDetails(algorithm: "OTHER")
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
+
+    func test_decodeOTP_secretFormat() throws {
+        let expected: [OTPAuthSecret.Format: String] = [
+            .base32: "BASE_32",
+        ]
+        for (format, string) in expected {
+            let otpDetails = makePersistedOTPDetails(secretFormat: string)
+            let item = makePersistedItem(otpDetails: otpDetails)
+            let sut = makeSUT()
+
+            let decoded = try sut.decode(item: item)
+            XCTAssertEqual(decoded.item.otpCode?.data.secret.format, format)
+        }
+    }
+
+    func test_decodeOTP_secretFormatInvalidThrows() throws {
+        let otpDetails = makePersistedOTPDetails(secretFormat: "INVALID")
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
+
+    func test_decodeOTP_emptySecret() throws {
+        let otpDetails = makePersistedOTPDetails(secretData: Data())
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.otpCode?.data.secret.data, Data())
+    }
+
+    func test_decodeOTP_nonEmptySecret() throws {
+        let data = Data([0xFF, 0xEE, 0x11, 0x12, 0x13, 0x56])
+        let otpDetails = makePersistedOTPDetails(secretData: data)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.otpCode?.data.secret.data, data)
+    }
+}
+
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoderTests {
@@ -139,10 +302,15 @@ extension PersistedVaultItemDecoderTests {
         colorRed: Double? = nil,
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
-            algorithm: "SHA1",
-            authType: "totp",
+            accountName: nil,
+            algorithm: VaultEncodingConstants.OTPAuthAlgorithm.sha1,
+            authType: VaultEncodingConstants.OTPAuthType.totp,
+            counter: 0,
+            digits: 1,
+            issuer: nil,
+            period: 0,
             secretData: Data(),
-            secretFormat: "BASE_32"
+            secretFormat: VaultEncodingConstants.OTPAuthSecret.Format.base32
         )
     ) -> PersistedVaultItem {
         let item = PersistedVaultItem(
@@ -158,5 +326,29 @@ extension PersistedVaultItemDecoderTests {
         )
         context.insert(item)
         return item
+    }
+
+    private func makePersistedOTPDetails(
+        accountName: String? = nil,
+        algorithm: String = VaultEncodingConstants.OTPAuthAlgorithm.sha1,
+        authType: String = VaultEncodingConstants.OTPAuthType.totp,
+        counter: Int64? = 0,
+        digits: Int32 = 1,
+        issuer: String? = nil,
+        period: Int64? = 0,
+        secretData: Data = Data(),
+        secretFormat: String = VaultEncodingConstants.OTPAuthSecret.Format.base32
+    ) -> PersistedOTPDetails {
+        PersistedOTPDetails(
+            accountName: accountName,
+            algorithm: algorithm,
+            authType: authType,
+            counter: counter,
+            digits: digits,
+            issuer: issuer,
+            period: period,
+            secretData: secretData,
+            secretFormat: secretFormat
+        )
     }
 }

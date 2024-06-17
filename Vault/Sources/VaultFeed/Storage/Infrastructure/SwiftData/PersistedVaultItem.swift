@@ -67,9 +67,24 @@ final class PersistedOTPDetails {
     @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.otpDetails)
     var vaultItem: PersistedVaultItem?
 
-    init(algorithm: String, authType: String, secretData: Data, secretFormat: String) {
+    init(
+        accountName: String?,
+        algorithm: String,
+        authType: String,
+        counter: Int64? = 0,
+        digits: Int32 = 0,
+        issuer: String?,
+        period: Int64? = 0,
+        secretData: Data,
+        secretFormat: String
+    ) {
+        self.accountName = accountName
         self.algorithm = algorithm
         self.authType = authType
+        self.counter = counter
+        self.digits = digits
+        self.issuer = issuer
+        self.period = period
         self.secretData = secretData
         self.secretFormat = secretFormat
     }
