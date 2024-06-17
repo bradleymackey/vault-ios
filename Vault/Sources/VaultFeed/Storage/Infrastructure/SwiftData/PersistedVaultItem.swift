@@ -5,12 +5,12 @@ import SwiftData
 @Model
 final class PersistedVaultItem {
     var id: UUID
-    var colorBlue: Double?
-    var colorGreen: Double?
-    var colorRed: Double?
     var createdDate: Date
     var updatedDate: Date
     var userDescription: String?
+    var colorBlue: Double?
+    var colorGreen: Double?
+    var colorRed: Double?
 
     @Relationship(deleteRule: .cascade)
     var noteDetails: PersistedNoteDetails?
@@ -18,10 +18,26 @@ final class PersistedVaultItem {
     @Relationship(deleteRule: .cascade)
     var otpDetails: PersistedOTPDetails?
 
-    init(createdDate: Date, id: UUID, updatedDate: Date) {
-        self.createdDate = createdDate
+    init(
+        id: UUID,
+        createdDate: Date,
+        updatedDate: Date,
+        userDescription: String?,
+        colorBlue: Double?,
+        colorGreen: Double?,
+        colorRed: Double?,
+        noteDetails: PersistedNoteDetails?,
+        otpDetails: PersistedOTPDetails?
+    ) {
         self.id = id
+        self.createdDate = createdDate
         self.updatedDate = updatedDate
+        self.userDescription = userDescription
+        self.colorBlue = colorBlue
+        self.colorGreen = colorGreen
+        self.colorRed = colorRed
+        self.noteDetails = noteDetails
+        self.otpDetails = otpDetails
     }
 
     var queryableStrings: [String] {
