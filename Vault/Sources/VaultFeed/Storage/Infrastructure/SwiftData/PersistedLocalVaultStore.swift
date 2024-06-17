@@ -15,3 +15,19 @@ public final actor PersistedLocalVaultStore {
         context = .init(container)
     }
 }
+
+// MARK: - VaultStoreReader
+
+extension PersistedLocalVaultStore: VaultStoreReader {
+    public func retrieve() async throws -> [StoredVaultItem] {
+        let results = try PersistedVaultItem.fetchAll(in: context)
+        // TODO: map items
+        return []
+    }
+
+    public func retrieve(matching query: String) async throws -> [StoredVaultItem] {
+        let results = try PersistedVaultItem.fetch(matchingQuery: query, in: context)
+        // TODO: map items
+        return []
+    }
+}
