@@ -98,8 +98,9 @@ final class PersistedNoteDetails {
     @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.noteDetails)
     var vaultItem: PersistedVaultItem?
 
-    init(title: String) {
+    init(title: String, rawContents: String?) {
         self.title = title
+        self.rawContents = rawContents
     }
 }
 

@@ -14,7 +14,11 @@ struct PersistedVaultItemDecoder {
             let otpCode = try decodeOTPCode(otp: otp)
             return StoredVaultItem(metadata: metadata, item: .otpCode(otpCode))
         } else if let note = item.noteDetails {
-            throw UnimplementedError()
+            let note = SecureNote(
+                title: note.title,
+                contents: note.rawContents ?? ""
+            )
+            return StoredVaultItem(metadata: metadata, item: .secureNote(note))
         } else {
             throw DecodingError.missingItemDetail
         }

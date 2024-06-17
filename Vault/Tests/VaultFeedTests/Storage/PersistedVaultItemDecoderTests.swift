@@ -285,6 +285,32 @@ extension PersistedVaultItemDecoderTests {
     }
 }
 
+// MARK: - Secure Note
+
+extension PersistedVaultItemDecoderTests {
+    func test_decodeNote_title() throws {
+        let sut = makeSUT()
+
+        let title = "this is my note title"
+        let noteDetails = makePersistedNoteDetails(title: title)
+        let item = makePersistedItem(noteDetails: noteDetails, otpDetails: nil)
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.secureNote?.title, title)
+    }
+
+    func test_decodeNote_contents() throws {
+        let sut = makeSUT()
+
+        let contents = "this is my note contents"
+        let noteDetails = makePersistedNoteDetails(rawContents: contents)
+        let item = makePersistedItem(noteDetails: noteDetails, otpDetails: nil)
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.item.secureNote?.contents, contents)
+    }
+}
+
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoderTests {
@@ -350,5 +376,12 @@ extension PersistedVaultItemDecoderTests {
             secretData: secretData,
             secretFormat: secretFormat
         )
+    }
+
+    private func makePersistedNoteDetails(
+        title: String = "my title",
+        rawContents: String? = nil
+    ) -> PersistedNoteDetails {
+        PersistedNoteDetails(title: title, rawContents: rawContents)
     }
 }
