@@ -1,6 +1,7 @@
 import Foundation
 import SwiftData
 
+/// A `VaultItem` persisted to disk using SwiftData.
 @Model
 final class PersistedVaultItem {
     var id: UUID
