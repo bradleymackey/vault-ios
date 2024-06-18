@@ -6,7 +6,7 @@ struct PersistedVaultItemEncoder {
     let context: ModelContext
     let currentDate: () -> Date
 
-    init(context: ModelContext, currentDate: @escaping () -> Date) {
+    init(context: ModelContext, currentDate: @escaping () -> Date = { Date() }) {
         self.context = context
         self.currentDate = currentDate
     }
