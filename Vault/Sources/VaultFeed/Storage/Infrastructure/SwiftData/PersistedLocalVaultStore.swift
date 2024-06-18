@@ -14,6 +14,15 @@ public final actor PersistedLocalVaultStore {
         )
         context = .init(container)
     }
+
+    @MainActor
+    public var mainContext: ModelContext {
+        container.mainContext
+    }
+
+    public func makeContext() -> ModelContext {
+        .init(container)
+    }
 }
 
 // MARK: - VaultStoreReader
