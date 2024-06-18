@@ -33,8 +33,6 @@ struct PersistedVaultItemDecoder {
         case missingPeriodForTOTP
         case missingCounterForHOTP
     }
-
-    struct UnimplementedError: Error {}
 }
 
 // MARK: - Helpers
