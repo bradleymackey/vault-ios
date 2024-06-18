@@ -4,6 +4,7 @@ import SwiftData
 /// A `VaultItem` persisted to disk using SwiftData.
 @Model
 final class PersistedVaultItem {
+    @Attribute(.unique)
     var id: UUID
     var createdDate: Date
     var updatedDate: Date
