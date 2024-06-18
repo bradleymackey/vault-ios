@@ -1,0 +1,141 @@
+import Foundation
+import SwiftData
+import VaultCore
+
+struct PersistedVaultItemEncoder {
+    let context: ModelContext
+    let currentDate: () -> Date
+
+    init(context: ModelContext, currentDate: @escaping () -> Date) {
+        self.context = context
+        self.currentDate = currentDate
+    }
+
+    /// Encodes the given item, inserting it in the encoder's `context`.
+    func encode(item: StoredVaultItem.Write, existing: PersistedVaultItem? = nil) -> PersistedVaultItem {
+        let model = if let existing {
+            encode(existingItem: existing, newData: item)
+        } else {
+            encode(newData: item)
+        }
+        // We need to insert the model into the context at this point or the backing data
+        // for the SwiftData model is not valid.
+        context.insert(model)
+        return model
+    }
+}
+
+// MARK: - Items
+
+extension PersistedVaultItemEncoder {
+    private func encode(newData: StoredVaultItem.Write) -> PersistedVaultItem {
+        let now = currentDate()
+        let noteDetails: PersistedNoteDetails? = switch newData.item {
+        case let .secureNote(note): encodeSecureNoteDetails(newData: note)
+        case .otpCode: nil
+        }
+        let otpDetails: PersistedOTPDetails? = switch newData.item {
+        case let .otpCode(code): encodeOtpDetails(newData: code)
+        case .secureNote: nil
+        }
+        return PersistedVaultItem(
+            id: UUID(),
+            createdDate: now,
+            updatedDate: now,
+            userDescription: newData.userDescription,
+            colorBlue: newData.color?.blue,
+            colorGreen: newData.color?.green,
+            colorRed: newData.color?.red,
+            noteDetails: noteDetails,
+            otpDetails: otpDetails
+        )
+    }
+
+    private func encode(
+        existingItem: PersistedVaultItem,
+        newData: StoredVaultItem.Write
+    ) -> PersistedVaultItem {
+        let now = currentDate()
+        let existingItem = existingItem
+        existingItem.updatedDate = now
+        existingItem.userDescription = newData.userDescription
+        existingItem.colorRed = newData.color?.red
+        existingItem.colorBlue = newData.color?.blue
+        existingItem.colorGreen = newData.color?.green
+        switch newData.item {
+        case let .otpCode(codeDetails):
+            existingItem.otpDetails = encodeOtpDetails(newData: codeDetails)
+        case let .secureNote(noteDetails):
+            existingItem.noteDetails = encodeSecureNoteDetails(newData: noteDetails)
+        }
+        return existingItem
+    }
+}
+
+// MARK: - OTP
+
+extension PersistedVaultItemEncoder {
+    private func encodeOtpDetails(
+        newData: OTPAuthCode
+    ) -> PersistedOTPDetails {
+        PersistedOTPDetails(
+            accountName: newData.data.accountName,
+            algorithm: encodedOTPAlgorithm(newData.data.algorithm),
+            authType: encodedOTPAuthType(newData.type),
+            counter: encodedOTPCounter(newData.type),
+            digits: Int32(newData.data.digits.value),
+            issuer: newData.data.issuer,
+            period: encodedOTPPeriod(newData.type),
+            secretData: newData.data.secret.data,
+            secretFormat: encodedOTPSecretFormat(newData.data.secret.format)
+        )
+    }
+
+    private func encodedOTPAuthType(_ authType: OTPAuthType) -> String {
+        switch authType {
+        case .totp: VaultEncodingConstants.OTPAuthType.totp
+        case .hotp: VaultEncodingConstants.OTPAuthType.hotp
+        }
+    }
+
+    private func encodedOTPPeriod(_ authType: OTPAuthType) -> Int64? {
+        switch authType {
+        case let .totp(period): Int64(period)
+        case .hotp: nil
+        }
+    }
+
+    private func encodedOTPCounter(_ authType: OTPAuthType) -> Int64? {
+        switch authType {
+        case let .hotp(counter): Int64(counter)
+        case .totp: nil
+        }
+    }
+
+    private func encodedOTPAlgorithm(_ algorithm: OTPAuthAlgorithm) -> String {
+        switch algorithm {
+        case .sha1: VaultEncodingConstants.OTPAuthAlgorithm.sha1
+        case .sha256: VaultEncodingConstants.OTPAuthAlgorithm.sha256
+        case .sha512: VaultEncodingConstants.OTPAuthAlgorithm.sha512
+        }
+    }
+
+    private func encodedOTPSecretFormat(_ secretFormat: OTPAuthSecret.Format) -> String {
+        switch secretFormat {
+        case .base32: VaultEncodingConstants.OTPAuthSecret.Format.base32
+        }
+    }
+}
+
+// MARK: - Note
+
+extension PersistedVaultItemEncoder {
+    private func encodeSecureNoteDetails(
+        newData: SecureNote
+    ) -> PersistedNoteDetails {
+        PersistedNoteDetails(
+            title: newData.title,
+            rawContents: newData.contents
+        )
+    }
+}
