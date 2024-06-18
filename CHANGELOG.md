@@ -5,8 +5,8 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-The app is not storage resilient prior to v2.0.
-Some breaking changes were made during this time.
+The app binary version was set to 1.0 throughout initial development and is considered unstable and not resilient.
+Only app binary versions >2.0 should be used in production for this reason.
 
 ## [Unreleased]
 
