@@ -203,7 +203,6 @@ let package = Package(
                 "FoundationExtensions",
             ],
             resources: [
-                .copy("Resources/VaultStore.xcdatamodeld"),
                 .process("Resources/VaultFeed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
