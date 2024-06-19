@@ -81,7 +81,7 @@ extension VaultBackupItem {
         public var algorithm: String
         public var digits: UInt16
         public var accountName: String
-        public var issuer: String?
+        public var issuer: String
 
         public init(
             secretFormat: String,
@@ -92,7 +92,7 @@ extension VaultBackupItem {
             algorithm: String,
             digits: UInt16,
             accountName: String,
-            issuer: String? = nil
+            issuer: String = ""
         ) {
             self.secretFormat = secretFormat
             self.secretData = secretData

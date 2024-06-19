@@ -59,7 +59,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         secretBase32String = code.data.secret.base32EncodedString
         algorithm = code.data.algorithm
         numberOfDigits = code.data.digits.value
-        issuerTitle = code.data.issuer ?? ""
+        issuerTitle = code.data.issuer
         accountNameTitle = code.data.accountName
         description = userDescription
         self.color = color

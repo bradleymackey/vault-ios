@@ -197,14 +197,6 @@ extension ManagedVaultItemEncoderTests {
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
-    func test_encodeIssuer_encodesNilIfNotPresent() {
-        let sut = makeSUT()
-        let code = makeWritable(code: makeCodeValue(issuer: nil))
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.otpDetails?.issuer)
-    }
-
     func test_encodeAlgorithm_encodesToString() {
         let expected: [OTPAuthAlgorithm: String] = [
             .sha1: "SHA1",
@@ -286,7 +278,7 @@ extension ManagedVaultItemEncoderTests {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String = "any",
-        issuer: String? = nil
+        issuer: String = ""
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,

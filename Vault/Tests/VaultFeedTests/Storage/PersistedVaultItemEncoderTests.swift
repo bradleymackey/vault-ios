@@ -214,14 +214,6 @@ extension PersistedVaultItemEncoderTests {
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
-    func test_encodeOTP_isserNil() {
-        let sut = makeSUT()
-        let code = makeWritable(code: makeCodeValue(issuer: nil))
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.otpDetails?.issuer)
-    }
-
     func test_encodeOTP_algorithm() {
         let expected: [OTPAuthAlgorithm: String] = [
             .sha1: "SHA1",
@@ -303,7 +295,7 @@ extension PersistedVaultItemEncoderTests {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String = "any",
-        issuer: String? = nil
+        issuer: String = ""
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,

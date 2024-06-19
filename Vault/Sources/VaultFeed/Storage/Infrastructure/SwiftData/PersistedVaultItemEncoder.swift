@@ -80,11 +80,11 @@ extension PersistedVaultItemEncoder {
     ) -> PersistedOTPDetails {
         PersistedOTPDetails(
             accountName: newData.data.accountName,
+            issuer: newData.data.issuer,
             algorithm: encodedOTPAlgorithm(newData.data.algorithm),
             authType: encodedOTPAuthType(newData.type),
             counter: encodedOTPCounter(newData.type),
             digits: Int32(newData.data.digits.value),
-            issuer: newData.data.issuer,
             period: encodedOTPPeriod(newData.type),
             secretData: newData.data.secret.data,
             secretFormat: encodedOTPSecretFormat(newData.data.secret.format)

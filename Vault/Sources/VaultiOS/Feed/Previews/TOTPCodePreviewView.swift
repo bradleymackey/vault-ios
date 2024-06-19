@@ -98,7 +98,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
                     codeRenderer.subject.send("1234567")
                 }
 
-            makePreview(issuer: nil, renderer: codeRenderer)
+            makePreview(issuer: "", renderer: codeRenderer)
 
             makePreview(issuer: "Code Error Example", renderer: errorRenderer)
                 .modifier(OTPCardViewModifier())
@@ -127,7 +127,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     }
 
     static func makePreview(
-        issuer: String?,
+        issuer: String,
         renderer: OTPCodeRendererMock,
         behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {

@@ -81,17 +81,13 @@ extension PersistedLocalVaultStore: VaultStoreReader {
 
         let codeNamePredicate = #Predicate<PersistedVaultItem> {
             $0.otpDetails.flatMap {
-                $0.accountName.flatMap {
-                    $0.localizedStandardContains(query)
-                }
+                $0.accountName.localizedStandardContains(query)
             } ?? false
         }
 
         let codeIssuerPredicate = #Predicate<PersistedVaultItem> {
             $0.otpDetails.flatMap {
-                $0.issuer.flatMap {
-                    $0.localizedStandardContains(query)
-                }
+                $0.issuer.localizedStandardContains(query)
             } ?? false
         }
 

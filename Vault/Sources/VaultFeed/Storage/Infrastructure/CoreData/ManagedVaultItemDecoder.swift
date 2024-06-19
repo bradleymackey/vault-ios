@@ -38,7 +38,7 @@ struct ManagedVaultItemDecoder {
                 algorithm: decodeAlgorithm(value: otp.algorithm),
                 digits: decode(digits: otp.digits),
                 accountName: otp.accountName,
-                issuer: otp.issuer
+                issuer: otp.issuer ?? ""
             )
         )
     }

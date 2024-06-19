@@ -53,7 +53,7 @@ extension PersistedVaultItemDecoder {
                 secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),
                 algorithm: decodeAlgorithm(value: otp.algorithm),
                 digits: decode(digits: otp.digits),
-                accountName: otp.accountName ?? "",
+                accountName: otp.accountName,
                 issuer: otp.issuer
             )
         )

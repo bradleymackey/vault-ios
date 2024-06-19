@@ -69,7 +69,7 @@ extension OTPAuthURIDecoder {
         }
     }
 
-    private func decodeLabel(uri: URL) throws -> (accountName: String, issuer: String?) {
+    private func decodeLabel(uri: URL) throws -> (accountName: String, issuer: String) {
         guard uri.pathComponents.count > 1 else {
             throw URIDecodingError.invalidLabel
         }
@@ -78,9 +78,9 @@ extension OTPAuthURIDecoder {
         guard let accountName = parts.last?.trimmingCharacters(in: .whitespacesAndNewlines) else {
             throw URIDecodingError.invalidLabel
         }
-        var issuer = uri.otpParameter(.issuer)?.trimmingCharacters(in: .whitespacesAndNewlines)
-        if issuer == nil, parts.count > 1 {
-            issuer = parts.first?.trimmingCharacters(in: .whitespacesAndNewlines)
+        var issuer = uri.otpParameter(.issuer)?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
+        if issuer.isEmpty, parts.count > 1 {
+            issuer = parts.first?.trimmingCharacters(in: .whitespacesAndNewlines) ?? ""
         }
         return (String(accountName), issuer)
     }

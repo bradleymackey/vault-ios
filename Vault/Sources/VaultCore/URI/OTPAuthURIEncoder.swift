@@ -41,9 +41,9 @@ extension OTPAuthURIEncoder {
         queryItems.append(
             .otpAuth(.digits, value: "\(code.data.digits.value)")
         )
-        if let issuer = code.data.issuer {
+        if code.data.issuer.isNotEmpty {
             queryItems.append(
-                .otpAuth(.issuer, value: issuer)
+                .otpAuth(.issuer, value: code.data.issuer)
             )
         }
         switch code.type {
@@ -64,8 +64,8 @@ extension OTPAuthURIEncoder {
     }
 
     private func makeFormattedLabel(code: OTPAuthCode) -> String {
-        if let issuer = code.data.issuer {
-            "\(issuer):\(code.data.accountName)"
+        if code.data.issuer.isNotEmpty {
+            "\(code.data.issuer):\(code.data.accountName)"
         } else {
             code.data.accountName
         }

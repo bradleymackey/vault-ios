@@ -55,12 +55,12 @@ final class PersistedVaultItem {
 
 @Model
 final class PersistedOTPDetails {
-    var accountName: String?
+    var accountName: String
+    var issuer: String
     var algorithm: String
     var authType: String
     var counter: Int64? = 0
-    var digits: Int32 = 0
-    var issuer: String?
+    var digits: Int32
     var period: Int64? = 0
     var secretData: Data
     var secretFormat: String
@@ -69,22 +69,22 @@ final class PersistedOTPDetails {
     var vaultItem: PersistedVaultItem?
 
     init(
-        accountName: String?,
+        accountName: String,
+        issuer: String,
         algorithm: String,
         authType: String,
         counter: Int64? = 0,
-        digits: Int32 = 0,
-        issuer: String?,
+        digits: Int32,
         period: Int64? = 0,
         secretData: Data,
         secretFormat: String
     ) {
         self.accountName = accountName
+        self.issuer = issuer
         self.algorithm = algorithm
         self.authType = authType
         self.counter = counter
         self.digits = digits
-        self.issuer = issuer
         self.period = period
         self.secretData = secretData
         self.secretFormat = secretFormat

@@ -159,15 +159,6 @@ extension PersistedVaultItemDecoderTests {
         XCTAssertEqual(decoded.item.otpCode?.data.issuer, issuerName)
     }
 
-    func test_decodeOTP_issuerDecodesNilIfDoesNotExist() throws {
-        let otpDetails = makePersistedOTPDetails(issuer: nil)
-        let item = makePersistedItem(otpDetails: otpDetails)
-        let sut = makeSUT()
-
-        let decoded = try sut.decode(item: item)
-        XCTAssertNil(decoded.item.otpCode?.data.issuer)
-    }
-
     func test_decodeOTP_authTypeTOTPWithPeriod() throws {
         let otpDetails = makePersistedOTPDetails(authType: "totp", period: 69)
         let item = makePersistedItem(otpDetails: otpDetails)
@@ -309,12 +300,12 @@ extension PersistedVaultItemDecoderTests {
         color: PersistedVaultItem.Color? = nil,
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
-            accountName: nil,
+            accountName: "",
+            issuer: "",
             algorithm: VaultEncodingConstants.OTPAuthAlgorithm.sha1,
             authType: VaultEncodingConstants.OTPAuthType.totp,
             counter: 0,
             digits: 1,
-            issuer: nil,
             period: 0,
             secretData: Data(),
             secretFormat: VaultEncodingConstants.OTPAuthSecret.Format.base32
@@ -334,23 +325,23 @@ extension PersistedVaultItemDecoderTests {
     }
 
     private func makePersistedOTPDetails(
-        accountName: String? = nil,
+        accountName: String = "",
         algorithm: String = VaultEncodingConstants.OTPAuthAlgorithm.sha1,
         authType: String = VaultEncodingConstants.OTPAuthType.totp,
         counter: Int64? = 0,
         digits: Int32 = 1,
-        issuer: String? = nil,
+        issuer: String = "",
         period: Int64? = 0,
         secretData: Data = Data(),
         secretFormat: String = VaultEncodingConstants.OTPAuthSecret.Format.base32
     ) -> PersistedOTPDetails {
         PersistedOTPDetails(
             accountName: accountName,
+            issuer: issuer,
             algorithm: algorithm,
             authType: authType,
             counter: counter,
             digits: digits,
-            issuer: issuer,
             period: period,
             secretData: secretData,
             secretFormat: secretFormat
