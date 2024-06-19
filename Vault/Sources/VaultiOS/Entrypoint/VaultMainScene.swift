@@ -6,7 +6,7 @@ import VaultSettings
 /// Entrypoint scene for the vault app.
 @MainActor
 public struct VaultMainScene: Scene {
-    @State private var feedViewModel: FeedViewModel<CoreDataVaultStore>
+    @State private var feedViewModel: FeedViewModel<PersistedLocalVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<TOTPPreviewViewFactoryImpl>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<HOTPPreviewViewFactoryImpl>
     @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
@@ -30,7 +30,7 @@ public struct VaultMainScene: Scene {
         let localSettings = LocalSettings(defaults: defaults)
         let timer = LiveIntervalTimer()
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
-        let storeFactory = CoreDataVaultStoreFactory(fileManager: .default)
+        let storeFactory = PersistedLocalVaultStoreFactory(fileManager: .default)
         let store = storeFactory.makeVaultStore()
         let totp = TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
