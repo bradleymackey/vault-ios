@@ -316,6 +316,9 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 created: Date(),
                 updated: Date(),
                 userDescription: "Description",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: VaultItemColor(color: .green)
             ),
             editor: StubEditor(),

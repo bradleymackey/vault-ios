@@ -20,6 +20,9 @@ extension VaultBackupItemDecoder {
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
             userDescription: backupItem.userDescription,
+            visibility: decodeVisibility(level: backupItem.visibility),
+            searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
+            searchPassphrase: backupItem.searchPassphrase,
             color: decodeColor(color: backupItem.tintColor)
         )
     }
@@ -33,6 +36,22 @@ extension VaultBackupItemDecoder {
         switch backupItem.item {
         case let .note(data): .secureNote(decodeSecureNote(data: data))
         case let .otp(data): try .otpCode(decodeOTPCode(data: data))
+        }
+    }
+
+    private func decodeVisibility(level: VaultBackupItem.Visibility) -> VaultItemVisibility {
+        switch level {
+        case .always: .always
+        case .onlySearch: .onlySearch
+        }
+    }
+
+    private func decodeSearchableLevel(level: VaultBackupItem.SearchableLevel) -> VaultItemSearchableLevel {
+        switch level {
+        case .full: .full
+        case .none: .none
+        case .onlyTitle: .onlyTitle
+        case .onlyPassphrase: .onlyPassphrase
         }
     }
 }

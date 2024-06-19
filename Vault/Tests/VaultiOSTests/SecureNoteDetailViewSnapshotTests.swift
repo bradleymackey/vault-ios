@@ -21,6 +21,9 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -41,6 +44,9 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "",
+                visibility: .always,
+                searchableLevel: .none,
+                searchPassphrase: "",
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -61,6 +67,9 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "My description",
+                visibility: .always,
+                searchableLevel: .onlyTitle,
+                searchPassphrase: "",
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -82,6 +91,9 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "My description",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: .gray
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -103,6 +115,9 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: date,
                 updated: date.addingTimeInterval(1), // different updated date
                 userDescription: "My description",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: .black
             ),
             editor: SecureNoteDetailEditorMock(),

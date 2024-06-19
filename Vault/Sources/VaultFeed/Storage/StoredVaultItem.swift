@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 /// A `VaultItem` retrieved from storage.
@@ -21,7 +22,14 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
 
     /// Maps this object to a `StoredVaultItem.Write` for writing.
     public var asWritable: StoredVaultItem.Write {
-        .init(userDescription: metadata.userDescription, color: metadata.color, item: item)
+        .init(
+            userDescription: metadata.userDescription,
+            color: metadata.color,
+            item: item,
+            visibility: metadata.visibility,
+            searchableLevel: metadata.searchableLevel,
+            searchPassphase: metadata.searchPassphrase
+        )
     }
 }
 
@@ -36,14 +44,29 @@ extension StoredVaultItem {
         public var updated: Date
         /// User-provided description about the item.
         public var userDescription: String
+        public var visibility: VaultItemVisibility
+        public var searchableLevel: VaultItemSearchableLevel
+        public var searchPassphrase: String?
         /// The color tint for this item.
         public var color: VaultItemColor?
 
-        public init(id: UUID, created: Date, updated: Date, userDescription: String, color: VaultItemColor?) {
+        public init(
+            id: UUID,
+            created: Date,
+            updated: Date,
+            userDescription: String,
+            visibility: VaultItemVisibility,
+            searchableLevel: VaultItemSearchableLevel,
+            searchPassphrase: String?,
+            color: VaultItemColor?
+        ) {
             self.id = id
             self.created = created
             self.updated = updated
             self.userDescription = userDescription
+            self.visibility = visibility
+            self.searchableLevel = searchableLevel
+            self.searchPassphrase = searchPassphrase
             self.color = color
         }
     }
@@ -55,11 +78,24 @@ extension StoredVaultItem {
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: VaultItem
+        public var visibility: VaultItemVisibility
+        public var searchableLevel: VaultItemSearchableLevel
+        public var searchPassphase: String?
 
-        public init(userDescription: String, color: VaultItemColor?, item: VaultItem) {
+        public init(
+            userDescription: String,
+            color: VaultItemColor?,
+            item: VaultItem,
+            visibility: VaultItemVisibility,
+            searchableLevel: VaultItemSearchableLevel,
+            searchPassphase: String?
+        ) {
             self.userDescription = userDescription
             self.color = color
             self.item = item
+            self.visibility = visibility
+            self.searchableLevel = searchableLevel
+            self.searchPassphase = searchPassphase
         }
     }
 }

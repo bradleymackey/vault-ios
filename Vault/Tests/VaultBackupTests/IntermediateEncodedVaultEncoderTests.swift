@@ -35,6 +35,9 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date,
             updatedDate: date.addingTimeInterval(7000),
             userDescription: "",
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "passphrase",
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "Example Note", rawContents: "Example note"))
         )
@@ -60,6 +63,9 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date,
             updatedDate: date.addingTimeInterval(100),
             userDescription: "",
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "pass",
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "any",
@@ -96,6 +102,9 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
             userDescription: "",
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "searchphrase",
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
@@ -105,6 +114,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date2,
             updatedDate: date2.addingTimeInterval(1234),
             userDescription: "",
+            visibility: .always,
+            searchableLevel: .none,
             item: .note(data: .init(title: "Hello world again"))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
@@ -114,6 +125,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date3,
             updatedDate: date3.addingTimeInterval(100),
             userDescription: "",
+            visibility: .onlySearch,
+            searchableLevel: .onlyTitle,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "any",

@@ -8,6 +8,9 @@ struct PersistedVaultItemDecoder {
             created: item.createdDate,
             updated: item.updatedDate,
             userDescription: item.userDescription,
+            visibility: decodeVisibility(level: item.visibility),
+            searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
+            searchPassphrase: item.searchPassphrase,
             color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {
@@ -38,6 +41,22 @@ struct PersistedVaultItemDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoder {
+    private func decodeSearchableLevel(level: PersistedVaultItem.SearchableLevel) -> VaultItemSearchableLevel {
+        switch level {
+        case .full: .full
+        case .none: .none
+        case .onlyTitle: .onlyTitle
+        case .onlyPassphrase: .onlyPassphrase
+        }
+    }
+
+    private func decodeVisibility(level: PersistedVaultItem.Visibility) -> VaultItemVisibility {
+        switch level {
+        case .always: .always
+        case .onlySearch: .onlySearch
+        }
+    }
+
     private func decodeColor(item: PersistedVaultItem) -> VaultItemColor? {
         if let color = item.color {
             VaultItemColor(red: color.red, green: color.green, blue: color.blue)

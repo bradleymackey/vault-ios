@@ -9,6 +9,9 @@ enum DemoVaultFactory {
                 created: Date(),
                 updated: Date(),
                 userDescription: "My Cool Code",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: nil
             ),
             item: .otpCode(.init(
@@ -29,6 +32,9 @@ enum DemoVaultFactory {
                 created: Date(),
                 updated: Date(),
                 userDescription: "My Other Cool code",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: VaultItemColor(color: .green)
             ),
             item: .otpCode(.init(
@@ -49,6 +55,9 @@ enum DemoVaultFactory {
                 created: Date(),
                 updated: Date(),
                 userDescription: "This is a secure note which I made. The contents should be very secret.",
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: VaultItemColor(color: .red)
             ),
             item: .secureNote(.init(title: title, contents: contents))

@@ -18,6 +18,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "hello",
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: "contents"))
         )
@@ -29,6 +32,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
+        XCTAssertEqual(decodedItem.metadata.visibility, .always)
+        XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
+        XCTAssertEqual(decodedItem.metadata.searchPassphrase, "hello")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
@@ -55,6 +61,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "pass",
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "BASE_32",
@@ -77,6 +86,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
+        XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
+        XCTAssertEqual(decodedItem.metadata.searchPassphrase, "pass")
+        XCTAssertEqual(decodedItem.metadata.visibility, .always)
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.item.otpCode?.type, .totp(period: 30))
         XCTAssertEqual(decodedItem.item.otpCode?.data.secret, expectedSecret)
@@ -96,6 +108,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            visibility: .onlySearch,
+            searchableLevel: .full,
+            searchPassphrase: "nice",
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "BASE_32",
@@ -118,6 +133,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
+        XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
+        XCTAssertEqual(decodedItem.metadata.visibility, .onlySearch)
+        XCTAssertEqual(decodedItem.metadata.searchPassphrase, "nice")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.2, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.item.otpCode?.type, .hotp(counter: 10))
         XCTAssertEqual(decodedItem.item.otpCode?.data.secret, expectedSecret)
@@ -202,6 +220,9 @@ extension VaultBackupItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "",
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: contents))
         )
@@ -222,6 +243,9 @@ extension VaultBackupItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            visibility: .onlySearch,
+            searchableLevel: .full,
+            searchPassphrase: "",
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: secretFormat,

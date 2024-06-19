@@ -18,7 +18,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         )
 
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc", color: color)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc",
+            color: color,
+            visibility: .always,
+            searchableLevel: .onlyTitle,
+            searchPassphrase: ""
+        )
 
         XCTAssertEqual(sut.codeType, .totp)
         XCTAssertEqual(sut.totpPeriodLength, 1234)
@@ -30,6 +37,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.description, "mydesc")
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
+        XCTAssertEqual(sut.visibility, .always)
+        XCTAssertEqual(sut.searchableLevel, .onlyTitle)
     }
 
     func test_initHydratedFromCode_assignsHOTPCodeType() {
@@ -45,7 +54,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         )
 
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: color)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: color,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: ""
+        )
 
         XCTAssertEqual(sut.codeType, .hotp)
         XCTAssertEqual(sut.totpPeriodLength, 30, "Defaults TOTP to default for HOTP code")
@@ -57,12 +73,20 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.description, "mydesc2")
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
+        XCTAssertEqual(sut.searchableLevel, .full)
     }
 
     func test_init_emptySecretIsEmptySecretBase32String() {
         let code = anyOTPAuthCode(secret: .empty())
 
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc",
+            color: nil,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: ""
+        )
 
         XCTAssertEqual(sut.secretBase32String, "")
     }
@@ -79,7 +103,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            visibility: .always,
+            searchableLevel: .none,
+            searchPassphrase: ""
+        )
 
         XCTAssertTrue(sut.isValid)
     }
@@ -96,7 +127,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            visibility: .onlySearch,
+            searchableLevel: .onlyPassphrase,
+            searchPassphrase: ""
+        )
         sut.secretBase32String = ""
 
         XCTAssertFalse(sut.isValid)
@@ -114,7 +152,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            visibility: .always,
+            searchableLevel: .none,
+            searchPassphrase: ""
+        )
         sut.issuerTitle = ""
 
         XCTAssertFalse(sut.isValid)
@@ -132,7 +177,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            visibility: .onlySearch,
+            searchableLevel: .full,
+            searchPassphrase: ""
+        )
         sut.secretBase32String = "A" // this is invalid
 
         XCTAssertFalse(sut.isValid)
@@ -140,7 +192,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
     func test_asOTPAuthCode_createsTOTPCode() throws {
         let code = anyTOTPAuthCode()
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc",
+            color: nil,
+            visibility: .always,
+            searchableLevel: .none,
+            searchPassphrase: ""
+        )
 
         let newCode = try sut.asOTPAuthCode()
 
@@ -149,7 +208,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
     func test_asOTPAuthCode_createsHOTPCode() throws {
         let code = anyHOTPAuthCode()
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            visibility: .always,
+            searchableLevel: .onlyTitle,
+            searchPassphrase: ""
+        )
 
         let newCode = try sut.asOTPAuthCode()
 
@@ -157,7 +223,14 @@ final class OTPCodeDetailEditsTests: XCTestCase {
     }
 
     func test_asOTPAuthCode_throwsErrorIfBase32SecretIsInvalid() throws {
-        var sut = OTPCodeDetailEdits(hydratedFromCode: anyTOTPAuthCode(), userDescription: "any", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: anyTOTPAuthCode(),
+            userDescription: "any",
+            color: nil,
+            visibility: .onlySearch,
+            searchableLevel: .full,
+            searchPassphrase: ""
+        )
         sut.secretBase32String = "e~~"
 
         XCTAssertThrowsError(try sut.asOTPAuthCode())

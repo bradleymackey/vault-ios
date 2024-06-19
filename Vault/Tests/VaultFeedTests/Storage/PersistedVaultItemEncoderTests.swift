@@ -286,7 +286,14 @@ extension PersistedVaultItemEncoderTests {
         code: OTPAuthCode,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(userDescription: userDescription, color: color, item: .otpCode(code))
+        StoredVaultItem.Write(
+            userDescription: userDescription,
+            color: color,
+            item: .otpCode(code),
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphase: ""
+        )
     }
 
     private func makeCodeValue(
@@ -314,7 +321,14 @@ extension PersistedVaultItemEncoderTests {
         note: SecureNote,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(userDescription: userDescription, color: color, item: .secureNote(note))
+        StoredVaultItem.Write(
+            userDescription: userDescription,
+            color: color,
+            item: .secureNote(note),
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphase: ""
+        )
     }
 
     private func makeSecretNoteValue(

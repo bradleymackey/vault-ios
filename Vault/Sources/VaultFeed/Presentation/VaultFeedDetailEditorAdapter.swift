@@ -16,7 +16,10 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
         let newCodeVaultItem = try StoredVaultItem.Write(
             userDescription: initialEdits.description,
             color: initialEdits.color,
-            item: .otpCode(initialEdits.asOTPAuthCode())
+            item: .otpCode(initialEdits.asOTPAuthCode()),
+            visibility: initialEdits.visibility,
+            searchableLevel: initialEdits.searchableLevel,
+            searchPassphase: initialEdits.searchPassphrase
         )
 
         try await vaultFeed.create(item: newCodeVaultItem)
@@ -29,7 +32,14 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
 
         try await vaultFeed.update(
             id: id,
-            item: .init(userDescription: edits.description, color: edits.color, item: .otpCode(item))
+            item: .init(
+                userDescription: edits.description,
+                color: edits.color,
+                item: .otpCode(item),
+                visibility: edits.visibility,
+                searchableLevel: edits.searchableLevel,
+                searchPassphase: edits.searchPassphrase
+            )
         )
     }
 
@@ -44,7 +54,10 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         let newStoredVaultItem = StoredVaultItem.Write(
             userDescription: initialEdits.description,
             color: initialEdits.color,
-            item: .secureNote(newSecureNote)
+            item: .secureNote(newSecureNote),
+            visibility: initialEdits.visibility,
+            searchableLevel: initialEdits.searchableLevel,
+            searchPassphase: initialEdits.searchPassphrase
         )
 
         try await vaultFeed.create(item: newStoredVaultItem)
@@ -57,7 +70,10 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         let updatedStoredVaultItem = StoredVaultItem.Write(
             userDescription: edits.description,
             color: edits.color,
-            item: .secureNote(updatedItem)
+            item: .secureNote(updatedItem),
+            visibility: edits.visibility,
+            searchableLevel: edits.searchableLevel,
+            searchPassphase: edits.searchPassphrase
         )
 
         try await vaultFeed.update(id: id, item: updatedStoredVaultItem)

@@ -28,7 +28,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         case let .editing(note, metadata):
             .init(detail: .init(
                 title: note.title,
-                description: metadata.userDescription ?? "",
+                description: metadata.userDescription,
                 contents: note.contents
             ))
         }
