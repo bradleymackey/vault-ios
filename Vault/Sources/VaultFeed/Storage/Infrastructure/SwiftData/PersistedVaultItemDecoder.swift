@@ -39,8 +39,8 @@ struct PersistedVaultItemDecoder {
 
 extension PersistedVaultItemDecoder {
     private func decodeColor(item: PersistedVaultItem) -> VaultItemColor? {
-        if let red = item.colorRed, let green = item.colorGreen, let blue = item.colorBlue {
-            VaultItemColor(red: red, green: green, blue: blue)
+        if let color = item.color {
+            VaultItemColor(red: color.red, green: color.green, blue: color.blue)
         } else {
             nil
         }

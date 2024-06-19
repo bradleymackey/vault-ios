@@ -104,9 +104,7 @@ extension PersistedVaultItemEncoderTests {
         let code = makeWritable(code: uniqueCode(), color: nil)
 
         let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.colorRed)
-        XCTAssertNil(encoded.colorBlue)
-        XCTAssertNil(encoded.colorGreen)
+        XCTAssertNil(encoded.color)
     }
 
     func test_encodeMetadata_newItemWritesColorValues() {
@@ -115,9 +113,26 @@ extension PersistedVaultItemEncoderTests {
         let code = makeWritable(code: uniqueCode(), color: color)
 
         let encoded = sut.encode(item: code)
-        XCTAssertEqual(encoded.colorRed, 0.5)
-        XCTAssertEqual(encoded.colorGreen, 0.6)
-        XCTAssertEqual(encoded.colorBlue, 0.7)
+        XCTAssertEqual(encoded.color?.red, 0.5)
+        XCTAssertEqual(encoded.color?.green, 0.6)
+        XCTAssertEqual(encoded.color?.blue, 0.7)
+    }
+
+    func test_encodeMetadata_existingItemOverridesColorValues() {
+        let sut1 = makeSUT()
+
+        var existingItem = uniqueWritableVaultItem()
+        existingItem.color = VaultItemColor(red: 0.1, green: 0.2, blue: 0.3)
+        let existing = sut1.encode(item: existingItem)
+
+        let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
+        let sut2 = makeSUT()
+        let code = makeWritable(code: uniqueCode(), color: color)
+
+        let newCode = sut2.encode(item: code, existing: existing)
+        XCTAssertEqual(newCode.color?.red, 0.5)
+        XCTAssertEqual(newCode.color?.green, 0.6)
+        XCTAssertEqual(newCode.color?.blue, 0.7)
     }
 }
 

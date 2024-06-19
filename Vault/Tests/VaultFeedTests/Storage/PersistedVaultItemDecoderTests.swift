@@ -82,24 +82,9 @@ extension PersistedVaultItemDecoderTests {
         XCTAssertEqual(decoded.metadata.userDescription, description)
     }
 
-    func test_decodeMetadata_colorIsNilIfAllNil() throws {
+    func test_decodeMetadata_colorIsNil() throws {
         let item = makePersistedItem(
-            colorBlue: nil,
-            colorGreen: nil,
-            colorRed: nil
-        )
-        let sut = makeSUT()
-
-        let decoded = try sut.decode(item: item)
-
-        XCTAssertNil(decoded.metadata.color)
-    }
-
-    func test_decodeMetadata_colorIsNilIfAnyMissing() throws {
-        let item = makePersistedItem(
-            colorBlue: 0.5,
-            colorGreen: nil,
-            colorRed: nil
+            color: nil
         )
         let sut = makeSUT()
 
@@ -110,9 +95,7 @@ extension PersistedVaultItemDecoderTests {
 
     func test_decodeMetadata_decodesColorValues() throws {
         let item = makePersistedItem(
-            colorBlue: 0.5,
-            colorGreen: 0.6,
-            colorRed: 0.7
+            color: .init(red: 0.7, green: 0.6, blue: 0.5)
         )
         let sut = makeSUT()
 
@@ -323,9 +306,7 @@ extension PersistedVaultItemDecoderTests {
         createdDate: Date = Date(),
         updatedDate: Date = Date(),
         userDescription: String? = nil,
-        colorBlue: Double? = nil,
-        colorGreen: Double? = nil,
-        colorRed: Double? = nil,
+        color: PersistedVaultItem.Color? = nil,
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
             accountName: nil,
@@ -344,9 +325,7 @@ extension PersistedVaultItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updatedDate,
             userDescription: userDescription,
-            colorBlue: colorBlue,
-            colorGreen: colorGreen,
-            colorRed: colorRed,
+            color: color,
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )
