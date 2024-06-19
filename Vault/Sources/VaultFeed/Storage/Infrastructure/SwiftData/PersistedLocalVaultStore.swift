@@ -6,11 +6,27 @@ public final actor PersistedLocalVaultStore {
     private let container: ModelContainer
     private let context: ModelContext
 
-    public init(storeURL: URL) throws {
+    public enum Error: Swift.Error {
+        case modelNotFound
+    }
+
+    public enum Configuration: Sendable {
+        case inMemory
+        case storedOnDisk(URL)
+
+        fileprivate var modelConfiguration: ModelConfiguration {
+            switch self {
+            case .inMemory: .init(isStoredInMemoryOnly: true)
+            case let .storedOnDisk(url): .init(url: url)
+            }
+        }
+    }
+
+    public init(configuration: Configuration) throws {
         container = try .init(
             for: PersistedVaultItem.self,
             migrationPlan: nil,
-            configurations: .init(url: storeURL)
+            configurations: configuration.modelConfiguration
         )
         context = .init(container)
     }
@@ -23,20 +39,122 @@ public final actor PersistedLocalVaultStore {
     public func makeContext() -> ModelContext {
         .init(container)
     }
+
+    public func deleteAll() {
+        container.deleteAllData()
+    }
 }
 
 // MARK: - VaultStoreReader
 
 extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve() async throws -> [StoredVaultItem] {
-        let results = try PersistedVaultItem.fetchAll(in: context)
-        // TODO: map items
-        return []
+        let descriptor = FetchDescriptor<PersistedVaultItem>(sortBy: [SortDescriptor(\.updatedDate)])
+        let results = try context.fetch(descriptor)
+        let decoder = PersistedVaultItemDecoder()
+        return try results.map {
+            try decoder.decode(item: $0)
+        }
     }
 
     public func retrieve(matching query: String) async throws -> [StoredVaultItem] {
-        let results = try PersistedVaultItem.fetch(matchingQuery: query, in: context)
-        // TODO: map items
-        return []
+        let userDescriptionPredicate = #Predicate<PersistedVaultItem> {
+            $0.userDescription.flatMap {
+                $0.localizedStandardContains(query)
+            } ?? false
+        }
+
+        let noteTitlePredicate = #Predicate<PersistedVaultItem> {
+            $0.noteDetails.flatMap {
+                $0.title.localizedStandardContains(query)
+            } ?? false
+        }
+
+        let noteContentsPredicate = #Predicate<PersistedVaultItem> {
+            $0.noteDetails.flatMap {
+                $0.rawContents.flatMap {
+                    $0.localizedStandardContains(query)
+                }
+            } ?? false
+        }
+
+        let codeNamePredicate = #Predicate<PersistedVaultItem> {
+            $0.otpDetails.flatMap {
+                $0.accountName.flatMap {
+                    $0.localizedStandardContains(query)
+                }
+            } ?? false
+        }
+
+        let codeIssuerPredicate = #Predicate<PersistedVaultItem> {
+            $0.otpDetails.flatMap {
+                $0.issuer.flatMap {
+                    $0.localizedStandardContains(query)
+                }
+            } ?? false
+        }
+
+        let predicate = #Predicate<PersistedVaultItem> {
+            userDescriptionPredicate.evaluate($0) ||
+                noteTitlePredicate.evaluate($0) ||
+                noteContentsPredicate.evaluate($0) ||
+                codeNamePredicate.evaluate($0) ||
+                codeIssuerPredicate.evaluate($0)
+        }
+        let descriptor = FetchDescriptor(predicate: predicate, sortBy: [SortDescriptor(\.updatedDate)])
+        let results = try context.fetch(descriptor)
+        let decoder = PersistedVaultItemDecoder()
+        return try results.map {
+            try decoder.decode(item: $0)
+        }
+    }
+}
+
+// MARK: - VaultStoreWriter
+
+extension PersistedLocalVaultStore: VaultStoreWriter {
+    @discardableResult
+    public func insert(item: StoredVaultItem.Write) async throws -> UUID {
+        do {
+            let encoder = PersistedVaultItemEncoder(context: context)
+            let encoded = encoder.encode(item: item)
+
+            try context.save()
+            return encoded.id
+        } catch {
+            context.rollback()
+            throw error
+        }
+    }
+
+    public func update(id: UUID, item: StoredVaultItem.Write) async throws {
+        do {
+            var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
+                item.id == id
+            })
+            descriptor.fetchLimit = 1
+            guard let existing = try context.fetch(descriptor).first else {
+                throw Error.modelNotFound
+            }
+            let encoder = PersistedVaultItemEncoder(context: context)
+            _ = encoder.encode(item: item, existing: existing)
+
+            try context.save()
+        } catch {
+            context.rollback()
+            throw error
+        }
+    }
+
+    public func delete(id: UUID) async throws {
+        do {
+            try context.delete(model: PersistedVaultItem.self, where: #Predicate {
+                $0.id == id
+            })
+            try context.save()
+        } catch {
+            context.rollback()
+            throw error
+        }
     }
 }
