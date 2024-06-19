@@ -40,17 +40,6 @@ final class PersistedVaultItem {
         self.noteDetails = noteDetails
         self.otpDetails = otpDetails
     }
-
-    var queryableStrings: [String] {
-        let strings = [
-            userDescription,
-            noteDetails?.title,
-            noteDetails?.contents,
-            otpDetails?.accountName,
-            otpDetails?.issuer,
-        ]
-        return strings.compactMap { $0 }
-    }
 }
 
 @Model
