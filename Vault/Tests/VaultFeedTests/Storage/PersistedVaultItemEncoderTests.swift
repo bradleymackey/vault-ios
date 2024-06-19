@@ -82,14 +82,6 @@ extension PersistedVaultItemEncoderTests {
         }
     }
 
-    func test_encodeMetadata_newItemUserDescriptionEncodesNil() {
-        let sut = makeSUT()
-        let code = makeWritable(userDescription: nil, code: uniqueCode())
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.userDescription)
-    }
-
     func test_encodeMetadata_newItemUserDescriptionEncodesString() {
         let sut = makeSUT()
         let desc = UUID().uuidString
@@ -298,7 +290,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        userDescription: String? = nil,
+        userDescription: String = "",
         code: OTPAuthCode,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
@@ -326,7 +318,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        userDescription: String? = nil,
+        userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {

@@ -7,7 +7,7 @@ struct ManagedVaultItemDecoder {
             id: item.id,
             created: item.createdDate,
             updated: item.updatedDate,
-            userDescription: item.userDescription,
+            userDescription: item.userDescription ?? "",
             color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {

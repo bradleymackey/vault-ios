@@ -8,7 +8,7 @@ final class PersistedVaultItem {
     var id: UUID
     var createdDate: Date
     var updatedDate: Date
-    var userDescription: String?
+    var userDescription: String
     var color: Color?
 
     @Relationship(deleteRule: .cascade)
@@ -27,7 +27,7 @@ final class PersistedVaultItem {
         id: UUID,
         createdDate: Date,
         updatedDate: Date,
-        userDescription: String?,
+        userDescription: String,
         color: Color?,
         noteDetails: PersistedNoteDetails?,
         otpDetails: PersistedOTPDetails?

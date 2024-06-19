@@ -47,6 +47,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             id: uuid1,
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
+            userDescription: "",
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
@@ -55,6 +56,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             id: uuid2,
             createdDate: date2,
             updatedDate: date2.addingTimeInterval(1234),
+            userDescription: "",
             item: .note(data: .init(title: "Hello world again"))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
@@ -63,6 +65,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             id: uuid3,
             createdDate: date3,
             updatedDate: date3.addingTimeInterval(100),
+            userDescription: "",
             item: .otp(data: .init(
                 secretFormat: "any",
                 secretData: Data(repeating: 0xFE, count: 20),

@@ -12,7 +12,8 @@
           }
         }
       },
-      "updated_date" : 13579000
+      "updated_date" : 13579000,
+      "user_description" : ""
     },
     {
       "created_date" : 45658000,
@@ -24,7 +25,8 @@
           }
         }
       },
-      "updated_date" : 46892000
+      "updated_date" : 46892000,
+      "user_description" : ""
     },
     {
       "created_date" : 345652348000,
@@ -49,7 +51,8 @@
         "green" : 0.2,
         "red" : 0.1
       },
-      "updated_date" : 345652448000
+      "updated_date" : 345652448000,
+      "user_description" : ""
     }
   ],
   "obfuscation_padding" : "q6urCg==",

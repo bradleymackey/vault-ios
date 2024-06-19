@@ -305,7 +305,7 @@ extension PersistedVaultItemDecoderTests {
         id: UUID = UUID(),
         createdDate: Date = Date(),
         updatedDate: Date = Date(),
-        userDescription: String? = nil,
+        userDescription: String = "",
         color: PersistedVaultItem.Color? = nil,
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
