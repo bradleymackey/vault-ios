@@ -21,7 +21,7 @@ let swiftSettings: [SwiftSetting] = [
 let package = Package(
     name: "Vault",
     defaultLocalization: "en",
-    platforms: [.iOS(.v17), .macOS(.v14)],
+    platforms: [.iOS("17.4"), .macOS("14.4")],
     products: [
         .library(
             name: "VaultiOS",

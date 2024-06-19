@@ -104,26 +104,3 @@ final class PersistedNoteDetails {
         self.rawContents = rawContents
     }
 }
-
-extension PersistedVaultItem {
-    static func fetchAll(in context: ModelContext) throws -> [PersistedVaultItem] {
-        let descriptor = FetchDescriptor<PersistedVaultItem>(sortBy: [SortDescriptor(\.updatedDate)])
-        return try context.fetch(descriptor)
-    }
-
-    static func fetch(matchingQuery query: String, in context: ModelContext) throws -> [PersistedVaultItem] {
-        let predicate: Predicate<PersistedVaultItem> = #Predicate { item in
-            item.queryableStrings.contains { $0.contains(query) }
-        }
-        let descriptor = FetchDescriptor(predicate: predicate, sortBy: [SortDescriptor(\.updatedDate)])
-        return try context.fetch(descriptor)
-    }
-
-    static func first(withID id: UUID, in context: ModelContext) throws -> PersistedVaultItem? {
-        var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
-            item.id == id
-        })
-        descriptor.fetchLimit = 1
-        return try context.fetch(descriptor).first
-    }
-}

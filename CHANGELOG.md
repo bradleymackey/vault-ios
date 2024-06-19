@@ -13,6 +13,7 @@ Only app binary versions >2.0 should be used in production for this reason.
 ### Added
 
 - Initial release
+- Minimum deployment target is iOS 17.4
 - Storage for secure notes
 - Storage for 2FA codes (TOTP, HOTP)
 - Backup export
