@@ -39,16 +39,14 @@ extension VaultBackupItemDecoder {
         }
     }
 
-    private func decodeVisibility(level: VaultBackupItem.Visibility) -> StoredVaultItem.Metadata.Visibility {
+    private func decodeVisibility(level: VaultBackupItem.Visibility) -> VaultItemVisibility {
         switch level {
         case .always: .always
         case .onlySearch: .onlySearch
         }
     }
 
-    private func decodeSearchableLevel(level: VaultBackupItem.SearchableLevel) -> StoredVaultItem.Metadata
-        .SearchableLevel
-    {
+    private func decodeSearchableLevel(level: VaultBackupItem.SearchableLevel) -> VaultItemSearchableLevel {
         switch level {
         case .full: .full
         case .none: .none

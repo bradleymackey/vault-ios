@@ -44,8 +44,8 @@ extension StoredVaultItem {
         public var updated: Date
         /// User-provided description about the item.
         public var userDescription: String
-        public var visibility: Visibility
-        public var searchableLevel: SearchableLevel
+        public var visibility: VaultItemVisibility
+        public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphrase: String?
         /// The color tint for this item.
         public var color: VaultItemColor?
@@ -55,8 +55,8 @@ extension StoredVaultItem {
             created: Date,
             updated: Date,
             userDescription: String,
-            visibility: Visibility,
-            searchableLevel: SearchableLevel,
+            visibility: VaultItemVisibility,
+            searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
             color: VaultItemColor?
         ) {
@@ -72,42 +72,22 @@ extension StoredVaultItem {
     }
 }
 
-extension StoredVaultItem.Metadata {
-    public enum SearchableLevel: Equatable, Hashable, IdentifiableSelf, Sendable {
-        /// The item cannot be searched for.
-        case none
-        /// All available data in the item can be searched for.
-        case full
-        /// Only the title of the item can be searched for.
-        case onlyTitle
-        /// A secret passphrase is required to search.
-        case onlyPassphrase
-    }
-
-    public enum Visibility: Equatable, Hashable, IdentifiableSelf, Sendable {
-        /// This item is always visible in the feed and in searches.
-        case always
-        /// This item is only visible when searching, according to the `SearchableLevel`
-        case onlySearch
-    }
-}
-
 extension StoredVaultItem {
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: VaultItem
-        public var visibility: Metadata.Visibility
-        public var searchableLevel: Metadata.SearchableLevel
+        public var visibility: VaultItemVisibility
+        public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphase: String?
 
         public init(
             userDescription: String,
             color: VaultItemColor?,
             item: VaultItem,
-            visibility: Metadata.Visibility,
-            searchableLevel: Metadata.SearchableLevel,
+            visibility: VaultItemVisibility,
+            searchableLevel: VaultItemSearchableLevel,
             searchPassphase: String?
         ) {
             self.userDescription = userDescription

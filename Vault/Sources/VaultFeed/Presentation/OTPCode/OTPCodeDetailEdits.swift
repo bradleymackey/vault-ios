@@ -20,8 +20,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     public var issuerTitle: String = ""
     public var accountNameTitle: String
     public var description: String
-    public var visibility: StoredVaultItem.Metadata.Visibility
-    public var searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+    public var visibility: VaultItemVisibility
+    public var searchableLevel: VaultItemSearchableLevel
     @FieldValidated(validationLogic: .alwaysValid)
     public var searchPassphrase: String = ""
     public var color: VaultItemColor?
@@ -36,8 +36,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         issuerTitle: String,
         accountNameTitle: String,
         description: String,
-        visibility: StoredVaultItem.Metadata.Visibility,
-        searchableLevel: StoredVaultItem.Metadata.SearchableLevel,
+        visibility: VaultItemVisibility,
+        searchableLevel: VaultItemSearchableLevel,
         searchPassphrase: String,
         color: VaultItemColor?
     ) {
@@ -60,8 +60,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         hydratedFromCode code: OTPAuthCode,
         userDescription: String,
         color: VaultItemColor?,
-        visibility: StoredVaultItem.Metadata.Visibility,
-        searchableLevel: StoredVaultItem.Metadata.SearchableLevel,
+        visibility: VaultItemVisibility,
+        searchableLevel: VaultItemSearchableLevel,
         searchPassphrase: String
     ) {
         codeType = code.type.kind

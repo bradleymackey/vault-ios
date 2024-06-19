@@ -41,9 +41,7 @@ struct PersistedVaultItemDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoder {
-    private func decodeSearchableLevel(level: PersistedVaultItem.SearchableLevel) -> StoredVaultItem.Metadata
-        .SearchableLevel
-    {
+    private func decodeSearchableLevel(level: PersistedVaultItem.SearchableLevel) -> VaultItemSearchableLevel {
         switch level {
         case .full: .full
         case .none: .none
@@ -52,7 +50,7 @@ extension PersistedVaultItemDecoder {
         }
     }
 
-    private func decodeVisibility(level: PersistedVaultItem.Visibility) -> StoredVaultItem.Metadata.Visibility {
+    private func decodeVisibility(level: PersistedVaultItem.Visibility) -> VaultItemVisibility {
         switch level {
         case .always: .always
         case .onlySearch: .onlySearch

@@ -15,9 +15,9 @@ public struct SecureNoteDetailEdits: EditableState {
     @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
-    public var visibility: StoredVaultItem.Metadata.Visibility
+    public var visibility: VaultItemVisibility
 
-    public var searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+    public var searchableLevel: VaultItemSearchableLevel
 
     @FieldValidated(validationLogic: .alwaysValid)
     public var searchPassphrase: String = ""
@@ -29,8 +29,8 @@ public struct SecureNoteDetailEdits: EditableState {
         description: String = "",
         contents: String = "",
         color: VaultItemColor? = nil,
-        visibility: StoredVaultItem.Metadata.Visibility = .always,
-        searchableLevel: StoredVaultItem.Metadata.SearchableLevel = .full,
+        visibility: VaultItemVisibility = .always,
+        searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String = ""
     ) {
         self.description = description
