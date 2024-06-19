@@ -15,12 +15,6 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         sut = try PersistedLocalVaultStore(configuration: .inMemory)
     }
 
-    override func tearDown() async throws {
-        await sut.deleteAll()
-
-        try await super.tearDown()
-    }
-
     func test_retrieve_deliversEmptyOnEmptyStore() async throws {
         let result = try await sut.retrieve()
         XCTAssertEqual(result, [])

@@ -39,10 +39,6 @@ public final actor PersistedLocalVaultStore {
     public func makeContext() -> ModelContext {
         .init(container)
     }
-
-    public func deleteAll() {
-        container.deleteAllData()
-    }
 }
 
 // MARK: - VaultStoreReader
