@@ -49,7 +49,9 @@ extension InMemoryVaultStore: VaultStoreWriter {
             created: currentDate,
             updated: currentDate,
             userDescription: item.userDescription,
+            visibility: item.visibility,
             searchableLevel: item.searchableLevel,
+            searchPassphrase: item.searchPassphase,
             color: item.color
         )
         let code = StoredVaultItem(
@@ -70,7 +72,9 @@ extension InMemoryVaultStore: VaultStoreWriter {
             created: existingCode.metadata.created,
             updated: Date(),
             userDescription: item.userDescription,
+            visibility: item.visibility,
             searchableLevel: item.searchableLevel,
+            searchPassphrase: item.searchPassphase,
             color: item.color
         )
         let newCode = StoredVaultItem(

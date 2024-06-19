@@ -12,14 +12,16 @@
           }
         }
       },
-      "searchable_level" : "FULLY_SEARCHABLE",
+      "search_passphrase" : "passphrase",
+      "searchable_level" : "FULL",
       "tint_color" : {
         "blue" : 0.3,
         "green" : 0.2,
         "red" : 0.1
       },
       "updated_date" : 19345000,
-      "user_description" : ""
+      "user_description" : "",
+      "visibility" : "ALWAYS"
     }
   ],
   "obfuscation_padding" : "q6urCg==",

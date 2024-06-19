@@ -36,13 +36,22 @@ func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
         created: Date(),
         updated: Date(),
         userDescription: "any",
-        searchableLevel: .fullySearchable,
+        visibility: .always,
+        searchableLevel: .full,
+        searchPassphrase: nil,
         color: nil
     )
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {
-    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()), searchableLevel: .fullySearchable)
+    .init(
+        userDescription: "any",
+        color: nil,
+        item: .otpCode(uniqueCode()),
+        visibility: .always,
+        searchableLevel: .full,
+        searchPassphase: nil
+    )
 }
 
 func forceRunLoopAdvance() {

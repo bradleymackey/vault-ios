@@ -290,7 +290,9 @@ extension PersistedVaultItemEncoderTests {
             userDescription: userDescription,
             color: color,
             item: .otpCode(code),
-            searchableLevel: .fullySearchable
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphase: ""
         )
     }
 
@@ -323,7 +325,9 @@ extension PersistedVaultItemEncoderTests {
             userDescription: userDescription,
             color: color,
             item: .secureNote(note),
-            searchableLevel: .fullySearchable
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphase: ""
         )
     }
 

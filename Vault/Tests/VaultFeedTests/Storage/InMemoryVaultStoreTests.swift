@@ -153,7 +153,9 @@ final class InMemoryVaultStoreTests: XCTestCase {
                 userDescription: newUserDescription,
                 color: newColor,
                 item: .otpCode(newCode),
-                searchableLevel: .fullySearchable
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphase: "Pass"
             )
         )
 
@@ -163,7 +165,9 @@ final class InMemoryVaultStoreTests: XCTestCase {
         XCTAssertEqual(item.id, code1.id)
         XCTAssertEqual(item.metadata.userDescription, newUserDescription)
         XCTAssertEqual(item.metadata.color, newColor)
-        XCTAssertEqual(item.metadata.searchableLevel, .fullySearchable)
+        XCTAssertEqual(item.metadata.visibility, .always)
+        XCTAssertEqual(item.metadata.searchableLevel, .full)
+        XCTAssertEqual(item.metadata.searchPassphrase, "Pass")
         XCTAssertEqual(item.item, .otpCode(newCode))
     }
 

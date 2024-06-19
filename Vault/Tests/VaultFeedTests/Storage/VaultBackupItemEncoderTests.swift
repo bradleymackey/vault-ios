@@ -20,7 +20,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                searchableLevel: .fullySearchable,
+                visibility: .always,
+                searchableLevel: .onlyTitle,
+                searchPassphrase: "",
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .secureNote(note)
@@ -35,7 +37,8 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.userDescription, description)
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
-        XCTAssertEqual(encodedItem.searchableLevel, .fullySearchable)
+        XCTAssertEqual(encodedItem.visibility, .always)
+        XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
     }
 
@@ -61,7 +64,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                searchableLevel: .fullySearchable,
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "hello",
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
@@ -73,7 +78,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.id, id)
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
-        XCTAssertEqual(encodedItem.searchableLevel, .fullySearchable)
+        XCTAssertEqual(encodedItem.visibility, .always)
+        XCTAssertEqual(encodedItem.searchableLevel, .full)
+        XCTAssertEqual(encodedItem.searchPassphrase, "hello")
         XCTAssertEqual(encodedItem.userDescription, description)
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
         XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
@@ -109,7 +116,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                searchableLevel: .fullySearchable,
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "test",
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
@@ -122,7 +131,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.searchableLevel, .fullySearchable)
+        XCTAssertEqual(encodedItem.visibility, .always)
+        XCTAssertEqual(encodedItem.searchableLevel, .full)
+        XCTAssertEqual(encodedItem.searchPassphrase, "test")
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
         XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
         XCTAssertEqual(encodedItem.item.codeData?.algorithm, "SHA256")
@@ -186,7 +197,9 @@ extension VaultBackupItemEncoderTests {
                 created: Date(),
                 updated: Date(),
                 userDescription: "any",
-                searchableLevel: .fullySearchable,
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
                 color: color
             ),
             item: .otpCode(code)

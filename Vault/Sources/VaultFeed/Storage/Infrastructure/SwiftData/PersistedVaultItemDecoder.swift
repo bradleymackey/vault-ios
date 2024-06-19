@@ -8,7 +8,9 @@ struct PersistedVaultItemDecoder {
             created: item.createdDate,
             updated: item.updatedDate,
             userDescription: item.userDescription,
+            visibility: decodeVisibility(level: item.visibility),
             searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
+            searchPassphrase: item.searchPassphrase,
             color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {
@@ -43,9 +45,17 @@ extension PersistedVaultItemDecoder {
         .SearchableLevel
     {
         switch level {
-        case .fullySearchable: .fullySearchable
-        case .titleOnly: .titleOnly
-        case .notSearchable: .notSearchable
+        case .full: .full
+        case .none: .none
+        case .onlyTitle: .onlyTitle
+        case .onlyPassphrase: .onlyPassphrase
+        }
+    }
+
+    private func decodeVisibility(level: PersistedVaultItem.Visibility) -> StoredVaultItem.Metadata.Visibility {
+        switch level {
+        case .always: .always
+        case .onlySearch: .onlySearch
         }
     }
 

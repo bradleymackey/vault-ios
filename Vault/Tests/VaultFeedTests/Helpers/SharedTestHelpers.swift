@@ -28,7 +28,9 @@ func uniqueStoredMetadata(userDescription: String = "any") -> StoredVaultItem.Me
         created: Date(),
         updated: Date(),
         userDescription: userDescription,
-        searchableLevel: .fullySearchable,
+        visibility: .always,
+        searchableLevel: .full,
+        searchPassphrase: nil,
         color: nil
     )
 }
@@ -51,7 +53,9 @@ func searchableStoredOTPVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            searchableLevel: .notSearchable,
+            visibility: .always,
+            searchableLevel: .none,
+            searchPassphrase: nil,
             color: nil
         ),
         item: .otpCode(.init(
@@ -72,7 +76,9 @@ func searchableStoredSecureNoteVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            searchableLevel: .notSearchable,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
             color: nil
         ),
         item: .secureNote(.init(title: title, contents: contents))
@@ -87,7 +93,14 @@ func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {
-    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()), searchableLevel: .notSearchable)
+    .init(
+        userDescription: "any",
+        color: nil,
+        item: .otpCode(uniqueCode()),
+        visibility: .always,
+        searchableLevel: .none,
+        searchPassphase: nil
+    )
 }
 
 func writableSearchableOTPVaultItem(
@@ -111,7 +124,9 @@ func writableSearchableNoteVaultItem(
         userDescription: userDescription,
         color: nil,
         item: .secureNote(.init(title: title, contents: contents)),
-        searchableLevel: .notSearchable
+        visibility: .always,
+        searchableLevel: .none,
+        searchPassphase: nil
     )
 }
 

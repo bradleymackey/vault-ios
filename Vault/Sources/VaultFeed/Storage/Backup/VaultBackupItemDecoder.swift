@@ -20,7 +20,9 @@ extension VaultBackupItemDecoder {
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
             userDescription: backupItem.userDescription,
+            visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
+            searchPassphrase: backupItem.searchPassphrase,
             color: decodeColor(color: backupItem.tintColor)
         )
     }
@@ -37,13 +39,21 @@ extension VaultBackupItemDecoder {
         }
     }
 
+    private func decodeVisibility(level: VaultBackupItem.Visibility) -> StoredVaultItem.Metadata.Visibility {
+        switch level {
+        case .always: .always
+        case .onlySearch: .onlySearch
+        }
+    }
+
     private func decodeSearchableLevel(level: VaultBackupItem.SearchableLevel) -> StoredVaultItem.Metadata
         .SearchableLevel
     {
         switch level {
-        case .fullySearchable: .fullySearchable
-        case .titleOnly: .titleOnly
-        case .notSearchable: .notSearchable
+        case .full: .full
+        case .none: .none
+        case .onlyTitle: .onlyTitle
+        case .onlyPassphrase: .onlyPassphrase
         }
     }
 }

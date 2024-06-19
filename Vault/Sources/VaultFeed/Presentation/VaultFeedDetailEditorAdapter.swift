@@ -17,7 +17,9 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
             userDescription: initialEdits.description,
             color: initialEdits.color,
             item: .otpCode(initialEdits.asOTPAuthCode()),
-            searchableLevel: initialEdits.searchableLevel
+            visibility: initialEdits.visibility,
+            searchableLevel: initialEdits.searchableLevel,
+            searchPassphase: initialEdits.searchPassphrase
         )
 
         try await vaultFeed.create(item: newCodeVaultItem)
@@ -34,7 +36,9 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
                 userDescription: edits.description,
                 color: edits.color,
                 item: .otpCode(item),
-                searchableLevel: edits.searchableLevel
+                visibility: edits.visibility,
+                searchableLevel: edits.searchableLevel,
+                searchPassphase: edits.searchPassphrase
             )
         )
     }
@@ -51,7 +55,9 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             userDescription: initialEdits.description,
             color: initialEdits.color,
             item: .secureNote(newSecureNote),
-            searchableLevel: initialEdits.searchableLevel
+            visibility: initialEdits.visibility,
+            searchableLevel: initialEdits.searchableLevel,
+            searchPassphase: initialEdits.searchPassphrase
         )
 
         try await vaultFeed.create(item: newStoredVaultItem)
@@ -65,7 +71,9 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             userDescription: edits.description,
             color: edits.color,
             item: .secureNote(updatedItem),
-            searchableLevel: edits.searchableLevel
+            visibility: edits.visibility,
+            searchableLevel: edits.searchableLevel,
+            searchPassphase: edits.searchPassphrase
         )
 
         try await vaultFeed.update(id: id, item: updatedStoredVaultItem)

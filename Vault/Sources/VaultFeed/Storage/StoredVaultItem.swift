@@ -26,7 +26,9 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
             userDescription: metadata.userDescription,
             color: metadata.color,
             item: item,
-            searchableLevel: metadata.searchableLevel
+            visibility: metadata.visibility,
+            searchableLevel: metadata.searchableLevel,
+            searchPassphase: metadata.searchPassphrase
         )
     }
 }
@@ -42,7 +44,9 @@ extension StoredVaultItem {
         public var updated: Date
         /// User-provided description about the item.
         public var userDescription: String
+        public var visibility: Visibility
         public var searchableLevel: SearchableLevel
+        public var searchPassphrase: String?
         /// The color tint for this item.
         public var color: VaultItemColor?
 
@@ -51,14 +55,18 @@ extension StoredVaultItem {
             created: Date,
             updated: Date,
             userDescription: String,
+            visibility: Visibility,
             searchableLevel: SearchableLevel,
+            searchPassphrase: String?,
             color: VaultItemColor?
         ) {
             self.id = id
             self.created = created
             self.updated = updated
             self.userDescription = userDescription
+            self.visibility = visibility
             self.searchableLevel = searchableLevel
+            self.searchPassphrase = searchPassphrase
             self.color = color
         }
     }
@@ -66,9 +74,21 @@ extension StoredVaultItem {
 
 extension StoredVaultItem.Metadata {
     public enum SearchableLevel: Equatable, Hashable, IdentifiableSelf, Sendable {
-        case fullySearchable
-        case titleOnly
-        case notSearchable
+        /// The item cannot be searched for.
+        case none
+        /// All available data in the item can be searched for.
+        case full
+        /// Only the title of the item can be searched for.
+        case onlyTitle
+        /// A secret passphrase is required to search.
+        case onlyPassphrase
+    }
+
+    public enum Visibility: Equatable, Hashable, IdentifiableSelf, Sendable {
+        /// This item is always visible in the feed and in searches.
+        case always
+        /// This item is only visible when searching, according to the `SearchableLevel`
+        case onlySearch
     }
 }
 
@@ -78,18 +98,24 @@ extension StoredVaultItem {
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: VaultItem
+        public var visibility: Metadata.Visibility
         public var searchableLevel: Metadata.SearchableLevel
+        public var searchPassphase: String?
 
         public init(
             userDescription: String,
             color: VaultItemColor?,
             item: VaultItem,
-            searchableLevel: Metadata.SearchableLevel
+            visibility: Metadata.Visibility,
+            searchableLevel: Metadata.SearchableLevel,
+            searchPassphase: String?
         ) {
             self.userDescription = userDescription
             self.color = color
             self.item = item
+            self.visibility = visibility
             self.searchableLevel = searchableLevel
+            self.searchPassphase = searchPassphase
         }
     }
 }

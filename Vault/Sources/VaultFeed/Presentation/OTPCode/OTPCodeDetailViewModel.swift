@@ -35,7 +35,9 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                     hydratedFromCode: initialCode,
                     userDescription: "",
                     color: nil,
-                    searchableLevel: .fullySearchable
+                    visibility: .always,
+                    searchableLevel: .full,
+                    searchPassphrase: ""
                 ),
                 isInitiallyDirty: true
             )
@@ -44,7 +46,9 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 hydratedFromCode: code,
                 userDescription: metadata.userDescription,
                 color: metadata.color,
-                searchableLevel: metadata.searchableLevel
+                visibility: metadata.visibility,
+                searchableLevel: metadata.searchableLevel,
+                searchPassphrase: metadata.searchPassphrase ?? ""
             ))
         }
     }

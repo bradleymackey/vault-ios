@@ -15,7 +15,12 @@ public struct SecureNoteDetailEdits: EditableState {
     @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
+    public var visibility: StoredVaultItem.Metadata.Visibility
+
     public var searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+
+    @FieldValidated(validationLogic: .alwaysValid)
+    public var searchPassphrase: String = ""
 
     public var color: VaultItemColor?
 
@@ -24,16 +29,20 @@ public struct SecureNoteDetailEdits: EditableState {
         description: String = "",
         contents: String = "",
         color: VaultItemColor? = nil,
-        searchableLevel: StoredVaultItem.Metadata.SearchableLevel = .fullySearchable
+        visibility: StoredVaultItem.Metadata.Visibility = .always,
+        searchableLevel: StoredVaultItem.Metadata.SearchableLevel = .full,
+        searchPassphrase: String = ""
     ) {
         self.description = description
         self.title = title
         self.contents = contents
         self.color = color
+        self.visibility = visibility
         self.searchableLevel = searchableLevel
+        self.searchPassphrase = searchPassphrase
     }
 
     public var isValid: Bool {
-        $title.isValid && $description.isValid && $contents.isValid
+        $title.isValid && $description.isValid && $contents.isValid && $searchPassphrase.isValid
     }
 }

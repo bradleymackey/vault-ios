@@ -12,9 +12,11 @@
           }
         }
       },
-      "searchable_level" : "FULLY_SEARCHABLE",
+      "search_passphrase" : "searchphrase",
+      "searchable_level" : "FULL",
       "updated_date" : 13579000,
-      "user_description" : ""
+      "user_description" : "",
+      "visibility" : "ALWAYS"
     },
     {
       "created_date" : 45658000,
@@ -26,9 +28,10 @@
           }
         }
       },
-      "searchable_level" : "NOT_SEARCHABLE",
+      "searchable_level" : "NONE",
       "updated_date" : 46892000,
-      "user_description" : ""
+      "user_description" : "",
+      "visibility" : "ALWAYS"
     },
     {
       "created_date" : 345652348000,
@@ -48,14 +51,15 @@
           }
         }
       },
-      "searchable_level" : "TITLE_ONLY",
+      "searchable_level" : "ONLY_TITLE",
       "tint_color" : {
         "blue" : 0.3,
         "green" : 0.2,
         "red" : 0.1
       },
       "updated_date" : 345652448000,
-      "user_description" : ""
+      "user_description" : "",
+      "visibility" : "ONLY_SEARCH"
     }
   ],
   "obfuscation_padding" : "q6urCg==",

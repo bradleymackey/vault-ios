@@ -25,7 +25,9 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             hydratedFromCode: initialCode,
             userDescription: "mydesc",
             color: nil,
-            searchableLevel: .fullySearchable
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: ""
         )
 
         let exp = expectation(description: "Wait for creation")
@@ -74,15 +76,19 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc",
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
-            searchableLevel: .fullySearchable
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: ""
         )
         edits.issuerTitle = "new issuer name"
         edits.accountNameTitle = "new account name"
         edits.description = "new description"
+        edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
+            XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
             case let .otpCode(otpCode):
                 XCTAssertEqual(otpCode.data.accountName, "new account name")
@@ -256,7 +262,9 @@ extension VaultFeedDetailEditorAdapterTests {
             issuerTitle: "iss",
             accountNameTitle: "acc",
             description: "desc",
-            searchableLevel: .fullySearchable,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "",
             color: nil
         )
     }

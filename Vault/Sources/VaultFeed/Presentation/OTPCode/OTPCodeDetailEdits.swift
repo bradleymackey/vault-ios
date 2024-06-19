@@ -20,7 +20,10 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     public var issuerTitle: String = ""
     public var accountNameTitle: String
     public var description: String
+    public var visibility: StoredVaultItem.Metadata.Visibility
     public var searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+    @FieldValidated(validationLogic: .alwaysValid)
+    public var searchPassphrase: String = ""
     public var color: VaultItemColor?
 
     public init(
@@ -33,7 +36,9 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         issuerTitle: String,
         accountNameTitle: String,
         description: String,
+        visibility: StoredVaultItem.Metadata.Visibility,
         searchableLevel: StoredVaultItem.Metadata.SearchableLevel,
+        searchPassphrase: String,
         color: VaultItemColor?
     ) {
         self.codeType = codeType
@@ -45,7 +50,9 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.issuerTitle = issuerTitle
         self.accountNameTitle = accountNameTitle
         self.description = description
+        self.visibility = visibility
         self.searchableLevel = searchableLevel
+        self.searchPassphrase = searchPassphrase
         self.color = color
     }
 
@@ -53,7 +60,9 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         hydratedFromCode code: OTPAuthCode,
         userDescription: String,
         color: VaultItemColor?,
-        searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+        visibility: StoredVaultItem.Metadata.Visibility,
+        searchableLevel: StoredVaultItem.Metadata.SearchableLevel,
+        searchPassphrase: String
     ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
@@ -70,7 +79,9 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         issuerTitle = code.data.issuer
         accountNameTitle = code.data.accountName
         description = userDescription
+        self.visibility = visibility
         self.searchableLevel = searchableLevel
+        self.searchPassphrase = searchPassphrase
         self.color = color
     }
 
@@ -117,7 +128,9 @@ extension OTPCodeDetailEdits {
             issuerTitle: "",
             accountNameTitle: "",
             description: "",
-            searchableLevel: .fullySearchable,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "",
             color: nil
         )
     }

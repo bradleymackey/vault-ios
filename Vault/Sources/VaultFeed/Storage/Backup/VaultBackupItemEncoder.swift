@@ -18,7 +18,9 @@ final class VaultBackupItemEncoder {
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
             userDescription: storedItem.metadata.userDescription,
+            visibility: encodeVisibility(metadata: storedItem.metadata),
             searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
+            searchPassphrase: storedItem.metadata.searchPassphrase,
             tintColor: encodeTintColor(meta: storedItem.metadata),
             item: itemDetail
         )
@@ -33,11 +35,19 @@ extension VaultBackupItemEncoder {
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 
+    private func encodeVisibility(metadata: StoredVaultItem.Metadata) -> VaultBackupItem.Visibility {
+        switch metadata.visibility {
+        case .always: .always
+        case .onlySearch: .onlySearch
+        }
+    }
+
     private func encodeSearchableLevel(metadata: StoredVaultItem.Metadata) -> VaultBackupItem.SearchableLevel {
         switch metadata.searchableLevel {
-        case .fullySearchable: .fullySearchable
-        case .titleOnly: .titleOnly
-        case .notSearchable: .notSearchable
+        case .none: .none
+        case .full: .full
+        case .onlyTitle: .onlyTitle
+        case .onlyPassphrase: .onlyPassphrase
         }
     }
 }

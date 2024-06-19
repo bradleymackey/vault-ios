@@ -144,7 +144,9 @@ struct VaultItemFeedView_Previews: PreviewProvider {
                         created: Date(),
                         updated: Date(),
                         userDescription: "My Cool Code",
-                        searchableLevel: .fullySearchable,
+                        visibility: .always,
+                        searchableLevel: .full,
+                        searchPassphrase: "",
                         color: VaultItemColor(color: .green)
                     ),
                     item: .otpCode(.init(
