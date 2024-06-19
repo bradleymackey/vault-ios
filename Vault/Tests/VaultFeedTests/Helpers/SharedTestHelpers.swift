@@ -23,7 +23,14 @@ func anyStoredNote() -> SecureNote {
 }
 
 func uniqueStoredMetadata(userDescription: String = "any") -> StoredVaultItem.Metadata {
-    .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil)
+    .init(
+        id: UUID(),
+        created: Date(),
+        updated: Date(),
+        userDescription: userDescription,
+        searchableLevel: .fullySearchable,
+        color: nil
+    )
 }
 
 func uniqueStoredVaultItem() -> StoredVaultItem {
@@ -39,7 +46,14 @@ func searchableStoredOTPVaultItem(
     issuerName: String = ""
 ) -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil),
+        metadata: .init(
+            id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: userDescription,
+            searchableLevel: .notSearchable,
+            color: nil
+        ),
         item: .otpCode(.init(
             type: .totp(period: 30),
             data: .init(secret: .empty(), accountName: accountName, issuer: issuerName)
@@ -53,7 +67,14 @@ func searchableStoredSecureNoteVaultItem(
     contents: String = ""
 ) -> StoredVaultItem {
     StoredVaultItem(
-        metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil),
+        metadata: .init(
+            id: UUID(),
+            created: Date(),
+            updated: Date(),
+            userDescription: userDescription,
+            searchableLevel: .notSearchable,
+            color: nil
+        ),
         item: .secureNote(.init(title: title, contents: contents))
     )
 }
@@ -66,7 +87,7 @@ func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {
-    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()))
+    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()), searchableLevel: .notSearchable)
 }
 
 func writableSearchableOTPVaultItem(
@@ -89,7 +110,8 @@ func writableSearchableNoteVaultItem(
     .init(
         userDescription: userDescription,
         color: nil,
-        item: .secureNote(.init(title: title, contents: contents))
+        item: .secureNote(.init(title: title, contents: contents)),
+        searchableLevel: .notSearchable
     )
 }
 

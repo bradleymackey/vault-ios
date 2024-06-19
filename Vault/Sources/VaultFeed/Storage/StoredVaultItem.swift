@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 /// A `VaultItem` retrieved from storage.
@@ -21,7 +22,12 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
 
     /// Maps this object to a `StoredVaultItem.Write` for writing.
     public var asWritable: StoredVaultItem.Write {
-        .init(userDescription: metadata.userDescription, color: metadata.color, item: item)
+        .init(
+            userDescription: metadata.userDescription,
+            color: metadata.color,
+            item: item,
+            searchableLevel: metadata.searchableLevel
+        )
     }
 }
 
@@ -36,16 +42,33 @@ extension StoredVaultItem {
         public var updated: Date
         /// User-provided description about the item.
         public var userDescription: String
+        public var searchableLevel: SearchableLevel
         /// The color tint for this item.
         public var color: VaultItemColor?
 
-        public init(id: UUID, created: Date, updated: Date, userDescription: String, color: VaultItemColor?) {
+        public init(
+            id: UUID,
+            created: Date,
+            updated: Date,
+            userDescription: String,
+            searchableLevel: SearchableLevel,
+            color: VaultItemColor?
+        ) {
             self.id = id
             self.created = created
             self.updated = updated
             self.userDescription = userDescription
+            self.searchableLevel = searchableLevel
             self.color = color
         }
+    }
+}
+
+extension StoredVaultItem.Metadata {
+    public enum SearchableLevel: Equatable, Hashable, IdentifiableSelf, Sendable {
+        case fullySearchable
+        case titleOnly
+        case notSearchable
     }
 }
 
@@ -55,11 +78,18 @@ extension StoredVaultItem {
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: VaultItem
+        public var searchableLevel: Metadata.SearchableLevel
 
-        public init(userDescription: String, color: VaultItemColor?, item: VaultItem) {
+        public init(
+            userDescription: String,
+            color: VaultItemColor?,
+            item: VaultItem,
+            searchableLevel: Metadata.SearchableLevel
+        ) {
             self.userDescription = userDescription
             self.color = color
             self.item = item
+            self.searchableLevel = searchableLevel
         }
     }
 }

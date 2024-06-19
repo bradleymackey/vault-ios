@@ -9,6 +9,7 @@ final class PersistedVaultItem {
     var createdDate: Date
     var updatedDate: Date
     var userDescription: String
+    var searchableLevel: SearchableLevel = SearchableLevel.fullySearchable
     var color: Color?
 
     @Relationship(deleteRule: .cascade)
@@ -23,11 +24,18 @@ final class PersistedVaultItem {
         var blue: Double
     }
 
+    enum SearchableLevel: String, Codable {
+        case fullySearchable
+        case titleOnly
+        case notSearchable
+    }
+
     init(
         id: UUID,
         createdDate: Date,
         updatedDate: Date,
         userDescription: String,
+        searchableLevel: SearchableLevel = SearchableLevel.fullySearchable,
         color: Color?,
         noteDetails: PersistedNoteDetails?,
         otpDetails: PersistedOTPDetails?
@@ -36,6 +44,7 @@ final class PersistedVaultItem {
         self.createdDate = createdDate
         self.updatedDate = updatedDate
         self.userDescription = userDescription
+        self.searchableLevel = searchableLevel
         self.color = color
         self.noteDetails = noteDetails
         self.otpDetails = otpDetails

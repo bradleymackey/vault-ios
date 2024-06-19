@@ -31,11 +31,18 @@ func anySecureNote() -> SecureNote {
 }
 
 func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
-    .init(id: id, created: Date(), updated: Date(), userDescription: "any", color: nil)
+    .init(
+        id: id,
+        created: Date(),
+        updated: Date(),
+        userDescription: "any",
+        searchableLevel: .fullySearchable,
+        color: nil
+    )
 }
 
 func uniqueWritableVaultItem() -> StoredVaultItem.Write {
-    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()))
+    .init(userDescription: "any", color: nil, item: .otpCode(uniqueCode()), searchableLevel: .fullySearchable)
 }
 
 func forceRunLoopAdvance() {

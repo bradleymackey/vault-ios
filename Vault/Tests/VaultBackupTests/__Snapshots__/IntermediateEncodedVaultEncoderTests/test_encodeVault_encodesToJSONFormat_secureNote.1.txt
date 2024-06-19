@@ -12,6 +12,7 @@
           }
         }
       },
+      "searchable_level" : "FULLY_SEARCHABLE",
       "tint_color" : {
         "blue" : 0.3,
         "green" : 0.2,

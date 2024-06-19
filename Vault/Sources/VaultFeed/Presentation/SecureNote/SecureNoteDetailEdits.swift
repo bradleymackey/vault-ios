@@ -15,13 +15,22 @@ public struct SecureNoteDetailEdits: EditableState {
     @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
+    public var searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+
     public var color: VaultItemColor?
 
-    public init(title: String = "", description: String = "", contents: String = "", color: VaultItemColor? = nil) {
+    public init(
+        title: String = "",
+        description: String = "",
+        contents: String = "",
+        color: VaultItemColor? = nil,
+        searchableLevel: StoredVaultItem.Metadata.SearchableLevel = .fullySearchable
+    ) {
         self.description = description
         self.title = title
         self.contents = contents
         self.color = color
+        self.searchableLevel = searchableLevel
     }
 
     public var isValid: Bool {

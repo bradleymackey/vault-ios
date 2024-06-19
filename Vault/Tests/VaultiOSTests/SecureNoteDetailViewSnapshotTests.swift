@@ -21,6 +21,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "",
+                searchableLevel: .fullySearchable,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -41,6 +42,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "",
+                searchableLevel: .notSearchable,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -61,6 +63,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "My description",
+                searchableLevel: .titleOnly,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -82,6 +85,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 userDescription: "My description",
+                searchableLevel: .fullySearchable,
                 color: .gray
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -103,6 +107,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 created: date,
                 updated: date.addingTimeInterval(1), // different updated date
                 userDescription: "My description",
+                searchableLevel: .fullySearchable,
                 color: .black
             ),
             editor: SecureNoteDetailEditorMock(),

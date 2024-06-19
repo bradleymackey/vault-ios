@@ -35,6 +35,7 @@ struct CodeStoreFake: VaultStoreReader {
                 created: Date(),
                 updated: Date(),
                 userDescription: "",
+                searchableLevel: .fullySearchable,
                 color: VaultItemColor(color: .green)
             ),
             item: .otpCode(
@@ -54,6 +55,7 @@ struct CodeStoreFake: VaultStoreReader {
                 created: Date(),
                 updated: Date(),
                 userDescription: "",
+                searchableLevel: .fullySearchable,
                 color: VaultItemColor(color: .green)
             ),
             item: .otpCode(
@@ -73,6 +75,7 @@ struct CodeStoreFake: VaultStoreReader {
                 created: Date(),
                 updated: Date(),
                 userDescription: "",
+                searchableLevel: .fullySearchable,
                 color: VaultItemColor(color: .green)
             ),
             item: .otpCode(

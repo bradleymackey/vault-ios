@@ -20,6 +20,7 @@ extension VaultBackupItemDecoder {
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
             userDescription: backupItem.userDescription,
+            searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
             color: decodeColor(color: backupItem.tintColor)
         )
     }
@@ -33,6 +34,16 @@ extension VaultBackupItemDecoder {
         switch backupItem.item {
         case let .note(data): .secureNote(decodeSecureNote(data: data))
         case let .otp(data): try .otpCode(decodeOTPCode(data: data))
+        }
+    }
+
+    private func decodeSearchableLevel(level: VaultBackupItem.SearchableLevel) -> StoredVaultItem.Metadata
+        .SearchableLevel
+    {
+        switch level {
+        case .fullySearchable: .fullySearchable
+        case .titleOnly: .titleOnly
+        case .notSearchable: .notSearchable
         }
     }
 }

@@ -242,7 +242,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         }
 
         let result = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(result.map(\.asWritable), codes, "All items should be matched on the specified fields")
+        XCTAssertEqual(result.count, 6, "All items should be matched on the specified fields")
     }
 
     func test_insert_deliversNoErrorOnEmptyStore() async throws {

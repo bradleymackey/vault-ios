@@ -20,6 +20,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     public var issuerTitle: String = ""
     public var accountNameTitle: String
     public var description: String
+    public var searchableLevel: StoredVaultItem.Metadata.SearchableLevel
     public var color: VaultItemColor?
 
     public init(
@@ -32,6 +33,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         issuerTitle: String,
         accountNameTitle: String,
         description: String,
+        searchableLevel: StoredVaultItem.Metadata.SearchableLevel,
         color: VaultItemColor?
     ) {
         self.codeType = codeType
@@ -43,10 +45,16 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.issuerTitle = issuerTitle
         self.accountNameTitle = accountNameTitle
         self.description = description
+        self.searchableLevel = searchableLevel
         self.color = color
     }
 
-    public init(hydratedFromCode code: OTPAuthCode, userDescription: String, color: VaultItemColor?) {
+    public init(
+        hydratedFromCode code: OTPAuthCode,
+        userDescription: String,
+        color: VaultItemColor?,
+        searchableLevel: StoredVaultItem.Metadata.SearchableLevel
+    ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
         case let .totp(period): period
@@ -62,6 +70,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         issuerTitle = code.data.issuer
         accountNameTitle = code.data.accountName
         description = userDescription
+        self.searchableLevel = searchableLevel
         self.color = color
     }
 
@@ -108,6 +117,7 @@ extension OTPCodeDetailEdits {
             issuerTitle: "",
             accountNameTitle: "",
             description: "",
+            searchableLevel: .fullySearchable,
             color: nil
         )
     }

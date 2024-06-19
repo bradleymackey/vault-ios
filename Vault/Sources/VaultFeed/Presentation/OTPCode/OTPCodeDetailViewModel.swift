@@ -31,14 +31,20 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
             .init(detail: .new())
         case let .creating(.some(initialCode)):
             .init(
-                detail: OTPCodeDetailEdits(hydratedFromCode: initialCode, userDescription: "", color: nil),
+                detail: OTPCodeDetailEdits(
+                    hydratedFromCode: initialCode,
+                    userDescription: "",
+                    color: nil,
+                    searchableLevel: .fullySearchable
+                ),
                 isInitiallyDirty: true
             )
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
                 hydratedFromCode: code,
                 userDescription: metadata.userDescription,
-                color: metadata.color
+                color: metadata.color,
+                searchableLevel: metadata.searchableLevel
             ))
         }
     }

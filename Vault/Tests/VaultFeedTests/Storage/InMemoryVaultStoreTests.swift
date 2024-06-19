@@ -149,7 +149,12 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let newColor = VaultItemColor(red: 0.1, green: 0.1, blue: 0.1)
         try await sut.update(
             id: code1.id,
-            item: .init(userDescription: newUserDescription, color: newColor, item: .otpCode(newCode))
+            item: .init(
+                userDescription: newUserDescription,
+                color: newColor,
+                item: .otpCode(newCode),
+                searchableLevel: .fullySearchable
+            )
         )
 
         let retrieved = try await sut.retrieve()
@@ -158,6 +163,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         XCTAssertEqual(item.id, code1.id)
         XCTAssertEqual(item.metadata.userDescription, newUserDescription)
         XCTAssertEqual(item.metadata.color, newColor)
+        XCTAssertEqual(item.metadata.searchableLevel, .fullySearchable)
         XCTAssertEqual(item.item, .otpCode(newCode))
     }
 

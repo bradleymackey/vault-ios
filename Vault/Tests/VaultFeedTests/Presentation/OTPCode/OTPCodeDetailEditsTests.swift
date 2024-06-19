@@ -18,7 +18,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         )
 
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc", color: color)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc",
+            color: color,
+            searchableLevel: .titleOnly
+        )
 
         XCTAssertEqual(sut.codeType, .totp)
         XCTAssertEqual(sut.totpPeriodLength, 1234)
@@ -30,6 +35,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.description, "mydesc")
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
+        XCTAssertEqual(sut.searchableLevel, .titleOnly)
     }
 
     func test_initHydratedFromCode_assignsHOTPCodeType() {
@@ -45,7 +51,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         )
 
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: color)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: color,
+            searchableLevel: .fullySearchable
+        )
 
         XCTAssertEqual(sut.codeType, .hotp)
         XCTAssertEqual(sut.totpPeriodLength, 30, "Defaults TOTP to default for HOTP code")
@@ -57,12 +68,18 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.description, "mydesc2")
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
+        XCTAssertEqual(sut.searchableLevel, .fullySearchable)
     }
 
     func test_init_emptySecretIsEmptySecretBase32String() {
         let code = anyOTPAuthCode(secret: .empty())
 
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc",
+            color: nil,
+            searchableLevel: .fullySearchable
+        )
 
         XCTAssertEqual(sut.secretBase32String, "")
     }
@@ -79,7 +96,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            searchableLevel: .notSearchable
+        )
 
         XCTAssertTrue(sut.isValid)
     }
@@ -96,7 +118,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            searchableLevel: .notSearchable
+        )
         sut.secretBase32String = ""
 
         XCTAssertFalse(sut.isValid)
@@ -114,7 +141,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            searchableLevel: .notSearchable
+        )
         sut.issuerTitle = ""
 
         XCTAssertFalse(sut.isValid)
@@ -132,7 +164,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             )
         )
 
-        var sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            searchableLevel: .fullySearchable
+        )
         sut.secretBase32String = "A" // this is invalid
 
         XCTAssertFalse(sut.isValid)
@@ -140,7 +177,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
     func test_asOTPAuthCode_createsTOTPCode() throws {
         let code = anyTOTPAuthCode()
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc",
+            color: nil,
+            searchableLevel: .notSearchable
+        )
 
         let newCode = try sut.asOTPAuthCode()
 
@@ -149,7 +191,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
     func test_asOTPAuthCode_createsHOTPCode() throws {
         let code = anyHOTPAuthCode()
-        let sut = OTPCodeDetailEdits(hydratedFromCode: code, userDescription: "mydesc2", color: nil)
+        let sut = OTPCodeDetailEdits(
+            hydratedFromCode: code,
+            userDescription: "mydesc2",
+            color: nil,
+            searchableLevel: .titleOnly
+        )
 
         let newCode = try sut.asOTPAuthCode()
 
@@ -157,7 +204,12 @@ final class OTPCodeDetailEditsTests: XCTestCase {
     }
 
     func test_asOTPAuthCode_throwsErrorIfBase32SecretIsInvalid() throws {
-        var sut = OTPCodeDetailEdits(hydratedFromCode: anyTOTPAuthCode(), userDescription: "any", color: nil)
+        var sut = OTPCodeDetailEdits(
+            hydratedFromCode: anyTOTPAuthCode(),
+            userDescription: "any",
+            color: nil,
+            searchableLevel: .fullySearchable
+        )
         sut.secretBase32String = "e~~"
 
         XCTAssertThrowsError(try sut.asOTPAuthCode())

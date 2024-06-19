@@ -12,6 +12,7 @@
           }
         }
       },
+      "searchable_level" : "FULLY_SEARCHABLE",
       "updated_date" : 13579000,
       "user_description" : ""
     },
@@ -25,6 +26,7 @@
           }
         }
       },
+      "searchable_level" : "NOT_SEARCHABLE",
       "updated_date" : 46892000,
       "user_description" : ""
     },
@@ -46,6 +48,7 @@
           }
         }
       },
+      "searchable_level" : "TITLE_ONLY",
       "tint_color" : {
         "blue" : 0.3,
         "green" : 0.2,

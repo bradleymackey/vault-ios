@@ -18,6 +18,7 @@ final class VaultBackupItemEncoder {
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
             userDescription: storedItem.metadata.userDescription,
+            searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
             tintColor: encodeTintColor(meta: storedItem.metadata),
             item: itemDetail
         )
@@ -30,6 +31,14 @@ extension VaultBackupItemEncoder {
     private func encodeTintColor(meta: StoredVaultItem.Metadata) -> VaultBackupItem.RGBColor? {
         guard let color = meta.color else { return nil }
         return .init(red: color.red, green: color.green, blue: color.blue)
+    }
+
+    private func encodeSearchableLevel(metadata: StoredVaultItem.Metadata) -> VaultBackupItem.SearchableLevel {
+        switch metadata.searchableLevel {
+        case .fullySearchable: .fullySearchable
+        case .titleOnly: .titleOnly
+        case .notSearchable: .notSearchable
+        }
     }
 }
 

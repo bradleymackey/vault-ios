@@ -24,7 +24,8 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let initialEdits = OTPCodeDetailEdits(
             hydratedFromCode: initialCode,
             userDescription: "mydesc",
-            color: nil
+            color: nil,
+            searchableLevel: .fullySearchable
         )
 
         let exp = expectation(description: "Wait for creation")
@@ -72,7 +73,8 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         var edits = OTPCodeDetailEdits(
             hydratedFromCode: code,
             userDescription: "mydesc",
-            color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5)
+            color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
+            searchableLevel: .fullySearchable
         )
         edits.issuerTitle = "new issuer name"
         edits.accountNameTitle = "new account name"
@@ -254,6 +256,7 @@ extension VaultFeedDetailEditorAdapterTests {
             issuerTitle: "iss",
             accountNameTitle: "acc",
             description: "desc",
+            searchableLevel: .fullySearchable,
             color: nil
         )
     }
