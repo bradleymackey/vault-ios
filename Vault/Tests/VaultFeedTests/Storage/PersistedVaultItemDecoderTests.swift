@@ -277,7 +277,7 @@ extension PersistedVaultItemDecoderTests {
         let sut = makeSUT()
 
         let contents = "this is my note contents"
-        let noteDetails = makePersistedNoteDetails(rawContents: contents)
+        let noteDetails = makePersistedNoteDetails(contents: contents)
         let item = makePersistedItem(noteDetails: noteDetails, otpDetails: nil)
 
         let decoded = try sut.decode(item: item)
@@ -350,8 +350,8 @@ extension PersistedVaultItemDecoderTests {
 
     private func makePersistedNoteDetails(
         title: String = "my title",
-        rawContents: String? = nil
+        contents: String = ""
     ) -> PersistedNoteDetails {
-        PersistedNoteDetails(title: title, rawContents: rawContents)
+        PersistedNoteDetails(title: title, contents: contents)
     }
 }

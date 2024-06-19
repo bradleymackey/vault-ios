@@ -16,7 +16,7 @@ struct PersistedVaultItemDecoder {
         } else if let note = item.noteDetails {
             let note = SecureNote(
                 title: note.title,
-                contents: note.rawContents ?? ""
+                contents: note.contents
             )
             return StoredVaultItem(metadata: metadata, item: .secureNote(note))
         } else {

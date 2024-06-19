@@ -45,7 +45,7 @@ final class PersistedVaultItem {
         let strings = [
             userDescription,
             noteDetails?.title,
-            noteDetails?.rawContents,
+            noteDetails?.contents,
             otpDetails?.accountName,
             otpDetails?.issuer,
         ]
@@ -93,14 +93,14 @@ final class PersistedOTPDetails {
 
 @Model
 final class PersistedNoteDetails {
-    var rawContents: String?
     var title: String
+    var contents: String
 
     @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.noteDetails)
     var vaultItem: PersistedVaultItem?
 
-    init(title: String, rawContents: String?) {
+    init(title: String, contents: String) {
         self.title = title
-        self.rawContents = rawContents
+        self.contents = contents
     }
 }

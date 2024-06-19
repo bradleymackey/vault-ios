@@ -135,7 +135,7 @@ extension PersistedVaultItemEncoder {
     ) -> PersistedNoteDetails {
         PersistedNoteDetails(
             title: newData.title,
-            rawContents: newData.contents
+            contents: newData.contents
         )
     }
 }

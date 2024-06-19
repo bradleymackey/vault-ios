@@ -270,7 +270,7 @@ extension PersistedVaultItemEncoderTests {
         let item = makeWritable(note: makeSecretNoteValue(contents: "this is the note contents"))
 
         let encoded = sut.encode(item: item)
-        XCTAssertEqual(encoded.noteDetails?.rawContents, "this is the note contents")
+        XCTAssertEqual(encoded.noteDetails?.contents, "this is the note contents")
     }
 }
 

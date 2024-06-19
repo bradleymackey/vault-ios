@@ -73,9 +73,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
 
         let noteContentsPredicate = #Predicate<PersistedVaultItem> {
             $0.noteDetails.flatMap {
-                $0.rawContents.flatMap {
-                    $0.localizedStandardContains(query)
-                }
+                $0.contents.localizedStandardContains(query)
             } ?? false
         }
 
