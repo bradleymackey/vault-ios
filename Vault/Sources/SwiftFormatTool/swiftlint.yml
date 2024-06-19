@@ -24,6 +24,11 @@ colon:
 indentation: 4
 
 custom_rules:
+  no_coreData:
+    name: "No CoreData"
+    regex: "(\\bNSManagedObject|\\bNSManagedObjectContext|\\bNSPersistentContainer\\bNSManagedObjectModel)"
+    message: "Prefer SwiftData to CoreData"
+    severity: error
   no_objcMembers:
     name: "@objcMembers"
     regex: "@objcMembers"
