@@ -80,14 +80,6 @@ extension ManagedVaultItemEncoderTests {
         }
     }
 
-    func test_encodeUserDescription_encodesNil() {
-        let sut = makeSUT()
-        let code = makeWritable(userDescription: nil, code: uniqueCode())
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.userDescription)
-    }
-
     func test_encodeUserDescription_encodesString() {
         let sut = makeSUT()
         let desc = UUID().uuidString
@@ -205,14 +197,6 @@ extension ManagedVaultItemEncoderTests {
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
-    func test_encodeIssuer_encodesNilIfNotPresent() {
-        let sut = makeSUT()
-        let code = makeWritable(code: makeCodeValue(issuer: nil))
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.otpDetails?.issuer)
-    }
-
     func test_encodeAlgorithm_encodesToString() {
         let expected: [OTPAuthAlgorithm: String] = [
             .sha1: "SHA1",
@@ -281,7 +265,7 @@ extension ManagedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        userDescription: String? = nil,
+        userDescription: String = "",
         code: OTPAuthCode,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
@@ -294,7 +278,7 @@ extension ManagedVaultItemEncoderTests {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String = "any",
-        issuer: String? = nil
+        issuer: String = ""
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,
@@ -309,7 +293,7 @@ extension ManagedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        userDescription: String? = nil,
+        userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {

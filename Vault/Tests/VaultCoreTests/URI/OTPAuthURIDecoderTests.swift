@@ -132,7 +132,7 @@ final class OTPAuthURIDecoderTests: XCTestCase {
         let sut = makeSUT()
 
         let code = try sut.decode(value)
-        XCTAssertNil(code.data.issuer)
+        XCTAssertEqual(code.data.issuer, "")
     }
 
     func test_decodeIssuer_decodesIssuerFromLabelIfNoParameter() throws {

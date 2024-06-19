@@ -198,7 +198,7 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     private func makeCode(
         type: OTPAuthType = .totp(),
         accountName: String = "any",
-        issuer: String? = nil,
+        issuer: String = "",
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         secret: OTPAuthSecret = .init(data: Data(), format: .base32)

@@ -62,9 +62,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         // but flapMap works just fine.
 
         let userDescriptionPredicate = #Predicate<PersistedVaultItem> {
-            $0.userDescription.flatMap {
-                $0.localizedStandardContains(query)
-            } ?? false
+            $0.userDescription.localizedStandardContains(query)
         }
 
         let noteTitlePredicate = #Predicate<PersistedVaultItem> {
@@ -75,25 +73,19 @@ extension PersistedLocalVaultStore: VaultStoreReader {
 
         let noteContentsPredicate = #Predicate<PersistedVaultItem> {
             $0.noteDetails.flatMap {
-                $0.rawContents.flatMap {
-                    $0.localizedStandardContains(query)
-                }
+                $0.contents.localizedStandardContains(query)
             } ?? false
         }
 
         let codeNamePredicate = #Predicate<PersistedVaultItem> {
             $0.otpDetails.flatMap {
-                $0.accountName.flatMap {
-                    $0.localizedStandardContains(query)
-                }
+                $0.accountName.localizedStandardContains(query)
             } ?? false
         }
 
         let codeIssuerPredicate = #Predicate<PersistedVaultItem> {
             $0.otpDetails.flatMap {
-                $0.issuer.flatMap {
-                    $0.localizedStandardContains(query)
-                }
+                $0.issuer.localizedStandardContains(query)
             } ?? false
         }
 

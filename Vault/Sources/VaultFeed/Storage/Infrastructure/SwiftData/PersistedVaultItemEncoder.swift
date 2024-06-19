@@ -43,9 +43,9 @@ extension PersistedVaultItemEncoder {
             createdDate: now,
             updatedDate: now,
             userDescription: newData.userDescription,
-            colorBlue: newData.color?.blue,
-            colorGreen: newData.color?.green,
-            colorRed: newData.color?.red,
+            color: newData.color.flatMap { color in
+                .init(red: color.red, green: color.green, blue: color.blue)
+            },
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )
@@ -59,9 +59,9 @@ extension PersistedVaultItemEncoder {
         let existingItem = existingItem
         existingItem.updatedDate = now
         existingItem.userDescription = newData.userDescription
-        existingItem.colorRed = newData.color?.red
-        existingItem.colorBlue = newData.color?.blue
-        existingItem.colorGreen = newData.color?.green
+        existingItem.color = newData.color.flatMap { color in
+            .init(red: color.red, green: color.green, blue: color.blue)
+        }
         switch newData.item {
         case let .otpCode(codeDetails):
             existingItem.otpDetails = encodeOtpDetails(newData: codeDetails)
@@ -80,11 +80,11 @@ extension PersistedVaultItemEncoder {
     ) -> PersistedOTPDetails {
         PersistedOTPDetails(
             accountName: newData.data.accountName,
+            issuer: newData.data.issuer,
             algorithm: encodedOTPAlgorithm(newData.data.algorithm),
             authType: encodedOTPAuthType(newData.type),
             counter: encodedOTPCounter(newData.type),
             digits: Int32(newData.data.digits.value),
-            issuer: newData.data.issuer,
             period: encodedOTPPeriod(newData.type),
             secretData: newData.data.secret.data,
             secretFormat: encodedOTPSecretFormat(newData.data.secret.format)
@@ -135,7 +135,7 @@ extension PersistedVaultItemEncoder {
     ) -> PersistedNoteDetails {
         PersistedNoteDetails(
             title: newData.title,
-            rawContents: newData.contents
+            contents: newData.contents
         )
     }
 }

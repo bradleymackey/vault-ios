@@ -7,7 +7,7 @@ struct ManagedVaultItemDecoder {
             id: item.id,
             created: item.createdDate,
             updated: item.updatedDate,
-            userDescription: item.userDescription,
+            userDescription: item.userDescription ?? "",
             color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {
@@ -38,7 +38,7 @@ struct ManagedVaultItemDecoder {
                 algorithm: decodeAlgorithm(value: otp.algorithm),
                 digits: decode(digits: otp.digits),
                 accountName: otp.accountName,
-                issuer: otp.issuer
+                issuer: otp.issuer ?? ""
             )
         )
     }

@@ -82,14 +82,6 @@ extension PersistedVaultItemEncoderTests {
         }
     }
 
-    func test_encodeMetadata_newItemUserDescriptionEncodesNil() {
-        let sut = makeSUT()
-        let code = makeWritable(userDescription: nil, code: uniqueCode())
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.userDescription)
-    }
-
     func test_encodeMetadata_newItemUserDescriptionEncodesString() {
         let sut = makeSUT()
         let desc = UUID().uuidString
@@ -104,9 +96,7 @@ extension PersistedVaultItemEncoderTests {
         let code = makeWritable(code: uniqueCode(), color: nil)
 
         let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.colorRed)
-        XCTAssertNil(encoded.colorBlue)
-        XCTAssertNil(encoded.colorGreen)
+        XCTAssertNil(encoded.color)
     }
 
     func test_encodeMetadata_newItemWritesColorValues() {
@@ -115,9 +105,26 @@ extension PersistedVaultItemEncoderTests {
         let code = makeWritable(code: uniqueCode(), color: color)
 
         let encoded = sut.encode(item: code)
-        XCTAssertEqual(encoded.colorRed, 0.5)
-        XCTAssertEqual(encoded.colorGreen, 0.6)
-        XCTAssertEqual(encoded.colorBlue, 0.7)
+        XCTAssertEqual(encoded.color?.red, 0.5)
+        XCTAssertEqual(encoded.color?.green, 0.6)
+        XCTAssertEqual(encoded.color?.blue, 0.7)
+    }
+
+    func test_encodeMetadata_existingItemOverridesColorValues() {
+        let sut1 = makeSUT()
+
+        var existingItem = uniqueWritableVaultItem()
+        existingItem.color = VaultItemColor(red: 0.1, green: 0.2, blue: 0.3)
+        let existing = sut1.encode(item: existingItem)
+
+        let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
+        let sut2 = makeSUT()
+        let code = makeWritable(code: uniqueCode(), color: color)
+
+        let newCode = sut2.encode(item: code, existing: existing)
+        XCTAssertEqual(newCode.color?.red, 0.5)
+        XCTAssertEqual(newCode.color?.green, 0.6)
+        XCTAssertEqual(newCode.color?.blue, 0.7)
     }
 }
 
@@ -207,14 +214,6 @@ extension PersistedVaultItemEncoderTests {
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
-    func test_encodeOTP_isserNil() {
-        let sut = makeSUT()
-        let code = makeWritable(code: makeCodeValue(issuer: nil))
-
-        let encoded = sut.encode(item: code)
-        XCTAssertNil(encoded.otpDetails?.issuer)
-    }
-
     func test_encodeOTP_algorithm() {
         let expected: [OTPAuthAlgorithm: String] = [
             .sha1: "SHA1",
@@ -271,7 +270,7 @@ extension PersistedVaultItemEncoderTests {
         let item = makeWritable(note: makeSecretNoteValue(contents: "this is the note contents"))
 
         let encoded = sut.encode(item: item)
-        XCTAssertEqual(encoded.noteDetails?.rawContents, "this is the note contents")
+        XCTAssertEqual(encoded.noteDetails?.contents, "this is the note contents")
     }
 }
 
@@ -283,7 +282,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        userDescription: String? = nil,
+        userDescription: String = "",
         code: OTPAuthCode,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {
@@ -296,7 +295,7 @@ extension PersistedVaultItemEncoderTests {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String = "any",
-        issuer: String? = nil
+        issuer: String = ""
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,
@@ -311,7 +310,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        userDescription: String? = nil,
+        userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil
     ) -> StoredVaultItem.Write {

@@ -165,7 +165,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
 
         let result = try await sut.retrieve(matching: "yes")
         XCTAssertEqual(result.count, 3)
-        XCTAssertEqual(result.compactMap(\.metadata.userDescription), ["yes", "yess", "yesss"])
+        XCTAssertEqual(result.map(\.metadata.userDescription), ["yes", "yess", "yesss"])
     }
 
     func test_retrieveMatchingQuery_deliversErrorOnRetrievalError() async throws {
@@ -198,7 +198,7 @@ final class CoreDataVaultStoreTests: XCTestCase {
 
         let result = try await sut.retrieve(matching: "a")
         XCTAssertEqual(result.count, 3)
-        XCTAssertEqual(result.compactMap(\.metadata.userDescription), ["a", "----a----", "----A----"])
+        XCTAssertEqual(result.map(\.metadata.userDescription), ["a", "----a----", "----A----"])
     }
 
     func test_retrieveMatchingQuery_matchesOTPAccountName() async throws {

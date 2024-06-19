@@ -154,14 +154,6 @@ extension ManagedVaultItemDecoderTests {
         XCTAssertEqual(decoded.item.otpCode?.data.issuer, issuerName)
     }
 
-    func test_decodeIssuer_decodesNilIfDoesNotExist() throws {
-        let code = makeManagedCode(issuer: nil)
-        let sut = makeSUT()
-
-        let decoded = try sut.decode(item: code)
-        XCTAssertNil(decoded.item.otpCode?.data.issuer)
-    }
-
     func test_decodeType_decodesTOTPWithPeriod() throws {
         let code = makeManagedCode(authType: "totp", period: 69)
         let sut = makeSUT()
@@ -293,7 +285,7 @@ extension ManagedVaultItemDecoderTests {
         authType: String = "totp",
         counter: NSNumber? = UInt32(30) as NSNumber,
         digits: NSNumber = UInt32(6) as NSNumber,
-        issuer: String? = "issuer",
+        issuer: String = "issuer",
         period: NSNumber? = UInt32(30) as NSNumber,
         secretData: Data = Data(),
         secretFormat: String = "BASE_32",

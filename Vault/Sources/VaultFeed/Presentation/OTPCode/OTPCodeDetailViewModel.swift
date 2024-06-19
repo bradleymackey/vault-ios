@@ -37,7 +37,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
                 hydratedFromCode: code,
-                userDescription: metadata.userDescription ?? "",
+                userDescription: metadata.userDescription,
                 color: metadata.color
             ))
         }

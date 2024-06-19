@@ -36,7 +36,7 @@ func uniqueStoredVaultItem() -> StoredVaultItem {
 func searchableStoredOTPVaultItem(
     userDescription: String = "",
     accountName: String = "",
-    issuerName: String? = nil
+    issuerName: String = ""
 ) -> StoredVaultItem {
     StoredVaultItem(
         metadata: .init(id: UUID(), created: Date(), updated: Date(), userDescription: userDescription, color: nil),
@@ -72,7 +72,7 @@ func uniqueWritableVaultItem() -> StoredVaultItem.Write {
 func writableSearchableOTPVaultItem(
     userDescription: String = "",
     accountName: String = "",
-    issuerName: String? = nil
+    issuerName: String = ""
 ) -> StoredVaultItem.Write {
     searchableStoredOTPVaultItem(
         userDescription: userDescription,

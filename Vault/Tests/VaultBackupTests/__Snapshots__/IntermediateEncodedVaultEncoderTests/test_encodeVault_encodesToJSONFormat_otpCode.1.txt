@@ -24,7 +24,8 @@
         "green" : 0.2,
         "red" : 0.1
       },
-      "updated_date" : 12445000
+      "updated_date" : 12445000,
+      "user_description" : ""
     }
   ],
   "obfuscation_padding" : "q6urCg==",

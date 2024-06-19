@@ -31,7 +31,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var id: UUID
     public var createdDate: Date
     public var updatedDate: Date
-    public var userDescription: String?
+    public var userDescription: String
     /// The tint color associated with the item.
     public var tintColor: RGBColor?
     /// The item's data that is used to reconstruct the item.
@@ -41,7 +41,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         id: UUID,
         createdDate: Date,
         updatedDate: Date,
-        userDescription: String? = nil,
+        userDescription: String,
         tintColor: RGBColor? = nil,
         item: Item
     ) {
@@ -81,7 +81,7 @@ extension VaultBackupItem {
         public var algorithm: String
         public var digits: UInt16
         public var accountName: String
-        public var issuer: String?
+        public var issuer: String
 
         public init(
             secretFormat: String,
@@ -92,7 +92,7 @@ extension VaultBackupItem {
             algorithm: String,
             digits: UInt16,
             accountName: String,
-            issuer: String? = nil
+            issuer: String = ""
         ) {
             self.secretFormat = secretFormat
             self.secretData = secretData

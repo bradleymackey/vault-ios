@@ -8,10 +8,8 @@ final class PersistedVaultItem {
     var id: UUID
     var createdDate: Date
     var updatedDate: Date
-    var userDescription: String?
-    var colorBlue: Double?
-    var colorGreen: Double?
-    var colorRed: Double?
+    var userDescription: String
+    var color: Color?
 
     @Relationship(deleteRule: .cascade)
     var noteDetails: PersistedNoteDetails?
@@ -19,14 +17,18 @@ final class PersistedVaultItem {
     @Relationship(deleteRule: .cascade)
     var otpDetails: PersistedOTPDetails?
 
+    struct Color: Codable {
+        var red: Double
+        var green: Double
+        var blue: Double
+    }
+
     init(
         id: UUID,
         createdDate: Date,
         updatedDate: Date,
-        userDescription: String?,
-        colorBlue: Double?,
-        colorGreen: Double?,
-        colorRed: Double?,
+        userDescription: String,
+        color: Color?,
         noteDetails: PersistedNoteDetails?,
         otpDetails: PersistedOTPDetails?
     ) {
@@ -34,33 +36,20 @@ final class PersistedVaultItem {
         self.createdDate = createdDate
         self.updatedDate = updatedDate
         self.userDescription = userDescription
-        self.colorBlue = colorBlue
-        self.colorGreen = colorGreen
-        self.colorRed = colorRed
+        self.color = color
         self.noteDetails = noteDetails
         self.otpDetails = otpDetails
-    }
-
-    var queryableStrings: [String] {
-        let strings = [
-            userDescription,
-            noteDetails?.title,
-            noteDetails?.rawContents,
-            otpDetails?.accountName,
-            otpDetails?.issuer,
-        ]
-        return strings.compactMap { $0 }
     }
 }
 
 @Model
 final class PersistedOTPDetails {
-    var accountName: String?
+    var accountName: String
+    var issuer: String
     var algorithm: String
     var authType: String
     var counter: Int64? = 0
-    var digits: Int32 = 0
-    var issuer: String?
+    var digits: Int32
     var period: Int64? = 0
     var secretData: Data
     var secretFormat: String
@@ -69,22 +58,22 @@ final class PersistedOTPDetails {
     var vaultItem: PersistedVaultItem?
 
     init(
-        accountName: String?,
+        accountName: String,
+        issuer: String,
         algorithm: String,
         authType: String,
         counter: Int64? = 0,
-        digits: Int32 = 0,
-        issuer: String?,
+        digits: Int32,
         period: Int64? = 0,
         secretData: Data,
         secretFormat: String
     ) {
         self.accountName = accountName
+        self.issuer = issuer
         self.algorithm = algorithm
         self.authType = authType
         self.counter = counter
         self.digits = digits
-        self.issuer = issuer
         self.period = period
         self.secretData = secretData
         self.secretFormat = secretFormat
@@ -93,14 +82,14 @@ final class PersistedOTPDetails {
 
 @Model
 final class PersistedNoteDetails {
-    var rawContents: String?
     var title: String
+    var contents: String
 
     @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.noteDetails)
     var vaultItem: PersistedVaultItem?
 
-    init(title: String, rawContents: String?) {
+    init(title: String, contents: String) {
         self.title = title
-        self.rawContents = rawContents
+        self.contents = contents
     }
 }

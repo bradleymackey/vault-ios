@@ -16,7 +16,7 @@ struct PersistedVaultItemDecoder {
         } else if let note = item.noteDetails {
             let note = SecureNote(
                 title: note.title,
-                contents: note.rawContents ?? ""
+                contents: note.contents
             )
             return StoredVaultItem(metadata: metadata, item: .secureNote(note))
         } else {
@@ -39,8 +39,8 @@ struct PersistedVaultItemDecoder {
 
 extension PersistedVaultItemDecoder {
     private func decodeColor(item: PersistedVaultItem) -> VaultItemColor? {
-        if let red = item.colorRed, let green = item.colorGreen, let blue = item.colorBlue {
-            VaultItemColor(red: red, green: green, blue: blue)
+        if let color = item.color {
+            VaultItemColor(red: color.red, green: color.green, blue: color.blue)
         } else {
             nil
         }
@@ -53,7 +53,7 @@ extension PersistedVaultItemDecoder {
                 secret: .init(data: otp.secretData, format: decodeSecretFormat(value: otp.secretFormat)),
                 algorithm: decodeAlgorithm(value: otp.algorithm),
                 digits: decode(digits: otp.digits),
-                accountName: otp.accountName ?? "",
+                accountName: otp.accountName,
                 issuer: otp.issuer
             )
         )

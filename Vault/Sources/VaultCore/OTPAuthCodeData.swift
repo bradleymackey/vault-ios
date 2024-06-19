@@ -7,14 +7,14 @@ public struct OTPAuthCodeData: Equatable, Hashable, Sendable {
     public var algorithm: OTPAuthAlgorithm
     public var digits: OTPAuthDigits
     public var accountName: String
-    public var issuer: String?
+    public var issuer: String
 
     public init(
         secret: OTPAuthSecret,
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String,
-        issuer: String? = nil
+        issuer: String = ""
     ) {
         self.secret = secret
         self.algorithm = algorithm

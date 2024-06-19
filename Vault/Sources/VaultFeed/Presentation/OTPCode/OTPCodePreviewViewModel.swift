@@ -7,12 +7,12 @@ import VaultCore
 @Observable
 public final class OTPCodePreviewViewModel {
     public let accountName: String
-    public let issuer: String?
+    public let issuer: String
     public let color: VaultItemColor
     public private(set) var code: OTPCodeState = .notReady
 
     public var visibleIssuer: String {
-        if let issuer, issuer.isNotEmpty {
+        if issuer.isNotEmpty {
             issuer
         } else {
             localized(key: "codeDetail.field.siteName.empty.title")
@@ -23,7 +23,7 @@ public final class OTPCodePreviewViewModel {
 
     public init(
         accountName: String,
-        issuer: String?,
+        issuer: String,
         color: VaultItemColor,
         fixedCodeState: OTPCodeState
     ) {
@@ -35,7 +35,7 @@ public final class OTPCodePreviewViewModel {
 
     public init(
         accountName: String,
-        issuer: String?,
+        issuer: String,
         color: VaultItemColor,
         renderer: some OTPCodeRenderer
     ) {

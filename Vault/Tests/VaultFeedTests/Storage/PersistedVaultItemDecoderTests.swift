@@ -82,24 +82,9 @@ extension PersistedVaultItemDecoderTests {
         XCTAssertEqual(decoded.metadata.userDescription, description)
     }
 
-    func test_decodeMetadata_colorIsNilIfAllNil() throws {
+    func test_decodeMetadata_colorIsNil() throws {
         let item = makePersistedItem(
-            colorBlue: nil,
-            colorGreen: nil,
-            colorRed: nil
-        )
-        let sut = makeSUT()
-
-        let decoded = try sut.decode(item: item)
-
-        XCTAssertNil(decoded.metadata.color)
-    }
-
-    func test_decodeMetadata_colorIsNilIfAnyMissing() throws {
-        let item = makePersistedItem(
-            colorBlue: 0.5,
-            colorGreen: nil,
-            colorRed: nil
+            color: nil
         )
         let sut = makeSUT()
 
@@ -110,9 +95,7 @@ extension PersistedVaultItemDecoderTests {
 
     func test_decodeMetadata_decodesColorValues() throws {
         let item = makePersistedItem(
-            colorBlue: 0.5,
-            colorGreen: 0.6,
-            colorRed: 0.7
+            color: .init(red: 0.7, green: 0.6, blue: 0.5)
         )
         let sut = makeSUT()
 
@@ -174,15 +157,6 @@ extension PersistedVaultItemDecoderTests {
 
         let decoded = try sut.decode(item: item)
         XCTAssertEqual(decoded.item.otpCode?.data.issuer, issuerName)
-    }
-
-    func test_decodeOTP_issuerDecodesNilIfDoesNotExist() throws {
-        let otpDetails = makePersistedOTPDetails(issuer: nil)
-        let item = makePersistedItem(otpDetails: otpDetails)
-        let sut = makeSUT()
-
-        let decoded = try sut.decode(item: item)
-        XCTAssertNil(decoded.item.otpCode?.data.issuer)
     }
 
     func test_decodeOTP_authTypeTOTPWithPeriod() throws {
@@ -303,7 +277,7 @@ extension PersistedVaultItemDecoderTests {
         let sut = makeSUT()
 
         let contents = "this is my note contents"
-        let noteDetails = makePersistedNoteDetails(rawContents: contents)
+        let noteDetails = makePersistedNoteDetails(contents: contents)
         let item = makePersistedItem(noteDetails: noteDetails, otpDetails: nil)
 
         let decoded = try sut.decode(item: item)
@@ -322,18 +296,16 @@ extension PersistedVaultItemDecoderTests {
         id: UUID = UUID(),
         createdDate: Date = Date(),
         updatedDate: Date = Date(),
-        userDescription: String? = nil,
-        colorBlue: Double? = nil,
-        colorGreen: Double? = nil,
-        colorRed: Double? = nil,
+        userDescription: String = "",
+        color: PersistedVaultItem.Color? = nil,
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
-            accountName: nil,
+            accountName: "",
+            issuer: "",
             algorithm: VaultEncodingConstants.OTPAuthAlgorithm.sha1,
             authType: VaultEncodingConstants.OTPAuthType.totp,
             counter: 0,
             digits: 1,
-            issuer: nil,
             period: 0,
             secretData: Data(),
             secretFormat: VaultEncodingConstants.OTPAuthSecret.Format.base32
@@ -344,9 +316,7 @@ extension PersistedVaultItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updatedDate,
             userDescription: userDescription,
-            colorBlue: colorBlue,
-            colorGreen: colorGreen,
-            colorRed: colorRed,
+            color: color,
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )
@@ -355,23 +325,23 @@ extension PersistedVaultItemDecoderTests {
     }
 
     private func makePersistedOTPDetails(
-        accountName: String? = nil,
+        accountName: String = "",
         algorithm: String = VaultEncodingConstants.OTPAuthAlgorithm.sha1,
         authType: String = VaultEncodingConstants.OTPAuthType.totp,
         counter: Int64? = 0,
         digits: Int32 = 1,
-        issuer: String? = nil,
+        issuer: String = "",
         period: Int64? = 0,
         secretData: Data = Data(),
         secretFormat: String = VaultEncodingConstants.OTPAuthSecret.Format.base32
     ) -> PersistedOTPDetails {
         PersistedOTPDetails(
             accountName: accountName,
+            issuer: issuer,
             algorithm: algorithm,
             authType: authType,
             counter: counter,
             digits: digits,
-            issuer: issuer,
             period: period,
             secretData: secretData,
             secretFormat: secretFormat
@@ -380,8 +350,8 @@ extension PersistedVaultItemDecoderTests {
 
     private func makePersistedNoteDetails(
         title: String = "my title",
-        rawContents: String? = nil
+        contents: String = ""
     ) -> PersistedNoteDetails {
-        PersistedNoteDetails(title: title, rawContents: rawContents)
+        PersistedNoteDetails(title: title, contents: contents)
     }
 }
