@@ -58,6 +58,13 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     }
 
     public func retrieve(matching query: String) async throws -> [StoredVaultItem] {
+        // NOTE: Compounding queries in SwiftData is a bit rough at the moment.
+        // Each Predicate can only contain a single expression, so we must create them seperately
+        // then compound them (a big chain of disjunctions leads to "expression too complex" errors).
+
+        // It also really doesn't play well with Optional Chaining (it leads to internal SQL errors),
+        // but flapMap works just fine.
+
         let userDescriptionPredicate = #Predicate<PersistedVaultItem> {
             $0.userDescription.flatMap {
                 $0.localizedStandardContains(query)
