@@ -52,6 +52,9 @@ struct SecureNoteDetailView: View {
                 noteContentsEditingSection
                 noteVisibilityOptionsEditingSection
                 noteSearchableLevelEditingSection
+                if viewModel.shouldShowDeleteButton {
+                    deleteSection
+                }
             } else {
                 noteMetadataContentSection
                 noteContentsSection
@@ -177,14 +180,6 @@ struct SecureNoteDetailView: View {
                 .frame(minHeight: 250)
         } header: {
             Text(viewModel.strings.noteContentsTitle)
-        } footer: {
-            if viewModel.shouldShowDeleteButton {
-                deleteButton
-                    .modifier(HorizontallyCenter())
-                    .padding()
-                    .padding(.vertical, 16)
-                    .transition(.opacity)
-            }
         }
     }
 
@@ -249,11 +244,17 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    private var deleteButton: some View {
-        Button {
-            isShowingDeleteConfirmation = true
-        } label: {
-            ItemDeleteLabel()
+    private var deleteSection: some View {
+        Section {
+            Button {
+                isShowingDeleteConfirmation = true
+            } label: {
+                FormRow(image: .init(systemName: "trash"), color: .red) {
+                    Text(localized(key: "action.delete.title"))
+                        .fontWeight(.medium)
+                }
+            }
+            .foregroundStyle(.red)
         }
     }
 }

@@ -75,6 +75,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 nameEditingSection
                 descriptionEditingSection
+                if viewModel.shouldShowDeleteButton {
+                    deleteSection
+                }
             } else {
                 if case let .editing(code, metadata) = viewModel.mode {
                     codeInformationSection(code: code, metadata: metadata)
@@ -141,13 +144,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .keyboardType(.default)
         } header: {
             Text(viewModel.strings.descriptionTitle)
-        } footer: {
-            if viewModel.shouldShowDeleteButton {
-                deleteButton
-                    .modifier(HorizontallyCenter())
-                    .padding()
-                    .padding(.vertical, 16)
-            }
         }
     }
 
@@ -284,11 +280,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var deleteButton: some View {
-        Button {
-            isShowingDeleteConfirmation = true
-        } label: {
-            ItemDeleteLabel()
+    private var deleteSection: some View {
+        Section {
+            Button {
+                isShowingDeleteConfirmation = true
+            } label: {
+                FormRow(image: .init(systemName: "trash"), color: .red) {
+                    Text(localized(key: "action.delete.title"))
+                        .fontWeight(.medium)
+                }
+            }
+            .foregroundStyle(.red)
         }
     }
 
