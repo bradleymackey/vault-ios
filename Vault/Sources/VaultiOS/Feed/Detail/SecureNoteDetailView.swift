@@ -52,6 +52,9 @@ struct SecureNoteDetailView: View {
                 noteContentsEditingSection
                 noteVisibilityOptionsEditingSection
                 noteSearchableLevelEditingSection
+                if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                    passphraseEntrySection
+                }
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
                 }
@@ -60,6 +63,7 @@ struct SecureNoteDetailView: View {
                 noteContentsSection
             }
         }
+        .animation(.easeOut, value: viewModel.editingModel.detail.searchableLevel)
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
@@ -230,17 +234,18 @@ struct SecureNoteDetailView: View {
                     viewModel.editingModel.detail.visibility = .always
                 }
             }
-
-            if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
-                VStack {
-                    TextField(viewModel.strings.passphraseTitle, text: $viewModel.editingModel.detail.searchPassphrase)
-                    Text(viewModel.strings.passphraseSubtitle)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
         } header: {
             Text(viewModel.strings.searchableLevelTitle)
+        }
+    }
+
+    private var passphraseEntrySection: some View {
+        Section {
+            TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+        } header: {
+            Text(viewModel.strings.passphraseTitle)
+        } footer: {
+            Text(viewModel.strings.passphraseSubtitle)
         }
     }
 

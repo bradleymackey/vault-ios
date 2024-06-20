@@ -817,13 +817,24 @@
         }
       }
     },
+    "noteDetail.passphrase.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Passphrase..."
+          }
+        }
+      }
+    },
     "noteDetail.passphrase.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This is the passphrase for this item. You must search exactly for this passphrase to find this item. Don't forget it!"
+            "value" : "You must search exactly for this passphrase to find this item. Don't forget it!"
           }
         }
       }
