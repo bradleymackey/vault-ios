@@ -10,17 +10,18 @@ public final actor InMemoryVaultStore {
 }
 
 extension InMemoryVaultStore: VaultStoreReader {
-    public func retrieve() async throws -> [StoredVaultItem] {
-        codes
+    public func retrieve() async throws -> VaultRetrievalResult {
+        .init(items: codes, errors: [])
     }
 
-    public func retrieve(matching query: String) async throws -> [StoredVaultItem] {
+    public func retrieve(matching query: String) async throws -> VaultRetrievalResult {
         let pattern = Regex {
             ZeroOrMore { .any }
             query
             ZeroOrMore { .any }
         }.ignoresCase()
-        return codes.filter { $0.matches(pattern: pattern) }
+        let codes = codes.filter { $0.matches(pattern: pattern) }
+        return .init(items: codes, errors: [])
     }
 }
 

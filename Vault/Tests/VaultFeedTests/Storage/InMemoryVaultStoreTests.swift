@@ -8,7 +8,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [])
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved, [StoredVaultItem]())
+        XCTAssertEqual(retrieved.items, [StoredVaultItem]())
     }
 
     func test_retrieve_codeReturned() async throws {
@@ -16,14 +16,14 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [code1])
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved, [code1])
+        XCTAssertEqual(retrieved.items, [code1])
     }
 
     func test_retrieveMatchingQuery_noCodesReturnsNone() async throws {
         let sut = makeSUT(codes: [])
 
         let retrieved = try await sut.retrieve(matching: "any")
-        XCTAssertEqual(retrieved, [StoredVaultItem]())
+        XCTAssertEqual(retrieved.items, [StoredVaultItem]())
     }
 
     func test_retrieveMatchingQuery_emptyQueryReturnsAll() async throws {
@@ -31,7 +31,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [code1])
 
         let retrieved = try await sut.retrieve(matching: "")
-        XCTAssertEqual(retrieved, [code1])
+        XCTAssertEqual(retrieved.items, [code1])
     }
 
     func test_retrieveMatchingQuery_matchesUserDescription() async throws {
@@ -46,7 +46,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: codes)
 
         let retrieved = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(retrieved.map(\.metadata.userDescription), ["a", "--A--", "a", "--a--"])
+        XCTAssertEqual(retrieved.items.map(\.metadata.userDescription), ["a", "--A--", "a", "--a--"])
     }
 
     func test_retrieveMatchingQuery_matchesOTPAccountName() async throws {
@@ -60,7 +60,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: codes)
 
         let retrieved = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(retrieved.map(\.item.otpCode?.data.accountName), ["a", "--a--", "A"])
+        XCTAssertEqual(retrieved.items.map(\.item.otpCode?.data.accountName), ["a", "--a--", "A"])
     }
 
     func test_retrieveMatchingQuery_matchesOTPIssuerName() async throws {
@@ -74,7 +74,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: codes)
 
         let retrieved = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(retrieved.map(\.item.otpCode?.data.issuer), ["a", "--a--", "A"])
+        XCTAssertEqual(retrieved.items.map(\.item.otpCode?.data.issuer), ["a", "--a--", "A"])
     }
 
     func test_retrieveMatchingQuery_matchesSecureNoteTitle() async throws {
@@ -88,7 +88,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: codes)
 
         let retrieved = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(retrieved.map(\.item.secureNote?.title), ["a", "--a--", "A"])
+        XCTAssertEqual(retrieved.items.map(\.item.secureNote?.title), ["a", "--a--", "A"])
     }
 
     func test_retrieveMatchingQuery_matchesSecureNoteContents() async throws {
@@ -102,7 +102,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: codes)
 
         let retrieved = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(retrieved.map(\.item.secureNote?.contents), ["a", "--a--", "A"])
+        XCTAssertEqual(retrieved.items.map(\.item.secureNote?.contents), ["a", "--a--", "A"])
     }
 
     func test_retrieveMatchingQuery_combinesMatchesFromDifferentFields() async throws {
@@ -117,7 +117,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: codes)
 
         let retrieved = try await sut.retrieve(matching: "a")
-        XCTAssertEqual(retrieved, codes, "All items, matched on their own fields, should be returned")
+        XCTAssertEqual(retrieved.items, codes, "All items, matched on their own fields, should be returned")
     }
 
     func test_insert_addsNewCodeToRepository() async throws {
@@ -127,8 +127,8 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let newID = try await sut.insert(item: code1)
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved.count, 1)
-        let code = try XCTUnwrap(retrieved.first)
+        XCTAssertEqual(retrieved.items.count, 1)
+        let code = try XCTUnwrap(retrieved.items.first)
         XCTAssertEqual(code.id, newID)
         XCTAssertEqual(code.asWritable, code1)
     }
@@ -160,8 +160,8 @@ final class InMemoryVaultStoreTests: XCTestCase {
         )
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved.count, 1)
-        let item = try XCTUnwrap(retrieved.first)
+        XCTAssertEqual(retrieved.items.count, 1)
+        let item = try XCTUnwrap(retrieved.items.first)
         XCTAssertEqual(item.id, code1.id)
         XCTAssertEqual(item.metadata.userDescription, newUserDescription)
         XCTAssertEqual(item.metadata.color, newColor)
@@ -176,7 +176,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         try await sut.delete(id: UUID())
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved, [])
+        XCTAssertEqual(retrieved.items, [])
     }
 
     func test_delete_removesCode() async throws {
@@ -186,7 +186,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
         try await sut.delete(id: code1.id)
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved, [code2])
+        XCTAssertEqual(retrieved.items, [code2])
     }
 }
 

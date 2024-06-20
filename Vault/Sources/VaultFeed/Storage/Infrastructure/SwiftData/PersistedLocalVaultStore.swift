@@ -44,7 +44,7 @@ public final actor PersistedLocalVaultStore {
 // MARK: - VaultStoreReader
 
 extension PersistedLocalVaultStore: VaultStoreReader {
-    public func retrieve() async throws -> [StoredVaultItem] {
+    public func retrieve() async throws -> VaultRetrievalResult {
         let always = VaultEncodingConstants.Visibility.always
         let predicate = #Predicate<PersistedVaultItem> {
             $0.visibility == always
@@ -54,13 +54,10 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             sortBy: [SortDescriptor(\.updatedDate)]
         )
         let results = try context.fetch(descriptor)
-        let decoder = PersistedVaultItemDecoder()
-        return try results.map {
-            try decoder.decode(item: $0)
-        }
+        return .collectFrom(retrievedItems: results)
     }
 
-    public func retrieve(matching query: String) async throws -> [StoredVaultItem] {
+    public func retrieve(matching query: String) async throws -> VaultRetrievalResult {
         // NOTE: Compounding queries in SwiftData is a bit rough at the moment.
         // Each Predicate can only contain a single expression, so we must create them seperately
         // then compound them (a big chain of disjunctions leads to "expression too complex" errors).
@@ -123,9 +120,23 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         }
         let descriptor = FetchDescriptor(predicate: predicate, sortBy: [SortDescriptor(\.updatedDate)])
         let results = try context.fetch(descriptor)
+        return .collectFrom(retrievedItems: results)
+    }
+}
+
+extension VaultRetrievalResult {
+    /// Decodes and collects `PersistedVaultItem` instances into a retrieval result.
+    fileprivate static func collectFrom(retrievedItems: [PersistedVaultItem]) -> Self {
         let decoder = PersistedVaultItemDecoder()
-        return try results.map {
-            try decoder.decode(item: $0)
+        return retrievedItems.reduce(into: VaultRetrievalResult()) { result, item in
+            do {
+                let decodedItem = try decoder.decode(item: item)
+                result.items.append(decodedItem)
+            } catch let error as VaultItemDecodingError {
+                result.errors.append(.failedToDecode(error))
+            } catch {
+                result.errors.append(.unknown)
+            }
         }
     }
 }

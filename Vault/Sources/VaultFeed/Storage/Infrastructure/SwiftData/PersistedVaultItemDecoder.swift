@@ -23,20 +23,8 @@ struct PersistedVaultItemDecoder {
             )
             return StoredVaultItem(metadata: metadata, item: .secureNote(note))
         } else {
-            throw DecodingError.missingItemDetail
+            throw VaultItemDecodingError.missingItemDetail
         }
-    }
-
-    enum DecodingError: Error {
-        case invalidOTPType
-        case invalidNumberOfDigits(Int32)
-        case invalidAlgorithm
-        case invalidSecretFormat
-        case invalidSearchableLevel
-        case invalidVisibility
-        case missingItemDetail
-        case missingPeriodForTOTP
-        case missingCounterForHOTP
     }
 }
 
@@ -49,7 +37,7 @@ extension PersistedVaultItemDecoder {
         case VaultEncodingConstants.SearchableLevel.none: .none
         case VaultEncodingConstants.SearchableLevel.onlyTitle: .onlyTitle
         case VaultEncodingConstants.SearchableLevel.onlyPassphrase: .onlyPassphrase
-        default: throw DecodingError.invalidSearchableLevel
+        default: throw VaultItemDecodingError.invalidSearchableLevel
         }
     }
 
@@ -57,7 +45,7 @@ extension PersistedVaultItemDecoder {
         switch level {
         case VaultEncodingConstants.Visibility.always: .always
         case VaultEncodingConstants.Visibility.onlySearch: .onlySearch
-        default: throw DecodingError.invalidVisibility
+        default: throw VaultItemDecodingError.invalidVisibility
         }
     }
 
@@ -86,22 +74,22 @@ extension PersistedVaultItemDecoder {
         switch otp.authType {
         case VaultEncodingConstants.OTPAuthType.totp:
             guard let period = otp.period else {
-                throw DecodingError.missingPeriodForTOTP
+                throw VaultItemDecodingError.missingPeriodForTOTP
             }
             return .totp(period: UInt64(period))
         case VaultEncodingConstants.OTPAuthType.hotp:
             guard let counter = otp.counter else {
-                throw DecodingError.missingCounterForHOTP
+                throw VaultItemDecodingError.missingCounterForHOTP
             }
             return .hotp(counter: UInt64(counter))
         default:
-            throw DecodingError.invalidOTPType
+            throw VaultItemDecodingError.invalidOTPType
         }
     }
 
     private func decode(digits: Int32) throws -> OTPAuthDigits {
         guard (Int32(UInt16.min) ... Int32(UInt16.max)).contains(digits) else {
-            throw DecodingError.invalidNumberOfDigits(digits)
+            throw VaultItemDecodingError.invalidNumberOfDigits
         }
         return OTPAuthDigits(value: UInt16(digits))
     }
@@ -111,14 +99,14 @@ extension PersistedVaultItemDecoder {
         case VaultEncodingConstants.OTPAuthAlgorithm.sha1: .sha1
         case VaultEncodingConstants.OTPAuthAlgorithm.sha256: .sha256
         case VaultEncodingConstants.OTPAuthAlgorithm.sha512: .sha512
-        default: throw DecodingError.invalidAlgorithm
+        default: throw VaultItemDecodingError.invalidAlgorithm
         }
     }
 
     private func decodeSecretFormat(value: String) throws -> OTPAuthSecret.Format {
         switch value {
         case VaultEncodingConstants.OTPAuthSecret.Format.base32: .base32
-        default: throw DecodingError.invalidSecretFormat
+        default: throw VaultItemDecodingError.invalidSecretFormat
         }
     }
 }
