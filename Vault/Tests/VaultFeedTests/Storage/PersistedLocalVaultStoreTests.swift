@@ -65,6 +65,34 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result2.map(\.item.otpCode), codes.map(\.item.otpCode))
     }
 
+    func test_retrieve_doesNotReturnSearchOnlyItems() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueWritableVaultItem(visibility: .onlySearch),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertTrue(result.isEmpty)
+    }
+
+    func test_retrieve_returnsAlwaysVisibleItems() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(visibility: .always),
+            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueWritableVaultItem(visibility: .always),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.count, 2)
+    }
+
     func test_retrieveMatchingQuery_returnsEmptyOnEmptyStoreAndEmptyQuery() async throws {
         let result = try await sut.retrieve(matching: "")
         XCTAssertEqual(result, [])

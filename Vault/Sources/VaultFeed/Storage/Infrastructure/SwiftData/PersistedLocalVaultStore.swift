@@ -45,7 +45,14 @@ public final actor PersistedLocalVaultStore {
 
 extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve() async throws -> [StoredVaultItem] {
-        let descriptor = FetchDescriptor<PersistedVaultItem>(sortBy: [SortDescriptor(\.updatedDate)])
+        let always = VaultEncodingConstants.Visibility.always
+        let predicate = #Predicate<PersistedVaultItem> {
+            $0.visibility == always
+        }
+        let descriptor = FetchDescriptor<PersistedVaultItem>(
+            predicate: predicate,
+            sortBy: [SortDescriptor(\.updatedDate)]
+        )
         let results = try context.fetch(descriptor)
         let decoder = PersistedVaultItemDecoder()
         return try results.map {
