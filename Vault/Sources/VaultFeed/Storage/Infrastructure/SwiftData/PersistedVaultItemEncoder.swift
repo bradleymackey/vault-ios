@@ -43,6 +43,9 @@ extension PersistedVaultItemEncoder {
             createdDate: now,
             updatedDate: now,
             userDescription: newData.userDescription,
+            visibility: encodeVisibilityLevel(level: newData.visibility),
+            searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
+            searchPassphrase: newData.searchPassphase,
             color: newData.color.flatMap { color in
                 .init(red: color.red, green: color.green, blue: color.blue)
             },
@@ -59,6 +62,9 @@ extension PersistedVaultItemEncoder {
         let existingItem = existingItem
         existingItem.updatedDate = now
         existingItem.userDescription = newData.userDescription
+        existingItem.visibility = encodeVisibilityLevel(level: newData.visibility)
+        existingItem.searchableLevel = encodeSearchableLevel(level: newData.searchableLevel)
+        existingItem.searchPassphrase = newData.searchPassphase
         existingItem.color = newData.color.flatMap { color in
             .init(red: color.red, green: color.green, blue: color.blue)
         }
@@ -69,6 +75,22 @@ extension PersistedVaultItemEncoder {
             existingItem.noteDetails = encodeSecureNoteDetails(newData: noteDetails)
         }
         return existingItem
+    }
+
+    private func encodeSearchableLevel(level: VaultItemSearchableLevel) -> String {
+        switch level {
+        case .none: VaultEncodingConstants.SearchableLevel.none
+        case .full: VaultEncodingConstants.SearchableLevel.full
+        case .onlyTitle: VaultEncodingConstants.SearchableLevel.onlyTitle
+        case .onlyPassphrase: VaultEncodingConstants.SearchableLevel.onlyPassphrase
+        }
+    }
+
+    private func encodeVisibilityLevel(level: VaultItemVisibility) -> String {
+        switch level {
+        case .always: VaultEncodingConstants.Visibility.always
+        case .onlySearch: VaultEncodingConstants.Visibility.onlySearch
+        }
     }
 }
 

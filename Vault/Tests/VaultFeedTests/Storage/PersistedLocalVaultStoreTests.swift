@@ -65,6 +65,34 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result2.map(\.item.otpCode), codes.map(\.item.otpCode))
     }
 
+    func test_retrieve_doesNotReturnSearchOnlyItems() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueWritableVaultItem(visibility: .onlySearch),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertTrue(result.isEmpty)
+    }
+
+    func test_retrieve_returnsAlwaysVisibleItems() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(visibility: .always),
+            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueWritableVaultItem(visibility: .always),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.count, 2)
+    }
+
     func test_retrieveMatchingQuery_returnsEmptyOnEmptyStoreAndEmptyQuery() async throws {
         let result = try await sut.retrieve(matching: "")
         XCTAssertEqual(result, [])
@@ -243,6 +271,124 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         let result = try await sut.retrieve(matching: "a")
         XCTAssertEqual(result.count, 6, "All items should be matched on the specified fields")
+    }
+
+    func test_retrieveMatchingQuery_returnsMatchesForAllQueryStates() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(userDescription: "a", visibility: .onlySearch),
+            writableSearchableNoteVaultItem(title: "aa", visibility: .always),
+            writableSearchableNoteVaultItem(contents: "aaa", visibility: .onlySearch),
+            writableSearchableOTPVaultItem(userDescription: "aaaa", visibility: .onlySearch),
+            writableSearchableOTPVaultItem(accountName: "aaaaa", visibility: .onlySearch),
+            writableSearchableOTPVaultItem(issuerName: "aaaaaa", visibility: .onlySearch),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 6, "All items should be matched on the specified fields")
+    }
+
+    func test_retrieveMatchingQuery_doesNotReturnNotesSearchingByContent() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyTitle),
+            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyPassphrase),
+            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .none),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 0, "Cannot search note content in this state")
+    }
+
+    func test_retrieveMatchingQuery_returnsNoteContentsIfEnabled() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyTitle),
+            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyPassphrase),
+            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .full),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 1, "Only 1 note matches will full search")
+    }
+
+    func test_retrieveMatchingQuery_returnsItemsSearchingByTitle() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyTitle),
+            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyTitle),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.count, 2, "All items here should be matched")
+    }
+
+    func test_retrieveMatchingQuery_titleOnlyMatchesOTPFields() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyTitle),
+            writableSearchableOTPVaultItem(issuerName: "aaabbb", searchableLevel: .onlyTitle),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.map(\.metadata.id), [insertedIDs[0], insertedIDs[1]], "Matches both")
+    }
+
+    func test_retrieveMatchingQuery_requiresExactPassphraseMatch() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "n"),
+            writableSearchableOTPVaultItem(
+                accountName: "aaa",
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: "nn"
+            ),
+            writableSearchableOTPVaultItem(
+                accountName: "aaa",
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: "nnn"
+            ),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let result = try await sut.retrieve(matching: "n")
+        XCTAssertEqual(result.map(\.metadata.id), [insertedIDs[0]], "Only the first item is an exact match")
+    }
+
+    func test_retrieveMatchingQuery_returnsPassphraseMatches() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .full),
+            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "a"),
+            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "b"),
+            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "q"),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(
+            result.map(\.metadata.id),
+            [insertedIDs[0], insertedIDs[1]],
+            "Matches first on text, second on passphrase"
+        )
     }
 
     func test_insert_deliversNoErrorOnEmptyStore() async throws {

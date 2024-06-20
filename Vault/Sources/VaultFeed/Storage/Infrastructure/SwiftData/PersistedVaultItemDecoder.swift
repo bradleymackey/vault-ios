@@ -3,7 +3,7 @@ import VaultCore
 
 struct PersistedVaultItemDecoder {
     func decode(item: PersistedVaultItem) throws -> StoredVaultItem {
-        let metadata = StoredVaultItem.Metadata(
+        let metadata = try StoredVaultItem.Metadata(
             id: item.id,
             created: item.createdDate,
             updated: item.updatedDate,
@@ -32,6 +32,8 @@ struct PersistedVaultItemDecoder {
         case invalidNumberOfDigits(Int32)
         case invalidAlgorithm
         case invalidSecretFormat
+        case invalidSearchableLevel
+        case invalidVisibility
         case missingItemDetail
         case missingPeriodForTOTP
         case missingCounterForHOTP
@@ -41,19 +43,21 @@ struct PersistedVaultItemDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoder {
-    private func decodeSearchableLevel(level: PersistedVaultItem.SearchableLevel) -> VaultItemSearchableLevel {
+    private func decodeSearchableLevel(level: String) throws -> VaultItemSearchableLevel {
         switch level {
-        case .full: .full
-        case .none: .none
-        case .onlyTitle: .onlyTitle
-        case .onlyPassphrase: .onlyPassphrase
+        case VaultEncodingConstants.SearchableLevel.full: .full
+        case VaultEncodingConstants.SearchableLevel.none: .none
+        case VaultEncodingConstants.SearchableLevel.onlyTitle: .onlyTitle
+        case VaultEncodingConstants.SearchableLevel.onlyPassphrase: .onlyPassphrase
+        default: throw DecodingError.invalidSearchableLevel
         }
     }
 
-    private func decodeVisibility(level: PersistedVaultItem.Visibility) -> VaultItemVisibility {
+    private func decodeVisibility(level: String) throws -> VaultItemVisibility {
         switch level {
-        case .always: .always
-        case .onlySearch: .onlySearch
+        case VaultEncodingConstants.Visibility.always: .always
+        case VaultEncodingConstants.Visibility.onlySearch: .onlySearch
+        default: throw DecodingError.invalidVisibility
         }
     }
 

@@ -126,6 +126,60 @@ extension PersistedVaultItemEncoderTests {
         XCTAssertEqual(newCode.color?.green, 0.6)
         XCTAssertEqual(newCode.color?.blue, 0.7)
     }
+
+    func test_encodeMetadata_newItemEncodesVisibilityLevels() throws {
+        let mapping: [VaultItemVisibility: String] = [
+            .always: "ALWAYS",
+            .onlySearch: "ONLY_SEARCH",
+        ]
+
+        for (value, key) in mapping {
+            let sut1 = makeSUT()
+            var existingItem = uniqueWritableVaultItem()
+            existingItem.visibility = value
+            let existing = sut1.encode(item: existingItem)
+
+            XCTAssertEqual(existing.visibility, key)
+        }
+    }
+
+    func test_encodeMetadata_existingItemEncodesVisibilityLevels() throws {
+        let mapping: [VaultItemVisibility: String] = [
+            .always: "ALWAYS",
+            .onlySearch: "ONLY_SEARCH",
+        ]
+
+        for (value, key) in mapping {
+            let sut1 = makeSUT()
+            var item1 = uniqueWritableVaultItem()
+            item1.visibility = .onlySearch
+            let existing = sut1.encode(item: item1)
+
+            var item2 = uniqueWritableVaultItem()
+            item2.visibility = value
+            let existing2 = sut1.encode(item: item2, existing: existing)
+
+            XCTAssertEqual(existing2.visibility, key)
+        }
+    }
+
+    func test_encodeMetadata_newItemEncodesSearchableLevels() throws {
+        let mapping: [VaultItemSearchableLevel: String] = [
+            .full: "FULL",
+            .none: "NONE",
+            .onlyTitle: "ONLY_TITLE",
+            .onlyPassphrase: "ONLY_PASSPHRASE",
+        ]
+
+        for (value, key) in mapping {
+            let sut1 = makeSUT()
+            var existingItem = uniqueWritableVaultItem()
+            existingItem.searchableLevel = value
+            let existing = sut1.encode(item: existingItem)
+
+            XCTAssertEqual(existing.searchableLevel, key)
+        }
+    }
 }
 
 // MARK: - OTP
@@ -284,15 +338,18 @@ extension PersistedVaultItemEncoderTests {
     private func makeWritable(
         userDescription: String = "",
         code: OTPAuthCode,
-        color: VaultItemColor? = nil
+        color: VaultItemColor? = nil,
+        visibility: VaultItemVisibility = .always,
+        searchableLevel: VaultItemSearchableLevel = .full,
+        searchPassphrase: String = ""
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
             userDescription: userDescription,
             color: color,
             item: .otpCode(code),
-            visibility: .always,
-            searchableLevel: .full,
-            searchPassphase: ""
+            visibility: visibility,
+            searchableLevel: searchableLevel,
+            searchPassphase: searchPassphrase
         )
     }
 

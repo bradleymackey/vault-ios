@@ -9,8 +9,8 @@ final class PersistedVaultItem {
     var createdDate: Date
     var updatedDate: Date
     var userDescription: String
-    var visibility: Visibility = Visibility.always
-    var searchableLevel: SearchableLevel = SearchableLevel.full
+    var visibility: String
+    var searchableLevel: String
     var searchPassphrase: String?
     var color: Color?
 
@@ -26,26 +26,14 @@ final class PersistedVaultItem {
         var blue: Double
     }
 
-    enum Visibility: String, Codable {
-        case always = "ALWAYS"
-        case onlySearch = "ONLY_SEARCH"
-    }
-
-    enum SearchableLevel: String, Codable {
-        case none = "NONE"
-        case full = "FULL"
-        case onlyTitle = "ONLY_TITLE"
-        case onlyPassphrase = "ONLY_PASSPHRASE"
-    }
-
     init(
         id: UUID,
         createdDate: Date,
         updatedDate: Date,
         userDescription: String,
-        visibility: Visibility = Visibility.always,
-        searchableLevel: SearchableLevel = SearchableLevel.full,
-        searchPassphrase: String? = nil,
+        visibility: String,
+        searchableLevel: String,
+        searchPassphrase: String?,
         color: Color?,
         noteDetails: PersistedNoteDetails?,
         otpDetails: PersistedOTPDetails?

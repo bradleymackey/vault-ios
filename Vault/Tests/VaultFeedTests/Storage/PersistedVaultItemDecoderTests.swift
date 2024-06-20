@@ -104,6 +104,60 @@ extension PersistedVaultItemDecoderTests {
         let expectedColor = VaultItemColor(red: 0.7, green: 0.6, blue: 0.5)
         XCTAssertEqual(decoded.metadata.color, expectedColor)
     }
+
+    func test_decodeMetadata_decodesVisibilityLevels() throws {
+        let mapping: [VaultItemVisibility: String] = [
+            .always: "ALWAYS",
+            .onlySearch: "ONLY_SEARCH",
+        ]
+        for (value, key) in mapping {
+            let item = makePersistedItem(visibility: key)
+            let sut = makeSUT()
+
+            let decoded = try sut.decode(item: item)
+
+            XCTAssertEqual(decoded.metadata.visibility, value)
+        }
+    }
+
+    func test_decodeMetadata_throwsForInvalidVisibilityLevel() throws {
+        let item = makePersistedItem(visibility: "INVALID")
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
+
+    func test_decodeMetadata_decodesSearchableLevels() throws {
+        let mapping: [VaultItemSearchableLevel: String] = [
+            .full: "FULL",
+            .none: "NONE",
+            .onlyTitle: "ONLY_TITLE",
+            .onlyPassphrase: "ONLY_PASSPHRASE",
+        ]
+        for (value, key) in mapping {
+            let item = makePersistedItem(searchableLevel: key)
+            let sut = makeSUT()
+
+            let decoded = try sut.decode(item: item)
+
+            XCTAssertEqual(decoded.metadata.searchableLevel, value)
+        }
+    }
+
+    func test_decodeMetadata_throwsForInvalidSearchableLevel() throws {
+        let item = makePersistedItem(searchableLevel: "INVALID")
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
+
+    func test_decodeMetadata_decodesSearchPassphrase() throws {
+        let item = makePersistedItem(searchPassphrase: "my secret - super secret")
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.searchPassphrase, "my secret - super secret")
+    }
 }
 
 // MARK: - OTP Code
@@ -297,6 +351,9 @@ extension PersistedVaultItemDecoderTests {
         createdDate: Date = Date(),
         updatedDate: Date = Date(),
         userDescription: String = "",
+        visibility: String = "ALWAYS",
+        searchableLevel: String = "FULL",
+        searchPassphrase: String? = nil,
         color: PersistedVaultItem.Color? = nil,
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
@@ -316,6 +373,9 @@ extension PersistedVaultItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updatedDate,
             userDescription: userDescription,
+            visibility: visibility,
+            searchableLevel: searchableLevel,
+            searchPassphrase: searchPassphrase,
             color: color,
             noteDetails: noteDetails,
             otpDetails: otpDetails
