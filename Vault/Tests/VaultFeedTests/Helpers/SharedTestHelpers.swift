@@ -48,8 +48,9 @@ func searchableStoredOTPVaultItem(
     userDescription: String = "",
     accountName: String = "",
     issuerName: String = "",
+    visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
-    secretPassphrase: String? = nil
+    searchPassphrase: String? = nil
 ) -> StoredVaultItem {
     StoredVaultItem(
         metadata: .init(
@@ -57,9 +58,9 @@ func searchableStoredOTPVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            visibility: .always,
+            visibility: visibility,
             searchableLevel: searchableLevel,
-            searchPassphrase: secretPassphrase,
+            searchPassphrase: searchPassphrase,
             color: nil
         ),
         item: .otpCode(.init(
@@ -113,13 +114,17 @@ func writableSearchableOTPVaultItem(
     userDescription: String = "",
     accountName: String = "",
     issuerName: String = "",
-    searchableLevel: VaultItemSearchableLevel = .full
+    visibility: VaultItemVisibility = .always,
+    searchableLevel: VaultItemSearchableLevel = .full,
+    searchPassphrase: String? = nil
 ) -> StoredVaultItem.Write {
     searchableStoredOTPVaultItem(
         userDescription: userDescription,
         accountName: accountName,
         issuerName: issuerName,
-        searchableLevel: searchableLevel
+        visibility: visibility,
+        searchableLevel: searchableLevel,
+        searchPassphrase: searchPassphrase
     ).asWritable
 }
 
@@ -127,15 +132,17 @@ func writableSearchableNoteVaultItem(
     userDescription: String = "",
     title: String = "",
     contents: String = "",
-    searchableLevel: VaultItemSearchableLevel = .full
+    visibility: VaultItemVisibility = .always,
+    searchableLevel: VaultItemSearchableLevel = .full,
+    searchPassphrase: String? = nil
 ) -> StoredVaultItem.Write {
     .init(
         userDescription: userDescription,
         color: nil,
         item: .secureNote(.init(title: title, contents: contents)),
-        visibility: .always,
+        visibility: visibility,
         searchableLevel: searchableLevel,
-        searchPassphase: nil
+        searchPassphase: searchPassphrase
     )
 }
 

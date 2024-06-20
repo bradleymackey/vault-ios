@@ -68,36 +68,54 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         // It also really doesn't play well with Optional Chaining (it leads to internal SQL errors),
         // but flapMap works just fine.
 
+        let full = VaultEncodingConstants.SearchableLevel.full
+        let onlyTitle = VaultEncodingConstants.SearchableLevel.onlyTitle
+        let onlyPassphrase = VaultEncodingConstants.SearchableLevel.onlyPassphrase
+        let titleSearchable = #Predicate<PersistedVaultItem> {
+            $0.searchableLevel == full || $0.searchableLevel == onlyTitle
+        }
+
+        let contentSearchable = #Predicate<PersistedVaultItem> {
+            $0.searchableLevel == full
+        }
+
+        let passphrasePredicate = #Predicate<PersistedVaultItem> { item in
+            item.searchableLevel == onlyPassphrase &&
+                // We need an EXACT match on the passphrase
+                item.searchPassphrase.flatMap { $0 == query } ?? false
+        }
+
         let userDescriptionPredicate = #Predicate<PersistedVaultItem> {
-            $0.userDescription.localizedStandardContains(query)
+            $0.userDescription.localizedStandardContains(query) && titleSearchable.evaluate($0)
         }
 
-        let noteTitlePredicate = #Predicate<PersistedVaultItem> {
-            $0.noteDetails.flatMap {
-                $0.title.localizedStandardContains(query)
+        let noteTitlePredicate = #Predicate<PersistedVaultItem> { item in
+            item.noteDetails.flatMap {
+                $0.title.localizedStandardContains(query) && titleSearchable.evaluate(item)
             } ?? false
         }
 
-        let noteContentsPredicate = #Predicate<PersistedVaultItem> {
-            $0.noteDetails.flatMap {
-                $0.contents.localizedStandardContains(query)
+        let noteContentsPredicate = #Predicate<PersistedVaultItem> { item in
+            item.noteDetails.flatMap {
+                $0.contents.localizedStandardContains(query) && contentSearchable.evaluate(item)
             } ?? false
         }
 
-        let codeNamePredicate = #Predicate<PersistedVaultItem> {
-            $0.otpDetails.flatMap {
-                $0.accountName.localizedStandardContains(query)
+        let codeNamePredicate = #Predicate<PersistedVaultItem> { item in
+            item.otpDetails.flatMap {
+                $0.accountName.localizedStandardContains(query) && titleSearchable.evaluate(item)
             } ?? false
         }
 
-        let codeIssuerPredicate = #Predicate<PersistedVaultItem> {
-            $0.otpDetails.flatMap {
-                $0.issuer.localizedStandardContains(query)
+        let codeIssuerPredicate = #Predicate<PersistedVaultItem> { item in
+            item.otpDetails.flatMap {
+                $0.issuer.localizedStandardContains(query) && titleSearchable.evaluate(item)
             } ?? false
         }
 
         let predicate = #Predicate<PersistedVaultItem> {
-            userDescriptionPredicate.evaluate($0) ||
+            passphrasePredicate.evaluate($0) ||
+                userDescriptionPredicate.evaluate($0) ||
                 noteTitlePredicate.evaluate($0) ||
                 noteContentsPredicate.evaluate($0) ||
                 codeNamePredicate.evaluate($0) ||
