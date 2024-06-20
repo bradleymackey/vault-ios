@@ -8,7 +8,6 @@ struct DetailSubtitleView: View {
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .font(.headline)
                 .foregroundColor(.primary)
             Text(subtitle)
                 .font(.footnote)
