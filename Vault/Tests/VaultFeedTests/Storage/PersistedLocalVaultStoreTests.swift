@@ -2,8 +2,8 @@ import Foundation
 import SwiftData
 import TestHelpers
 import VaultCore
-import VaultFeed
 import XCTest
+@testable import VaultFeed
 
 final class PersistedLocalVaultStoreTests: XCTestCase {
     // swiftlint:disable:next implicitly_unwrapped_optional
@@ -97,6 +97,49 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let result = try await sut.retrieve()
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.errors, [])
+    }
+
+    @MainActor
+    func test_retrieve_returnsCorruptedItemsAsErrors() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+        ]
+        var ids = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            ids.append(id)
+        }
+
+        // Introduce a corruption error on the first item
+        try corruptItemAlgorithm(id: ids[0])
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.items.map(\.id), Array(ids[1...]))
+        XCTAssertEqual(result.errors, [.failedToDecode(.invalidAlgorithm)])
+    }
+
+    @MainActor
+    func test_retrieve_returnsAllItemsCorrupted() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+            uniqueWritableVaultItem(),
+        ]
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            // Corrupt all items
+            try corruptItemAlgorithm(id: id)
+        }
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.items, [])
+        XCTAssertEqual(result.errors, [
+            .failedToDecode(.invalidAlgorithm),
+            .failedToDecode(.invalidAlgorithm),
+            .failedToDecode(.invalidAlgorithm),
+        ])
     }
 
     func test_retrieveMatchingQuery_returnsEmptyOnEmptyStoreAndEmptyQuery() async throws {
@@ -419,6 +462,51 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    @MainActor
+    func test_retrieveMatchingQuery_returnsCorruptedItemsAsErrors() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableOTPVaultItem(accountName: "aaa"),
+            writableSearchableOTPVaultItem(accountName: "aaa"),
+            writableSearchableOTPVaultItem(accountName: "bbb"), // not included
+            writableSearchableOTPVaultItem(accountName: "aaa"),
+        ]
+        var ids = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            ids.append(id)
+        }
+
+        // Introduce a corruption error on the first item
+        try corruptItemAlgorithm(id: ids[0])
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.items.map(\.id), [ids[1], ids[3]])
+        XCTAssertEqual(result.errors, [.failedToDecode(.invalidAlgorithm)])
+    }
+
+    @MainActor
+    func test_retrieveMatchingQuery_returnsAllItemsCorrupted() async throws {
+        let codes: [StoredVaultItem.Write] = [
+            writableSearchableOTPVaultItem(accountName: "aaa"),
+            writableSearchableOTPVaultItem(accountName: "aaa"),
+            writableSearchableOTPVaultItem(accountName: "bbb"), // not included
+            writableSearchableOTPVaultItem(accountName: "aaa"),
+        ]
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            // Corrupt all items
+            try corruptItemAlgorithm(id: id)
+        }
+
+        let result = try await sut.retrieve(matching: "a")
+        XCTAssertEqual(result.items, [])
+        XCTAssertEqual(result.errors, [
+            .failedToDecode(.invalidAlgorithm),
+            .failedToDecode(.invalidAlgorithm),
+            .failedToDecode(.invalidAlgorithm),
+        ])
+    }
+
     func test_insert_deliversNoErrorOnEmptyStore() async throws {
         try await sut.insert(item: uniqueWritableVaultItem())
     }
@@ -547,5 +635,25 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let result = try await sut.retrieve()
         XCTAssertEqual(result.items.map(\.item.otpCode), initialCodes.map(\.item.otpCode) + [newCode.item.otpCode])
         XCTAssertEqual(result.errors, [])
+    }
+}
+
+// MARK: - Helpers
+
+extension PersistedLocalVaultStoreTests {
+    @MainActor
+    private func corruptItemAlgorithm(
+        id: UUID
+    ) throws {
+        let context = sut.makeContext()
+        var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
+            item.id == id
+        })
+        descriptor.fetchLimit = 1
+        let existing = try XCTUnwrap(context.fetch(descriptor).first)
+        existing.otpDetails?.algorithm = "INVALID"
+
+        context.insert(existing)
+        try context.save()
     }
 }

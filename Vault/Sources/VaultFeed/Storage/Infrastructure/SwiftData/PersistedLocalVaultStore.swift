@@ -36,6 +36,7 @@ public final actor PersistedLocalVaultStore {
         container.mainContext
     }
 
+    @MainActor
     public func makeContext() -> ModelContext {
         .init(container)
     }
