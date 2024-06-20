@@ -143,6 +143,13 @@ extension SecureNoteDetailViewModel {
         public let noteDescription = localized(key: "noteDetail.field.noteDescription.title")
         public let noteContentsTitle = localized(key: "noteDetail.field.noteContents.title")
         public let noteEmptyTitleTitle = localized(key: "noteDetail.field.noteTitleEmpty.title")
+        public let noteVisibilityTitle = localized(key: "noteDetail.visibilitySection.title")
+        public let noteShownInTitle = localized(key: "noteDetail.visibility.title")
+        public let noteShownInSubtitle = localized(key: "noteDetail.visibility.subtitle")
+        public let searchableLevelTitle = localized(key: "noteDetail.searchableLevel.title")
+        public let searchableLevelSubtitle = localized(key: "noteDetail.searchableLevel.subtitle")
+        public let passphraseTitle = localized(key: "noteDetail.passphrase.title")
+        public let passphraseSubtitle = localized(key: "noteDetail.passphrase.subtitle")
     }
 
     public var strings: Strings {

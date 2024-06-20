@@ -50,6 +50,8 @@ struct SecureNoteDetailView: View {
                 noteTitleEditingSection
                 noteDescriptionEditingSection
                 noteContentsEditingSection
+                noteVisibilityOptionsEditingSection
+                noteSearchableLevelEditingSection
             } else {
                 noteMetadataContentSection
                 noteContentsSection
@@ -183,6 +185,67 @@ struct SecureNoteDetailView: View {
                     .padding(.vertical, 16)
                     .transition(.opacity)
             }
+        }
+    }
+
+    private var noteVisibilityOptionsEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.visibility) {
+                ForEach(VaultItemVisibility.allCases) { visibility in
+                    DetailSubtitleView(
+                        title: visibility.localizedTitle,
+                        subtitle: visibility.localizedSubtitle
+                    )
+                    .tag(visibility)
+                }
+            } label: {
+                Text(viewModel.strings.noteVisibilityTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.visibility) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .onlySearch && viewModel.editingModel.detail.searchableLevel == .none {
+                    viewModel.editingModel.detail.searchableLevel = .full
+                }
+            }
+        } header: {
+            Text(viewModel.strings.noteVisibilityTitle)
+        }
+    }
+
+    private var noteSearchableLevelEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
+                ForEach(VaultItemSearchableLevel.allCases) { level in
+                    DetailSubtitleView(
+                        title: level.localizedTitle,
+                        subtitle: level.localizedSubtitle
+                    )
+                    .tag(level)
+                }
+            } label: {
+                Text(viewModel.strings.searchableLevelTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.searchableLevel) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .none && viewModel.editingModel.detail.visibility == .onlySearch {
+                    viewModel.editingModel.detail.visibility = .always
+                }
+            }
+
+            if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                VStack {
+                    TextField(viewModel.strings.passphraseTitle, text: $viewModel.editingModel.detail.searchPassphrase)
+                    Text(viewModel.strings.passphraseSubtitle)
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
+            }
+        } header: {
+            Text(viewModel.strings.searchableLevelTitle)
         }
     }
 

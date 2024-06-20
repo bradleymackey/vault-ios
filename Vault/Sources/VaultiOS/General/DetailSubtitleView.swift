@@ -3,15 +3,16 @@ import SwiftUI
 
 struct DetailSubtitleView: View {
     let title: String
-    let subtitle: String
+    let subtitle: String?
 
     var body: some View {
         VStack(alignment: .leading) {
             Text(title)
-                .foregroundColor(.primary)
-            Text(subtitle)
-                .font(.footnote)
-                .foregroundColor(.secondary)
+            if let subtitle {
+                Text(subtitle)
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
         }
     }
 }

@@ -43,6 +43,14 @@ public struct SecureNoteDetailEdits: EditableState {
     }
 
     public var isValid: Bool {
-        $title.isValid && $description.isValid && $contents.isValid && $searchPassphrase.isValid
+        $title.isValid && $description.isValid && $contents.isValid && $searchPassphrase
+            .isValid && isVisibilitySearchValid
+    }
+
+    private var isVisibilitySearchValid: Bool {
+        switch (visibility, searchableLevel) {
+        case (.onlySearch, .none): false
+        default: true
+        }
     }
 }
