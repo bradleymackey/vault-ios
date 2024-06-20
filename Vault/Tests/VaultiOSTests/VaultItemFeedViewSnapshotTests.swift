@@ -27,7 +27,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredVaultItem()]
+        store.codesToRetrieve = .init(items: [uniqueStoredVaultItem()])
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()
@@ -40,7 +40,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_multipleCodesAtMediumSize() async throws {
         let store = MockOTPCodeStore()
-        store.codesToRetrieve = [uniqueStoredVaultItem(), uniqueStoredVaultItem(), uniqueStoredVaultItem()]
+        store.codesToRetrieve = .init(items: [
+            uniqueStoredVaultItem(),
+            uniqueStoredVaultItem(),
+            uniqueStoredVaultItem(),
+        ])
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()

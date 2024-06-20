@@ -6,6 +6,7 @@ import Foundation
 public final class FeedViewModel<Store: VaultStore> {
     public var searchQuery: String = ""
     public var codes = [StoredVaultItem]()
+    public var errors = [VaultRetrievalResult.Error]()
     public private(set) var retrievalError: PresentationError?
 
     private let store: Store
@@ -86,11 +87,13 @@ extension FeedViewModel: VaultFeed {
 
     public func reloadData() async {
         do {
-            codes = if let query = sanitizedQuery {
+            let result = if let query = sanitizedQuery {
                 try await store.retrieve(matching: query)
             } else {
                 try await store.retrieve()
             }
+            codes = result.items
+            errors = result.errors
         } catch {
             retrievalError = PresentationError(
                 userTitle: localized(key: "feedRetrieval.error.title"),
