@@ -158,7 +158,7 @@ struct SecureNoteDetailView: View {
                     FooterInfoLabel(
                         title: viewModel.strings.createdDateTitle,
                         detail: createdDate,
-                        systemImageName: "clock.fill"
+                        systemImageName: "clock"
                     )
 
                     if let updatedDate = viewModel.updatedDateValue {
@@ -169,6 +169,18 @@ struct SecureNoteDetailView: View {
                         )
                     }
                 }
+
+                FooterInfoLabel(
+                    title: viewModel.strings.searchableLevelTitle,
+                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
+                    systemImageName: "magnifyingglass"
+                )
+
+                FooterInfoLabel(
+                    title: viewModel.strings.noteVisibilityTitle,
+                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
+                    systemImageName: "eye"
+                )
             }
             .font(.footnote)
             .padding(.top, 8)
