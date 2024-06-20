@@ -18,4 +18,16 @@ enum VaultEncodingConstants {
         static let sha256 = "SHA256"
         static let sha512 = "SHA512"
     }
+
+    enum Visibility {
+        static let always = "ALWAYS"
+        static let onlySearch = "ONLY_SEARCH"
+    }
+
+    enum SearchableLevel {
+        static let none = "NONE"
+        static let full = "FULL"
+        static let onlyTitle = "ONLY_TITLE"
+        static let onlyPassphrase = "ONLY_PASSPHRASE"
+    }
 }
