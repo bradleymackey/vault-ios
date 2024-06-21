@@ -214,22 +214,22 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     private func codeInformationSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
         Section {
-            VStack(alignment: .center) {
-                copyableViewGenerator().makeVaultPreviewView(
-                    item: .otpCode(code),
-                    metadata: metadata,
-                    behaviour: .normal
-                )
-                .frame(maxWidth: 220)
-                .padding(.horizontal, 8) // some additional padding because it's bigger
-                .modifier(OTPCardViewModifier(context: .secondary))
-                .clipShape(RoundedRectangle(cornerRadius: 16)) // make it a bit more rounded because it's bigger
-                .shadow(color: .black.opacity(0.3), radius: 20)
-                .padding()
-                .modifier(HorizontallyCenter())
-            }
-            .padding(.vertical, 32)
-            .listRowSeparator(.hidden)
+            copyableViewGenerator().makeVaultPreviewView(
+                item: .otpCode(code),
+                metadata: metadata,
+                behaviour: .normal
+            )
+            .frame(maxWidth: 220)
+            .padding(4) // some additional padding because it's bigger
+            .padding(.horizontal, 4)
+            .modifier(OTPCardViewModifier(context: .secondary))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(.blue, lineWidth: 4)
+            )
+            .padding()
+            .modifier(HorizontallyCenter())
+            .listRowBackground(EmptyView())
 
             if !viewModel.editingModel.detail.description.isBlank {
                 VStack(alignment: .leading, spacing: 4) {
