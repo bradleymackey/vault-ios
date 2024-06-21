@@ -1,6 +1,7 @@
 import Foundation
 import VaultCore
 
+/// @mockable
 @MainActor
 public protocol OTPCodeDetailEditor {
     func createCode(initialEdits: OTPCodeDetailEdits) async throws

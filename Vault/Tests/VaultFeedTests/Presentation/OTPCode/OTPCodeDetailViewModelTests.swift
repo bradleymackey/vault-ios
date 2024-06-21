@@ -74,17 +74,20 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_detailMenuItems_editingHasOneExpectedItem() {
+    func test_detailMenuItems_editingHasItems() {
         let sut = makeSUTEditing()
 
-        XCTAssertEqual(sut.detailMenuItems.count, 1)
+        XCTAssertEqual(
+            sut.detailMenuItems.map(\.title),
+            ["Created", "Search Level", "Visibility", "Type", "Period", "Digits", "Algorithm", "Key Format"]
+        )
     }
 
     @MainActor
-    func test_detailMenuItems_creatingHasNoItems() {
+    func test_detailMenuItems_creatingHasItems() {
         let sut = makeSUTCreating()
 
-        XCTAssertEqual(sut.detailMenuItems.count, 0)
+        XCTAssertEqual(sut.detailMenuItems.map(\.title), ["Search Level", "Visibility"])
     }
 
     @MainActor

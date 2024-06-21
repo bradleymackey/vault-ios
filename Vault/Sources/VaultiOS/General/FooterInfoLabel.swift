@@ -9,14 +9,16 @@ struct FooterInfoLabel: View {
     var body: some View {
         LabeledContent {
             Text(detail)
+                .multilineTextAlignment(.trailing)
         } label: {
             Label {
                 Text(title)
+                    .multilineTextAlignment(.leading)
             } icon: {
                 Image(systemName: systemImageName)
                     .frame(minWidth: 24)
             }
         }
-        .font(.subheadline)
+        .font(.footnote)
     }
 }

@@ -178,4 +178,32 @@ extension SecureNoteDetailViewModel {
             nil
         }
     }
+
+    public var detailEntries: [DetailEntry] {
+        var items = [DetailEntry]()
+        if let createdDateValue {
+            items.append(.init(title: strings.createdDateTitle, detail: createdDateValue, systemIconName: "clock"))
+        }
+
+        if let updatedDateValue {
+            items.append(.init(
+                title: strings.updatedDateTitle,
+                detail: updatedDateValue,
+                systemIconName: "clock.arrow.2.circlepath"
+            ))
+        }
+
+        items.append(.init(
+            title: strings.searchableLevelTitle,
+            detail: editingModel.detail.searchableLevel.localizedTitle,
+            systemIconName: editingModel.detail.searchableLevel.systemIconName
+        ))
+
+        items.append(.init(
+            title: strings.noteVisibilityTitle,
+            detail: editingModel.detail.visibility.localizedTitle,
+            systemIconName: editingModel.detail.visibility.systemIconName
+        ))
+        return items
+    }
 }

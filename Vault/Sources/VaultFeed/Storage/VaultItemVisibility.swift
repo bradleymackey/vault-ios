@@ -9,6 +9,13 @@ public enum VaultItemVisibility: Equatable, Hashable, CaseIterable, Identifiable
 }
 
 extension VaultItemVisibility {
+    public var systemIconName: String {
+        switch self {
+        case .always: "eye"
+        case .onlySearch: "eye.slash"
+        }
+    }
+
     public var localizedTitle: String {
         switch self {
         case .always: localized(key: "vaultItemVisibility.always.title")

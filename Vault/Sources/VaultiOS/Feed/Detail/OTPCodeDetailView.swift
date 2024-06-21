@@ -230,54 +230,20 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             .padding()
             .modifier(HorizontallyCenter())
             .listRowBackground(EmptyView())
-
-            if !viewModel.editingModel.detail.description.isBlank {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(viewModel.strings.descriptionTitle)
-                        .foregroundStyle(.primary)
-
-                    Text(viewModel.editingModel.detail.description)
-                        .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
-
-                    HStack { Spacer() }
-                }
-                .font(.callout)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity)
-            }
         } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                if let createdDateValue = viewModel.createdDateValue {
-                    FooterInfoLabel(
-                        title: viewModel.strings.createdDateTitle,
-                        detail: createdDateValue,
-                        systemImageName: "clock"
-                    )
+            VStack(alignment: .center, spacing: 24) {
+                if !viewModel.editingModel.detail.description.isBlank {
+                    Text(viewModel.editingModel.detail.description)
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .font(.callout)
+                        .multilineTextAlignment(.leading)
+
+                    Divider()
                 }
 
-                if let updatedDateValue = viewModel.updatedDateValue {
-                    FooterInfoLabel(
-                        title: viewModel.strings.updatedDateTitle,
-                        detail: updatedDateValue,
-                        systemImageName: "clock.arrow.2.circlepath"
-                    )
-                }
-
-                FooterInfoLabel(
-                    title: viewModel.strings.searchableLevelTitle,
-                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
-                    systemImageName: "magnifyingglass"
-                )
-
-                FooterInfoLabel(
-                    title: viewModel.strings.visibilityTitle,
-                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
-                    systemImageName: "eye"
-                )
-
-                ForEach(viewModel.detailMenuItems) { item in
-                    ForEach(item.entries) { entry in
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(viewModel.detailMenuItems) { entry in
                         FooterInfoLabel(
                             title: entry.title,
                             detail: entry.detail,
@@ -285,9 +251,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         )
                     }
                 }
+                .font(.footnote)
             }
-            .font(.footnote)
-            .padding(.top, 8)
+            .padding(.top, 16)
         }
     }
 
@@ -296,6 +262,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             Picker(selection: $viewModel.editingModel.detail.visibility) {
                 ForEach(VaultItemVisibility.allCases) { visibility in
                     DetailSubtitleView(
+                        systemIcon: visibility.systemIconName,
                         title: visibility.localizedTitle,
                         subtitle: visibility.localizedSubtitle
                     )
@@ -322,6 +289,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
                 ForEach(VaultItemSearchableLevel.allCases) { level in
                     DetailSubtitleView(
+                        systemIcon: level.systemIconName,
                         title: level.localizedTitle,
                         subtitle: level.localizedSubtitle
                     )

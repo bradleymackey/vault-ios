@@ -84,19 +84,77 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         }
     }
 
-    public var detailMenuItems: [DetailMenuItem] {
+    public var detailMenuItems: [DetailEntry] {
+        var entries = [DetailEntry]()
+        if let createdDate = createdDateValue {
+            entries.append(DetailEntry(title: strings.createdDateTitle, detail: createdDate, systemIconName: "clock"))
+        }
+
+        if let updateDate = updatedDateValue {
+            entries.append(DetailEntry(
+                title: strings.updatedDateTitle,
+                detail: updateDate,
+                systemIconName: "clock.arrow.2.circlepath"
+            ))
+        }
+
+        entries.append(DetailEntry(
+            title: strings.searchableLevelTitle,
+            detail: editingModel.detail.searchableLevel.localizedTitle,
+            systemIconName: editingModel.detail.searchableLevel.systemIconName
+        ))
+
+        entries.append(DetailEntry(
+            title: strings.visibilityTitle,
+            detail: editingModel.detail.visibility.localizedTitle,
+            systemIconName: editingModel.detail.visibility.systemIconName
+        ))
+
         switch mode {
         case .creating:
-            return []
+            break
         case let .editing(code, _):
-            let details = DetailMenuItem(
-                id: "detail",
-                title: localized(key: "codeDetail.listSection.details.title"),
-                systemIconName: "books.vertical.fill",
-                entries: Self.makeInfoEntries(code)
+            let formatter = OTPCodeDetailFormatter(code: code)
+            entries.append(
+                DetailEntry(
+                    title: localized(key: "codeDetail.listSection.type.title"),
+                    detail: formatter.typeName,
+                    systemIconName: "tag.fill"
+                )
             )
-            return [details]
+            if let period = formatter.period {
+                entries.append(
+                    DetailEntry(
+                        title: localized(key: "codeDetail.listSection.period.title"),
+                        detail: period,
+                        systemIconName: "clock.fill"
+                    )
+                )
+            }
+            entries.append(
+                DetailEntry(
+                    title: localized(key: "codeDetail.listSection.digits.title"),
+                    detail: formatter.digits,
+                    systemIconName: "number"
+                )
+            )
+            entries.append(
+                DetailEntry(
+                    title: localized(key: "codeDetail.listSection.algorithm.title"),
+                    detail: formatter.algorithm,
+                    systemIconName: "lock.laptopcomputer"
+                )
+            )
+            entries.append(
+                DetailEntry(
+                    title: localized(key: "codeDetail.listSection.secretFormat.title"),
+                    detail: formatter.secretType,
+                    systemIconName: "lock.fill"
+                )
+            )
         }
+
+        return entries
     }
 
     public func didEncounterErrorPublisher() -> AnyPublisher<any Error, Never> {
@@ -233,50 +291,5 @@ extension OTPCodeDetailViewModel {
         default:
             nil
         }
-    }
-}
-
-extension OTPCodeDetailViewModel {
-    private static func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
-        let formatter = OTPCodeDetailFormatter(code: code)
-        var entries = [DetailEntry]()
-        entries.append(
-            DetailEntry(
-                title: localized(key: "codeDetail.listSection.type.title"),
-                detail: formatter.typeName,
-                systemIconName: "tag.fill"
-            )
-        )
-        if let period = formatter.period {
-            entries.append(
-                DetailEntry(
-                    title: localized(key: "codeDetail.listSection.period.title"),
-                    detail: period,
-                    systemIconName: "clock.fill"
-                )
-            )
-        }
-        entries.append(
-            DetailEntry(
-                title: localized(key: "codeDetail.listSection.digits.title"),
-                detail: formatter.digits,
-                systemIconName: "number"
-            )
-        )
-        entries.append(
-            DetailEntry(
-                title: localized(key: "codeDetail.listSection.algorithm.title"),
-                detail: formatter.algorithm,
-                systemIconName: "lock.laptopcomputer"
-            )
-        )
-        entries.append(
-            DetailEntry(
-                title: localized(key: "codeDetail.listSection.secretFormat.title"),
-                detail: formatter.secretType,
-                systemIconName: "lock.fill"
-            )
-        )
-        return entries
     }
 }

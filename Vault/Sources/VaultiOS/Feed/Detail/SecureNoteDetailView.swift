@@ -153,34 +153,10 @@ struct SecureNoteDetailView: View {
             )
             .frame(minHeight: 250, alignment: .top)
         } footer: {
-            VStack(alignment: .leading, spacing: 4) {
-                if let createdDate = viewModel.createdDateValue {
-                    FooterInfoLabel(
-                        title: viewModel.strings.createdDateTitle,
-                        detail: createdDate,
-                        systemImageName: "clock"
-                    )
-
-                    if let updatedDate = viewModel.updatedDateValue {
-                        FooterInfoLabel(
-                            title: viewModel.strings.updatedDateTitle,
-                            detail: updatedDate,
-                            systemImageName: "clock.arrow.2.circlepath"
-                        )
-                    }
+            VStack(alignment: .leading, spacing: 8) {
+                ForEach(viewModel.detailEntries) { item in
+                    FooterInfoLabel(title: item.title, detail: item.detail, systemImageName: item.systemIconName)
                 }
-
-                FooterInfoLabel(
-                    title: viewModel.strings.searchableLevelTitle,
-                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
-                    systemImageName: "magnifyingglass"
-                )
-
-                FooterInfoLabel(
-                    title: viewModel.strings.noteVisibilityTitle,
-                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
-                    systemImageName: "eye"
-                )
             }
             .font(.footnote)
             .padding(.top, 8)
@@ -204,6 +180,7 @@ struct SecureNoteDetailView: View {
             Picker(selection: $viewModel.editingModel.detail.visibility) {
                 ForEach(VaultItemVisibility.allCases) { visibility in
                     DetailSubtitleView(
+                        systemIcon: visibility.systemIconName,
                         title: visibility.localizedTitle,
                         subtitle: visibility.localizedSubtitle
                     )
@@ -230,6 +207,7 @@ struct SecureNoteDetailView: View {
             Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
                 ForEach(VaultItemSearchableLevel.allCases) { level in
                     DetailSubtitleView(
+                        systemIcon: level.systemIconName,
                         title: level.localizedTitle,
                         subtitle: level.localizedSubtitle
                     )
