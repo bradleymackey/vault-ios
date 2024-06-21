@@ -12,7 +12,11 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     override func setUp() async throws {
         try await super.setUp()
 
-        sut = try PersistedLocalVaultStore(configuration: .inMemory)
+        let container = try ModelContainer(
+            for: PersistedVaultItem.self,
+            configurations: .init(isStoredInMemoryOnly: true)
+        )
+        sut = PersistedLocalVaultStore(modelContainer: container)
     }
 
     func test_retrieve_deliversEmptyOnEmptyStore() async throws {
@@ -113,7 +117,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         }
 
         // Introduce a corruption error on the first item
-        try corruptItemAlgorithm(id: ids[0])
+        try await sut.corruptItemAlgorithm(id: ids[0])
 
         let result = try await sut.retrieve()
         XCTAssertEqual(result.items.map(\.id), Array(ids[1...]))
@@ -130,7 +134,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         for code in codes {
             let id = try await sut.insert(item: code)
             // Corrupt all items
-            try corruptItemAlgorithm(id: id)
+            try await sut.corruptItemAlgorithm(id: id)
         }
 
         let result = try await sut.retrieve()
@@ -477,7 +481,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         }
 
         // Introduce a corruption error on the first item
-        try corruptItemAlgorithm(id: ids[0])
+        try await sut.corruptItemAlgorithm(id: ids[0])
 
         let result = try await sut.retrieve(matching: "a")
         XCTAssertEqual(result.items.map(\.id), [ids[1], ids[3]])
@@ -495,7 +499,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         for code in codes {
             let id = try await sut.insert(item: code)
             // Corrupt all items
-            try corruptItemAlgorithm(id: id)
+            try await sut.corruptItemAlgorithm(id: id)
         }
 
         let result = try await sut.retrieve(matching: "a")
@@ -640,20 +644,18 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension PersistedLocalVaultStoreTests {
-    @MainActor
-    private func corruptItemAlgorithm(
-        id: UUID
-    ) throws {
-        let context = sut.makeContext()
+extension PersistedLocalVaultStore {
+    fileprivate func corruptItemAlgorithm(id: UUID) async throws {
         var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
             item.id == id
         })
         descriptor.fetchLimit = 1
-        let existing = try XCTUnwrap(context.fetch(descriptor).first)
+        guard let existing = try? modelContext.fetch(descriptor).first else {
+            return
+        }
         existing.otpDetails?.algorithm = "INVALID"
 
-        context.insert(existing)
-        try context.save()
+        modelContext.insert(existing)
+        try modelContext.save()
     }
 }

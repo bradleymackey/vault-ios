@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 public final class PersistedLocalVaultStoreFactory {
     private let fileManager: FileManager
@@ -10,7 +11,12 @@ public final class PersistedLocalVaultStoreFactory {
     public func makeVaultStore() -> PersistedLocalVaultStore {
         do {
             let storeURL = try getDocumentDirectory().appending(path: "PersistedLocalVaultStore-Main")
-            return try PersistedLocalVaultStore(configuration: .storedOnDisk(storeURL))
+            let container = try ModelContainer(
+                for: PersistedVaultItem.self,
+                migrationPlan: nil,
+                configurations: .init(url: storeURL)
+            )
+            return PersistedLocalVaultStore(modelContainer: container)
         } catch {
             fatalError("Unable to connect to PersistedLocalVaultStore: \(error)")
         }

@@ -59,7 +59,6 @@ extension PersistedVaultItemEncoder {
         newData: StoredVaultItem.Write
     ) -> PersistedVaultItem {
         let now = currentDate()
-        let existingItem = existingItem
         existingItem.updatedDate = now
         existingItem.userDescription = newData.userDescription
         existingItem.visibility = encodeVisibilityLevel(level: newData.visibility)
