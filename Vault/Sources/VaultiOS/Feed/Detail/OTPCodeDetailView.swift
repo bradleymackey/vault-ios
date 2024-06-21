@@ -248,35 +248,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             }
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                if let createdDateValue = viewModel.createdDateValue {
-                    FooterInfoLabel(
-                        title: viewModel.strings.createdDateTitle,
-                        detail: createdDateValue,
-                        systemImageName: "clock"
-                    )
-                }
-
-                if let updatedDateValue = viewModel.updatedDateValue {
-                    FooterInfoLabel(
-                        title: viewModel.strings.updatedDateTitle,
-                        detail: updatedDateValue,
-                        systemImageName: "clock.arrow.2.circlepath"
-                    )
-                }
-
-                FooterInfoLabel(
-                    title: viewModel.strings.searchableLevelTitle,
-                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
-                    systemImageName: "magnifyingglass"
-                )
-
-                FooterInfoLabel(
-                    title: viewModel.strings.visibilityTitle,
-                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
-                    systemImageName: "eye"
-                )
-
-                ForEach(viewModel.detailMenuItems) { item in
+                if let item = viewModel.detailMenuItems {
                     ForEach(item.entries) { entry in
                         FooterInfoLabel(
                             title: entry.title,

@@ -84,18 +84,17 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         }
     }
 
-    public var detailMenuItems: [DetailMenuItem] {
+    public var detailMenuItems: DetailMenuItem? {
         switch mode {
         case .creating:
-            return []
+            return nil
         case let .editing(code, _):
-            let details = DetailMenuItem(
+            return DetailMenuItem(
                 id: "detail",
                 title: localized(key: "codeDetail.listSection.details.title"),
                 systemIconName: "books.vertical.fill",
-                entries: Self.makeInfoEntries(code)
+                entries: makeInfoEntries(code)
             )
-            return [details]
         }
     }
 
@@ -237,9 +236,33 @@ extension OTPCodeDetailViewModel {
 }
 
 extension OTPCodeDetailViewModel {
-    private static func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
+    private func makeInfoEntries(_ code: OTPAuthCode) -> [DetailEntry] {
         let formatter = OTPCodeDetailFormatter(code: code)
         var entries = [DetailEntry]()
+        if let createdDate = createdDateValue {
+            entries.append(DetailEntry(title: strings.createdDateTitle, detail: createdDate, systemIconName: "clock"))
+        }
+
+        if let updateDate = updatedDateValue {
+            entries.append(DetailEntry(
+                title: strings.updatedDateTitle,
+                detail: updateDate,
+                systemIconName: "clock.arrow.2.circlepath"
+            ))
+        }
+
+        entries.append(DetailEntry(
+            title: strings.searchableLevelTitle,
+            detail: editingModel.detail.searchableLevel.localizedTitle,
+            systemIconName: "magnifyingglass"
+        ))
+
+        entries.append(DetailEntry(
+            title: strings.visibilityTitle,
+            detail: editingModel.detail.visibility.localizedTitle,
+            systemIconName: "eye"
+        ))
+
         entries.append(
             DetailEntry(
                 title: localized(key: "codeDetail.listSection.type.title"),
