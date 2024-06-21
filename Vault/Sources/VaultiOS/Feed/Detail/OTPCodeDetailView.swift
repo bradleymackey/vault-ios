@@ -75,6 +75,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 nameEditingSection
                 descriptionEditingSection
+                codeVisibilityOptionsEditingSection
+                codeSearchableLevelEditingSection
+                if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                    passphraseEntrySection
+                }
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
                 }
@@ -263,7 +268,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     FooterInfoLabel(
                         title: viewModel.strings.createdDateTitle,
                         detail: createdDateValue,
-                        systemImageName: "clock.fill"
+                        systemImageName: "clock"
                     )
                 }
 
@@ -274,9 +279,83 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         systemImageName: "clock.arrow.2.circlepath"
                     )
                 }
+
+                FooterInfoLabel(
+                    title: viewModel.strings.searchableLevelTitle,
+                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
+                    systemImageName: "magnifyingglass"
+                )
+
+                FooterInfoLabel(
+                    title: viewModel.strings.visibilityTitle,
+                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
+                    systemImageName: "eye"
+                )
             }
             .font(.footnote)
             .padding(.top, 8)
+        }
+    }
+
+    private var codeVisibilityOptionsEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.visibility) {
+                ForEach(VaultItemVisibility.allCases) { visibility in
+                    DetailSubtitleView(
+                        title: visibility.localizedTitle,
+                        subtitle: visibility.localizedSubtitle
+                    )
+                    .tag(visibility)
+                }
+            } label: {
+                Text(viewModel.strings.visibilityTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.visibility) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .onlySearch && viewModel.editingModel.detail.searchableLevel == .none {
+                    viewModel.editingModel.detail.searchableLevel = .full
+                }
+            }
+        } header: {
+            Text(viewModel.strings.visibilityTitle)
+        }
+    }
+
+    private var codeSearchableLevelEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
+                ForEach(VaultItemSearchableLevel.allCases) { level in
+                    DetailSubtitleView(
+                        title: level.localizedTitle,
+                        subtitle: level.localizedSubtitle
+                    )
+                    .tag(level)
+                }
+            } label: {
+                Text(viewModel.strings.searchableLevelTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.searchableLevel) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .none && viewModel.editingModel.detail.visibility == .onlySearch {
+                    viewModel.editingModel.detail.visibility = .always
+                }
+            }
+        } header: {
+            Text(viewModel.strings.searchableLevelTitle)
+        }
+    }
+
+    private var passphraseEntrySection: some View {
+        Section {
+            TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+        } header: {
+            Text(viewModel.strings.passphraseTitle)
+        } footer: {
+            Text(viewModel.strings.passphraseSubtitle)
         }
     }
 

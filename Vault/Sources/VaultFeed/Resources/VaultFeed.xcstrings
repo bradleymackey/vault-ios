@@ -652,6 +652,94 @@
         }
       }
     },
+    "itemDetail.passphrase.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Passphrase..."
+          }
+        }
+      }
+    },
+    "itemDetail.passphrase.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You must search exactly for this passphrase to find this item. Don't forget it!"
+          }
+        }
+      }
+    },
+    "itemDetail.passphrase.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passphrase"
+          }
+        }
+      }
+    },
+    "itemDetail.searchableLevel.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The amount of information for this item available via search"
+          }
+        }
+      }
+    },
+    "itemDetail.searchableLevel.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Level"
+          }
+        }
+      }
+    },
+    "itemDetail.visibility.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The places this item will appear."
+          }
+        }
+      }
+    },
+    "itemDetail.visibility.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visibility"
+          }
+        }
+      }
+    },
+    "itemDetail.visibilitySection.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visibility"
+          }
+        }
+      }
+    },
     "noteDetail.action.delete.confirm.subtitle" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -817,61 +905,6 @@
         }
       }
     },
-    "noteDetail.passphrase.prompt" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter Passphrase..."
-          }
-        }
-      }
-    },
-    "noteDetail.passphrase.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "You must search exactly for this passphrase to find this item. Don't forget it!"
-          }
-        }
-      }
-    },
-    "noteDetail.passphrase.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passphrase"
-          }
-        }
-      }
-    },
-    "noteDetail.searchableLevel.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The amount of information for this item available via search"
-          }
-        }
-      }
-    },
-    "noteDetail.searchableLevel.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search Level"
-          }
-        }
-      }
-    },
     "noteDetail.title" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -879,39 +912,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Note"
-          }
-        }
-      }
-    },
-    "noteDetail.visibility.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The places this item will appear."
-          }
-        }
-      }
-    },
-    "noteDetail.visibility.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visibility"
-          }
-        }
-      }
-    },
-    "noteDetail.visibilitySection.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Visibility"
           }
         }
       }
