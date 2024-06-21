@@ -196,6 +196,14 @@ extension OTPCodeDetailViewModel {
         public let inputKeyValidTitle = localized(key: "codeDetail.input.key.valid.title")
         public let inputKeyErrorTitle = localized(key: "codeDetail.input.key.error.title")
         public let inputKeyEmptyTitle = localized(key: "codeDetail.input.key.enterText.title")
+        public let visibilityTitle = localized(key: "itemDetail.visibilitySection.title")
+        public let shownInTitle = localized(key: "itemDetail.visibility.title")
+        public let shownInSubtitle = localized(key: "itemDetail.visibility.subtitle")
+        public let searchableLevelTitle = localized(key: "itemDetail.searchableLevel.title")
+        public let searchableLevelSubtitle = localized(key: "noteDetail.searchableLevel.subtitle")
+        public let passphraseTitle = localized(key: "itemDetail.passphrase.title")
+        public let passphrasePrompt = localized(key: "itemDetail.passphrase.prompt")
+        public let passphraseSubtitle = localized(key: "itemDetail.passphrase.subtitle")
 
         public func codeKindTitle(kind: OTPAuthType.Kind) -> String {
             switch kind {

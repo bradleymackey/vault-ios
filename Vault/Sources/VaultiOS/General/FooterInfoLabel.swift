@@ -14,8 +14,9 @@ struct FooterInfoLabel: View {
                 Text(title)
             } icon: {
                 Image(systemName: systemImageName)
-                    .frame(minWidth: 16)
+                    .frame(minWidth: 24)
             }
         }
+        .font(.subheadline)
     }
 }

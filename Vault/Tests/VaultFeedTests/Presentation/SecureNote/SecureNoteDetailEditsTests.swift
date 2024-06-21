@@ -5,19 +5,41 @@ import XCTest
 
 final class SecureNoteDetailEditsTests: XCTestCase {
     func test_isValid_invalidForEmptyTitle() {
-        let sut = SecureNoteDetailEdits(title: "")
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = ""
 
         XCTAssertFalse(sut.isValid)
     }
 
     func test_isValid_invalidForBlankTitle() {
-        let sut = SecureNoteDetailEdits(title: "  ")
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " "
 
         XCTAssertFalse(sut.isValid)
     }
 
     func test_isValid_validForTitleWithContents() {
-        let sut = SecureNoteDetailEdits(title: " A ")
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.contents = "Nice"
+
+        XCTAssertTrue(sut.isValid)
+    }
+
+    func test_isValid_invalidForOnlySearchNotSearching() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.visibility = .onlySearch
+        sut.searchableLevel = .none
+
+        XCTAssertFalse(sut.isValid)
+    }
+
+    func test_isValid_validForSearchCombinations() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.visibility = .onlySearch
+        sut.searchableLevel = .full
 
         XCTAssertTrue(sut.isValid)
     }

@@ -50,11 +50,20 @@ struct SecureNoteDetailView: View {
                 noteTitleEditingSection
                 noteDescriptionEditingSection
                 noteContentsEditingSection
+                noteVisibilityOptionsEditingSection
+                noteSearchableLevelEditingSection
+                if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                    passphraseEntrySection
+                }
+                if viewModel.shouldShowDeleteButton {
+                    deleteSection
+                }
             } else {
                 noteMetadataContentSection
                 noteContentsSection
             }
         }
+        .animation(.easeOut, value: viewModel.editingModel.detail.searchableLevel)
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
@@ -144,12 +153,12 @@ struct SecureNoteDetailView: View {
             )
             .frame(minHeight: 250, alignment: .top)
         } footer: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 if let createdDate = viewModel.createdDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.createdDateTitle,
                         detail: createdDate,
-                        systemImageName: "clock.fill"
+                        systemImageName: "clock"
                     )
 
                     if let updatedDate = viewModel.updatedDateValue {
@@ -160,6 +169,18 @@ struct SecureNoteDetailView: View {
                         )
                     }
                 }
+
+                FooterInfoLabel(
+                    title: viewModel.strings.searchableLevelTitle,
+                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
+                    systemImageName: "magnifyingglass"
+                )
+
+                FooterInfoLabel(
+                    title: viewModel.strings.noteVisibilityTitle,
+                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
+                    systemImageName: "eye"
+                )
             }
             .font(.footnote)
             .padding(.top, 8)
@@ -175,22 +196,82 @@ struct SecureNoteDetailView: View {
                 .frame(minHeight: 250)
         } header: {
             Text(viewModel.strings.noteContentsTitle)
-        } footer: {
-            if viewModel.shouldShowDeleteButton {
-                deleteButton
-                    .modifier(HorizontallyCenter())
-                    .padding()
-                    .padding(.vertical, 16)
-                    .transition(.opacity)
-            }
         }
     }
 
-    private var deleteButton: some View {
-        Button {
-            isShowingDeleteConfirmation = true
-        } label: {
-            ItemDeleteLabel()
+    private var noteVisibilityOptionsEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.visibility) {
+                ForEach(VaultItemVisibility.allCases) { visibility in
+                    DetailSubtitleView(
+                        title: visibility.localizedTitle,
+                        subtitle: visibility.localizedSubtitle
+                    )
+                    .tag(visibility)
+                }
+            } label: {
+                Text(viewModel.strings.noteVisibilityTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.visibility) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .onlySearch && viewModel.editingModel.detail.searchableLevel == .none {
+                    viewModel.editingModel.detail.searchableLevel = .full
+                }
+            }
+        } header: {
+            Text(viewModel.strings.noteVisibilityTitle)
+        }
+    }
+
+    private var noteSearchableLevelEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
+                ForEach(VaultItemSearchableLevel.allCases) { level in
+                    DetailSubtitleView(
+                        title: level.localizedTitle,
+                        subtitle: level.localizedSubtitle
+                    )
+                    .tag(level)
+                }
+            } label: {
+                Text(viewModel.strings.searchableLevelTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.searchableLevel) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .none && viewModel.editingModel.detail.visibility == .onlySearch {
+                    viewModel.editingModel.detail.visibility = .always
+                }
+            }
+        } header: {
+            Text(viewModel.strings.searchableLevelTitle)
+        }
+    }
+
+    private var passphraseEntrySection: some View {
+        Section {
+            TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+        } header: {
+            Text(viewModel.strings.passphraseTitle)
+        } footer: {
+            Text(viewModel.strings.passphraseSubtitle)
+        }
+    }
+
+    private var deleteSection: some View {
+        Section {
+            Button {
+                isShowingDeleteConfirmation = true
+            } label: {
+                FormRow(image: .init(systemName: "trash"), color: .red) {
+                    Text(localized(key: "action.delete.title"))
+                        .fontWeight(.medium)
+                }
+            }
+            .foregroundStyle(.red)
         }
     }
 }

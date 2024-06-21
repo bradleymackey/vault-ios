@@ -652,6 +652,94 @@
         }
       }
     },
+    "itemDetail.passphrase.prompt" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter Passphrase..."
+          }
+        }
+      }
+    },
+    "itemDetail.passphrase.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You must search exactly for this passphrase to find this item. Don't forget it!"
+          }
+        }
+      }
+    },
+    "itemDetail.passphrase.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passphrase"
+          }
+        }
+      }
+    },
+    "itemDetail.searchableLevel.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The amount of information for this item available via search"
+          }
+        }
+      }
+    },
+    "itemDetail.searchableLevel.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Search Level"
+          }
+        }
+      }
+    },
+    "itemDetail.visibility.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "The places this item will appear."
+          }
+        }
+      }
+    },
+    "itemDetail.visibility.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visibility"
+          }
+        }
+      }
+    },
+    "itemDetail.visibilitySection.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Visibility"
+          }
+        }
+      }
+    },
     "noteDetail.action.delete.confirm.subtitle" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -868,6 +956,138 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Enter some text!"
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.full.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All available content in this item is searchable."
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.full.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Full"
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.none.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item is not searchable. It won't appear in searches and can only be found on the feed."
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.none.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.onlyPassphrase.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item can only be found using the passphrase assigned to this item. It's useful for hiding items with plausible deniability."
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.onlyPassphrase.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passphrase"
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.onlyTitle.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only the title and description of this item is searchable."
+          }
+        }
+      }
+    },
+    "vaultItemSearchableLevel.onlyTitle.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only Title"
+          }
+        }
+      }
+    },
+    "vaultItemVisibility.always.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item is always visible in the feed and during searches."
+          }
+        }
+      }
+    },
+    "vaultItemVisibility.always.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Always"
+          }
+        }
+      }
+    },
+    "vaultItemVisibility.onlySearch.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item is only visible during searches. It will not be visible in the feed."
+          }
+        }
+      }
+    },
+    "vaultItemVisibility.onlySearch.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only Search"
           }
         }
       }

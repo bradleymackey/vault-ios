@@ -75,11 +75,18 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 nameEditingSection
                 descriptionEditingSection
+                codeVisibilityOptionsEditingSection
+                codeSearchableLevelEditingSection
+                if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                    passphraseEntrySection
+                }
+                if viewModel.shouldShowDeleteButton {
+                    deleteSection
+                }
             } else {
                 if case let .editing(code, metadata) = viewModel.mode {
                     codeInformationSection(code: code, metadata: metadata)
                 }
-                codeDetailsSection
             }
         }
         .onChange(of: selectedColor.hashValue) { _, _ in
@@ -141,13 +148,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .keyboardType(.default)
         } header: {
             Text(viewModel.strings.descriptionTitle)
-        } footer: {
-            if viewModel.shouldShowDeleteButton {
-                deleteButton
-                    .modifier(HorizontallyCenter())
-                    .padding()
-                    .padding(.vertical, 16)
-            }
         }
     }
 
@@ -214,22 +214,22 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     private func codeInformationSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
         Section {
-            VStack(alignment: .center) {
-                copyableViewGenerator().makeVaultPreviewView(
-                    item: .otpCode(code),
-                    metadata: metadata,
-                    behaviour: .normal
-                )
-                .frame(maxWidth: 220)
-                .padding(.horizontal, 8) // some additional padding because it's bigger
-                .modifier(OTPCardViewModifier(context: .secondary))
-                .clipShape(RoundedRectangle(cornerRadius: 16)) // make it a bit more rounded because it's bigger
-                .shadow(color: .black.opacity(0.3), radius: 20)
-                .padding()
-                .modifier(HorizontallyCenter())
-            }
-            .padding(.vertical, 32)
-            .listRowSeparator(.hidden)
+            copyableViewGenerator().makeVaultPreviewView(
+                item: .otpCode(code),
+                metadata: metadata,
+                behaviour: .normal
+            )
+            .frame(maxWidth: 220)
+            .padding(4) // some additional padding because it's bigger
+            .padding(.horizontal, 4)
+            .modifier(OTPCardViewModifier(context: .secondary))
+            .overlay(
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(.secondary, lineWidth: 4)
+            )
+            .padding()
+            .modifier(HorizontallyCenter())
+            .listRowBackground(EmptyView())
 
             if !viewModel.editingModel.detail.description.isBlank {
                 VStack(alignment: .leading, spacing: 4) {
@@ -246,28 +246,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity)
             }
-        }
-    }
-
-    private var codeDetailsSection: some View {
-        Section {
-            ForEach(viewModel.detailMenuItems) { item in
-                ForEach(item.entries) { entry in
-                    Label {
-                        LabeledContent(entry.title, value: entry.detail)
-                    } icon: {
-                        RowIcon(icon: Image(systemName: entry.systemIconName), color: .clear)
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
         } footer: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 if let createdDateValue = viewModel.createdDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.createdDateTitle,
                         detail: createdDateValue,
-                        systemImageName: "clock.fill"
+                        systemImageName: "clock"
                     )
                 }
 
@@ -278,17 +263,107 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         systemImageName: "clock.arrow.2.circlepath"
                     )
                 }
+
+                FooterInfoLabel(
+                    title: viewModel.strings.searchableLevelTitle,
+                    detail: viewModel.editingModel.detail.searchableLevel.localizedTitle,
+                    systemImageName: "magnifyingglass"
+                )
+
+                FooterInfoLabel(
+                    title: viewModel.strings.visibilityTitle,
+                    detail: viewModel.editingModel.detail.visibility.localizedTitle,
+                    systemImageName: "eye"
+                )
+
+                ForEach(viewModel.detailMenuItems) { item in
+                    ForEach(item.entries) { entry in
+                        FooterInfoLabel(
+                            title: entry.title,
+                            detail: entry.detail,
+                            systemImageName: entry.systemIconName
+                        )
+                    }
+                }
             }
             .font(.footnote)
             .padding(.top, 8)
         }
     }
 
-    private var deleteButton: some View {
-        Button {
-            isShowingDeleteConfirmation = true
-        } label: {
-            ItemDeleteLabel()
+    private var codeVisibilityOptionsEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.visibility) {
+                ForEach(VaultItemVisibility.allCases) { visibility in
+                    DetailSubtitleView(
+                        title: visibility.localizedTitle,
+                        subtitle: visibility.localizedSubtitle
+                    )
+                    .tag(visibility)
+                }
+            } label: {
+                Text(viewModel.strings.visibilityTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.visibility) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .onlySearch && viewModel.editingModel.detail.searchableLevel == .none {
+                    viewModel.editingModel.detail.searchableLevel = .full
+                }
+            }
+        } header: {
+            Text(viewModel.strings.visibilityTitle)
+        }
+    }
+
+    private var codeSearchableLevelEditingSection: some View {
+        Section {
+            Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
+                ForEach(VaultItemSearchableLevel.allCases) { level in
+                    DetailSubtitleView(
+                        title: level.localizedTitle,
+                        subtitle: level.localizedSubtitle
+                    )
+                    .tag(level)
+                }
+            } label: {
+                Text(viewModel.strings.searchableLevelTitle)
+            }
+            .pickerStyle(.inline)
+            .labelsHidden()
+            .onChange(of: viewModel.editingModel.detail.searchableLevel) { oldValue, newValue in
+                guard oldValue != newValue else { return }
+                if newValue == .none && viewModel.editingModel.detail.visibility == .onlySearch {
+                    viewModel.editingModel.detail.visibility = .always
+                }
+            }
+        } header: {
+            Text(viewModel.strings.searchableLevelTitle)
+        }
+    }
+
+    private var passphraseEntrySection: some View {
+        Section {
+            TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+        } header: {
+            Text(viewModel.strings.passphraseTitle)
+        } footer: {
+            Text(viewModel.strings.passphraseSubtitle)
+        }
+    }
+
+    private var deleteSection: some View {
+        Section {
+            Button {
+                isShowingDeleteConfirmation = true
+            } label: {
+                FormRow(image: .init(systemName: "trash"), color: .red) {
+                    Text(localized(key: "action.delete.title"))
+                        .fontWeight(.medium)
+                }
+            }
+            .foregroundStyle(.red)
         }
     }
 

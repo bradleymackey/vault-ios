@@ -25,13 +25,13 @@ public struct SecureNoteDetailEdits: EditableState {
     public var color: VaultItemColor?
 
     public init(
-        title: String = "",
-        description: String = "",
-        contents: String = "",
-        color: VaultItemColor? = nil,
-        visibility: VaultItemVisibility = .always,
-        searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String = ""
+        title: String,
+        description: String,
+        contents: String,
+        color: VaultItemColor?,
+        visibility: VaultItemVisibility,
+        searchableLevel: VaultItemSearchableLevel,
+        searchPassphrase: String
     ) {
         self.description = description
         self.title = title
@@ -43,6 +43,32 @@ public struct SecureNoteDetailEdits: EditableState {
     }
 
     public var isValid: Bool {
-        $title.isValid && $description.isValid && $contents.isValid && $searchPassphrase.isValid
+        $title.isValid && $description.isValid && $contents.isValid && $searchPassphrase
+            .isValid && isVisibilitySearchValid
+    }
+
+    private var isVisibilitySearchValid: Bool {
+        switch (visibility, searchableLevel) {
+        case (.onlySearch, .none): false
+        default: true
+        }
+    }
+}
+
+// MARK: - Helpers
+
+extension SecureNoteDetailEdits {
+    /// Create an `SecureNoteDetailEdits` in a blank state with initial input values, for creation.
+    /// All initial values are sensible defaults.
+    public static func new() -> SecureNoteDetailEdits {
+        .init(
+            title: "",
+            description: "",
+            contents: "",
+            color: nil,
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: ""
+        )
     }
 }

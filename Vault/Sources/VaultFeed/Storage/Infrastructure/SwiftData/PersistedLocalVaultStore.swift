@@ -2,43 +2,12 @@ import Foundation
 import SwiftData
 
 /// Uses SwiftData with a CoreData backing layer to persist content.
+///
+/// Conforms to SwiftData's `ModelActor` to ensure all database operations are thread-safe.
+@ModelActor
 public final actor PersistedLocalVaultStore {
-    private let container: ModelContainer
-    private let context: ModelContext
-
     public enum Error: Swift.Error {
         case modelNotFound
-    }
-
-    public enum Configuration: Sendable {
-        case inMemory
-        case storedOnDisk(URL)
-
-        fileprivate var modelConfiguration: ModelConfiguration {
-            switch self {
-            case .inMemory: .init(isStoredInMemoryOnly: true)
-            case let .storedOnDisk(url): .init(url: url)
-            }
-        }
-    }
-
-    public init(configuration: Configuration) throws {
-        container = try .init(
-            for: PersistedVaultItem.self,
-            migrationPlan: nil,
-            configurations: configuration.modelConfiguration
-        )
-        context = .init(container)
-    }
-
-    @MainActor
-    public var mainContext: ModelContext {
-        container.mainContext
-    }
-
-    @MainActor
-    public func makeContext() -> ModelContext {
-        .init(container)
     }
 }
 
@@ -54,7 +23,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             predicate: predicate,
             sortBy: [SortDescriptor(\.updatedDate)]
         )
-        let results = try context.fetch(descriptor)
+        let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
     }
 
@@ -120,7 +89,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
                 codeIssuerPredicate.evaluate($0)
         }
         let descriptor = FetchDescriptor(predicate: predicate, sortBy: [SortDescriptor(\.updatedDate)])
-        let results = try context.fetch(descriptor)
+        let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
     }
 }
@@ -148,13 +117,13 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
     @discardableResult
     public func insert(item: StoredVaultItem.Write) async throws -> UUID {
         do {
-            let encoder = PersistedVaultItemEncoder(context: context)
+            let encoder = PersistedVaultItemEncoder(context: modelContext)
             let encoded = encoder.encode(item: item)
 
-            try context.save()
+            try modelContext.save()
             return encoded.id
         } catch {
-            context.rollback()
+            modelContext.rollback()
             throw error
         }
     }
@@ -165,27 +134,27 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
                 item.id == id
             })
             descriptor.fetchLimit = 1
-            guard let existing = try context.fetch(descriptor).first else {
+            guard let existing = try modelContext.fetch(descriptor).first else {
                 throw Error.modelNotFound
             }
-            let encoder = PersistedVaultItemEncoder(context: context)
+            let encoder = PersistedVaultItemEncoder(context: modelContext)
             _ = encoder.encode(item: item, existing: existing)
 
-            try context.save()
+            try modelContext.save()
         } catch {
-            context.rollback()
+            modelContext.rollback()
             throw error
         }
     }
 
     public func delete(id: UUID) async throws {
         do {
-            try context.delete(model: PersistedVaultItem.self, where: #Predicate {
+            try modelContext.delete(model: PersistedVaultItem.self, where: #Predicate {
                 $0.id == id
             })
-            try context.save()
+            try modelContext.save()
         } catch {
-            context.rollback()
+            modelContext.rollback()
             throw error
         }
     }

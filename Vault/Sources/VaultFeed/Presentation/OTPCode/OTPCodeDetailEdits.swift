@@ -8,22 +8,34 @@ import VaultCore
 /// From this model, they are merged with an existing model or written to a new model, as needed.
 public struct OTPCodeDetailEdits: EditableState, Sendable {
     public var codeType: OTPAuthType.Kind
+
     /// Only used for TOTP type codes, ignored otherwise
     public var totpPeriodLength: UInt64
+
     /// Only used for HOTP type codes, ignored otherwise
     public var hotpCounterValue: UInt64
+
     @FieldValidated(validationLogic: .otpSecretBase32)
     public var secretBase32String: String = ""
+
     public var algorithm: OTPAuthAlgorithm
+
     public var numberOfDigits: UInt16
+
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var issuerTitle: String = ""
+
     public var accountNameTitle: String
+
     public var description: String
+
     public var visibility: VaultItemVisibility
+
     public var searchableLevel: VaultItemSearchableLevel
+
     @FieldValidated(validationLogic: .alwaysValid)
     public var searchPassphrase: String = ""
+
     public var color: VaultItemColor?
 
     public init(
@@ -106,7 +118,14 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     }
 
     public var isValid: Bool {
-        $secretBase32String.isValid && $issuerTitle.isValid
+        $secretBase32String.isValid && $issuerTitle.isValid && isVisibilitySearchValid
+    }
+
+    private var isVisibilitySearchValid: Bool {
+        switch (visibility, searchableLevel) {
+        case (.onlySearch, .none): false
+        default: true
+        }
     }
 }
 

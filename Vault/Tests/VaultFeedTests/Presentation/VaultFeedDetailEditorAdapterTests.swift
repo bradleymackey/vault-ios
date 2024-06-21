@@ -147,19 +147,25 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
     func test_createNote_createsNoteInFeed() async throws {
         let feed = MockVaultFeed()
         let sut = makeSUT(feed: feed)
-        let initialEdits = SecureNoteDetailEdits(
-            title: "new title",
-            description: "new description",
-            contents: "new contents"
-        )
+        var initialEdits = SecureNoteDetailEdits.new()
+        initialEdits.title = "new title"
+        initialEdits.description = "new description"
+        initialEdits.contents = "new contents"
+        initialEdits.searchableLevel = .onlyPassphrase
+        initialEdits.visibility = .onlySearch
+        initialEdits.searchPassphrase = "pass"
 
         let exp = expectation(description: "Wait for creation")
         feed.createCalled = { data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "new description")
+            XCTAssertEqual(data.visibility, .onlySearch)
+            XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
+            XCTAssertEqual(data.searchPassphase, "pass")
             switch data.item {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "new title")
+                XCTAssertEqual(note.contents, "new contents")
                 XCTAssertEqual(note.contents, "new contents")
             default:
                 XCTFail("invalid kind")
@@ -176,7 +182,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.createNote(initialEdits: .init()))
+        await XCTAssertThrowsError(try await sut.createNote(initialEdits: .new()))
     }
 
     @MainActor
@@ -190,12 +196,21 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         var item = uniqueVaultItem(item: .secureNote(note))
         item.metadata.userDescription = "old description"
 
-        let edits = SecureNoteDetailEdits(title: "new title", description: "new description", contents: "new contents")
+        var edits = SecureNoteDetailEdits.new()
+        edits.title = "new title"
+        edits.description = "new description"
+        edits.contents = "new contents"
+        edits.visibility = .always
+        edits.searchableLevel = .onlyTitle
+        edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
         feed.updateCalled = { _, data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "new description")
+            XCTAssertEqual(data.visibility, .always)
+            XCTAssertEqual(data.searchableLevel, .onlyTitle)
+            XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "new title")
@@ -215,7 +230,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anyStoredNote(), edits: .init()))
+        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anyStoredNote(), edits: .new()))
     }
 
     @MainActor

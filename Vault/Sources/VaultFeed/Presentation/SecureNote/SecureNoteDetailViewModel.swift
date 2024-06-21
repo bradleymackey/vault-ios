@@ -24,12 +24,16 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         self.editor = editor
         editingModel = switch mode {
         case .creating:
-            .init(detail: .init())
+            .init(detail: .new())
         case let .editing(note, metadata):
             .init(detail: .init(
                 title: note.title,
                 description: metadata.userDescription,
-                contents: note.contents
+                contents: note.contents,
+                color: metadata.color,
+                visibility: metadata.visibility,
+                searchableLevel: metadata.searchableLevel,
+                searchPassphrase: metadata.searchPassphrase ?? ""
             ))
         }
     }
@@ -143,6 +147,14 @@ extension SecureNoteDetailViewModel {
         public let noteDescription = localized(key: "noteDetail.field.noteDescription.title")
         public let noteContentsTitle = localized(key: "noteDetail.field.noteContents.title")
         public let noteEmptyTitleTitle = localized(key: "noteDetail.field.noteTitleEmpty.title")
+        public let noteVisibilityTitle = localized(key: "itemDetail.visibilitySection.title")
+        public let noteShownInTitle = localized(key: "itemDetail.visibility.title")
+        public let noteShownInSubtitle = localized(key: "itemDetail.visibility.subtitle")
+        public let searchableLevelTitle = localized(key: "itemDetail.searchableLevel.title")
+        public let searchableLevelSubtitle = localized(key: "noteDetail.searchableLevel.subtitle")
+        public let passphraseTitle = localized(key: "itemDetail.passphrase.title")
+        public let passphrasePrompt = localized(key: "itemDetail.passphrase.prompt")
+        public let passphraseSubtitle = localized(key: "itemDetail.passphrase.subtitle")
     }
 
     public var strings: Strings {
