@@ -225,7 +225,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             .modifier(OTPCardViewModifier(context: .secondary))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
-                    .stroke(.blue, lineWidth: 4)
+                    .stroke(.secondary, lineWidth: 4)
             )
             .padding()
             .modifier(HorizontallyCenter())
