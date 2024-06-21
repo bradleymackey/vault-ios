@@ -180,6 +180,7 @@ struct SecureNoteDetailView: View {
             Picker(selection: $viewModel.editingModel.detail.visibility) {
                 ForEach(VaultItemVisibility.allCases) { visibility in
                     DetailSubtitleView(
+                        systemIcon: visibility.systemIconName,
                         title: visibility.localizedTitle,
                         subtitle: visibility.localizedSubtitle
                     )
@@ -206,6 +207,7 @@ struct SecureNoteDetailView: View {
             Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
                 ForEach(VaultItemSearchableLevel.allCases) { level in
                     DetailSubtitleView(
+                        systemIcon: level.systemIconName,
                         title: level.localizedTitle,
                         subtitle: level.localizedSubtitle
                     )

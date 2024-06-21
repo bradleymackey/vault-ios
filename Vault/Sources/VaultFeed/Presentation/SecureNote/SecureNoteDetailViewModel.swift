@@ -196,13 +196,13 @@ extension SecureNoteDetailViewModel {
         items.append(.init(
             title: strings.searchableLevelTitle,
             detail: editingModel.detail.searchableLevel.localizedTitle,
-            systemIconName: "magnifyingglass"
+            systemIconName: editingModel.detail.searchableLevel.systemIconName
         ))
 
         items.append(.init(
             title: strings.noteVisibilityTitle,
             detail: editingModel.detail.visibility.localizedTitle,
-            systemIconName: "eye"
+            systemIconName: editingModel.detail.visibility.systemIconName
         ))
         return items
     }

@@ -13,6 +13,15 @@ public enum VaultItemSearchableLevel: Equatable, Hashable, CaseIterable, Identif
 }
 
 extension VaultItemSearchableLevel {
+    public var systemIconName: String {
+        switch self {
+        case .none: "dial.low"
+        case .onlyTitle: "dial.medium.fill"
+        case .full: "dial.high.fill"
+        case .onlyPassphrase: "lock.fill"
+        }
+    }
+
     public var localizedTitle: String {
         switch self {
         case .none: localized(key: "vaultItemSearchableLevel.none.title")

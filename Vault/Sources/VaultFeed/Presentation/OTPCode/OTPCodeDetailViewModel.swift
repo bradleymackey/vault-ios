@@ -101,13 +101,13 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         entries.append(DetailEntry(
             title: strings.searchableLevelTitle,
             detail: editingModel.detail.searchableLevel.localizedTitle,
-            systemIconName: "magnifyingglass"
+            systemIconName: editingModel.detail.searchableLevel.systemIconName
         ))
 
         entries.append(DetailEntry(
             title: strings.visibilityTitle,
             detail: editingModel.detail.visibility.localizedTitle,
-            systemIconName: "eye"
+            systemIconName: editingModel.detail.visibility.systemIconName
         ))
 
         switch mode {
