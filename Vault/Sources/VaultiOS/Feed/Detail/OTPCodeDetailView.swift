@@ -87,7 +87,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 if case let .editing(code, metadata) = viewModel.mode {
                     codeInformationSection(code: code, metadata: metadata)
                 }
-                codeDetailsSection
             }
         }
         .onChange(of: selectedColor.hashValue) { _, _ in
@@ -247,23 +246,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity)
             }
-        }
-    }
-
-    private var codeDetailsSection: some View {
-        Section {
-            ForEach(viewModel.detailMenuItems) { item in
-                ForEach(item.entries) { entry in
-                    Label {
-                        LabeledContent(entry.title, value: entry.detail)
-                    } icon: {
-                        RowIcon(icon: Image(systemName: entry.systemIconName), color: .clear)
-                            .foregroundColor(.primary)
-                    }
-                }
-            }
         } footer: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 if let createdDateValue = viewModel.createdDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.createdDateTitle,
@@ -291,6 +275,16 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     detail: viewModel.editingModel.detail.visibility.localizedTitle,
                     systemImageName: "eye"
                 )
+
+                ForEach(viewModel.detailMenuItems) { item in
+                    ForEach(item.entries) { entry in
+                        FooterInfoLabel(
+                            title: entry.title,
+                            detail: entry.detail,
+                            systemImageName: entry.systemIconName
+                        )
+                    }
+                }
             }
             .font(.footnote)
             .padding(.top, 8)

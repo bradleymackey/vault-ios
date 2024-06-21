@@ -153,7 +153,7 @@ struct SecureNoteDetailView: View {
             )
             .frame(minHeight: 250, alignment: .top)
         } footer: {
-            VStack(alignment: .leading, spacing: 2) {
+            VStack(alignment: .leading, spacing: 4) {
                 if let createdDate = viewModel.createdDateValue {
                     FooterInfoLabel(
                         title: viewModel.strings.createdDateTitle,

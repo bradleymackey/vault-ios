@@ -17,5 +17,6 @@ struct FooterInfoLabel: View {
                     .frame(minWidth: 24)
             }
         }
+        .font(.subheadline)
     }
 }
