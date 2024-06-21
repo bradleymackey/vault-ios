@@ -230,34 +230,30 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             .padding()
             .modifier(HorizontallyCenter())
             .listRowBackground(EmptyView())
-
-            if !viewModel.editingModel.detail.description.isBlank {
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(viewModel.strings.descriptionTitle)
-                        .foregroundStyle(.primary)
-
-                    Text(viewModel.editingModel.detail.description)
-                        .foregroundStyle(.secondary)
-                        .textSelection(.enabled)
-
-                    HStack { Spacer() }
-                }
-                .font(.callout)
-                .multilineTextAlignment(.leading)
-                .frame(maxWidth: .infinity)
-            }
         } footer: {
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(viewModel.detailMenuItems) { entry in
-                    FooterInfoLabel(
-                        title: entry.title,
-                        detail: entry.detail,
-                        systemImageName: entry.systemIconName
-                    )
+            VStack(alignment: .center, spacing: 24) {
+                if !viewModel.editingModel.detail.description.isBlank {
+                    Text(viewModel.editingModel.detail.description)
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .font(.callout)
+                        .multilineTextAlignment(.leading)
+
+                    Divider()
                 }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(viewModel.detailMenuItems) { entry in
+                        FooterInfoLabel(
+                            title: entry.title,
+                            detail: entry.detail,
+                            systemImageName: entry.systemIconName
+                        )
+                    }
+                }
+                .font(.footnote)
             }
-            .font(.footnote)
-            .padding(.top, 8)
+            .padding(.top, 16)
         }
     }
 
