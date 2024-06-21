@@ -190,6 +190,15 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertFalse(sut.isValid)
     }
 
+    func test_isValid_badSearchCombination() throws {
+        var sut = OTPCodeDetailEdits.new()
+        // Invalid combination
+        sut.visibility = .onlySearch
+        sut.searchableLevel = .none
+
+        XCTAssertFalse(sut.isValid)
+    }
+
     func test_asOTPAuthCode_createsTOTPCode() throws {
         let code = anyTOTPAuthCode()
         let sut = OTPCodeDetailEdits(
