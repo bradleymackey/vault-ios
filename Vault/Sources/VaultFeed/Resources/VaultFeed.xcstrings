@@ -311,7 +311,7 @@
       }
     },
     "codeDetail.listSection.details.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {

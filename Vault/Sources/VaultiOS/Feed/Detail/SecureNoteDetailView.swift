@@ -153,7 +153,7 @@ struct SecureNoteDetailView: View {
             )
             .frame(minHeight: 250, alignment: .top)
         } footer: {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach(viewModel.detailEntries) { item in
                     FooterInfoLabel(title: item.title, detail: item.detail, systemImageName: item.systemIconName)
                 }

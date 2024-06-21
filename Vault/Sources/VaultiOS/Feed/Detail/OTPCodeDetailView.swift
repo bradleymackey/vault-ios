@@ -247,7 +247,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .frame(maxWidth: .infinity)
             }
         } footer: {
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 8) {
                 ForEach(viewModel.detailMenuItems) { entry in
                     FooterInfoLabel(
                         title: entry.title,
