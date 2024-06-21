@@ -248,14 +248,12 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             }
         } footer: {
             VStack(alignment: .leading, spacing: 4) {
-                if let item = viewModel.detailMenuItems {
-                    ForEach(item.entries) { entry in
-                        FooterInfoLabel(
-                            title: entry.title,
-                            detail: entry.detail,
-                            systemImageName: entry.systemIconName
-                        )
-                    }
+                ForEach(viewModel.detailMenuItems) { entry in
+                    FooterInfoLabel(
+                        title: entry.title,
+                        detail: entry.detail,
+                        systemImageName: entry.systemIconName
+                    )
                 }
             }
             .font(.footnote)
