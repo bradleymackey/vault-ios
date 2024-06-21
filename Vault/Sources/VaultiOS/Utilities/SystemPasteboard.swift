@@ -3,6 +3,7 @@ import UIKit
 import VaultCore
 import VaultSettings
 
+/// @mockable
 public protocol SystemPasteboard {
     /// Copy the given string to the pasteboard.
     ///
