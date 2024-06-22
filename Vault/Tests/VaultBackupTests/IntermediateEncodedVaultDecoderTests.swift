@@ -28,6 +28,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             version: "1.0.0",
             created: Date(timeIntervalSince1970: 1_700_575_468),
             userDescription: "my description",
+            tags: [],
             items: [],
             obfuscationPadding: Data()
         )
@@ -114,12 +115,14 @@ extension IntermediateEncodedVaultDecoderTests {
     private func anyBackupPayload(
         created: Date = Date(),
         userDescription: String = "my description",
+        tags: [VaultBackupTag] = [],
         items: [VaultBackupItem] = []
     ) -> VaultBackupPayload {
         VaultBackupPayload(
             version: "1.0.0",
             created: created,
             userDescription: userDescription,
+            tags: tags,
             items: items,
             obfuscationPadding: Data()
         )

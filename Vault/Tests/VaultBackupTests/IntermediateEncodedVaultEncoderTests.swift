@@ -174,12 +174,14 @@ extension IntermediateEncodedVaultEncoderTests {
     private func anyBackupPayload(
         created: Date = Date(),
         userDescription: String = "my description",
+        tags: [VaultBackupTag] = [],
         items: [VaultBackupItem] = []
     ) -> VaultBackupPayload {
         VaultBackupPayload(
             version: "1.0.0",
             created: created,
             userDescription: userDescription,
+            tags: tags,
             items: items,
             obfuscationPadding: Data(hex: "abababa")
         )

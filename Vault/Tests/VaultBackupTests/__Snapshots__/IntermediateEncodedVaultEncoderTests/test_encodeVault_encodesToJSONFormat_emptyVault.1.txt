@@ -4,6 +4,9 @@
 
   ],
   "obfuscation_padding" : "q6urCg==",
+  "tags" : [
+
+  ],
   "user_description" : "my description",
   "version" : "1.0.0"
 }

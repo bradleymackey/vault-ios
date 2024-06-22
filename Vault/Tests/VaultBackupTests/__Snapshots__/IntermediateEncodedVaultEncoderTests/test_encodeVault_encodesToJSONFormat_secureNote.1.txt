@@ -28,6 +28,9 @@
     }
   ],
   "obfuscation_padding" : "q6urCg==",
+  "tags" : [
+
+  ],
   "user_description" : "Example vault with a single note",
   "version" : "1.0.0"
 }

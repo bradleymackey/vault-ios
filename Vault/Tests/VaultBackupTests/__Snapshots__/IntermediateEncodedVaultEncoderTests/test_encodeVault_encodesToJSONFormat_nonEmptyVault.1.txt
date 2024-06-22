@@ -72,6 +72,9 @@
     }
   ],
   "obfuscation_padding" : "q6urCg==",
+  "tags" : [
+
+  ],
   "user_description" : "my description again",
   "version" : "1.0.0"
 }

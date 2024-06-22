@@ -14,6 +14,8 @@ public struct VaultBackupPayload: Codable, Equatable {
     public var created: Date
     /// Custom user provided desciption attached to the backup.
     public var userDescription: String
+    /// The tags that are used to group item.
+    public var tags: [VaultBackupTag]
     /// The individual items from the vault.
     public var items: [VaultBackupItem]
     /// Arbitrary padding used to disguise the actual size of the payload.
@@ -22,6 +24,18 @@ public struct VaultBackupPayload: Codable, Equatable {
     /// This should be sufficient to disguise the number of items in the payload, but not
     /// so large to make the payload hard to handle.
     var obfuscationPadding: Data
+}
+
+// MARK: - Tag
+
+public struct VaultBackupTag: Codable, Equatable, Identifiable {
+    public var id: UUID
+    public var title: String
+
+    public init(id: UUID, title: String) {
+        self.id = id
+        self.title = title
+    }
 }
 
 // MARK: - Item

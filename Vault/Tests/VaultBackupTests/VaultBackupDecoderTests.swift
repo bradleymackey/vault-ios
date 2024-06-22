@@ -27,14 +27,10 @@ final class VaultBackupDecoderTests: XCTestCase {
 
         let encryptedVault = EncryptedVault(
             data: Data(hex: """
-            0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace10\
-            3d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13\
-            e7e68c3142c6b487141659225347c2a5b21b7eead891334de0323938e6599\
-            14f478e6f1995637a201b45c1c15ff9cf02d8a3e44ec07029cc2b9e4f45d0\
-            ec6b60b6e9e8ac109a946e9e6391
+            0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b487141659225347c2a5b21a6ce8d9ec7712b30a415bb60da50c238c6f01c0327737284dcb924be4d41ec8e8a72ac270319a6c845940d3ed6937e3bba6f91c86b07e9c4b9ad657b3eb9185f27726b3ee3a606e11b5ae3593
             """),
             authentication: Data(hex: """
-            837b99a7c9d7e7b4cb56fe2f863d6034
+            8a90eab22324cbf12366fda7f7006437
             """),
             encryptionIV: Data(hex: """
             abababababababababababababababababababababababababababababababab
@@ -57,14 +53,10 @@ final class VaultBackupDecoderTests: XCTestCase {
 
         let encryptedVault = EncryptedVault(
             data: Data(hex: """
-            0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace10\
-            3d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13\
-            e7e68c3142c6b487141659225347c2a5b21b7eead891334de0323938e6599\
-            14f478e6f1995637a201b45c1c15ff9cf02d8a3e44ec07029cc2b9e4f45d0\
-            ec6b60b6e9e8ac109a946e9e6391
+            0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b487141659225347c2a5b21a6ce8d9ec7712b30a415bb60da50c238c6f01c0327737284dcb924be4d41ec8e8a72ac270319a6c845940d3ed6937e3bba6f91c86b07e9c4b9ad657b3eb9185f27726b3ee3a606e11b5ae3593
             """),
             authentication: Data(hex: """
-            837b99a7c9d7e7b4cb56fe2f863d6034
+            8a90eab22324cbf12366fda7f7006437
             """),
             encryptionIV: Data(hex: """
             abababababababababababababababababababababababababababababababab
@@ -82,11 +74,7 @@ final class VaultBackupDecoderTests: XCTestCase {
 
         let encryptedVault = EncryptedVault(
             data: Data(hex: """
-            0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace10\
-            3d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13\
-            e7e68c3142c6b487141659225347c2a5b21b7eead891334de0323938e6599\
-            14f478e6f1995637a201b45c1c15ff9cf02d8a3e44ec07029cc2b9e4f45d0\
-            ec6b60b6e9e8ac109a946e9e6391
+            0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b487141659225347c2a5b21a6ce8d9ec7712b30a415bb60da50c238c6f01c0327737284dcb924be4d41ec8e8a72ac270319a6c845940d3ed6937e3bba6f91c86b07e9c4b9ad657b3eb9185f27726b3ee3a606e11b5ae3593
             """),
             // malformed
             authentication: Data(hex: """
