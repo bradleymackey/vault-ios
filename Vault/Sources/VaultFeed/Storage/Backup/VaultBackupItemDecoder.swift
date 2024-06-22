@@ -20,11 +20,18 @@ extension VaultBackupItemDecoder {
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
             userDescription: backupItem.userDescription,
+            tags: decodeTags(ids: backupItem.tags),
             visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
             searchPassphrase: backupItem.searchPassphrase,
             color: decodeColor(color: backupItem.tintColor)
         )
+    }
+
+    private func decodeTags(ids: Set<UUID>) -> StoredVaultItemTags {
+        StoredVaultItemTags(ids: ids.map {
+            VaultItemTag.Identifier(id: $0)
+        }.reducedToSet())
     }
 
     private func decodeColor(color: VaultBackupItem.RGBColor?) -> VaultItemColor? {

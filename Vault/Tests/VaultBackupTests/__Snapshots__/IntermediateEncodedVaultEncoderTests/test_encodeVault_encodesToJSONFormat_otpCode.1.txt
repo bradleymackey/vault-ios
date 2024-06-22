@@ -21,6 +21,9 @@
       },
       "search_passphrase" : "pass",
       "searchable_level" : "FULL",
+      "tags" : [
+        "5738B828-FDE4-4F8C-8D4D-FF619054E98E"
+      ],
       "tint_color" : {
         "blue" : 0.3,
         "green" : 0.2,

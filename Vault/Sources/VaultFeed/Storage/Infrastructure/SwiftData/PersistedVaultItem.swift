@@ -13,6 +13,8 @@ final class PersistedVaultItem {
     var searchableLevel: String
     var searchPassphrase: String?
     var color: Color?
+    @Relationship(deleteRule: .nullify)
+    var tags: [PersistedVaultTag] = []
 
     @Relationship(deleteRule: .cascade)
     var noteDetails: PersistedNoteDetails?
@@ -35,6 +37,7 @@ final class PersistedVaultItem {
         searchableLevel: String,
         searchPassphrase: String?,
         color: Color?,
+        tags: [PersistedVaultTag],
         noteDetails: PersistedNoteDetails?,
         otpDetails: PersistedOTPDetails?
     ) {
@@ -46,6 +49,7 @@ final class PersistedVaultItem {
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase
         self.color = color
+        self.tags = tags
         self.noteDetails = noteDetails
         self.otpDetails = otpDetails
     }

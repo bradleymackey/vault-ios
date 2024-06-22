@@ -32,6 +32,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var createdDate: Date
     public var updatedDate: Date
     public var userDescription: String
+    public var tags: Set<UUID>
     public var visibility: Visibility
     public var searchableLevel: SearchableLevel
     public var searchPassphrase: String?
@@ -45,6 +46,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         createdDate: Date,
         updatedDate: Date,
         userDescription: String,
+        tags: Set<UUID>,
         visibility: Visibility,
         searchableLevel: SearchableLevel,
         searchPassphrase: String? = nil,
@@ -55,6 +57,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         self.createdDate = createdDate
         self.updatedDate = updatedDate
         self.userDescription = userDescription
+        self.tags = tags
         self.visibility = visibility
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase

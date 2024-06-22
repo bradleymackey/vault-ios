@@ -18,6 +18,7 @@ final class VaultBackupItemEncoder {
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
             userDescription: storedItem.metadata.userDescription,
+            tags: storedItem.metadata.tags.ids.reducedToSet(\.id),
             visibility: encodeVisibility(metadata: storedItem.metadata),
             searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
             searchPassphrase: storedItem.metadata.searchPassphrase,

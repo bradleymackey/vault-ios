@@ -118,7 +118,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
     public func insert(item: StoredVaultItem.Write) async throws -> UUID {
         do {
             let encoder = PersistedVaultItemEncoder(context: modelContext)
-            let encoded = encoder.encode(item: item)
+            let encoded = try encoder.encode(item: item)
 
             try modelContext.save()
             return encoded.id
@@ -138,7 +138,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
                 throw Error.modelNotFound
             }
             let encoder = PersistedVaultItemEncoder(context: modelContext)
-            _ = encoder.encode(item: item, existing: existing)
+            _ = try encoder.encode(item: item, existing: existing)
 
             try modelContext.save()
         } catch {

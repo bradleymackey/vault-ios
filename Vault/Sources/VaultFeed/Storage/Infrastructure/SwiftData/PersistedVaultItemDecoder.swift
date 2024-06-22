@@ -8,6 +8,7 @@ struct PersistedVaultItemDecoder {
             created: item.createdDate,
             updated: item.updatedDate,
             userDescription: item.userDescription,
+            tags: decodeTags(tags: item.tags),
             visibility: decodeVisibility(level: item.visibility),
             searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
             searchPassphrase: item.searchPassphrase,
@@ -31,6 +32,12 @@ struct PersistedVaultItemDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoder {
+    private func decodeTags(tags: [PersistedVaultTag]) -> StoredVaultItemTags {
+        StoredVaultItemTags(ids: tags.map {
+            VaultItemTag.Identifier(id: $0.id)
+        }.reducedToSet())
+    }
+
     private func decodeSearchableLevel(level: String) throws -> VaultItemSearchableLevel {
         switch level {
         case VaultEncodingConstants.SearchableLevel.full: .full

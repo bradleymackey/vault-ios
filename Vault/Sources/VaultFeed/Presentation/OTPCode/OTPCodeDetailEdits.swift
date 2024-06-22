@@ -38,6 +38,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var color: VaultItemColor?
 
+    public var tags: StoredVaultItemTags
+
     public init(
         codeType: OTPAuthType.Kind,
         totpPeriodLength: UInt64,
@@ -51,6 +53,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
         searchPassphrase: String,
+        tags: StoredVaultItemTags,
         color: VaultItemColor?
     ) {
         self.codeType = codeType
@@ -65,6 +68,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.visibility = visibility
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase
+        self.tags = tags
         self.color = color
     }
 
@@ -74,7 +78,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         color: VaultItemColor?,
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
-        searchPassphrase: String
+        searchPassphrase: String,
+        tags: StoredVaultItemTags
     ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
@@ -91,6 +96,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         issuerTitle = code.data.issuer
         accountNameTitle = code.data.accountName
         description = userDescription
+        self.tags = tags
         self.visibility = visibility
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase
@@ -150,6 +156,7 @@ extension OTPCodeDetailEdits {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
+            tags: .init(ids: []),
             color: nil
         )
     }

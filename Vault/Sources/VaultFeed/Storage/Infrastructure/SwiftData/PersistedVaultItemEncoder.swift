@@ -12,11 +12,11 @@ struct PersistedVaultItemEncoder {
     }
 
     /// Encodes the given item, inserting it in the encoder's `context`.
-    func encode(item: StoredVaultItem.Write, existing: PersistedVaultItem? = nil) -> PersistedVaultItem {
+    func encode(item: StoredVaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
         let model = if let existing {
-            encode(existingItem: existing, newData: item)
+            try encode(existingItem: existing, newData: item)
         } else {
-            encode(newData: item)
+            try encode(newData: item)
         }
         // We need to insert the model into the context at this point or the backing data
         // for the SwiftData model is not valid.
@@ -28,7 +28,13 @@ struct PersistedVaultItemEncoder {
 // MARK: - Items
 
 extension PersistedVaultItemEncoder {
-    private func encode(newData: StoredVaultItem.Write) -> PersistedVaultItem {
+    private func fetchTagsForItem(newData: StoredVaultItem.Write) throws -> [PersistedVaultTag] {
+        let tagsForItemIds = newData.tags.ids.map(\.id).reducedToSet()
+        let itemTagsPredicate = #Predicate<PersistedVaultTag> { tagsForItemIds.contains($0.id) }
+        return try context.fetch(.init(predicate: itemTagsPredicate))
+    }
+
+    private func encode(newData: StoredVaultItem.Write) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
         case let .secureNote(note): encodeSecureNoteDetails(newData: note)
@@ -38,7 +44,7 @@ extension PersistedVaultItemEncoder {
         case let .otpCode(code): encodeOtpDetails(newData: code)
         case .secureNote: nil
         }
-        return PersistedVaultItem(
+        return try PersistedVaultItem(
             id: UUID(),
             createdDate: now,
             updatedDate: now,
@@ -49,6 +55,7 @@ extension PersistedVaultItemEncoder {
             color: newData.color.flatMap { color in
                 .init(red: color.red, green: color.green, blue: color.blue)
             },
+            tags: fetchTagsForItem(newData: newData),
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )
@@ -57,13 +64,14 @@ extension PersistedVaultItemEncoder {
     private func encode(
         existingItem: PersistedVaultItem,
         newData: StoredVaultItem.Write
-    ) -> PersistedVaultItem {
+    ) throws -> PersistedVaultItem {
         let now = currentDate()
         existingItem.updatedDate = now
         existingItem.userDescription = newData.userDescription
         existingItem.visibility = encodeVisibilityLevel(level: newData.visibility)
         existingItem.searchableLevel = encodeSearchableLevel(level: newData.searchableLevel)
         existingItem.searchPassphrase = newData.searchPassphase
+        existingItem.tags = try fetchTagsForItem(newData: newData)
         existingItem.color = newData.color.flatMap { color in
             .init(red: color.red, green: color.green, blue: color.blue)
         }

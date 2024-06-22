@@ -355,6 +355,7 @@ extension PersistedVaultItemDecoderTests {
         searchableLevel: String = "FULL",
         searchPassphrase: String? = nil,
         color: PersistedVaultItem.Color? = nil,
+        tags: [PersistedVaultTag] = [],
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
             accountName: "",
@@ -377,6 +378,7 @@ extension PersistedVaultItemDecoderTests {
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
             color: color,
+            tags: tags,
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )

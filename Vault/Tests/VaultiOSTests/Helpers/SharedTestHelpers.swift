@@ -36,6 +36,7 @@ func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
         created: Date(),
         updated: Date(),
         userDescription: "any",
+        tags: .init(ids: []),
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: nil,
@@ -48,6 +49,7 @@ func uniqueWritableVaultItem() -> StoredVaultItem.Write {
         userDescription: "any",
         color: nil,
         item: .otpCode(uniqueCode()),
+        tags: .init(ids: []),
         visibility: .always,
         searchableLevel: .full,
         searchPassphase: nil

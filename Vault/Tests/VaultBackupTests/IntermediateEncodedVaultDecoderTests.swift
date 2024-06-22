@@ -48,6 +48,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
             userDescription: "",
+            tags: [],
             visibility: .always,
             searchableLevel: .full,
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
@@ -59,6 +60,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             createdDate: date2,
             updatedDate: date2.addingTimeInterval(1234),
             userDescription: "",
+            tags: [],
             visibility: .always,
             searchableLevel: .none,
             item: .note(data: .init(title: "Hello world again"))
@@ -70,6 +72,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             createdDate: date3,
             updatedDate: date3.addingTimeInterval(100),
             userDescription: "",
+            tags: [],
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
             searchPassphrase: "phrase",
