@@ -4,24 +4,27 @@ import VaultCore
 public typealias VaultStore = VaultStoreReader & VaultStoreWriter
 
 public protocol VaultStoreReader: Sendable {
-    /// Retrieve all stored codes from storage.
+    /// Retrieve all stored items.
     func retrieve() async throws -> VaultRetrievalResult
 
-    /// Retrieve only vault items that match the given query.
+    /// Retrieve only items that match the given query.
     func retrieve(matching query: String) async throws -> VaultRetrievalResult
 }
 
 public protocol VaultStoreWriter: Sendable {
-    /// Insert an `OTPAuthCode` with a unique `id`.
+    /// Create a new item in the vault store, based off the provided data.
     ///
-    /// - Returns: The underlying ID of the entry in the store.
+    /// The id will be created by the underlying storage layer and returned.
+    ///
+    /// - Returns: The unique ID of the newly created item.
     @discardableResult
     func insert(item: StoredVaultItem.Write) async throws -> UUID
 
-    /// Update the code at the given ID.
+    /// Update the item with the given `id`.
     func update(id: UUID, item: StoredVaultItem.Write) async throws
 
-    /// Delete the code with the specific `id`.
-    /// Has no effect if the code does not exist.
+    /// Delete the item with the specific `id`.
+    ///
+    /// This should have no effect if the item does not exist.
     func delete(id: UUID) async throws
 }
