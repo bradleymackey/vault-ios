@@ -102,12 +102,15 @@ func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
     )
 }
 
-func uniqueWritableVaultItem(visibility: VaultItemVisibility = .always) -> StoredVaultItem.Write {
+func uniqueWritableVaultItem(
+    visibility: VaultItemVisibility = .always,
+    tags: StoredVaultItemTags = .init(ids: [])
+) -> StoredVaultItem.Write {
     .init(
         userDescription: "any",
         color: nil,
         item: .otpCode(uniqueCode()),
-        tags: .init(ids: []),
+        tags: tags,
         visibility: visibility,
         searchableLevel: .none,
         searchPassphase: nil

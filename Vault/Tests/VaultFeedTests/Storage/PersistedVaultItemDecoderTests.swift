@@ -158,6 +158,24 @@ extension PersistedVaultItemDecoderTests {
         let decoded = try sut.decode(item: item)
         XCTAssertEqual(decoded.metadata.searchPassphrase, "my secret - super secret")
     }
+
+    func test_decodeMetadata_decodesEmptyItemTags() throws {
+        let item = makePersistedItem(tags: [])
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.tags, .init(ids: []))
+    }
+
+    func test_decodeMetadata_decodesItemTags() throws {
+        let id1 = UUID()
+        let id2 = UUID()
+        let item = makePersistedItem(tags: [makePersistedTag(id: id1), makePersistedTag(id: id2)])
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.tags, .init(ids: [.init(id: id1), .init(id: id2)]))
+    }
 }
 
 // MARK: - OTP Code
@@ -344,6 +362,15 @@ extension PersistedVaultItemDecoderTests {
 extension PersistedVaultItemDecoderTests {
     private func makeSUT() -> PersistedVaultItemDecoder {
         PersistedVaultItemDecoder()
+    }
+
+    private func makePersistedTag(
+        id: UUID = UUID(),
+        title: String = "Any"
+    ) -> PersistedVaultTag {
+        let tag = PersistedVaultTag(id: id, title: title, items: [])
+        context.insert(tag)
+        return tag
     }
 
     private func makePersistedItem(

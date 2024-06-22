@@ -180,6 +180,74 @@ extension PersistedVaultItemEncoderTests {
             XCTAssertEqual(existing.searchableLevel, key)
         }
     }
+
+    func test_encodeMetadata_existingItemEncodesSearchableLevels() throws {
+        let mapping: [VaultItemSearchableLevel: String] = [
+            .full: "FULL",
+            .none: "NONE",
+            .onlyTitle: "ONLY_TITLE",
+            .onlyPassphrase: "ONLY_PASSPHRASE",
+        ]
+
+        for (value, key) in mapping {
+            let sut1 = makeSUT()
+            var item1 = uniqueWritableVaultItem()
+            item1.searchableLevel = .none
+            let existing = try sut1.encode(item: item1)
+
+            var item2 = uniqueWritableVaultItem()
+            item2.searchableLevel = value
+            let existing2 = try sut1.encode(item: item2, existing: existing)
+
+            XCTAssertEqual(existing2.searchableLevel, key)
+        }
+    }
+
+    func test_encodeMetadata_newItemEncodesEmptyTags() throws {
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: []))
+
+        let encoded = try sut.encode(item: item)
+        XCTAssertEqual(encoded.tags, [])
+    }
+
+    func test_encodeMetadata_newItemEncodesSomeTags() throws {
+        let id1 = UUID()
+        let id2 = UUID()
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1), .init(id: id2)]))
+
+        let persisted1 = makePersistedTag(id: id1)
+        let persisted2 = makePersistedTag(id: id2)
+        let encoded = try sut.encode(item: item)
+        XCTAssertEqual(encoded.tags.map(\.id), [persisted1.id, persisted2.id])
+    }
+
+    func test_encodeMetadata_existingItemEncodesEmptyTags() throws {
+        let id1 = UUID()
+        _ = makePersistedTag(id: id1)
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1)]))
+        let existing = try sut.encode(item: item)
+
+        let itemNew = uniqueWritableVaultItem(tags: .init(ids: []))
+        let encoded = try sut.encode(item: itemNew, existing: existing)
+        XCTAssertEqual(encoded.tags, [])
+    }
+
+    func test_encodeMetadata_existingItemEncodesSomeTags() throws {
+        let id1 = UUID()
+        _ = makePersistedTag(id: id1)
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1)]))
+        let existing = try sut.encode(item: item)
+
+        let id2 = UUID()
+        let persisted2 = makePersistedTag(id: id2)
+        let itemNew = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id2)]))
+        let encoded = try sut.encode(item: itemNew, existing: existing)
+        XCTAssertEqual(encoded.tags.map(\.id), [persisted2.id])
+    }
 }
 
 // MARK: - OTP
@@ -333,6 +401,12 @@ extension PersistedVaultItemEncoderTests {
 extension PersistedVaultItemEncoderTests {
     private func makeSUT(currentDate: @escaping () -> Date = { Date() }) -> PersistedVaultItemEncoder {
         PersistedVaultItemEncoder(context: context, currentDate: currentDate)
+    }
+
+    private func makePersistedTag(id: UUID = UUID(), title: String = "Any") -> PersistedVaultTag {
+        let tag = PersistedVaultTag(id: id, title: title, items: [])
+        context.insert(tag)
+        return tag
     }
 
     private func makeWritable(
