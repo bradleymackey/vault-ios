@@ -26,6 +26,25 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
     }
 
     @MainActor
+    func test_encodeVault_encodesToJSONFormat_topLevelTags() throws {
+        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try XCTUnwrap(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
+        let sut = makeSUT()
+        let date = Date(timeIntervalSince1970: 12345)
+        let backup = anyBackupPayload(
+            created: date,
+            userDescription: "my description",
+            tags: [.init(id: uuid1, title: "My first tag"), .init(id: uuid2, title: "my second tag")],
+            items: []
+        )
+
+        let encodedVault = try sut.encode(vaultBackup: backup)
+
+        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        assertSnapshot(of: encoded, as: .lines)
+    }
+
+    @MainActor
     func test_encodeVault_encodesToJSONFormat_secureNote() throws {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)

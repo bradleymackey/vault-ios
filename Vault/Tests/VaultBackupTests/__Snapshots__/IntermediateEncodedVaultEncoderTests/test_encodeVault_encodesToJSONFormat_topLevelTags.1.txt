@@ -1,0 +1,19 @@
+{
+  "created" : 12345000,
+  "items" : [
+
+  ],
+  "obfuscation_padding" : "q6urCg==",
+  "tags" : [
+    {
+      "id" : "A5950174-2106-4251-BD73-58B8D39F77F3",
+      "title" : "My first tag"
+    },
+    {
+      "id" : "DCABE94A-C194-49AA-B709-7221DAD253AB",
+      "title" : "my second tag"
+    }
+  ],
+  "user_description" : "my description",
+  "version" : "1.0.0"
+}
