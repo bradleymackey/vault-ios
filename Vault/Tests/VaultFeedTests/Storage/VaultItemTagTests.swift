@@ -1,6 +1,6 @@
 import Foundation
 import XCTest
-@testable import VaultCore
+@testable import VaultFeed
 
 final class VaultItemTagTests: XCTestCase {
     func test_equal_onlyChecksIDs() {
