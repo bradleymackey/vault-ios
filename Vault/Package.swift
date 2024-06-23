@@ -35,7 +35,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.16.0"),
-        .package(url: "https://github.com/nalexn/ViewInspector", exact: "0.9.10"),
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.2"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
@@ -85,7 +84,6 @@ let package = Package(
             name: "TestHelpers",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-                .product(name: "ViewInspector", package: "ViewInspector"),
             ],
             swiftSettings: swiftSettings
         ),

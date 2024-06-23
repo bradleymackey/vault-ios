@@ -7,6 +7,11 @@ import XCTest
 @testable import VaultiOS
 
 final class HOTPPreviewViewGeneratorTests: XCTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+//        isRecording = true
+    }
+
     @MainActor
     func test_init_hasNoSideEffects() {
         let (_, timer, factory) = makeSUT()
@@ -21,8 +26,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let view = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let foundText = try view.inspect().anyView().text().string()
-        XCTAssertEqual(foundText, "Hello, HOTP!")
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
     @MainActor
@@ -168,7 +172,7 @@ extension HOTPPreviewViewGeneratorTests {
     @MainActor
     private func makeSUT() -> (SUT, MockIntervalTimer, HOTPPreviewViewFactoryMock) {
         let factory = HOTPPreviewViewFactoryMock()
-        factory.makeHOTPViewHandler = { _, _, _ in AnyView(Text("Hello, HOTP!")) }
+        factory.makeHOTPViewHandler = { _, _, _ in AnyView(Color.green) }
         let timer = MockIntervalTimer()
         let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer)
         return (sut, timer, factory)

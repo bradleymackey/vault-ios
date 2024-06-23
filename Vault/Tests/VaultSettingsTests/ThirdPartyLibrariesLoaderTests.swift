@@ -9,8 +9,15 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
 
         let loaded = try await sut.load()
 
-        XCTAssertEqual(loaded.count, 8)
-        XCTAssertEqual(loaded.first?.name, "SwiftUI-Shimmer")
+        XCTAssertEqual(loaded.map(\.name), [
+            "SwiftUI-Shimmer",
+            "CryptoSwift",
+            "SnapshotTesting",
+            "SimpleToast",
+            "Defaults",
+            "CodeScanner",
+            "SimpleKeychain",
+        ])
     }
 
     func test_load_parsesValuesCorrectly() async throws {

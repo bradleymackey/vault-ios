@@ -7,6 +7,11 @@ import VaultiOS
 import XCTest
 
 final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+//        isRecording = true
+    }
+
     @MainActor
     func test_init_hasNoSideEffects() {
         let totp = MockTOTPGenerator()
@@ -29,8 +34,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let code = OTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
         let view = sut.makeVaultPreviewView(item: .otpCode(code), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let text = try view.inspect().text().string()
-        XCTAssertEqual(text, "TOTP")
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
     @MainActor
@@ -43,8 +47,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let code = OTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
         let view = sut.makeVaultPreviewView(item: .otpCode(code), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let text = try view.inspect().text().string()
-        XCTAssertEqual(text, "HOTP")
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
     @MainActor
@@ -57,8 +60,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let noteItem = SecureNote(title: "Title", contents: "Contents")
         let view = sut.makeVaultPreviewView(item: .secureNote(noteItem), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let text = try view.inspect().text().string()
-        XCTAssertEqual(text, "Secure Note")
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
     @MainActor
