@@ -12,7 +12,7 @@ final class PersistedVaultItem {
     var visibility: String
     var searchableLevel: String
     var searchPassphrase: String?
-    var color: Color?
+    var color: PersistedColor?
     @Relationship(deleteRule: .nullify)
     var tags: [PersistedVaultTag] = []
 
@@ -22,12 +22,6 @@ final class PersistedVaultItem {
     @Relationship(deleteRule: .cascade)
     var otpDetails: PersistedOTPDetails?
 
-    struct Color: Codable {
-        var red: Double
-        var green: Double
-        var blue: Double
-    }
-
     init(
         id: UUID,
         createdDate: Date,
@@ -36,7 +30,7 @@ final class PersistedVaultItem {
         visibility: String,
         searchableLevel: String,
         searchPassphrase: String?,
-        color: Color?,
+        color: PersistedColor?,
         tags: [PersistedVaultTag],
         noteDetails: PersistedNoteDetails?,
         otpDetails: PersistedOTPDetails?

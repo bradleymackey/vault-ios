@@ -368,7 +368,7 @@ extension PersistedVaultItemDecoderTests {
         id: UUID = UUID(),
         title: String = "Any"
     ) -> PersistedVaultTag {
-        let tag = PersistedVaultTag(id: id, title: title, items: [])
+        let tag = PersistedVaultTag(id: id, title: title, color: nil, iconName: nil, items: [])
         context.insert(tag)
         return tag
     }
@@ -381,7 +381,7 @@ extension PersistedVaultItemDecoderTests {
         visibility: String = "ALWAYS",
         searchableLevel: String = "FULL",
         searchPassphrase: String? = nil,
-        color: PersistedVaultItem.Color? = nil,
+        color: PersistedColor? = nil,
         tags: [PersistedVaultTag] = [],
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(

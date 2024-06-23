@@ -404,7 +404,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makePersistedTag(id: UUID = UUID(), title: String = "Any") -> PersistedVaultTag {
-        let tag = PersistedVaultTag(id: id, title: title, items: [])
+        let tag = PersistedVaultTag(id: id, title: title, color: nil, iconName: nil, items: [])
         context.insert(tag)
         return tag
     }
