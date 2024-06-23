@@ -13,10 +13,14 @@ public struct VaultItemTag: Identifiable, Sendable {
     /// Static identifier for this item
     public let id: Identifier
     public var name: String
+    public var color: VaultItemColor?
+    public var iconName: String?
 
-    public init(id: Identifier, name: String) {
+    public init(id: Identifier, name: String, color: VaultItemColor? = nil, iconName: String? = nil) {
         self.id = id
         self.name = name
+        self.color = color
+        self.iconName = iconName
     }
 }
 
