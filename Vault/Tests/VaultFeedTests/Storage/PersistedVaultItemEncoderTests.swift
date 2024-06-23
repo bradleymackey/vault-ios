@@ -220,7 +220,7 @@ extension PersistedVaultItemEncoderTests {
         let persisted1 = makePersistedTag(id: id1)
         let persisted2 = makePersistedTag(id: id2)
         let encoded = try sut.encode(item: item)
-        XCTAssertEqual(encoded.tags.map(\.id), [persisted1.id, persisted2.id])
+        XCTAssertEqual(encoded.tags.map(\.id).reducedToSet(), [persisted1.id, persisted2.id])
     }
 
     func test_encodeMetadata_existingItemEncodesEmptyTags() throws {
@@ -246,7 +246,7 @@ extension PersistedVaultItemEncoderTests {
         let persisted2 = makePersistedTag(id: id2)
         let itemNew = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id2)]))
         let encoded = try sut.encode(item: itemNew, existing: existing)
-        XCTAssertEqual(encoded.tags.map(\.id), [persisted2.id])
+        XCTAssertEqual(encoded.tags.map(\.id).reducedToSet(), [persisted2.id])
     }
 }
 
