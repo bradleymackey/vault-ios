@@ -8,6 +8,11 @@ import XCTest
 @testable import VaultiOS
 
 final class SecureNotePreviewViewGeneratorTests: XCTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+//        isRecording = true
+    }
+
     @MainActor
     func test_init_hasNoSideEffects() {
         let factory = SecureNotePreviewViewFactoryMock()
@@ -19,14 +24,13 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_makeVaultPreviewItem_generatesViews() throws {
         let factory = SecureNotePreviewViewFactoryMock()
-        factory.makeSecureNoteViewHandler = { _, _ in AnyView(Text("Hello, Secure Note!")) }
+        factory.makeSecureNoteViewHandler = { _, _ in AnyView(Color.red) }
         let sut = makeSUT(factory: factory)
 
         let view = sut.makeVaultPreviewView(item: anySecureNote(), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let foundText = try view.inspect().anyView().text().string()
-        XCTAssertEqual(foundText, "Hello, Secure Note!")
         XCTAssertEqual(factory.makeSecureNoteViewCallCount, 1)
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
     @MainActor

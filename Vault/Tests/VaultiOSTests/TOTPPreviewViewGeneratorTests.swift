@@ -8,6 +8,11 @@ import XCTest
 @testable import VaultiOS
 
 final class TOTPPreviewViewGeneratorTests: XCTestCase {
+    override func setUp() async throws {
+        try await super.setUp()
+//        isRecording = true
+    }
+
     @MainActor
     func test_init_hasNoSideEffects() {
         let factory = makeTOTPPreviewViewFactoryMock()
@@ -21,13 +26,12 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_makeOTPView_generatesViews() throws {
         let factory = TOTPPreviewViewFactoryMock()
-        factory.makeTOTPViewHandler = { _, _, _, _ in AnyView(Text("Hello, TOTP!")) }
+        factory.makeTOTPViewHandler = { _, _, _, _ in AnyView(Color.green) }
         let sut = makeSUT(factory: factory)
 
         let view = sut.makeVaultPreviewView(item: anyTOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
-        let foundText = try view.inspect().anyView().text().string()
-        XCTAssertEqual(foundText, "Hello, TOTP!")
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
     @MainActor
