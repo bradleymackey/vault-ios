@@ -27,7 +27,7 @@ final class PersistedVaultItemEncoderTests: XCTestCase {
 // MARK: - Metadata
 
 extension PersistedVaultItemEncoderTests {
-    func test_encodeMetadata_usesSameDateForCreatedAndUpdated() {
+    func test_encodeMetadata_usesSameDateForCreatedAndUpdated() throws {
         var currentEpochSeconds = 100.0
         let sut = makeSUT(currentDate: {
             // Ensures the time increments every time the date is fetched
@@ -35,93 +35,93 @@ extension PersistedVaultItemEncoderTests {
             return Date(timeIntervalSince1970: currentEpochSeconds)
         })
 
-        let newItem = sut.encode(item: uniqueWritableVaultItem())
+        let newItem = try sut.encode(item: uniqueWritableVaultItem())
         XCTAssertEqual(newItem.createdDate, newItem.updatedDate)
     }
 
-    func test_encodeMetadata_existingItemRetainsUUID() {
+    func test_encodeMetadata_existingItemRetainsUUID() throws {
         let sut = makeSUT()
 
-        let existing = sut.encode(item: uniqueWritableVaultItem())
+        let existing = try sut.encode(item: uniqueWritableVaultItem())
         let existingID = existing.id
 
-        let newCode = sut.encode(item: uniqueWritableVaultItem(), existing: existing)
+        let newCode = try sut.encode(item: uniqueWritableVaultItem(), existing: existing)
         XCTAssertEqual(newCode.id, existingID, "ID should not change for update")
     }
 
-    func test_encodeMetadata_existingItemRetainsCreatedDate() {
+    func test_encodeMetadata_existingItemRetainsCreatedDate() throws {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(item: uniqueWritableVaultItem())
+        let existing = try sut1.encode(item: uniqueWritableVaultItem())
         let existingCreatedDate = existing.createdDate
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(item: uniqueWritableVaultItem(), existing: existing)
+        let newCode = try sut2.encode(item: uniqueWritableVaultItem(), existing: existing)
         XCTAssertEqual(newCode.createdDate, existingCreatedDate, "Date should not change for update")
     }
 
-    func test_encodeMetadata_existingItemUpdatesUpdatedDate() {
+    func test_encodeMetadata_existingItemUpdatesUpdatedDate() throws {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = sut1.encode(item: uniqueWritableVaultItem())
+        let existing = try sut1.encode(item: uniqueWritableVaultItem())
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = sut2.encode(item: uniqueWritableVaultItem(), existing: existing)
+        let newCode = try sut2.encode(item: uniqueWritableVaultItem(), existing: existing)
         XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should not change for update")
     }
 
-    func test_encodeMetadata_newItemGeneratesRandomUUID() {
+    func test_encodeMetadata_newItemGeneratesRandomUUID() throws {
         var seen = Set<UUID>()
         for _ in 0 ..< 100 {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue())
 
-            let encoded = sut.encode(item: code)
+            let encoded = try sut.encode(item: code)
             XCTAssertFalse(seen.contains(encoded.id))
             seen.insert(encoded.id)
         }
     }
 
-    func test_encodeMetadata_newItemUserDescriptionEncodesString() {
+    func test_encodeMetadata_newItemUserDescriptionEncodesString() throws {
         let sut = makeSUT()
         let desc = UUID().uuidString
         let code = makeWritable(userDescription: desc, code: uniqueCode())
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.userDescription, desc)
     }
 
-    func test_encodeMetadata_newItemIgnoresForNoColor() {
+    func test_encodeMetadata_newItemIgnoresForNoColor() throws {
         let sut = makeSUT()
         let code = makeWritable(code: uniqueCode(), color: nil)
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertNil(encoded.color)
     }
 
-    func test_encodeMetadata_newItemWritesColorValues() {
+    func test_encodeMetadata_newItemWritesColorValues() throws {
         let sut = makeSUT()
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
         let code = makeWritable(code: uniqueCode(), color: color)
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.color?.red, 0.5)
         XCTAssertEqual(encoded.color?.green, 0.6)
         XCTAssertEqual(encoded.color?.blue, 0.7)
     }
 
-    func test_encodeMetadata_existingItemOverridesColorValues() {
+    func test_encodeMetadata_existingItemOverridesColorValues() throws {
         let sut1 = makeSUT()
 
         var existingItem = uniqueWritableVaultItem()
         existingItem.color = VaultItemColor(red: 0.1, green: 0.2, blue: 0.3)
-        let existing = sut1.encode(item: existingItem)
+        let existing = try sut1.encode(item: existingItem)
 
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
         let sut2 = makeSUT()
         let code = makeWritable(code: uniqueCode(), color: color)
 
-        let newCode = sut2.encode(item: code, existing: existing)
+        let newCode = try sut2.encode(item: code, existing: existing)
         XCTAssertEqual(newCode.color?.red, 0.5)
         XCTAssertEqual(newCode.color?.green, 0.6)
         XCTAssertEqual(newCode.color?.blue, 0.7)
@@ -137,7 +137,7 @@ extension PersistedVaultItemEncoderTests {
             let sut1 = makeSUT()
             var existingItem = uniqueWritableVaultItem()
             existingItem.visibility = value
-            let existing = sut1.encode(item: existingItem)
+            let existing = try sut1.encode(item: existingItem)
 
             XCTAssertEqual(existing.visibility, key)
         }
@@ -153,11 +153,11 @@ extension PersistedVaultItemEncoderTests {
             let sut1 = makeSUT()
             var item1 = uniqueWritableVaultItem()
             item1.visibility = .onlySearch
-            let existing = sut1.encode(item: item1)
+            let existing = try sut1.encode(item: item1)
 
             var item2 = uniqueWritableVaultItem()
             item2.visibility = value
-            let existing2 = sut1.encode(item: item2, existing: existing)
+            let existing2 = try sut1.encode(item: item2, existing: existing)
 
             XCTAssertEqual(existing2.visibility, key)
         }
@@ -175,17 +175,85 @@ extension PersistedVaultItemEncoderTests {
             let sut1 = makeSUT()
             var existingItem = uniqueWritableVaultItem()
             existingItem.searchableLevel = value
-            let existing = sut1.encode(item: existingItem)
+            let existing = try sut1.encode(item: existingItem)
 
             XCTAssertEqual(existing.searchableLevel, key)
         }
+    }
+
+    func test_encodeMetadata_existingItemEncodesSearchableLevels() throws {
+        let mapping: [VaultItemSearchableLevel: String] = [
+            .full: "FULL",
+            .none: "NONE",
+            .onlyTitle: "ONLY_TITLE",
+            .onlyPassphrase: "ONLY_PASSPHRASE",
+        ]
+
+        for (value, key) in mapping {
+            let sut1 = makeSUT()
+            var item1 = uniqueWritableVaultItem()
+            item1.searchableLevel = .none
+            let existing = try sut1.encode(item: item1)
+
+            var item2 = uniqueWritableVaultItem()
+            item2.searchableLevel = value
+            let existing2 = try sut1.encode(item: item2, existing: existing)
+
+            XCTAssertEqual(existing2.searchableLevel, key)
+        }
+    }
+
+    func test_encodeMetadata_newItemEncodesEmptyTags() throws {
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: []))
+
+        let encoded = try sut.encode(item: item)
+        XCTAssertEqual(encoded.tags, [])
+    }
+
+    func test_encodeMetadata_newItemEncodesSomeTags() throws {
+        let id1 = UUID()
+        let id2 = UUID()
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1), .init(id: id2)]))
+
+        let persisted1 = makePersistedTag(id: id1)
+        let persisted2 = makePersistedTag(id: id2)
+        let encoded = try sut.encode(item: item)
+        XCTAssertEqual(encoded.tags.map(\.id), [persisted1.id, persisted2.id])
+    }
+
+    func test_encodeMetadata_existingItemEncodesEmptyTags() throws {
+        let id1 = UUID()
+        _ = makePersistedTag(id: id1)
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1)]))
+        let existing = try sut.encode(item: item)
+
+        let itemNew = uniqueWritableVaultItem(tags: .init(ids: []))
+        let encoded = try sut.encode(item: itemNew, existing: existing)
+        XCTAssertEqual(encoded.tags, [])
+    }
+
+    func test_encodeMetadata_existingItemEncodesSomeTags() throws {
+        let id1 = UUID()
+        _ = makePersistedTag(id: id1)
+        let sut = makeSUT()
+        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1)]))
+        let existing = try sut.encode(item: item)
+
+        let id2 = UUID()
+        let persisted2 = makePersistedTag(id: id2)
+        let itemNew = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id2)]))
+        let encoded = try sut.encode(item: itemNew, existing: existing)
+        XCTAssertEqual(encoded.tags.map(\.id), [persisted2.id])
     }
 }
 
 // MARK: - OTP
 
 extension PersistedVaultItemEncoderTests {
-    func test_encodeOTP_digitsEncodesToInt32() {
+    func test_encodeOTP_digitsEncodesToInt32() throws {
         let samples: [OTPAuthDigits: Int32] = [
             OTPAuthDigits(value: 6): 6,
             OTPAuthDigits(value: 7): 7,
@@ -197,78 +265,78 @@ extension PersistedVaultItemEncoderTests {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue(digits: digits))
 
-            let encoded = sut.encode(item: code)
+            let encoded = try sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.digits, value)
         }
     }
 
-    func test_encodeOTP_authTypeEncodesKindTOTP() {
+    func test_encodeOTP_authTypeEncodesKindTOTP() throws {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.authType, "totp")
     }
 
-    func test_encodeOTP_authTypeEncodesKindHOTP() {
+    func test_encodeOTP_authTypeEncodesKindHOTP() throws {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.authType, "hotp")
     }
 
-    func test_encodeOTP_periodForTOTP() {
+    func test_encodeOTP_periodForTOTP() throws {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp(period: 69)))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.period, 69)
     }
 
-    func test_encodeOTP_noPeriodForHOTP() {
+    func test_encodeOTP_noPeriodForHOTP() throws {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp()))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.period)
     }
 
-    func test_encodeOTP_counterForHOTP() {
+    func test_encodeOTP_counterForHOTP() throws {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .hotp(counter: 69)))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.counter, 69)
     }
 
-    func test_encodeOTP_noCounterForTOTP() {
+    func test_encodeOTP_noCounterForTOTP() throws {
         let sut = makeSUT()
         let code = makeWritable(code: makeCodeValue(type: .totp()))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertNil(encoded.otpDetails?.counter)
     }
 
-    func test_encodeOTP_accountName() {
+    func test_encodeOTP_accountName() throws {
         let sut = makeSUT()
         let accountName = UUID().uuidString
         let code = makeWritable(code: makeCodeValue(accountName: accountName))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.accountName, accountName)
     }
 
-    func test_encodeOTP_isser() {
+    func test_encodeOTP_isser() throws {
         let sut = makeSUT()
         let issuer = UUID().uuidString
         let code = makeWritable(code: makeCodeValue(issuer: issuer))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.issuer, issuer)
     }
 
-    func test_encodeOTP_algorithm() {
+    func test_encodeOTP_algorithm() throws {
         let expected: [OTPAuthAlgorithm: String] = [
             .sha1: "SHA1",
             .sha256: "SHA256",
@@ -278,12 +346,12 @@ extension PersistedVaultItemEncoderTests {
             let sut = makeSUT()
             let code = makeWritable(code: makeCodeValue(algorithm: algo))
 
-            let encoded = sut.encode(item: code)
+            let encoded = try sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.algorithm, expected)
         }
     }
 
-    func test_encodeOTP_secretFormat() {
+    func test_encodeOTP_secretFormat() throws {
         let expected: [OTPAuthSecret.Format: String] = [
             .base32: "BASE_32",
         ]
@@ -292,18 +360,18 @@ extension PersistedVaultItemEncoderTests {
             let secret = OTPAuthSecret(data: Data(), format: format)
             let code = makeWritable(code: makeCodeValue(secret: secret))
 
-            let encoded = sut.encode(item: code)
+            let encoded = try sut.encode(item: code)
             XCTAssertEqual(encoded.otpDetails?.secretFormat, expected)
         }
     }
 
-    func test_encodeOTP_secretToBinary() {
+    func test_encodeOTP_secretToBinary() throws {
         let sut = makeSUT()
         let secretData = Data([0xFF, 0xEE, 0x66, 0x77, 0x22])
         let secret = OTPAuthSecret(data: secretData, format: .base32)
         let code = makeWritable(code: makeCodeValue(secret: secret))
 
-        let encoded = sut.encode(item: code)
+        let encoded = try sut.encode(item: code)
         XCTAssertEqual(encoded.otpDetails?.secretData, secretData)
     }
 }
@@ -311,19 +379,19 @@ extension PersistedVaultItemEncoderTests {
 // MARK: - Secure Note
 
 extension PersistedVaultItemEncoderTests {
-    func test_encodeNote_title() {
+    func test_encodeNote_title() throws {
         let sut = makeSUT()
         let item = makeWritable(note: makeSecretNoteValue(title: "this is my title"))
 
-        let encoded = sut.encode(item: item)
+        let encoded = try sut.encode(item: item)
         XCTAssertEqual(encoded.noteDetails?.title, "this is my title")
     }
 
-    func test_encodeNote_contents() {
+    func test_encodeNote_contents() throws {
         let sut = makeSUT()
         let item = makeWritable(note: makeSecretNoteValue(contents: "this is the note contents"))
 
-        let encoded = sut.encode(item: item)
+        let encoded = try sut.encode(item: item)
         XCTAssertEqual(encoded.noteDetails?.contents, "this is the note contents")
     }
 }
@@ -335,18 +403,26 @@ extension PersistedVaultItemEncoderTests {
         PersistedVaultItemEncoder(context: context, currentDate: currentDate)
     }
 
+    private func makePersistedTag(id: UUID = UUID(), title: String = "Any") -> PersistedVaultTag {
+        let tag = PersistedVaultTag(id: id, title: title, items: [])
+        context.insert(tag)
+        return tag
+    }
+
     private func makeWritable(
         userDescription: String = "",
         code: OTPAuthCode,
         color: VaultItemColor? = nil,
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
+        tags: StoredVaultItemTags = .init(ids: []),
         searchPassphrase: String = ""
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
             userDescription: userDescription,
             color: color,
             item: .otpCode(code),
+            tags: tags,
             visibility: visibility,
             searchableLevel: searchableLevel,
             searchPassphase: searchPassphrase
@@ -376,12 +452,14 @@ extension PersistedVaultItemEncoderTests {
     private func makeWritable(
         userDescription: String = "",
         note: SecureNote,
-        color: VaultItemColor? = nil
+        color: VaultItemColor? = nil,
+        tags: StoredVaultItemTags = .init(ids: [])
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
             userDescription: userDescription,
             color: color,
             item: .secureNote(note),
+            tags: tags,
             visibility: .always,
             searchableLevel: .full,
             searchPassphase: ""

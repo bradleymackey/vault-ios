@@ -37,7 +37,8 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                     color: nil,
                     visibility: .always,
                     searchableLevel: .full,
-                    searchPassphrase: ""
+                    searchPassphrase: "",
+                    tags: .init(ids: [])
                 ),
                 isInitiallyDirty: true
             )
@@ -48,7 +49,8 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 color: metadata.color,
                 visibility: metadata.visibility,
                 searchableLevel: metadata.searchableLevel,
-                searchPassphrase: metadata.searchPassphrase ?? ""
+                searchPassphrase: metadata.searchPassphrase ?? "",
+                tags: metadata.tags
             ))
         }
     }

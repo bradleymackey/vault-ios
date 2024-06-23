@@ -359,6 +359,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 created: Date(),
                 updated: Date(),
                 userDescription: "Description",
+                tags: .init(ids: []),
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",

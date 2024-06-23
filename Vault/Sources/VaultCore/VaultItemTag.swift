@@ -1,0 +1,31 @@
+import Foundation
+
+public struct VaultItemTag: Identifiable, Sendable {
+    /// Uniquely identifies this tag.
+    public struct Identifier: Identifiable, Equatable, Hashable, Sendable {
+        public let id: UUID
+
+        public init(id: UUID) {
+            self.id = id
+        }
+    }
+
+    /// Static identifier for this item
+    public let id: Identifier
+    public var name: String
+
+    public init(id: Identifier, name: String) {
+        self.id = id
+        self.name = name
+    }
+}
+
+extension VaultItemTag: Equatable, Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.id == rhs.id
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}

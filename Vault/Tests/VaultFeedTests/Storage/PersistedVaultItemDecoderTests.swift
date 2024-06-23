@@ -158,6 +158,24 @@ extension PersistedVaultItemDecoderTests {
         let decoded = try sut.decode(item: item)
         XCTAssertEqual(decoded.metadata.searchPassphrase, "my secret - super secret")
     }
+
+    func test_decodeMetadata_decodesEmptyItemTags() throws {
+        let item = makePersistedItem(tags: [])
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.tags, .init(ids: []))
+    }
+
+    func test_decodeMetadata_decodesItemTags() throws {
+        let id1 = UUID()
+        let id2 = UUID()
+        let item = makePersistedItem(tags: [makePersistedTag(id: id1), makePersistedTag(id: id2)])
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.tags, .init(ids: [.init(id: id1), .init(id: id2)]))
+    }
 }
 
 // MARK: - OTP Code
@@ -346,6 +364,15 @@ extension PersistedVaultItemDecoderTests {
         PersistedVaultItemDecoder()
     }
 
+    private func makePersistedTag(
+        id: UUID = UUID(),
+        title: String = "Any"
+    ) -> PersistedVaultTag {
+        let tag = PersistedVaultTag(id: id, title: title, items: [])
+        context.insert(tag)
+        return tag
+    }
+
     private func makePersistedItem(
         id: UUID = UUID(),
         createdDate: Date = Date(),
@@ -355,6 +382,7 @@ extension PersistedVaultItemDecoderTests {
         searchableLevel: String = "FULL",
         searchPassphrase: String? = nil,
         color: PersistedVaultItem.Color? = nil,
+        tags: [PersistedVaultTag] = [],
         noteDetails: PersistedNoteDetails? = nil,
         otpDetails: PersistedOTPDetails? = .init(
             accountName: "",
@@ -377,6 +405,7 @@ extension PersistedVaultItemDecoderTests {
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
             color: color,
+            tags: tags,
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )

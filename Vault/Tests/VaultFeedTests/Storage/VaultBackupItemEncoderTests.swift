@@ -14,12 +14,14 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
         let note = SecureNote(title: "title", contents: "contents")
+        let tags = StoredVaultItemTags(ids: [.init(id: UUID())])
         let item = StoredVaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
+                tags: tags,
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
@@ -35,6 +37,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
+        XCTAssertEqual(encodedItem.tags, tags.ids.reducedToSet(\.id))
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
         XCTAssertEqual(encodedItem.visibility, .always)
@@ -64,6 +67,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
+                tags: .init(ids: []),
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
@@ -82,6 +86,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "hello")
         XCTAssertEqual(encodedItem.userDescription, description)
+        XCTAssertEqual(encodedItem.tags, [])
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
         XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
         XCTAssertEqual(encodedItem.item.codeData?.algorithm, "SHA256")
@@ -116,6 +121,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
+                tags: .init(ids: []),
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
@@ -134,6 +140,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "test")
+        XCTAssertEqual(encodedItem.tags, [])
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
         XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
         XCTAssertEqual(encodedItem.item.codeData?.algorithm, "SHA256")
@@ -197,6 +204,7 @@ extension VaultBackupItemEncoderTests {
                 created: Date(),
                 updated: Date(),
                 userDescription: "any",
+                tags: .init(ids: []),
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",

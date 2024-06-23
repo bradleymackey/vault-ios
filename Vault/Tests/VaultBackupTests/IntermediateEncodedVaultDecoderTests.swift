@@ -28,6 +28,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             version: "1.0.0",
             created: Date(timeIntervalSince1970: 1_700_575_468),
             userDescription: "my description",
+            tags: [],
             items: [],
             obfuscationPadding: Data()
         )
@@ -48,6 +49,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
             userDescription: "",
+            tags: [],
             visibility: .always,
             searchableLevel: .full,
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
@@ -59,6 +61,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             createdDate: date2,
             updatedDate: date2.addingTimeInterval(1234),
             userDescription: "",
+            tags: [],
             visibility: .always,
             searchableLevel: .none,
             item: .note(data: .init(title: "Hello world again"))
@@ -70,6 +73,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             createdDate: date3,
             updatedDate: date3.addingTimeInterval(100),
             userDescription: "",
+            tags: [],
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
             searchPassphrase: "phrase",
@@ -111,12 +115,14 @@ extension IntermediateEncodedVaultDecoderTests {
     private func anyBackupPayload(
         created: Date = Date(),
         userDescription: String = "my description",
+        tags: [VaultBackupTag] = [],
         items: [VaultBackupItem] = []
     ) -> VaultBackupPayload {
         VaultBackupPayload(
             version: "1.0.0",
             created: created,
             userDescription: userDescription,
+            tags: tags,
             items: items,
             obfuscationPadding: Data()
         )

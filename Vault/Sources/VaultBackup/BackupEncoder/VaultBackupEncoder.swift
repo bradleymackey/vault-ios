@@ -31,11 +31,16 @@ public final class VaultBackupEncoder {
     }
 
     /// Encodes and encrypts a vault providing a payload.
-    public func createExportPayload(items: [VaultBackupItem], userDescription: String) throws -> EncryptedVault {
+    public func createExportPayload(
+        items: [VaultBackupItem],
+        tags: [VaultBackupTag],
+        userDescription: String
+    ) throws -> EncryptedVault {
         let payload = VaultBackupPayload(
             version: "1.0.0",
             created: clock.currentDate,
             userDescription: userDescription,
+            tags: tags,
             items: items,
             obfuscationPadding: makePadding(itemsCount: items.count)
         )

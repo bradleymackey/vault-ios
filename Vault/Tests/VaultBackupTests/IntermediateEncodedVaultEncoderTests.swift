@@ -26,15 +26,36 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
     }
 
     @MainActor
+    func test_encodeVault_encodesToJSONFormat_topLevelTags() throws {
+        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try XCTUnwrap(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
+        let sut = makeSUT()
+        let date = Date(timeIntervalSince1970: 12345)
+        let backup = anyBackupPayload(
+            created: date,
+            userDescription: "my description",
+            tags: [.init(id: uuid1, title: "My first tag"), .init(id: uuid2, title: "my second tag")],
+            items: []
+        )
+
+        let encodedVault = try sut.encode(vaultBackup: backup)
+
+        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        assertSnapshot(of: encoded, as: .lines)
+    }
+
+    @MainActor
     func test_encodeVault_encodesToJSONFormat_secureNote() throws {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)
-        let uuid = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try XCTUnwrap(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
         let item = VaultBackupItem(
-            id: uuid,
+            id: uuid1,
             createdDate: date,
             updatedDate: date.addingTimeInterval(7000),
             userDescription: "",
+            tags: [uuid2],
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "passphrase",
@@ -58,11 +79,13 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let sut = makeSUT()
         let date = Date(timeIntervalSince1970: 12345)
         let uuid = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try XCTUnwrap(UUID(uuidString: "5738B828-FDE4-4F8C-8D4D-FF619054E98E"))
         let item = VaultBackupItem(
             id: uuid,
             createdDate: date,
             updatedDate: date.addingTimeInterval(100),
             userDescription: "",
+            tags: [uuid2],
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
@@ -102,6 +125,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
             userDescription: "",
+            tags: [],
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "searchphrase",
@@ -109,11 +133,13 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         )
         let date2 = Date(timeIntervalSince1970: 45658)
         let uuid2 = try XCTUnwrap(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
+        let uuidTag = try XCTUnwrap(UUID(uuidString: "493DF342-E537-4722-B6DC-6430A1413E34"))
         let item2 = VaultBackupItem(
             id: uuid2,
             createdDate: date2,
             updatedDate: date2.addingTimeInterval(1234),
             userDescription: "",
+            tags: [uuidTag],
             visibility: .always,
             searchableLevel: .none,
             item: .note(data: .init(title: "Hello world again"))
@@ -125,6 +151,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             createdDate: date3,
             updatedDate: date3.addingTimeInterval(100),
             userDescription: "",
+            tags: [uuidTag],
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
@@ -166,12 +193,14 @@ extension IntermediateEncodedVaultEncoderTests {
     private func anyBackupPayload(
         created: Date = Date(),
         userDescription: String = "my description",
+        tags: [VaultBackupTag] = [],
         items: [VaultBackupItem] = []
     ) -> VaultBackupPayload {
         VaultBackupPayload(
             version: "1.0.0",
             created: created,
             userDescription: userDescription,
+            tags: tags,
             items: items,
             obfuscationPadding: Data(hex: "abababa")
         )

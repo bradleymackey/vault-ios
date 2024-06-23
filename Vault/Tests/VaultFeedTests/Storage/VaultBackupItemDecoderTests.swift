@@ -13,11 +13,13 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         let createdDate = Date()
         let updateDate = Date()
         let description = "my user description"
+        let tag = UUID()
         let item = VaultBackupItem(
             id: id,
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            tags: [tag],
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "hello",
@@ -36,6 +38,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "hello")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
+        XCTAssertEqual(decodedItem.metadata.tags, .init(ids: [.init(id: tag)]))
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
     }
@@ -61,6 +64,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            tags: [],
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
@@ -108,6 +112,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            tags: [],
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "nice",
@@ -220,6 +225,7 @@ extension VaultBackupItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            tags: [],
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
@@ -243,6 +249,7 @@ extension VaultBackupItemDecoderTests {
             createdDate: createdDate,
             updatedDate: updateDate,
             userDescription: description,
+            tags: [],
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "",

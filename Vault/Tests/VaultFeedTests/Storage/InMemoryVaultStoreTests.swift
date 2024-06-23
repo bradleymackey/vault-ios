@@ -153,6 +153,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
                 userDescription: newUserDescription,
                 color: newColor,
                 item: .otpCode(newCode),
+                tags: .init(ids: []),
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphase: "Pass"

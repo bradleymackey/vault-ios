@@ -14,6 +14,8 @@ public struct VaultBackupPayload: Codable, Equatable {
     public var created: Date
     /// Custom user provided desciption attached to the backup.
     public var userDescription: String
+    /// The tags that are used to group item.
+    public var tags: [VaultBackupTag]
     /// The individual items from the vault.
     public var items: [VaultBackupItem]
     /// Arbitrary padding used to disguise the actual size of the payload.
@@ -24,6 +26,18 @@ public struct VaultBackupPayload: Codable, Equatable {
     var obfuscationPadding: Data
 }
 
+// MARK: - Tag
+
+public struct VaultBackupTag: Codable, Equatable, Identifiable {
+    public var id: UUID
+    public var title: String
+
+    public init(id: UUID, title: String) {
+        self.id = id
+        self.title = title
+    }
+}
+
 // MARK: - Item
 
 public struct VaultBackupItem: Codable, Equatable, Identifiable {
@@ -32,6 +46,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var createdDate: Date
     public var updatedDate: Date
     public var userDescription: String
+    public var tags: Set<UUID>
     public var visibility: Visibility
     public var searchableLevel: SearchableLevel
     public var searchPassphrase: String?
@@ -45,6 +60,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         createdDate: Date,
         updatedDate: Date,
         userDescription: String,
+        tags: Set<UUID>,
         visibility: Visibility,
         searchableLevel: SearchableLevel,
         searchPassphrase: String? = nil,
@@ -55,6 +71,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         self.createdDate = createdDate
         self.updatedDate = updatedDate
         self.userDescription = userDescription
+        self.tags = tags
         self.visibility = visibility
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase

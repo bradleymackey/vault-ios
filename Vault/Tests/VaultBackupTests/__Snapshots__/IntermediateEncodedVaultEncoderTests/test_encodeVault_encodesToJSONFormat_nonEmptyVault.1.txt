@@ -14,6 +14,9 @@
       },
       "search_passphrase" : "searchphrase",
       "searchable_level" : "FULL",
+      "tags" : [
+
+      ],
       "updated_date" : 13579000,
       "user_description" : "",
       "visibility" : "ALWAYS"
@@ -29,6 +32,9 @@
         }
       },
       "searchable_level" : "NONE",
+      "tags" : [
+        "493DF342-E537-4722-B6DC-6430A1413E34"
+      ],
       "updated_date" : 46892000,
       "user_description" : "",
       "visibility" : "ALWAYS"
@@ -52,6 +58,9 @@
         }
       },
       "searchable_level" : "ONLY_TITLE",
+      "tags" : [
+        "493DF342-E537-4722-B6DC-6430A1413E34"
+      ],
       "tint_color" : {
         "blue" : 0.3,
         "green" : 0.2,
@@ -63,6 +72,9 @@
     }
   ],
   "obfuscation_padding" : "q6urCg==",
+  "tags" : [
+
+  ],
   "user_description" : "my description again",
   "version" : "1.0.0"
 }

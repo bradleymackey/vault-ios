@@ -10,7 +10,7 @@ final class VaultBackupEncoderTests: XCTestCase {
         let key = try VaultKey(key: Data(repeating: 0xAA, count: 32), iv: Data(repeating: 0xAB, count: 32))
         let sut = makeSUT(key: key)
 
-        let encryptedVault = try sut.createExportPayload(items: [], userDescription: "hello world")
+        let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
 
         // This is the encoded payload created by this test case:
 
@@ -20,22 +20,21 @@ final class VaultBackupEncoderTests: XCTestCase {
 //
 //          ],
 //          "obfuscation_padding" : "",
+//          "tags" : [
+//
+//          ],
 //          "user_description" : "hello world",
 //          "version" : "1.0.0"
 //        }
 
         // Manually verified data:
-        // https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'%7D,%7B'option':'Hex','string':'abababababababababababababababababababababababababababababababab'%7D,'GCM','Raw','Hex',%7B'option':'Hex','string':''%7D)&input=ewogICJjcmVhdGVkIiA6IDEyMzQwMDAsCiAgIml0ZW1zIiA6IFsKCiAgXSwKICAib2JmdXNjYXRpb25fcGFkZGluZyIgOiAiIiwKICAidXNlcl9kZXNjcmlwdGlvbiIgOiAiaGVsbG8gd29ybGQiLAogICJ2ZXJzaW9uIiA6ICIxLjAuMCIKfQ
+        // https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'%7D,%7B'option':'Hex','string':'abababababababababababababababababababababababababababababababab'%7D,'GCM','Raw','Hex',%7B'option':'Hex','string':''%7D)&input=ewogICJjcmVhdGVkIiA6IDEyMzQwMDAsCiAgIml0ZW1zIiA6IFsKCiAgXSwKICAib2JmdXNjYXRpb25fcGFkZGluZyIgOiAiIiwKICAidGFncyIgOiBbCgogIF0sCiAgInVzZXJfZGVzY3JpcHRpb24iIDogImhlbGxvIHdvcmxkIiwKICAidmVyc2lvbiIgOiAiMS4wLjAiCn0
 
         XCTAssertEqual(encryptedVault.data.toHexString(), """
-        0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace10\
-        3d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13\
-        e7e68c3142c6b487141659225347c2a5b21b7eead891334de0323938e6599\
-        14f478e6f1995637a201b45c1c15ff9cf02d8a3e44ec07029cc2b9e4f45d0\
-        ec6b60b6e9e8ac109a946e9e6391
+        0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b487141659225347c2a5b21a6ce8d9ec7712b30a415bb60da50c238c6f01c0327737284dcb924be4d41ec8e8a72ac270319a6c845940d3ed6937e3bba6f91c86b07e9c4b9ad657b3eb9185f27726b3ee3a606e11b5ae3593
         """)
         XCTAssertEqual(encryptedVault.authentication.toHexString(), """
-        837b99a7c9d7e7b4cb56fe2f863d6034
+        8a90eab22324cbf12366fda7f7006437
         """)
         XCTAssertEqual(encryptedVault.encryptionIV.toHexString(), """
         abababababababababababababababababababababababababababababababab
@@ -47,7 +46,7 @@ final class VaultBackupEncoderTests: XCTestCase {
         let padding = VaultBackupEncoder.PaddingMode.fixed(data: Data(repeating: 0xF1, count: 45))
         let sut = makeSUT(key: key, paddingMode: padding)
 
-        let encryptedVault = try sut.createExportPayload(items: [], userDescription: "hello world")
+        let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
 
         // This is the encoded payload created by this test case:
 
@@ -57,24 +56,21 @@ final class VaultBackupEncoderTests: XCTestCase {
 //
 //          ],
 //          "obfuscation_padding" : "8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx8fHx",
+//          "tags" : [
+//
+//          ],
 //          "user_description" : "hello world",
 //          "version" : "1.0.0"
 //        }
 
         // Manually verified data:
-        // https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'%7D,%7B'option':'Hex','string':'abababababababababababababababababababababababababababababababab'%7D,'GCM','Raw','Hex',%7B'option':'Hex','string':''%7D)&input=ewogICJjcmVhdGVkIiA6IDEyMzQwMDAsCiAgIml0ZW1zIiA6IFsKCiAgXSwKICAib2JmdXNjYXRpb25fcGFkZGluZyIgOiAiOGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4IiwKICAidXNlcl9kZXNjcmlwdGlvbiIgOiAiaGVsbG8gd29ybGQiLAogICJ2ZXJzaW9uIiA6ICIxLjAuMCIKfQ
+        // https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'%7D,%7B'option':'Hex','string':'abababababababababababababababababababababababababababababababab'%7D,'GCM','Raw','Hex',%7B'option':'Hex','string':''%7D)&input=ewogICJjcmVhdGVkIiA6IDEyMzQwMDAsCiAgIml0ZW1zIiA6IFsKCiAgXSwKICAib2JmdXNjYXRpb25fcGFkZGluZyIgOiAiOGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4IiwKICAidGFncyIgOiBbCgogIF0sCiAgInVzZXJfZGVzY3JpcHRpb24iIDogImhlbGxvIHdvcmxkIiwKICAidmVyc2lvbiIgOiAiMS4wLjAiCn0
 
         XCTAssertEqual(encryptedVault.data.toHexString(), """
-        0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace10\
-        3d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13\
-        e7e68c3142c6b4871416593819059abdf62675b7cc862f10f5193369f0658\
-        0184fe4371bd3096a7d1161d6d94edec556dac9b07c8618738228a44414d9\
-        ca3178ea81b2a558e2c27c9063cc9307b5f19b998f3379e0af79272e4bece\
-        351ccd6978e81755622e9bc4d716bca2e8fda19841f26d96577f69f0cc67d\
-        a102f91cd9b1a4c5122a9c0b71
+        0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b4871416593819059abdf62675b7cc862f10f5193369f06580184fe4371bd3096a7d1161d6d94edec556dac9b07c8618738228a44414d9ca3178ea81b2a558e2c27c9063cc9307b4e39998f27726b39701447e1fd8a035ced68fdbd0784111e1b61e6576d1329f915ae01d26c13330ec8909c57ca355ac4e97e4a8d9363a9e237a22c3c9823dc69043a1ef6d7dca398856e17f48
         """)
         XCTAssertEqual(encryptedVault.authentication.toHexString(), """
-        f13dfab30d7ab1b70c5925d83064d5fb
+        7867d55c8cad397c71b11c22ea7af7f1
         """)
         XCTAssertEqual(encryptedVault.encryptionIV.toHexString(), """
         abababababababababababababababababababababababababababababababab
@@ -85,7 +81,7 @@ final class VaultBackupEncoderTests: XCTestCase {
         let salt = Data.random(count: 34)
         let sut = try makeSUT(key: anyKey(), keygenSalt: salt)
 
-        let encryptedVault = try sut.createExportPayload(items: [], userDescription: "hello world")
+        let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
 
         XCTAssertEqual(encryptedVault.keygenSalt, salt)
     }

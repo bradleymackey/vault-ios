@@ -26,6 +26,7 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
             userDescription: metadata.userDescription,
             color: metadata.color,
             item: item,
+            tags: metadata.tags,
             visibility: metadata.visibility,
             searchableLevel: metadata.searchableLevel,
             searchPassphase: metadata.searchPassphrase
@@ -46,6 +47,7 @@ extension StoredVaultItem {
         public var userDescription: String
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
+        public var tags: StoredVaultItemTags
         public var searchPassphrase: String?
         /// The color tint for this item.
         public var color: VaultItemColor?
@@ -55,6 +57,7 @@ extension StoredVaultItem {
             created: Date,
             updated: Date,
             userDescription: String,
+            tags: StoredVaultItemTags,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
@@ -64,6 +67,7 @@ extension StoredVaultItem {
             self.created = created
             self.updated = updated
             self.userDescription = userDescription
+            self.tags = tags
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphrase = searchPassphrase
@@ -78,6 +82,7 @@ extension StoredVaultItem {
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: VaultItem
+        public var tags: StoredVaultItemTags
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphase: String?
@@ -86,6 +91,7 @@ extension StoredVaultItem {
             userDescription: String,
             color: VaultItemColor?,
             item: VaultItem,
+            tags: StoredVaultItemTags,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphase: String?
@@ -93,6 +99,7 @@ extension StoredVaultItem {
             self.userDescription = userDescription
             self.color = color
             self.item = item
+            self.tags = tags
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphase = searchPassphase

@@ -7,3 +7,11 @@ extension Sequence where Element: Hashable {
         }
     }
 }
+
+extension Sequence {
+    public func reducedToSet<T: Hashable>(_ keyPath: KeyPath<Element, T>) -> Set<T> {
+        reduce(into: Set<T>()) { partialResult, nextItem in
+            partialResult.insert(nextItem[keyPath: keyPath])
+        }
+    }
+}
