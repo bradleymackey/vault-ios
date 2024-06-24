@@ -9,7 +9,7 @@ public struct VaultItemFeedView<
     Store: VaultStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
-    ViewGenerator.PreviewItem == StoredVaultItem.Payload
+    ViewGenerator.PreviewItem == VaultItem.Payload
 {
     @Bindable public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
@@ -168,8 +168,8 @@ struct VaultItemFeedView_Previews: PreviewProvider {
 
     struct GenericGenerator: VaultItemPreviewViewGenerator {
         func makeVaultPreviewView(
-            item _: StoredVaultItem.Payload,
-            metadata _: StoredVaultItem.Metadata,
+            item _: VaultItem.Payload,
+            metadata _: VaultItem.Metadata,
             behaviour _: VaultItemViewBehaviour
         ) -> some View {
             Text("Code")

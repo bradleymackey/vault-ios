@@ -8,11 +8,11 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [])
 
         let retrieved = try await sut.retrieve()
-        XCTAssertEqual(retrieved.items, [StoredVaultItem]())
+        XCTAssertEqual(retrieved.items, [VaultItem]())
     }
 
     func test_retrieve_codeReturned() async throws {
-        let code1 = uniqueStoredVaultItem()
+        let code1 = uniqueVaultItem()
         let sut = makeSUT(codes: [code1])
 
         let retrieved = try await sut.retrieve()
@@ -23,11 +23,11 @@ final class InMemoryVaultStoreTests: XCTestCase {
         let sut = makeSUT(codes: [])
 
         let retrieved = try await sut.retrieve(matching: "any")
-        XCTAssertEqual(retrieved.items, [StoredVaultItem]())
+        XCTAssertEqual(retrieved.items, [VaultItem]())
     }
 
     func test_retrieveMatchingQuery_emptyQueryReturnsAll() async throws {
-        let code1 = uniqueStoredVaultItem()
+        let code1 = uniqueVaultItem()
         let sut = makeSUT(codes: [code1])
 
         let retrieved = try await sut.retrieve(matching: "")
@@ -35,7 +35,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesUserDescription() async throws {
-        let codes: [StoredVaultItem] = [
+        let codes: [VaultItem] = [
             searchableStoredSecureNoteVaultItem(userDescription: "a"),
             searchableStoredSecureNoteVaultItem(userDescription: "--A--"),
             searchableStoredSecureNoteVaultItem(userDescription: "x"),
@@ -50,7 +50,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesOTPAccountName() async throws {
-        let codes: [StoredVaultItem] = [
+        let codes: [VaultItem] = [
             searchableStoredOTPVaultItem(accountName: "a"),
             searchableStoredOTPVaultItem(accountName: "x"),
             searchableStoredOTPVaultItem(accountName: "--a--"),
@@ -64,7 +64,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesOTPIssuerName() async throws {
-        let codes: [StoredVaultItem] = [
+        let codes: [VaultItem] = [
             searchableStoredOTPVaultItem(issuerName: "a"),
             searchableStoredOTPVaultItem(issuerName: "x"),
             searchableStoredOTPVaultItem(issuerName: "--a--"),
@@ -78,7 +78,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesSecureNoteTitle() async throws {
-        let codes: [StoredVaultItem] = [
+        let codes: [VaultItem] = [
             searchableStoredSecureNoteVaultItem(title: "a"),
             searchableStoredSecureNoteVaultItem(title: "x"),
             searchableStoredSecureNoteVaultItem(title: "--a--"),
@@ -92,7 +92,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesSecureNoteContents() async throws {
-        let codes: [StoredVaultItem] = [
+        let codes: [VaultItem] = [
             searchableStoredSecureNoteVaultItem(contents: "a"),
             searchableStoredSecureNoteVaultItem(contents: "x"),
             searchableStoredSecureNoteVaultItem(contents: "--a--"),
@@ -106,7 +106,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_combinesMatchesFromDifferentFields() async throws {
-        let codes: [StoredVaultItem] = [
+        let codes: [VaultItem] = [
             searchableStoredSecureNoteVaultItem(title: "a"),
             searchableStoredSecureNoteVaultItem(contents: "aa"),
             searchableStoredSecureNoteVaultItem(userDescription: "aaa"),
@@ -141,7 +141,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_update_updatesExistingCode() async throws {
-        let code1 = uniqueStoredVaultItem()
+        let code1 = uniqueVaultItem()
         let sut = makeSUT(codes: [code1])
 
         let newCode = uniqueCode()
@@ -181,8 +181,8 @@ final class InMemoryVaultStoreTests: XCTestCase {
     }
 
     func test_delete_removesCode() async throws {
-        let code1 = uniqueStoredVaultItem()
-        let code2 = uniqueStoredVaultItem()
+        let code1 = uniqueVaultItem()
+        let code2 = uniqueVaultItem()
         let sut = makeSUT(codes: [code1, code2])
         try await sut.delete(id: code1.id)
 
@@ -192,7 +192,7 @@ final class InMemoryVaultStoreTests: XCTestCase {
 }
 
 extension InMemoryVaultStoreTests {
-    private func makeSUT(codes: [StoredVaultItem]) -> InMemoryVaultStore {
+    private func makeSUT(codes: [VaultItem]) -> InMemoryVaultStore {
         InMemoryVaultStore(codes: codes)
     }
 }

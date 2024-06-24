@@ -7,7 +7,7 @@ import VaultFeed
 public protocol VaultItemPreviewViewGenerator {
     associatedtype PreviewItem
     associatedtype PreviewView: View
-    func makeVaultPreviewView(item: PreviewItem, metadata: StoredVaultItem.Metadata, behaviour: VaultItemViewBehaviour)
+    func makeVaultPreviewView(item: PreviewItem, metadata: VaultItem.Metadata, behaviour: VaultItemViewBehaviour)
         -> PreviewView
     func scenePhaseDidChange(to scene: ScenePhase)
     func didAppear()

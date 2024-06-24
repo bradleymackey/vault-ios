@@ -15,7 +15,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let description = "my user description"
         let note = SecureNote(title: "title", contents: "contents")
         let tags: Set<VaultItemTag.Identifier> = [.init(id: UUID())]
-        let item = StoredVaultItem(
+        let item = VaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
@@ -61,7 +61,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 issuer: "my issuer"
             )
         )
-        let item = StoredVaultItem(
+        let item = VaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
@@ -115,7 +115,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 issuer: "my issuer"
             )
         )
-        let item = StoredVaultItem(
+        let item = VaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
@@ -187,7 +187,7 @@ extension VaultBackupItemEncoderTests {
         VaultBackupItemEncoder()
     }
 
-    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm = .sha1, color: VaultItemColor? = nil) -> StoredVaultItem {
+    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm = .sha1, color: VaultItemColor? = nil) -> VaultItem {
         let code = OTPAuthCode(
             type: .hotp(counter: 69),
             data: .init(
@@ -198,7 +198,7 @@ extension VaultBackupItemEncoderTests {
                 issuer: "my issuer"
             )
         )
-        return StoredVaultItem(
+        return VaultItem(
             metadata: .init(
                 id: UUID(),
                 created: Date(),

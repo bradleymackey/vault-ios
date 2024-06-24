@@ -417,8 +417,8 @@ extension PersistedVaultItemEncoderTests {
         searchableLevel: VaultItemSearchableLevel = .full,
         tags: Set<VaultItemTag.Identifier> = [],
         searchPassphrase: String = ""
-    ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(
+    ) -> VaultItem.Write {
+        VaultItem.Write(
             userDescription: userDescription,
             color: color,
             item: .otpCode(code),
@@ -454,8 +454,8 @@ extension PersistedVaultItemEncoderTests {
         note: SecureNote,
         color: VaultItemColor? = nil,
         tags: Set<VaultItemTag.Identifier> = []
-    ) -> StoredVaultItem.Write {
-        StoredVaultItem.Write(
+    ) -> VaultItem.Write {
+        VaultItem.Write(
             userDescription: userDescription,
             color: color,
             item: .secureNote(note),

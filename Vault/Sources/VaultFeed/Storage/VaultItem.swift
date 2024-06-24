@@ -5,7 +5,7 @@ import VaultCore
 /// A `VaultItem` retrieved from storage.
 ///
 /// Includes the unique ID used to identify this item.
-public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
+public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     /// An item of data that can be stored in the Vault.
     public enum Payload: Equatable, Hashable, Sendable {
         case otpCode(OTPAuthCode)
@@ -26,8 +26,8 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
         metadata.id
     }
 
-    /// Maps this object to a `StoredVaultItem.Write` for writing.
-    public var asWritable: StoredVaultItem.Write {
+    /// Maps this object to a `VaultItem.Write` for writing.
+    public var asWritable: VaultItem.Write {
         .init(
             userDescription: metadata.userDescription,
             color: metadata.color,
@@ -40,7 +40,7 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
     }
 }
 
-extension StoredVaultItem.Payload {
+extension VaultItem.Payload {
     public var otpCode: OTPAuthCode? {
         switch self {
         case let .otpCode(otpCode):
@@ -60,7 +60,7 @@ extension StoredVaultItem.Payload {
     }
 }
 
-extension StoredVaultItem {
+extension VaultItem {
     /// Common metadata for all stored vault items.
     public struct Metadata: Equatable, Hashable, Identifiable, Sendable {
         /// A unique ID to identify this specific `item`.
@@ -102,7 +102,7 @@ extension StoredVaultItem {
     }
 }
 
-extension StoredVaultItem {
+extension VaultItem {
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
         public var userDescription: String

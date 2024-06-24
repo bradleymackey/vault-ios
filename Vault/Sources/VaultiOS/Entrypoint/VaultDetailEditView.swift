@@ -7,10 +7,10 @@ struct VaultDetailEditView<
     Store: VaultStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View
-    where PreviewGenerator.PreviewItem == StoredVaultItem.Payload
+    where PreviewGenerator.PreviewItem == VaultItem.Payload
 {
     var feedViewModel: FeedViewModel<Store>
-    var storedItem: StoredVaultItem
+    var storedItem: VaultItem
     var previewGenerator: PreviewGenerator
     var openInEditMode: Bool
     @Binding var navigationPath: NavigationPath

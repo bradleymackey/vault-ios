@@ -2,8 +2,8 @@ import Foundation
 import VaultCore
 
 struct PersistedVaultItemDecoder {
-    func decode(item: PersistedVaultItem) throws -> StoredVaultItem {
-        let metadata = try StoredVaultItem.Metadata(
+    func decode(item: PersistedVaultItem) throws -> VaultItem {
+        let metadata = try VaultItem.Metadata(
             id: item.id,
             created: item.createdDate,
             updated: item.updatedDate,
@@ -16,13 +16,13 @@ struct PersistedVaultItemDecoder {
         )
         if let otp = item.otpDetails {
             let otpCode = try decodeOTPCode(otp: otp)
-            return StoredVaultItem(metadata: metadata, item: .otpCode(otpCode))
+            return VaultItem(metadata: metadata, item: .otpCode(otpCode))
         } else if let note = item.noteDetails {
             let note = SecureNote(
                 title: note.title,
                 contents: note.contents
             )
-            return StoredVaultItem(metadata: metadata, item: .secureNote(note))
+            return VaultItem(metadata: metadata, item: .secureNote(note))
         } else {
             throw VaultItemDecodingError.missingItemDetail
         }

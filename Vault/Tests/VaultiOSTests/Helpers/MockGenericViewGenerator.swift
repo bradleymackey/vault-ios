@@ -5,11 +5,11 @@ import VaultFeed
 import VaultiOS
 
 final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = StoredVaultItem.Payload
+    typealias PreviewItem = VaultItem.Payload
 
     func makeVaultPreviewView(
         item _: PreviewItem,
-        metadata _: StoredVaultItem.Metadata,
+        metadata _: VaultItem.Metadata,
         behaviour _: VaultItemViewBehaviour
     ) -> some View {
         ZStack {

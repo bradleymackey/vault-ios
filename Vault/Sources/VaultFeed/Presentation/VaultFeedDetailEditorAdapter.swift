@@ -13,7 +13,7 @@ public struct VaultFeedDetailEditorAdapter {
 
 extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
     public func createCode(initialEdits: OTPCodeDetailEdits) async throws {
-        let newCodeVaultItem = try StoredVaultItem.Write(
+        let newCodeVaultItem = try VaultItem.Write(
             userDescription: initialEdits.description,
             color: initialEdits.color,
             item: .otpCode(initialEdits.asOTPAuthCode()),
@@ -53,7 +53,7 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
 extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
     public func createNote(initialEdits: SecureNoteDetailEdits) async throws {
         let newSecureNote = SecureNote(title: initialEdits.title, contents: initialEdits.contents)
-        let newStoredVaultItem = StoredVaultItem.Write(
+        let newVaultItem = VaultItem.Write(
             userDescription: initialEdits.description,
             color: initialEdits.color,
             item: .secureNote(newSecureNote),
@@ -63,14 +63,14 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             searchPassphase: initialEdits.searchPassphrase
         )
 
-        try await vaultFeed.create(item: newStoredVaultItem)
+        try await vaultFeed.create(item: newVaultItem)
     }
 
     public func updateNote(id: UUID, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
         var updatedItem = item
         updatedItem.title = edits.title
         updatedItem.contents = edits.contents
-        let updatedStoredVaultItem = StoredVaultItem.Write(
+        let updatedVaultItem = VaultItem.Write(
             userDescription: edits.description,
             color: edits.color,
             item: .secureNote(updatedItem),
@@ -80,7 +80,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             searchPassphase: edits.searchPassphrase
         )
 
-        try await vaultFeed.update(id: id, item: updatedStoredVaultItem)
+        try await vaultFeed.update(id: id, item: updatedVaultItem)
     }
 
     public func deleteNote(id: UUID) async throws {

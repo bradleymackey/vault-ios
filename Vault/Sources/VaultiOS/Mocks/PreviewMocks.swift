@@ -28,7 +28,7 @@ func forceRunLoopAdvance() {
 }
 
 struct CodeStoreFake: VaultStoreReader {
-    let codes: [StoredVaultItem] = [
+    let codes: [VaultItem] = [
         .init(
             metadata: .init(
                 id: UUID(),
@@ -110,11 +110,11 @@ struct CodeStoreFake: VaultStoreReader {
 }
 
 struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator, VaultItemCopyActionHandler {
-    typealias PreviewItem = StoredVaultItem.Payload
+    typealias PreviewItem = VaultItem.Payload
 
     func makeVaultPreviewView(
         item _: PreviewItem,
-        metadata _: StoredVaultItem.Metadata,
+        metadata _: VaultItem.Metadata,
         behaviour _: VaultItemViewBehaviour
     ) -> some View {
         Text("Preview View")

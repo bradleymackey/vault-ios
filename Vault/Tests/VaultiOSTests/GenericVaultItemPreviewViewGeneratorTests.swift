@@ -242,7 +242,7 @@ extension GenericVaultItemPreviewViewGeneratorTests {
 
         func makeVaultPreviewView(
             item _: PreviewItem,
-            metadata _: StoredVaultItem.Metadata,
+            metadata _: VaultItem.Metadata,
             behaviour _: VaultItemViewBehaviour
         ) -> some View {
             Text("HOTP")
@@ -280,7 +280,7 @@ extension GenericVaultItemPreviewViewGeneratorTests {
 
         func makeVaultPreviewView(
             item _: PreviewItem,
-            metadata _: StoredVaultItem.Metadata,
+            metadata _: VaultItem.Metadata,
             behaviour _: VaultItemViewBehaviour
         ) -> some View {
             Text("TOTP")
@@ -318,7 +318,7 @@ extension GenericVaultItemPreviewViewGeneratorTests {
 
         func makeVaultPreviewView(
             item _: SecureNote,
-            metadata _: StoredVaultItem.Metadata,
+            metadata _: VaultItem.Metadata,
             behaviour _: VaultItemViewBehaviour
         ) -> some View {
             Text("Secure Note")

@@ -19,8 +19,8 @@ func uniqueCode() -> OTPAuthCode {
     )
 }
 
-func uniqueStoredVaultItem() -> StoredVaultItem {
-    StoredVaultItem(
+func uniqueVaultItem() -> VaultItem {
+    VaultItem(
         metadata: uniqueMetadata(),
         item: .otpCode(uniqueCode())
     )
@@ -30,7 +30,7 @@ func anySecureNote() -> SecureNote {
     .init(title: "Hello World", contents: "This is my note")
 }
 
-func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
+func uniqueMetadata(id: UUID = UUID()) -> VaultItem.Metadata {
     .init(
         id: id,
         created: Date(),
@@ -44,7 +44,7 @@ func uniqueMetadata(id: UUID = UUID()) -> StoredVaultItem.Metadata {
     )
 }
 
-func uniqueWritableVaultItem() -> StoredVaultItem.Write {
+func uniqueWritableVaultItem() -> VaultItem.Write {
     .init(
         userDescription: "any",
         color: nil,

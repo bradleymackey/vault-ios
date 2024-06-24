@@ -115,7 +115,7 @@ extension VaultRetrievalResult {
 
 extension PersistedLocalVaultStore: VaultStoreWriter {
     @discardableResult
-    public func insert(item: StoredVaultItem.Write) async throws -> UUID {
+    public func insert(item: VaultItem.Write) async throws -> UUID {
         do {
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             let encoded = try encoder.encode(item: item)
@@ -128,7 +128,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         }
     }
 
-    public func update(id: UUID, item: StoredVaultItem.Write) async throws {
+    public func update(id: UUID, item: VaultItem.Write) async throws {
         do {
             var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
                 item.id == id

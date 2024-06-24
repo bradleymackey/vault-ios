@@ -2,7 +2,7 @@ import Foundation
 import VaultFeed
 
 enum DemoVaultFactory {
-    static func totpCode(issuer: String = "Ebay") -> StoredVaultItem {
+    static func totpCode(issuer: String = "Ebay") -> VaultItem {
         .init(
             metadata: .init(
                 id: UUID(),
@@ -26,7 +26,7 @@ enum DemoVaultFactory {
         )
     }
 
-    static func hotpCode(issuer: String = "Ebay") -> StoredVaultItem {
+    static func hotpCode(issuer: String = "Ebay") -> VaultItem {
         .init(
             metadata: .init(
                 id: UUID(),
@@ -50,7 +50,7 @@ enum DemoVaultFactory {
         )
     }
 
-    static func secureNote(title: String = "Title", contents: String = "Contents...") -> StoredVaultItem {
+    static func secureNote(title: String = "Title", contents: String = "Contents...") -> VaultItem {
         .init(
             metadata: .init(
                 id: UUID(),

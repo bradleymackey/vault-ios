@@ -24,7 +24,7 @@ func anyStoredNote() -> SecureNote {
 
 func uniqueStoredMetadata(
     userDescription: String = "any"
-) -> StoredVaultItem.Metadata {
+) -> VaultItem.Metadata {
     .init(
         id: UUID(),
         created: Date(),
@@ -38,8 +38,8 @@ func uniqueStoredMetadata(
     )
 }
 
-func uniqueStoredVaultItem() -> StoredVaultItem {
-    StoredVaultItem(
+func uniqueVaultItem() -> VaultItem {
+    VaultItem(
         metadata: uniqueStoredMetadata(),
         item: .otpCode(uniqueCode())
     )
@@ -52,8 +52,8 @@ func searchableStoredOTPVaultItem(
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
-) -> StoredVaultItem {
-    StoredVaultItem(
+) -> VaultItem {
+    VaultItem(
         metadata: .init(
             id: UUID(),
             created: Date(),
@@ -78,8 +78,8 @@ func searchableStoredSecureNoteVaultItem(
     contents: String = "",
     searchableLevel: VaultItemSearchableLevel = .full,
     secretPassphrase: String? = nil
-) -> StoredVaultItem {
-    StoredVaultItem(
+) -> VaultItem {
+    VaultItem(
         metadata: .init(
             id: UUID(),
             created: Date(),
@@ -95,8 +95,8 @@ func searchableStoredSecureNoteVaultItem(
     )
 }
 
-func uniqueVaultItem(item: StoredVaultItem.Payload) -> StoredVaultItem {
-    StoredVaultItem(
+func uniqueVaultItem(item: VaultItem.Payload) -> VaultItem {
+    VaultItem(
         metadata: uniqueStoredMetadata(),
         item: item
     )
@@ -105,7 +105,7 @@ func uniqueVaultItem(item: StoredVaultItem.Payload) -> StoredVaultItem {
 func uniqueWritableVaultItem(
     visibility: VaultItemVisibility = .always,
     tags: Set<VaultItemTag.Identifier> = []
-) -> StoredVaultItem.Write {
+) -> VaultItem.Write {
     .init(
         userDescription: "any",
         color: nil,
@@ -124,7 +124,7 @@ func writableSearchableOTPVaultItem(
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
-) -> StoredVaultItem.Write {
+) -> VaultItem.Write {
     searchableStoredOTPVaultItem(
         userDescription: userDescription,
         accountName: accountName,
@@ -142,7 +142,7 @@ func writableSearchableNoteVaultItem(
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
-) -> StoredVaultItem.Write {
+) -> VaultItem.Write {
     .init(
         userDescription: userDescription,
         color: nil,

@@ -18,10 +18,10 @@ public protocol VaultStoreWriter: Sendable {
     ///
     /// - Returns: The unique ID of the newly created item.
     @discardableResult
-    func insert(item: StoredVaultItem.Write) async throws -> UUID
+    func insert(item: VaultItem.Write) async throws -> UUID
 
     /// Update the item with the given `id`.
-    func update(id: UUID, item: StoredVaultItem.Write) async throws
+    func update(id: UUID, item: VaultItem.Write) async throws
 
     /// Delete the item with the specific `id`.
     ///

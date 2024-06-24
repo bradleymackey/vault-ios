@@ -7,12 +7,12 @@ public protocol VaultFeed {
     func reloadData() async
 
     /// Creates a new valut item.
-    func create(item: StoredVaultItem.Write) async throws
+    func create(item: VaultItem.Write) async throws
 
     /// An update was made to the given vault item.
     ///
     /// The feed should update this data and show the changes.
-    func update(id: UUID, item: StoredVaultItem.Write) async throws
+    func update(id: UUID, item: VaultItem.Write) async throws
 
     func delete(id: UUID) async throws
 }

@@ -5,7 +5,7 @@ import Foundation
 @Observable
 public final class FeedViewModel<Store: VaultStore> {
     public var searchQuery: String = ""
-    public var codes = [StoredVaultItem]()
+    public var codes = [VaultItem]()
     public var errors = [VaultRetrievalResult.Error]()
     public private(set) var retrievalError: PresentationError?
 
@@ -21,7 +21,7 @@ public final class FeedViewModel<Store: VaultStore> {
         sanitizedQuery != nil
     }
 
-    public func code(id: UUID) -> StoredVaultItem? {
+    public func code(id: UUID) -> VaultItem? {
         codes.first(where: { $0.id == id })
     }
 
@@ -109,12 +109,12 @@ extension FeedViewModel: VaultFeed {
         return trimmed
     }
 
-    public func create(item: StoredVaultItem.Write) async throws {
+    public func create(item: VaultItem.Write) async throws {
         try await store.insert(item: item)
         await reloadData()
     }
 
-    public func update(id: UUID, item: StoredVaultItem.Write) async throws {
+    public func update(id: UUID, item: VaultItem.Write) async throws {
         try await store.update(id: id, item: item)
         await invalidateCaches(id: id)
         await reloadData()
