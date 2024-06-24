@@ -31,7 +31,7 @@ final class VaultBackupItemEncoder {
 // MARK: - Helpers
 
 extension VaultBackupItemEncoder {
-    private func encodeTintColor(meta: VaultItem.Metadata) -> VaultBackupItem.RGBColor? {
+    private func encodeTintColor(meta: VaultItem.Metadata) -> VaultBackupRGBColor? {
         guard let color = meta.color else { return nil }
         return .init(red: color.red, green: color.green, blue: color.blue)
     }

@@ -34,7 +34,15 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let backup = anyBackupPayload(
             created: date,
             userDescription: "my description",
-            tags: [.init(id: uuid1, title: "My first tag"), .init(id: uuid2, title: "my second tag")],
+            tags: [
+                .init(id: uuid1, title: "My first tag", color: nil, iconName: nil),
+                .init(
+                    id: uuid2,
+                    title: "my second tag",
+                    color: .init(red: 0.3, green: 0.4, blue: 0.5),
+                    iconName: "some_name"
+                ),
+            ],
             items: []
         )
 
