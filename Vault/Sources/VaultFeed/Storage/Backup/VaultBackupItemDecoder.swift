@@ -34,7 +34,7 @@ extension VaultBackupItemDecoder {
         }.reducedToSet()
     }
 
-    private func decodeColor(color: VaultBackupItem.RGBColor?) -> VaultItemColor? {
+    private func decodeColor(color: VaultBackupRGBColor?) -> VaultItemColor? {
         guard let color else { return nil }
         return .init(red: color.red, green: color.green, blue: color.blue)
     }

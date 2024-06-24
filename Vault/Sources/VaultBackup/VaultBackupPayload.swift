@@ -31,10 +31,14 @@ public struct VaultBackupPayload: Codable, Equatable {
 public struct VaultBackupTag: Codable, Equatable, Identifiable {
     public var id: UUID
     public var title: String
+    public var color: VaultBackupRGBColor?
+    public var iconName: String?
 
-    public init(id: UUID, title: String) {
+    public init(id: UUID, title: String, color: VaultBackupRGBColor?, iconName: String?) {
         self.id = id
         self.title = title
+        self.color = color
+        self.iconName = iconName
     }
 }
 
@@ -51,7 +55,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var searchableLevel: SearchableLevel
     public var searchPassphrase: String?
     /// The tint color associated with the item.
-    public var tintColor: RGBColor?
+    public var tintColor: VaultBackupRGBColor?
     /// The item's data that is used to reconstruct the item.
     public var item: Item
 
@@ -64,7 +68,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         visibility: Visibility,
         searchableLevel: SearchableLevel,
         searchPassphrase: String? = nil,
-        tintColor: RGBColor? = nil,
+        tintColor: VaultBackupRGBColor? = nil,
         item: Item
     ) {
         self.id = id
@@ -80,21 +84,21 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     }
 }
 
+public struct VaultBackupRGBColor: Codable, Equatable {
+    public var red, green, blue: Double
+
+    public init(red: Double, green: Double, blue: Double) {
+        self.red = red
+        self.green = green
+        self.blue = blue
+    }
+}
+
 extension VaultBackupItem {
     /// A individual vault item with enough information to reconstruct it.
     public enum Item: Codable, Equatable {
         case otp(data: OTP)
         case note(data: Note)
-    }
-
-    public struct RGBColor: Codable, Equatable {
-        public var red, green, blue: Double
-
-        public init(red: Double, green: Double, blue: Double) {
-            self.red = red
-            self.green = green
-            self.blue = blue
-        }
     }
 
     public enum SearchableLevel: String, Codable {

@@ -10,6 +10,12 @@
       "title" : "My first tag"
     },
     {
+      "color" : {
+        "blue" : 0.5,
+        "green" : 0.4,
+        "red" : 0.3
+      },
+      "icon_name" : "some_name",
       "id" : "DCABE94A-C194-49AA-B709-7221DAD253AB",
       "title" : "my second tag"
     }
