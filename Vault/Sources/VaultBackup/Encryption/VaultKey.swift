@@ -21,4 +21,10 @@ public struct VaultKey {
         self.key = key
         self.iv = iv
     }
+
+    /// Creates a new key with a random IV.
+    public static func newKeyWithRandomIV(key: Data) throws -> VaultKey {
+        let iv = Data.random(count: 32)
+        return try .init(key: key, iv: iv)
+    }
 }

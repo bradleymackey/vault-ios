@@ -27,4 +27,18 @@ final class VaultKeyTests: XCTestCase {
         XCTAssertEqual(sut.iv.count, 32)
         XCTAssertEqual(sut.key.count, 32)
     }
+
+    func test_newKeyWithRandomIV_throwsForInvalidKeyLength() {
+        XCTAssertThrowsError(try VaultKey.newKeyWithRandomIV(key: Data.random(count: 1)))
+    }
+
+    func test_newKeyWithRandomIV_makesValidKeyAndIVLength() throws {
+        for _ in 1 ... 100 {
+            let data = Data.random(count: 32)
+            let key = try VaultKey.newKeyWithRandomIV(key: data)
+
+            XCTAssertEqual(key.key, data)
+            XCTAssertEqual(key.iv.count, 32)
+        }
+    }
 }

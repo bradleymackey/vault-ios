@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import VaultBackup
 
 public struct BackupPassword: Equatable, Hashable, Sendable {
     /// The derived key (via keygen) from the user's password.
@@ -25,5 +26,9 @@ extension BackupPassword {
         let salt = Data.random(count: 48)
         let key = try deriver.key(password: Data(password.utf8), salt: salt)
         return BackupPassword(key: key, salt: salt, keyDervier: deriver.signature)
+    }
+
+    public func newVaultKeyWithRandomIV() throws -> VaultKey {
+        try VaultKey.newKeyWithRandomIV(key: key)
     }
 }
