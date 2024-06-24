@@ -32,8 +32,8 @@ struct PersistedVaultItemDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoder {
-    private func decodeTags(tags: [PersistedVaultTag]) -> StoredVaultItemTags {
-        StoredVaultItemTags(ids: tags.map {
+    private func decodeTags(tags: [PersistedVaultTag]) -> VaultItemTags {
+        VaultItemTags(ids: tags.map {
             VaultItemTag.Identifier(id: $0.id)
         }.reducedToSet())
     }

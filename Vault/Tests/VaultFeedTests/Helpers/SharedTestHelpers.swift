@@ -104,7 +104,7 @@ func uniqueVaultItem(item: StoredVaultItem.Payload) -> StoredVaultItem {
 
 func uniqueWritableVaultItem(
     visibility: VaultItemVisibility = .always,
-    tags: StoredVaultItemTags = .init(ids: [])
+    tags: VaultItemTags = .init(ids: [])
 ) -> StoredVaultItem.Write {
     .init(
         userDescription: "any",

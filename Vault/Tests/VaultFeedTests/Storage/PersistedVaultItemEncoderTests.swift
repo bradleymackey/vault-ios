@@ -415,7 +415,7 @@ extension PersistedVaultItemEncoderTests {
         color: VaultItemColor? = nil,
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
-        tags: StoredVaultItemTags = .init(ids: []),
+        tags: VaultItemTags = .init(ids: []),
         searchPassphrase: String = ""
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
@@ -453,7 +453,7 @@ extension PersistedVaultItemEncoderTests {
         userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil,
-        tags: StoredVaultItemTags = .init(ids: [])
+        tags: VaultItemTags = .init(ids: [])
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
             userDescription: userDescription,
