@@ -15,7 +15,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     HOTP.PreviewItem == HOTPAuthCode,
     Note.PreviewItem == SecureNote
 {
-    public typealias PreviewItem = VaultItem
+    public typealias PreviewItem = StoredVaultItem.Payload
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note

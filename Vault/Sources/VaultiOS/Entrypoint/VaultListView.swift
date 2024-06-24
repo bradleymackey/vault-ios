@@ -9,7 +9,7 @@ struct VaultListView<
     Store: VaultStore,
     Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
 >: View
-    where Generator.PreviewItem == VaultItem
+    where Generator.PreviewItem == StoredVaultItem.Payload
 {
     var feedViewModel: FeedViewModel<Store>
     var localSettings: LocalSettings

@@ -7,7 +7,7 @@ struct VaultDetailEditView<
     Store: VaultStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View
-    where PreviewGenerator.PreviewItem == VaultItem
+    where PreviewGenerator.PreviewItem == StoredVaultItem.Payload
 {
     var feedViewModel: FeedViewModel<Store>
     var storedItem: StoredVaultItem

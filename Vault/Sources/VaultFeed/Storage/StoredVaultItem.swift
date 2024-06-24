@@ -6,12 +6,18 @@ import VaultCore
 ///
 /// Includes the unique ID used to identify this item.
 public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
+    /// An item of data that can be stored in the Vault.
+    public enum Payload: Equatable, Hashable, Sendable {
+        case otpCode(OTPAuthCode)
+        case secureNote(SecureNote)
+    }
+
     /// Information about the stored item.
     public var metadata: Metadata
     /// The stored vault item.
-    public var item: VaultItem
+    public var item: Payload
 
-    public init(metadata: Metadata, item: VaultItem) {
+    public init(metadata: Metadata, item: Payload) {
         self.metadata = metadata
         self.item = item
     }
@@ -31,6 +37,26 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
             searchableLevel: metadata.searchableLevel,
             searchPassphase: metadata.searchPassphrase
         )
+    }
+}
+
+extension StoredVaultItem.Payload {
+    public var otpCode: OTPAuthCode? {
+        switch self {
+        case let .otpCode(otpCode):
+            otpCode
+        default:
+            nil
+        }
+    }
+
+    public var secureNote: SecureNote? {
+        switch self {
+        case let .secureNote(note):
+            note
+        default:
+            nil
+        }
     }
 }
 
@@ -81,7 +107,7 @@ extension StoredVaultItem {
     public struct Write: Equatable, Sendable {
         public var userDescription: String
         public var color: VaultItemColor?
-        public var item: VaultItem
+        public var item: Payload
         public var tags: StoredVaultItemTags
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
@@ -90,7 +116,7 @@ extension StoredVaultItem {
         public init(
             userDescription: String,
             color: VaultItemColor?,
-            item: VaultItem,
+            item: Payload,
             tags: StoredVaultItemTags,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,

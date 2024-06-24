@@ -95,7 +95,7 @@ func searchableStoredSecureNoteVaultItem(
     )
 }
 
-func uniqueVaultItem(item: VaultItem) -> StoredVaultItem {
+func uniqueVaultItem(item: StoredVaultItem.Payload) -> StoredVaultItem {
     StoredVaultItem(
         metadata: uniqueStoredMetadata(),
         item: item

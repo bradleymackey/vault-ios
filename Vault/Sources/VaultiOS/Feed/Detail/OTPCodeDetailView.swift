@@ -6,7 +6,7 @@ import VaultUI
 
 @MainActor
 struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
-    where PreviewGenerator.PreviewItem == VaultItem
+    where PreviewGenerator.PreviewItem == StoredVaultItem.Payload
 {
     @State private var viewModel: OTPCodeDetailViewModel
     private var previewGenerator: PreviewGenerator

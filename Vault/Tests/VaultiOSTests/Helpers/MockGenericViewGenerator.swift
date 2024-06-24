@@ -5,7 +5,7 @@ import VaultFeed
 import VaultiOS
 
 final class MockGenericViewGenerator: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = VaultItem
+    typealias PreviewItem = StoredVaultItem.Payload
 
     func makeVaultPreviewView(
         item _: PreviewItem,

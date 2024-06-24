@@ -39,7 +39,7 @@ extension VaultBackupItemDecoder {
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 
-    private func decodeItem(backupItem: VaultBackupItem) throws -> VaultItem {
+    private func decodeItem(backupItem: VaultBackupItem) throws -> StoredVaultItem.Payload {
         switch backupItem.item {
         case let .note(data): .secureNote(decodeSecureNote(data: data))
         case let .otp(data): try .otpCode(decodeOTPCode(data: data))

@@ -6,7 +6,7 @@ import VaultFeed
 struct VaultDetailCreateView<
     Store: VaultStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
->: View where PreviewGenerator.PreviewItem == VaultItem {
+>: View where PreviewGenerator.PreviewItem == StoredVaultItem.Payload {
     var feedViewModel: FeedViewModel<Store>
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator

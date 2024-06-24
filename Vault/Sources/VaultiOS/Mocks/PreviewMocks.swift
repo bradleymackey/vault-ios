@@ -110,7 +110,7 @@ struct CodeStoreFake: VaultStoreReader {
 }
 
 struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator, VaultItemCopyActionHandler {
-    typealias PreviewItem = VaultItem
+    typealias PreviewItem = StoredVaultItem.Payload
 
     func makeVaultPreviewView(
         item _: PreviewItem,
