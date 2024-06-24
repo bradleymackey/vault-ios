@@ -8,14 +8,14 @@ class MockVaultFeed: VaultFeed {
         calls.append("\(#function)")
     }
 
-    var createCalled: (StoredVaultItem.Write) -> Void = { _ in }
-    func create(item: StoredVaultItem.Write) async throws {
+    var createCalled: (VaultItem.Write) -> Void = { _ in }
+    func create(item: VaultItem.Write) async throws {
         calls.append(#function)
         createCalled(item)
     }
 
-    var updateCalled: (UUID, StoredVaultItem.Write) -> Void = { _, _ in }
-    func update(id: UUID, item: StoredVaultItem.Write) async throws {
+    var updateCalled: (UUID, VaultItem.Write) -> Void = { _, _ in }
+    func update(id: UUID, item: VaultItem.Write) async throws {
         calls.append("\(#function)")
         updateCalled(id, item)
     }

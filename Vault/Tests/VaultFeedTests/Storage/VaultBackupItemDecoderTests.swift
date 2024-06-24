@@ -38,7 +38,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "hello")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
-        XCTAssertEqual(decodedItem.metadata.tags, .init(ids: [.init(id: tag)]))
+        XCTAssertEqual(decodedItem.metadata.tags, [.init(id: tag)])
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
     }

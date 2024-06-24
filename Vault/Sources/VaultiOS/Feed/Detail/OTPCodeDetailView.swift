@@ -6,7 +6,7 @@ import VaultUI
 
 @MainActor
 struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
-    where PreviewGenerator.PreviewItem == VaultItem
+    where PreviewGenerator.PreviewItem == VaultItem.Payload
 {
     @State private var viewModel: OTPCodeDetailViewModel
     private var previewGenerator: PreviewGenerator
@@ -17,7 +17,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     init(
         editingExistingCode code: OTPAuthCode,
         navigationPath: Binding<NavigationPath>,
-        storedMetadata: StoredVaultItem.Metadata,
+        storedMetadata: VaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
         openInEditMode: Bool,
@@ -212,7 +212,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private func codeInformationSection(code: OTPAuthCode, metadata: StoredVaultItem.Metadata) -> some View {
+    private func codeInformationSection(code: OTPAuthCode, metadata: VaultItem.Metadata) -> some View {
         Section {
             copyableViewGenerator().makeVaultPreviewView(
                 item: .otpCode(code),
@@ -359,7 +359,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 created: Date(),
                 updated: Date(),
                 userDescription: "Description",
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",

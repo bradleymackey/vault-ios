@@ -15,7 +15,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     HOTP.PreviewItem == HOTPAuthCode,
     Note.PreviewItem == SecureNote
 {
-    public typealias PreviewItem = VaultItem
+    public typealias PreviewItem = VaultItem.Payload
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note
@@ -31,7 +31,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     @ViewBuilder
     public func makeVaultPreviewView(
         item: PreviewItem,
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         switch item {

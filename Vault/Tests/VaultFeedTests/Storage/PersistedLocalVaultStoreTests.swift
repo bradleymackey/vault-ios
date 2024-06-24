@@ -41,7 +41,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieve_deliversMultipleCodesOnNonEmptyStore() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -56,7 +56,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieve_hasNoSideEffectsOnNonEmptyStore() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -74,7 +74,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieve_doesNotReturnSearchOnlyItems() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(visibility: .onlySearch),
             uniqueWritableVaultItem(visibility: .onlySearch),
             uniqueWritableVaultItem(visibility: .onlySearch),
@@ -89,7 +89,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieve_returnsAlwaysVisibleItems() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(visibility: .always),
             uniqueWritableVaultItem(visibility: .onlySearch),
             uniqueWritableVaultItem(visibility: .always),
@@ -105,7 +105,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     @MainActor
     func test_retrieve_returnsCorruptedItemsAsErrors() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -126,7 +126,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     @MainActor
     func test_retrieve_returnsAllItemsCorrupted() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -168,7 +168,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_returnsEmptyForNoQueryMatches() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(),
             writableSearchableOTPVaultItem(),
         ]
@@ -182,7 +182,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_deliversSingleMatchOnMatchingQuery() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(userDescription: "yes"),
             writableSearchableOTPVaultItem(userDescription: "no"),
         ]
@@ -197,7 +197,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_hasNoSideEffectsOnSingleMatch() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(userDescription: "yes"),
             writableSearchableOTPVaultItem(userDescription: "no"),
         ]
@@ -216,7 +216,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_deliversMultipleMatchesOnMatchingQuery() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableOTPVaultItem(userDescription: "no"),
             writableSearchableNoteVaultItem(userDescription: "yes"),
             writableSearchableOTPVaultItem(userDescription: "no"),
@@ -235,7 +235,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesUserDescription() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(),
             writableSearchableOTPVaultItem(userDescription: "x"),
             writableSearchableNoteVaultItem(userDescription: "a"),
@@ -256,7 +256,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesOTPAccountName() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(),
             writableSearchableOTPVaultItem(accountName: "a"),
             writableSearchableOTPVaultItem(accountName: "x"),
@@ -273,7 +273,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesOTPIssuer() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(),
             writableSearchableOTPVaultItem(issuerName: "a"),
             writableSearchableOTPVaultItem(issuerName: "x"),
@@ -290,7 +290,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesNoteDetailsTitle() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(),
             writableSearchableNoteVaultItem(title: "a"),
             writableSearchableNoteVaultItem(title: "x"),
@@ -307,7 +307,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_matchesNoteDetailsContents() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(),
             writableSearchableNoteVaultItem(contents: "a"),
             writableSearchableNoteVaultItem(contents: "x"),
@@ -324,7 +324,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_combinesResultsFromDifferentFields() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(userDescription: "a"),
             writableSearchableNoteVaultItem(title: "aa"),
             writableSearchableNoteVaultItem(contents: "aaa"),
@@ -342,7 +342,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_returnsMatchesForAllQueryStates() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(userDescription: "a", visibility: .onlySearch),
             writableSearchableNoteVaultItem(title: "aa", visibility: .always),
             writableSearchableNoteVaultItem(contents: "aaa", visibility: .onlySearch),
@@ -360,7 +360,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_doesNotReturnNotesSearchingByContent() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyTitle),
             writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyPassphrase),
             writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .none),
@@ -375,7 +375,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_returnsNoteContentsIfEnabled() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyTitle),
             writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyPassphrase),
             writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .full),
@@ -390,7 +390,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_returnsItemsSearchingByTitle() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyTitle),
             writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyTitle),
         ]
@@ -404,7 +404,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_titleOnlyMatchesOTPFields() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyTitle),
             writableSearchableOTPVaultItem(issuerName: "aaabbb", searchableLevel: .onlyTitle),
         ]
@@ -420,7 +420,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_requiresExactPassphraseMatch() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "n"),
             writableSearchableOTPVaultItem(
                 accountName: "aaa",
@@ -445,7 +445,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_returnsPassphraseMatches() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .full),
             writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "a"),
             writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "b"),
@@ -468,7 +468,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     @MainActor
     func test_retrieveMatchingQuery_returnsCorruptedItemsAsErrors() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableOTPVaultItem(accountName: "aaa"),
             writableSearchableOTPVaultItem(accountName: "aaa"),
             writableSearchableOTPVaultItem(accountName: "bbb"), // not included
@@ -490,7 +490,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     @MainActor
     func test_retrieveMatchingQuery_returnsAllItemsCorrupted() async throws {
-        let codes: [StoredVaultItem.Write] = [
+        let codes: [VaultItem.Write] = [
             writableSearchableOTPVaultItem(accountName: "aaa"),
             writableSearchableOTPVaultItem(accountName: "aaa"),
             writableSearchableOTPVaultItem(accountName: "bbb"), // not included

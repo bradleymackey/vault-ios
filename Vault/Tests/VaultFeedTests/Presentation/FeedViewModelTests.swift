@@ -41,7 +41,7 @@ final class FeedViewModelTests: XCTestCase {
     @MainActor
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = StubStore()
-        store.codes = .init(items: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
+        store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
 
         let exp = expectation(description: "Wait for reload data")
@@ -58,7 +58,7 @@ final class FeedViewModelTests: XCTestCase {
     @MainActor
     func test_reloadData_populatesCodesIfQueryIsNotPresent() async throws {
         let store = StubStore()
-        store.codes = .init(items: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
+        store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
         sut.searchQuery = "  " // whitespace only
 
@@ -76,7 +76,7 @@ final class FeedViewModelTests: XCTestCase {
     @MainActor
     func test_reloadData_populatesCodesFromQueryIfQueryIsPresent() async throws {
         let store = StubStore()
-        store.codesMatchingQuery = .init(items: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
+        store.codesMatchingQuery = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
         sut.searchQuery = " \tSOME QUERY 123\n "
 
@@ -95,7 +95,7 @@ final class FeedViewModelTests: XCTestCase {
     @MainActor
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = StubStore()
-        store.codes = .init(items: [uniqueStoredVaultItem(), uniqueStoredVaultItem()])
+        store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
 
         await expectNoMutation(observable: sut, keyPath: \.retrievalError) {
@@ -325,13 +325,13 @@ final class FeedViewModelTests: XCTestCase {
         }
 
         var insertStoreCalled: () -> Void = {}
-        func insert(item _: StoredVaultItem.Write) async throws -> UUID {
+        func insert(item _: VaultItem.Write) async throws -> UUID {
             insertStoreCalled()
             return UUID()
         }
 
         var updateStoreCalled: () -> Void = {}
-        func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
+        func update(id _: UUID, item _: VaultItem.Write) async throws {
             updateStoreCalled()
         }
 
@@ -360,11 +360,11 @@ final class FeedViewModelTests: XCTestCase {
             throw error
         }
 
-        func insert(item _: StoredVaultItem.Write) async throws -> UUID {
+        func insert(item _: VaultItem.Write) async throws -> UUID {
             throw error
         }
 
-        func update(id _: UUID, item _: StoredVaultItem.Write) async throws {
+        func update(id _: UUID, item _: VaultItem.Write) async throws {
             throw error
         }
 

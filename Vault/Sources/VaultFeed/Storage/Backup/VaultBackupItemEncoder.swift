@@ -2,13 +2,13 @@ import Foundation
 import VaultBackup
 import VaultCore
 
-/// Encodes an individual `StoredVaultItem` to a `VaultBackupItem` ready for use in the
+/// Encodes an individual `VaultItem` to a `VaultBackupItem` ready for use in the
 /// backup and encryption engine.
 ///
 /// This transforms and encodes all the properties of the item such that it's in a format
 /// that can be passed to the backup & encryption engine.
 final class VaultBackupItemEncoder {
-    func encode(storedItem: StoredVaultItem) -> VaultBackupItem {
+    func encode(storedItem: VaultItem) -> VaultBackupItem {
         let itemDetail: VaultBackupItem.Item = switch storedItem.item {
         case let .otpCode(code): .otp(data: encodeOTPCode(code: code))
         case let .secureNote(note): .note(data: encodeNote(note: note))
@@ -18,7 +18,7 @@ final class VaultBackupItemEncoder {
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
             userDescription: storedItem.metadata.userDescription,
-            tags: storedItem.metadata.tags.ids.reducedToSet(\.id),
+            tags: storedItem.metadata.tags.reducedToSet(\.id),
             visibility: encodeVisibility(metadata: storedItem.metadata),
             searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
             searchPassphrase: storedItem.metadata.searchPassphrase,
@@ -31,19 +31,19 @@ final class VaultBackupItemEncoder {
 // MARK: - Helpers
 
 extension VaultBackupItemEncoder {
-    private func encodeTintColor(meta: StoredVaultItem.Metadata) -> VaultBackupItem.RGBColor? {
+    private func encodeTintColor(meta: VaultItem.Metadata) -> VaultBackupItem.RGBColor? {
         guard let color = meta.color else { return nil }
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 
-    private func encodeVisibility(metadata: StoredVaultItem.Metadata) -> VaultBackupItem.Visibility {
+    private func encodeVisibility(metadata: VaultItem.Metadata) -> VaultBackupItem.Visibility {
         switch metadata.visibility {
         case .always: .always
         case .onlySearch: .onlySearch
         }
     }
 
-    private func encodeSearchableLevel(metadata: StoredVaultItem.Metadata) -> VaultBackupItem.SearchableLevel {
+    private func encodeSearchableLevel(metadata: VaultItem.Metadata) -> VaultBackupItem.SearchableLevel {
         switch metadata.searchableLevel {
         case .none: .none
         case .full: .full

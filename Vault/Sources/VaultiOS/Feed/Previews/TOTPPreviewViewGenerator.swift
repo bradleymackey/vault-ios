@@ -35,7 +35,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
 
     public func makeVaultPreviewView(
         item: PreviewItem,
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         viewFactory.makeTOTPView(
@@ -111,7 +111,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
     }
 
     private func makeViewModelForCode(
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         code: TOTPAuthCode
     ) -> OTPCodePreviewViewModel {
         viewModelCache.getOrCreateValue(for: metadata.id) {

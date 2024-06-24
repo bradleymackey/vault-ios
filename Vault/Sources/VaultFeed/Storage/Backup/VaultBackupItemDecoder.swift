@@ -3,8 +3,8 @@ import VaultBackup
 import VaultCore
 
 final class VaultBackupItemDecoder {
-    func decode(backupItem: VaultBackupItem) throws -> StoredVaultItem {
-        try StoredVaultItem(
+    func decode(backupItem: VaultBackupItem) throws -> VaultItem {
+        try VaultItem(
             metadata: decodeMetadata(backupItem: backupItem),
             item: decodeItem(backupItem: backupItem)
         )
@@ -14,7 +14,7 @@ final class VaultBackupItemDecoder {
 // MARK: - Helpers
 
 extension VaultBackupItemDecoder {
-    private func decodeMetadata(backupItem: VaultBackupItem) -> StoredVaultItem.Metadata {
+    private func decodeMetadata(backupItem: VaultBackupItem) -> VaultItem.Metadata {
         .init(
             id: backupItem.id,
             created: backupItem.createdDate,
@@ -28,10 +28,10 @@ extension VaultBackupItemDecoder {
         )
     }
 
-    private func decodeTags(ids: Set<UUID>) -> StoredVaultItemTags {
-        StoredVaultItemTags(ids: ids.map {
+    private func decodeTags(ids: Set<UUID>) -> Set<VaultItemTag.Identifier> {
+        ids.map {
             VaultItemTag.Identifier(id: $0)
-        }.reducedToSet())
+        }.reducedToSet()
     }
 
     private func decodeColor(color: VaultBackupItem.RGBColor?) -> VaultItemColor? {
@@ -39,7 +39,7 @@ extension VaultBackupItemDecoder {
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 
-    private func decodeItem(backupItem: VaultBackupItem) throws -> VaultItem {
+    private func decodeItem(backupItem: VaultBackupItem) throws -> VaultItem.Payload {
         switch backupItem.item {
         case let .note(data): .secureNote(decodeSecureNote(data: data))
         case let .otp(data): try .otpCode(decodeOTPCode(data: data))

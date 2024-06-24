@@ -14,8 +14,8 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
         let note = SecureNote(title: "title", contents: "contents")
-        let tags = StoredVaultItemTags(ids: [.init(id: UUID())])
-        let item = StoredVaultItem(
+        let tags: Set<VaultItemTag.Identifier> = [.init(id: UUID())]
+        let item = VaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
@@ -37,7 +37,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.tags, tags.ids.reducedToSet(\.id))
+        XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
         XCTAssertEqual(encodedItem.visibility, .always)
@@ -61,13 +61,13 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 issuer: "my issuer"
             )
         )
-        let item = StoredVaultItem(
+        let item = VaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
@@ -115,13 +115,13 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 issuer: "my issuer"
             )
         )
-        let item = StoredVaultItem(
+        let item = VaultItem(
             metadata: .init(
                 id: id,
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
@@ -187,7 +187,7 @@ extension VaultBackupItemEncoderTests {
         VaultBackupItemEncoder()
     }
 
-    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm = .sha1, color: VaultItemColor? = nil) -> StoredVaultItem {
+    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm = .sha1, color: VaultItemColor? = nil) -> VaultItem {
         let code = OTPAuthCode(
             type: .hotp(counter: 69),
             data: .init(
@@ -198,13 +198,13 @@ extension VaultBackupItemEncoderTests {
                 issuer: "my issuer"
             )
         )
-        return StoredVaultItem(
+        return VaultItem(
             metadata: .init(
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
                 userDescription: "any",
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",

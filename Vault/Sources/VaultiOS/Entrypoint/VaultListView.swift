@@ -9,7 +9,7 @@ struct VaultListView<
     Store: VaultStore,
     Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
 >: View
-    where Generator.PreviewItem == VaultItem
+    where Generator.PreviewItem == VaultItem.Payload
 {
     var feedViewModel: FeedViewModel<Store>
     var localSettings: LocalSettings
@@ -22,7 +22,7 @@ struct VaultListView<
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Hashable, IdentifiableSelf {
-        case detail(UUID, StoredVaultItem)
+        case detail(UUID, VaultItem)
         case creatingItem(CreatingItem)
     }
 

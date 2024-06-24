@@ -12,7 +12,7 @@ struct PersistedVaultItemEncoder {
     }
 
     /// Encodes the given item, inserting it in the encoder's `context`.
-    func encode(item: StoredVaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
+    func encode(item: VaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
         let model = if let existing {
             try encode(existingItem: existing, newData: item)
         } else {
@@ -28,13 +28,13 @@ struct PersistedVaultItemEncoder {
 // MARK: - Items
 
 extension PersistedVaultItemEncoder {
-    private func fetchTagsForItem(newData: StoredVaultItem.Write) throws -> [PersistedVaultTag] {
-        let tagsForItemIds = newData.tags.ids.map(\.id).reducedToSet()
+    private func fetchTagsForItem(newData: VaultItem.Write) throws -> [PersistedVaultTag] {
+        let tagsForItemIds = newData.tags.map(\.id).reducedToSet()
         let itemTagsPredicate = #Predicate<PersistedVaultTag> { tagsForItemIds.contains($0.id) }
         return try context.fetch(.init(predicate: itemTagsPredicate))
     }
 
-    private func encode(newData: StoredVaultItem.Write) throws -> PersistedVaultItem {
+    private func encode(newData: VaultItem.Write) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
         case let .secureNote(note): encodeSecureNoteDetails(newData: note)
@@ -63,7 +63,7 @@ extension PersistedVaultItemEncoder {
 
     private func encode(
         existingItem: PersistedVaultItem,
-        newData: StoredVaultItem.Write
+        newData: VaultItem.Write
     ) throws -> PersistedVaultItem {
         let now = currentDate()
         existingItem.updatedDate = now

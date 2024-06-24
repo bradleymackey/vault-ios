@@ -22,7 +22,7 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
 
     public func makeVaultPreviewView(
         item: PreviewItem,
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         viewFactory.makeHOTPView(
@@ -102,7 +102,7 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
     }
 
     private func makePreviewViewModel(
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         code: HOTPAuthCode
     ) -> OTPCodePreviewViewModel {
         previewViewModelCache.getOrCreateValue(for: metadata.id) {

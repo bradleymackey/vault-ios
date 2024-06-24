@@ -17,7 +17,7 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
 
     public func makeVaultPreviewView(
         item: SecureNote,
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(

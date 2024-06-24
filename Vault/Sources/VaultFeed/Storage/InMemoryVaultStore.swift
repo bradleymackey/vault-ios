@@ -2,9 +2,9 @@ import Foundation
 import RegexBuilder
 
 public final actor InMemoryVaultStore {
-    private var codes: [StoredVaultItem]
+    private var codes: [VaultItem]
 
-    public init(codes: [StoredVaultItem] = []) {
+    public init(codes: [VaultItem] = []) {
         self.codes = codes
     }
 }
@@ -25,7 +25,7 @@ extension InMemoryVaultStore: VaultStoreReader {
     }
 }
 
-extension StoredVaultItem {
+extension VaultItem {
     fileprivate func matches(pattern: Regex<Substring>) -> Bool {
         let fields: [String?] = [
             metadata.userDescription,
@@ -43,9 +43,9 @@ extension InMemoryVaultStore: VaultStoreWriter {
     struct CodeNotFound: Error {}
 
     @discardableResult
-    public func insert(item: StoredVaultItem.Write) async throws -> UUID {
+    public func insert(item: VaultItem.Write) async throws -> UUID {
         let currentDate = Date()
-        let metadata = StoredVaultItem.Metadata(
+        let metadata = VaultItem.Metadata(
             id: UUID(),
             created: currentDate,
             updated: currentDate,
@@ -56,7 +56,7 @@ extension InMemoryVaultStore: VaultStoreWriter {
             searchPassphrase: item.searchPassphase,
             color: item.color
         )
-        let code = StoredVaultItem(
+        let code = VaultItem(
             metadata: metadata,
             item: item.item
         )
@@ -64,12 +64,12 @@ extension InMemoryVaultStore: VaultStoreWriter {
         return code.id
     }
 
-    public func update(id: UUID, item: StoredVaultItem.Write) async throws {
+    public func update(id: UUID, item: VaultItem.Write) async throws {
         guard let index = codes.firstIndex(where: { $0.id == id }) else {
             throw CodeNotFound()
         }
         let existingCode = codes[index]
-        let metadata = StoredVaultItem.Metadata(
+        let metadata = VaultItem.Metadata(
             id: id,
             created: existingCode.metadata.created,
             updated: Date(),
@@ -80,7 +80,7 @@ extension InMemoryVaultStore: VaultStoreWriter {
             searchPassphrase: item.searchPassphase,
             color: item.color
         )
-        let newCode = StoredVaultItem(
+        let newCode = VaultItem(
             metadata: metadata,
             item: item.item
         )

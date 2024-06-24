@@ -404,7 +404,7 @@ extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUTEditing(
         code: OTPAuthCode = uniqueCode(),
-        metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
+        metadata: VaultItem.Metadata = uniqueStoredMetadata(),
         editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
         file: StaticString = #filePath,
         line: UInt = #line
@@ -418,7 +418,7 @@ extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUT(
         code: OTPAuthCode = uniqueCode(),
-        metadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
+        metadata: VaultItem.Metadata = uniqueStoredMetadata(),
         editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
         file: StaticString = #filePath,
         line: UInt = #line

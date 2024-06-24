@@ -2,14 +2,14 @@ import Foundation
 import VaultFeed
 
 enum DemoVaultFactory {
-    static func totpCode(issuer: String = "Ebay") -> StoredVaultItem {
+    static func totpCode(issuer: String = "Ebay") -> VaultItem {
         .init(
             metadata: .init(
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
                 userDescription: "My Cool Code",
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
@@ -26,14 +26,14 @@ enum DemoVaultFactory {
         )
     }
 
-    static func hotpCode(issuer: String = "Ebay") -> StoredVaultItem {
+    static func hotpCode(issuer: String = "Ebay") -> VaultItem {
         .init(
             metadata: .init(
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
                 userDescription: "My Other Cool code",
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
@@ -50,14 +50,14 @@ enum DemoVaultFactory {
         )
     }
 
-    static func secureNote(title: String = "Title", contents: String = "Contents...") -> StoredVaultItem {
+    static func secureNote(title: String = "Title", contents: String = "Contents...") -> VaultItem {
         .init(
             metadata: .init(
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
                 userDescription: "This is a secure note which I made. The contents should be very secret.",
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",

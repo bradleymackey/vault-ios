@@ -10,7 +10,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
 
     public enum Mode {
         case creating(initialCode: OTPAuthCode? = nil)
-        case editing(code: OTPAuthCode, metadata: StoredVaultItem.Metadata)
+        case editing(code: OTPAuthCode, metadata: VaultItem.Metadata)
     }
 
     public let mode: Mode
@@ -38,7 +38,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                     visibility: .always,
                     searchableLevel: .full,
                     searchPassphrase: "",
-                    tags: .init(ids: [])
+                    tags: []
                 ),
                 isInitiallyDirty: true
             )

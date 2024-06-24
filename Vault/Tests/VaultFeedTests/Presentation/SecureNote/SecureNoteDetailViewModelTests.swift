@@ -330,7 +330,7 @@ extension SecureNoteDetailViewModelTests {
     @MainActor
     private func makeSUTEditing(
         storedNote: SecureNote = anyStoredNote(),
-        storedMetadata: StoredVaultItem.Metadata = uniqueStoredMetadata(),
+        storedMetadata: VaultItem.Metadata = uniqueStoredMetadata(),
         editor: MockSecureNoteDetailEditor = MockSecureNoteDetailEditor()
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(mode: .editing(note: storedNote, metadata: storedMetadata), editor: editor)

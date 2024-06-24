@@ -28,7 +28,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         let exp = expectation(description: "Wait for creation")
@@ -80,7 +80,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
         edits.issuerTitle = "new issuer name"
         edits.accountNameTitle = "new account name"
@@ -282,7 +282,7 @@ extension VaultFeedDetailEditorAdapterTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: []),
+            tags: [],
             color: nil
         )
     }

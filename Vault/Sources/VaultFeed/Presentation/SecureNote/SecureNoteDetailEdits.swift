@@ -24,7 +24,7 @@ public struct SecureNoteDetailEdits: EditableState {
 
     public var color: VaultItemColor?
 
-    public var tags: StoredVaultItemTags
+    public var tags: Set<VaultItemTag.Identifier>
 
     public init(
         title: String,
@@ -34,7 +34,7 @@ public struct SecureNoteDetailEdits: EditableState {
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
         searchPassphrase: String,
-        tags: StoredVaultItemTags
+        tags: Set<VaultItemTag.Identifier>
     ) {
         self.description = description
         self.title = title
@@ -73,7 +73,7 @@ extension SecureNoteDetailEdits {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
     }
 }

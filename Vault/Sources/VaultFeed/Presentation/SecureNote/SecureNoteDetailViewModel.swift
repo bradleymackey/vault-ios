@@ -9,7 +9,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
 
     public enum Mode {
         case creating
-        case editing(note: SecureNote, metadata: StoredVaultItem.Metadata)
+        case editing(note: SecureNote, metadata: VaultItem.Metadata)
     }
 
     private let mode: Mode

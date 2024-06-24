@@ -16,7 +16,7 @@ public struct VaultItemOnTapDecoratorViewGenerator<
 
     public func makeVaultPreviewView(
         item: PreviewItem,
-        metadata: StoredVaultItem.Metadata,
+        metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         Button {

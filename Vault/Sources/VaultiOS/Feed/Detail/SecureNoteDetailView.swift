@@ -14,7 +14,7 @@ struct SecureNoteDetailView: View {
     init(
         editingExistingNote note: SecureNote,
         navigationPath: Binding<NavigationPath>,
-        storedMetadata: StoredVaultItem.Metadata,
+        storedMetadata: VaultItem.Metadata,
         editor: any SecureNoteDetailEditor,
         openInEditMode: Bool
     ) {

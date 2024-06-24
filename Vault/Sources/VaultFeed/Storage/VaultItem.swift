@@ -5,13 +5,19 @@ import VaultCore
 /// A `VaultItem` retrieved from storage.
 ///
 /// Includes the unique ID used to identify this item.
-public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
+public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
+    /// An item of data that can be stored in the Vault.
+    public enum Payload: Equatable, Hashable, Sendable {
+        case otpCode(OTPAuthCode)
+        case secureNote(SecureNote)
+    }
+
     /// Information about the stored item.
     public var metadata: Metadata
     /// The stored vault item.
-    public var item: VaultItem
+    public var item: Payload
 
-    public init(metadata: Metadata, item: VaultItem) {
+    public init(metadata: Metadata, item: Payload) {
         self.metadata = metadata
         self.item = item
     }
@@ -20,8 +26,8 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
         metadata.id
     }
 
-    /// Maps this object to a `StoredVaultItem.Write` for writing.
-    public var asWritable: StoredVaultItem.Write {
+    /// Maps this object to a `VaultItem.Write` for writing.
+    public var asWritable: VaultItem.Write {
         .init(
             userDescription: metadata.userDescription,
             color: metadata.color,
@@ -34,7 +40,27 @@ public struct StoredVaultItem: Equatable, Hashable, Identifiable, Sendable {
     }
 }
 
-extension StoredVaultItem {
+extension VaultItem.Payload {
+    public var otpCode: OTPAuthCode? {
+        switch self {
+        case let .otpCode(otpCode):
+            otpCode
+        default:
+            nil
+        }
+    }
+
+    public var secureNote: SecureNote? {
+        switch self {
+        case let .secureNote(note):
+            note
+        default:
+            nil
+        }
+    }
+}
+
+extension VaultItem {
     /// Common metadata for all stored vault items.
     public struct Metadata: Equatable, Hashable, Identifiable, Sendable {
         /// A unique ID to identify this specific `item`.
@@ -47,7 +73,7 @@ extension StoredVaultItem {
         public var userDescription: String
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
-        public var tags: StoredVaultItemTags
+        public var tags: Set<VaultItemTag.Identifier>
         public var searchPassphrase: String?
         /// The color tint for this item.
         public var color: VaultItemColor?
@@ -57,7 +83,7 @@ extension StoredVaultItem {
             created: Date,
             updated: Date,
             userDescription: String,
-            tags: StoredVaultItemTags,
+            tags: Set<VaultItemTag.Identifier>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
@@ -76,13 +102,13 @@ extension StoredVaultItem {
     }
 }
 
-extension StoredVaultItem {
+extension VaultItem {
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
         public var userDescription: String
         public var color: VaultItemColor?
-        public var item: VaultItem
-        public var tags: StoredVaultItemTags
+        public var item: Payload
+        public var tags: Set<VaultItemTag.Identifier>
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphase: String?
@@ -90,8 +116,8 @@ extension StoredVaultItem {
         public init(
             userDescription: String,
             color: VaultItemColor?,
-            item: VaultItem,
-            tags: StoredVaultItemTags,
+            item: Payload,
+            tags: Set<VaultItemTag.Identifier>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphase: String?

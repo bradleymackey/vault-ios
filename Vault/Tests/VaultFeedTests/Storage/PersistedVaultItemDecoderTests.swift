@@ -164,7 +164,7 @@ extension PersistedVaultItemDecoderTests {
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.tags, .init(ids: []))
+        XCTAssertEqual(decoded.metadata.tags, [])
     }
 
     func test_decodeMetadata_decodesItemTags() throws {
@@ -174,7 +174,7 @@ extension PersistedVaultItemDecoderTests {
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.tags, .init(ids: [.init(id: id1), .init(id: id2)]))
+        XCTAssertEqual(decoded.metadata.tags, [.init(id: id1), .init(id: id2)])
     }
 }
 

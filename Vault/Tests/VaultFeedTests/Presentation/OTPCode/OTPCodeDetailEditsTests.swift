@@ -25,7 +25,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             visibility: .always,
             searchableLevel: .onlyTitle,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         XCTAssertEqual(sut.codeType, .totp)
@@ -62,7 +62,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         XCTAssertEqual(sut.codeType, .hotp)
@@ -88,7 +88,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         XCTAssertEqual(sut.secretBase32String, "")
@@ -104,7 +104,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             visibility: .always,
             searchableLevel: .none,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         XCTAssertTrue(sut.isValid)
@@ -149,7 +149,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             visibility: .always,
             searchableLevel: .none,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         let newCode = try sut.asOTPAuthCode()
@@ -166,7 +166,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             visibility: .always,
             searchableLevel: .onlyTitle,
             searchPassphrase: "",
-            tags: .init(ids: [])
+            tags: []
         )
 
         let newCode = try sut.asOTPAuthCode()
