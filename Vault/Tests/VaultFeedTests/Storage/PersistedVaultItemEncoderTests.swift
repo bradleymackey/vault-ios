@@ -205,7 +205,7 @@ extension PersistedVaultItemEncoderTests {
 
     func test_encodeMetadata_newItemEncodesEmptyTags() throws {
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: .init(ids: []))
+        let item = uniqueWritableVaultItem(tags: [])
 
         let encoded = try sut.encode(item: item)
         XCTAssertEqual(encoded.tags, [])
@@ -215,7 +215,7 @@ extension PersistedVaultItemEncoderTests {
         let id1 = UUID()
         let id2 = UUID()
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1), .init(id: id2)]))
+        let item = uniqueWritableVaultItem(tags: [.init(id: id1), .init(id: id2)])
 
         let persisted1 = makePersistedTag(id: id1)
         let persisted2 = makePersistedTag(id: id2)
@@ -227,10 +227,10 @@ extension PersistedVaultItemEncoderTests {
         let id1 = UUID()
         _ = makePersistedTag(id: id1)
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1)]))
+        let item = uniqueWritableVaultItem(tags: [.init(id: id1)])
         let existing = try sut.encode(item: item)
 
-        let itemNew = uniqueWritableVaultItem(tags: .init(ids: []))
+        let itemNew = uniqueWritableVaultItem(tags: [])
         let encoded = try sut.encode(item: itemNew, existing: existing)
         XCTAssertEqual(encoded.tags, [])
     }
@@ -239,12 +239,12 @@ extension PersistedVaultItemEncoderTests {
         let id1 = UUID()
         _ = makePersistedTag(id: id1)
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id1)]))
+        let item = uniqueWritableVaultItem(tags: [.init(id: id1)])
         let existing = try sut.encode(item: item)
 
         let id2 = UUID()
         let persisted2 = makePersistedTag(id: id2)
-        let itemNew = uniqueWritableVaultItem(tags: .init(ids: [.init(id: id2)]))
+        let itemNew = uniqueWritableVaultItem(tags: [.init(id: id2)])
         let encoded = try sut.encode(item: itemNew, existing: existing)
         XCTAssertEqual(encoded.tags.map(\.id).reducedToSet(), [persisted2.id])
     }
@@ -415,7 +415,7 @@ extension PersistedVaultItemEncoderTests {
         color: VaultItemColor? = nil,
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
-        tags: VaultItemTags = .init(ids: []),
+        tags: Set<VaultItemTag.Identifier> = [],
         searchPassphrase: String = ""
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
@@ -453,7 +453,7 @@ extension PersistedVaultItemEncoderTests {
         userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil,
-        tags: VaultItemTags = .init(ids: [])
+        tags: Set<VaultItemTag.Identifier> = []
     ) -> StoredVaultItem.Write {
         StoredVaultItem.Write(
             userDescription: userDescription,

@@ -144,7 +144,7 @@ struct VaultItemFeedView_Previews: PreviewProvider {
                         created: Date(),
                         updated: Date(),
                         userDescription: "My Cool Code",
-                        tags: .init(ids: []),
+                        tags: [],
                         visibility: .always,
                         searchableLevel: .full,
                         searchPassphrase: "",

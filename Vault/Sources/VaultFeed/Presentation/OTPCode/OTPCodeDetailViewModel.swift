@@ -38,7 +38,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                     visibility: .always,
                     searchableLevel: .full,
                     searchPassphrase: "",
-                    tags: .init(ids: [])
+                    tags: []
                 ),
                 isInitiallyDirty: true
             )

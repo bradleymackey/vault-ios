@@ -14,7 +14,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
         let note = SecureNote(title: "title", contents: "contents")
-        let tags = VaultItemTags(ids: [.init(id: UUID())])
+        let tags: Set<VaultItemTag.Identifier> = [.init(id: UUID())]
         let item = StoredVaultItem(
             metadata: .init(
                 id: id,
@@ -37,7 +37,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.tags, tags.ids.reducedToSet(\.id))
+        XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
         XCTAssertEqual(encodedItem.visibility, .always)
@@ -67,7 +67,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
@@ -121,7 +121,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 created: createdDate,
                 updated: updateDate,
                 userDescription: description,
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
@@ -204,7 +204,7 @@ extension VaultBackupItemEncoderTests {
                 created: Date(),
                 updated: Date(),
                 userDescription: "any",
-                tags: .init(ids: []),
+                tags: [],
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",

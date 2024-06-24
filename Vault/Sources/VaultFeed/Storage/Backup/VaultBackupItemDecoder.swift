@@ -28,10 +28,10 @@ extension VaultBackupItemDecoder {
         )
     }
 
-    private func decodeTags(ids: Set<UUID>) -> VaultItemTags {
-        VaultItemTags(ids: ids.map {
+    private func decodeTags(ids: Set<UUID>) -> Set<VaultItemTag.Identifier> {
+        ids.map {
             VaultItemTag.Identifier(id: $0)
-        }.reducedToSet())
+        }.reducedToSet()
     }
 
     private func decodeColor(color: VaultBackupItem.RGBColor?) -> VaultItemColor? {

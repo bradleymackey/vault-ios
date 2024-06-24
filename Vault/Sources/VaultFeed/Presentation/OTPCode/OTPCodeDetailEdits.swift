@@ -38,7 +38,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var color: VaultItemColor?
 
-    public var tags: VaultItemTags
+    public var tags: Set<VaultItemTag.Identifier>
 
     public init(
         codeType: OTPAuthType.Kind,
@@ -53,7 +53,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
         searchPassphrase: String,
-        tags: VaultItemTags,
+        tags: Set<VaultItemTag.Identifier>,
         color: VaultItemColor?
     ) {
         self.codeType = codeType
@@ -79,7 +79,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
         searchPassphrase: String,
-        tags: VaultItemTags
+        tags: Set<VaultItemTag.Identifier>
     ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
@@ -156,7 +156,7 @@ extension OTPCodeDetailEdits {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            tags: .init(ids: []),
+            tags: [],
             color: nil
         )
     }

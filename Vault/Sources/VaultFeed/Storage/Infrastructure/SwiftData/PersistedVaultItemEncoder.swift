@@ -29,7 +29,7 @@ struct PersistedVaultItemEncoder {
 
 extension PersistedVaultItemEncoder {
     private func fetchTagsForItem(newData: StoredVaultItem.Write) throws -> [PersistedVaultTag] {
-        let tagsForItemIds = newData.tags.ids.map(\.id).reducedToSet()
+        let tagsForItemIds = newData.tags.map(\.id).reducedToSet()
         let itemTagsPredicate = #Predicate<PersistedVaultTag> { tagsForItemIds.contains($0.id) }
         return try context.fetch(.init(predicate: itemTagsPredicate))
     }
