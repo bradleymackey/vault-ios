@@ -4,10 +4,10 @@ import VaultBackup
 import XCTest
 @testable import VaultFeed
 
-final class BackupCreatorTests: XCTestCase {
+final class BackupExporterTests: XCTestCase {
     func test_createEncryptedBackup_usesDifferentIVEachIteration() throws {
         let password = BackupPassword(key: .random(count: 32), salt: .random(count: 32), keyDervier: .testing)
-        let sut = BackupCreator(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
+        let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
         var seenData = Set<Data>()
         for _ in 1 ... 100 {
@@ -25,7 +25,7 @@ final class BackupCreatorTests: XCTestCase {
         let key = Data.random(count: 32)
         let salt = Data.random(count: 32)
         let password = BackupPassword(key: key, salt: salt, keyDervier: .testing)
-        let sut = BackupCreator(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
+        let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
         let backup = try sut.createEncryptedBackup(userDescription: "my backup", items: [], tags: [])
 
@@ -39,7 +39,7 @@ final class BackupCreatorTests: XCTestCase {
         let key = Data.random(count: 32)
         let salt = Data.random(count: 32)
         let password = BackupPassword(key: key, salt: salt, keyDervier: .testing)
-        let sut = BackupCreator(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
+        let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
         let backup = try sut.createEncryptedBackup(
             userDescription: "my backup",
