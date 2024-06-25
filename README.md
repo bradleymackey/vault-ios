@@ -12,6 +12,34 @@ Development takes place in `/Vault`, so take a look in there.
 - `/Vault` Swift Package that defines targets used by the app, build settings, tooling.
 - `/VaultApp` minimal wrapper that packages this into an executable application.
 
+## Architecture
+
+There's essentially 3 storage representations, which we encode and decode from.
+
+To avoid exponential growth of encoders and decoders between all the formats, we always only encode and decode to the Application Layer `VaultItem`.
+This gives us a common format and source of truth for fields that should be present in all the other formats.
+
+```
+                               ┌────────────────┐
+                               │                │
+                               │  Application   │
+                            ┌─▶│  Layer         │◀─┐
+                            │  │                │  │
+                            │  │  [VaultItem]   │  │
+                            │  └────────────────┘  │
+                            │                      │
+                            │                      │
+                            │                      │
+                            │                      │
+┌─────────────────────────┐ │                      │    ┌────────────────────┐
+│                         │ │                      │    │                    │
+│  Persistence            │ │                      │    │ Backup             │
+│  Layer (SwiftData)      │◀┘                      └──▶ │ Layer              │
+│                         │                             │                    │
+│  [PersistedVaultItem]   │                             │ [VaultBackupItem]  │
+└─────────────────────────┘                             └────────────────────┘
+```
+
 ## TODO
 
 - [x] Use a modern structure, based on SPM
