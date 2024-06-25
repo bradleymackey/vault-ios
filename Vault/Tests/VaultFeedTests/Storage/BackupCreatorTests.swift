@@ -11,7 +11,8 @@ final class BackupExporterTests: XCTestCase {
 
         var seenData = Set<Data>()
         for _ in 1 ... 100 {
-            let backup = try sut.createEncryptedBackup(userDescription: "my backup", items: [], tags: [])
+            let payload = VaultApplicationPayload(userDescription: "my backup", items: [], tags: [])
+            let backup = try sut.createEncryptedBackup(payload: payload)
             defer { seenData.insert(backup.data) }
 
             XCTAssertFalse(
@@ -27,7 +28,8 @@ final class BackupExporterTests: XCTestCase {
         let password = BackupPassword(key: key, salt: salt, keyDervier: .testing)
         let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
-        let backup = try sut.createEncryptedBackup(userDescription: "my backup", items: [], tags: [])
+        let payload = VaultApplicationPayload(userDescription: "my backup", items: [], tags: [])
+        let backup = try sut.createEncryptedBackup(payload: payload)
 
         XCTAssertEqual(backup.encryptionIV.count, 32)
         XCTAssertEqual(backup.keygenSalt, salt)
@@ -41,11 +43,12 @@ final class BackupExporterTests: XCTestCase {
         let password = BackupPassword(key: key, salt: salt, keyDervier: .testing)
         let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
-        let backup = try sut.createEncryptedBackup(
+        let payload = VaultApplicationPayload(
             userDescription: "my backup",
             items: [searchableStoredOTPVaultItem()],
             tags: [VaultItemTag(id: .init(id: UUID()), name: "tag")]
         )
+        let backup = try sut.createEncryptedBackup(payload: payload)
 
         XCTAssertEqual(backup.encryptionIV.count, 32)
         XCTAssertEqual(backup.keygenSalt, salt)
