@@ -288,7 +288,7 @@ extension OTPCodeDetailViewModel {
 
     public var updatedDateValue: String? {
         switch mode {
-        case let .editing(_, metadata) where metadata.created != metadata.updated:
+        case let .editing(_, metadata) where metadata.updated > metadata.created.addingTimeInterval(5):
             metadata.updated.formatted(date: .abbreviated, time: .shortened)
         default:
             nil
