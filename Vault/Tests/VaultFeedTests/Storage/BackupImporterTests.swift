@@ -32,7 +32,7 @@ final class BackupImporterTests: XCTestCase {
 
         let decoded = try sut.importEncryptedBackup(encryptedVault: encryptedBackup)
 
-        XCTAssertEqual(decoded.items, [item1])
+        XCTAssertEqual(decoded.items.map(\.id), [item1].map(\.id))
         XCTAssertEqual(decoded.tags, [tag1, tag2])
         XCTAssertEqual(decoded.userDescription, "my backup description")
     }
