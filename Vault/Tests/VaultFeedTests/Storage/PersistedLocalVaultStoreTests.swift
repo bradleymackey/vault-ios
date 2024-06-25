@@ -642,7 +642,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_exportVault_hasNoSideEffectsOnEmptyVault() async throws {
-        _ = try await sut.exportVault()
+        _ = try await sut.exportVault(userDescription: "")
 
         let result = try await sut.retrieve()
         XCTAssertEqual(result, .empty())
@@ -654,16 +654,16 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        _ = try await sut.exportVault()
+        _ = try await sut.exportVault(userDescription: "my desc")
 
         let result = try await sut.retrieve()
         XCTAssertEqual(result.items.count, 3)
     }
 
     func test_exportVault_empty() async throws {
-        let export = try await sut.exportVault()
+        let export = try await sut.exportVault(userDescription: "my description!")
 
-        XCTAssertEqual(export.userDescription, "")
+        XCTAssertEqual(export.userDescription, "my description!")
         XCTAssertEqual(export.items, [])
         XCTAssertEqual(export.tags, [])
     }
@@ -676,9 +676,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             insertedIDs.append(id)
         }
 
-        let export = try await sut.exportVault()
+        let export = try await sut.exportVault(userDescription: "my description")
 
-        XCTAssertEqual(export.userDescription, "")
+        XCTAssertEqual(export.userDescription, "my description")
         XCTAssertEqual(export.items.map(\.asWritable), items.map(\.asWritable))
         XCTAssertEqual(export.items.map(\.id), insertedIDs)
         XCTAssertEqual(export.tags, [])

@@ -2,5 +2,5 @@ import Foundation
 
 /// @mockable
 public protocol VaultStoreExporter: Sendable {
-    func exportVault() async throws -> VaultApplicationPayload
+    func exportVault(userDescription: String) async throws -> VaultApplicationPayload
 }
