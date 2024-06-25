@@ -11,5 +11,19 @@ final class BackupImporter {
         self.backupPassword = backupPassword
     }
 
-    func importEncryptedBackup() {}
+    func importEncryptedBackup(encryptedVault: EncryptedVault) throws -> VaultApplicationPayload {
+        let backupDecoder = VaultBackupDecoder(key: backupPassword.key)
+        let payload = try backupDecoder.extractBackupPayload(from: encryptedVault)
+        let itemDecoder = VaultBackupItemDecoder()
+        let tagDecoder = VaultBackupTagDecoder()
+        return try .init(
+            userDescription: payload.userDescription,
+            items: payload.items.map {
+                try itemDecoder.decode(backupItem: $0)
+            },
+            tags: payload.tags.map {
+                try tagDecoder.decode(tag: $0)
+            }
+        )
+    }
 }
