@@ -6,7 +6,7 @@ import Foundation
 public final class FeedViewModel<Store: VaultStore> {
     public var searchQuery: String = ""
     public var codes = [VaultItem]()
-    public var errors = [VaultRetrievalResult.Error]()
+    public var errors = [VaultRetrievalResult<VaultItem>.Error]()
     public private(set) var retrievalError: PresentationError?
 
     private let store: Store

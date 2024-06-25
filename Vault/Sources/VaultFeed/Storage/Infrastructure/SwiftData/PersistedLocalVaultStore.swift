@@ -14,7 +14,7 @@ public final actor PersistedLocalVaultStore {
 // MARK: - VaultStoreReader
 
 extension PersistedLocalVaultStore: VaultStoreReader {
-    public func retrieve() async throws -> VaultRetrievalResult {
+    public func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
         let always = VaultEncodingConstants.Visibility.always
         let predicate = #Predicate<PersistedVaultItem> {
             $0.visibility == always
@@ -27,7 +27,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         return .collectFrom(retrievedItems: results)
     }
 
-    public func retrieve(matching query: String) async throws -> VaultRetrievalResult {
+    public func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
         // NOTE: Compounding queries in SwiftData is a bit rough at the moment.
         // Each Predicate can only contain a single expression, so we must create them seperately
         // then compound them (a big chain of disjunctions leads to "expression too complex" errors).
@@ -94,11 +94,11 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     }
 }
 
-extension VaultRetrievalResult {
+extension VaultRetrievalResult where T == VaultItem {
     /// Decodes and collects `PersistedVaultItem` instances into a retrieval result.
     fileprivate static func collectFrom(retrievedItems: [PersistedVaultItem]) -> Self {
         let decoder = PersistedVaultItemDecoder()
-        return retrievedItems.reduce(into: VaultRetrievalResult()) { result, item in
+        return retrievedItems.reduce(into: VaultRetrievalResult<VaultItem>()) { result, item in
             do {
                 let decodedItem = try decoder.decode(item: item)
                 result.items.append(decodedItem)
