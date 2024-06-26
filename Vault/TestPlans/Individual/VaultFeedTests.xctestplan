@@ -20,7 +20,9 @@
       "identifier" : "London, England",
       "referenceType" : "built-in"
     },
-    "region" : "US"
+    "region" : "US",
+    "testExecutionOrdering" : "random",
+    "testTimeoutsEnabled" : true
   },
   "testTargets" : [
     {
