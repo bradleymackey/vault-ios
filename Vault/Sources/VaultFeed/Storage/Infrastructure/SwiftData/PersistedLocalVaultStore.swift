@@ -164,10 +164,8 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 
 extension PersistedLocalVaultStore: VaultStoreExporter {
     public func exportVault(userDescription: String) async throws -> VaultApplicationPayload {
-        let allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { _ in true })
-        let allItems = try modelContext.fetch(allItemsDescriptor)
-        let allTagsDescriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { _ in true })
-        let allTags = try modelContext.fetch(allTagsDescriptor)
+        let allItems: [PersistedVaultItem] = try modelContext.fetch(.all())
+        let allTags: [PersistedVaultTag] = try modelContext.fetch(.all())
         let itemDecoder = PersistedVaultItemDecoder()
         let tagDecoder = PersistedVaultTagDecoder()
         return try .init(
