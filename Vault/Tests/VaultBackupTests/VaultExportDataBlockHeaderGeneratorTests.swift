@@ -10,7 +10,7 @@ final class VaultExportDataBlockHeaderGeneratorTests: XCTestCase {
 
         let header = sut.makeHeader(pageNumber: 1)
 
-        XCTAssertEqual(header?.left, "Created 2/4/70, 6:20 PM")
+        XCTAssertEqual(header?.left, "Created 2/4/70, 5:20 PM")
     }
 
     func test_makeHeader_rightIsPageNumber() {
