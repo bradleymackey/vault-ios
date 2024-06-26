@@ -38,6 +38,16 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             searchPassphase: metadata.searchPassphrase
         )
     }
+
+    /// Checks if all deterministic content in a given vault item is equal to an `other` item.
+    ///
+    /// This ignores data that is not user-determined.
+    /// For example, the created and updated date.
+    func isContentEqual(to other: VaultItem) -> Bool {
+        // The 'writable' content is all deterministic
+        asWritable == other.asWritable &&
+            id == other.id
+    }
 }
 
 extension VaultItem.Payload {
