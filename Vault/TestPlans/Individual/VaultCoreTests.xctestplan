@@ -9,7 +9,18 @@
     }
   ],
   "defaultOptions" : {
-    "language" : "en"
+    "environmentVariableEntries" : [
+      {
+        "key" : "TZ",
+        "value" : "UTC"
+      }
+    ],
+    "language" : "en",
+    "locationScenario" : {
+      "identifier" : "London, England",
+      "referenceType" : "built-in"
+    },
+    "region" : "US"
   },
   "testTargets" : [
     {
