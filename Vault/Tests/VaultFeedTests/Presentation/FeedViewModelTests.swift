@@ -20,7 +20,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_populatesEmptyCodesFromStore() async throws {
-        let sut = makeSUT(store: StubStore.empty)
+        let sut = makeSUT(store: VaultStoreStub.empty)
 
         await expectSingleMutation(observable: sut, keyPath: \.codes) {
             await sut.reloadData()
@@ -30,7 +30,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_doesNotShowErrorOnPopulatingFromEmpty() async throws {
-        let sut = makeSUT(store: StubStore.empty)
+        let sut = makeSUT(store: VaultStoreStub.empty)
 
         await expectNoMutation(observable: sut, keyPath: \.retrievalError) {
             await sut.reloadData()
@@ -40,7 +40,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_populatesCodesFromStore() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
 
@@ -57,7 +57,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_populatesCodesIfQueryIsNotPresent() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
         sut.searchQuery = "  " // whitespace only
@@ -75,7 +75,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_populatesCodesFromQueryIfQueryIsPresent() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         store.codesMatchingQuery = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
         sut.searchQuery = " \tSOME QUERY 123\n "
@@ -94,7 +94,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
 
@@ -116,7 +116,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_createItem_updatesStore() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store update")
         store.insertStoreCalled = {
             exp.fulfill()
@@ -131,7 +131,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_createItem_reloadsAfterUpdate() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store update")
         store.retrieveStoreCalled = {
             exp.fulfill()
@@ -164,7 +164,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_createItem_doesNotInvalidateAnyCaches() async throws {
         let cache1 = VaultItemCacheMock()
         let cache2 = VaultItemCacheMock()
-        let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
+        let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
         try await sut.create(item: uniqueWritableVaultItem())
 
@@ -174,7 +174,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_updateCode_updatesStore() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store update")
         store.updateStoreCalled = {
             exp.fulfill()
@@ -189,7 +189,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_updateCode_reloadsAfterUpdate() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store retrieve")
         store.retrieveStoreCalled = {
             exp.fulfill()
@@ -222,7 +222,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_updateCode_invalidatesCaches() async throws {
         let cache1 = VaultItemCacheMock()
         let cache2 = VaultItemCacheMock()
-        let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
+        let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
         try await sut.update(id: invalidateId, item: uniqueWritableVaultItem())
@@ -233,7 +233,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_removesFromStore() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store delete")
         store.deleteStoreCalled = {
             exp.fulfill()
@@ -248,7 +248,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_reloadsAfterDelete() async throws {
-        let store = StubStore()
+        let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store retrieve")
         store.retrieveStoreCalled = {
             exp.fulfill()
@@ -281,7 +281,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_deleteCode_invalidatesCaches() async throws {
         let cache1 = VaultItemCacheMock()
         let cache2 = VaultItemCacheMock()
-        let sut = makeSUT(store: StubStore(), caches: [cache1, cache2])
+        let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
         try await sut.delete(id: invalidateId)
@@ -302,43 +302,6 @@ final class FeedViewModelTests: XCTestCase {
         let sut = FeedViewModel(store: store, caches: caches)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
-    }
-
-    @MainActor
-    private final class StubStore: VaultStoreReader, VaultStoreWriter {
-        var codes = VaultRetrievalResult<VaultItem>()
-        var retrieveStoreCalled: () -> Void = {}
-        func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
-            retrieveStoreCalled()
-            return codes
-        }
-
-        var codesMatchingQuery = VaultRetrievalResult<VaultItem>()
-        var retrieveStoreMatchingQueryCalled: (String) -> Void = { _ in }
-        func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
-            retrieveStoreMatchingQueryCalled(query)
-            return codesMatchingQuery
-        }
-
-        static var empty: StubStore {
-            .init()
-        }
-
-        var insertStoreCalled: () -> Void = {}
-        func insert(item _: VaultItem.Write) async throws -> UUID {
-            insertStoreCalled()
-            return UUID()
-        }
-
-        var updateStoreCalled: () -> Void = {}
-        func update(id _: UUID, item _: VaultItem.Write) async throws {
-            updateStoreCalled()
-        }
-
-        var deleteStoreCalled: () -> Void = {}
-        func delete(id _: UUID) async throws {
-            deleteStoreCalled()
-        }
     }
 
     @MainActor

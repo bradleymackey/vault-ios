@@ -136,30 +136,32 @@ public struct VaultItemFeedView<
 
 struct VaultItemFeedView_Previews: PreviewProvider {
     static var previews: some View {
-        VaultItemFeedView(
-            viewModel: .init(store: InMemoryVaultStore(codes: [
-                .init(
-                    metadata: .init(
-                        id: UUID(),
-                        created: Date(),
-                        updated: Date(),
-                        userDescription: "My Cool Code",
-                        tags: [],
-                        visibility: .always,
-                        searchableLevel: .full,
-                        searchPassphrase: "",
-                        color: VaultItemColor(color: .green)
-                    ),
-                    item: .otpCode(.init(
-                        type: .totp(),
-                        data: .init(
-                            secret: .empty(),
-                            accountName: "example@example.com",
-                            issuer: "i"
-                        )
-                    ))
+        let store = VaultStoreStub()
+        store.codes = .init(items: [
+            .init(
+                metadata: .init(
+                    id: UUID(),
+                    created: Date(),
+                    updated: Date(),
+                    userDescription: "My Cool Code",
+                    tags: [],
+                    visibility: .always,
+                    searchableLevel: .full,
+                    searchPassphrase: "",
+                    color: VaultItemColor(color: .green)
                 ),
-            ])),
+                item: .otpCode(.init(
+                    type: .totp(),
+                    data: .init(
+                        secret: .empty(),
+                        accountName: "example@example.com",
+                        issuer: "i"
+                    )
+                ))
+            ),
+        ])
+        return VaultItemFeedView(
+            viewModel: .init(store: store),
             localSettings: .init(defaults: .init(userDefaults: .standard)),
             viewGenerator: GenericGenerator(),
             isEditing: .constant(false)
