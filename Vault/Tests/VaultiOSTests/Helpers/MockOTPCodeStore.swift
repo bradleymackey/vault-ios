@@ -5,16 +5,16 @@ import VaultiOS
 @MainActor
 final class MockOTPCodeStore: VaultStore {
     init() {}
-    var codesToRetrieve = VaultRetrievalResult()
+    var codesToRetrieve = VaultRetrievalResult<VaultItem>()
     var didRetrieveData: () -> Void = {}
-    func retrieve() async throws -> VaultRetrievalResult {
+    func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
         didRetrieveData()
         return codesToRetrieve
     }
 
-    var codesToRetrieveMatchingQuery = VaultRetrievalResult()
+    var codesToRetrieveMatchingQuery = VaultRetrievalResult<VaultItem>()
     var didRetrieveDataMatchingQuery: (String) -> Void = { _ in }
-    func retrieve(matching query: String) async throws -> VaultRetrievalResult {
+    func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
         didRetrieveDataMatchingQuery(query)
         return codesToRetrieveMatchingQuery
     }

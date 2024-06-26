@@ -640,6 +640,49 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.items.map(\.item.otpCode), initialCodes.map(\.item.otpCode) + [newCode.item.otpCode])
         XCTAssertEqual(result.errors, [])
     }
+
+    func test_exportVault_hasNoSideEffectsOnEmptyVault() async throws {
+        _ = try await sut.exportVault(userDescription: "")
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result, .empty())
+    }
+
+    func test_exportVault_hasNoSideEffectsOnNonEmptyVault() async throws {
+        let initialCodes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
+        for code in initialCodes {
+            try await sut.insert(item: code)
+        }
+
+        _ = try await sut.exportVault(userDescription: "my desc")
+
+        let result = try await sut.retrieve()
+        XCTAssertEqual(result.items.count, 3)
+    }
+
+    func test_exportVault_empty() async throws {
+        let export = try await sut.exportVault(userDescription: "my description!")
+
+        XCTAssertEqual(export.userDescription, "my description!")
+        XCTAssertEqual(export.items, [])
+        XCTAssertEqual(export.tags, [])
+    }
+
+    func test_exportVault_withContent() async throws {
+        let items = [uniqueVaultItem(), uniqueVaultItem(), uniqueVaultItem()]
+        var insertedIDs = [UUID]()
+        for code in items {
+            let id = try await sut.insert(item: code.asWritable)
+            insertedIDs.append(id)
+        }
+
+        let export = try await sut.exportVault(userDescription: "my description")
+
+        XCTAssertEqual(export.userDescription, "my description")
+        XCTAssertEqual(export.items.map(\.asWritable), items.map(\.asWritable))
+        XCTAssertEqual(export.items.map(\.id), insertedIDs)
+        XCTAssertEqual(export.tags, [])
+    }
 }
 
 // MARK: - Helpers

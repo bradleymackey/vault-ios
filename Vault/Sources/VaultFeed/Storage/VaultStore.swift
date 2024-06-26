@@ -5,10 +5,10 @@ public typealias VaultStore = VaultStoreReader & VaultStoreWriter
 
 public protocol VaultStoreReader: Sendable {
     /// Retrieve all stored items.
-    func retrieve() async throws -> VaultRetrievalResult
+    func retrieve() async throws -> VaultRetrievalResult<VaultItem>
 
     /// Retrieve only items that match the given query.
-    func retrieve(matching query: String) async throws -> VaultRetrievalResult
+    func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem>
 }
 
 public protocol VaultStoreWriter: Sendable {

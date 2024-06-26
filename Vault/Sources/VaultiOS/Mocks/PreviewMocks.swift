@@ -100,11 +100,11 @@ struct CodeStoreFake: VaultStoreReader {
         ),
     ]
 
-    func retrieve() async throws -> VaultRetrievalResult {
+    func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
         .init(items: codes)
     }
 
-    func retrieve(matching _: String) async throws -> VaultRetrievalResult {
+    func retrieve(matching _: String) async throws -> VaultRetrievalResult<VaultItem> {
         .init(items: codes)
     }
 }

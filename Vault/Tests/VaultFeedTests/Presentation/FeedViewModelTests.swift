@@ -306,16 +306,16 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     private final class StubStore: VaultStoreReader, VaultStoreWriter {
-        var codes = VaultRetrievalResult()
+        var codes = VaultRetrievalResult<VaultItem>()
         var retrieveStoreCalled: () -> Void = {}
-        func retrieve() async throws -> VaultRetrievalResult {
+        func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
             retrieveStoreCalled()
             return codes
         }
 
-        var codesMatchingQuery = VaultRetrievalResult()
+        var codesMatchingQuery = VaultRetrievalResult<VaultItem>()
         var retrieveStoreMatchingQueryCalled: (String) -> Void = { _ in }
-        func retrieve(matching query: String) async throws -> VaultRetrievalResult {
+        func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
             retrieveStoreMatchingQueryCalled(query)
             return codesMatchingQuery
         }
@@ -349,13 +349,13 @@ final class FeedViewModelTests: XCTestCase {
         }
 
         var retrieveStoreCalled: () -> Void = {}
-        func retrieve() async throws -> VaultRetrievalResult {
+        func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
             retrieveStoreCalled()
             throw error
         }
 
         var retrieveStoreMatchingQueryCalled: (String) -> Void = { _ in }
-        func retrieve(matching query: String) async throws -> VaultRetrievalResult {
+        func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
             retrieveStoreMatchingQueryCalled(query)
             throw error
         }
