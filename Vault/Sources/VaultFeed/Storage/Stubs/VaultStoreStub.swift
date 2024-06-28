@@ -37,6 +37,14 @@ public final class VaultStoreStub: VaultStore {
     public func delete(id _: UUID) async throws {
         deleteStoreCalled()
     }
+
+    public var exportVaultHandler: (String) -> VaultApplicationPayload = { _ in
+        VaultApplicationPayload(userDescription: "any", items: [], tags: [])
+    }
+
+    public func exportVault(userDescription: String) async throws -> VaultApplicationPayload {
+        exportVaultHandler(userDescription)
+    }
 }
 
 // MARK: - Helpers

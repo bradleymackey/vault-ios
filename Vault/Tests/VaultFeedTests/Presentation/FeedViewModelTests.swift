@@ -106,7 +106,8 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_reloadData_presentsErrorOnFeedReloadError() async throws {
-        let sut = makeSUT(store: ErrorStubStore(error: anyNSError()))
+        let store = VaultStoreErroring(error: anyNSError())
+        let sut = makeSUT(store: store)
 
         await expectSingleMutation(observable: sut, keyPath: \.retrievalError) {
             await sut.reloadData()
@@ -146,7 +147,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_createItem_doesNotReloadOnFailure() async throws {
-        let store = ErrorStubStore(error: anyNSError())
+        let store = VaultStoreErroring(error: anyNSError())
         let exp = expectation(description: "Wait for store update")
         exp.isInverted = true
         store.retrieveStoreCalled = {
@@ -204,7 +205,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_updateCode_doesNotReloadOnFailure() async throws {
-        let store = ErrorStubStore(error: anyNSError())
+        let store = VaultStoreErroring(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
         exp.isInverted = true
         store.retrieveStoreCalled = {
@@ -263,7 +264,7 @@ final class FeedViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_doesNotReloadOnFailure() async throws {
-        let store = ErrorStubStore(error: anyNSError())
+        let store = VaultStoreErroring(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
         exp.isInverted = true
         store.retrieveStoreCalled = {
@@ -302,37 +303,5 @@ final class FeedViewModelTests: XCTestCase {
         let sut = FeedViewModel(store: store, caches: caches)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
-    }
-
-    @MainActor
-    private final class ErrorStubStore: VaultStoreReader, VaultStoreWriter {
-        var error: any Error
-        init(error: any Error) {
-            self.error = error
-        }
-
-        var retrieveStoreCalled: () -> Void = {}
-        func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
-            retrieveStoreCalled()
-            throw error
-        }
-
-        var retrieveStoreMatchingQueryCalled: (String) -> Void = { _ in }
-        func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
-            retrieveStoreMatchingQueryCalled(query)
-            throw error
-        }
-
-        func insert(item _: VaultItem.Write) async throws -> UUID {
-            throw error
-        }
-
-        func update(id _: UUID, item _: VaultItem.Write) async throws {
-            throw error
-        }
-
-        func delete(id _: UUID) async throws {
-            throw error
-        }
     }
 }

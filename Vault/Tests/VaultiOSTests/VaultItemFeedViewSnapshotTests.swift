@@ -14,7 +14,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_layout_noCodes() async throws {
-        let store = MockOTPCodeStore()
+        let store = VaultStoreStub()
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()
@@ -26,8 +26,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_layout_singleCodeAtMediumSize() async throws {
-        let store = MockOTPCodeStore()
-        store.codesToRetrieve = .init(items: [uniqueVaultItem()])
+        let store = VaultStoreStub()
+        store.codes = .init(items: [uniqueVaultItem()])
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()
@@ -39,8 +39,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_layout_multipleCodesAtMediumSize() async throws {
-        let store = MockOTPCodeStore()
-        store.codesToRetrieve = .init(items: [
+        let store = VaultStoreStub()
+        store.codes = .init(items: [
             uniqueVaultItem(),
             uniqueVaultItem(),
             uniqueVaultItem(),
@@ -58,11 +58,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultItemFeedViewSnapshotTests {
-    typealias SUT = VaultItemFeedView<MockOTPCodeStore, MockGenericViewGenerator>
+    typealias SUT = VaultItemFeedView<VaultStoreStub, MockGenericViewGenerator>
 
     @MainActor
     private func makeSUT(
-        viewModel: FeedViewModel<MockOTPCodeStore>,
+        viewModel: FeedViewModel<VaultStoreStub>,
         localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
     ) -> SUT {
         let generator = MockGenericViewGenerator()
