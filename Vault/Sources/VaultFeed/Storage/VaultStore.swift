@@ -1,7 +1,7 @@
 import Foundation
 import VaultCore
 
-public typealias VaultStore = VaultStoreReader & VaultStoreWriter
+public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreWriter
 
 public protocol VaultStoreReader: Sendable {
     /// Retrieve all stored items.
@@ -27,4 +27,9 @@ public protocol VaultStoreWriter: Sendable {
     ///
     /// This should have no effect if the item does not exist.
     func delete(id: UUID) async throws
+}
+
+/// @mockable
+public protocol VaultStoreExporter: Sendable {
+    func exportVault(userDescription: String) async throws -> VaultApplicationPayload
 }

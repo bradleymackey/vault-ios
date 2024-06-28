@@ -30,4 +30,9 @@ final class MockOTPCodeStore: VaultStore {
     func update(id _: UUID, item _: VaultItem.Write) async throws {
         // noop
     }
+
+    func exportVault(userDescription: String) async throws -> VaultApplicationPayload {
+        // noop
+        VaultApplicationPayload(userDescription: "any", items: [], tags: [])
+    }
 }

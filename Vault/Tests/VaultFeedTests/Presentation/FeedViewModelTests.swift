@@ -305,7 +305,7 @@ final class FeedViewModelTests: XCTestCase {
     }
 
     @MainActor
-    private final class ErrorStubStore: VaultStoreReader, VaultStoreWriter {
+    private final class ErrorStubStore: VaultStore {
         var error: any Error
         init(error: any Error) {
             self.error = error
@@ -332,6 +332,10 @@ final class FeedViewModelTests: XCTestCase {
         }
 
         func delete(id _: UUID) async throws {
+            throw error
+        }
+
+        func exportVault(userDescription _: String) async throws -> VaultApplicationPayload {
             throw error
         }
     }
