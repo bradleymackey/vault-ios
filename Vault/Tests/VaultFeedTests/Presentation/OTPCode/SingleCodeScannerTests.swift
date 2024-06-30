@@ -33,7 +33,7 @@ final class SingleCodeScannerTests: XCTestCase {
 
     @MainActor
     func test_scan_setsStateToInvalidForInvalidCode() {
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         let sut = makeSUT(intervalTimer: timer, mapper: { _ in
             throw anyNSError()
         })
@@ -45,7 +45,7 @@ final class SingleCodeScannerTests: XCTestCase {
 
     @MainActor
     func test_scan_returnsToScanningAfterInvalidCodeFailure() {
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         let sut = makeSUT(intervalTimer: timer, mapper: { _ in
             throw anyNSError()
         })
@@ -58,7 +58,7 @@ final class SingleCodeScannerTests: XCTestCase {
 
     @MainActor
     func test_scan_successSetsStateToSuccess() {
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         let sut = makeSUT(intervalTimer: timer)
 
         sut.scan(text: OTPAuthURI.exampleCodeString)
@@ -68,7 +68,7 @@ final class SingleCodeScannerTests: XCTestCase {
 
     @MainActor
     func test_scan_publishesScannedCodeAfterDelay() async throws {
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         let sut = makeSUT(intervalTimer: timer)
 
         sut.scan(text: OTPAuthURI.exampleCodeString)
@@ -90,7 +90,7 @@ extension SingleCodeScannerTests {
 
     @MainActor
     private func makeSUT(
-        intervalTimer: MockIntervalTimer = MockIntervalTimer(),
+        intervalTimer: IntervalTimerMock = IntervalTimerMock(),
         mapper: @escaping (String) throws -> DummyModel = { _ in DummyModel() },
         file: StaticString = #filePath,
         line: UInt = #line

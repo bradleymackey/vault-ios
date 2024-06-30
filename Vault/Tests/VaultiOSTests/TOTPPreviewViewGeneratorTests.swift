@@ -16,7 +16,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
         let factory = makeTOTPPreviewViewFactoryMock()
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         _ = makeSUT(factory: factory, timer: timer)
 
         XCTAssertEqual(factory.makeTOTPViewCallCount, 0)
@@ -165,7 +165,7 @@ extension TOTPPreviewViewGeneratorTests {
         factory: TOTPPreviewViewFactoryMock = makeTOTPPreviewViewFactoryMock(),
         updaterFactory: MockCodeTimerUpdaterFactory = MockCodeTimerUpdaterFactory(),
         clock: EpochClock = EpochClock { 100 },
-        timer: MockIntervalTimer = MockIntervalTimer()
+        timer: IntervalTimerMock = IntervalTimerMock()
     ) -> SUT {
         SUT(viewFactory: factory, updaterFactory: updaterFactory, clock: clock, timer: timer)
     }

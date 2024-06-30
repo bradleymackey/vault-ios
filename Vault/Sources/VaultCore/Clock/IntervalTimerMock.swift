@@ -1,17 +1,18 @@
 import Combine
 import Foundation
-import VaultCore
 
-final class MockIntervalTimer: IntervalTimer {
+public final class IntervalTimerMock: IntervalTimer {
     private let timerPublisher = PassthroughSubject<Void, Never>()
     /// Mock: the intervals that were waited for.
-    var recordedWaitedIntervals = [Double]()
+    public var recordedWaitedIntervals = [Double]()
 
-    func finishTimer() {
+    public init() {}
+
+    public func finishTimer() {
         timerPublisher.send()
     }
 
-    func wait(for time: Double) -> AnyPublisher<Void, Never> {
+    public func wait(for time: Double) -> AnyPublisher<Void, Never> {
         recordedWaitedIntervals.append(time)
         return timerPublisher.first().eraseToAnyPublisher()
     }

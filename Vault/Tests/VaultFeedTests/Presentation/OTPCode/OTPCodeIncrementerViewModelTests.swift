@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import TestHelpers
+import VaultCore
 import VaultFeed
 import XCTest
 
@@ -100,9 +101,9 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeSUT() -> (HOTPCodeRenderer, MockIntervalTimer, OTPCodeIncrementerViewModel) {
+    private func makeSUT() -> (HOTPCodeRenderer, IntervalTimerMock, OTPCodeIncrementerViewModel) {
         let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()))
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         let sut = OTPCodeIncrementerViewModel(
             hotpRenderer: renderer,
             timer: timer,
