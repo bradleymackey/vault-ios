@@ -17,7 +17,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let (_, timer, factory) = makeSUT()
 
         XCTAssertEqual(factory.makeHOTPViewCallCount, 0)
-        XCTAssertEqual(timer.recordedWaitedIntervals, [])
+        XCTAssertEqual(timer.waitArgValues, [])
     }
 
     @MainActor

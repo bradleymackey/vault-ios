@@ -20,7 +20,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         _ = makeSUT(factory: factory, timer: timer)
 
         XCTAssertEqual(factory.makeTOTPViewCallCount, 0)
-        XCTAssertEqual(timer.recordedWaitedIntervals, [])
+        XCTAssertEqual(timer.waitArgValues, [])
     }
 
     @MainActor

@@ -4,7 +4,7 @@ import Foundation
 public final class IntervalTimerMock: IntervalTimer {
     private let timerPublisher = PassthroughSubject<Void, Never>()
     /// Mock: the intervals that were waited for.
-    public var recordedWaitedIntervals = [Double]()
+    public var waitArgValues = [Double]()
 
     public init() {}
 
@@ -13,7 +13,7 @@ public final class IntervalTimerMock: IntervalTimer {
     }
 
     public func wait(for time: Double) -> AnyPublisher<Void, Never> {
-        recordedWaitedIntervals.append(time)
+        waitArgValues.append(time)
         return timerPublisher.first().eraseToAnyPublisher()
     }
 }
