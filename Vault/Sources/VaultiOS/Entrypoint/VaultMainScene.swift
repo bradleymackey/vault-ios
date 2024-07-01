@@ -28,7 +28,7 @@ public struct VaultMainScene: Scene {
     public init() {
         let defaults = Defaults(userDefaults: .standard)
         let localSettings = LocalSettings(defaults: defaults)
-        let timer = LiveIntervalTimer()
+        let timer = IntervalTimerImpl()
         let clock = EpochClock(makeCurrentTime: { Date.now.timeIntervalSince1970 })
         let storeFactory = PersistedLocalVaultStoreFactory(fileManager: .default)
         let store = storeFactory.makeVaultStore()

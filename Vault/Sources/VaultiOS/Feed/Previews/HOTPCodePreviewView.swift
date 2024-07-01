@@ -143,7 +143,7 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
                     hotpRenderer: .init(
                         hotpGenerator: .init(secret: Data())
                     ),
-                    timer: LiveIntervalTimer(),
+                    timer: IntervalTimerImpl(),
                     initialCounter: 0
                 )
             ),
