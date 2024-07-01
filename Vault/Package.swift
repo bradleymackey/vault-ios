@@ -40,6 +40,7 @@ let package = Package(
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.4.1"),
+        .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
     ],
     targets: [
         .target(
@@ -199,6 +200,7 @@ let package = Package(
                 "VaultCore",
                 "CryptoEngine",
                 "FoundationExtensions",
+                .product(name: "SwiftSecurity", package: "swift-security"),
             ],
             resources: [
                 .process("Resources/VaultFeed.xcstrings"),

@@ -1,5 +1,5 @@
 {
-  "originHash" : "4901aa3ddc36868aa98d35856f3e49a50325493b0fa08b81f6667eb9f0737732",
+  "originHash" : "62b1663c3d0b8108befe804255bb82fbd803caac2df2f9962c89d1ec278106f2",
   "pins" : [
     {
       "identity" : "bigint",
@@ -44,6 +44,15 @@
       "state" : {
         "revision" : "46989693916f56d1186bd59ac15124caef896560",
         "version" : "1.3.1"
+      }
+    },
+    {
+      "identity" : "swift-security",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/dm-zharov/swift-security.git",
+      "state" : {
+        "revision" : "1d9d3b1aefcb8ca965a21f63c3f1b725bb5f3a3d",
+        "version" : "2.2.1"
       }
     },
     {
