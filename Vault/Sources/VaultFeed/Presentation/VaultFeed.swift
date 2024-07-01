@@ -1,6 +1,8 @@
 import Foundation
 
 /// A feed of vault items.
+///
+/// @mockable
 @MainActor
 public protocol VaultFeed {
     /// The feed should load all initial data.
