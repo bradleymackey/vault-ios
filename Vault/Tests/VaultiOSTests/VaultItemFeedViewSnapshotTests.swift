@@ -58,14 +58,21 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultItemFeedViewSnapshotTests {
-    typealias SUT = VaultItemFeedView<VaultStoreStub, MockGenericViewGenerator>
+    typealias SUT = VaultItemFeedView<VaultStoreStub, VaultItemPreviewViewGeneratorMock>
 
     @MainActor
     private func makeSUT(
         viewModel: FeedViewModel<VaultStoreStub>,
         localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
     ) -> SUT {
-        let generator = MockGenericViewGenerator()
+        let generator = VaultItemPreviewViewGeneratorMock.mockGenerating {
+            ZStack {
+                Color.blue
+                Text("Code")
+                    .foregroundStyle(.white)
+            }
+            .frame(minHeight: 100)
+        }
         return VaultItemFeedView(
             viewModel: viewModel,
             localSettings: localSettings,

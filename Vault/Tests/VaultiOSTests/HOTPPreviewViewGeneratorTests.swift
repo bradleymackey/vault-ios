@@ -17,7 +17,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         let (_, timer, factory) = makeSUT()
 
         XCTAssertEqual(factory.makeHOTPViewCallCount, 0)
-        XCTAssertEqual(timer.recordedWaitedIntervals, [])
+        XCTAssertEqual(timer.waitArgValues, [])
     }
 
     @MainActor
@@ -170,10 +170,10 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 extension HOTPPreviewViewGeneratorTests {
     private typealias SUT = HOTPPreviewViewGenerator<HOTPPreviewViewFactoryMock>
     @MainActor
-    private func makeSUT() -> (SUT, MockIntervalTimer, HOTPPreviewViewFactoryMock) {
+    private func makeSUT() -> (SUT, IntervalTimerMock, HOTPPreviewViewFactoryMock) {
         let factory = HOTPPreviewViewFactoryMock()
         factory.makeHOTPViewHandler = { _, _, _ in AnyView(Color.green) }
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer)
         return (sut, timer, factory)
     }

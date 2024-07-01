@@ -2,7 +2,27 @@ import Foundation
 import SwiftUI
 import VaultCore
 import VaultFeed
+import VaultiOS
 import VaultSettings
+
+extension VaultItemPreviewViewGeneratorMock {
+    static func defaultMock() -> VaultItemPreviewViewGeneratorMock {
+        mockGenerating {
+            Text("Preview View")
+        }
+    }
+
+    /// The preview view will be generated with the provided view.
+    static func mockGenerating(@ViewBuilder view: @escaping () -> some View) -> VaultItemPreviewViewGeneratorMock {
+        let s = VaultItemPreviewViewGeneratorMock()
+        s.makeVaultPreviewViewHandler = { _, _, _ in
+            AnyView(
+                view()
+            )
+        }
+        return s
+    }
+}
 
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)

@@ -3,6 +3,7 @@ import SwiftUI
 import VaultCore
 import VaultFeed
 
+/// @mockable(typealias: PreviewView = AnyView; PreviewItem = VaultItem.Payload)
 @MainActor
 public protocol VaultItemPreviewViewGenerator {
     associatedtype PreviewItem
@@ -28,4 +29,12 @@ public protocol VaultItemPreviewActionHandler {
 public enum VaultItemPreviewAction: Equatable {
     case copyText(String)
     case openItemDetail(UUID)
+}
+
+// MARK: - Mock
+
+extension VaultItemPreviewViewGeneratorMock: VaultItemCopyActionHandler {
+    public func textToCopyForVaultItem(id _: UUID) -> String? {
+        nil
+    }
 }

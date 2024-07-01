@@ -27,7 +27,7 @@ struct OTPCodeCreateView<
     // 'dismiss' applies in the context that it's defined in!
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
-    @State private var scanner = SingleCodeScanner(intervalTimer: LiveIntervalTimer()) { string in
+    @State private var scanner = SingleCodeScanner(intervalTimer: IntervalTimerImpl()) { string in
         guard let uri = OTPAuthURI(string: string) else {
             throw URLError(.badURL)
         }

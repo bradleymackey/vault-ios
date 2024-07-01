@@ -16,11 +16,11 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
         let factory = makeTOTPPreviewViewFactoryMock()
-        let timer = MockIntervalTimer()
+        let timer = IntervalTimerMock()
         _ = makeSUT(factory: factory, timer: timer)
 
         XCTAssertEqual(factory.makeTOTPViewCallCount, 0)
-        XCTAssertEqual(timer.recordedWaitedIntervals, [])
+        XCTAssertEqual(timer.waitArgValues, [])
     }
 
     @MainActor
@@ -163,9 +163,9 @@ extension TOTPPreviewViewGeneratorTests {
     @MainActor
     private func makeSUT(
         factory: TOTPPreviewViewFactoryMock = makeTOTPPreviewViewFactoryMock(),
-        updaterFactory: MockCodeTimerUpdaterFactory = MockCodeTimerUpdaterFactory(),
+        updaterFactory: OTPCodeTimerUpdaterFactoryMock = .defaultMock(),
         clock: EpochClock = EpochClock { 100 },
-        timer: MockIntervalTimer = MockIntervalTimer()
+        timer: IntervalTimerMock = IntervalTimerMock()
     ) -> SUT {
         SUT(viewFactory: factory, updaterFactory: updaterFactory, clock: clock, timer: timer)
     }
@@ -201,13 +201,13 @@ extension TOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, MockCodeTimerUpdater)] {
-        var models = [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, MockCodeTimerUpdater)]()
+    ) -> [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, OTPCodeTimerUpdaterMock)] {
+        var models = [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, OTPCodeTimerUpdaterMock)]()
 
         let group = DispatchGroup()
         factory.makeTOTPViewHandler = { viewModel, periodState, updater, _ in
             defer { group.leave() }
-            guard let mockUpdater = updater as? MockCodeTimerUpdater else {
+            guard let mockUpdater = updater as? OTPCodeTimerUpdaterMock else {
                 return AnyView(Text("Hello, TOTP!"))
             }
             models.append((viewModel, periodState, mockUpdater))
@@ -262,32 +262,17 @@ extension TOTPPreviewViewGeneratorTests {
         ids: [UUID],
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> [MockCodeTimerUpdater] {
+    ) -> [OTPCodeTimerUpdaterMock] {
         collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
             .map(\.2)
     }
+}
 
-    private final class MockCodeTimerUpdaterFactory: OTPCodeTimerUpdaterFactory {
-        func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater {
-            MockCodeTimerUpdater(period: period)
-        }
-    }
-
-    private final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
-        let period: UInt64
-        init(period: UInt64) {
-            self.period = period
-        }
-
-        private(set) var recalculateCallCount = 0
-        func recalculate() {
-            recalculateCallCount += 1
-        }
-
-        let timerUpdatedPublisherSubject = PassthroughSubject<OTPCodeTimerState, Never>()
-        func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
-            timerUpdatedPublisherSubject.eraseToAnyPublisher()
-        }
+extension OTPCodeTimerUpdaterFactoryMock {
+    static func defaultMock() -> OTPCodeTimerUpdaterFactoryMock {
+        let s = OTPCodeTimerUpdaterFactoryMock()
+        s.makeUpdaterHandler = { _ in OTPCodeTimerUpdaterMock() }
+        return s
     }
 }
 

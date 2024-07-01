@@ -8,7 +8,7 @@ import VaultUI
 struct BackupKeyImportView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: BackupKeyImportViewModel
-    @State private var scanner = SingleCodeScanner(intervalTimer: LiveIntervalTimer()) { qrCode in
+    @State private var scanner = SingleCodeScanner(intervalTimer: IntervalTimerImpl()) { qrCode in
         try BackupPasswordDecoder().decode(qrCode: qrCode)
     }
 

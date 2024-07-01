@@ -8,14 +8,17 @@ public protocol OTPCodeRenderer {
     func renderedCodePublisher() -> AnyPublisher<String, any Error>
 }
 
-extension Publisher where Output == BigUInt {
-    func digitsRenderer(digits: Int) -> AnyPublisher<String, Failure> {
-        map { codeNumber in
-            String(codeNumber).leftPadding(toLength: digits, withPad: "0")
-        }
-        .eraseToAnyPublisher()
+// MARK: - Mock
+
+public final class OTPCodeRendererMock: OTPCodeRenderer {
+    public init() {}
+    public let subject = PassthroughSubject<String, any Error>()
+    public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
+        subject.eraseToAnyPublisher()
     }
 }
+
+// MARK: - Impl
 
 public final class TOTPCodeRenderer: OTPCodeRenderer {
     private let timer: any OTPCodeTimerUpdater
@@ -69,6 +72,17 @@ public final class HOTPCodeRenderer: OTPCodeRenderer {
                 try generator.code(counter: counterValue)
             }
             .eraseToAnyPublisher()
+    }
+}
+
+// MARK: - Helpers
+
+extension Publisher where Output == BigUInt {
+    func digitsRenderer(digits: Int) -> AnyPublisher<String, Failure> {
+        map { codeNumber in
+            String(codeNumber).leftPadding(toLength: digits, withPad: "0")
+        }
+        .eraseToAnyPublisher()
     }
 }
 

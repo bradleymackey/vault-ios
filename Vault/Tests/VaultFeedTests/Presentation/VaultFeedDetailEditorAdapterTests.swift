@@ -7,15 +7,17 @@ import XCTest
 final class VaultFeedDetailEditorAdapterTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         _ = makeSUT(feed: feed)
 
-        XCTAssertTrue(feed.calls.isEmpty)
+        XCTAssertEqual(feed.createCallCount, 0)
+        XCTAssertEqual(feed.updateCallCount, 0)
+        XCTAssertEqual(feed.deleteCallCount, 0)
     }
 
     @MainActor
     func test_createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
         let initialCode = OTPAuthCode(
             type: .totp(period: 40),
@@ -32,7 +34,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         )
 
         let exp = expectation(description: "Wait for creation")
-        feed.createCalled = { data in
+        feed.createHandler = { data in
             defer { exp.fulfill() }
             switch data.item {
             case let .otpCode(code):
@@ -62,7 +64,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_updateCode_translatesCodeDataForCall() async throws {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
         var code = uniqueCode()
@@ -88,7 +90,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
-        feed.updateCalled = { _, data in
+        feed.updateHandler = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
             XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
@@ -121,13 +123,13 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_deletesFromFeed() async throws {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
         let id = UUID()
 
         let exp = expectation(description: "Wait for delete")
-        feed.deleteCalled = { actualID in
+        feed.deleteHandler = { actualID in
             XCTAssertEqual(id, actualID)
             exp.fulfill()
         }
@@ -147,7 +149,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_createNote_createsNoteInFeed() async throws {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
         var initialEdits = SecureNoteDetailEdits.new()
         initialEdits.title = "new title"
@@ -158,7 +160,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         initialEdits.searchPassphrase = "pass"
 
         let exp = expectation(description: "Wait for creation")
-        feed.createCalled = { data in
+        feed.createHandler = { data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "new description")
             XCTAssertEqual(data.visibility, .onlySearch)
@@ -189,7 +191,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_updateNote_updatesNoteInFeed() async throws {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
         var note = anyStoredNote()
@@ -207,7 +209,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
-        feed.updateCalled = { _, data in
+        feed.updateHandler = { _, data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "new description")
             XCTAssertEqual(data.visibility, .always)
@@ -237,13 +239,13 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_deleteNote_deletesFromFeed() async throws {
-        let feed = MockVaultFeed()
+        let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
         let id = UUID()
 
         let exp = expectation(description: "Wait for delete")
-        feed.deleteCalled = { actualID in
+        feed.deleteHandler = { actualID in
             XCTAssertEqual(id, actualID)
             exp.fulfill()
         }

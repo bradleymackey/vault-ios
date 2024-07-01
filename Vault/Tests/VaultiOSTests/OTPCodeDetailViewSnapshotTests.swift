@@ -29,7 +29,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 color: nil
             ),
             editor: OTPCodeDetailEditorMock(),
-            previewGenerator: VaultItemPreviewViewGeneratorMock(),
+            previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             openInEditMode: false,
             presentationMode: .none
         )
@@ -56,7 +56,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 color: nil
             ),
             editor: OTPCodeDetailEditorMock(),
-            previewGenerator: VaultItemPreviewViewGeneratorMock(),
+            previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             openInEditMode: false,
             presentationMode: .none
         )

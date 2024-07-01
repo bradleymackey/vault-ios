@@ -3,10 +3,10 @@ import TestHelpers
 import VaultCore
 import XCTest
 
-final class LiveIntervalTimerTests: XCTestCase {
+final class IntervalTimerImplTests: XCTestCase {
     @MainActor
     func test_wait_publishesAfterWait() async throws {
-        let sut = LiveIntervalTimer()
+        let sut = IntervalTimerImpl()
 
         let publisher = sut.wait(for: 0.5).collect(1).first()
 
@@ -16,7 +16,7 @@ final class LiveIntervalTimerTests: XCTestCase {
 
     @MainActor
     func test_wait_doesNotPublishBeforeWait() async throws {
-        let sut = LiveIntervalTimer()
+        let sut = IntervalTimerImpl()
         let publisher = sut.wait(for: 5).collect(1).first()
 
         // We're waiting for 5 seconds, but check after 1 second for tolerance.
