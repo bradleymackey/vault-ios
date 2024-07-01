@@ -89,27 +89,3 @@ struct CodeStoreFake: VaultStoreReader {
         .init(items: codes)
     }
 }
-
-struct VaultItemPreviewViewGeneratorMock: VaultItemPreviewViewGenerator, VaultItemCopyActionHandler {
-    typealias PreviewItem = VaultItem.Payload
-
-    func makeVaultPreviewView(
-        item _: PreviewItem,
-        metadata _: VaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
-    ) -> some View {
-        Text("Preview View")
-    }
-
-    func textToCopyForVaultItem(id _: UUID) -> String? {
-        nil
-    }
-
-    func scenePhaseDidChange(to _: ScenePhase) {
-        // noop
-    }
-
-    func didAppear() {
-        // noop
-    }
-}
