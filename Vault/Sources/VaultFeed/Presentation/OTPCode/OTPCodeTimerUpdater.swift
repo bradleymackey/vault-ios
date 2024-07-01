@@ -7,6 +7,24 @@ public protocol OTPCodeTimerUpdater {
     func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never>
 }
 
+// MARK: - Mock
+
+public final class OTPCodeTimerUpdaterMock: OTPCodeTimerUpdater {
+    public init() {}
+
+    public let subject = PassthroughSubject<OTPCodeTimerState, Never>()
+    public var recalculateCallCount = 0
+    public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
+        subject.eraseToAnyPublisher()
+    }
+
+    public func recalculate() {
+        recalculateCallCount += 1
+    }
+}
+
+// MARK: - Impl
+
 /// Controller for producing timers for a given code, according to a clock.
 public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
