@@ -4,18 +4,6 @@ import SwiftUI
 import VaultCore
 import VaultFeed
 
-final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
-    var recalculateCallCount = 0
-    let subject = PassthroughSubject<OTPCodeTimerState, Never>()
-    func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
-        subject.eraseToAnyPublisher()
-    }
-
-    func recalculate() {
-        recalculateCallCount += 1
-    }
-}
-
 func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date())
 }
