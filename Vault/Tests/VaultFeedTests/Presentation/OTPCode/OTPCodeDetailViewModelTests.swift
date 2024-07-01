@@ -8,18 +8,18 @@ import XCTest
 final class OTPCodeDetailViewModelTests: XCTestCase {
     @MainActor
     func test_init_creatingHasNoSideEffects() {
-        let editor = MockOTPCodeDetailEditor()
+        let editor = OTPCodeDetailEditorMock()
         _ = makeSUTCreating(editor: editor)
 
-        XCTAssertEqual(editor.operationsPerformed, [])
+        editor.assertNoOperations()
     }
 
     @MainActor
     func test_init_editingHasNoSideEffects() {
-        let editor = MockOTPCodeDetailEditor()
+        let editor = OTPCodeDetailEditorMock()
         _ = makeSUTEditing(editor: editor)
 
-        XCTAssertEqual(editor.operationsPerformed, [])
+        editor.assertNoOperations()
     }
 
     @MainActor
@@ -122,11 +122,11 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveChanges_creatingUpdatesEditor() async throws {
-        let editor = MockOTPCodeDetailEditor()
+        let editor = OTPCodeDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
         let exp = expectation(description: "Wait for code creation")
-        editor.createCodeCalled = { _ in
+        editor.createCodeHandler = { _ in
             exp.fulfill()
         }
 
@@ -159,8 +159,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveChanges_creatingSendsErrorIfSaveError() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.createCodeResult = .failure(anyNSError())
+        let editor = OTPCodeDetailEditorMock()
+        editor.createCodeHandler = { _ in
+            throw anyNSError()
+        }
         let sut = makeSUTCreating(editor: editor)
 
         let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
@@ -173,8 +175,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.createCodeResult = .failure(anyNSError())
+        let editor = OTPCodeDetailEditorMock()
+        editor.createCodeHandler = { _ in
+            throw anyNSError()
+        }
         let sut = makeSUTCreating(editor: editor)
 
         await sut.saveChanges()
@@ -194,8 +198,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveChanges_editingSetsSavingToFalseAfterSaveError() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.updateCodeResult = .failure(anyNSError())
+        let editor = OTPCodeDetailEditorMock()
+        editor.updateCodeHandler = { _, _, _ in
+            throw anyNSError()
+        }
         let sut = makeSUTEditing(editor: editor)
 
         await sut.saveChanges()
@@ -205,8 +211,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveChanges_editingDoesNotPersistEditingModelIfSaveFailed() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.updateCodeResult = .failure(anyNSError())
+        let editor = OTPCodeDetailEditorMock()
+        editor.updateCodeHandler = { _, _, _ in
+            throw anyNSError()
+        }
         let sut = makeSUTEditing(editor: editor)
         makeDirty(sut: sut)
 
@@ -217,8 +225,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveChanges_editingSendsErrorIfSaveError() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.updateCodeResult = .failure(anyNSError())
+        let editor = OTPCodeDetailEditorMock()
+        editor.updateCodeHandler = { _, _, _ in
+            throw anyNSError()
+        }
         let sut = makeSUTEditing(editor: editor)
 
         let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
@@ -231,12 +241,12 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_hasNoActionIfCreatingCode() async throws {
-        let editor = MockOTPCodeDetailEditor()
+        let editor = OTPCodeDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
         await sut.delete()
 
-        XCTAssertEqual(editor.operationsPerformed, [])
+        editor.assertNoOperations()
     }
 
     @MainActor
@@ -262,8 +272,10 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_editingSendsErrorIfDeleteError() async throws {
-        let editor = MockOTPCodeDetailEditor()
-        editor.deleteCodeResult = .failure(anyNSError())
+        let editor = OTPCodeDetailEditorMock()
+        editor.deleteCodeHandler = { _ in
+            throw anyNSError()
+        }
         let sut = makeSUTEditing(editor: editor)
 
         let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
@@ -390,7 +402,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUTCreating(
-        editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
+        editor: OTPCodeDetailEditorMock = .defaultMock(),
         initialCode: OTPAuthCode? = nil,
         file: StaticString = #filePath,
         line: UInt = #line
@@ -405,7 +417,7 @@ extension OTPCodeDetailViewModelTests {
     private func makeSUTEditing(
         code: OTPAuthCode = uniqueCode(),
         metadata: VaultItem.Metadata = uniqueStoredMetadata(),
-        editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
+        editor: OTPCodeDetailEditorMock = .defaultMock(),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
@@ -419,7 +431,7 @@ extension OTPCodeDetailViewModelTests {
     private func makeSUT(
         code: OTPAuthCode = uniqueCode(),
         metadata: VaultItem.Metadata = uniqueStoredMetadata(),
-        editor: MockOTPCodeDetailEditor = MockOTPCodeDetailEditor(),
+        editor: OTPCodeDetailEditorMock = .defaultMock(),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
@@ -433,5 +445,18 @@ extension OTPCodeDetailViewModelTests {
     func makeDirty(sut: OTPCodeDetailViewModel) {
         sut.editingModel.detail.accountNameTitle = UUID().uuidString
         XCTAssertTrue(sut.editingModel.isDirty)
+    }
+}
+
+extension OTPCodeDetailEditorMock {
+    static func defaultMock() -> OTPCodeDetailEditorMock {
+        let s = OTPCodeDetailEditorMock()
+        return s
+    }
+
+    func assertNoOperations() {
+        XCTAssertEqual(createCodeCallCount, 0)
+        XCTAssertEqual(updateCodeCallCount, 0)
+        XCTAssertEqual(deleteCodeCallCount, 0)
     }
 }
