@@ -83,8 +83,8 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         issuer: String = "any",
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (MockCodeRenderer, OTPCodePreviewViewModel) {
-        let renderer = MockCodeRenderer()
+    ) -> (OTPCodeRendererMock, OTPCodePreviewViewModel) {
+        let renderer = OTPCodeRendererMock()
         let viewModel = OTPCodePreviewViewModel(
             accountName: "any",
             issuer: issuer,
@@ -93,12 +93,5 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         )
         trackForMemoryLeaks(viewModel, file: file, line: line)
         return (renderer, viewModel)
-    }
-
-    private struct MockCodeRenderer: OTPCodeRenderer {
-        let subject = PassthroughSubject<String, any Error>()
-        func renderedCodePublisher() -> AnyPublisher<String, any Error> {
-            subject.eraseToAnyPublisher()
-        }
     }
 }

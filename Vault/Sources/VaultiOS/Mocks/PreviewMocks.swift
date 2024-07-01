@@ -16,13 +16,6 @@ final class MockCodeTimerUpdater: OTPCodeTimerUpdater {
     }
 }
 
-struct OTPCodeRendererMock: OTPCodeRenderer {
-    let subject = PassthroughSubject<String, any Error>()
-    func renderedCodePublisher() -> AnyPublisher<String, any Error> {
-        subject.eraseToAnyPublisher()
-    }
-}
-
 func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date())
 }
