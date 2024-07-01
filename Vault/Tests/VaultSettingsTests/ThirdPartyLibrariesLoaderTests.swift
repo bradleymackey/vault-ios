@@ -16,7 +16,7 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
             "SimpleToast",
             "Defaults",
             "CodeScanner",
-            "SimpleKeychain",
+            "swift-security",
         ])
     }
 
