@@ -2,6 +2,7 @@ import Foundation
 import VaultCore
 import VaultFeed
 
+/// @mockable
 public protocol OTPCodeTimerUpdaterFactory {
     func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater
 }

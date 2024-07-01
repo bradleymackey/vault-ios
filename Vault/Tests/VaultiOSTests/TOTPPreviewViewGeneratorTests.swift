@@ -163,7 +163,7 @@ extension TOTPPreviewViewGeneratorTests {
     @MainActor
     private func makeSUT(
         factory: TOTPPreviewViewFactoryMock = makeTOTPPreviewViewFactoryMock(),
-        updaterFactory: MockCodeTimerUpdaterFactory = MockCodeTimerUpdaterFactory(),
+        updaterFactory: OTPCodeTimerUpdaterFactoryMock = .defaultMock(),
         clock: EpochClock = EpochClock { 100 },
         timer: IntervalTimerMock = IntervalTimerMock()
     ) -> SUT {
@@ -266,11 +266,13 @@ extension TOTPPreviewViewGeneratorTests {
         collectFactoryParameters(sut: sut, factory: factory, ids: ids, file: file, line: line)
             .map(\.2)
     }
+}
 
-    private final class MockCodeTimerUpdaterFactory: OTPCodeTimerUpdaterFactory {
-        func makeUpdater(period _: UInt64) -> any OTPCodeTimerUpdater {
-            OTPCodeTimerUpdaterMock()
-        }
+extension OTPCodeTimerUpdaterFactoryMock {
+    static func defaultMock() -> OTPCodeTimerUpdaterFactoryMock {
+        let s = OTPCodeTimerUpdaterFactoryMock()
+        s.makeUpdaterHandler = { _ in OTPCodeTimerUpdaterMock() }
+        return s
     }
 }
 
