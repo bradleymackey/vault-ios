@@ -1,11 +1,12 @@
 import CryptoEngine
 import Foundation
+import SwiftSecurity
 
 @Observable
 public final class KeychainBackupPasswordStore: BackupPasswordStore {
-    private let keychain: SimpleKeychain
+    private let keychain: Keychain
 
-    public init(keychain: SimpleKeychain) {
+    public init(keychain: Keychain) {
         self.keychain = keychain
     }
 
@@ -21,18 +22,26 @@ public final class KeychainBackupPasswordStore: BackupPasswordStore {
         }
     }
 
+    private var keychainAccessPolicy: AccessPolicy {
+        .init(.whenUnlockedThisDeviceOnly)
+    }
+
     public func set(password: BackupPassword) throws {
-        try keychain.set(password.key, forKey: KeychainKey.key)
-        try keychain.set(password.salt, forKey: KeychainKey.salt)
+        try keychain.store(password.key, query: .credential(for: KeychainKey.key), accessPolicy: keychainAccessPolicy)
+        try keychain.store(password.salt, query: .credential(for: KeychainKey.salt), accessPolicy: keychainAccessPolicy)
         let encodedDeriver = try signatureEncoder().encode(password.keyDervier)
-        try keychain.set(encodedDeriver, forKey: KeychainKey.deriver)
+        try keychain.store(
+            encodedDeriver,
+            query: .credential(for: KeychainKey.deriver),
+            accessPolicy: keychainAccessPolicy
+        )
     }
 
     struct NotFoundInKeychain: Error {}
 
     private func fetchDataFromKeychainIfPresent(key: String) throws -> Data {
-        if try keychain.hasItem(forKey: key) {
-            return try keychain.data(forKey: key)
+        if let item = try keychain.retrieve(.credential(for: key)) {
+            item
         } else {
             throw NotFoundInKeychain()
         }
