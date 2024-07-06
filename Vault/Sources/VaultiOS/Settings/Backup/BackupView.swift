@@ -6,7 +6,7 @@ import VaultUI
 
 @MainActor
 struct BackupView: View {
-    @Environment(KeychainBackupPasswordStore.self) var backupStore
+    @Environment(BackupPasswordStoreImpl.self) var backupStore
     @State private var viewModel: BackupViewModel
     @State private var modal: Modal?
 

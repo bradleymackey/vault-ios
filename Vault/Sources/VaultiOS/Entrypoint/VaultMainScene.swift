@@ -15,9 +15,7 @@ public struct VaultMainScene: Scene {
     @State private var settingsViewModel = SettingsViewModel()
     @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
-    @State private var backupStore = KeychainBackupPasswordStore(keychain: .init(
-        accessibility: .whenUnlockedThisDeviceOnly
-    ))
+    @State private var backupStore = BackupPasswordStoreImpl(secureStorage: SecureStorageImpl(keychain: .default))
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,

@@ -2,14 +2,24 @@ import CryptoEngine
 import Foundation
 
 @Observable
-public final class KeychainBackupPasswordStore: BackupPasswordStore {
-    private let keychain: SimpleKeychain
+public final class BackupPasswordStoreImpl: BackupPasswordStore {
+    private let secureStorage: any SecureStorage
 
-    public init(keychain: SimpleKeychain) {
-        self.keychain = keychain
+    public init(secureStorage: any SecureStorage) {
+        self.secureStorage = secureStorage
     }
 
     public func fetchPassword() throws -> BackupPassword? {
+        struct NotFoundInKeychain: Error {}
+
+        func fetchDataFromKeychainIfPresent(key: String) throws -> Data {
+            if let item = try secureStorage.retrieve(key: key) {
+                item
+            } else {
+                throw NotFoundInKeychain()
+            }
+        }
+
         do {
             let key = try fetchDataFromKeychainIfPresent(key: KeychainKey.key)
             let salt = try fetchDataFromKeychainIfPresent(key: KeychainKey.salt)
@@ -22,20 +32,10 @@ public final class KeychainBackupPasswordStore: BackupPasswordStore {
     }
 
     public func set(password: BackupPassword) throws {
-        try keychain.set(password.key, forKey: KeychainKey.key)
-        try keychain.set(password.salt, forKey: KeychainKey.salt)
+        try secureStorage.store(data: password.key, forKey: KeychainKey.key)
+        try secureStorage.store(data: password.salt, forKey: KeychainKey.salt)
         let encodedDeriver = try signatureEncoder().encode(password.keyDervier)
-        try keychain.set(encodedDeriver, forKey: KeychainKey.deriver)
-    }
-
-    struct NotFoundInKeychain: Error {}
-
-    private func fetchDataFromKeychainIfPresent(key: String) throws -> Data {
-        if try keychain.hasItem(forKey: key) {
-            return try keychain.data(forKey: key)
-        } else {
-            throw NotFoundInKeychain()
-        }
+        try secureStorage.store(data: encodedDeriver, forKey: KeychainKey.deriver)
     }
 
     private func signatureEncoder() -> JSONEncoder {
@@ -53,7 +53,7 @@ public final class KeychainBackupPasswordStore: BackupPasswordStore {
 
 // MARK: - Keys
 
-extension KeychainBackupPasswordStore {
+extension BackupPasswordStoreImpl {
     private enum KeychainKey {
         static let key = "vault-backup-password-key-v1"
         static let salt = "vault-backup-password-salt-v1"
