@@ -1,6 +1,5 @@
 import CryptoEngine
 import Foundation
-import SwiftSecurity
 
 @Observable
 public final class BackupPasswordStoreImpl: BackupPasswordStore {
@@ -30,10 +29,6 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
         } catch is NotFoundInKeychain {
             return nil
         }
-    }
-
-    private var keychainAccessPolicy: AccessPolicy {
-        .init(.whenUnlockedThisDeviceOnly)
     }
 
     public func set(password: BackupPassword) throws {
