@@ -5,8 +5,13 @@ import SwiftSecurity
 ///
 /// @mockable
 public protocol SecureStorage {
+    /// Locally stores data with a restrictive access policy.
+    ///
+    /// - Throws: Internal error is thrown if we cannot retrieve from the Keychain.
     func store(data: Data, forKey key: String) throws
-    /// Returns `nil` if data is already present.
+    /// Returns `nil` if the data does not exist for this key.
+    ///
+    /// - Throws: Internal error is thrown if we cannot retrieve from the Keychain.
     func retrieve(key: String) throws -> Data?
 }
 
