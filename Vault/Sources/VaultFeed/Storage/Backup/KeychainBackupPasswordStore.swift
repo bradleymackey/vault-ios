@@ -4,13 +4,23 @@ import SwiftSecurity
 
 @Observable
 public final class KeychainBackupPasswordStore: BackupPasswordStore {
-    private let keychain: Keychain
+    private let secureStorage: any SecureStorage
 
-    public init(keychain: Keychain) {
-        self.keychain = keychain
+    public init(secureStorage: any SecureStorage) {
+        self.secureStorage = secureStorage
     }
 
     public func fetchPassword() throws -> BackupPassword? {
+        struct NotFoundInKeychain: Error {}
+
+        func fetchDataFromKeychainIfPresent(key: String) throws -> Data {
+            if let item = try secureStorage.retrieve(key: key) {
+                item
+            } else {
+                throw NotFoundInKeychain()
+            }
+        }
+
         do {
             let key = try fetchDataFromKeychainIfPresent(key: KeychainKey.key)
             let salt = try fetchDataFromKeychainIfPresent(key: KeychainKey.salt)
@@ -27,24 +37,10 @@ public final class KeychainBackupPasswordStore: BackupPasswordStore {
     }
 
     public func set(password: BackupPassword) throws {
-        try keychain.store(password.key, query: .credential(for: KeychainKey.key), accessPolicy: keychainAccessPolicy)
-        try keychain.store(password.salt, query: .credential(for: KeychainKey.salt), accessPolicy: keychainAccessPolicy)
+        try secureStorage.store(data: password.key, forKey: KeychainKey.key)
+        try secureStorage.store(data: password.salt, forKey: KeychainKey.salt)
         let encodedDeriver = try signatureEncoder().encode(password.keyDervier)
-        try keychain.store(
-            encodedDeriver,
-            query: .credential(for: KeychainKey.deriver),
-            accessPolicy: keychainAccessPolicy
-        )
-    }
-
-    struct NotFoundInKeychain: Error {}
-
-    private func fetchDataFromKeychainIfPresent(key: String) throws -> Data {
-        if let item = try keychain.retrieve(.credential(for: key)) {
-            item
-        } else {
-            throw NotFoundInKeychain()
-        }
+        try secureStorage.store(data: encodedDeriver, forKey: KeychainKey.deriver)
     }
 
     private func signatureEncoder() -> JSONEncoder {
