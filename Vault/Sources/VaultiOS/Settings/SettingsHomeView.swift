@@ -5,7 +5,7 @@ import VaultUI
 
 @MainActor
 public struct SettingsHomeView: View {
-    @Environment(KeychainBackupPasswordStore.self) var backupStore
+    @Environment(BackupPasswordStoreImpl.self) var backupStore
     private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 

@@ -3,7 +3,7 @@ import Foundation
 import SwiftSecurity
 
 @Observable
-public final class KeychainBackupPasswordStore: BackupPasswordStore {
+public final class BackupPasswordStoreImpl: BackupPasswordStore {
     private let secureStorage: any SecureStorage
 
     public init(secureStorage: any SecureStorage) {
@@ -58,7 +58,7 @@ public final class KeychainBackupPasswordStore: BackupPasswordStore {
 
 // MARK: - Keys
 
-extension KeychainBackupPasswordStore {
+extension BackupPasswordStoreImpl {
     private enum KeychainKey {
         static let key = "vault-backup-password-key-v1"
         static let salt = "vault-backup-password-salt-v1"
