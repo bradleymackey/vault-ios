@@ -5,7 +5,8 @@ final class IntermediateEncodedVaultDecoder {
     init() {}
 
     func decode(encodedVault: IntermediateEncodedVault) throws -> VaultBackupPayload {
-        try makeDecoder().decode(VaultBackupPayload.self, from: encodedVault.data)
+        let decompressed = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        return try makeDecoder().decode(VaultBackupPayload.self, from: decompressed)
     }
 
     private func makeDecoder() -> JSONDecoder {
