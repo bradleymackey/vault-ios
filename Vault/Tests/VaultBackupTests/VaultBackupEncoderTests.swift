@@ -12,8 +12,7 @@ final class VaultBackupEncoderTests: XCTestCase {
 
         let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
 
-        // This is the encoded payload created by this test case:
-
+        // This is the encoded payload created by this test case, which is compressed using lzma:
 //        {
 //          "created" : 1234000,
 //          "items" : [
@@ -27,14 +26,11 @@ final class VaultBackupEncoderTests: XCTestCase {
 //          "version" : "1.0.0"
 //        }
 
-        // Manually verified data:
-        // https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'%7D,%7B'option':'Hex','string':'abababababababababababababababababababababababababababababababab'%7D,'GCM','Raw','Hex',%7B'option':'Hex','string':''%7D)&input=ewogICJjcmVhdGVkIiA6IDEyMzQwMDAsCiAgIml0ZW1zIiA6IFsKCiAgXSwKICAib2JmdXNjYXRpb25fcGFkZGluZyIgOiAiIiwKICAidGFncyIgOiBbCgogIF0sCiAgInVzZXJfZGVzY3JpcHRpb24iIDogImhlbGxvIHdvcmxkIiwKICAidmVyc2lvbiIgOiAiMS4wLjAiCn0
-
         XCTAssertEqual(encryptedVault.data.toHexString(), """
-        0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b487141659225347c2a5b21a6ce8d9ec7712b30a415bb60da50c238c6f01c0327737284dcb924be4d41ec8e8a72ac270319a6c845940d3ed6937e3bba6f91c86b07e9c4b9ad657b3eb9185f27726b3ee3a606e11b5ae3593
+        866de95d08a6b24751cdc4e9ab793585614c2062ba690a77762735d1abc866835ad0b54d1e3f29e9ffc4ad1d26a55e3a198ca9f685225042d331df50d64ad495f2a75c30000c6929c6e38a1bbfa16f0d3b81581c0d8f18ffc1df7ec773cfaa16068eb9b00c2de1268a459b3a6ae081dcdf81fe06d80ee23c8c44cb8ae6c61f519ffd7b1ce50efdbcd35e2a1e1eebd0571c924e0ad55f3f85a07b203005aea9e1314e85d36d065de2
         """)
         XCTAssertEqual(encryptedVault.authentication.toHexString(), """
-        8a90eab22324cbf12366fda7f7006437
+        f5228102f094dbc0703270d39bac6b81
         """)
         XCTAssertEqual(encryptedVault.encryptionIV.toHexString(), """
         abababababababababababababababababababababababababababababababab
@@ -63,14 +59,11 @@ final class VaultBackupEncoderTests: XCTestCase {
 //          "version" : "1.0.0"
 //        }
 
-        // Manually verified data:
-        // https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa'%7D,%7B'option':'Hex','string':'abababababababababababababababababababababababababababababababab'%7D,'GCM','Raw','Hex',%7B'option':'Hex','string':''%7D)&input=ewogICJjcmVhdGVkIiA6IDEyMzQwMDAsCiAgIml0ZW1zIiA6IFsKCiAgXSwKICAib2JmdXNjYXRpb25fcGFkZGluZyIgOiAiOGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4OGZIeDhmSHg4Zkh4IiwKICAidGFncyIgOiBbCgogIF0sCiAgInVzZXJfZGVzY3JpcHRpb24iIDogImhlbGxvIHdvcmxkIiwKICAidmVyc2lvbiIgOiAiMS4wLjAiCn0
-
         XCTAssertEqual(encryptedVault.data.toHexString(), """
-        0050b32570c5c022cfab78cc8b592ea4467e1356fe76dff89c078ff3ace103d3ab72826b177505bada8cb5d66725b3b3ed5887a6ab2f9f6258ce927b13e7e68c3142c6b4871416593819059abdf62675b7cc862f10f5193369f06580184fe4371bd3096a7d1161d6d94edec556dac9b07c8618738228a44414d9ca3178ea81b2a558e2c27c9063cc9307b4e39998f27726b39701447e1fd8a035ced68fdbd0784111e1b61e6576d1329f915ae01d26c13330ec8909c57ca355ac4e97e4a8d9363a9e237a22c3c9823dc69043a1ef6d7dca398856e17f48
+        866de95d08a6b24751cdc4e9ab793585614c2062ba690a77762779d1b3c866835ad0b54d1e3f29e9ffc4ad1d26a55e3a198ca9f685225042d331df50d64ad495f2a75c30000c6929c6e38a1bbfa16f0d3b81581c0d8f18ffc1df7ec7de2cdcab847920ca4ce7a9bdf9c900c8853f9f12f19c36b0e3f9e3a79cd90a1be41291e436ffd83df34f31d6387933018eee38fd700ab2d10e5e3f858c3e64f77aafa31df76fda28c5060e4440ebf8358e3f5fa1
         """)
         XCTAssertEqual(encryptedVault.authentication.toHexString(), """
-        7867d55c8cad397c71b11c22ea7af7f1
+        c69f0292593e8e4c43afb3cbfcc815d0
         """)
         XCTAssertEqual(encryptedVault.encryptionIV.toHexString(), """
         abababababababababababababababababababababababababababababababab

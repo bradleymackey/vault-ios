@@ -21,7 +21,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 
         let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -48,7 +49,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 
         let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -78,7 +80,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 
         let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -119,7 +122,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 
         let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
@@ -183,7 +187,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 
         let encodedVault = try sut.encode(vaultBackup: backup)
 
-        let encoded = try XCTUnwrap(String(data: encodedVault.data, encoding: .utf8))
+        let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 }

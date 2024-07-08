@@ -6,7 +6,8 @@ final class IntermediateEncodedVaultEncoder {
 
     func encode(vaultBackup: VaultBackupPayload) throws -> IntermediateEncodedVault {
         let data = try makeEncoder().encode(vaultBackup)
-        return IntermediateEncodedVault(data: data)
+        let compressed = try (data as NSData).compressed(using: .lzma) as Data
+        return IntermediateEncodedVault(data: compressed)
     }
 
     private func makeEncoder() -> JSONEncoder {
