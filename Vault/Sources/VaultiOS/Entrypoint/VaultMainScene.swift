@@ -75,7 +75,7 @@ public struct VaultMainScene: Scene {
                 }
 
                 NavigationStack {
-                    Text("Tags UI")
+                    VaultTagFeedView(viewModel: tagFeedViewModel)
                 }
                 .tabItem {
                     Label(tagFeedViewModel.strings.title, systemImage: "tag")
