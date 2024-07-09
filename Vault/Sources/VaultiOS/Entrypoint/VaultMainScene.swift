@@ -16,6 +16,7 @@ public struct VaultMainScene: Scene {
     @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
     @State private var backupStore = BackupPasswordStoreImpl(secureStorage: SecureStorageImpl(keychain: .default))
+    @State private var tagFeedViewModel = VaultTagFeedViewModel()
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -77,7 +78,7 @@ public struct VaultMainScene: Scene {
                     Text("Tags UI")
                 }
                 .tabItem {
-                    Label("Tags", systemImage: "tag")
+                    Label(tagFeedViewModel.strings.title, systemImage: "tag")
                 }
 
                 NavigationStack {
