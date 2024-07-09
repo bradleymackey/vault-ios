@@ -74,6 +74,13 @@ public struct VaultMainScene: Scene {
                 }
 
                 NavigationStack {
+                    Text("Tags UI")
+                }
+                .tabItem {
+                    Label("Tags", systemImage: "tag")
+                }
+
+                NavigationStack {
                     VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
                 }
                 .tabItem {
