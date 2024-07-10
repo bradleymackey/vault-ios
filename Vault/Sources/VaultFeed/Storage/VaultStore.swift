@@ -15,6 +15,10 @@ public struct VaultStoreQuery: Sendable, Equatable {
     public static var all: VaultStoreQuery {
         .init(searchText: nil, tags: [])
     }
+
+    public var isFiltering: Bool {
+        self != .all
+    }
 }
 
 public protocol VaultStoreReader: Sendable {
