@@ -22,6 +22,13 @@ public final class VaultStoreStub: VaultStore {
         return codesMatchingQuery
     }
 
+    public var retrieveResult = VaultRetrievalResult<VaultItem>()
+    public var retrieveQueryCalled: (VaultStoreQuery) -> Void = { _ in }
+    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+        retrieveQueryCalled(query)
+        return retrieveResult
+    }
+
     public var insertStoreCalled: () -> Void = {}
     public func insert(item _: VaultItem.Write) async throws -> UUID {
         insertStoreCalled()

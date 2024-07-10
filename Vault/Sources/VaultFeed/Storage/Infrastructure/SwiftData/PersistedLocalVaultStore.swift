@@ -14,6 +14,11 @@ public final actor PersistedLocalVaultStore {
 // MARK: - VaultStoreReader
 
 extension PersistedLocalVaultStore: VaultStoreReader {
+    public func retrieve(query _: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+        // FIXME: implement this
+        VaultRetrievalResult()
+    }
+
     public func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
         let always = VaultEncodingConstants.Visibility.always
         let predicate = #Predicate<PersistedVaultItem> {

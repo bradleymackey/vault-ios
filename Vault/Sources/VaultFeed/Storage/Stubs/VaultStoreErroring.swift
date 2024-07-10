@@ -20,6 +20,12 @@ public final class VaultStoreErroring: VaultStore {
         throw error
     }
 
+    public var retrieveQueryCalled: (VaultStoreQuery) -> Void = { _ in }
+    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+        retrieveQueryCalled(query)
+        throw error
+    }
+
     public func insert(item _: VaultItem.Write) async throws -> UUID {
         throw error
     }
