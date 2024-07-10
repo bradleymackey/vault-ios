@@ -33,3 +33,19 @@ extension VaultItemTag: Equatable, Hashable {
         hasher.combine(id)
     }
 }
+
+// MARK: - Write
+
+extension VaultItemTag {
+    public struct Write: Equatable, Sendable {
+        public var name: String
+        public var color: VaultItemColor?
+        public var iconName: String?
+
+        public init(name: String, color: VaultItemColor?, iconName: String?) {
+            self.name = name
+            self.color = color
+            self.iconName = iconName
+        }
+    }
+}
