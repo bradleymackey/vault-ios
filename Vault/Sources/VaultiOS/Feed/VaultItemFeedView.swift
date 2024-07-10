@@ -137,7 +137,7 @@ public struct VaultItemFeedView<
 struct VaultItemFeedView_Previews: PreviewProvider {
     static var previews: some View {
         let store = VaultStoreStub()
-        store.codes = .init(items: [
+        store.retrieveQueryResult = .init(items: [
             .init(
                 metadata: .init(
                     id: UUID(),

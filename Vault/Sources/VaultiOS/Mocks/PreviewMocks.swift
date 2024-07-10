@@ -84,12 +84,4 @@ struct CodeStoreFake: VaultStoreReader {
     func retrieve(query _: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         .init(items: codes)
     }
-
-    func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
-        .init(items: codes)
-    }
-
-    func retrieve(matching _: String) async throws -> VaultRetrievalResult<VaultItem> {
-        .init(items: codes)
-    }
 }

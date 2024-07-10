@@ -87,11 +87,8 @@ extension FeedViewModel: VaultFeed {
 
     public func reloadData() async {
         do {
-            let result = if let query = sanitizedQuery {
-                try await store.retrieve(matching: query)
-            } else {
-                try await store.retrieve()
-            }
+            let query = VaultStoreQuery(searchText: sanitizedQuery, tags: [])
+            let result = try await store.retrieve(query: query)
             codes = result.items
             errors = result.errors
         } catch {

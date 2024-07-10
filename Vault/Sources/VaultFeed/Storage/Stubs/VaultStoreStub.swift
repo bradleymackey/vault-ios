@@ -8,25 +8,11 @@ import Foundation
 public final class VaultStoreStub: VaultStore {
     public init() {}
 
-    public var codes = VaultRetrievalResult<VaultItem>()
-    public var retrieveStoreCalled: () -> Void = {}
-    public func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
-        retrieveStoreCalled()
-        return codes
-    }
-
-    public var codesMatchingQuery = VaultRetrievalResult<VaultItem>()
-    public var retrieveStoreMatchingQueryCalled: (String) -> Void = { _ in }
-    public func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
-        retrieveStoreMatchingQueryCalled(query)
-        return codesMatchingQuery
-    }
-
-    public var retrieveResult = VaultRetrievalResult<VaultItem>()
+    public var retrieveQueryResult = VaultRetrievalResult<VaultItem>()
     public var retrieveQueryCalled: (VaultStoreQuery) -> Void = { _ in }
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         retrieveQueryCalled(query)
-        return retrieveResult
+        return retrieveQueryResult
     }
 
     public var insertStoreCalled: () -> Void = {}

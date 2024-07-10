@@ -19,28 +19,28 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         sut = PersistedLocalVaultStore(modelContainer: container)
     }
 
-    func test_retrieve_deliversEmptyOnEmptyStore() async throws {
-        let result = try await sut.retrieve()
+    func test_retrieveAll_deliversEmptyOnEmptyStore() async throws {
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result, .empty())
     }
 
-    func test_retrieve_hasNoSideEffectsOnEmptyStore() async throws {
-        let result1 = try await sut.retrieve()
+    func test_retrieveAll_hasNoSideEffectsOnEmptyStore() async throws {
+        let result1 = try await sut.retrieve(query: .all)
         XCTAssertEqual(result1, .empty())
-        let result2 = try await sut.retrieve()
+        let result2 = try await sut.retrieve(query: .all)
         XCTAssertEqual(result2, .empty())
     }
 
-    func test_retrieve_deliversSingleCodeOnNonEmptyStore() async throws {
+    func test_retrieveAll_deliversSingleCodeOnNonEmptyStore() async throws {
         let code = uniqueWritableVaultItem()
         try await sut.insert(item: code)
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), [code.item.otpCode])
         XCTAssertEqual(result.errors, [])
     }
 
-    func test_retrieve_deliversMultipleCodesOnNonEmptyStore() async throws {
+    func test_retrieveAll_deliversMultipleCodesOnNonEmptyStore() async throws {
         let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -50,12 +50,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), codes.map(\.item.otpCode))
         XCTAssertEqual(result.errors, [])
     }
 
-    func test_retrieve_hasNoSideEffectsOnNonEmptyStore() async throws {
+    func test_retrieveAll_hasNoSideEffectsOnNonEmptyStore() async throws {
         let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -65,15 +65,15 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result1 = try await sut.retrieve()
+        let result1 = try await sut.retrieve(query: .all)
         XCTAssertEqual(result1.items.map(\.item.otpCode), codes.map(\.item.otpCode))
         XCTAssertEqual(result1.errors, [])
-        let result2 = try await sut.retrieve()
+        let result2 = try await sut.retrieve(query: .all)
         XCTAssertEqual(result2.items.map(\.item.otpCode), codes.map(\.item.otpCode))
         XCTAssertEqual(result2.errors, [])
     }
 
-    func test_retrieve_doesNotReturnSearchOnlyItems() async throws {
+    func test_retrieveAll_doesNotReturnSearchOnlyItems() async throws {
         let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(visibility: .onlySearch),
             uniqueWritableVaultItem(visibility: .onlySearch),
@@ -83,12 +83,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertTrue(result.items.isEmpty)
         XCTAssertTrue(result.errors.isEmpty)
     }
 
-    func test_retrieve_returnsAlwaysVisibleItems() async throws {
+    func test_retrieveAll_returnsAlwaysVisibleItems() async throws {
         let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(visibility: .always),
             uniqueWritableVaultItem(visibility: .onlySearch),
@@ -98,13 +98,13 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.errors, [])
     }
 
     @MainActor
-    func test_retrieve_returnsCorruptedItemsAsErrors() async throws {
+    func test_retrieveAll_returnsCorruptedItemsAsErrors() async throws {
         let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -119,13 +119,13 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         // Introduce a corruption error on the first item
         try await sut.corruptItemAlgorithm(id: ids[0])
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.id), Array(ids[1...]))
         XCTAssertEqual(result.errors, [.failedToDecode(.invalidAlgorithm)])
     }
 
     @MainActor
-    func test_retrieve_returnsAllItemsCorrupted() async throws {
+    func test_retrieveAll_returnsAllItemsCorrupted() async throws {
         let codes: [VaultItem.Write] = [
             uniqueWritableVaultItem(),
             uniqueWritableVaultItem(),
@@ -137,7 +137,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.corruptItemAlgorithm(id: id)
         }
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [
             .failedToDecode(.invalidAlgorithm),
@@ -147,22 +147,25 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveMatchingQuery_returnsEmptyOnEmptyStoreAndEmptyQuery() async throws {
-        let result = try await sut.retrieve(matching: "")
+        let query = VaultStoreQuery(searchText: "")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [])
     }
 
     func test_retrieveMatchingQuery_returnsEmptyOnEmptyStore() async throws {
-        let result = try await sut.retrieve(matching: "any")
+        let query = VaultStoreQuery(searchText: "any")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [])
     }
 
     func test_retrieveMatchingQuery_hasNoSideEffectsOnEmptyStore() async throws {
-        let result1 = try await sut.retrieve(matching: "any")
+        let query = VaultStoreQuery(searchText: "any")
+        let result1 = try await sut.retrieve(query: query)
         XCTAssertEqual(result1.items, [])
         XCTAssertEqual(result1.errors, [])
-        let result2 = try await sut.retrieve(matching: "any")
+        let result2 = try await sut.retrieve(query: query)
         XCTAssertEqual(result2.items, [])
         XCTAssertEqual(result2.errors, [])
     }
@@ -176,7 +179,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "any")
+        let query = VaultStoreQuery(searchText: "any")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [])
     }
@@ -190,7 +194,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "yes")
+        let query = VaultStoreQuery(searchText: "yes")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 1)
         XCTAssertEqual(result.items.compactMap(\.item.secureNote), codes.compactMap(\.item.secureNote))
         XCTAssertEqual(result.errors, [])
@@ -205,11 +210,13 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result1 = try await sut.retrieve(matching: "yes")
+        let query1 = VaultStoreQuery(searchText: "yes")
+        let result1 = try await sut.retrieve(query: query1)
         XCTAssertEqual(result1.items.count, 1)
         XCTAssertEqual(result1.items.compactMap(\.item.secureNote), codes.compactMap(\.item.secureNote))
         XCTAssertEqual(result1.errors, [])
-        let result2 = try await sut.retrieve(matching: "yes")
+        let query2 = VaultStoreQuery(searchText: "yes")
+        let result2 = try await sut.retrieve(query: query2)
         XCTAssertEqual(result2.items.count, 1)
         XCTAssertEqual(result2.items.compactMap(\.item.secureNote), codes.compactMap(\.item.secureNote))
         XCTAssertEqual(result2.errors, [])
@@ -228,7 +235,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "yes")
+        let query = VaultStoreQuery(searchText: "yes")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 3)
         XCTAssertEqual(result.items.map(\.metadata.userDescription), ["yes", "yess", "yesss"])
         XCTAssertEqual(result.errors, [])
@@ -249,7 +257,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 3)
         XCTAssertEqual(result.items.map(\.metadata.userDescription), ["a", "----a----", "----A----"])
         XCTAssertEqual(result.errors, [])
@@ -266,7 +275,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.items.compactMap(\.item.otpCode?.data.accountName), ["a", "----A----"])
         XCTAssertEqual(result.errors, [])
@@ -283,7 +293,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.items.compactMap(\.item.otpCode?.data.issuer), ["a", "----A----"])
         XCTAssertEqual(result.errors, [])
@@ -300,7 +311,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.items.compactMap(\.item.secureNote?.title), ["a", "----A----"])
         XCTAssertEqual(result.errors, [])
@@ -317,7 +329,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.items.compactMap(\.item.secureNote?.contents), ["a", "----A----"])
         XCTAssertEqual(result.errors, [])
@@ -336,7 +349,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 6, "All items should be matched on the specified fields")
         XCTAssertEqual(result.errors, [])
     }
@@ -354,7 +368,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 6, "All items should be matched on the specified fields")
         XCTAssertEqual(result.errors, [])
     }
@@ -369,7 +384,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 0, "Cannot search note content in this state")
         XCTAssertEqual(result.errors, [])
     }
@@ -384,7 +400,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 1, "Only 1 note matches will full search")
         XCTAssertEqual(result.errors, [])
     }
@@ -398,7 +415,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 2, "All items here should be matched")
         XCTAssertEqual(result.errors, [])
     }
@@ -414,7 +432,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             insertedIDs.append(id)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0], insertedIDs[1]], "Matches both")
         XCTAssertEqual(result.errors, [])
     }
@@ -439,7 +458,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             insertedIDs.append(id)
         }
 
-        let result = try await sut.retrieve(matching: "n")
+        let query = VaultStoreQuery(searchText: "n")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0]], "Only the first item is an exact match")
         XCTAssertEqual(result.errors, [])
     }
@@ -457,7 +477,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             insertedIDs.append(id)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(
             result.items.map(\.metadata.id),
             [insertedIDs[0], insertedIDs[1]],
@@ -483,7 +504,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         // Introduce a corruption error on the first item
         try await sut.corruptItemAlgorithm(id: ids[0])
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.map(\.id), [ids[1], ids[3]])
         XCTAssertEqual(result.errors, [.failedToDecode(.invalidAlgorithm)])
     }
@@ -502,7 +524,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.corruptItemAlgorithm(id: id)
         }
 
-        let result = try await sut.retrieve(matching: "a")
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [
             .failedToDecode(.invalidAlgorithm),
@@ -526,7 +549,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         try await sut.insert(item: code)
         try await sut.insert(item: code)
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), [code.item.otpCode, code.item.otpCode])
         XCTAssertEqual(result.errors, [])
     }
@@ -540,7 +563,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             ids.append(id)
         }
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.id), ids)
         XCTAssertEqual(result.errors, [])
     }
@@ -548,7 +571,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     func test_deleteByID_hasNoEffectOnEmptyStore() async throws {
         try await sut.delete(id: UUID())
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [])
     }
@@ -560,7 +583,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         try await sut.delete(id: id)
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [])
     }
@@ -573,7 +596,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         try await sut.delete(id: UUID())
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), otherCodes.map(\.item.otpCode))
         XCTAssertEqual(result.errors, [])
     }
@@ -590,7 +613,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     func test_updateByID_hasNoEffectOnEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
         try? await sut.update(id: UUID(), item: uniqueWritableVaultItem())
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
         XCTAssertEqual(result.errors, [])
     }
@@ -603,7 +626,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         try? await sut.update(id: UUID(), item: uniqueWritableVaultItem())
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), codes.map(\.item.otpCode))
         XCTAssertEqual(result.errors, [])
     }
@@ -615,7 +638,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let newCode = uniqueWritableVaultItem()
         try await sut.update(id: id, item: newCode)
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertNotEqual(
             result.items.map(\.item.otpCode),
             [initialCode.item.otpCode],
@@ -636,7 +659,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let newCode = uniqueWritableVaultItem()
         try await sut.update(id: id, item: newCode)
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), initialCodes.map(\.item.otpCode) + [newCode.item.otpCode])
         XCTAssertEqual(result.errors, [])
     }
@@ -644,7 +667,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     func test_exportVault_hasNoSideEffectsOnEmptyVault() async throws {
         _ = try await sut.exportVault(userDescription: "")
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result, .empty())
     }
 
@@ -656,7 +679,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         _ = try await sut.exportVault(userDescription: "my desc")
 
-        let result = try await sut.retrieve()
+        let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.count, 3)
     }
 
