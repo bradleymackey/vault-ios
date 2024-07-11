@@ -22,6 +22,10 @@ public struct VaultItemTag: Identifiable, Sendable {
         self.color = color
         self.iconName = iconName
     }
+
+    public var asWritable: VaultItemTag.Write {
+        .init(name: name, color: color, iconName: iconName)
+    }
 }
 
 extension VaultItemTag: Equatable, Hashable {
