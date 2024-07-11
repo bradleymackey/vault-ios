@@ -188,3 +188,66 @@ extension PersistedLocalVaultStore: VaultStoreExporter {
         )
     }
 }
+
+// MARK: - VaultTagStoreReader
+
+extension PersistedLocalVaultStore: VaultTagStoreReader {
+    public func retrieveTags() async throws -> [VaultItemTag] {
+        let allTags: [PersistedVaultTag] = try modelContext.fetch(.all(sortBy: [SortDescriptor(\.title)]))
+        let decoder = PersistedVaultTagDecoder()
+        return try allTags.map {
+            try decoder.decode(item: $0)
+        }
+    }
+}
+
+// MARK: - VaultTagStoreWriter
+
+extension PersistedLocalVaultStore: VaultTagStoreWriter {
+    @discardableResult
+    public func insertTag(item: VaultItemTag.Write) async throws -> VaultItemTag.Identifier {
+        do {
+            let encoder = PersistedVaultTagEncoder(context: modelContext)
+            let newTag = encoder.encode(tag: item)
+
+            try modelContext.save()
+            return VaultItemTag.Identifier(id: newTag.id)
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+
+    public func updateTag(id: VaultItemTag.Identifier, item: VaultItemTag.Write) async throws {
+        do {
+            let uuid = id.id
+            var descriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { item in
+                item.id == uuid
+            })
+            descriptor.fetchLimit = 1
+            guard let existing = try modelContext.fetch(descriptor).first else {
+                throw Error.modelNotFound
+            }
+            let encoder = PersistedVaultTagEncoder(context: modelContext)
+            _ = encoder.encode(tag: item, existing: existing)
+
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+
+    public func deleteTag(id: VaultItemTag.Identifier) async throws {
+        do {
+            let uuid = id.id
+            try modelContext.delete(model: PersistedVaultTag.self, where: #Predicate {
+                $0.id == uuid
+            })
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}

@@ -706,6 +706,148 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(export.items.map(\.id), insertedIDs)
         XCTAssertEqual(export.tags, [])
     }
+
+    func test_retrieveTags_returnsNoTagsIfThereAreNone() async throws {
+        let tags = try await sut.retrieveTags()
+
+        XCTAssertEqual(tags, [])
+    }
+
+    func test_retrieveTags_returnsMultipleTags() async throws {
+        let items = [
+            VaultItemTag.Write(name: "any1", color: nil, iconName: nil),
+            VaultItemTag.Write(name: "any2", color: nil, iconName: nil),
+            VaultItemTag.Write(name: "any3", color: nil, iconName: nil),
+        ]
+        var insertedIDs = [UUID]()
+        for tag in items {
+            let id = try await sut.insertTag(item: tag)
+            insertedIDs.append(id.id)
+        }
+        let tags = try await sut.retrieveTags()
+
+        XCTAssertEqual(tags.map(\.id.id), insertedIDs)
+    }
+
+    func test_insertTag_deliversNoErrorOnEmptyStore() async throws {
+        try await sut.insertTag(item: anyVaultItemTag().asWritable)
+    }
+
+    func test_insertTag_deliversNoErrorOnNonEmptyStore() async throws {
+        try await sut.insertTag(item: anyVaultItemTag().asWritable)
+        try await sut.insertTag(item: anyVaultItemTag().asWritable)
+    }
+
+    func test_insertTag_doesNotOverrideExactSameEntryAsUsesNewIDToUnique() async throws {
+        let code = anyVaultItemTag().asWritable
+
+        try await sut.insertTag(item: code)
+        try await sut.insertTag(item: code)
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result.count, 2)
+    }
+
+    func test_insertTag_returnsUniqueCodeIDAfterSuccessfulInsert() async throws {
+        let code = anyVaultItemTag().asWritable
+
+        var ids = [UUID]()
+        for _ in 0 ..< 5 {
+            let id = try await sut.insertTag(item: code)
+            ids.append(id.id)
+        }
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result.map(\.id.id), ids)
+    }
+
+    func test_deleteTag_hasNoEffectOnEmptyStore() async throws {
+        try await sut.deleteTag(id: .init(id: UUID()))
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result, [])
+    }
+
+    func test_deleteTag_deletesSingleEntryMatchingID() async throws {
+        let code = anyVaultItemTag().asWritable
+
+        let id = try await sut.insertTag(item: code)
+
+        try await sut.deleteTag(id: id)
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result, [])
+    }
+
+    func test_deleteTag_hasNoEffectOnNoMatchingTag() async throws {
+        let otherTags = [anyVaultItemTag().asWritable, anyVaultItemTag().asWritable, anyVaultItemTag().asWritable]
+        var insertedIds = [VaultItemTag.Identifier]()
+        for tag in otherTags {
+            let id = try await sut.insertTag(item: tag)
+            insertedIds.append(id)
+        }
+
+        try await sut.deleteTag(id: .init(id: UUID()))
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result.map(\.id), insertedIds)
+    }
+
+    func test_updateTag_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
+        do {
+            try await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().asWritable)
+            XCTFail("Expected to throw error")
+        } catch {
+            // ignore
+        }
+    }
+
+    func test_updateTag_hasNoEffectOnEmptyStorageIfDoesNotAlreadyExist() async throws {
+        try? await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().asWritable)
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result, [])
+    }
+
+    func test_updateTag_hasNoEffectOnNonEmptyStorageIfDoesNotAlreadyExist() async throws {
+        let tags = [anyVaultItemTag().asWritable, anyVaultItemTag().asWritable, anyVaultItemTag().asWritable]
+        for tag in tags {
+            try await sut.insertTag(item: tag)
+        }
+
+        try? await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().asWritable)
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result.map(\.asWritable), tags)
+    }
+
+    func test_updateTag_updatesDataForValidTag() async throws {
+        let initial = anyVaultItemTag().asWritable
+        let id = try await sut.insertTag(item: initial)
+
+        let newTag = anyVaultItemTag(name: "this is the new name").asWritable
+        try await sut.updateTag(id: id, item: newTag)
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result.map(\.name), ["this is the new name"])
+    }
+
+    func test_updateTag_hasNoSideEffectsOnOtherTags() async throws {
+        let initialTags = [anyVaultItemTag().asWritable, anyVaultItemTag().asWritable, anyVaultItemTag().asWritable]
+        var insertedIds = [VaultItemTag.Identifier]()
+        for tag in initialTags {
+            let id = try await sut.insertTag(item: tag)
+            insertedIds.append(id)
+        }
+
+        let id = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+
+        let newTag = anyVaultItemTag().asWritable
+        try await sut.updateTag(id: id, item: newTag)
+
+        let result = try await sut.retrieveTags()
+        XCTAssertEqual(result.map(\.id), insertedIds + [id])
+    }
 }
 
 // MARK: - Helpers

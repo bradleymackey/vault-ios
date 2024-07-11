@@ -3,10 +3,6 @@ import FoundationExtensions
 import VaultCore
 import VaultFeed
 
-func anyNSError() -> NSError {
-    NSError(domain: "any", code: 100)
-}
-
 func uniqueCode() -> OTPAuthCode {
     let randomData = Data.random(count: 50)
     return OTPAuthCode(
@@ -158,6 +154,19 @@ func writableSearchableNoteVaultItem(
     )
 }
 
+// MARK: - VaultItemTag
+
+func anyVaultItemTag(
+    id: UUID = UUID(),
+    name: String = "name",
+    color: VaultItemColor? = nil,
+    iconName: String? = nil
+) -> VaultItemTag {
+    VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
+}
+
+// MARK: - Constants
+
 func hotpRfcSecretData() -> Data {
     Data([
         0x31,
@@ -181,4 +190,10 @@ func hotpRfcSecretData() -> Data {
         0x39,
         0x30,
     ])
+}
+
+// MARK: - Misc
+
+func anyNSError() -> NSError {
+    NSError(domain: "any", code: 100)
 }
