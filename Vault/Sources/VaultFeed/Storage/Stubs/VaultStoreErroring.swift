@@ -8,15 +8,9 @@ public final class VaultStoreErroring: VaultStore {
         self.error = error
     }
 
-    public var retrieveStoreCalled: () -> Void = {}
-    public func retrieve() async throws -> VaultRetrievalResult<VaultItem> {
-        retrieveStoreCalled()
-        throw error
-    }
-
-    public var retrieveStoreMatchingQueryCalled: (String) -> Void = { _ in }
-    public func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem> {
-        retrieveStoreMatchingQueryCalled(query)
+    public var retrieveQueryCalled: (VaultStoreQuery) -> Void = { _ in }
+    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+        retrieveQueryCalled(query)
         throw error
     }
 

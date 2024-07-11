@@ -22,6 +22,10 @@ public struct VaultItemTag: Identifiable, Sendable {
         self.color = color
         self.iconName = iconName
     }
+
+    public var asWritable: VaultItemTag.Write {
+        .init(name: name, color: color, iconName: iconName)
+    }
 }
 
 extension VaultItemTag: Equatable, Hashable {
@@ -31,5 +35,21 @@ extension VaultItemTag: Equatable, Hashable {
 
     public func hash(into hasher: inout Hasher) {
         hasher.combine(id)
+    }
+}
+
+// MARK: - Write
+
+extension VaultItemTag {
+    public struct Write: Equatable, Sendable {
+        public var name: String
+        public var color: VaultItemColor?
+        public var iconName: String?
+
+        public init(name: String, color: VaultItemColor?, iconName: String?) {
+            self.name = name
+            self.color = color
+            self.iconName = iconName
+        }
     }
 }

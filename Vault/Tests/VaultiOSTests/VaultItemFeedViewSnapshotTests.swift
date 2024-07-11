@@ -27,7 +27,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = VaultStoreStub()
-        store.codes = .init(items: [uniqueVaultItem()])
+        store.retrieveQueryResult = .init(items: [uniqueVaultItem()])
         let viewModel = FeedViewModel(store: store)
         let sut = makeSUT(viewModel: viewModel)
             .framedToTestDeviceSize()
@@ -40,7 +40,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_multipleCodesAtMediumSize() async throws {
         let store = VaultStoreStub()
-        store.codes = .init(items: [
+        store.retrieveQueryResult = .init(items: [
             uniqueVaultItem(),
             uniqueVaultItem(),
             uniqueVaultItem(),

@@ -3,12 +3,27 @@ import VaultCore
 
 public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreWriter
 
-public protocol VaultStoreReader: Sendable {
-    /// Retrieve all stored items.
-    func retrieve() async throws -> VaultRetrievalResult<VaultItem>
+public struct VaultStoreQuery: Sendable, Equatable {
+    /// Require that the item includes this search text.
+    ///
+    /// Using `nil` equates to not querying by text and won't filter items by a search query.
+    public var searchText: String?
+    /// Require that the item includes **all** these search tags.
+    public var tags: Set<VaultItemTag.Identifier> = []
 
-    /// Retrieve only items that match the given query.
-    func retrieve(matching query: String) async throws -> VaultRetrievalResult<VaultItem>
+    /// Return all items, don't filter the results.
+    public static var all: VaultStoreQuery {
+        .init(searchText: nil, tags: [])
+    }
+
+    public var isQuerying: Bool {
+        self != .all
+    }
+}
+
+public protocol VaultStoreReader: Sendable {
+    /// Retrieve items matching the given query.
+    func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem>
 }
 
 public protocol VaultStoreWriter: Sendable {

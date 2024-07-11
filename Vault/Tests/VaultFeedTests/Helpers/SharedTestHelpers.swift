@@ -3,10 +3,6 @@ import FoundationExtensions
 import VaultCore
 import VaultFeed
 
-func anyNSError() -> NSError {
-    NSError(domain: "any", code: 100)
-}
-
 func uniqueCode() -> OTPAuthCode {
     let randomData = Data.random(count: 50)
     return OTPAuthCode(
@@ -49,6 +45,7 @@ func searchableStoredOTPVaultItem(
     userDescription: String = "",
     accountName: String = "",
     issuerName: String = "",
+    tags: Set<VaultItemTag.Identifier> = [],
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
@@ -59,7 +56,7 @@ func searchableStoredOTPVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            tags: [],
+            tags: tags,
             visibility: visibility,
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
@@ -76,6 +73,7 @@ func searchableStoredSecureNoteVaultItem(
     userDescription: String = "",
     title: String = "",
     contents: String = "",
+    tags: Set<VaultItemTag.Identifier> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
     secretPassphrase: String? = nil
 ) -> VaultItem {
@@ -85,7 +83,7 @@ func searchableStoredSecureNoteVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            tags: [],
+            tags: tags,
             visibility: .always,
             searchableLevel: searchableLevel,
             searchPassphrase: secretPassphrase,
@@ -123,12 +121,14 @@ func writableSearchableOTPVaultItem(
     issuerName: String = "",
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
+    tags: Set<VaultItemTag.Identifier> = [],
     searchPassphrase: String? = nil
 ) -> VaultItem.Write {
     searchableStoredOTPVaultItem(
         userDescription: userDescription,
         accountName: accountName,
         issuerName: issuerName,
+        tags: tags,
         visibility: visibility,
         searchableLevel: searchableLevel,
         searchPassphrase: searchPassphrase
@@ -139,6 +139,7 @@ func writableSearchableNoteVaultItem(
     userDescription: String = "",
     title: String = "",
     contents: String = "",
+    tags: Set<VaultItemTag.Identifier> = [],
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
@@ -147,12 +148,25 @@ func writableSearchableNoteVaultItem(
         userDescription: userDescription,
         color: nil,
         item: .secureNote(.init(title: title, contents: contents)),
-        tags: [],
+        tags: tags,
         visibility: visibility,
         searchableLevel: searchableLevel,
         searchPassphase: searchPassphrase
     )
 }
+
+// MARK: - VaultItemTag
+
+func anyVaultItemTag(
+    id: UUID = UUID(),
+    name: String = "name",
+    color: VaultItemColor? = nil,
+    iconName: String? = nil
+) -> VaultItemTag {
+    VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
+}
+
+// MARK: - Constants
 
 func hotpRfcSecretData() -> Data {
     Data([
@@ -177,4 +191,10 @@ func hotpRfcSecretData() -> Data {
         0x39,
         0x30,
     ])
+}
+
+// MARK: - Misc
+
+func anyNSError() -> NSError {
+    NSError(domain: "any", code: 100)
 }

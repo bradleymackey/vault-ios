@@ -41,61 +41,62 @@ final class FeedViewModelTests: XCTestCase {
     @MainActor
     func test_reloadData_populatesCodesFromStore() async throws {
         let store = VaultStoreStub()
-        store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
 
         let exp = expectation(description: "Wait for reload data")
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
         await sut.reloadData()
 
         await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.codes, store.codes.items)
+        XCTAssertEqual(sut.codes, store.retrieveQueryResult.items)
     }
 
     @MainActor
     func test_reloadData_populatesCodesIfQueryIsNotPresent() async throws {
         let store = VaultStoreStub()
-        store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
         sut.searchQuery = "  " // whitespace only
 
         let exp = expectation(description: "Wait for reload data from normal store, not search")
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
         await sut.reloadData()
 
         await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.codes, store.codes.items)
+        XCTAssertEqual(sut.codes, store.retrieveQueryResult.items)
     }
 
     @MainActor
     func test_reloadData_populatesCodesFromQueryIfQueryIsPresent() async throws {
         let store = VaultStoreStub()
-        store.codesMatchingQuery = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
         sut.searchQuery = " \tSOME QUERY 123\n "
 
         let exp = expectation(description: "Wait for reload data")
-        store.retrieveStoreMatchingQueryCalled = { query in
-            XCTAssertEqual(query, "SOME QUERY 123")
+        store.retrieveQueryCalled = { query in
+            XCTAssertEqual(query.searchText, "SOME QUERY 123")
+            XCTAssertEqual(query.tags, [])
             exp.fulfill()
         }
 
         await sut.reloadData()
 
         await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.codes, store.codesMatchingQuery.items)
+        XCTAssertEqual(sut.codes, store.retrieveQueryResult.items)
     }
 
     @MainActor
     func test_reloadData_doesNotShowErrorOnPopulatingFromNonEmpty() async throws {
         let store = VaultStoreStub()
-        store.codes = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(store: store)
 
         await expectNoMutation(observable: sut, keyPath: \.retrievalError) {
@@ -134,7 +135,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_createItem_reloadsAfterUpdate() async throws {
         let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store update")
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
@@ -150,7 +151,7 @@ final class FeedViewModelTests: XCTestCase {
         let store = VaultStoreErroring(error: anyNSError())
         let exp = expectation(description: "Wait for store update")
         exp.isInverted = true
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
@@ -192,7 +193,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_updateCode_reloadsAfterUpdate() async throws {
         let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store retrieve")
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
@@ -208,7 +209,7 @@ final class FeedViewModelTests: XCTestCase {
         let store = VaultStoreErroring(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
         exp.isInverted = true
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
@@ -251,7 +252,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_deleteCode_reloadsAfterDelete() async throws {
         let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store retrieve")
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 
@@ -267,7 +268,7 @@ final class FeedViewModelTests: XCTestCase {
         let store = VaultStoreErroring(error: anyNSError())
         let exp = expectation(description: "Wait for store not retrieve")
         exp.isInverted = true
-        store.retrieveStoreCalled = {
+        store.retrieveQueryCalled = { _ in
             exp.fulfill()
         }
 

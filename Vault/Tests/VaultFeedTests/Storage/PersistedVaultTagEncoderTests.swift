@@ -26,20 +26,22 @@ final class PersistedVaultTagEncoderTests: XCTestCase {
 // MARK: - Encoding
 
 extension PersistedVaultTagEncoderTests {
-    func test_encode_id() throws {
-        let id = UUID()
+    func test_encode_newItemCreatedUUID() throws {
         let sut = makeSUT()
-        let item = makeVaultItemTag(id: id)
 
-        let encoded = sut.encode(tag: item)
-
-        XCTAssertEqual(encoded.id, id)
+        var seenIds = Set<UUID>()
+        for _ in 1 ... 100 {
+            let item = makeWritableVaultItemTag()
+            let encoded = sut.encode(tag: item)
+            seenIds.insert(encoded.id)
+        }
+        XCTAssertEqual(seenIds.count, 100)
     }
 
     func test_encode_name() throws {
         let name = "my tag name"
         let sut = makeSUT()
-        let item = makeVaultItemTag(name: name)
+        let item = makeWritableVaultItemTag(name: name)
 
         let encoded = sut.encode(tag: item)
 
@@ -48,7 +50,7 @@ extension PersistedVaultTagEncoderTests {
 
     func test_encode_colorNil() throws {
         let sut = makeSUT()
-        let item = makeVaultItemTag(color: nil)
+        let item = makeWritableVaultItemTag(color: nil)
 
         let encoded = sut.encode(tag: item)
 
@@ -58,7 +60,7 @@ extension PersistedVaultTagEncoderTests {
     func test_encode_colorWithValues() throws {
         let sut = makeSUT()
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
-        let item = makeVaultItemTag(color: color)
+        let item = makeWritableVaultItemTag(color: color)
 
         let encoded = sut.encode(tag: item)
 
@@ -70,7 +72,7 @@ extension PersistedVaultTagEncoderTests {
     func test_encode_iconName() throws {
         let name = "my icon name"
         let sut = makeSUT()
-        let item = makeVaultItemTag(iconName: name)
+        let item = makeWritableVaultItemTag(iconName: name)
 
         let encoded = sut.encode(tag: item)
 
@@ -83,6 +85,18 @@ extension PersistedVaultTagEncoderTests {
 extension PersistedVaultTagEncoderTests {
     private func makeSUT() -> PersistedVaultTagEncoder {
         PersistedVaultTagEncoder(context: context)
+    }
+
+    private func makeWritableVaultItemTag(
+        name: String = "Any",
+        color: VaultItemColor? = nil,
+        iconName: String? = nil
+    ) -> VaultItemTag.Write {
+        .init(
+            name: name,
+            color: color,
+            iconName: iconName
+        )
     }
 
     private func makeVaultItemTag(
