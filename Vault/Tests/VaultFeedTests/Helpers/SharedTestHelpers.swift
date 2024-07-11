@@ -49,6 +49,7 @@ func searchableStoredOTPVaultItem(
     userDescription: String = "",
     accountName: String = "",
     issuerName: String = "",
+    tags: Set<VaultItemTag.Identifier> = [],
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
@@ -59,7 +60,7 @@ func searchableStoredOTPVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            tags: [],
+            tags: tags,
             visibility: visibility,
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
@@ -76,6 +77,7 @@ func searchableStoredSecureNoteVaultItem(
     userDescription: String = "",
     title: String = "",
     contents: String = "",
+    tags: Set<VaultItemTag.Identifier> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
     secretPassphrase: String? = nil
 ) -> VaultItem {
@@ -85,7 +87,7 @@ func searchableStoredSecureNoteVaultItem(
             created: Date(),
             updated: Date(),
             userDescription: userDescription,
-            tags: [],
+            tags: tags,
             visibility: .always,
             searchableLevel: searchableLevel,
             searchPassphrase: secretPassphrase,
@@ -123,12 +125,14 @@ func writableSearchableOTPVaultItem(
     issuerName: String = "",
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
+    tags: Set<VaultItemTag.Identifier> = [],
     searchPassphrase: String? = nil
 ) -> VaultItem.Write {
     searchableStoredOTPVaultItem(
         userDescription: userDescription,
         accountName: accountName,
         issuerName: issuerName,
+        tags: tags,
         visibility: visibility,
         searchableLevel: searchableLevel,
         searchPassphrase: searchPassphrase
