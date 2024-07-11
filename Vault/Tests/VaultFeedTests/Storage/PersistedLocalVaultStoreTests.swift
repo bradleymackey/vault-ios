@@ -336,6 +336,26 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_retrieveMatchingQuery_filtersByTagsAsWell() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+
+        let codes: [VaultItem.Write] = [
+            writableSearchableNoteVaultItem(tags: [tag1]),
+            writableSearchableNoteVaultItem(contents: "a", tags: [tag1]),
+            writableSearchableNoteVaultItem(contents: "x", tags: [tag1]),
+            writableSearchableNoteVaultItem(contents: "----A----"), // not tagged, so not returned
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(searchText: "a", tags: [tag1])
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 1)
+        XCTAssertEqual(result.items.compactMap(\.item.secureNote?.contents), ["a"])
+        XCTAssertEqual(result.errors, [])
+    }
+
     func test_retrieveMatchingQuery_combinesResultsFromDifferentFields() async throws {
         let codes: [VaultItem.Write] = [
             writableSearchableNoteVaultItem(userDescription: "a"),
@@ -532,6 +552,87 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             .failedToDecode(.invalidAlgorithm),
             .failedToDecode(.invalidAlgorithm),
         ])
+    }
+
+    func test_retrieveMatchingTags_returnsMatchingAllItemsIfTagNotSpecified() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+
+        let codes: [VaultItem.Write] = [
+            writableSearchableOTPVaultItem(tags: [tag1]),
+            writableSearchableOTPVaultItem(tags: [tag1]),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let query = VaultStoreQuery()
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0], insertedIDs[1]], "Returns both")
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingTags_returnsMatchingAllTags() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+
+        let codes: [VaultItem.Write] = [
+            writableSearchableOTPVaultItem(tags: [tag1]),
+            writableSearchableOTPVaultItem(tags: [tag1]),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let query = VaultStoreQuery(tags: [tag1])
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0], insertedIDs[1]], "Matches both")
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingTags_returnsLimitedItemsMatchingTags() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+        let tag2 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+
+        let codes: [VaultItem.Write] = [
+            writableSearchableOTPVaultItem(tags: [tag1]),
+            writableSearchableOTPVaultItem(tags: [tag2]),
+            writableSearchableOTPVaultItem(tags: [tag1]),
+            writableSearchableOTPVaultItem(tags: [tag2]),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let query = VaultStoreQuery(tags: [tag1])
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0], insertedIDs[2]], "Matches both")
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingTags_returnsLimitedItemsMatchingTagsMultiple() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+        let tag2 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
+        let codes: [VaultItem.Write] = [
+            writableSearchableOTPVaultItem(tags: [tag1, tag2]),
+            writableSearchableOTPVaultItem(tags: [tag2]),
+            writableSearchableOTPVaultItem(tags: [tag1, tag2]),
+            writableSearchableOTPVaultItem(tags: [tag2]),
+        ]
+        var insertedIDs = [UUID]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let query = VaultStoreQuery(tags: [tag1])
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0], insertedIDs[2]], "Matches both")
+        XCTAssertEqual(result.errors, [])
     }
 
     func test_insert_deliversNoErrorOnEmptyStore() async throws {

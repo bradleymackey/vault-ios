@@ -16,7 +16,7 @@ public struct VaultStoreQuery: Sendable, Equatable {
         .init(searchText: nil, tags: [])
     }
 
-    public var isFiltering: Bool {
+    public var isQuerying: Bool {
         self != .all
     }
 }

@@ -15,28 +15,53 @@ public final actor PersistedLocalVaultStore {
 
 extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
-        // FIXME: implement fetching with tags
-        if let searchText = query.searchText {
-            try await retrieve(matchingText: searchText)
-        } else {
-            try await retrieveAll()
-        }
-    }
-
-    private func retrieveAll() async throws -> VaultRetrievalResult<VaultItem> {
-        let always = VaultEncodingConstants.Visibility.always
-        let predicate = #Predicate<PersistedVaultItem> {
-            $0.visibility == always
-        }
         let descriptor = FetchDescriptor<PersistedVaultItem>(
-            predicate: predicate,
+            predicate: makePredicate(query: query),
             sortBy: [SortDescriptor(\.updatedDate)]
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
     }
 
-    private func retrieve(matchingText query: String) async throws -> VaultRetrievalResult<VaultItem> {
+    /// Creates a predicate that returns items when querying.
+    private func makePredicate(query: VaultStoreQuery) -> Predicate<PersistedVaultItem> {
+        let tagsPredicate = makeTagsPredicate(matchingTags: query.tags)
+        if let searchText = query.searchText, searchText.isNotEmpty {
+            // (1) Searching by text and (2) filtering by tags.
+            // We don't need to filter by visibility level since all items should appear.
+
+            let searchPredicate = makeSearchTextPredicate(matchingText: searchText)
+            return #Predicate<PersistedVaultItem> {
+                searchPredicate.evaluate($0) && tagsPredicate.evaluate($0)
+            }
+        } else {
+            // Only filtering by tags.
+            // We need to explicitly filter by items that are "always visible", since the user is not searching.
+
+            let always = VaultEncodingConstants.Visibility.always
+            let visibilityPredicate = #Predicate<PersistedVaultItem> {
+                $0.visibility == always
+            }
+            return #Predicate<PersistedVaultItem> {
+                visibilityPredicate.evaluate($0) &&
+                    tagsPredicate.evaluate($0)
+            }
+        }
+    }
+
+    private func makeTagsPredicate(matchingTags tags: Set<VaultItemTag.Identifier>) -> Predicate<PersistedVaultItem> {
+        if tags.isEmpty {
+            // We're not filtering by any tags, so don't check tags.
+            return .true
+        } else {
+            let tagUUIDs = tags.map(\.id).reducedToSet()
+            return #Predicate<PersistedVaultItem> { item in
+                item.tags.contains(where: { tagUUIDs.contains($0.id) })
+            }
+        }
+    }
+
+    private func makeSearchTextPredicate(matchingText query: String) -> Predicate<PersistedVaultItem> {
         // NOTE: Compounding queries in SwiftData is a bit rough at the moment.
         // Each Predicate can only contain a single expression, so we must create them seperately
         // then compound them (a big chain of disjunctions leads to "expression too complex" errors).
@@ -89,7 +114,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             } ?? false
         }
 
-        let predicate = #Predicate<PersistedVaultItem> {
+        return #Predicate<PersistedVaultItem> {
             passphrasePredicate.evaluate($0) ||
                 userDescriptionPredicate.evaluate($0) ||
                 noteTitlePredicate.evaluate($0) ||
@@ -97,9 +122,6 @@ extension PersistedLocalVaultStore: VaultStoreReader {
                 codeNamePredicate.evaluate($0) ||
                 codeIssuerPredicate.evaluate($0)
         }
-        let descriptor = FetchDescriptor(predicate: predicate, sortBy: [SortDescriptor(\.updatedDate)])
-        let results = try modelContext.fetch(descriptor)
-        return .collectFrom(retrievedItems: results)
     }
 }
 

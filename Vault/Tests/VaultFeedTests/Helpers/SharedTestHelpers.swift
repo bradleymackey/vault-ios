@@ -139,6 +139,7 @@ func writableSearchableNoteVaultItem(
     userDescription: String = "",
     title: String = "",
     contents: String = "",
+    tags: Set<VaultItemTag.Identifier> = [],
     visibility: VaultItemVisibility = .always,
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil
@@ -147,7 +148,7 @@ func writableSearchableNoteVaultItem(
         userDescription: userDescription,
         color: nil,
         item: .secureNote(.init(title: title, contents: contents)),
-        tags: [],
+        tags: tags,
         visibility: visibility,
         searchableLevel: searchableLevel,
         searchPassphase: searchPassphrase
