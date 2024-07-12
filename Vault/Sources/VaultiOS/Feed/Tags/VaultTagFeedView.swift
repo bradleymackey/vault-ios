@@ -38,8 +38,6 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
 
     private var noTagsView: some View {
         VStack(alignment: .center, spacing: 12) {
-            Spacer()
-            Spacer()
             Image(systemName: "tag.fill")
                 .font(.largeTitle)
             VStack(alignment: .center, spacing: 2) {
@@ -48,10 +46,8 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                 Text(viewModel.strings.noTagsDescription)
                     .font(.callout)
             }
-            Spacer()
-            Spacer()
-            Spacer()
         }
+        .modifier(VerticallyCenterUpperThird(alignment: .center))
         .multilineTextAlignment(.center)
         .foregroundStyle(.secondary)
         .padding()
