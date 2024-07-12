@@ -50,7 +50,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         .modifier(VerticallyCenterUpperThird(alignment: .center))
         .multilineTextAlignment(.center)
         .foregroundStyle(.secondary)
-        .padding()
+        .padding(24)
         .textCase(.none)
     }
 }
