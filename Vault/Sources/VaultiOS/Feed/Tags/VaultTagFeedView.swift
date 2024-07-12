@@ -40,7 +40,9 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
             switch content {
             case .creatingTag:
                 NavigationStack {
-                    VaultTagDetailView<Store>(viewModel: .init(store: viewModel.store))
+                    VaultTagDetailView<Store>(
+                        viewModel: .init(store: viewModel.store, existingTag: nil)
+                    )
                 }
             }
         }
