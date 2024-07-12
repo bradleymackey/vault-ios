@@ -12,5 +12,6 @@ struct VaultTagRow: View {
             Image(systemName: tag.iconName ?? "tag.fill")
                 .foregroundStyle(tag.color?.color ?? .primary)
         }
+        .id(tag.id)
     }
 }

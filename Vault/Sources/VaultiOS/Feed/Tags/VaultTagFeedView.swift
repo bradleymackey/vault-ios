@@ -12,10 +12,14 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
 
     var body: some View {
         List {
-            VaultTagRow(tag: .init(id: .init(id: UUID()), name: "Testing"))
+            ForEach(viewModel.tags) { tag in
+                VaultTagRow(tag: tag)
+            }
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.automatic)
-        .task {}
+        .task {
+            await viewModel.onAppear()
+        }
     }
 }
