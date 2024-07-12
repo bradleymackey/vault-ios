@@ -37,20 +37,12 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
     }
 
     private var noTagsView: some View {
-        VStack(alignment: .center, spacing: 12) {
-            Image(systemName: "tag.fill")
-                .font(.largeTitle)
-            VStack(alignment: .center, spacing: 2) {
-                Text(viewModel.strings.noTagsTitle)
-                    .font(.headline.bold())
-                Text(viewModel.strings.noTagsDescription)
-                    .font(.callout)
-            }
-        }
+        PlaceholderView(
+            systemIcon: "tag.fill",
+            title: viewModel.strings.noTagsTitle,
+            subtitle: viewModel.strings.noTagsDescription
+        )
         .modifier(VerticallyCenterUpperThird(alignment: .center))
-        .multilineTextAlignment(.center)
-        .foregroundStyle(.secondary)
         .padding(24)
-        .textCase(.none)
     }
 }
