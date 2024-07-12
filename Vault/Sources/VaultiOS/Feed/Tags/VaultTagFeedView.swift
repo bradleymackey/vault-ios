@@ -1,13 +1,19 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultFeed
 
 @MainActor
 struct VaultTagFeedView<Store: VaultTagStore>: View {
     var viewModel: VaultTagFeedViewModel<Store>
+    @State private var modal: Modal?
 
     init(viewModel: VaultTagFeedViewModel<Store>) {
         self.viewModel = viewModel
+    }
+
+    enum Modal: Hashable, IdentifiableSelf {
+        case creatingTag
     }
 
     var body: some View {
@@ -21,6 +27,21 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.automatic)
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    modal = .creatingTag
+                } label: {
+                    Label(viewModel.strings.createTagTitle, systemImage: "plus")
+                }
+            }
+        }
+        .sheet(item: $modal, onDismiss: nil) { content in
+            switch content {
+            case .creatingTag:
+                Text("Create tag")
+            }
+        }
         .task {
             await viewModel.onAppear()
         }
