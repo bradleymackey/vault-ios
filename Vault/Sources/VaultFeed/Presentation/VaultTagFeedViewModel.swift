@@ -3,8 +3,12 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class VaultTagFeedViewModel {
-    public init() {}
+public final class VaultTagFeedViewModel<Store: VaultTagStore> {
+    private let store: Store
+
+    public init(store: Store) {
+        self.store = store
+    }
 }
 
 // MARK: - Strings
@@ -12,12 +16,11 @@ public final class VaultTagFeedViewModel {
 extension VaultTagFeedViewModel {
     public struct Strings: Sendable {
         fileprivate init() {}
-        fileprivate static let shared = Strings()
 
         public let title = localized(key: "tagFeed.title")
     }
 
     public var strings: Strings {
-        Strings.shared
+        Strings()
     }
 }

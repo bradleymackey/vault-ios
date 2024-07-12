@@ -3,10 +3,10 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-struct VaultTagFeedView: View {
-    var viewModel: VaultTagFeedViewModel
+struct VaultTagFeedView<Store: VaultTagStore>: View {
+    var viewModel: VaultTagFeedViewModel<Store>
 
-    init(viewModel: VaultTagFeedViewModel) {
+    init(viewModel: VaultTagFeedViewModel<Store>) {
         self.viewModel = viewModel
     }
 
@@ -16,5 +16,6 @@ struct VaultTagFeedView: View {
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.automatic)
+        .task {}
     }
 }
