@@ -7,7 +7,7 @@ public final class VaultTagFeedViewModel<Store: VaultTagStore> {
     public private(set) var tags = [VaultItemTag]()
     public private(set) var retrievalError: PresentationError?
 
-    private let store: Store
+    public let store: Store
 
     public init(store: Store) {
         self.store = store

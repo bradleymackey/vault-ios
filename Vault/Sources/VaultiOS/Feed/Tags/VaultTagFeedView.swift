@@ -39,7 +39,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         .sheet(item: $modal, onDismiss: nil) { content in
             switch content {
             case .creatingTag:
-                Text("Create tag")
+                VaultTagDetailView<Store>(viewModel: .init(store: viewModel.store))
             }
         }
         .task {
