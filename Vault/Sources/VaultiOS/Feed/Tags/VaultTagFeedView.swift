@@ -11,8 +11,13 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
     }
 
     var body: some View {
-        List {
-            contentSection
+        VStack {
+            if viewModel.tags.isEmpty {
+                noTagsView
+                    .frame(maxWidth: .infinity, maxHeight: .infinity)
+            } else {
+                list
+            }
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.automatic)
@@ -21,20 +26,20 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         }
     }
 
-    private var contentSection: some View {
-        Section {
-            ForEach(viewModel.tags) { tag in
-                VaultTagRow(tag: tag)
-            }
-        } header: {
-            if viewModel.tags.isEmpty {
-                noTagsView
+    private var list: some View {
+        List {
+            Section {
+                ForEach(viewModel.tags) { tag in
+                    VaultTagRow(tag: tag)
+                }
             }
         }
     }
 
     private var noTagsView: some View {
         VStack(alignment: .center, spacing: 12) {
+            Spacer()
+            Spacer()
             Image(systemName: "tag.fill")
                 .font(.largeTitle)
             VStack(alignment: .center, spacing: 2) {
@@ -43,8 +48,10 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                 Text(viewModel.strings.noTagsDescription)
                     .font(.callout)
             }
+            Spacer()
+            Spacer()
+            Spacer()
         }
-        .frame(maxWidth: .infinity)
         .multilineTextAlignment(.center)
         .foregroundStyle(.secondary)
         .padding()
