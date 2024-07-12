@@ -916,6 +916,39 @@
         }
       }
     },
+    "tagDetail.deleteError.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error deleting tag"
+          }
+        }
+      }
+    },
+    "tagDetail.genericError.detail" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Something went wrong with this tag, please try again!"
+          }
+        }
+      }
+    },
+    "tagDetail.saveError.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error saving tag"
+          }
+        }
+      }
+    },
     "tagDetail.title" : {
       "extractionState" : "manual",
       "localizations" : {
