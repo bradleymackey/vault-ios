@@ -916,6 +916,17 @@
         }
       }
     },
+    "tagDetail.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Tag"
+          }
+        }
+      }
+    },
     "tagFeed.create.title" : {
       "extractionState" : "manual",
       "localizations" : {

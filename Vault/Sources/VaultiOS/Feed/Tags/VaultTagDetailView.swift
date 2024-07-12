@@ -13,5 +13,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
         Form {
             Text("Editing Tag")
         }
+        .navigationTitle(viewModel.strings.title)
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

@@ -39,7 +39,9 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         .sheet(item: $modal, onDismiss: nil) { content in
             switch content {
             case .creatingTag:
-                VaultTagDetailView<Store>(viewModel: .init(store: viewModel.store))
+                NavigationStack {
+                    VaultTagDetailView<Store>(viewModel: .init(store: viewModel.store))
+                }
             }
         }
         .task {
