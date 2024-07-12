@@ -8,6 +8,7 @@ public final class VaultTagFeedViewModel<Store: VaultTagStore> {
     public private(set) var retrievalError: PresentationError?
 
     public let store: Store
+    public let strings = VaultTagFeedViewModelStrings()
 
     public init(store: Store) {
         self.store = store
@@ -41,10 +42,4 @@ public struct VaultTagFeedViewModelStrings: Sendable {
     public let noTagsDescription = localized(key: "tagFeed.noTags.description")
     public let retrieveErrorTitle = localized(key: "feedRetrieval.error.title")
     public let retrieveErrorDescription = localized(key: "feedRetrieval.error.description")
-}
-
-extension VaultTagFeedViewModel {
-    public var strings: VaultTagFeedViewModelStrings {
-        VaultTagFeedViewModelStrings()
-    }
 }
