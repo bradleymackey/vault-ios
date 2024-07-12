@@ -916,6 +916,28 @@
         }
       }
     },
+    "tagFeed.noTags.description" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add a tag to start categorizing content"
+          }
+        }
+      }
+    },
+    "tagFeed.noTags.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Tags"
+          }
+        }
+      }
+    },
     "tagFeed.title" : {
       "extractionState" : "manual",
       "localizations" : {

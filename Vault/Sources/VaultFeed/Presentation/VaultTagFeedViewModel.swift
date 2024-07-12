@@ -32,16 +32,18 @@ public final class VaultTagFeedViewModel<Store: VaultTagStore> {
 
 // MARK: - Strings
 
+public struct VaultTagFeedViewModelStrings: Sendable {
+    fileprivate init() {}
+
+    public let title = localized(key: "tagFeed.title")
+    public let noTagsTitle = localized(key: "tagFeed.noTags.title")
+    public let noTagsDescription = localized(key: "tagFeed.noTags.description")
+    public let retrieveErrorTitle = localized(key: "feedRetrieval.error.title")
+    public let retrieveErrorDescription = localized(key: "feedRetrieval.error.description")
+}
+
 extension VaultTagFeedViewModel {
-    public struct Strings: Sendable {
-        fileprivate init() {}
-
-        public let title = localized(key: "tagFeed.title")
-        public let retrieveErrorTitle = localized(key: "feedRetrieval.error.title")
-        public let retrieveErrorDescription = localized(key: "feedRetrieval.error.description")
-    }
-
-    public var strings: Strings {
-        Strings()
+    public var strings: VaultTagFeedViewModelStrings {
+        VaultTagFeedViewModelStrings()
     }
 }
