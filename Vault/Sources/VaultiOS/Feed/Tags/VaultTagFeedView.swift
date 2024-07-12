@@ -12,7 +12,7 @@ struct VaultTagFeedView: View {
 
     var body: some View {
         List {
-            Text("This is a tag item")
+            VaultTagRow(tag: .init(id: .init(id: UUID()), name: "Testing"))
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.automatic)
