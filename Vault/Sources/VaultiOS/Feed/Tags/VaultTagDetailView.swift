@@ -26,6 +26,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
                 Button {
                     Task {
                         await viewModel.save()
+                        dismiss()
                     }
                 } label: {
                     Text("Save")
