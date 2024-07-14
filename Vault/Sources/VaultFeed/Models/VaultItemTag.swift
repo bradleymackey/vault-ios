@@ -5,7 +5,7 @@ public struct VaultItemTag: Identifiable, Sendable {
     public struct Identifier: Identifiable, Equatable, Hashable, Sendable {
         public let id: UUID
 
-        public init(id: UUID) {
+        public init(id: UUID = UUID()) {
             self.id = id
         }
     }

@@ -50,16 +50,10 @@ public struct VaultItemFeedView<
     }
 
     private var noCodesFoundView: some View {
-        VStack(alignment: .center, spacing: 12) {
-            Image(systemName: "key.viewfinder")
-                .font(.largeTitle)
-            Text(localized(key: "codeFeed.noCodes.title"))
-                .font(.headline.bold())
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .aspectRatio(1, contentMode: .fit)
-        .modifier(OTPCardViewModifier())
-        .foregroundStyle(.secondary)
+        PlaceholderView(systemIcon: "key.viewfinder", title: localized(key: "codeFeed.noCodes.title"))
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .aspectRatio(1, contentMode: .fit)
+            .modifier(OTPCardViewModifier())
     }
 
     private var reorderingBehaviour: VaultItemViewBehaviour {

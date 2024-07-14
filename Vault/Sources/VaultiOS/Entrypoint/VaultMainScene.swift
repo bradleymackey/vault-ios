@@ -16,7 +16,7 @@ public struct VaultMainScene: Scene {
     @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
     @State private var backupStore = BackupPasswordStoreImpl(secureStorage: SecureStorageImpl(keychain: .default))
-    @State private var tagFeedViewModel = VaultTagFeedViewModel()
+    @State private var tagFeedViewModel: VaultTagFeedViewModel<PersistedLocalVaultStore>
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -44,10 +44,12 @@ public struct VaultMainScene: Scene {
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
+        let tagFeedViewModel = VaultTagFeedViewModel(store: store)
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
         _feedViewModel = State(wrappedValue: feed)
+        _tagFeedViewModel = State(wrappedValue: tagFeedViewModel)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
         _notePreviewGenerator = State(wrappedValue: note)

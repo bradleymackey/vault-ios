@@ -1,6 +1,8 @@
 import Foundation
 import VaultCore
 
+public typealias VaultTagStore = VaultTagStoreReader & VaultTagStoreWriter
+
 /// Can read all stored vault tags.
 ///
 /// @mockable
