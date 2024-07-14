@@ -19,8 +19,8 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     var body: some View {
         Form {
-            TextField("Name", text: $viewModel.title)
-            ColorPicker("Colo", selection: $selectedColor)
+            TextField("Tag Name...", text: $viewModel.title)
+            ColorPicker("Tag Color", selection: $selectedColor)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack(alignment: .center, spacing: 16) {
                     ForEach(systemIconOptions, id: \.self) {
