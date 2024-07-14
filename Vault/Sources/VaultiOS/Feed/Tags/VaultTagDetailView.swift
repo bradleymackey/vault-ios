@@ -32,7 +32,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     private var pickerSection: some View {
         Section {
-            TextField("Tag Name...", text: $viewModel.title)
+            TextField("Enter tag name...", text: $viewModel.title)
             ColorPicker("Tag Color", selection: $selectedColor)
         }
     }
