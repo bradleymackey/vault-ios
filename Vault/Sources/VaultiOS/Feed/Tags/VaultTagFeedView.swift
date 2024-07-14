@@ -41,7 +41,10 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
             case .creatingTag:
                 NavigationStack {
                     VaultTagDetailView<Store>(
-                        viewModel: .init(store: viewModel.store, existingTag: nil)
+                        viewModel: .init(store: viewModel.store, existingTag: nil),
+                        didCreate: {
+                            await viewModel.reloadData()
+                        }
                     )
                 }
             }
