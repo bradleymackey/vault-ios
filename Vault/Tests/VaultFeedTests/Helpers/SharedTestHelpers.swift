@@ -198,3 +198,5 @@ func hotpRfcSecretData() -> Data {
 func anyNSError() -> NSError {
     NSError(domain: "any", code: 100)
 }
+
+struct TestError: Error {}
