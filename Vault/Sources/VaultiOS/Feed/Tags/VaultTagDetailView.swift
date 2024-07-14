@@ -30,6 +30,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
                 } label: {
                     Text("Save")
                 }
+                .disabled(!viewModel.isValidToSave)
             }
 
             ToolbarItem(placement: .cancellationAction) {

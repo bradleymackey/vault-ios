@@ -99,6 +99,10 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
         .init(name: title, color: color, iconName: systemIconName)
     }
 
+    public var isValidToSave: Bool {
+        title.isNotEmpty && !title.isBlank
+    }
+
     public func save() async {
         do {
             if let tagId {
