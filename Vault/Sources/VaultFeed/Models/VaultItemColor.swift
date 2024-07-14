@@ -25,4 +25,12 @@ extension VaultItemColor {
     public static var black: VaultItemColor {
         VaultItemColor(red: 0, green: 0, blue: 0)
     }
+
+    public static func random() -> VaultItemColor {
+        VaultItemColor(
+            red: Double.random(in: 0 ... 1),
+            green: Double.random(in: 0 ... 1),
+            blue: Double.random(in: 0 ... 1)
+        )
+    }
 }
