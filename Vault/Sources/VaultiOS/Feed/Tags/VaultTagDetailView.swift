@@ -60,28 +60,24 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     private var iconSection: some View {
         Section {
-            systemIconPicker
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
+                ForEach(viewModel.systemIconOptions, id: \.self) { icon in
+                    Image(systemName: icon)
+                        .font(.title)
+                        .aspectRatio(contentMode: .fit)
+                        .padding(8)
+                        .foregroundStyle(viewModel.systemIconName == icon ? selectedColor : .secondary)
+                        .background(
+                            Circle()
+                                .stroke(selectedColor, lineWidth: viewModel.systemIconName == icon ? 2 : 0)
+                        )
+                        .onTapGesture {
+                            viewModel.systemIconName = icon
+                        }
+                }
+            }
         } header: {
             Text("Icon")
-        }
-    }
-
-    private var systemIconPicker: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
-            ForEach(viewModel.systemIconOptions, id: \.self) { icon in
-                Image(systemName: icon)
-                    .font(.title)
-                    .aspectRatio(contentMode: .fit)
-                    .padding(8)
-                    .foregroundStyle(viewModel.systemIconName == icon ? selectedColor : .secondary)
-                    .background(
-                        Circle()
-                            .stroke(selectedColor, lineWidth: viewModel.systemIconName == icon ? 2 : 0)
-                    )
-                    .onTapGesture {
-                        viewModel.systemIconName = icon
-                    }
-            }
         }
     }
 }
