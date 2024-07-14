@@ -14,6 +14,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
 
     enum Modal: Hashable, IdentifiableSelf {
         case creatingTag
+        case editingTag(VaultItemTag)
     }
 
     var body: some View {
@@ -47,6 +48,15 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                         }
                     )
                 }
+            case let .editingTag(tag):
+                NavigationStack {
+                    VaultTagDetailView<Store>(
+                        viewModel: .init(store: viewModel.store, existingTag: tag),
+                        didCreate: {
+                            await viewModel.reloadData()
+                        }
+                    )
+                }
             }
         }
         .task {
@@ -58,7 +68,12 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         List {
             Section {
                 ForEach(viewModel.tags) { tag in
-                    VaultTagRow(tag: tag)
+                    Button {
+                        modal = .editingTag(tag)
+                    } label: {
+                        VaultTagRow(tag: tag)
+                    }
+                    .foregroundStyle(.primary)
                 }
             }
         }
