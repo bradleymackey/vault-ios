@@ -9,7 +9,7 @@ struct PlaceholderView: View {
 
     var body: some View {
         VStack(alignment: .center, spacing: 12) {
-            Image(systemName: "tag.fill")
+            Image(systemName: systemIcon)
                 .font(.largeTitle)
             VStack(alignment: .center, spacing: 4) {
                 Text(title)
