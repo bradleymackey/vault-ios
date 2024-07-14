@@ -91,6 +91,10 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
         }
     }
 
+    public var isExistingItem: Bool {
+        tagId != nil
+    }
+
     public var systemIconOptions: [String] {
         Self.systemIconOptions
     }

@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import VaultFeed
+import VaultUI
 
 @MainActor
 struct VaultTagDetailView<Store: VaultTagStore>: View {
@@ -8,18 +9,21 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
     @State private var selectedColor: Color
 
     @Environment(\.dismiss) private var dismiss
-    private var didCreate: () async -> Void
+    private var didUpdateItems: () async -> Void
 
-    init(viewModel: VaultTagDetailViewModel<Store>, didCreate: @escaping () async -> Void) {
+    init(viewModel: VaultTagDetailViewModel<Store>, didUpdateItems: @escaping () async -> Void) {
         self.viewModel = viewModel
         _selectedColor = State(initialValue: viewModel.color.color)
-        self.didCreate = didCreate
+        self.didUpdateItems = didUpdateItems
     }
 
     var body: some View {
         Form {
             pickerSection
             iconSection
+            if viewModel.isExistingItem {
+                deleteSection
+            }
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -28,7 +32,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
                 Button {
                     Task {
                         await viewModel.save()
-                        await didCreate()
+                        await didUpdateItems()
                         dismiss()
                     }
                 } label: {
@@ -78,6 +82,23 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
             }
         } header: {
             Text("Icon")
+        }
+    }
+
+    private var deleteSection: some View {
+        Section {
+            Button {
+                Task {
+                    await viewModel.delete()
+                    await didUpdateItems()
+                    dismiss()
+                }
+            } label: {
+                FormRow(image: .init(systemName: "trash"), color: .red) {
+                    Text("Delete Tag")
+                }
+                .foregroundStyle(.red)
+            }
         }
     }
 }

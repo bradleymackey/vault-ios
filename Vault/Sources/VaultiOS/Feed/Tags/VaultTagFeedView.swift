@@ -43,7 +43,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                 NavigationStack {
                     VaultTagDetailView<Store>(
                         viewModel: .init(store: viewModel.store, existingTag: nil),
-                        didCreate: {
+                        didUpdateItems: {
                             await viewModel.reloadData()
                         }
                     )
@@ -52,7 +52,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                 NavigationStack {
                     VaultTagDetailView<Store>(
                         viewModel: .init(store: viewModel.store, existingTag: tag),
-                        didCreate: {
+                        didUpdateItems: {
                             await viewModel.reloadData()
                         }
                     )
