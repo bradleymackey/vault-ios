@@ -8,8 +8,8 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
     public var title: String
     public var color: VaultItemColor
     public var systemIconName: String
-    public private(set) var saveError: PresentationError?
-    public private(set) var deleteError: PresentationError?
+    public internal(set) var saveError: PresentationError?
+    public internal(set) var deleteError: PresentationError?
 
     private let tagId: VaultItemTag.Identifier?
     private let store: Store
