@@ -2,6 +2,7 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
+@MainActor
 struct VaultTagDetailView<Store: VaultTagStore>: View {
     @State private var viewModel: VaultTagDetailViewModel<Store>
     @State private var selectedColor: Color
@@ -19,25 +20,49 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     var body: some View {
         Form {
-            TextField("Tag Name...", text: $viewModel.title)
-            ColorPicker("Tag Color", selection: $selectedColor)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .center, spacing: 16) {
-                    ForEach(systemIconOptions, id: \.self) {
-                        Image(systemName: $0)
-                            .tag($0)
-                            .font(.title)
-                    }
-                }
-                .padding(.horizontal, 16)
-            }
-            .listRowInsets(EdgeInsets())
-            .padding(.vertical, 16)
+            pickerSection
+            iconSection
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.color = VaultItemColor(color: selectedColor)
+        }
+    }
+
+    private var pickerSection: some View {
+        Section {
+            TextField("Tag Name...", text: $viewModel.title)
+            ColorPicker("Tag Color", selection: $selectedColor)
+        }
+    }
+
+    private var iconSection: some View {
+        Section {
+            systemIconPicker
+        } header: {
+            Text("Icon")
+        }
+    }
+
+    private var systemIconPicker: some View {
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 32))], spacing: 40) {
+            ForEach(systemIconOptions, id: \.self) { icon in
+                Image(systemName: icon)
+                    .resizable()
+                    .font(.title)
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 24, height: 24)
+                    .padding(8)
+                    .foregroundStyle(viewModel.systemIconName == icon ? selectedColor : .secondary)
+                    .background(
+                        Circle()
+                            .stroke(selectedColor, lineWidth: viewModel.systemIconName == icon ? 2 : 0)
+                    )
+                    .onTapGesture {
+                        viewModel.systemIconName = icon
+                    }
+            }
         }
     }
 }
