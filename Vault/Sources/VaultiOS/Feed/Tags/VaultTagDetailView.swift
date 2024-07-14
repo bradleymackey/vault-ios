@@ -12,7 +12,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     init(viewModel: VaultTagDetailViewModel<Store>, didCreate: @escaping () async -> Void) {
         self.viewModel = viewModel
-        _selectedColor = State(initialValue: .brown)
+        _selectedColor = State(initialValue: viewModel.color.color)
         self.didCreate = didCreate
     }
 
