@@ -5,18 +5,28 @@ import VaultCore
 @Observable
 public final class VaultTagDetailViewModel<Store: VaultTagStore> {
     public let strings = VaultTagDetailViewModelStrings()
-    public var title = ""
-    public var color: VaultItemColor = .default
-    public var systemIconName = "tag.fill"
+    public var title: String
+    public var color: VaultItemColor
+    public var systemIconName: String
     public private(set) var saveError: PresentationError?
     public private(set) var deleteError: PresentationError?
 
     private let tagId: VaultItemTag.Identifier?
     private let store: Store
 
-    public init(store: Store, existingTag: VaultItemTag.Identifier?) {
+    public init(store: Store, existingTag: VaultItemTag?) {
         self.store = store
-        tagId = existingTag
+        if let existingTag {
+            tagId = existingTag.id
+            color = existingTag.color ?? .default
+            title = existingTag.name
+            systemIconName = existingTag.iconName ?? "tag.fill"
+        } else {
+            tagId = nil
+            color = .default
+            title = ""
+            systemIconName = "tag.fill"
+        }
     }
 
     private func makeWritableTag() -> VaultItemTag.Write {
