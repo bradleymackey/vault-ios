@@ -14,19 +14,85 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
     private let tagId: VaultItemTag.Identifier?
     private let store: Store
 
+    public static var defaultIconOption: String {
+        "tag.fill"
+    }
+
+    public static var systemIconOptions: [String] {
+        [
+            "tag.fill",
+            "briefcase.fill",
+            "tree.fill",
+            "mountain.2.fill",
+            "dog.fill",
+            "cat.fill",
+            "tortoise.fill",
+            "bird.fill",
+            "fish.fill",
+            "carrot.fill",
+            "clock.fill",
+            "person.fill",
+            "person.2.fill",
+            "person.3.fill",
+            "figure.stand",
+            "figure.walk",
+            "figure.mixed.cardio",
+            "figure.play",
+            "figure.fall",
+            "figure.and.child.holdinghands",
+            "figure.2.and.child.holdinghands",
+            "figure.2.arms.open",
+            "star.fill",
+            "heart.fill",
+            "flag.fill",
+            "flag.2.crossed.fill",
+            "figure.child.and.lock.open.fill",
+            "bell.fill",
+            "book.fill",
+            "folder.fill",
+            "paperplane.fill",
+            "dumbbell.fill",
+            "football.fill",
+            "tennisball.fill",
+            "gym.bag.fill",
+            "gamecontroller.fill",
+            "flag.checkered",
+            "pencil",
+            "scissors",
+            "doc.text.fill",
+            "doc.plaintext.fill",
+            "doc.richtext.fill",
+            "doc.on.doc.fill",
+            "doc.on.clipboard.fill",
+            "sun.max.fill",
+            "moon.fill",
+            "cloud.fill",
+            "cloud.sun.fill",
+            "drop.fill",
+            "bolt.fill",
+            "flame.fill",
+        ]
+    }
+
     public init(store: Store, existingTag: VaultItemTag?) {
         self.store = store
         if let existingTag {
             tagId = existingTag.id
             color = existingTag.color ?? .default
             title = existingTag.name
-            systemIconName = existingTag.iconName ?? "tag.fill"
+            let existingIcon = existingTag.iconName ?? Self.defaultIconOption
+            let currentIcon = Self.systemIconOptions.contains(existingIcon) ? existingIcon : Self.defaultIconOption
+            systemIconName = currentIcon
         } else {
             tagId = nil
             color = .default
             title = ""
-            systemIconName = "tag.fill"
+            systemIconName = Self.defaultIconOption
         }
+    }
+
+    public var systemIconOptions: [String] {
+        Self.systemIconOptions
     }
 
     private func makeWritableTag() -> VaultItemTag.Write {

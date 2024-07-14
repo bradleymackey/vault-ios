@@ -14,12 +14,6 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
         _selectedColor = State(initialValue: .brown)
     }
 
-    var systemIconOptions: [String] = [
-        "tag.fill",
-        "clock.fill",
-        "person.fill",
-    ]
-
     var body: some View {
         Form {
             pickerSection
@@ -68,13 +62,11 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
     }
 
     private var systemIconPicker: some View {
-        LazyVGrid(columns: [GridItem(.adaptive(minimum: 32))], spacing: 40) {
-            ForEach(systemIconOptions, id: \.self) { icon in
+        LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
+            ForEach(viewModel.systemIconOptions, id: \.self) { icon in
                 Image(systemName: icon)
-                    .resizable()
                     .font(.title)
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
                     .padding(8)
                     .foregroundStyle(viewModel.systemIconName == icon ? selectedColor : .secondary)
                     .background(
