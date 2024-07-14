@@ -7,6 +7,8 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
     @State private var viewModel: VaultTagDetailViewModel<Store>
     @State private var selectedColor: Color
 
+    @Environment(\.dismiss) private var dismiss
+
     init(viewModel: VaultTagDetailViewModel<Store>) {
         self.viewModel = viewModel
         _selectedColor = State(initialValue: .brown)
@@ -25,6 +27,26 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button {
+                    Task {
+                        await viewModel.save()
+                    }
+                } label: {
+                    Text("Save")
+                }
+            }
+
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                        .foregroundStyle(.red)
+                }
+            }
+        }
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.color = VaultItemColor(color: selectedColor)
         }
