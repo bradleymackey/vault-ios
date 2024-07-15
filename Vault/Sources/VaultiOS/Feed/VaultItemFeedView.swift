@@ -89,9 +89,23 @@ public struct VaultItemFeedView<
     }
 
     private var listOfCodesHeader: some View {
-        SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
-            .padding(.vertical, 8)
-            .background(Color(UIColor.systemBackground))
+        VStack(alignment: .leading, spacing: 12) {
+            SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                    Circle().frame(width: 24, height: 24).foregroundColor(.green)
+                }
+            }
+            .scrollClipDisabled()
+        }
+        .padding(.vertical, 8)
+        .background(Color(UIColor.systemBackground))
     }
 
     private var vaultItemsList: some View {
