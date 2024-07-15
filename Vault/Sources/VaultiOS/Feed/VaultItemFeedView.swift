@@ -80,14 +80,18 @@ public struct VaultItemFeedView<
                         noCodesFoundView
                     }
                 } header: {
-                    SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
-                        .padding(.vertical, 8)
-                        .background(Color(UIColor.systemBackground))
+                    listOfCodesHeader
                 }
             }
             .padding(.horizontal)
             .padding(.bottom)
         }
+    }
+
+    private var listOfCodesHeader: some View {
+        SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
+            .padding(.vertical, 8)
+            .background(Color(UIColor.systemBackground))
     }
 
     private var vaultItemsList: some View {
