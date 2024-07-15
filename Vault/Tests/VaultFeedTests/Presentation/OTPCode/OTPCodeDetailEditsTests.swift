@@ -22,8 +22,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc",
             color: color,
-            visibility: .always,
-            searchableLevel: .onlyTitle,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -38,8 +37,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.description, "mydesc")
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
-        XCTAssertEqual(sut.visibility, .always)
-        XCTAssertEqual(sut.searchableLevel, .onlyTitle)
+        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
     }
 
     func test_initHydratedFromCode_assignsHOTPCodeType() {
@@ -59,8 +57,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc2",
             color: color,
-            visibility: .always,
-            searchableLevel: .full,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -75,7 +72,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.description, "mydesc2")
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
-        XCTAssertEqual(sut.searchableLevel, .full)
+        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
     }
 
     func test_init_emptySecretIsEmptySecretBase32String() {
@@ -85,8 +82,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc",
             color: nil,
-            visibility: .always,
-            searchableLevel: .full,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -101,8 +97,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc2",
             color: nil,
-            visibility: .always,
-            searchableLevel: .none,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -131,13 +126,22 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertFalse(sut.isValid)
     }
 
-    func test_isValid_badSearchCombination() throws {
+    func test_isValid_invalidForEmptyPassphrase() throws {
         var sut = OTPCodeDetailEdits.new()
-        // Invalid combination
-        sut.visibility = .onlySearch
-        sut.searchableLevel = .none
+        sut.searchPassphrase = ""
+        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
 
         XCTAssertFalse(sut.isValid)
+    }
+
+    func test_isValid_validForNonEmptyPassphrase() throws {
+        var sut = OTPCodeDetailEdits.new()
+        sut.secretBase32String = "AA"
+        sut.issuerTitle = "any"
+        sut.searchPassphrase = "passphrase"
+        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+
+        XCTAssertTrue(sut.isValid)
     }
 
     func test_asOTPAuthCode_createsTOTPCode() throws {
@@ -146,8 +150,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc",
             color: nil,
-            visibility: .always,
-            searchableLevel: .none,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -163,8 +166,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc2",
             color: nil,
-            visibility: .always,
-            searchableLevel: .onlyTitle,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )

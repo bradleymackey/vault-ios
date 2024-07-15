@@ -27,8 +27,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             hydratedFromCode: initialCode,
             userDescription: "mydesc",
             color: nil,
-            visibility: .always,
-            searchableLevel: .full,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -79,8 +78,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             hydratedFromCode: code,
             userDescription: "mydesc",
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
-            visibility: .always,
-            searchableLevel: .full,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )
@@ -155,8 +153,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         initialEdits.title = "new title"
         initialEdits.description = "new description"
         initialEdits.contents = "new contents"
-        initialEdits.searchableLevel = .onlyPassphrase
-        initialEdits.visibility = .onlySearch
+        initialEdits.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
         initialEdits.searchPassphrase = "pass"
 
         let exp = expectation(description: "Wait for creation")
@@ -204,8 +201,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         edits.title = "new title"
         edits.description = "new description"
         edits.contents = "new contents"
-        edits.visibility = .always
-        edits.searchableLevel = .onlyTitle
+        edits.viewConfig = .alwaysVisible
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
@@ -213,7 +209,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "new description")
             XCTAssertEqual(data.visibility, .always)
-            XCTAssertEqual(data.searchableLevel, .onlyTitle)
+            XCTAssertEqual(data.searchableLevel, .full)
             XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
             case let .secureNote(note):
@@ -281,8 +277,7 @@ extension VaultFeedDetailEditorAdapterTests {
             issuerTitle: "iss",
             accountNameTitle: "acc",
             description: "desc",
-            visibility: .always,
-            searchableLevel: .full,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: [],
             color: nil
