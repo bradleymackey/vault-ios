@@ -5,6 +5,7 @@ import VaultFeed
 
 struct TagPillView: View {
     var tag: VaultItemTag
+    var isSelected: Bool = false
 
     var body: some View {
         Label(tag.name, systemImage: tag.iconName ?? "tag.fill")
@@ -12,12 +13,27 @@ struct TagPillView: View {
             .padding(.vertical, 8)
             .background(
                 Capsule(style: .circular)
-                    .fill(tag.color?.color ?? Color.accentColor)
+                    .fill(isSelected ? tagColor : Color.clear)
+                    .stroke(isSelected ? Color.clear : tagColor, lineWidth: 2)
             )
-            .foregroundColor(.white)
+            .foregroundColor(isSelected ? .white : tagColor)
+    }
+
+    private var tagColor: Color {
+        tag.color?.color ?? Color.accentColor
     }
 }
 
-#Preview {
-    TagPillView(tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"))
+#Preview("Not selected", traits: .sizeThatFitsLayout) {
+    TagPillView(
+        tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"),
+        isSelected: false
+    )
+}
+
+#Preview("Selected", traits: .sizeThatFitsLayout) {
+    TagPillView(
+        tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"),
+        isSelected: true
+    )
 }

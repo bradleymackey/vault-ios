@@ -100,7 +100,7 @@ public struct VaultItemFeedView<
                         iconName: "tag.fill"
                     ))
                     TagPillView(tag: .init(
-                       id: .init(),
+                        id: .init(),
                         name: "Tag 2",
                         color: .init(color: .clear),
                         iconName: "tag.fill"
