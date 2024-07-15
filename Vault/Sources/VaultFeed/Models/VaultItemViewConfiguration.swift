@@ -10,6 +10,15 @@ public enum VaultItemViewConfiguration: Equatable, Hashable, CaseIterable, Ident
     case onlyVisibleWhenSearchingRequiresPassphrase
 }
 
+extension VaultItemViewConfiguration {
+    public var needsPassphrase: Bool {
+        switch self {
+        case .alwaysVisible, .onlyVisibleWhenSearching: false
+        case .onlyVisibleWhenSearchingRequiresPassphrase: true
+        }
+    }
+}
+
 // MARK: - Interop
 
 extension VaultItemViewConfiguration {

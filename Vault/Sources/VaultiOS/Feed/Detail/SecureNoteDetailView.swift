@@ -50,9 +50,8 @@ struct SecureNoteDetailView: View {
                 noteTitleEditingSection
                 noteDescriptionEditingSection
                 noteContentsEditingSection
-                noteVisibilityOptionsEditingSection
-                noteSearchableLevelEditingSection
-                if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                viewConfigEditingSection
+                if viewModel.editingModel.detail.viewConfig.needsPassphrase {
                     passphraseEntrySection
                 }
                 if viewModel.shouldShowDeleteButton {
@@ -63,7 +62,7 @@ struct SecureNoteDetailView: View {
                 noteContentsSection
             }
         }
-        .animation(.easeOut, value: viewModel.editingModel.detail.searchableLevel)
+        .animation(.easeOut, value: viewModel.editingModel.detail.viewConfig)
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
@@ -175,10 +174,10 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    private var noteVisibilityOptionsEditingSection: some View {
+    private var viewConfigEditingSection: some View {
         Section {
-            Picker(selection: $viewModel.editingModel.detail.visibility) {
-                ForEach(VaultItemVisibility.allCases) { visibility in
+            Picker(selection: $viewModel.editingModel.detail.viewConfig) {
+                ForEach(VaultItemViewConfiguration.allCases) { visibility in
                     DetailSubtitleView(
                         systemIcon: visibility.systemIconName,
                         title: visibility.localizedTitle,
@@ -187,45 +186,12 @@ struct SecureNoteDetailView: View {
                     .tag(visibility)
                 }
             } label: {
-                Text(viewModel.strings.noteVisibilityTitle)
+                Text(viewModel.strings.visibilityTitle)
             }
             .pickerStyle(.inline)
             .labelsHidden()
-            .onChange(of: viewModel.editingModel.detail.visibility) { oldValue, newValue in
-                guard oldValue != newValue else { return }
-                if newValue == .onlySearch && viewModel.editingModel.detail.searchableLevel == .none {
-                    viewModel.editingModel.detail.searchableLevel = .full
-                }
-            }
         } header: {
             Text(viewModel.strings.noteVisibilityTitle)
-        }
-    }
-
-    private var noteSearchableLevelEditingSection: some View {
-        Section {
-            Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
-                ForEach(VaultItemSearchableLevel.allCases) { level in
-                    DetailSubtitleView(
-                        systemIcon: level.systemIconName,
-                        title: level.localizedTitle,
-                        subtitle: level.localizedSubtitle
-                    )
-                    .tag(level)
-                }
-            } label: {
-                Text(viewModel.strings.searchableLevelTitle)
-            }
-            .pickerStyle(.inline)
-            .labelsHidden()
-            .onChange(of: viewModel.editingModel.detail.searchableLevel) { oldValue, newValue in
-                guard oldValue != newValue else { return }
-                if newValue == .none && viewModel.editingModel.detail.visibility == .onlySearch {
-                    viewModel.editingModel.detail.visibility = .always
-                }
-            }
-        } header: {
-            Text(viewModel.strings.searchableLevelTitle)
         }
     }
 

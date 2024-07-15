@@ -685,35 +685,13 @@
         }
       }
     },
-    "itemDetail.searchableLevel.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The amount of information for this item available via search"
-          }
-        }
-      }
-    },
-    "itemDetail.searchableLevel.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search Level"
-          }
-        }
-      }
-    },
     "itemDetail.visibility.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The places this item will appear."
+            "value" : "The amount of visibility this item has."
           }
         }
       }

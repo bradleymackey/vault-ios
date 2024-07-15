@@ -35,8 +35,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                     hydratedFromCode: initialCode,
                     userDescription: "",
                     color: nil,
-                    visibility: .always,
-                    searchableLevel: .full,
+                    viewConfig: .alwaysVisible,
                     searchPassphrase: "",
                     tags: []
                 ),
@@ -47,8 +46,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 hydratedFromCode: code,
                 userDescription: metadata.userDescription,
                 color: metadata.color,
-                visibility: metadata.visibility,
-                searchableLevel: metadata.searchableLevel,
+                viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),
                 searchPassphrase: metadata.searchPassphrase ?? "",
                 tags: metadata.tags
             ))
@@ -100,16 +98,10 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
             ))
         }
 
-        entries.append(DetailEntry(
-            title: strings.searchableLevelTitle,
-            detail: editingModel.detail.searchableLevel.localizedTitle,
-            systemIconName: editingModel.detail.searchableLevel.systemIconName
-        ))
-
-        entries.append(DetailEntry(
+        entries.append(.init(
             title: strings.visibilityTitle,
-            detail: editingModel.detail.visibility.localizedTitle,
-            systemIconName: editingModel.detail.visibility.systemIconName
+            detail: editingModel.detail.viewConfig.localizedTitle,
+            systemIconName: editingModel.detail.viewConfig.systemIconName
         ))
 
         switch mode {
@@ -256,11 +248,9 @@ extension OTPCodeDetailViewModel {
         public let inputKeyValidTitle = localized(key: "codeDetail.input.key.valid.title")
         public let inputKeyErrorTitle = localized(key: "codeDetail.input.key.error.title")
         public let inputKeyEmptyTitle = localized(key: "codeDetail.input.key.enterText.title")
-        public let visibilityTitle = localized(key: "itemDetail.visibilitySection.title")
-        public let shownInTitle = localized(key: "itemDetail.visibility.title")
-        public let shownInSubtitle = localized(key: "itemDetail.visibility.subtitle")
-        public let searchableLevelTitle = localized(key: "itemDetail.searchableLevel.title")
-        public let searchableLevelSubtitle = localized(key: "noteDetail.searchableLevel.subtitle")
+        public let visibilitySectionTitle = localized(key: "itemDetail.visibilitySection.title")
+        public let visibilityTitle = localized(key: "itemDetail.visibility.title")
+        public let visibilitySubtitle = localized(key: "itemDetail.visibility.subtitle")
         public let passphraseTitle = localized(key: "itemDetail.passphrase.title")
         public let passphrasePrompt = localized(key: "itemDetail.passphrase.prompt")
         public let passphraseSubtitle = localized(key: "itemDetail.passphrase.subtitle")
