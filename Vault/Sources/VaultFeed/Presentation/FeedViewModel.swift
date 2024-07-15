@@ -3,9 +3,10 @@ import Foundation
 
 @MainActor
 @Observable
-public final class FeedViewModel<Store: VaultStore> {
+public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
     public var searchQuery: String = ""
     public var codes = [VaultItem]()
+    public var tags = [VaultItemTag]()
     public var errors = [VaultRetrievalResult<VaultItem>.Error]()
     public private(set) var retrievalError: PresentationError?
 
@@ -87,6 +88,7 @@ extension FeedViewModel: VaultFeed {
 
     public func reloadData() async {
         do {
+            tags = try await store.retrieveTags()
             let query = VaultStoreQuery(searchText: sanitizedQuery, tags: [])
             let result = try await store.retrieve(query: query)
             codes = result.items

@@ -4,7 +4,7 @@ import VaultCore
 import VaultFeed
 
 struct VaultDetailEditView<
-    Store: VaultStore,
+    Store: VaultStore & VaultTagStoreReader,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View
     where PreviewGenerator.PreviewItem == VaultItem.Payload

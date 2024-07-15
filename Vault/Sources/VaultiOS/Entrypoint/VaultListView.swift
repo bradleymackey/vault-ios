@@ -6,7 +6,7 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Store: VaultStore,
+    Store: VaultStore & VaultTagStoreReader,
     Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
 >: View
     where Generator.PreviewItem == VaultItem.Payload

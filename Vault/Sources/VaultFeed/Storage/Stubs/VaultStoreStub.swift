@@ -5,7 +5,7 @@ import Foundation
 ///
 /// This should be able to be used in place of any full `VaultStore`.
 @MainActor
-public final class VaultStoreStub: VaultStore {
+public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
     public init() {}
 
     public var retrieveQueryResult = VaultRetrievalResult<VaultItem>()
@@ -37,6 +37,10 @@ public final class VaultStoreStub: VaultStore {
 
     public func exportVault(userDescription: String) async throws -> VaultApplicationPayload {
         exportVaultHandler(userDescription)
+    }
+
+    public func retrieveTags() async throws -> [VaultItemTag] {
+        []
     }
 }
 
