@@ -685,35 +685,13 @@
         }
       }
     },
-    "itemDetail.searchableLevel.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "The amount of information for this item available via search"
-          }
-        }
-      }
-    },
-    "itemDetail.searchableLevel.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search Level"
-          }
-        }
-      }
-    },
     "itemDetail.visibility.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "The places this item will appear."
+            "value" : "The amount of visibility this item has."
           }
         }
       }
@@ -1048,95 +1026,7 @@
         }
       }
     },
-    "vaultItemSearchableLevel.full.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "All available content in this item is searchable."
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.full.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Full"
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.none.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This item is not searchable. It won't appear in searches and can only be found on the feed."
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.none.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "None"
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.onlyPassphrase.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This item can only be found using the passphrase assigned to this item. It's useful for hiding items with plausible deniability."
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.onlyPassphrase.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Passphrase"
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.onlyTitle.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only the title and description of this item is searchable."
-          }
-        }
-      }
-    },
-    "vaultItemSearchableLevel.onlyTitle.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Only Title"
-          }
-        }
-      }
-    },
-    "vaultItemVisibility.always.subtitle" : {
+    "vaultItemViewConfiguration.alwaysVisible.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1147,18 +1037,18 @@
         }
       }
     },
-    "vaultItemVisibility.always.title" : {
+    "vaultItemViewConfiguration.alwaysVisible.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Always"
+            "value" : "Always visible"
           }
         }
       }
     },
-    "vaultItemVisibility.onlySearch.subtitle" : {
+    "vaultItemViewConfiguration.onlyVisibleWhenSearching.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1169,13 +1059,35 @@
         }
       }
     },
-    "vaultItemVisibility.onlySearch.title" : {
+    "vaultItemViewConfiguration.onlyVisibleWhenSearching.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Only Search"
+            "value" : "Search only"
+          }
+        }
+      }
+    },
+    "vaultItemViewConfiguration.onlyVisibleWhenSearchingRequiresPassphrase.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item can only be found when searching for the passphrase assigned to this item. It's useful for hiding items with plausible deniability."
+          }
+        }
+      }
+    },
+    "vaultItemViewConfiguration.onlyVisibleWhenSearchingRequiresPassphrase.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Passphrase"
           }
         }
       }

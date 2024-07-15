@@ -31,8 +31,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 description: metadata.userDescription,
                 contents: note.contents,
                 color: metadata.color,
-                visibility: metadata.visibility,
-                searchableLevel: metadata.searchableLevel,
+                viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),
                 searchPassphrase: metadata.searchPassphrase ?? "",
                 tags: metadata.tags
             ))
@@ -149,10 +148,8 @@ extension SecureNoteDetailViewModel {
         public let noteContentsTitle = localized(key: "noteDetail.field.noteContents.title")
         public let noteEmptyTitleTitle = localized(key: "noteDetail.field.noteTitleEmpty.title")
         public let noteVisibilityTitle = localized(key: "itemDetail.visibilitySection.title")
-        public let noteShownInTitle = localized(key: "itemDetail.visibility.title")
-        public let noteShownInSubtitle = localized(key: "itemDetail.visibility.subtitle")
-        public let searchableLevelTitle = localized(key: "itemDetail.searchableLevel.title")
-        public let searchableLevelSubtitle = localized(key: "noteDetail.searchableLevel.subtitle")
+        public let visibilityTitle = localized(key: "itemDetail.visibility.title")
+        public let visibilitySubtitle = localized(key: "itemDetail.visibility.subtitle")
         public let passphraseTitle = localized(key: "itemDetail.passphrase.title")
         public let passphrasePrompt = localized(key: "itemDetail.passphrase.prompt")
         public let passphraseSubtitle = localized(key: "itemDetail.passphrase.subtitle")
@@ -194,17 +191,14 @@ extension SecureNoteDetailViewModel {
             ))
         }
 
-        items.append(.init(
-            title: strings.searchableLevelTitle,
-            detail: editingModel.detail.searchableLevel.localizedTitle,
-            systemIconName: editingModel.detail.searchableLevel.systemIconName
-        ))
+        items.append(
+            .init(
+                title: strings.visibilityTitle,
+                detail: editingModel.detail.viewConfig.localizedTitle,
+                systemIconName: editingModel.detail.viewConfig.systemIconName
+            )
+        )
 
-        items.append(.init(
-            title: strings.noteVisibilityTitle,
-            detail: editingModel.detail.visibility.localizedTitle,
-            systemIconName: editingModel.detail.visibility.systemIconName
-        ))
         return items
     }
 }

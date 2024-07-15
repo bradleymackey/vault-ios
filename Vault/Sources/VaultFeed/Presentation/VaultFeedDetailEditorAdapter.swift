@@ -18,8 +18,8 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
             color: initialEdits.color,
             item: .otpCode(initialEdits.asOTPAuthCode()),
             tags: initialEdits.tags,
-            visibility: initialEdits.visibility,
-            searchableLevel: initialEdits.searchableLevel,
+            visibility: initialEdits.viewConfig.visibility,
+            searchableLevel: initialEdits.viewConfig.searchableLevel,
             searchPassphase: initialEdits.searchPassphrase
         )
 
@@ -38,8 +38,8 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
                 color: edits.color,
                 item: .otpCode(item),
                 tags: edits.tags,
-                visibility: edits.visibility,
-                searchableLevel: edits.searchableLevel,
+                visibility: edits.viewConfig.visibility,
+                searchableLevel: edits.viewConfig.searchableLevel,
                 searchPassphase: edits.searchPassphrase
             )
         )
@@ -58,8 +58,8 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             color: initialEdits.color,
             item: .secureNote(newSecureNote),
             tags: initialEdits.tags,
-            visibility: initialEdits.visibility,
-            searchableLevel: initialEdits.searchableLevel,
+            visibility: initialEdits.viewConfig.visibility,
+            searchableLevel: initialEdits.viewConfig.searchableLevel,
             searchPassphase: initialEdits.searchPassphrase
         )
 
@@ -75,8 +75,8 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             color: edits.color,
             item: .secureNote(updatedItem),
             tags: edits.tags,
-            visibility: edits.visibility,
-            searchableLevel: edits.searchableLevel,
+            visibility: edits.viewConfig.visibility,
+            searchableLevel: edits.viewConfig.searchableLevel,
             searchPassphase: edits.searchPassphrase
         )
 

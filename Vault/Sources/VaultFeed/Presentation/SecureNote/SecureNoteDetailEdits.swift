@@ -15,11 +15,9 @@ public struct SecureNoteDetailEdits: EditableState {
     @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
-    public var visibility: VaultItemVisibility
+    public var viewConfig: VaultItemViewConfiguration
 
-    public var searchableLevel: VaultItemSearchableLevel
-
-    @FieldValidated(validationLogic: .alwaysValid)
+    @FieldValidated(validationLogic: .stringRequiringContent)
     public var searchPassphrase: String = ""
 
     public var color: VaultItemColor?
@@ -31,8 +29,7 @@ public struct SecureNoteDetailEdits: EditableState {
         description: String,
         contents: String,
         color: VaultItemColor?,
-        visibility: VaultItemVisibility,
-        searchableLevel: VaultItemSearchableLevel,
+        viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
         tags: Set<VaultItemTag.Identifier>
     ) {
@@ -40,20 +37,18 @@ public struct SecureNoteDetailEdits: EditableState {
         self.title = title
         self.contents = contents
         self.color = color
-        self.visibility = visibility
-        self.searchableLevel = searchableLevel
+        self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
         self.tags = tags
     }
 
     public var isValid: Bool {
-        $title.isValid && $description.isValid && $contents.isValid && $searchPassphrase
-            .isValid && isVisibilitySearchValid
+        $title.isValid && $description.isValid && $contents.isValid && isPassphraseValid
     }
 
-    private var isVisibilitySearchValid: Bool {
-        switch (visibility, searchableLevel) {
-        case (.onlySearch, .none): false
+    private var isPassphraseValid: Bool {
+        switch viewConfig {
+        case .onlyVisibleWhenSearchingRequiresPassphrase: $searchPassphrase.isValid
         default: true
         }
     }
@@ -70,8 +65,7 @@ extension SecureNoteDetailEdits {
             description: "",
             contents: "",
             color: nil,
-            visibility: .always,
-            searchableLevel: .full,
+            viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: []
         )

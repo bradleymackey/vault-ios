@@ -26,20 +26,20 @@ final class SecureNoteDetailEditsTests: XCTestCase {
         XCTAssertTrue(sut.isValid)
     }
 
-    func test_isValid_invalidForOnlySearchNotSearching() {
+    func test_isValid_invalidForEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
         sut.title = " A "
-        sut.visibility = .onlySearch
-        sut.searchableLevel = .none
+        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.searchPassphrase = ""
 
         XCTAssertFalse(sut.isValid)
     }
 
-    func test_isValid_validForSearchCombinations() {
+    func test_isValid_validForNonEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
         sut.title = " A "
-        sut.visibility = .onlySearch
-        sut.searchableLevel = .full
+        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.searchPassphrase = "passphrase"
 
         XCTAssertTrue(sut.isValid)
     }

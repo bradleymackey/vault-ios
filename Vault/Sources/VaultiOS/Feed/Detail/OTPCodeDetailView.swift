@@ -75,9 +75,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 nameEditingSection
                 descriptionEditingSection
-                codeVisibilityOptionsEditingSection
-                codeSearchableLevelEditingSection
-                if viewModel.editingModel.detail.searchableLevel == .onlyPassphrase {
+                viewConfigEditingSection
+                if viewModel.editingModel.detail.viewConfig.needsPassphrase {
                     passphraseEntrySection
                 }
                 if viewModel.shouldShowDeleteButton {
@@ -257,10 +256,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var codeVisibilityOptionsEditingSection: some View {
+    private var viewConfigEditingSection: some View {
         Section {
-            Picker(selection: $viewModel.editingModel.detail.visibility) {
-                ForEach(VaultItemVisibility.allCases) { visibility in
+            Picker(selection: $viewModel.editingModel.detail.viewConfig) {
+                ForEach(VaultItemViewConfiguration.allCases) { visibility in
                     DetailSubtitleView(
                         systemIcon: visibility.systemIconName,
                         title: visibility.localizedTitle,
@@ -273,41 +272,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             }
             .pickerStyle(.inline)
             .labelsHidden()
-            .onChange(of: viewModel.editingModel.detail.visibility) { oldValue, newValue in
-                guard oldValue != newValue else { return }
-                if newValue == .onlySearch && viewModel.editingModel.detail.searchableLevel == .none {
-                    viewModel.editingModel.detail.searchableLevel = .full
-                }
-            }
         } header: {
-            Text(viewModel.strings.visibilityTitle)
-        }
-    }
-
-    private var codeSearchableLevelEditingSection: some View {
-        Section {
-            Picker(selection: $viewModel.editingModel.detail.searchableLevel) {
-                ForEach(VaultItemSearchableLevel.allCases) { level in
-                    DetailSubtitleView(
-                        systemIcon: level.systemIconName,
-                        title: level.localizedTitle,
-                        subtitle: level.localizedSubtitle
-                    )
-                    .tag(level)
-                }
-            } label: {
-                Text(viewModel.strings.searchableLevelTitle)
-            }
-            .pickerStyle(.inline)
-            .labelsHidden()
-            .onChange(of: viewModel.editingModel.detail.searchableLevel) { oldValue, newValue in
-                guard oldValue != newValue else { return }
-                if newValue == .none && viewModel.editingModel.detail.visibility == .onlySearch {
-                    viewModel.editingModel.detail.visibility = .always
-                }
-            }
-        } header: {
-            Text(viewModel.strings.searchableLevelTitle)
+            Text(viewModel.strings.visibilitySectionTitle)
         }
     }
 
