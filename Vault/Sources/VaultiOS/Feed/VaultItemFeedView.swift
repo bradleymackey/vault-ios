@@ -93,26 +93,10 @@ public struct VaultItemFeedView<
             SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
-                    TagPillView(tag: .init(
-                        id: .init(),
-                        name: "Tag 1",
-                        color: .init(color: .orange),
-                        iconName: "tag.fill"
-                    ))
-                    TagPillView(tag: .init(
-                        id: .init(),
-                        name: "Tag 2",
-                        color: .init(color: .clear),
-                        iconName: "tag.fill"
-                    ))
-                    TagPillView(tag: .init(
-                        id: .init(),
-                        name: "Tag",
-                        color: .init(color: .yellow),
-                        iconName: "tag.fill"
-                    ))
-                    TagPillView(tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"))
-                    TagPillView(tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"))
+                    ForEach(viewModel.tags) { tag in
+                        TagPillView(tag: tag, isSelected: false)
+                            .id(tag)
+                    }
                 }
                 .font(.callout)
             }
