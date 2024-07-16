@@ -5,6 +5,7 @@ import Foundation
 @Observable
 public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
     public var searchQuery: String = ""
+    public var filteringByTags: Set<VaultItemTag.Identifier> = []
     public var codes = [VaultItem]()
     public var tags = [VaultItemTag]()
     public var errors = [VaultRetrievalResult<VaultItem>.Error]()
@@ -24,6 +25,14 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
 
     public func code(id: UUID) -> VaultItem? {
         codes.first(where: { $0.id == id })
+    }
+
+    public func toggleFiltering(tag: VaultItemTag.Identifier) {
+        if filteringByTags.contains(tag) {
+            filteringByTags.remove(tag)
+        } else {
+            filteringByTags.insert(tag)
+        }
     }
 
     public var title: String {
@@ -89,7 +98,7 @@ extension FeedViewModel: VaultFeed {
     public func reloadData() async {
         do {
             tags = try await store.retrieveTags()
-            let query = VaultStoreQuery(searchText: sanitizedQuery, tags: [])
+            let query = VaultStoreQuery(searchText: sanitizedQuery, tags: filteringByTags)
             let result = try await store.retrieve(query: query)
             codes = result.items
             errors = result.errors

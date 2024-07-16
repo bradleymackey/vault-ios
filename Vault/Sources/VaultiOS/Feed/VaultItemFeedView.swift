@@ -47,6 +47,11 @@ public struct VaultItemFeedView<
                 await viewModel.reloadData()
             }
         }
+        .onChange(of: viewModel.filteringByTags) { _, _ in
+            Task {
+                await viewModel.reloadData()
+            }
+        }
     }
 
     private var noCodesFoundView: some View {
@@ -94,8 +99,11 @@ public struct VaultItemFeedView<
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(viewModel.tags) { tag in
-                        TagPillView(tag: tag, isSelected: false)
+                        TagPillView(tag: tag, isSelected: viewModel.filteringByTags.contains(tag.id))
                             .id(tag)
+                            .onTapGesture {
+                                viewModel.toggleFiltering(tag: tag.id)
+                            }
                     }
                 }
                 .font(.callout)
