@@ -78,14 +78,14 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
         self.store = store
         if let existingTag {
             tagId = existingTag.id
-            color = existingTag.color ?? .default
+            color = existingTag.color ?? .tagDefault
             title = existingTag.name
             let existingIcon = existingTag.iconName ?? Self.defaultIconOption
             let currentIcon = Self.systemIconOptions.contains(existingIcon) ? existingIcon : Self.defaultIconOption
             systemIconName = currentIcon
         } else {
             tagId = nil
-            color = .default
+            color = .tagDefault
             title = ""
             systemIconName = Self.defaultIconOption
         }

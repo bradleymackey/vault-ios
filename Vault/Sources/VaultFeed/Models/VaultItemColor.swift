@@ -13,9 +13,13 @@ public struct VaultItemColor: Equatable, Hashable, Sendable {
 }
 
 extension VaultItemColor {
-    /// A sensible placeholder color to use when there's
+    /// A sensible placeholder color to use.
     public static var `default`: VaultItemColor {
         .gray
+    }
+
+    public static var tagDefault: VaultItemColor {
+        .init(red: 0, green: 0.47, blue: 0.68)
     }
 
     public static var gray: VaultItemColor {
