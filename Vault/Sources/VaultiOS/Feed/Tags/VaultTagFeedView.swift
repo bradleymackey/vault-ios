@@ -71,12 +71,15 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                     Button {
                         modal = .editingTag(tag)
                     } label: {
-                        VaultTagRow(tag: tag)
+                        TagPillView(tag: tag, isSelected: true)
                     }
-                    .foregroundStyle(.primary)
+                    .buttonStyle(.plain)
+                    .modifier(HorizontallyCenter())
+                    .listRowSeparator(.hidden)
                 }
             }
         }
+        .listStyle(.plain)
     }
 
     private var noTagsView: some View {
