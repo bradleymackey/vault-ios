@@ -21,6 +21,6 @@ extension Color {
 
     // Determine appropriate foreground color for contrast
     var contrastingForegroundColor: Color {
-        brightness() > 0.5 ? .black : .white
+        brightness() > 0.9 ? .black : .white
     }
 }
