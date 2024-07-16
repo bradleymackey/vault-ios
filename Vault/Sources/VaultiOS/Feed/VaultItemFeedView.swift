@@ -96,23 +96,25 @@ public struct VaultItemFeedView<
     private var listOfCodesHeader: some View {
         VStack(alignment: .leading, spacing: 12) {
             SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(viewModel.tags) { tag in
-                        TagPillView(tag: tag, isSelected: viewModel.filteringByTags.contains(tag.id))
-                            .id(tag)
-                            .onTapGesture {
-                                viewModel.toggleFiltering(tag: tag.id)
-                            }
+            if viewModel.tags.isNotEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(viewModel.tags) { tag in
+                            TagPillView(tag: tag, isSelected: viewModel.filteringByTags.contains(tag.id))
+                                .id(tag)
+                                .onTapGesture {
+                                    viewModel.toggleFiltering(tag: tag.id)
+                                }
+                        }
                     }
+                    .font(.callout)
                 }
-                .font(.callout)
-            }
-            .scrollClipDisabled()
-            if viewModel.filteringByTags.isNotEmpty {
-                Text("Filtering by tags: \(viewModel.filteringByTags.count)")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
+                .scrollClipDisabled()
+                if viewModel.filteringByTags.isNotEmpty {
+                    Text("Filtering by tags: \(viewModel.filteringByTags.count)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
             }
         }
         .padding(.vertical, 8)
