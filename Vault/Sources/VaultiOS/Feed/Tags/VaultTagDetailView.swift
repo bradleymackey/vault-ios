@@ -64,16 +64,16 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     private var iconSection: some View {
         Section {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))]) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))], spacing: 12) {
                 ForEach(viewModel.systemIconOptions, id: \.self) { icon in
                     Image(systemName: icon)
-                        .font(.title)
+                        .resizable()
                         .aspectRatio(contentMode: .fit)
+                        .frame(width: 24, height: 24)
                         .padding(8)
-                        .foregroundStyle(viewModel.systemIconName == icon ? selectedColor : .secondary)
-                        .background(
-                            Circle()
-                                .stroke(selectedColor, lineWidth: viewModel.systemIconName == icon ? 2 : 0)
+                        .foregroundStyle(
+                            viewModel.systemIconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)
+                                .opacity(0.5)
                         )
                         .onTapGesture {
                             viewModel.systemIconName = icon
