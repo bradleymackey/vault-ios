@@ -19,6 +19,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     var body: some View {
         Form {
+            previewSection
             pickerSection
             iconSection
             if viewModel.isExistingItem {
@@ -53,6 +54,23 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.color = VaultItemColor(color: selectedColor)
         }
+    }
+
+    private var previewSection: some View {
+        Section {
+            TagPillView(
+                tag: .init(
+                    id: .init(),
+                    name: viewModel.title,
+                    color: viewModel.color,
+                    iconName: viewModel.systemIconName
+                ),
+                isSelected: true
+            )
+            .modifier(HorizontallyCenter())
+            .padding()
+        }
+        .listRowBackground(EmptyView())
     }
 
     private var pickerSection: some View {
