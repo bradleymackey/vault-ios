@@ -109,9 +109,15 @@ public struct VaultItemFeedView<
                 .font(.callout)
             }
             .scrollClipDisabled()
+            if viewModel.filteringByTags.isNotEmpty {
+                Text("Filtering by tags: \(viewModel.filteringByTags.count)")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
         }
         .padding(.vertical, 8)
         .background(Color(UIColor.systemBackground))
+        .animation(.easeOut, value: viewModel.filteringByTags)
     }
 
     private var vaultItemsList: some View {
