@@ -275,16 +275,25 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     private var tagSelectionSection: some View {
         Section {
-            ForEach(tagsThatAreSelected) { tag in
-                FormRow(image: Image(systemName: tag.iconName ?? "tag.fill"), color: tag.color?.color ?? .primary) {
-                    Text(tag.name)
+            if tagsThatAreSelected.isEmpty {
+                PlaceholderView(
+                    systemIcon: "tag.fill",
+                    title: "None"
+                )
+                .modifier(HorizontallyCenter())
+                .padding()
+            } else {
+                ForEach(tagsThatAreSelected) { tag in
+                    FormRow(image: Image(systemName: tag.iconName ?? "tag.fill"), color: tag.color?.color ?? .primary) {
+                        Text(tag.name)
+                    }
                 }
-            }
-            .onDelete { indexes in
-                let tagIds = tagsThatAreSelected.map(\.id)
-                let tagsToRemove = indexes.map { tagIds[$0] }
-                for tag in tagsToRemove {
-                    viewModel.editingModel.detail.tags.remove(tag)
+                .onDelete { indexes in
+                    let tagIds = tagsThatAreSelected.map(\.id)
+                    let tagsToRemove = indexes.map { tagIds[$0] }
+                    for tag in tagsToRemove {
+                        viewModel.editingModel.detail.tags.remove(tag)
+                    }
                 }
             }
         } header: {
