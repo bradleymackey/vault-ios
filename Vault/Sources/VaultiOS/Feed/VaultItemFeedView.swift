@@ -111,15 +111,32 @@ public struct VaultItemFeedView<
                 }
                 .scrollClipDisabled()
                 if viewModel.filteringByTags.isNotEmpty {
-                    Text("Filtering by tags: \(viewModel.filteringByTags.count)")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    filteringByTagsInfoSection
                 }
             }
         }
         .padding(.vertical, 8)
         .background(Color(UIColor.systemBackground))
         .animation(.easeOut, value: viewModel.filteringByTags)
+    }
+
+    /// Small informational section when we are filtering by tags
+    private var filteringByTagsInfoSection: some View {
+        HStack {
+            Text("Filtering by tags: \(viewModel.filteringByTags.count)")
+                .foregroundColor(.secondary)
+
+            Spacer()
+
+            Button {
+                viewModel.filteringByTags.removeAll()
+            } label: {
+                Label("Clear tags", systemImage: "xmark")
+            }
+            .fontWeight(.medium)
+            .foregroundStyle(Color.accentColor, .secondary)
+        }
+        .font(.caption)
     }
 
     private var vaultItemsList: some View {
