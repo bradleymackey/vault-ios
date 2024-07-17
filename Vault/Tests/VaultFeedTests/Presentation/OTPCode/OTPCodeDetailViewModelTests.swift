@@ -64,7 +64,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
                 issuer: "my issuer"
             )
         )
-        let metadata = uniqueStoredMetadata(userDescription: "my description")
+        let metadata = anyVaultItemMetadata(userDescription: "my description")
 
         let sut = makeSUTEditing(code: code, metadata: metadata)
 
@@ -314,7 +314,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         var code = uniqueCode()
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
-        var metadata = uniqueStoredMetadata()
+        var metadata = anyVaultItemMetadata()
         metadata.userDescription = "description test"
         let sut = makeSUTEditing(code: code, metadata: metadata)
 
@@ -330,7 +330,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         var code = uniqueCode()
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
-        var metadata = uniqueStoredMetadata()
+        var metadata = anyVaultItemMetadata()
         metadata.userDescription = "description test"
         let sut = makeSUTEditing(code: code, metadata: metadata)
 
@@ -416,7 +416,7 @@ extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUTEditing(
         code: OTPAuthCode = uniqueCode(),
-        metadata: VaultItem.Metadata = uniqueStoredMetadata(),
+        metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: OTPCodeDetailEditorMock = .defaultMock(),
         file: StaticString = #filePath,
         line: UInt = #line
@@ -430,7 +430,7 @@ extension OTPCodeDetailViewModelTests {
     @MainActor
     private func makeSUT(
         code: OTPAuthCode = uniqueCode(),
-        metadata: VaultItem.Metadata = uniqueStoredMetadata(),
+        metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: OTPCodeDetailEditorMock = .defaultMock(),
         file: StaticString = #filePath,
         line: UInt = #line

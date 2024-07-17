@@ -24,7 +24,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     @MainActor
     func test_init_editingModelUsesInitialData() {
         let note = SecureNote(title: "my title", contents: "my contents")
-        let metadata = uniqueStoredMetadata(userDescription: "my description")
+        let metadata = anyVaultItemMetadata(userDescription: "my description")
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
         XCTAssertEqual(sut.editingModel.detail.title, note.title)
@@ -277,10 +277,10 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_editingModel_initialStateUsesData() {
-        var note = anyStoredNote()
+        var note = anySecureNote()
         note.contents = "this is my contents"
         note.title = "this is my title"
-        var metadata = uniqueStoredMetadata()
+        var metadata = anyVaultItemMetadata()
         metadata.userDescription = "description test"
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
@@ -293,10 +293,10 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_editingModel_editingStateUsesData() {
-        var note = anyStoredNote()
+        var note = anySecureNote()
         note.contents = "this is my contents"
         note.title = "this is my title"
-        var metadata = uniqueStoredMetadata()
+        var metadata = anyVaultItemMetadata()
         metadata.userDescription = "description test"
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
@@ -341,8 +341,8 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 extension SecureNoteDetailViewModelTests {
     @MainActor
     private func makeSUTEditing(
-        storedNote: SecureNote = anyStoredNote(),
-        storedMetadata: VaultItem.Metadata = uniqueStoredMetadata(),
+        storedNote: SecureNote = anySecureNote(),
+        storedMetadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock()
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(mode: .editing(note: storedNote, metadata: storedMetadata), editor: editor)

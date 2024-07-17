@@ -191,7 +191,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
-        var note = anyStoredNote()
+        var note = anySecureNote()
         note.title = "old title"
         note.contents = "old contents"
         var item = uniqueVaultItem(item: .secureNote(note))
@@ -230,7 +230,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anyStoredNote(), edits: .new()))
+        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anySecureNote(), edits: .new()))
     }
 
     @MainActor

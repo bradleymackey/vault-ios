@@ -45,7 +45,7 @@ final class BackupExporterTests: XCTestCase {
 
         let payload = VaultApplicationPayload(
             userDescription: "my backup",
-            items: [searchableStoredOTPVaultItem()],
+            items: [uniqueVaultItem()],
             tags: [VaultItemTag(id: .init(id: UUID()), name: "tag")]
         )
         let backup = try sut.createEncryptedBackup(payload: payload)
