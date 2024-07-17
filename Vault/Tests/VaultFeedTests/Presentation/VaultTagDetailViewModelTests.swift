@@ -28,7 +28,7 @@ final class VaultTagDetailViewModelTests: XCTestCase {
         let sut = makeSUT()
 
         XCTAssertEqual(sut.title, "")
-        XCTAssertEqual(sut.color, .default)
+        XCTAssertEqual(sut.color, .tagDefault)
         XCTAssertEqual(sut.systemIconName, "tag.fill")
     }
 

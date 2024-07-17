@@ -3,9 +3,14 @@ import XCTest
 @testable import VaultFeed
 
 final class VaultItemTagTests: XCTestCase {
-    func test_equal_onlyChecksIDs() {
+    func test_equal_checksWholeObject() {
         let id = makeUniqueIdentifier()
         XCTAssertEqual(
+            VaultItemTag(id: id, name: "same"),
+            VaultItemTag(id: id, name: "same")
+        )
+
+        XCTAssertNotEqual(
             VaultItemTag(id: id, name: "one"),
             VaultItemTag(id: id, name: "two")
         )
@@ -16,11 +21,16 @@ final class VaultItemTagTests: XCTestCase {
         )
     }
 
-    func test_hashable_onlyOnIds() {
+    func test_hashable_onWholeObject() {
         let id = makeUniqueIdentifier()
+        XCTAssertEqual(
+            VaultItemTag(id: id, name: "same").hashValue,
+            VaultItemTag(id: id, name: "same").hashValue
+        )
+
         let one = VaultItemTag(id: id, name: "one")
         let two = VaultItemTag(id: id, name: "two")
-        XCTAssertEqual(
+        XCTAssertNotEqual(
             one.hashValue,
             two.hashValue
         )

@@ -2,7 +2,7 @@ import Foundation
 
 /// A vault store that always errors on every method call.
 @MainActor
-public final class VaultStoreErroring: VaultStore {
+public final class VaultStoreErroring: VaultStore, VaultTagStoreReader {
     public var error: any Error
     public init(error: any Error) {
         self.error = error
@@ -27,6 +27,10 @@ public final class VaultStoreErroring: VaultStore {
     }
 
     public func exportVault(userDescription _: String) async throws -> VaultApplicationPayload {
+        throw error
+    }
+
+    public func retrieveTags() async throws -> [VaultItemTag] {
         throw error
     }
 }

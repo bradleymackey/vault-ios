@@ -53,6 +53,41 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
         assertSnapshot(matching: sut, as: .image)
     }
+
+    @MainActor
+    func test_searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
+        let store = VaultStoreStub()
+        store.retrieveTagsResult = .success([
+            VaultItemTag(id: .init(), name: "tag1"),
+            VaultItemTag(id: .init(), name: "tag2", color: .gray),
+        ])
+        let viewModel = FeedViewModel(store: store)
+        let sut = makeSUT(viewModel: viewModel)
+            .framedToTestDeviceSize()
+
+        await viewModel.onAppear()
+
+        assertSnapshot(matching: sut, as: .image)
+    }
+
+    @MainActor
+    func test_searchBar_tagsBeingFiltered() async throws {
+        let store = VaultStoreStub()
+        let tag1Id = VaultItemTag.Identifier()
+        store.retrieveTagsResult = .success([
+            VaultItemTag(id: tag1Id, name: "tag1"),
+            VaultItemTag(id: .init(), name: "tag2", color: .gray),
+        ])
+        let viewModel = FeedViewModel(store: store)
+        let sut = makeSUT(viewModel: viewModel)
+            .framedToTestDeviceSize()
+
+        viewModel.filteringByTags = [tag1Id]
+
+        await viewModel.onAppear()
+
+        assertSnapshot(matching: sut, as: .image)
+    }
 }
 
 // MARK: - Helpers

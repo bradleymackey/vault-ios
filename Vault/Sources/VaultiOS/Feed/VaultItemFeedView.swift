@@ -6,7 +6,7 @@ import VaultSettings
 
 @MainActor
 public struct VaultItemFeedView<
-    Store: VaultStore,
+    Store: VaultStore & VaultTagStoreReader,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload
@@ -47,6 +47,11 @@ public struct VaultItemFeedView<
                 await viewModel.reloadData()
             }
         }
+        .onChange(of: viewModel.filteringByTags) { _, _ in
+            Task {
+                await viewModel.reloadData()
+            }
+        }
     }
 
     private var noCodesFoundView: some View {
@@ -80,14 +85,58 @@ public struct VaultItemFeedView<
                         noCodesFoundView
                     }
                 } header: {
-                    SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
-                        .padding(.vertical, 8)
-                        .background(Color(UIColor.systemBackground))
+                    listOfCodesHeader
                 }
             }
             .padding(.horizontal)
             .padding(.bottom)
         }
+    }
+
+    private var listOfCodesHeader: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
+            if viewModel.tags.isNotEmpty {
+                ScrollView(.horizontal, showsIndicators: false) {
+                    HStack {
+                        ForEach(viewModel.tags) { tag in
+                            TagPillView(tag: tag, isSelected: viewModel.filteringByTags.contains(tag.id))
+                                .id(tag)
+                                .onTapGesture {
+                                    viewModel.toggleFiltering(tag: tag.id)
+                                }
+                        }
+                    }
+                    .font(.callout)
+                }
+                .scrollClipDisabled()
+                if viewModel.filteringByTags.isNotEmpty {
+                    filteringByTagsInfoSection
+                }
+            }
+        }
+        .padding(.vertical, 8)
+        .background(Color(UIColor.systemBackground))
+        .animation(.easeOut, value: viewModel.filteringByTags)
+    }
+
+    /// Small informational section when we are filtering by tags
+    private var filteringByTagsInfoSection: some View {
+        HStack {
+            Text("Filtering by tags: \(viewModel.filteringByTags.count)")
+                .foregroundColor(.secondary)
+
+            Spacer()
+
+            Button {
+                viewModel.filteringByTags.removeAll()
+            } label: {
+                Label("Clear tags", systemImage: "xmark")
+            }
+            .fontWeight(.medium)
+            .foregroundStyle(Color.accentColor, .secondary)
+        }
+        .font(.caption)
     }
 
     private var vaultItemsList: some View {
