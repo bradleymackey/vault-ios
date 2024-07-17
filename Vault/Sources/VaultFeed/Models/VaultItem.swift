@@ -27,7 +27,9 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     }
 
     /// Maps this object to a `VaultItem.Write` for writing.
-    public var asWritable: VaultItem.Write {
+    ///
+    /// This discards any non-deterministic data and identifiable information.
+    public func makeWritable() -> VaultItem.Write {
         .init(
             userDescription: metadata.userDescription,
             color: metadata.color,
@@ -45,7 +47,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     /// For example, the created and updated date.
     func isContentEqual(to other: VaultItem) -> Bool {
         // The 'writable' content is all deterministic
-        asWritable == other.asWritable &&
+        makeWritable() == other.makeWritable() &&
             id == other.id
     }
 }
