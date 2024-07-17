@@ -35,38 +35,38 @@ extension PersistedVaultItemEncoderTests {
             return Date(timeIntervalSince1970: currentEpochSeconds)
         })
 
-        let newItem = try sut.encode(item: uniqueWritableVaultItem())
+        let newItem = try sut.encode(item: uniqueVaultItem().asWritable)
         XCTAssertEqual(newItem.createdDate, newItem.updatedDate)
     }
 
     func test_encodeMetadata_existingItemRetainsUUID() throws {
         let sut = makeSUT()
 
-        let existing = try sut.encode(item: uniqueWritableVaultItem())
+        let existing = try sut.encode(item: uniqueVaultItem().asWritable)
         let existingID = existing.id
 
-        let newCode = try sut.encode(item: uniqueWritableVaultItem(), existing: existing)
+        let newCode = try sut.encode(item: uniqueVaultItem().asWritable, existing: existing)
         XCTAssertEqual(newCode.id, existingID, "ID should not change for update")
     }
 
     func test_encodeMetadata_existingItemRetainsCreatedDate() throws {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = try sut1.encode(item: uniqueWritableVaultItem())
+        let existing = try sut1.encode(item: uniqueVaultItem().asWritable)
         let existingCreatedDate = existing.createdDate
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = try sut2.encode(item: uniqueWritableVaultItem(), existing: existing)
+        let newCode = try sut2.encode(item: uniqueVaultItem().asWritable, existing: existing)
         XCTAssertEqual(newCode.createdDate, existingCreatedDate, "Date should not change for update")
     }
 
     func test_encodeMetadata_existingItemUpdatesUpdatedDate() throws {
         let sut1 = makeSUT(currentDate: { Date(timeIntervalSince1970: 100) })
 
-        let existing = try sut1.encode(item: uniqueWritableVaultItem())
+        let existing = try sut1.encode(item: uniqueVaultItem().asWritable)
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
-        let newCode = try sut2.encode(item: uniqueWritableVaultItem(), existing: existing)
+        let newCode = try sut2.encode(item: uniqueVaultItem().asWritable, existing: existing)
         XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should not change for update")
     }
 
@@ -113,7 +113,7 @@ extension PersistedVaultItemEncoderTests {
     func test_encodeMetadata_existingItemOverridesColorValues() throws {
         let sut1 = makeSUT()
 
-        var existingItem = uniqueWritableVaultItem()
+        var existingItem = uniqueVaultItem().asWritable
         existingItem.color = VaultItemColor(red: 0.1, green: 0.2, blue: 0.3)
         let existing = try sut1.encode(item: existingItem)
 
@@ -135,7 +135,7 @@ extension PersistedVaultItemEncoderTests {
 
         for (value, key) in mapping {
             let sut1 = makeSUT()
-            var existingItem = uniqueWritableVaultItem()
+            var existingItem = uniqueVaultItem().asWritable
             existingItem.visibility = value
             let existing = try sut1.encode(item: existingItem)
 
@@ -151,11 +151,11 @@ extension PersistedVaultItemEncoderTests {
 
         for (value, key) in mapping {
             let sut1 = makeSUT()
-            var item1 = uniqueWritableVaultItem()
+            var item1 = uniqueVaultItem().asWritable
             item1.visibility = .onlySearch
             let existing = try sut1.encode(item: item1)
 
-            var item2 = uniqueWritableVaultItem()
+            var item2 = uniqueVaultItem().asWritable
             item2.visibility = value
             let existing2 = try sut1.encode(item: item2, existing: existing)
 
@@ -173,7 +173,7 @@ extension PersistedVaultItemEncoderTests {
 
         for (value, key) in mapping {
             let sut1 = makeSUT()
-            var existingItem = uniqueWritableVaultItem()
+            var existingItem = uniqueVaultItem().asWritable
             existingItem.searchableLevel = value
             let existing = try sut1.encode(item: existingItem)
 
@@ -191,11 +191,11 @@ extension PersistedVaultItemEncoderTests {
 
         for (value, key) in mapping {
             let sut1 = makeSUT()
-            var item1 = uniqueWritableVaultItem()
+            var item1 = uniqueVaultItem().asWritable
             item1.searchableLevel = .none
             let existing = try sut1.encode(item: item1)
 
-            var item2 = uniqueWritableVaultItem()
+            var item2 = uniqueVaultItem().asWritable
             item2.searchableLevel = value
             let existing2 = try sut1.encode(item: item2, existing: existing)
 
@@ -205,7 +205,7 @@ extension PersistedVaultItemEncoderTests {
 
     func test_encodeMetadata_newItemEncodesEmptyTags() throws {
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: [])
+        let item = uniqueVaultItem(tags: []).asWritable
 
         let encoded = try sut.encode(item: item)
         XCTAssertEqual(encoded.tags, [])
@@ -215,7 +215,7 @@ extension PersistedVaultItemEncoderTests {
         let id1 = UUID()
         let id2 = UUID()
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: [.init(id: id1), .init(id: id2)])
+        let item = uniqueVaultItem(tags: [.init(id: id1), .init(id: id2)]).asWritable
 
         let persisted1 = makePersistedTag(id: id1)
         let persisted2 = makePersistedTag(id: id2)
@@ -227,10 +227,10 @@ extension PersistedVaultItemEncoderTests {
         let id1 = UUID()
         _ = makePersistedTag(id: id1)
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: [.init(id: id1)])
+        let item = uniqueVaultItem(tags: [.init(id: id1)]).asWritable
         let existing = try sut.encode(item: item)
 
-        let itemNew = uniqueWritableVaultItem(tags: [])
+        let itemNew = uniqueVaultItem(tags: []).asWritable
         let encoded = try sut.encode(item: itemNew, existing: existing)
         XCTAssertEqual(encoded.tags, [])
     }
@@ -239,12 +239,12 @@ extension PersistedVaultItemEncoderTests {
         let id1 = UUID()
         _ = makePersistedTag(id: id1)
         let sut = makeSUT()
-        let item = uniqueWritableVaultItem(tags: [.init(id: id1)])
+        let item = uniqueVaultItem(tags: [.init(id: id1)]).asWritable
         let existing = try sut.encode(item: item)
 
         let id2 = UUID()
         let persisted2 = makePersistedTag(id: id2)
-        let itemNew = uniqueWritableVaultItem(tags: [.init(id: id2)])
+        let itemNew = uniqueVaultItem(tags: [.init(id: id2)]).asWritable
         let encoded = try sut.encode(item: itemNew, existing: existing)
         XCTAssertEqual(encoded.tags.map(\.id).reducedToSet(), [persisted2.id])
     }

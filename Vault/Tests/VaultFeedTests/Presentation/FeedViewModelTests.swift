@@ -126,7 +126,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.create(item: uniqueWritableVaultItem())
+        try await sut.create(item: uniqueVaultItem().asWritable)
 
         await fulfillment(of: [exp])
     }
@@ -141,7 +141,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.create(item: uniqueWritableVaultItem())
+        try await sut.create(item: uniqueVaultItem().asWritable)
 
         await fulfillment(of: [exp])
     }
@@ -157,7 +157,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try? await sut.create(item: uniqueWritableVaultItem())
+        try? await sut.create(item: uniqueVaultItem().asWritable)
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -168,7 +168,7 @@ final class FeedViewModelTests: XCTestCase {
         let cache2 = VaultItemCacheMock()
         let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
-        try await sut.create(item: uniqueWritableVaultItem())
+        try await sut.create(item: uniqueVaultItem().asWritable)
 
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [])
         XCTAssertEqual(cache2.invalidateVaultItemDetailCacheArgValues, [])
@@ -184,7 +184,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), item: uniqueWritableVaultItem())
+        try await sut.update(id: UUID(), item: uniqueVaultItem().asWritable)
 
         await fulfillment(of: [exp])
     }
@@ -199,7 +199,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), item: uniqueWritableVaultItem())
+        try await sut.update(id: UUID(), item: uniqueVaultItem().asWritable)
 
         await fulfillment(of: [exp])
     }
@@ -215,7 +215,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try? await sut.update(id: UUID(), item: uniqueWritableVaultItem())
+        try? await sut.update(id: UUID(), item: uniqueVaultItem().asWritable)
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -227,7 +227,7 @@ final class FeedViewModelTests: XCTestCase {
         let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
         let invalidateId = UUID()
-        try await sut.update(id: invalidateId, item: uniqueWritableVaultItem())
+        try await sut.update(id: invalidateId, item: uniqueVaultItem().asWritable)
 
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [invalidateId])
         XCTAssertEqual(cache2.invalidateVaultItemDetailCacheArgValues, [invalidateId])

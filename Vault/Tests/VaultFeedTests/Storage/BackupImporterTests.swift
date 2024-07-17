@@ -18,7 +18,7 @@ final class BackupImporterTests: XCTestCase {
     }
 
     func test_importEncryptedBackup_decodesWithItems() throws {
-        let item1 = searchableStoredOTPVaultItem()
+        let item1 = uniqueVaultItem()
         let tag1 = VaultItemTag(id: .init(id: UUID()), name: "tag1")
         let tag2 = VaultItemTag(id: .init(id: UUID()), name: "tag2")
         let password = BackupPassword(key: .random(count: 32), salt: .random(count: 32), keyDervier: .testing)

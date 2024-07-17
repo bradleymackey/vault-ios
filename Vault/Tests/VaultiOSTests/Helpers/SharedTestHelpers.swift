@@ -64,18 +64,6 @@ func uniqueMetadata(id: UUID = UUID()) -> VaultItem.Metadata {
     )
 }
 
-func uniqueWritableVaultItem() -> VaultItem.Write {
-    .init(
-        userDescription: "any",
-        color: nil,
-        item: .otpCode(uniqueCode()),
-        tags: [],
-        visibility: .always,
-        searchableLevel: .full,
-        searchPassphase: nil
-    )
-}
-
 func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date().addingTimeInterval(0.1))
 }

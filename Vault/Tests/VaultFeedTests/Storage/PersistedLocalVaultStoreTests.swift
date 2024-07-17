@@ -32,7 +32,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveAll_deliversSingleCodeOnNonEmptyStore() async throws {
-        let code = uniqueWritableVaultItem()
+        let code = uniqueVaultItem().asWritable
         try await sut.insert(item: code)
 
         let result = try await sut.retrieve(query: .all)
@@ -42,9 +42,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveAll_deliversMultipleCodesOnNonEmptyStore() async throws {
         let codes: [VaultItem.Write] = [
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -57,9 +57,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveAll_hasNoSideEffectsOnNonEmptyStore() async throws {
         let codes: [VaultItem.Write] = [
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -75,9 +75,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveAll_doesNotReturnSearchOnlyItems() async throws {
         let codes: [VaultItem.Write] = [
-            uniqueWritableVaultItem(visibility: .onlySearch),
-            uniqueWritableVaultItem(visibility: .onlySearch),
-            uniqueWritableVaultItem(visibility: .onlySearch),
+            uniqueVaultItem(visibility: .onlySearch).asWritable,
+            uniqueVaultItem(visibility: .onlySearch).asWritable,
+            uniqueVaultItem(visibility: .onlySearch).asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -90,9 +90,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveAll_returnsAlwaysVisibleItems() async throws {
         let codes: [VaultItem.Write] = [
-            uniqueWritableVaultItem(visibility: .always),
-            uniqueWritableVaultItem(visibility: .onlySearch),
-            uniqueWritableVaultItem(visibility: .always),
+            uniqueVaultItem(visibility: .always).asWritable,
+            uniqueVaultItem(visibility: .onlySearch).asWritable,
+            uniqueVaultItem(visibility: .always).asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -106,9 +106,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     @MainActor
     func test_retrieveAll_returnsCorruptedItemsAsErrors() async throws {
         let codes: [VaultItem.Write] = [
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
         ]
         var ids = [UUID]()
         for code in codes {
@@ -127,9 +127,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     @MainActor
     func test_retrieveAll_returnsAllItemsCorrupted() async throws {
         let codes: [VaultItem.Write] = [
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
-            uniqueWritableVaultItem(),
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
         ]
         for code in codes {
             let id = try await sut.insert(item: code)
@@ -172,8 +172,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_returnsEmptyForNoQueryMatches() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(),
-            writableSearchableOTPVaultItem(),
+            anySecureNote().wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -187,8 +187,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_deliversSingleMatchOnMatchingQuery() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(userDescription: "yes"),
-            writableSearchableOTPVaultItem(userDescription: "no"),
+            anySecureNote().wrapInAnyVaultItem(userDescription: "yes").asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -203,8 +203,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_hasNoSideEffectsOnSingleMatch() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(userDescription: "yes"),
-            writableSearchableOTPVaultItem(userDescription: "no"),
+            anySecureNote().wrapInAnyVaultItem(userDescription: "yes").asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(userDescription: "no").asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -224,12 +224,14 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_deliversMultipleMatchesOnMatchingQuery() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(userDescription: "no"),
-            writableSearchableNoteVaultItem(userDescription: "yes"),
-            writableSearchableOTPVaultItem(userDescription: "no"),
-            writableSearchableOTPVaultItem(userDescription: "yess"),
-            writableSearchableOTPVaultItem(userDescription: "yesss"),
-            writableSearchableOTPVaultItem(userDescription: "no"),
+            anySecureNote().wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem().asWritable,
+            uniqueVaultItem(userDescription: "no").asWritable,
+            uniqueVaultItem(userDescription: "yes").asWritable,
+            uniqueVaultItem(userDescription: "no").asWritable,
+            uniqueVaultItem(userDescription: "yess").asWritable,
+            uniqueVaultItem(userDescription: "yesss").asWritable,
+            uniqueVaultItem(userDescription: "no").asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -244,14 +246,15 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_matchesUserDescription() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(),
-            writableSearchableOTPVaultItem(userDescription: "x"),
-            writableSearchableNoteVaultItem(userDescription: "a"),
-            writableSearchableOTPVaultItem(userDescription: "c"),
-            writableSearchableOTPVaultItem(userDescription: "b"),
-            writableSearchableOTPVaultItem(userDescription: "----a----"),
-            writableSearchableOTPVaultItem(userDescription: "----A----"),
-            writableSearchableOTPVaultItem(userDescription: "x"),
+            anyOTPAuthCode().wrapInAnyVaultItem().asWritable,
+            uniqueVaultItem().asWritable,
+            uniqueVaultItem(userDescription: "x").asWritable,
+            uniqueVaultItem(userDescription: "a").asWritable,
+            uniqueVaultItem(userDescription: "c").asWritable,
+            uniqueVaultItem(userDescription: "b").asWritable,
+            uniqueVaultItem(userDescription: "----a----").asWritable,
+            uniqueVaultItem(userDescription: "----A----").asWritable,
+            uniqueVaultItem(userDescription: "x").asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -266,10 +269,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_matchesOTPAccountName() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(),
-            writableSearchableOTPVaultItem(accountName: "a"),
-            writableSearchableOTPVaultItem(accountName: "x"),
-            writableSearchableOTPVaultItem(accountName: "----A----"),
+            anySecureNote().wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "a").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "x").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "----A----").wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -284,10 +287,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_matchesOTPIssuer() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(),
-            writableSearchableOTPVaultItem(issuerName: "a"),
-            writableSearchableOTPVaultItem(issuerName: "x"),
-            writableSearchableOTPVaultItem(issuerName: "----A----"),
+            anySecureNote().wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(issuerName: "a").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(issuerName: "x").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(issuerName: "----A----").wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -302,10 +305,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_matchesNoteDetailsTitle() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(),
-            writableSearchableNoteVaultItem(title: "a"),
-            writableSearchableNoteVaultItem(title: "x"),
-            writableSearchableNoteVaultItem(title: "----A----"),
+            anySecureNote().wrapInAnyVaultItem().asWritable,
+            anySecureNote(title: "a").wrapInAnyVaultItem().asWritable,
+            anySecureNote(title: "x").wrapInAnyVaultItem().asWritable,
+            anySecureNote(title: "----A----").wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -320,10 +323,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_matchesNoteDetailsContents() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(),
-            writableSearchableNoteVaultItem(contents: "a"),
-            writableSearchableNoteVaultItem(contents: "x"),
-            writableSearchableNoteVaultItem(contents: "----A----"),
+            anySecureNote().wrapInAnyVaultItem().asWritable,
+            anySecureNote(contents: "a").wrapInAnyVaultItem().asWritable,
+            anySecureNote(contents: "x").wrapInAnyVaultItem().asWritable,
+            anySecureNote(contents: "----A----").wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -340,10 +343,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
 
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(tags: [tag1]),
-            writableSearchableNoteVaultItem(contents: "a", tags: [tag1]),
-            writableSearchableNoteVaultItem(contents: "x", tags: [tag1]),
-            writableSearchableNoteVaultItem(contents: "----A----"), // not tagged, so not returned
+            anySecureNote().wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anySecureNote(contents: "a").wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anySecureNote(contents: "x").wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anySecureNote(contents: "----A----").wrapInAnyVaultItem(tags: []).asWritable, // not tagged, so not returned
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -358,12 +361,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_combinesResultsFromDifferentFields() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(userDescription: "a"),
-            writableSearchableNoteVaultItem(title: "aa"),
-            writableSearchableNoteVaultItem(contents: "aaa"),
-            writableSearchableOTPVaultItem(userDescription: "aaaa"),
-            writableSearchableOTPVaultItem(accountName: "aaaaa"),
-            writableSearchableOTPVaultItem(issuerName: "aaaaaa"),
+            anySecureNote().wrapInAnyVaultItem(userDescription: "a").asWritable,
+            anySecureNote(title: "aa").wrapInAnyVaultItem().asWritable,
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(userDescription: "aaaa").asWritable,
+            anyOTPAuthCode(accountName: "aaaaa").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(issuerName: "aaaaaa").wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -377,12 +380,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_returnsMatchesForAllQueryStates() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(userDescription: "a", visibility: .onlySearch),
-            writableSearchableNoteVaultItem(title: "aa", visibility: .always),
-            writableSearchableNoteVaultItem(contents: "aaa", visibility: .onlySearch),
-            writableSearchableOTPVaultItem(userDescription: "aaaa", visibility: .onlySearch),
-            writableSearchableOTPVaultItem(accountName: "aaaaa", visibility: .onlySearch),
-            writableSearchableOTPVaultItem(issuerName: "aaaaaa", visibility: .onlySearch),
+            anySecureNote().wrapInAnyVaultItem(userDescription: "a", visibility: .onlySearch).asWritable,
+            anySecureNote(title: "aa").wrapInAnyVaultItem(visibility: .always).asWritable,
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(visibility: .onlySearch).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(userDescription: "aaaa", visibility: .onlySearch).asWritable,
+            anyOTPAuthCode(accountName: "aaaaa").wrapInAnyVaultItem(visibility: .onlySearch).asWritable,
+            anyOTPAuthCode(issuerName: "aaaaaa").wrapInAnyVaultItem(visibility: .onlySearch).asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -396,10 +399,11 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_doesNotReturnNotesSearchingByContent() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyTitle),
-            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyPassphrase),
-            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .none),
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).asWritable,
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase).asWritable,
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(searchableLevel: .none).asWritable,
         ]
+
         for code in codes {
             try await sut.insert(item: code)
         }
@@ -412,9 +416,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_returnsNoteContentsIfEnabled() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyTitle),
-            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .onlyPassphrase),
-            writableSearchableNoteVaultItem(contents: "aaa", searchableLevel: .full),
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).asWritable,
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase).asWritable,
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(searchableLevel: .full).asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -428,8 +432,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_returnsItemsSearchingByTitle() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyTitle),
-            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyTitle),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).asWritable,
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).asWritable,
         ]
         for code in codes {
             try await sut.insert(item: code)
@@ -443,8 +447,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_titleOnlyMatchesOTPFields() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyTitle),
-            writableSearchableOTPVaultItem(issuerName: "aaabbb", searchableLevel: .onlyTitle),
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).asWritable,
+            anyOTPAuthCode(issuerName: "aaabbb").wrapInAnyVaultItem(searchableLevel: .onlyTitle).asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -460,17 +464,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_requiresExactPassphraseMatch() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "n"),
-            writableSearchableOTPVaultItem(
-                accountName: "aaa",
-                searchableLevel: .onlyPassphrase,
-                searchPassphrase: "nn"
-            ),
-            writableSearchableOTPVaultItem(
-                accountName: "aaa",
-                searchableLevel: .onlyPassphrase,
-                searchPassphrase: "nnn"
-            ),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "n")
+                .asWritable,
+            anyOTPAuthCode(accountName: "aaa")
+                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "nn").asWritable,
+            anyOTPAuthCode(issuerName: "aaa")
+                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "nnn").asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -486,10 +485,13 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveMatchingQuery_returnsPassphraseMatches() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .full),
-            writableSearchableNoteVaultItem(title: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "a"),
-            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "b"),
-            writableSearchableOTPVaultItem(accountName: "aaa", searchableLevel: .onlyPassphrase, searchPassphrase: "q"),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .full).asWritable,
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "a")
+                .asWritable,
+            anyOTPAuthCode(accountName: "aaa")
+                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "b").asWritable,
+            anyOTPAuthCode(accountName: "aaa")
+                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "q").asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -510,10 +512,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     @MainActor
     func test_retrieveMatchingQuery_returnsCorruptedItemsAsErrors() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(accountName: "aaa"),
-            writableSearchableOTPVaultItem(accountName: "aaa"),
-            writableSearchableOTPVaultItem(accountName: "bbb"), // not included
-            writableSearchableOTPVaultItem(accountName: "aaa"),
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "bbb").wrapInAnyVaultItem().asWritable, // not included
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().asWritable,
         ]
         var ids = [UUID]()
         for code in codes {
@@ -533,10 +535,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     @MainActor
     func test_retrieveMatchingQuery_returnsAllItemsCorrupted() async throws {
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(accountName: "aaa"),
-            writableSearchableOTPVaultItem(accountName: "aaa"),
-            writableSearchableOTPVaultItem(accountName: "bbb"), // not included
-            writableSearchableOTPVaultItem(accountName: "aaa"),
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().asWritable,
+            anyOTPAuthCode(accountName: "bbb").wrapInAnyVaultItem().asWritable, // not included
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().asWritable,
         ]
         for code in codes {
             let id = try await sut.insert(item: code)
@@ -558,8 +560,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
 
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(tags: [tag1]),
-            writableSearchableOTPVaultItem(tags: [tag1]),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -577,8 +579,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
 
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(tags: [tag1]),
-            writableSearchableOTPVaultItem(tags: [tag1]),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -597,10 +599,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let tag2 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
 
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(tags: [tag1]),
-            writableSearchableOTPVaultItem(tags: [tag2]),
-            writableSearchableOTPVaultItem(tags: [tag1]),
-            writableSearchableOTPVaultItem(tags: [tag2]),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -618,10 +620,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let tag1 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
         let tag2 = try await sut.insertTag(item: anyVaultItemTag().asWritable)
         let codes: [VaultItem.Write] = [
-            writableSearchableOTPVaultItem(tags: [tag1, tag2]),
-            writableSearchableOTPVaultItem(tags: [tag2]),
-            writableSearchableOTPVaultItem(tags: [tag1, tag2]),
-            writableSearchableOTPVaultItem(tags: [tag2]),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1, tag2]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1, tag2]).asWritable,
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).asWritable,
         ]
         var insertedIDs = [UUID]()
         for code in codes {
@@ -636,16 +638,16 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_insert_deliversNoErrorOnEmptyStore() async throws {
-        try await sut.insert(item: uniqueWritableVaultItem())
+        try await sut.insert(item: uniqueVaultItem().asWritable)
     }
 
     func test_insert_deliversNoErrorOnNonEmptyStore() async throws {
-        try await sut.insert(item: uniqueWritableVaultItem())
-        try await sut.insert(item: uniqueWritableVaultItem())
+        try await sut.insert(item: uniqueVaultItem().asWritable)
+        try await sut.insert(item: uniqueVaultItem().asWritable)
     }
 
     func test_insert_doesNotOverrideExactSameEntryAsUsesNewIDToUnique() async throws {
-        let code = uniqueWritableVaultItem()
+        let code = uniqueVaultItem().asWritable
 
         try await sut.insert(item: code)
         try await sut.insert(item: code)
@@ -656,7 +658,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_insert_returnsUniqueCodeIDAfterSuccessfulInsert() async throws {
-        let code = uniqueWritableVaultItem()
+        let code = uniqueVaultItem().asWritable
 
         var ids = [UUID]()
         for _ in 0 ..< 5 {
@@ -678,7 +680,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_deleteByID_deletesSingleEntryMatchingID() async throws {
-        let code = uniqueWritableVaultItem()
+        let code = uniqueVaultItem().asWritable
 
         let id = try await sut.insert(item: code)
 
@@ -690,7 +692,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_deleteByID_hasNoEffectOnNoMatchingCode() async throws {
-        let otherCodes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
+        let otherCodes = [uniqueVaultItem().asWritable, uniqueVaultItem().asWritable, uniqueVaultItem().asWritable]
         for code in otherCodes {
             try await sut.insert(item: code)
         }
@@ -704,7 +706,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_updateByID_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
         do {
-            try await sut.update(id: UUID(), item: uniqueWritableVaultItem())
+            try await sut.update(id: UUID(), item: uniqueVaultItem().asWritable)
             XCTFail("Expected to throw error")
         } catch {
             // ignore
@@ -712,7 +714,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_updateByID_hasNoEffectOnEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
-        try? await sut.update(id: UUID(), item: uniqueWritableVaultItem())
+        try? await sut.update(id: UUID(), item: uniqueVaultItem().asWritable)
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
@@ -720,12 +722,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_updateByID_hasNoEffectOnNonEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
-        let codes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
+        let codes = [uniqueVaultItem().asWritable, uniqueVaultItem().asWritable, uniqueVaultItem().asWritable]
         for code in codes {
             try await sut.insert(item: code)
         }
 
-        try? await sut.update(id: UUID(), item: uniqueWritableVaultItem())
+        try? await sut.update(id: UUID(), item: uniqueVaultItem().asWritable)
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), codes.map(\.item.otpCode))
@@ -733,10 +735,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_updateByID_updatesDataForValidCode() async throws {
-        let initialCode = uniqueWritableVaultItem()
+        let initialCode = uniqueVaultItem().asWritable
         let id = try await sut.insert(item: initialCode)
 
-        let newCode = uniqueWritableVaultItem()
+        let newCode = uniqueVaultItem().asWritable
         try await sut.update(id: id, item: newCode)
 
         let result = try await sut.retrieve(query: .all)
@@ -750,14 +752,14 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_updateByID_hasNoSideEffectsOnOtherCodes() async throws {
-        let initialCodes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
+        let initialCodes = [uniqueVaultItem().asWritable, uniqueVaultItem().asWritable, uniqueVaultItem().asWritable]
         for code in initialCodes {
             try await sut.insert(item: code)
         }
 
-        let id = try await sut.insert(item: uniqueWritableVaultItem())
+        let id = try await sut.insert(item: uniqueVaultItem().asWritable)
 
-        let newCode = uniqueWritableVaultItem()
+        let newCode = uniqueVaultItem().asWritable
         try await sut.update(id: id, item: newCode)
 
         let result = try await sut.retrieve(query: .all)
@@ -773,7 +775,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_exportVault_hasNoSideEffectsOnNonEmptyVault() async throws {
-        let initialCodes = [uniqueWritableVaultItem(), uniqueWritableVaultItem(), uniqueWritableVaultItem()]
+        let initialCodes = [uniqueVaultItem().asWritable, uniqueVaultItem().asWritable, uniqueVaultItem().asWritable]
         for code in initialCodes {
             try await sut.insert(item: code)
         }

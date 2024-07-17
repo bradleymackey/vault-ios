@@ -14,145 +14,120 @@ func uniqueCode() -> OTPAuthCode {
     )
 }
 
-func anyStoredNote() -> SecureNote {
-    SecureNote(title: "Some note", contents: "Some note contents")
+// MARK: - VaultItem
+
+func anySecureNote(
+    title: String = "",
+    contents: String = ""
+) -> SecureNote {
+    SecureNote(title: title, contents: contents)
 }
 
-func uniqueStoredMetadata(
-    userDescription: String = "any"
+func anyOTPAuthCode(
+    accountName: String = "",
+    issuerName: String = ""
+) -> OTPAuthCode {
+    let randomData = Data.random(count: 50)
+    return OTPAuthCode(
+        type: .totp(),
+        data: .init(
+            secret: .init(data: randomData, format: .base32),
+            accountName: accountName,
+            issuer: issuerName
+        )
+    )
+}
+
+/// A unique vault item.
+/// The default payload is any OTPAuthCode.
+func uniqueVaultItem(
+    item: VaultItem.Payload = .otpCode(anyOTPAuthCode()),
+    userDescription: String = "",
+    visibility: VaultItemVisibility = .always,
+    tags: Set<VaultItemTag.Identifier> = []
+) -> VaultItem {
+    VaultItem(
+        metadata: anyVaultItemMetadata(
+            userDescription: userDescription,
+            visibility: visibility,
+            tags: tags
+        ),
+        item: item
+    )
+}
+
+/// A unique vault item with custom metadata.
+/// The default payload is any OTPAuthCode.
+func uniqueVaultItem(
+    metadata: VaultItem.Metadata,
+    item: VaultItem.Payload = .otpCode(anyOTPAuthCode())
+) -> VaultItem {
+    VaultItem(
+        metadata: metadata,
+        item: item
+    )
+}
+
+func anyVaultItemMetadata(
+    userDescription: String = "",
+    visibility: VaultItemVisibility = .always,
+    tags: Set<VaultItemTag.Identifier> = [],
+    searchableLevel: VaultItemSearchableLevel = .full,
+    searchPassphrase: String? = nil
 ) -> VaultItem.Metadata {
     .init(
         id: UUID(),
         created: Date(),
         updated: Date(),
         userDescription: userDescription,
-        tags: [],
-        visibility: .always,
-        searchableLevel: .full,
-        searchPassphrase: nil,
+        tags: tags,
+        visibility: visibility,
+        searchableLevel: searchableLevel,
+        searchPassphrase: searchPassphrase,
         color: nil
     )
 }
 
-func uniqueVaultItem() -> VaultItem {
-    VaultItem(
-        metadata: uniqueStoredMetadata(),
-        item: .otpCode(uniqueCode())
-    )
+extension SecureNote {
+    func wrapInAnyVaultItem(
+        userDescription: String = "",
+        visibility: VaultItemVisibility = .always,
+        tags: Set<VaultItemTag.Identifier> = [],
+        searchableLevel: VaultItemSearchableLevel = .full,
+        searchPassphrase: String? = nil
+    ) -> VaultItem {
+        VaultItem(
+            metadata: anyVaultItemMetadata(
+                userDescription: userDescription,
+                visibility: visibility,
+                tags: tags,
+                searchableLevel: searchableLevel,
+                searchPassphrase: searchPassphrase
+            ),
+            item: .secureNote(self)
+        )
+    }
 }
 
-func searchableStoredOTPVaultItem(
-    userDescription: String = "",
-    accountName: String = "",
-    issuerName: String = "",
-    tags: Set<VaultItemTag.Identifier> = [],
-    visibility: VaultItemVisibility = .always,
-    searchableLevel: VaultItemSearchableLevel = .full,
-    searchPassphrase: String? = nil
-) -> VaultItem {
-    VaultItem(
-        metadata: .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: userDescription,
-            tags: tags,
-            visibility: visibility,
-            searchableLevel: searchableLevel,
-            searchPassphrase: searchPassphrase,
-            color: nil
-        ),
-        item: .otpCode(.init(
-            type: .totp(period: 30),
-            data: .init(secret: .empty(), accountName: accountName, issuer: issuerName)
-        ))
-    )
-}
-
-func searchableStoredSecureNoteVaultItem(
-    userDescription: String = "",
-    title: String = "",
-    contents: String = "",
-    tags: Set<VaultItemTag.Identifier> = [],
-    searchableLevel: VaultItemSearchableLevel = .full,
-    secretPassphrase: String? = nil
-) -> VaultItem {
-    VaultItem(
-        metadata: .init(
-            id: UUID(),
-            created: Date(),
-            updated: Date(),
-            userDescription: userDescription,
-            tags: tags,
-            visibility: .always,
-            searchableLevel: searchableLevel,
-            searchPassphrase: secretPassphrase,
-            color: nil
-        ),
-        item: .secureNote(.init(title: title, contents: contents))
-    )
-}
-
-func uniqueVaultItem(item: VaultItem.Payload) -> VaultItem {
-    VaultItem(
-        metadata: uniqueStoredMetadata(),
-        item: item
-    )
-}
-
-func uniqueWritableVaultItem(
-    visibility: VaultItemVisibility = .always,
-    tags: Set<VaultItemTag.Identifier> = []
-) -> VaultItem.Write {
-    .init(
-        userDescription: "any",
-        color: nil,
-        item: .otpCode(uniqueCode()),
-        tags: tags,
-        visibility: visibility,
-        searchableLevel: .none,
-        searchPassphase: nil
-    )
-}
-
-func writableSearchableOTPVaultItem(
-    userDescription: String = "",
-    accountName: String = "",
-    issuerName: String = "",
-    visibility: VaultItemVisibility = .always,
-    searchableLevel: VaultItemSearchableLevel = .full,
-    tags: Set<VaultItemTag.Identifier> = [],
-    searchPassphrase: String? = nil
-) -> VaultItem.Write {
-    searchableStoredOTPVaultItem(
-        userDescription: userDescription,
-        accountName: accountName,
-        issuerName: issuerName,
-        tags: tags,
-        visibility: visibility,
-        searchableLevel: searchableLevel,
-        searchPassphrase: searchPassphrase
-    ).asWritable
-}
-
-func writableSearchableNoteVaultItem(
-    userDescription: String = "",
-    title: String = "",
-    contents: String = "",
-    tags: Set<VaultItemTag.Identifier> = [],
-    visibility: VaultItemVisibility = .always,
-    searchableLevel: VaultItemSearchableLevel = .full,
-    searchPassphrase: String? = nil
-) -> VaultItem.Write {
-    .init(
-        userDescription: userDescription,
-        color: nil,
-        item: .secureNote(.init(title: title, contents: contents)),
-        tags: tags,
-        visibility: visibility,
-        searchableLevel: searchableLevel,
-        searchPassphase: searchPassphrase
-    )
+extension OTPAuthCode {
+    func wrapInAnyVaultItem(
+        userDescription: String = "",
+        visibility: VaultItemVisibility = .always,
+        tags: Set<VaultItemTag.Identifier> = [],
+        searchableLevel: VaultItemSearchableLevel = .full,
+        searchPassphrase: String? = nil
+    ) -> VaultItem {
+        VaultItem(
+            metadata: anyVaultItemMetadata(
+                userDescription: userDescription,
+                visibility: visibility,
+                tags: tags,
+                searchableLevel: searchableLevel,
+                searchPassphrase: searchPassphrase
+            ),
+            item: .otpCode(self)
+        )
+    }
 }
 
 // MARK: - VaultItemTag
