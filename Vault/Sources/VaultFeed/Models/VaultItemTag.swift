@@ -23,6 +23,9 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
         self.iconName = iconName
     }
 
+    /// Maps this object to a `VaultItemTag.Write` for writing.
+    ///
+    /// This discards any non-deterministic data and identifiable information.
     public func makeWritable() -> VaultItemTag.Write {
         .init(name: name, color: color, iconName: iconName)
     }

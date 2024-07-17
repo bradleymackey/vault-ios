@@ -27,6 +27,8 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     }
 
     /// Maps this object to a `VaultItem.Write` for writing.
+    ///
+    /// This discards any non-deterministic data and identifiable information.
     public func makeWritable() -> VaultItem.Write {
         .init(
             userDescription: metadata.userDescription,
