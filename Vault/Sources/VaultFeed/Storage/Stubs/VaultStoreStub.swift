@@ -39,8 +39,9 @@ public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
         exportVaultHandler(userDescription)
     }
 
+    public var retrieveTagsResult: Result<[VaultItemTag], any Error> = .success([])
     public func retrieveTags() async throws -> [VaultItemTag] {
-        []
+        try retrieveTagsResult.get()
     }
 }
 
