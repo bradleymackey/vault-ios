@@ -23,7 +23,7 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
         self.iconName = iconName
     }
 
-    public var asWritable: VaultItemTag.Write {
+    public func makeWritable() -> VaultItemTag.Write {
         .init(name: name, color: color, iconName: iconName)
     }
 }
