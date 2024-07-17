@@ -70,6 +70,7 @@ struct OTPCodeCreateView<
                 OTPCodeDetailView(
                     newCodeWithContext: nil,
                     navigationPath: $navigationPath,
+                    allTags: feedViewModel.tags,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
@@ -78,6 +79,7 @@ struct OTPCodeCreateView<
                 OTPCodeDetailView(
                     newCodeWithContext: scannedCode,
                     navigationPath: $navigationPath,
+                    allTags: feedViewModel.tags,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode

@@ -14,6 +14,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     }
 
     public let mode: Mode
+    public let allTags: [VaultItemTag]
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
@@ -21,9 +22,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
 
     public init(
         mode: Mode,
+        allTags: [VaultItemTag],
         editor: any OTPCodeDetailEditor
     ) {
         self.mode = mode
+        self.allTags = allTags
         self.editor = editor
 
         editingModel = switch mode {

@@ -17,6 +17,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     init(
         editingExistingCode code: OTPAuthCode,
         navigationPath: Binding<NavigationPath>,
+        allTags: [VaultItemTag],
         storedMetadata: VaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
@@ -24,7 +25,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
-        _viewModel = .init(initialValue: .init(mode: .editing(code: code, metadata: storedMetadata), editor: editor))
+        _viewModel = .init(initialValue: .init(
+            mode: .editing(code: code, metadata: storedMetadata),
+            allTags: allTags,
+            editor: editor
+        ))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
         _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
@@ -37,12 +42,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     init(
         newCodeWithContext initialCode: OTPAuthCode?,
         navigationPath: Binding<NavigationPath>,
+        allTags: [VaultItemTag],
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
         presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
-        _viewModel = .init(initialValue: .init(mode: .creating(initialCode: initialCode), editor: editor))
+        _viewModel = .init(initialValue: .init(
+            mode: .creating(initialCode: initialCode),
+            allTags: allTags,
+            editor: editor
+        ))
         self.previewGenerator = previewGenerator
         self.presentationMode = presentationMode
         _selectedColor = .init(initialValue: VaultItemColor.default.color)
@@ -75,6 +85,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 nameEditingSection
                 descriptionEditingSection
+                if viewModel.allTags.isNotEmpty {
+                    tagSelectionSection
+                }
                 viewConfigEditingSection
                 if viewModel.editingModel.detail.viewConfig.needsPassphrase {
                     passphraseEntrySection
@@ -256,6 +269,14 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
+    private var tagSelectionSection: some View {
+        Section {
+            TagSelectionView(selectedTags: $viewModel.editingModel.detail.tags, allTags: viewModel.allTags)
+        } header: {
+            Text("Tags")
+        }
+    }
+
     private var viewConfigEditingSection: some View {
         Section {
             Picker(selection: $viewModel.editingModel.detail.viewConfig) {
@@ -320,6 +341,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 data: .init(secret: .empty(), accountName: "Test")
             ),
             navigationPath: .constant(.init()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: Date(),

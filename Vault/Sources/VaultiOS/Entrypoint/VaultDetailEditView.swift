@@ -23,6 +23,7 @@ struct VaultDetailEditView<
             OTPCodeDetailView(
                 editingExistingCode: storedCode,
                 navigationPath: $navigationPath,
+                allTags: feedViewModel.tags,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 previewGenerator: previewGenerator,
