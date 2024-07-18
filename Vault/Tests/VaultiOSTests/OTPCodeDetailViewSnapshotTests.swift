@@ -17,6 +17,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -44,6 +45,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),

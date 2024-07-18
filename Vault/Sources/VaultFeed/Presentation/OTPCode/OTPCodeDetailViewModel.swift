@@ -14,6 +14,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     }
 
     public let mode: Mode
+    public let allTags: [VaultItemTag]
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
@@ -21,9 +22,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
 
     public init(
         mode: Mode,
+        allTags: [VaultItemTag],
         editor: any OTPCodeDetailEditor
     ) {
         self.mode = mode
+        self.allTags = allTags
         self.editor = editor
 
         editingModel = switch mode {
@@ -51,6 +54,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 tags: metadata.tags
             ))
         }
+    }
+
+    /// Tags which haven't been added to this item yet.
+    public var remainingTags: [VaultItemTag] {
+        allTags.filter { !editingModel.detail.tags.contains($0.id) }
     }
 
     public var isInitialCreation: Bool {

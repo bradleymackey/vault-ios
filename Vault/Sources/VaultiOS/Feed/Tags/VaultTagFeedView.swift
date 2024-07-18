@@ -2,6 +2,7 @@ import Foundation
 import FoundationExtensions
 import SwiftUI
 import VaultFeed
+import VaultUI
 
 @MainActor
 struct VaultTagFeedView<Store: VaultTagStore>: View {
@@ -71,11 +72,13 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                     Button {
                         modal = .editingTag(tag)
                     } label: {
-                        TagPillView(tag: tag, isSelected: true)
+                        FormRow(
+                            image: Image(systemName: tag.iconName ?? "tag.fill"),
+                            color: tag.color?.color ?? .primary
+                        ) {
+                            Text(tag.name)
+                        }
                     }
-                    .buttonStyle(.plain)
-                    .modifier(HorizontallyCenter())
-                    .listRowSeparator(.hidden)
                 }
             }
         }
