@@ -125,7 +125,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                             }
                         }
                     }
+                    .navigationTitle(Text("Add Tag"))
                 }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
             }
         })
         .onChange(of: selectedColor.hashValue) { _, _ in
