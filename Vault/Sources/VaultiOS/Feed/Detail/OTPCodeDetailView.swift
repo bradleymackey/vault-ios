@@ -12,7 +12,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
+
     @State private var selectedColor: Color
+    @Environment(Pasteboard.self) private var pasteboard: Pasteboard
+    @State private var currentError: (any Error)?
+    @State private var isShowingDeleteConfirmation = false
+    @State private var isShowingCopyPaste = false
+    @State private var modal: Modal?
+
+    private enum Modal: IdentifiableSelf {
+        case tagSelector
+    }
 
     init(
         editingExistingCode code: OTPAuthCode,
@@ -60,11 +70,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         viewModel.startEditing()
     }
 
-    @Environment(Pasteboard.self) private var pasteboard: Pasteboard
-    @State private var currentError: (any Error)?
-    @State private var isShowingDeleteConfirmation = false
-    @State private var isShowingCopyPaste = false
-
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
         animation: .spring,
@@ -101,6 +106,28 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             }
         }
+        .sheet(item: $modal, onDismiss: nil, content: { item in
+            switch item {
+            case .tagSelector:
+                NavigationStack {
+                    List {
+                        ForEach(viewModel.remainingTags) { tag in
+                            Button {
+                                viewModel.editingModel.detail.tags.insert(tag.id)
+                                modal = nil
+                            } label: {
+                                FormRow(
+                                    image: Image(systemName: tag.iconName ?? "tag.fill"),
+                                    color: tag.color?.color ?? .primary
+                                ) {
+                                    Text(tag.name)
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        })
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
         }
@@ -282,23 +309,33 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 )
                 .modifier(HorizontallyCenter())
                 .padding()
-            } else {
-                ForEach(tagsThatAreSelected) { tag in
-                    FormRow(image: Image(systemName: tag.iconName ?? "tag.fill"), color: tag.color?.color ?? .primary) {
-                        Text(tag.name)
-                    }
+            }
+
+            ForEach(tagsThatAreSelected) { tag in
+                FormRow(image: Image(systemName: tag.iconName ?? "tag.fill"), color: tag.color?.color ?? .primary) {
+                    Text(tag.name)
                 }
-                .onDelete { indexes in
-                    let tagIds = tagsThatAreSelected.map(\.id)
-                    let tagsToRemove = indexes.map { tagIds[$0] }
-                    for tag in tagsToRemove {
-                        viewModel.editingModel.detail.tags.remove(tag)
-                    }
+            }
+            .onDelete { indexes in
+                let tagIds = tagsThatAreSelected.map(\.id)
+                let tagsToRemove = indexes.map { tagIds[$0] }
+                for tag in tagsToRemove {
+                    viewModel.editingModel.detail.tags.remove(tag)
+                }
+            }
+
+            if viewModel.remainingTags.isNotEmpty {
+                // present add tag picker, this uses a standard SwiftUI picker to add another tag
+                Button {
+                    modal = .tagSelector
+                } label: {
+                    Label("Tag", systemImage: "plus")
                 }
             }
         } header: {
             Text("Tags")
         }
+        .listRowSeparator(tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
 
     private var viewConfigEditingSection: some View {

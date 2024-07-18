@@ -56,6 +56,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         }
     }
 
+    /// Tags which haven't been added to this item yet.
+    public var remainingTags: [VaultItemTag] {
+        allTags.filter { !editingModel.detail.tags.contains($0.id) }
+    }
+
     public var isInitialCreation: Bool {
         switch mode {
         case .creating: true

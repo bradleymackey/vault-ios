@@ -55,6 +55,30 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_remainingTags_noTagsSelectedIsEqualToAllTags() {
+        let tag1 = anyVaultItemTag()
+        let tag2 = anyVaultItemTag()
+        let tag3 = anyVaultItemTag()
+
+        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        sut.editingModel.detail.tags = []
+
+        XCTAssertEqual(sut.remainingTags, [tag1, tag2, tag3])
+    }
+
+    @MainActor
+    func test_remainingTags_removesTagsThatHaveBeenSelected() {
+        let tag1 = anyVaultItemTag()
+        let tag2 = anyVaultItemTag()
+        let tag3 = anyVaultItemTag()
+
+        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        sut.editingModel.detail.tags = [tag1.id]
+
+        XCTAssertEqual(sut.remainingTags, [tag2, tag3])
+    }
+
+    @MainActor
     func test_init_editingModelUsesInitialData() {
         let code = OTPAuthCode(
             type: .totp(),
@@ -404,10 +428,11 @@ extension OTPCodeDetailViewModelTests {
     private func makeSUTCreating(
         editor: OTPCodeDetailEditorMock = .defaultMock(),
         initialCode: OTPAuthCode? = nil,
+        allTags: [VaultItemTag] = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(mode: .creating(initialCode: initialCode), editor: editor)
+        let sut = OTPCodeDetailViewModel(mode: .creating(initialCode: initialCode), allTags: allTags, editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
@@ -418,10 +443,15 @@ extension OTPCodeDetailViewModelTests {
         code: OTPAuthCode = uniqueCode(),
         metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: OTPCodeDetailEditorMock = .defaultMock(),
+        allTags: [VaultItemTag] = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(mode: .editing(code: code, metadata: metadata), editor: editor)
+        let sut = OTPCodeDetailViewModel(
+            mode: .editing(code: code, metadata: metadata),
+            allTags: allTags,
+            editor: editor
+        )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
@@ -432,10 +462,15 @@ extension OTPCodeDetailViewModelTests {
         code: OTPAuthCode = uniqueCode(),
         metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: OTPCodeDetailEditorMock = .defaultMock(),
+        allTags: [VaultItemTag] = [],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
-        let sut = OTPCodeDetailViewModel(mode: .editing(code: code, metadata: metadata), editor: editor)
+        let sut = OTPCodeDetailViewModel(
+            mode: .editing(code: code, metadata: metadata),
+            allTags: allTags,
+            editor: editor
+        )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
         return sut
