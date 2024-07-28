@@ -20,7 +20,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
     var body: some View {
         Form {
             previewSection
-            pickerSection
+            tagNameSection
             iconSection
             if viewModel.isExistingItem {
                 deleteSection
@@ -77,7 +77,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
         .listRowBackground(EmptyView())
     }
 
-    private var pickerSection: some View {
+    private var tagNameSection: some View {
         Section {
             TextField("My Tag", text: $viewModel.title)
         } header: {
