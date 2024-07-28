@@ -8,7 +8,7 @@ struct TagPillView: View {
     var isSelected: Bool = false
 
     var body: some View {
-        HStack(alignment: .center, spacing: 16) {
+        HStack(alignment: .center, spacing: 12) {
             TagIconView(iconName: tag.iconName)
             Text(tag.name)
         }
