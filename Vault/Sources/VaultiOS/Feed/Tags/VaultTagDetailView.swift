@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 import VaultFeed
-import VaultUI
 
 @MainActor
 struct VaultTagDetailView<Store: VaultTagStore>: View {

@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 import VaultSettings
-import VaultUI
 
 /// A settings screen where the content is populated by a `FileBackedContentViewModel`
 struct SettingsDocumentView: View {
