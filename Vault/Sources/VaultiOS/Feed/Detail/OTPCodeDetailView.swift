@@ -118,7 +118,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                             } label: {
                                 FormRow(
                                     image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
-                                    color: tag.color?.color ?? .primary
+                                    color: tag.color?.color ?? .primary,
+                                    style: .standard
                                 ) {
                                     Text(tag.name)
                                 }
@@ -317,7 +318,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             ForEach(tagsThatAreSelected) { tag in
                 FormRow(
                     image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
-                    color: tag.color?.color ?? .primary
+                    color: tag.color?.color ?? .primary,
+                    style: .standard
                 ) {
                     Text(tag.name)
                 }
@@ -380,7 +382,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             Button {
                 isShowingDeleteConfirmation = true
             } label: {
-                FormRow(image: .init(systemName: "trash"), color: .red) {
+                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
                     Text(localized(key: "action.delete.title"))
                         .fontWeight(.medium)
                 }

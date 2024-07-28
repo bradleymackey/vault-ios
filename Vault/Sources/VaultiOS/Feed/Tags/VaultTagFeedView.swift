@@ -74,7 +74,8 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                     } label: {
                         FormRow(
                             image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
-                            color: tag.color?.color ?? .primary
+                            color: tag.color?.color ?? .primary,
+                            style: .standard
                         ) {
                             Text(tag.name)
                         }
