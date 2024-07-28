@@ -8,15 +8,18 @@ struct TagPillView: View {
     var isSelected: Bool = false
 
     var body: some View {
-        Label(tag.name, systemImage: tag.iconName ?? VaultItemTag.defaultIconName)
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
-            .background(
-                Capsule(style: .circular)
-                    .fill(isSelected ? tagColor : .clear)
-                    .stroke(isSelected ? contrastingColor : tagColor, lineWidth: 1)
-            )
-            .foregroundColor(isSelected ? contrastingColor : tagColor)
+        HStack(alignment: .center, spacing: 16) {
+            TagIconView(iconName: tag.iconName)
+            Text(tag.name)
+        }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 8)
+        .background(
+            Capsule(style: .circular)
+                .fill(isSelected ? tagColor : .clear)
+                .stroke(isSelected ? contrastingColor : tagColor, lineWidth: 1)
+        )
+        .foregroundColor(isSelected ? contrastingColor : tagColor)
     }
 
     private var tagColor: Color {

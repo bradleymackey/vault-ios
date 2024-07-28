@@ -87,12 +87,10 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     private var iconSection: some View {
         Section {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))], spacing: 12) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 70, maximum: 100))], spacing: 12) {
                 ForEach(viewModel.systemIconOptions, id: \.self) { icon in
                     Image(systemName: icon)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
+                        .font(.system(.title2))
                         .padding(8)
                         .foregroundStyle(
                             viewModel.systemIconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)
