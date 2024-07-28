@@ -210,7 +210,7 @@ struct SecureNoteDetailView: View {
             Button {
                 isShowingDeleteConfirmation = true
             } label: {
-                FormRow(image: .init(systemName: "trash"), color: .red) {
+                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
                     Text(localized(key: "action.delete.title"))
                         .fontWeight(.medium)
                 }
