@@ -20,7 +20,7 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
     var body: some View {
         Form {
             previewSection
-            pickerSection
+            tagNameSection
             iconSection
             if viewModel.isExistingItem {
                 deleteSection
@@ -58,36 +58,39 @@ struct VaultTagDetailView<Store: VaultTagStore>: View {
 
     private var previewSection: some View {
         Section {
-            TagPillView(
-                tag: .init(
-                    id: .init(),
-                    name: viewModel.title,
-                    color: viewModel.color,
-                    iconName: viewModel.systemIconName
-                ),
-                isSelected: true
-            )
+            VStack(alignment: .center, spacing: 16) {
+                TagPillView(
+                    tag: .init(
+                        id: .init(),
+                        name: viewModel.title,
+                        color: viewModel.color,
+                        iconName: viewModel.systemIconName
+                    ),
+                    isSelected: true
+                )
+
+                ColorPicker("Tag Color", selection: $selectedColor)
+                    .labelsHidden()
+            }
             .modifier(HorizontallyCenter())
-            .padding()
         }
         .listRowBackground(EmptyView())
     }
 
-    private var pickerSection: some View {
+    private var tagNameSection: some View {
         Section {
-            TextField("Enter tag name...", text: $viewModel.title)
-            ColorPicker("Tag Color", selection: $selectedColor)
+            TextField("My Tag", text: $viewModel.title)
+        } header: {
+            Text("Tag Name")
         }
     }
 
     private var iconSection: some View {
         Section {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 40))], spacing: 12) {
+            LazyVGrid(columns: [GridItem(.adaptive(minimum: 70, maximum: 100))], spacing: 12) {
                 ForEach(viewModel.systemIconOptions, id: \.self) { icon in
                     Image(systemName: icon)
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 24, height: 24)
+                        .font(.system(.title2))
                         .padding(8)
                         .foregroundStyle(
                             viewModel.systemIconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)

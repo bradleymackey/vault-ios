@@ -117,7 +117,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                                 modal = nil
                             } label: {
                                 FormRow(
-                                    image: Image(systemName: tag.iconName ?? "tag.fill"),
+                                    image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
                                     color: tag.color?.color ?? .primary
                                 ) {
                                     Text(tag.name)
@@ -315,7 +315,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             }
 
             ForEach(tagsThatAreSelected) { tag in
-                FormRow(image: Image(systemName: tag.iconName ?? "tag.fill"), color: tag.color?.color ?? .primary) {
+                FormRow(
+                    image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
+                    color: tag.color?.color ?? .primary
+                ) {
                     Text(tag.name)
                 }
             }

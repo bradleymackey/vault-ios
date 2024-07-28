@@ -16,7 +16,7 @@ struct PlaceholderView: View {
                     .font(.headline.bold())
                 if let subtitle {
                     Text(subtitle)
-                        .font(.footnote)
+                        .font(.body)
                 }
             }
         }
