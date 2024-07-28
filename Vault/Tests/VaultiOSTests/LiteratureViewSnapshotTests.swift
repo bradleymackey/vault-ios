@@ -1,7 +1,7 @@
 import SnapshotTesting
 import SwiftUI
 import XCTest
-@testable import VaultUI
+@testable import VaultiOS
 
 final class LiteratureViewSnapshotTests: XCTestCase {
     override func setUp() {

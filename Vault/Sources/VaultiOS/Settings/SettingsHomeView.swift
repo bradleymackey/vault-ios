@@ -1,7 +1,6 @@
 import SwiftUI
 import VaultFeed
 import VaultSettings
-import VaultUI
 
 @MainActor
 public struct SettingsHomeView: View {

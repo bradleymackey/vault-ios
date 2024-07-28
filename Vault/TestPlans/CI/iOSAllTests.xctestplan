@@ -84,13 +84,6 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "VaultUITests",
-        "name" : "VaultUITests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "VaultiOSTests",
         "name" : "VaultiOSTests"
       }

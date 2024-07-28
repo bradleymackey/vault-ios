@@ -52,7 +52,6 @@ let package = Package(
                 "SimpleToast",
                 "CodeScanner",
                 "FoundationExtensions",
-                .targetItem(name: "VaultUI", condition: .when(platforms: [.iOS])),
             ],
             resources: [
                 .process("Resources/Feed.xcstrings"),
@@ -97,21 +96,6 @@ let package = Package(
         .testTarget(
             name: "VaultCoreTests",
             dependencies: ["VaultCore", "TestHelpers"],
-            swiftSettings: swiftSettings
-        ),
-        .target(
-            name: "VaultUI",
-            dependencies: ["FoundationExtensions", "ImageTools"],
-            swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
-        ),
-        .testTarget(
-            name: "VaultUITests",
-            dependencies: [
-                "VaultUI",
-                .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
-            ],
-            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings
         ),
         .target(

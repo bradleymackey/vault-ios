@@ -4,7 +4,6 @@ import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
-import VaultUI
 
 @MainActor
 struct OTPCodeCreateView<
