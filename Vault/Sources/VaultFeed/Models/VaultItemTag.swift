@@ -23,6 +23,11 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
         self.iconName = iconName
     }
 
+    /// The default system icon name that should be used by a tag.
+    public static var defaultIconName: String {
+        "tag.fill"
+    }
+
     /// Maps this object to a `VaultItemTag.Write` for writing.
     ///
     /// This discards any non-deterministic data and identifiable information.

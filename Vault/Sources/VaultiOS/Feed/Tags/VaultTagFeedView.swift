@@ -73,7 +73,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                         modal = .editingTag(tag)
                     } label: {
                         FormRow(
-                            image: Image(systemName: tag.iconName ?? "tag.fill"),
+                            image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
                             color: tag.color?.color ?? .primary
                         ) {
                             Text(tag.name)

@@ -9,7 +9,7 @@ struct VaultTagRow: View {
         Label {
             Text(tag.name)
         } icon: {
-            Image(systemName: tag.iconName ?? "tag.fill")
+            Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName)
                 .foregroundStyle(tag.color?.color ?? .primary)
         }
         .id(tag.id)

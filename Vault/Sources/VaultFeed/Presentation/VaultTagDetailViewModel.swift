@@ -15,12 +15,12 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
     private let store: Store
 
     public static var defaultIconOption: String {
-        "tag.fill"
+        VaultItemTag.defaultIconName
     }
 
     public static var systemIconOptions: [String] {
         [
-            "tag.fill",
+            "tag.fill", // VaultItemTag.defaultIconName
             "briefcase.fill",
             "tree.fill",
             "mountain.2.fill",

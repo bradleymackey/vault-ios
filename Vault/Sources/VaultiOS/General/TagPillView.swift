@@ -8,7 +8,7 @@ struct TagPillView: View {
     var isSelected: Bool = false
 
     var body: some View {
-        Label(tag.name, systemImage: tag.iconName ?? "tag.fill")
+        Label(tag.name, systemImage: tag.iconName ?? VaultItemTag.defaultIconName)
             .padding(.horizontal, 12)
             .padding(.vertical, 8)
             .background(
