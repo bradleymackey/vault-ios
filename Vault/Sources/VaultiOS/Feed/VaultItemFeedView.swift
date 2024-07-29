@@ -170,6 +170,7 @@ public struct VaultItemFeedView<
         } moveAction: { from, to in
             viewModel.codes.move(fromOffsets: from, toOffset: to)
         }
+        .animation(.easeOut, value: viewModel.filteringByTags)
     }
 
     private var columns: [GridItem] {
