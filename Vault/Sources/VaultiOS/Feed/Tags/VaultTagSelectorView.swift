@@ -23,6 +23,7 @@ struct VaultTagSelectorView: View {
                         Text(tag.name)
                     }
                 }
+                .tint(.primary)
             }
         }
         .toolbar {
