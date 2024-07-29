@@ -91,8 +91,10 @@ struct SecureNoteDetailView: View {
             switch item {
             case .tagSelector:
                 NavigationStack {
-                    tagSelectorList
-                        .navigationTitle(Text("Add Tag"))
+                    VaultTagSelectorView(currentTags: viewModel.remainingTags) { selectedTag in
+                        viewModel.editingModel.detail.tags.insert(selectedTag.id)
+                    }
+                    .navigationTitle(Text("Add Tag"))
                 }
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)

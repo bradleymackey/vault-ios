@@ -109,8 +109,10 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             switch item {
             case .tagSelector:
                 NavigationStack {
-                    tagSelectorList
-                        .navigationTitle(Text("Add Tag"))
+                    VaultTagSelectorView(currentTags: viewModel.remainingTags) { selectedTag in
+                        viewModel.editingModel.detail.tags.insert(selectedTag.id)
+                    }
+                    .navigationTitle(Text("Add Tag"))
                 }
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
@@ -134,25 +136,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
             ToastAlertMessageView.copiedToClipboard()
                 .padding(.top, 24)
-        }
-    }
-
-    private var tagSelectorList: some View {
-        List {
-            ForEach(viewModel.remainingTags) { tag in
-                Button {
-                    viewModel.editingModel.detail.tags.insert(tag.id)
-                    modal = nil
-                } label: {
-                    FormRow(
-                        image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
-                        color: tag.color?.color ?? .primary,
-                        style: .standard
-                    ) {
-                        Text(tag.name)
-                    }
-                }
-            }
         }
     }
 
