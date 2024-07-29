@@ -12,7 +12,6 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     let content: (Item) -> Content
     let previewContent: (Item) -> PreviewContent
     let moveAction: (IndexSet, Int) -> Void
-    @Namespace private var forEachItems
 
     init(
         items: [Item],
@@ -36,8 +35,6 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
     var body: some View {
         ForEach(items) { item in
             content(item)
-                .matchedGeometryEffect(id: item.id, in: forEachItems)
-                .animation(.easeOut, value: items)
                 .overlay(
                     Color.white
                         .opacity(draggingItem == item ? 0.8 : 0)
