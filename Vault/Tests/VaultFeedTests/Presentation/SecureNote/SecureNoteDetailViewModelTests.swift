@@ -336,6 +336,54 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(sut.visibleTitle, "my title")
     }
+
+    @MainActor
+    func test_remainingTags_noTagsSelectedIsEqualToAllTags() {
+        let tag1 = anyVaultItemTag()
+        let tag2 = anyVaultItemTag()
+        let tag3 = anyVaultItemTag()
+
+        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        sut.editingModel.detail.tags = []
+
+        XCTAssertEqual(sut.remainingTags, [tag1, tag2, tag3])
+    }
+
+    @MainActor
+    func test_remainingTags_removesTagsThatHaveBeenSelected() {
+        let tag1 = anyVaultItemTag()
+        let tag2 = anyVaultItemTag()
+        let tag3 = anyVaultItemTag()
+
+        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        sut.editingModel.detail.tags = [tag1.id]
+
+        XCTAssertEqual(sut.remainingTags, [tag2, tag3])
+    }
+
+    @MainActor
+    func test_tagsThatAreSelected_isEmptyIfNoTagsSelected() {
+        let tag1 = anyVaultItemTag()
+        let tag2 = anyVaultItemTag()
+        let tag3 = anyVaultItemTag()
+        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+
+        sut.editingModel.detail.tags = []
+
+        XCTAssertEqual(sut.tagsThatAreSelected, [])
+    }
+
+    @MainActor
+    func test_tagsThatAreSelected_matchesSelectedTags() {
+        let tag1 = anyVaultItemTag()
+        let tag2 = anyVaultItemTag()
+        let tag3 = anyVaultItemTag()
+        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+
+        sut.editingModel.detail.tags = [tag1.id, tag3.id]
+
+        XCTAssertEqual(sut.tagsThatAreSelected, [tag1, tag3])
+    }
 }
 
 extension SecureNoteDetailViewModelTests {
@@ -360,10 +408,13 @@ extension SecureNoteDetailViewModelTests {
     }
 
     @MainActor
-    private func makeSUT(editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock())
+    private func makeSUT(
+        editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
+        allTags: [VaultItemTag] = []
+    )
         -> SecureNoteDetailViewModel
     {
-        SecureNoteDetailViewModel(mode: .creating, allTags: [], editor: editor)
+        SecureNoteDetailViewModel(mode: .creating, allTags: allTags, editor: editor)
     }
 
     @MainActor
