@@ -6,9 +6,14 @@ import VaultCore
 public final class VaultTagFeedViewModel<Store: VaultTagStore> {
     public private(set) var tags = [VaultItemTag]()
     public private(set) var retrievalError: PresentationError?
+    public private(set) var state: State = .base
 
     public let store: Store
     public let strings = VaultTagFeedViewModelStrings()
+
+    public enum State {
+        case base, loaded
+    }
 
     public init(store: Store) {
         self.store = store
@@ -21,6 +26,7 @@ public final class VaultTagFeedViewModel<Store: VaultTagStore> {
     public func reloadData() async {
         do {
             tags = try await store.retrieveTags()
+            state = .loaded
         } catch {
             retrievalError = PresentationError(
                 userTitle: strings.retrieveErrorTitle,
