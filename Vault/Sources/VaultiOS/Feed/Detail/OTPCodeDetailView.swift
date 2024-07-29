@@ -12,8 +12,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
 
-    @State private var selectedColor: Color
     @Environment(Pasteboard.self) private var pasteboard: Pasteboard
+    @State private var selectedColor: Color
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
     @State private var isShowingCopyPaste = false
@@ -109,21 +109,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             switch item {
             case .tagSelector:
                 NavigationStack {
-                    List {
-                        ForEach(viewModel.remainingTags) { tag in
-                            Button {
-                                viewModel.editingModel.detail.tags.insert(tag.id)
-                                modal = nil
-                            } label: {
-                                FormRow(
-                                    image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
-                                    color: tag.color?.color ?? .primary,
-                                    style: .standard
-                                ) {
-                                    Text(tag.name)
-                                }
-                            }
-                        }
+                    VaultTagSelectorView(currentTags: viewModel.remainingTags) { selectedTag in
+                        viewModel.editingModel.detail.tags.insert(selectedTag.id)
                     }
                     .navigationTitle(Text("Add Tag"))
                 }
@@ -284,37 +271,49 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     Divider()
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(viewModel.detailMenuItems) { entry in
-                        FooterInfoLabel(
-                            title: entry.title,
-                            detail: entry.detail,
-                            systemImageName: entry.systemIconName
-                        )
+                VStack(alignment: .leading, spacing: 16) {
+                    if viewModel.tagsThatAreSelected.isNotEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(viewModel.tagsThatAreSelected) { tag in
+                                    TagPillView(tag: tag, isSelected: true)
+                                        .id(tag)
+                                }
+                            }
+                            .font(.callout)
+                        }
+                        .scrollClipDisabled()
                     }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(viewModel.detailMenuItems) { entry in
+                            FooterInfoLabel(
+                                title: entry.title,
+                                detail: entry.detail,
+                                systemImageName: entry.systemIconName
+                            )
+                        }
+                    }
+                    .font(.footnote)
                 }
-                .font(.footnote)
             }
             .padding(.top, 16)
         }
     }
 
-    private var tagsThatAreSelected: [VaultItemTag] {
-        viewModel.allTags.filter { viewModel.editingModel.detail.tags.contains($0.id) }
-    }
-
     private var tagSelectionSection: some View {
         Section {
-            if tagsThatAreSelected.isEmpty {
+            if viewModel.tagsThatAreSelected.isEmpty {
                 PlaceholderView(
                     systemIcon: "tag.fill",
-                    title: "None"
+                    title: "None",
+                    subtitle: "Add a tag to categorize this item"
                 )
                 .modifier(HorizontallyCenter())
                 .padding()
             }
 
-            ForEach(tagsThatAreSelected) { tag in
+            ForEach(viewModel.tagsThatAreSelected) { tag in
                 FormRow(
                     image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
                     color: tag.color?.color ?? .primary,
@@ -324,25 +323,26 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             }
             .onDelete { indexes in
-                let tagIds = tagsThatAreSelected.map(\.id)
+                let tagIds = viewModel.tagsThatAreSelected.map(\.id)
                 let tagsToRemove = indexes.map { tagIds[$0] }
                 for tag in tagsToRemove {
                     viewModel.editingModel.detail.tags.remove(tag)
                 }
             }
-
-            if viewModel.remainingTags.isNotEmpty {
-                // present add tag picker, this uses a standard SwiftUI picker to add another tag
-                Button {
-                    modal = .tagSelector
-                } label: {
-                    Label("Tag", systemImage: "plus")
+        } header: {
+            HStack(alignment: .center) {
+                Text("Tags")
+                Spacer()
+                if viewModel.remainingTags.isNotEmpty {
+                    Button {
+                        modal = .tagSelector
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                    }
                 }
             }
-        } header: {
-            Text("Tags")
         }
-        .listRowSeparator(tagsThatAreSelected.isEmpty ? .hidden : .automatic)
+        .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
 
     private var viewConfigEditingSection: some View {

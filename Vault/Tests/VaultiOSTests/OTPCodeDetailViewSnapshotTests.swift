@@ -34,8 +34,6 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
             presentationMode: .none
         )
-        .framedToTestDeviceSize()
-        .environment(makePasteboard())
 
         await snapshotScenarios(view: sut)
     }
@@ -62,8 +60,32 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
             presentationMode: .none
         )
-        .framedToTestDeviceSize()
-        .environment(makePasteboard())
+
+        await snapshotScenarios(view: sut)
+    }
+
+    @MainActor
+    func test_editMode_emptyState() async {
+        let sut = OTPCodeDetailView(
+            editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                color: nil
+            ),
+            editor: OTPCodeDetailEditorMock(),
+            previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            openInEditMode: true,
+            presentationMode: .none
+        )
 
         await snapshotScenarios(view: sut)
     }
@@ -81,6 +103,8 @@ extension OTPCodeDetailViewSnapshotTests {
                 let snapshottingView = view
                     .dynamicTypeSize(dynamicTypeSize)
                     .preferredColorScheme(colorScheme)
+                    .framedToTestDeviceSize()
+                    .environment(makePasteboard())
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(
