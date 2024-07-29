@@ -250,9 +250,24 @@ struct SecureNoteDetailView: View {
             )
             .frame(minHeight: 250, alignment: .top)
         } footer: {
-            VStack(alignment: .leading, spacing: 8) {
-                ForEach(viewModel.detailEntries) { item in
-                    FooterInfoLabel(title: item.title, detail: item.detail, systemImageName: item.systemIconName)
+            VStack(alignment: .leading, spacing: 16) {
+                if viewModel.tagsThatAreSelected.isNotEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(viewModel.tagsThatAreSelected) { tag in
+                                TagPillView(tag: tag, isSelected: true)
+                                    .id(tag)
+                            }
+                        }
+                        .font(.callout)
+                    }
+                    .scrollClipDisabled()
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(viewModel.detailEntries) { item in
+                        FooterInfoLabel(title: item.title, detail: item.detail, systemImageName: item.systemIconName)
+                    }
                 }
             }
             .font(.footnote)

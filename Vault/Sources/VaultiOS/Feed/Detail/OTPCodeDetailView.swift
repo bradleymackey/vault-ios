@@ -271,16 +271,31 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     Divider()
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
-                    ForEach(viewModel.detailMenuItems) { entry in
-                        FooterInfoLabel(
-                            title: entry.title,
-                            detail: entry.detail,
-                            systemImageName: entry.systemIconName
-                        )
+                VStack(alignment: .leading, spacing: 16) {
+                    if viewModel.tagsThatAreSelected.isNotEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack {
+                                ForEach(viewModel.tagsThatAreSelected) { tag in
+                                    TagPillView(tag: tag, isSelected: true)
+                                        .id(tag)
+                                }
+                            }
+                            .font(.callout)
+                        }
+                        .scrollClipDisabled()
                     }
+
+                    VStack(alignment: .leading, spacing: 8) {
+                        ForEach(viewModel.detailMenuItems) { entry in
+                            FooterInfoLabel(
+                                title: entry.title,
+                                detail: entry.detail,
+                                systemImageName: entry.systemIconName
+                            )
+                        }
+                    }
+                    .font(.footnote)
                 }
-                .font(.footnote)
             }
             .padding(.top, 16)
         }
