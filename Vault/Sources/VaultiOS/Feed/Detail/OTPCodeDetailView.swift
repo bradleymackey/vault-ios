@@ -308,7 +308,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             if tagsThatAreSelected.isEmpty {
                 PlaceholderView(
                     systemIcon: "tag.fill",
-                    title: "None"
+                    title: "None",
+                    subtitle: "Add a tag to categorize this item"
                 )
                 .modifier(HorizontallyCenter())
                 .padding()
@@ -330,17 +331,19 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     viewModel.editingModel.detail.tags.remove(tag)
                 }
             }
-
-            if viewModel.remainingTags.isNotEmpty {
-                // present add tag picker, this uses a standard SwiftUI picker to add another tag
-                Button {
-                    modal = .tagSelector
-                } label: {
-                    Label("Tag", systemImage: "plus")
+        } header: {
+            HStack(alignment: .center) {
+                Text("Tags")
+                Spacer()
+                if viewModel.remainingTags.isNotEmpty {
+                    // present add tag picker, this uses a standard SwiftUI picker to add another tag
+                    Button {
+                        modal = .tagSelector
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                    }
                 }
             }
-        } header: {
-            Text("Tags")
         }
         .listRowSeparator(tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
