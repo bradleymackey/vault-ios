@@ -19,11 +19,17 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
 
     var body: some View {
         VStack {
-            if viewModel.tags.isEmpty {
-                noTagsView
-                    .frame(maxWidth: .infinity, maxHeight: .infinity)
-            } else {
-                list
+            switch viewModel.state {
+            case .base:
+                // Initially empty view before loaded so we don't flash the noTagsView
+                EmptyView()
+            case .loaded:
+                if viewModel.tags.isEmpty {
+                    noTagsView
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                } else {
+                    list
+                }
             }
         }
         .navigationTitle(viewModel.strings.title)
