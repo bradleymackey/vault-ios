@@ -31,7 +31,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -56,7 +55,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -81,7 +79,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -107,7 +104,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -133,7 +129,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: false
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -158,7 +153,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: true
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -184,7 +178,6 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             editor: SecureNoteDetailEditorMock(),
             openInEditMode: true
         )
-        .framedToTestDeviceSize()
 
         await snapshotScenarios(view: sut)
     }
@@ -202,6 +195,7 @@ extension SecureNoteDetailViewSnapshotTests {
                 let snapshottingView = view
                     .dynamicTypeSize(dynamicTypeSize)
                     .preferredColorScheme(colorScheme)
+                    .framedToTestDeviceSize()
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(
