@@ -137,6 +137,57 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
 
         await snapshotScenarios(view: sut)
     }
+
+    @MainActor
+    func test_editMode_emptyState() async {
+        let sut = SecureNoteDetailView(
+            editingExistingNote: .init(title: "", contents: ""),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                color: nil
+            ),
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: true
+        )
+        .framedToTestDeviceSize()
+
+        await snapshotScenarios(view: sut)
+    }
+
+    @MainActor
+    func test_editMode_editedContent() async {
+        let date = fixedTestDate()
+        let sut = SecureNoteDetailView(
+            editingExistingNote: .init(title: "My Title", contents: "My contents"),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: date,
+                updated: date.addingTimeInterval(1), // different updated date
+                userDescription: "My description",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                color: .black
+            ),
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: true
+        )
+        .framedToTestDeviceSize()
+
+        await snapshotScenarios(view: sut)
+    }
 }
 
 // MARK: - Helpers
