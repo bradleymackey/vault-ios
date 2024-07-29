@@ -16,6 +16,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -40,6 +41,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -64,6 +66,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -89,6 +92,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: longContent),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: fixedTestDate(),
@@ -114,6 +118,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
             navigationPath: .constant(NavigationPath()),
+            allTags: [],
             storedMetadata: .init(
                 id: UUID(),
                 created: date,

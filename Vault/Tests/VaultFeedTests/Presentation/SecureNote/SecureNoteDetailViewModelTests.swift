@@ -345,21 +345,25 @@ extension SecureNoteDetailViewModelTests {
         storedMetadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock()
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(mode: .editing(note: storedNote, metadata: storedMetadata), editor: editor)
+        SecureNoteDetailViewModel(
+            mode: .editing(note: storedNote, metadata: storedMetadata),
+            allTags: [],
+            editor: editor
+        )
     }
 
     @MainActor
     private func makeSUTCreating(
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock()
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(mode: .creating, editor: editor)
+        SecureNoteDetailViewModel(mode: .creating, allTags: [], editor: editor)
     }
 
     @MainActor
     private func makeSUT(editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock())
         -> SecureNoteDetailViewModel
     {
-        SecureNoteDetailViewModel(mode: .creating, editor: editor)
+        SecureNoteDetailViewModel(mode: .creating, allTags: [], editor: editor)
     }
 
     @MainActor
