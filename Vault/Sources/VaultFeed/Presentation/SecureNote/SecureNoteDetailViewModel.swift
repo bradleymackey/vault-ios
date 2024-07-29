@@ -45,6 +45,10 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         allTags.filter { !editingModel.detail.tags.contains($0.id) }
     }
 
+    public var tagsThatAreSelected: [VaultItemTag] {
+        allTags.filter { editingModel.detail.tags.contains($0.id) }
+    }
+
     public var isInEditMode: Bool {
         detailEditState.isInEditMode
     }

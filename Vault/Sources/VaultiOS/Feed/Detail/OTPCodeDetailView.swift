@@ -336,7 +336,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 Text("Tags")
                 Spacer()
                 if viewModel.remainingTags.isNotEmpty {
-                    // present add tag picker, this uses a standard SwiftUI picker to add another tag
                     Button {
                         modal = .tagSelector
                     } label: {

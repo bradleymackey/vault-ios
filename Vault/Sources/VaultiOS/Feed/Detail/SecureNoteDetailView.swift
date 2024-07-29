@@ -68,6 +68,9 @@ struct SecureNoteDetailView: View {
                 noteTitleEditingSection
                 noteDescriptionEditingSection
                 noteContentsEditingSection
+                if viewModel.allTags.isNotEmpty {
+                    tagSelectionSection
+                }
                 viewConfigEditingSection
                 if viewModel.editingModel.detail.viewConfig.needsPassphrase {
                     passphraseEntrySection
@@ -95,6 +98,52 @@ struct SecureNoteDetailView: View {
                 .presentationDragIndicator(.visible)
             }
         }
+    }
+
+    // MARK: Tags
+
+    private var tagSelectionSection: some View {
+        Section {
+            if viewModel.tagsThatAreSelected.isEmpty {
+                PlaceholderView(
+                    systemIcon: "tag.fill",
+                    title: "None",
+                    subtitle: "Add a tag to categorize this item"
+                )
+                .modifier(HorizontallyCenter())
+                .padding()
+            }
+
+            ForEach(viewModel.tagsThatAreSelected) { tag in
+                FormRow(
+                    image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
+                    color: tag.color?.color ?? .primary,
+                    style: .standard
+                ) {
+                    Text(tag.name)
+                }
+            }
+            .onDelete { indexes in
+                let tagIds = viewModel.tagsThatAreSelected.map(\.id)
+                let tagsToRemove = indexes.map { tagIds[$0] }
+                for tag in tagsToRemove {
+                    viewModel.editingModel.detail.tags.remove(tag)
+                }
+            }
+        } header: {
+            HStack(alignment: .center) {
+                Text("Tags")
+                Spacer()
+                if viewModel.remainingTags.isNotEmpty {
+                    Button {
+                        modal = .tagSelector
+                    } label: {
+                        Image(systemName: "plus.circle.fill")
+                    }
+                }
+            }
+        }
+        .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
 
     private var tagSelectorList: some View {
