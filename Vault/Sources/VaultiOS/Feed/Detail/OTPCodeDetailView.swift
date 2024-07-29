@@ -12,8 +12,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
 
-    @State private var selectedColor: Color
     @Environment(Pasteboard.self) private var pasteboard: Pasteboard
+    @State private var selectedColor: Color
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
     @State private var isShowingCopyPaste = false
