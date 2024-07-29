@@ -303,13 +303,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         }
     }
 
-    private var tagsThatAreSelected: [VaultItemTag] {
-        viewModel.allTags.filter { viewModel.editingModel.detail.tags.contains($0.id) }
-    }
-
     private var tagSelectionSection: some View {
         Section {
-            if tagsThatAreSelected.isEmpty {
+            if viewModel.tagsThatAreSelected.isEmpty {
                 PlaceholderView(
                     systemIcon: "tag.fill",
                     title: "None",
@@ -319,7 +315,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .padding()
             }
 
-            ForEach(tagsThatAreSelected) { tag in
+            ForEach(viewModel.tagsThatAreSelected) { tag in
                 FormRow(
                     image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
                     color: tag.color?.color ?? .primary,
@@ -329,7 +325,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             }
             .onDelete { indexes in
-                let tagIds = tagsThatAreSelected.map(\.id)
+                let tagIds = viewModel.tagsThatAreSelected.map(\.id)
                 let tagsToRemove = indexes.map { tagIds[$0] }
                 for tag in tagsToRemove {
                     viewModel.editingModel.detail.tags.remove(tag)
@@ -349,7 +345,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             }
         }
-        .listRowSeparator(tagsThatAreSelected.isEmpty ? .hidden : .automatic)
+        .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
 
     private var viewConfigEditingSection: some View {

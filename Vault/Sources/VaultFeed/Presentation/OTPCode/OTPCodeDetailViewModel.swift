@@ -92,6 +92,10 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         }
     }
 
+    public var tagsThatAreSelected: [VaultItemTag] {
+        allTags.filter { editingModel.detail.tags.contains($0.id) }
+    }
+
     public var detailMenuItems: [DetailEntry] {
         var entries = [DetailEntry]()
         if let createdDate = createdDateValue {
