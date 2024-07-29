@@ -34,6 +34,7 @@ struct VaultDetailEditView<
             SecureNoteDetailView(
                 editingExistingNote: storedNote,
                 navigationPath: $navigationPath,
+                allTags: feedViewModel.tags,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 openInEditMode: openInEditMode

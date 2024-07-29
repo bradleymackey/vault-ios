@@ -7,18 +7,29 @@ import VaultFeed
 struct SecureNoteDetailView: View {
     @State private var viewModel: SecureNoteDetailViewModel
     @Binding private var navigationPath: NavigationPath
+
     @Environment(\.presentationMode) private var presentationMode
     @State private var selectedColor: Color
+    @State private var modal: Modal?
+
+    private enum Modal: IdentifiableSelf {
+        case tagSelector
+    }
 
     init(
         editingExistingNote note: SecureNote,
         navigationPath: Binding<NavigationPath>,
+        allTags: [VaultItemTag],
         storedMetadata: VaultItem.Metadata,
         editor: any SecureNoteDetailEditor,
         openInEditMode: Bool
     ) {
         _navigationPath = navigationPath
-        _viewModel = .init(initialValue: .init(mode: .editing(note: note, metadata: storedMetadata), editor: editor))
+        _viewModel = .init(initialValue: .init(
+            mode: .editing(note: note, metadata: storedMetadata),
+            allTags: allTags,
+            editor: editor
+        ))
         _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
 
         if openInEditMode {
@@ -26,9 +37,17 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    init(newNoteWithEditor editor: any SecureNoteDetailEditor, navigationPath: Binding<NavigationPath>) {
+    init(
+        newNoteWithEditor editor: any SecureNoteDetailEditor,
+        navigationPath: Binding<NavigationPath>,
+        allTags: [VaultItemTag]
+    ) {
         _navigationPath = navigationPath
-        _viewModel = .init(initialValue: .init(mode: .creating, editor: editor))
+        _viewModel = .init(initialValue: .init(
+            mode: .creating,
+            allTags: allTags,
+            editor: editor
+        ))
         _selectedColor = .init(initialValue: VaultItemColor.default.color)
 
         viewModel.startEditing()
@@ -64,6 +83,35 @@ struct SecureNoteDetailView: View {
         .animation(.easeOut, value: viewModel.editingModel.detail.viewConfig)
         .onChange(of: selectedColor.hashValue) { _, _ in
             viewModel.editingModel.detail.color = VaultItemColor(color: selectedColor)
+        }
+        .sheet(item: $modal, onDismiss: nil) { item in
+            switch item {
+            case .tagSelector:
+                NavigationStack {
+                    tagSelectorList
+                        .navigationTitle(Text("Add Tag"))
+                }
+                .presentationDetents([.medium, .large])
+                .presentationDragIndicator(.visible)
+            }
+        }
+    }
+
+    private var tagSelectorList: some View {
+        List {
+            ForEach(viewModel.remainingTags) { tag in
+                Button {
+                    viewModel.editingModel.detail.tags.insert(tag.id)
+                } label: {
+                    FormRow(
+                        image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
+                        color: tag.color?.color ?? .primary,
+                        style: .standard
+                    ) {
+                        Text(tag.name)
+                    }
+                }
+            }
         }
     }
 
