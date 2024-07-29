@@ -25,5 +25,15 @@ struct VaultTagSelectorView: View {
                 }
             }
         }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                }
+                .tint(.red)
+            }
+        }
     }
 }
