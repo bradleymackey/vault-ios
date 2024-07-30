@@ -43,4 +43,24 @@ final class SecureNoteDetailEditsTests: XCTestCase {
 
         XCTAssertTrue(sut.isValid)
     }
+
+    func test_isHiddenWithPassphrase_falseIfAlwaysVisible() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.viewConfig = .alwaysVisible
+        XCTAssertFalse(sut.isHiddenWithPassphrase)
+
+        sut.isHiddenWithPassphrase = false
+        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+    }
+
+    func test_isHiddenWithPassphrase_trueIfRequiresPassphrase() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.viewConfig = .requiresSearchPassphrase
+        XCTAssertTrue(sut.isHiddenWithPassphrase)
+
+        sut.isHiddenWithPassphrase = true
+        XCTAssertEqual(sut.viewConfig, .requiresSearchPassphrase)
+    }
 }
