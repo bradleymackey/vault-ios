@@ -123,7 +123,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     private var isPassphraseValid: Bool {
         switch viewConfig {
-        case .onlyVisibleWhenSearchingRequiresPassphrase: $searchPassphrase.isValid
+        case .requiresSearchPassphrase: $searchPassphrase.isValid
         default: true
         }
     }
