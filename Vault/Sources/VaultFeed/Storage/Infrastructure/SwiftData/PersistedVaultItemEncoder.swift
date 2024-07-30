@@ -52,6 +52,7 @@ extension PersistedVaultItemEncoder {
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
             searchPassphrase: newData.searchPassphase,
+            lockState: encodeLockState(state: newData.lockState),
             color: newData.color.flatMap { color in
                 .init(red: color.red, green: color.green, blue: color.blue)
             },
@@ -72,6 +73,7 @@ extension PersistedVaultItemEncoder {
         existingItem.searchableLevel = encodeSearchableLevel(level: newData.searchableLevel)
         existingItem.searchPassphrase = newData.searchPassphase
         existingItem.tags = try fetchTagsForItem(newData: newData)
+        existingItem.lockState = encodeLockState(state: newData.lockState)
         existingItem.color = newData.color.flatMap { color in
             .init(red: color.red, green: color.green, blue: color.blue)
         }
@@ -97,6 +99,13 @@ extension PersistedVaultItemEncoder {
         switch level {
         case .always: VaultEncodingConstants.Visibility.always
         case .onlySearch: VaultEncodingConstants.Visibility.onlySearch
+        }
+    }
+
+    private func encodeLockState(state: VaultItemLockState) -> String {
+        switch state {
+        case .notLocked: VaultEncodingConstants.LockState.notLocked
+        case .lockedWithNativeSecurity: VaultEncodingConstants.LockState.lockedWithNativeSecurity
         }
     }
 }

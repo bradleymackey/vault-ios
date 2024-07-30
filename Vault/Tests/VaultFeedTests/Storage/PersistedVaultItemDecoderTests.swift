@@ -176,6 +176,37 @@ extension PersistedVaultItemDecoderTests {
         let decoded = try sut.decode(item: item)
         XCTAssertEqual(decoded.metadata.tags, [.init(id: id1), .init(id: id2)])
     }
+
+    func test_decodeLockState_nilIsNotLocked() throws {
+        let item = makePersistedItem(lockState: nil)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.lockState, .notLocked)
+    }
+
+    func test_decodeLockState_notLocked() throws {
+        let item = makePersistedItem(lockState: "NOT_LOCKED")
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.lockState, .notLocked)
+    }
+
+    func test_decodeLockState_lockedNative() throws {
+        let item = makePersistedItem(lockState: "LOCKED_NATIVE")
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.lockState, .lockedWithNativeSecurity)
+    }
+
+    func test_decodeLockState_invalidValueThrows() throws {
+        let item = makePersistedItem(lockState: "INVALID")
+        let sut = makeSUT()
+
+        XCTAssertThrowsError(try sut.decode(item: item))
+    }
 }
 
 // MARK: - OTP Code
@@ -381,6 +412,7 @@ extension PersistedVaultItemDecoderTests {
         visibility: String = "ALWAYS",
         searchableLevel: String = "FULL",
         searchPassphrase: String? = nil,
+        lockState: String? = nil,
         color: PersistedColor? = nil,
         tags: [PersistedVaultTag] = [],
         noteDetails: PersistedNoteDetails? = nil,
@@ -404,6 +436,7 @@ extension PersistedVaultItemDecoderTests {
             visibility: visibility,
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
+            lockState: lockState,
             color: color,
             tags: tags,
             noteDetails: noteDetails,

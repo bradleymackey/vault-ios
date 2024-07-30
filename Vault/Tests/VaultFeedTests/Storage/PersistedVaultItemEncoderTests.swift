@@ -248,6 +248,44 @@ extension PersistedVaultItemEncoderTests {
         let encoded = try sut.encode(item: itemNew, existing: existing)
         XCTAssertEqual(encoded.tags.map(\.id).reducedToSet(), [persisted2.id])
     }
+
+    func test_encodeLockState_newItemEncodesNotLocked() throws {
+        let sut = makeSUT()
+        let item = uniqueVaultItem(lockState: .notLocked).makeWritable()
+
+        let encoded = try sut.encode(item: item)
+
+        XCTAssertEqual(encoded.lockState, "NOT_LOCKED")
+    }
+
+    func test_encodeLockState_existingItemEncodesNotLocked() throws {
+        let sut = makeSUT()
+        let item = uniqueVaultItem(lockState: .lockedWithNativeSecurity).makeWritable()
+        let existing = try sut.encode(item: item)
+
+        let newItem = uniqueVaultItem(lockState: .notLocked).makeWritable()
+        let encoded = try sut.encode(item: newItem, existing: existing)
+        XCTAssertEqual(encoded.lockState, "NOT_LOCKED")
+    }
+
+    func test_encodeLockState_newItemEncodesLockedNative() throws {
+        let sut = makeSUT()
+        let item = uniqueVaultItem(lockState: .lockedWithNativeSecurity).makeWritable()
+
+        let encoded = try sut.encode(item: item)
+
+        XCTAssertEqual(encoded.lockState, "LOCKED_NATIVE")
+    }
+
+    func test_encodeLockState_existingItemEncodesLockedNative() throws {
+        let sut = makeSUT()
+        let item = uniqueVaultItem(lockState: .notLocked).makeWritable()
+        let existing = try sut.encode(item: item)
+
+        let newItem = uniqueVaultItem(lockState: .lockedWithNativeSecurity).makeWritable()
+        let encoded = try sut.encode(item: newItem, existing: existing)
+        XCTAssertEqual(encoded.lockState, "LOCKED_NATIVE")
+    }
 }
 
 // MARK: - OTP

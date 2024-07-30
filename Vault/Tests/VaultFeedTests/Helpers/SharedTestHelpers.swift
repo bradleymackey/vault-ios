@@ -44,13 +44,15 @@ func uniqueVaultItem(
     item: VaultItem.Payload = .otpCode(anyOTPAuthCode()),
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
-    tags: Set<VaultItemTag.Identifier> = []
+    tags: Set<VaultItemTag.Identifier> = [],
+    lockState: VaultItemLockState = .notLocked
 ) -> VaultItem {
     VaultItem(
         metadata: anyVaultItemMetadata(
             userDescription: userDescription,
             visibility: visibility,
-            tags: tags
+            tags: tags,
+            lockState: lockState
         ),
         item: item
     )
