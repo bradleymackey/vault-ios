@@ -24,6 +24,8 @@ public struct SecureNoteDetailEdits: EditableState {
 
     public var tags: Set<VaultItemTag.Identifier>
 
+    public var lockState: VaultItemLockState
+
     public var isHiddenWithPassphrase: Bool {
         get {
             switch viewConfig {
@@ -43,7 +45,8 @@ public struct SecureNoteDetailEdits: EditableState {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
-        tags: Set<VaultItemTag.Identifier>
+        tags: Set<VaultItemTag.Identifier>,
+        lockState: VaultItemLockState
     ) {
         self.description = description
         self.title = title
@@ -52,6 +55,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
         self.tags = tags
+        self.lockState = lockState
     }
 
     public var isValid: Bool {
@@ -79,7 +83,8 @@ extension SecureNoteDetailEdits {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
     }
 }

@@ -19,6 +19,7 @@
           }
         }
       },
+      "lock_state" : "LOCKED_NATIVE",
       "search_passphrase" : "pass",
       "searchable_level" : "FULL",
       "tags" : [

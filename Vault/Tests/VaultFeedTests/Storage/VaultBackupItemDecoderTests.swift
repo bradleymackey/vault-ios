@@ -23,6 +23,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "hello",
+            lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: "contents"))
         )
@@ -39,6 +40,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "hello")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.metadata.tags, [.init(id: tag)])
+        XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
     }
@@ -68,6 +70,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
+            lockState: .lockedWithNativeSecurity,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "BASE_32",
@@ -94,6 +97,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "pass")
         XCTAssertEqual(decodedItem.metadata.visibility, .always)
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
+        XCTAssertEqual(decodedItem.metadata.lockState, .lockedWithNativeSecurity)
         XCTAssertEqual(decodedItem.item.otpCode?.type, .totp(period: 30))
         XCTAssertEqual(decodedItem.item.otpCode?.data.secret, expectedSecret)
         XCTAssertEqual(decodedItem.item.otpCode?.data.accountName, "my acc")
@@ -116,6 +120,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "nice",
+            lockState: .notLocked,
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "BASE_32",
@@ -142,6 +147,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.visibility, .onlySearch)
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "nice")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.2, green: 0.2, blue: 0.3))
+        XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
         XCTAssertEqual(decodedItem.item.otpCode?.type, .hotp(counter: 10))
         XCTAssertEqual(decodedItem.item.otpCode?.data.secret, expectedSecret)
         XCTAssertEqual(decodedItem.item.otpCode?.data.accountName, "my acc a")
@@ -229,6 +235,7 @@ extension VaultBackupItemDecoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
+            lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: contents))
         )
@@ -253,6 +260,7 @@ extension VaultBackupItemDecoderTests {
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "",
+            lockState: .notLocked,
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: secretFormat,

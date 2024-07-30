@@ -20,7 +20,8 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
             tags: initialEdits.tags,
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
-            searchPassphase: initialEdits.searchPassphrase
+            searchPassphase: initialEdits.searchPassphrase,
+            lockState: initialEdits.lockState
         )
 
         try await vaultFeed.create(item: newCodeVaultItem)
@@ -40,7 +41,8 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
                 tags: edits.tags,
                 visibility: edits.viewConfig.visibility,
                 searchableLevel: edits.viewConfig.searchableLevel,
-                searchPassphase: edits.searchPassphrase
+                searchPassphase: edits.searchPassphrase,
+                lockState: edits.lockState
             )
         )
     }
@@ -60,7 +62,8 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             tags: initialEdits.tags,
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
-            searchPassphase: initialEdits.searchPassphrase
+            searchPassphase: initialEdits.searchPassphrase,
+            lockState: initialEdits.lockState
         )
 
         try await vaultFeed.create(item: newVaultItem)
@@ -77,7 +80,8 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             tags: edits.tags,
             visibility: edits.viewConfig.visibility,
             searchableLevel: edits.viewConfig.searchableLevel,
-            searchPassphase: edits.searchPassphrase
+            searchPassphase: edits.searchPassphrase,
+            lockState: edits.lockState
         )
 
         try await vaultFeed.update(id: id, item: updatedVaultItem)

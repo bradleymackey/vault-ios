@@ -29,7 +29,8 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
 
         let exp = expectation(description: "Wait for creation")
@@ -80,7 +81,8 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
         edits.issuerTitle = "new issuer name"
         edits.accountNameTitle = "new account name"
@@ -155,6 +157,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         initialEdits.contents = "new contents"
         initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
+        initialEdits.lockState = .lockedWithNativeSecurity
 
         let exp = expectation(description: "Wait for creation")
         feed.createHandler = { data in
@@ -280,6 +283,7 @@ extension VaultFeedDetailEditorAdapterTests {
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: [],
+            lockState: .notLocked,
             color: nil
         )
     }

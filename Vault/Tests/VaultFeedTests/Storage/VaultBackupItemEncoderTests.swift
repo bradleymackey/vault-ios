@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import VaultBackup
 import VaultCore
@@ -25,6 +26,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .secureNote(note)
@@ -42,6 +44,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
+        XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
     }
 
@@ -71,6 +74,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
+                lockState: .lockedWithNativeSecurity,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
@@ -86,6 +90,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "hello")
         XCTAssertEqual(encodedItem.userDescription, description)
+        XCTAssertEqual(encodedItem.lockState, .lockedWithNativeSecurity)
         XCTAssertEqual(encodedItem.tags, [])
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
         XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
@@ -125,6 +130,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
+                lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
@@ -140,6 +146,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "test")
+        XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tags, [])
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
         XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
@@ -208,6 +215,7 @@ extension VaultBackupItemEncoderTests {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: color
             ),
             item: .otpCode(code)

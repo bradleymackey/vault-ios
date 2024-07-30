@@ -12,6 +12,7 @@
           }
         }
       },
+      "lock_state" : "NOT_LOCKED",
       "search_passphrase" : "searchphrase",
       "searchable_level" : "FULL",
       "tags" : [
@@ -31,6 +32,7 @@
           }
         }
       },
+      "lock_state" : "LOCKED_NATIVE",
       "searchable_level" : "NONE",
       "tags" : [
         "493DF342-E537-4722-B6DC-6430A1413E34"
@@ -57,6 +59,7 @@
           }
         }
       },
+      "lock_state" : "NOT_LOCKED",
       "searchable_level" : "ONLY_TITLE",
       "tags" : [
         "493DF342-E537-4722-B6DC-6430A1413E34"

@@ -38,6 +38,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var tags: Set<VaultItemTag.Identifier>
 
+    public var lockState: VaultItemLockState
+
     public var isHiddenWithPassphrase: Bool {
         get {
             switch viewConfig {
@@ -63,6 +65,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
         tags: Set<VaultItemTag.Identifier>,
+        lockState: VaultItemLockState,
         color: VaultItemColor?
     ) {
         self.codeType = codeType
@@ -77,6 +80,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
         self.tags = tags
+        self.lockState = lockState
         self.color = color
     }
 
@@ -86,7 +90,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
-        tags: Set<VaultItemTag.Identifier>
+        tags: Set<VaultItemTag.Identifier>,
+        lockState: VaultItemLockState
     ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
@@ -106,6 +111,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.tags = tags
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
+        self.lockState = lockState
         self.color = color
     }
 
@@ -162,7 +168,20 @@ extension OTPCodeDetailEdits {
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: [],
+            lockState: .notLocked,
             color: nil
+        )
+    }
+
+    public static func new(hydratedFromCode code: OTPAuthCode) -> OTPCodeDetailEdits {
+        .init(
+            hydratedFromCode: code,
+            userDescription: "",
+            color: nil,
+            viewConfig: .alwaysVisible,
+            searchPassphrase: "",
+            tags: [],
+            lockState: .notLocked
         )
     }
 }

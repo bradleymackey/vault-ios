@@ -52,6 +52,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             tags: [],
             visibility: .always,
             searchableLevel: .full,
+            lockState: .lockedWithNativeSecurity,
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
@@ -64,6 +65,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             tags: [],
             visibility: .always,
             searchableLevel: .none,
+            lockState: .notLocked,
             item: .note(data: .init(title: "Hello world again"))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
@@ -77,6 +79,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
             searchPassphrase: "phrase",
+            lockState: .lockedWithNativeSecurity,
             item: .otp(data: .init(
                 secretFormat: "any",
                 secretData: Data(repeating: 0xFE, count: 20),

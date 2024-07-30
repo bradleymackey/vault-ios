@@ -1026,6 +1026,50 @@
         }
       }
     },
+    "vaultItemLockState.lockedWithNativeSecurity.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked by your device's password or biometrics."
+          }
+        }
+      }
+    },
+    "vaultItemLockState.lockedWithNativeSecurity.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Locked"
+          }
+        }
+      }
+    },
+    "vaultItemLockState.notLocked.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item is not locked or protected."
+          }
+        }
+      }
+    },
+    "vaultItemLockState.notLocked.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not locked"
+          }
+        }
+      }
+    },
     "vaultItemViewConfiguration.alwaysVisible.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {

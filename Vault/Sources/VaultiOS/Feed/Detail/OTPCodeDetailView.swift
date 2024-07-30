@@ -404,6 +404,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: VaultItemColor(color: .green)
             ),
             editor: StubEditor(),

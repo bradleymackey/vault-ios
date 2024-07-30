@@ -71,6 +71,7 @@ extension VaultItemTests {
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
+        lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil
     ) -> VaultItem {
         VaultItem(
@@ -83,6 +84,7 @@ extension VaultItemTests {
                 visibility: visibility,
                 searchableLevel: searchableLevel,
                 searchPassphrase: searchPassphrase,
+                lockState: lockState,
                 color: color
             ),
             item: .secureNote(.init(title: "title", contents: "contents"))

@@ -24,6 +24,11 @@ enum VaultEncodingConstants {
         static let onlySearch = "ONLY_SEARCH"
     }
 
+    enum LockState {
+        static let notLocked = "NOT_LOCKED"
+        static let lockedWithNativeSecurity = "LOCKED_NATIVE"
+    }
+
     enum SearchableLevel {
         static let none = "NONE"
         static let full = "FULL"

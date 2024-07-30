@@ -26,6 +26,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -50,6 +51,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .none,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -74,6 +76,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -99,6 +102,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: .gray
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -124,6 +128,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: .black
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -148,6 +153,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: SecureNoteDetailEditorMock(),
@@ -173,6 +179,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: .black
             ),
             editor: SecureNoteDetailEditorMock(),

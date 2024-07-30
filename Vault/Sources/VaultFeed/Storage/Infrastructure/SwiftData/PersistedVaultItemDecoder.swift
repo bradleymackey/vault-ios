@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 struct PersistedVaultItemDecoder {
@@ -12,6 +13,7 @@ struct PersistedVaultItemDecoder {
             visibility: decodeVisibility(level: item.visibility),
             searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
             searchPassphrase: item.searchPassphrase,
+            lockState: decodeLockState(value: item.lockState),
             color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {
@@ -114,6 +116,15 @@ extension PersistedVaultItemDecoder {
         switch value {
         case VaultEncodingConstants.OTPAuthSecret.Format.base32: .base32
         default: throw VaultItemDecodingError.invalidSecretFormat
+        }
+    }
+
+    private func decodeLockState(value: String?) throws -> VaultItemLockState {
+        switch value {
+        case VaultEncodingConstants.LockState.notLocked: .notLocked
+        case VaultEncodingConstants.LockState.lockedWithNativeSecurity: .lockedWithNativeSecurity
+        case nil: .notLocked
+        default: throw VaultItemDecodingError.invalidLockState
         }
     }
 }
