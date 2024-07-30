@@ -69,6 +69,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "passphrase",
+            lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "Example Note", rawContents: "Example note"))
         )
@@ -100,6 +101,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
+            lockState: .lockedWithNativeSecurity,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "any",
@@ -141,6 +143,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "searchphrase",
+            lockState: .notLocked,
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
@@ -154,6 +157,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             tags: [uuidTag],
             visibility: .always,
             searchableLevel: .none,
+            lockState: .lockedWithNativeSecurity,
             item: .note(data: .init(title: "Hello world again"))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
@@ -166,6 +170,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             tags: [uuidTag],
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
+            lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
                 secretFormat: "any",

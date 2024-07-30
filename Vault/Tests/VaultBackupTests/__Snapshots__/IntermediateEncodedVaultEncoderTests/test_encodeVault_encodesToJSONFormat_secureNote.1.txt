@@ -12,6 +12,7 @@
           }
         }
       },
+      "lock_state" : "NOT_LOCKED",
       "search_passphrase" : "passphrase",
       "searchable_level" : "FULL",
       "tags" : [

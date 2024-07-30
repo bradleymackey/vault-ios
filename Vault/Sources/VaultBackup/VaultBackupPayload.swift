@@ -54,6 +54,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var visibility: Visibility
     public var searchableLevel: SearchableLevel
     public var searchPassphrase: String?
+    public var lockState: LockState
     /// The tint color associated with the item.
     public var tintColor: VaultBackupRGBColor?
     /// The item's data that is used to reconstruct the item.
@@ -68,6 +69,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         visibility: Visibility,
         searchableLevel: SearchableLevel,
         searchPassphrase: String? = nil,
+        lockState: LockState,
         tintColor: VaultBackupRGBColor? = nil,
         item: Item
     ) {
@@ -80,6 +82,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase
         self.tintColor = tintColor
+        self.lockState = lockState
         self.item = item
     }
 }
@@ -111,6 +114,11 @@ extension VaultBackupItem {
     public enum Visibility: String, Codable {
         case always = "ALWAYS"
         case onlySearch = "ONLY_SEARCH"
+    }
+
+    public enum LockState: String, Codable {
+        case notLocked = "NOT_LOCKED"
+        case lockedWithNativeSecurity = "LOCKED_NATIVE"
     }
 
     /// A backed up OTP code.

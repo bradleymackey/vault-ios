@@ -25,7 +25,7 @@ extension VaultBackupItemDecoder {
             visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
             searchPassphrase: backupItem.searchPassphrase,
-            lockState: unimplemented("decode this value"),
+            lockState: decodeLockState(state: backupItem.lockState),
             color: decodeColor(color: backupItem.tintColor)
         )
     }
@@ -61,6 +61,13 @@ extension VaultBackupItemDecoder {
         case .none: .none
         case .onlyTitle: .onlyTitle
         case .onlyPassphrase: .onlyPassphrase
+        }
+    }
+
+    private func decodeLockState(state: VaultBackupItem.LockState) -> VaultItemLockState {
+        switch state {
+        case .notLocked: .notLocked
+        case .lockedWithNativeSecurity: .lockedWithNativeSecurity
         }
     }
 }

@@ -22,6 +22,7 @@ final class VaultBackupItemEncoder {
             visibility: encodeVisibility(metadata: storedItem.metadata),
             searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
             searchPassphrase: storedItem.metadata.searchPassphrase,
+            lockState: encodeLockState(metadata: storedItem.metadata),
             tintColor: encodeTintColor(meta: storedItem.metadata),
             item: itemDetail
         )
@@ -49,6 +50,13 @@ extension VaultBackupItemEncoder {
         case .full: .full
         case .onlyTitle: .onlyTitle
         case .onlyPassphrase: .onlyPassphrase
+        }
+    }
+
+    private func encodeLockState(metadata: VaultItem.Metadata) -> VaultBackupItem.LockState {
+        switch metadata.lockState {
+        case .notLocked: .notLocked
+        case .lockedWithNativeSecurity: .lockedWithNativeSecurity
         }
     }
 }
