@@ -102,6 +102,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             }
         }
+        .animation(.easeOut, value: viewModel.editingModel.detail.viewConfig)
         .sheet(item: $modal, onDismiss: nil, content: { item in
             switch item {
             case .tagSelector:
