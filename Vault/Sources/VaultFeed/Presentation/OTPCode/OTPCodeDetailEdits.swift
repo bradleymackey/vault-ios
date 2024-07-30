@@ -38,6 +38,18 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var tags: Set<VaultItemTag.Identifier>
 
+    public var isHiddenWithPassphrase: Bool {
+        get {
+            switch viewConfig {
+            case .alwaysVisible: false
+            case .requiresSearchPassphrase: true
+            }
+        }
+        set {
+            viewConfig = newValue ? .requiresSearchPassphrase : .alwaysVisible
+        }
+    }
+
     public init(
         codeType: OTPAuthType.Kind,
         totpPeriodLength: UInt64,

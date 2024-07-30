@@ -92,10 +92,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 if viewModel.allTags.isNotEmpty {
                     tagSelectionSection
                 }
-                viewConfigEditingSection
-                if viewModel.editingModel.detail.viewConfig.needsPassphrase {
-                    passphraseEntrySection
-                }
+                passphraseEditingSection
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
                 }
@@ -345,34 +342,20 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
 
-    private var viewConfigEditingSection: some View {
+    private var passphraseEditingSection: some View {
         Section {
-            Picker(selection: $viewModel.editingModel.detail.viewConfig) {
-                ForEach(VaultItemViewConfiguration.allCases) { visibility in
-                    DetailSubtitleView(
-                        systemIcon: visibility.systemIconName,
-                        title: visibility.localizedTitle,
-                        subtitle: visibility.localizedSubtitle
-                    )
-                    .tag(visibility)
-                }
-            } label: {
-                Text(viewModel.strings.visibilityTitle)
+            Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
+                Text("Hide with passphrase")
             }
-            .pickerStyle(.inline)
-            .labelsHidden()
+            if viewModel.editingModel.detail.isHiddenWithPassphrase {
+                TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+            }
         } header: {
             Text(viewModel.strings.visibilitySectionTitle)
-        }
-    }
-
-    private var passphraseEntrySection: some View {
-        Section {
-            TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
-        } header: {
-            Text(viewModel.strings.passphraseTitle)
         } footer: {
-            Text(viewModel.strings.passphraseSubtitle)
+            if viewModel.editingModel.detail.isHiddenWithPassphrase {
+                Text(viewModel.strings.passphraseSubtitle)
+            }
         }
     }
 
