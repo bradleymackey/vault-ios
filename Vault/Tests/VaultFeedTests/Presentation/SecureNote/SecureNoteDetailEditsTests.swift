@@ -29,7 +29,7 @@ final class SecureNoteDetailEditsTests: XCTestCase {
     func test_isValid_invalidForEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
         sut.title = " A "
-        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.viewConfig = .requiresSearchPassphrase
         sut.searchPassphrase = ""
 
         XCTAssertFalse(sut.isValid)
@@ -38,9 +38,29 @@ final class SecureNoteDetailEditsTests: XCTestCase {
     func test_isValid_validForNonEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
         sut.title = " A "
-        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.viewConfig = .requiresSearchPassphrase
         sut.searchPassphrase = "passphrase"
 
         XCTAssertTrue(sut.isValid)
+    }
+
+    func test_isHiddenWithPassphrase_falseIfAlwaysVisible() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.viewConfig = .alwaysVisible
+        XCTAssertFalse(sut.isHiddenWithPassphrase)
+
+        sut.isHiddenWithPassphrase = false
+        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+    }
+
+    func test_isHiddenWithPassphrase_trueIfRequiresPassphrase() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.viewConfig = .requiresSearchPassphrase
+        XCTAssertTrue(sut.isHiddenWithPassphrase)
+
+        sut.isHiddenWithPassphrase = true
+        XCTAssertEqual(sut.viewConfig, .requiresSearchPassphrase)
     }
 }

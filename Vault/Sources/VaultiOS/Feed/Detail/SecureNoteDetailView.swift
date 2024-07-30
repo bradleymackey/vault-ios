@@ -71,10 +71,7 @@ struct SecureNoteDetailView: View {
                 if viewModel.allTags.isNotEmpty {
                     tagSelectionSection
                 }
-                viewConfigEditingSection
-                if viewModel.editingModel.detail.viewConfig.needsPassphrase {
-                    passphraseEntrySection
-                }
+                passphraseEditingSection
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
                 }
@@ -234,6 +231,7 @@ struct SecureNoteDetailView: View {
             TextEditor(text: $viewModel.editingModel.detail.description)
                 .font(.callout)
                 .frame(minHeight: 60)
+                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
             Text(viewModel.strings.noteDescription)
         }
@@ -281,40 +279,28 @@ struct SecureNoteDetailView: View {
             TextEditor(text: $viewModel.editingModel.detail.contents)
                 .font(.callout)
                 .fontDesign(.monospaced)
-                .frame(minHeight: 250)
+                .frame(minHeight: 350)
+                .keyboardType(.default)
+                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         }
     }
 
-    private var viewConfigEditingSection: some View {
+    private var passphraseEditingSection: some View {
         Section {
-            Picker(selection: $viewModel.editingModel.detail.viewConfig) {
-                ForEach(VaultItemViewConfiguration.allCases) { visibility in
-                    DetailSubtitleView(
-                        systemIcon: visibility.systemIconName,
-                        title: visibility.localizedTitle,
-                        subtitle: visibility.localizedSubtitle
-                    )
-                    .tag(visibility)
-                }
-            } label: {
-                Text(viewModel.strings.visibilityTitle)
+            Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
+                Text("Hide with passphrase")
             }
-            .pickerStyle(.inline)
-            .labelsHidden()
+            if viewModel.editingModel.detail.isHiddenWithPassphrase {
+                TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+            }
         } header: {
             Text(viewModel.strings.noteVisibilityTitle)
-        }
-    }
-
-    private var passphraseEntrySection: some View {
-        Section {
-            TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
-        } header: {
-            Text(viewModel.strings.passphraseTitle)
         } footer: {
-            Text(viewModel.strings.passphraseSubtitle)
+            if viewModel.editingModel.detail.isHiddenWithPassphrase {
+                Text(viewModel.strings.passphraseSubtitle)
+            }
         }
     }
 

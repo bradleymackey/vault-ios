@@ -669,7 +669,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "You must search exactly for this passphrase to find this item. Don't forget it!"
+            "value" : "This item will be hidden in the main feed. You must search exactly for this passphrase to find this item. Don't forget it!"
           }
         }
       }
@@ -1048,29 +1048,7 @@
         }
       }
     },
-    "vaultItemViewConfiguration.onlyVisibleWhenSearching.subtitle" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "This item is only visible during searches. It will not be visible in the feed."
-          }
-        }
-      }
-    },
-    "vaultItemViewConfiguration.onlyVisibleWhenSearching.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Search only"
-          }
-        }
-      }
-    },
-    "vaultItemViewConfiguration.onlyVisibleWhenSearchingRequiresPassphrase.subtitle" : {
+    "vaultItemViewConfiguration.requiresSearchPassphrase.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {
@@ -1081,7 +1059,7 @@
         }
       }
     },
-    "vaultItemViewConfiguration.onlyVisibleWhenSearchingRequiresPassphrase.title" : {
+    "vaultItemViewConfiguration.requiresSearchPassphrase.title" : {
       "extractionState" : "manual",
       "localizations" : {
         "en" : {

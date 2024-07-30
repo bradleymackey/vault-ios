@@ -4,19 +4,8 @@ import FoundationExtensions
 public enum VaultItemViewConfiguration: Equatable, Hashable, CaseIterable, IdentifiableSelf, Sendable {
     /// The item is always visible and searchable.
     case alwaysVisible
-    /// The item is only visible when searching.
-    case onlyVisibleWhenSearching
     /// The item is only visible when searching and requires a passphrase to be entered.
-    case onlyVisibleWhenSearchingRequiresPassphrase
-}
-
-extension VaultItemViewConfiguration {
-    public var needsPassphrase: Bool {
-        switch self {
-        case .alwaysVisible, .onlyVisibleWhenSearching: false
-        case .onlyVisibleWhenSearchingRequiresPassphrase: true
-        }
-    }
+    case requiresSearchPassphrase
 }
 
 // MARK: - Interop
@@ -27,8 +16,8 @@ extension VaultItemViewConfiguration {
         case .always: self = .alwaysVisible
         case .onlySearch:
             switch searchableLevel {
-            case .full, .onlyTitle, .none: self = .onlyVisibleWhenSearching
-            case .onlyPassphrase: self = .onlyVisibleWhenSearchingRequiresPassphrase
+            case .full, .onlyTitle, .none: self = .alwaysVisible
+            case .onlyPassphrase: self = .requiresSearchPassphrase
             }
         }
     }
@@ -36,14 +25,14 @@ extension VaultItemViewConfiguration {
     public var visibility: VaultItemVisibility {
         switch self {
         case .alwaysVisible: .always
-        case .onlyVisibleWhenSearching, .onlyVisibleWhenSearchingRequiresPassphrase: .onlySearch
+        case .requiresSearchPassphrase: .onlySearch
         }
     }
 
     public var searchableLevel: VaultItemSearchableLevel {
         switch self {
-        case .alwaysVisible, .onlyVisibleWhenSearching: .full
-        case .onlyVisibleWhenSearchingRequiresPassphrase: .onlyPassphrase
+        case .alwaysVisible: .full
+        case .requiresSearchPassphrase: .onlyPassphrase
         }
     }
 }
@@ -54,17 +43,15 @@ extension VaultItemViewConfiguration {
     public var systemIconName: String {
         switch self {
         case .alwaysVisible: "eye"
-        case .onlyVisibleWhenSearching: "eye.slash"
-        case .onlyVisibleWhenSearchingRequiresPassphrase: "lock.fill"
+        case .requiresSearchPassphrase: "eye.slash"
         }
     }
 
     public var localizedTitle: String {
         switch self {
         case .alwaysVisible: localized(key: "vaultItemViewConfiguration.alwaysVisible.title")
-        case .onlyVisibleWhenSearching: localized(key: "vaultItemViewConfiguration.onlyVisibleWhenSearching.title")
-        case .onlyVisibleWhenSearchingRequiresPassphrase: localized(
-                key: "vaultItemViewConfiguration.onlyVisibleWhenSearchingRequiresPassphrase.title"
+        case .requiresSearchPassphrase: localized(
+                key: "vaultItemViewConfiguration.requiresSearchPassphrase.title"
             )
         }
     }
@@ -72,9 +59,8 @@ extension VaultItemViewConfiguration {
     public var localizedSubtitle: String {
         switch self {
         case .alwaysVisible: localized(key: "vaultItemViewConfiguration.alwaysVisible.subtitle")
-        case .onlyVisibleWhenSearching: localized(key: "vaultItemViewConfiguration.onlyVisibleWhenSearching.subtitle")
-        case .onlyVisibleWhenSearchingRequiresPassphrase: localized(
-                key: "vaultItemViewConfiguration.onlyVisibleWhenSearchingRequiresPassphrase.subtitle"
+        case .requiresSearchPassphrase: localized(
+                key: "vaultItemViewConfiguration.requiresSearchPassphrase.subtitle"
             )
         }
     }

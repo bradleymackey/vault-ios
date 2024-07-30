@@ -129,7 +129,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
     func test_isValid_invalidForEmptyPassphrase() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.searchPassphrase = ""
-        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.viewConfig = .requiresSearchPassphrase
 
         XCTAssertFalse(sut.isValid)
     }
@@ -139,7 +139,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         sut.secretBase32String = "AA"
         sut.issuerTitle = "any"
         sut.searchPassphrase = "passphrase"
-        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.viewConfig = .requiresSearchPassphrase
 
         XCTAssertTrue(sut.isValid)
     }
@@ -181,6 +181,24 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         sut.secretBase32String = "e~~"
 
         XCTAssertThrowsError(try sut.asOTPAuthCode())
+    }
+
+    func test_isHiddenWithPassphrase_falseIfAlwaysVisible() {
+        var sut = OTPCodeDetailEdits.new()
+        sut.viewConfig = .alwaysVisible
+        XCTAssertFalse(sut.isHiddenWithPassphrase)
+
+        sut.isHiddenWithPassphrase = false
+        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+    }
+
+    func test_isHiddenWithPassphrase_trueIfRequiresPassphrase() {
+        var sut = OTPCodeDetailEdits.new()
+        sut.viewConfig = .requiresSearchPassphrase
+        XCTAssertTrue(sut.isHiddenWithPassphrase)
+
+        sut.isHiddenWithPassphrase = true
+        XCTAssertEqual(sut.viewConfig, .requiresSearchPassphrase)
     }
 }
 

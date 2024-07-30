@@ -153,7 +153,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         initialEdits.title = "new title"
         initialEdits.description = "new description"
         initialEdits.contents = "new contents"
-        initialEdits.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
 
         let exp = expectation(description: "Wait for creation")
