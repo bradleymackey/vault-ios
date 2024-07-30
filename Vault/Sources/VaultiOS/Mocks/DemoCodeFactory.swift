@@ -13,6 +13,7 @@ enum DemoVaultFactory {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             item: .otpCode(.init(
@@ -37,6 +38,7 @@ enum DemoVaultFactory {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: VaultItemColor(color: .green)
             ),
             item: .otpCode(.init(
@@ -61,6 +63,7 @@ enum DemoVaultFactory {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: VaultItemColor(color: .red)
             ),
             item: .secureNote(.init(title: title, contents: contents))

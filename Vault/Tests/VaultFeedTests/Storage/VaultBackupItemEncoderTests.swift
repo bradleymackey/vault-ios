@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import VaultBackup
 import VaultCore
@@ -25,6 +26,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
+                lockState: unimplemented(),
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .secureNote(note)
@@ -71,6 +73,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
+                lockState: unimplemented(),
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
@@ -125,6 +128,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
+                lockState: unimplemented(),
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
             item: .otpCode(code)
@@ -208,6 +212,7 @@ extension VaultBackupItemEncoderTests {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: color
             ),
             item: .otpCode(code)

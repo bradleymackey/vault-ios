@@ -24,7 +24,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: color,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .lockedWithNativeSecurity
         )
 
         XCTAssertEqual(sut.codeType, .totp)
@@ -38,6 +39,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
         XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+        XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
     }
 
     func test_initHydratedFromCode_assignsHOTPCodeType() {
@@ -59,7 +61,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: color,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .lockedWithNativeSecurity
         )
 
         XCTAssertEqual(sut.codeType, .hotp)
@@ -73,6 +76,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
         XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+        XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
     }
 
     func test_init_emptySecretIsEmptySecretBase32String() {
@@ -84,7 +88,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
 
         XCTAssertEqual(sut.secretBase32String, "")
@@ -99,7 +104,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
 
         XCTAssertTrue(sut.isValid)
@@ -152,7 +158,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
 
         let newCode = try sut.asOTPAuthCode()
@@ -168,7 +175,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            tags: []
+            tags: [],
+            lockState: .notLocked
         )
 
         let newCode = try sut.asOTPAuthCode()

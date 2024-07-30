@@ -37,7 +37,8 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             tags: metadata.tags,
             visibility: metadata.visibility,
             searchableLevel: metadata.searchableLevel,
-            searchPassphase: metadata.searchPassphrase
+            searchPassphase: metadata.searchPassphrase,
+            lockState: metadata.lockState
         )
     }
 
@@ -87,6 +88,7 @@ extension VaultItem {
         public var searchableLevel: VaultItemSearchableLevel
         public var tags: Set<VaultItemTag.Identifier>
         public var searchPassphrase: String?
+        public var lockState: VaultItemLockState
         /// The color tint for this item.
         public var color: VaultItemColor?
 
@@ -99,6 +101,7 @@ extension VaultItem {
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
+            lockState: VaultItemLockState,
             color: VaultItemColor?
         ) {
             self.id = id
@@ -109,6 +112,7 @@ extension VaultItem {
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphrase = searchPassphrase
+            self.lockState = lockState
             self.color = color
         }
     }
@@ -124,6 +128,7 @@ extension VaultItem {
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphase: String?
+        public var lockState: VaultItemLockState
 
         public init(
             userDescription: String,
@@ -132,7 +137,8 @@ extension VaultItem {
             tags: Set<VaultItemTag.Identifier>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
-            searchPassphase: String?
+            searchPassphase: String?,
+            lockState: VaultItemLockState
         ) {
             self.userDescription = userDescription
             self.color = color
@@ -141,6 +147,7 @@ extension VaultItem {
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphase = searchPassphase
+            self.lockState = lockState
         }
     }
 }

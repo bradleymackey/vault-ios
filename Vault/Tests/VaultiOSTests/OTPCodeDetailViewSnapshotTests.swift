@@ -27,6 +27,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: OTPCodeDetailEditorMock(),
@@ -53,6 +54,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .onlySearch,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: OTPCodeDetailEditorMock(),
@@ -79,6 +81,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                lockState: .notLocked,
                 color: nil
             ),
             editor: OTPCodeDetailEditorMock(),

@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 struct PersistedVaultItemDecoder {
@@ -12,6 +13,7 @@ struct PersistedVaultItemDecoder {
             visibility: decodeVisibility(level: item.visibility),
             searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
             searchPassphrase: item.searchPassphrase,
+            lockState: unimplemented("Decode lock state"),
             color: decodeColor(item: item)
         )
         if let otp = item.otpDetails {

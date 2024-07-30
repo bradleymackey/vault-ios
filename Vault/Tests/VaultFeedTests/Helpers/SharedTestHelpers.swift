@@ -73,7 +73,8 @@ func anyVaultItemMetadata(
     visibility: VaultItemVisibility = .always,
     tags: Set<VaultItemTag.Identifier> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
-    searchPassphrase: String? = nil
+    searchPassphrase: String? = nil,
+    lockState: VaultItemLockState = .notLocked
 ) -> VaultItem.Metadata {
     .init(
         id: UUID(),
@@ -84,6 +85,7 @@ func anyVaultItemMetadata(
         visibility: visibility,
         searchableLevel: searchableLevel,
         searchPassphrase: searchPassphrase,
+        lockState: lockState,
         color: nil
     )
 }

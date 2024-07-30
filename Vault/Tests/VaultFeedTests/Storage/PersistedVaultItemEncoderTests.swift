@@ -416,7 +416,8 @@ extension PersistedVaultItemEncoderTests {
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
         tags: Set<VaultItemTag.Identifier> = [],
-        searchPassphrase: String = ""
+        searchPassphrase: String = "",
+        lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
         VaultItem.Write(
             userDescription: userDescription,
@@ -425,7 +426,8 @@ extension PersistedVaultItemEncoderTests {
             tags: tags,
             visibility: visibility,
             searchableLevel: searchableLevel,
-            searchPassphase: searchPassphrase
+            searchPassphase: searchPassphrase,
+            lockState: lockState
         )
     }
 
@@ -453,7 +455,8 @@ extension PersistedVaultItemEncoderTests {
         userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil,
-        tags: Set<VaultItemTag.Identifier> = []
+        tags: Set<VaultItemTag.Identifier> = [],
+        lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
         VaultItem.Write(
             userDescription: userDescription,
@@ -462,7 +465,8 @@ extension PersistedVaultItemEncoderTests {
             tags: tags,
             visibility: .always,
             searchableLevel: .full,
-            searchPassphase: ""
+            searchPassphase: "",
+            lockState: lockState
         )
     }
 

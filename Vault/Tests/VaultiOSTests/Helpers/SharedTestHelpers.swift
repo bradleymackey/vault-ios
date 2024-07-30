@@ -60,6 +60,7 @@ func uniqueMetadata(id: UUID = UUID()) -> VaultItem.Metadata {
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: nil,
+        lockState: .notLocked,
         color: nil
     )
 }

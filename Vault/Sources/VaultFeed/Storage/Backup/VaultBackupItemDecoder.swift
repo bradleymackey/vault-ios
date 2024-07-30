@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultBackup
 import VaultCore
 
@@ -24,6 +25,7 @@ extension VaultBackupItemDecoder {
             visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
             searchPassphrase: backupItem.searchPassphrase,
+            lockState: unimplemented("decode this value"),
             color: decodeColor(color: backupItem.tintColor)
         )
     }

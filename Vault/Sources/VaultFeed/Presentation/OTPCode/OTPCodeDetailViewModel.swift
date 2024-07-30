@@ -34,14 +34,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
             .init(detail: .new())
         case let .creating(.some(initialCode)):
             .init(
-                detail: OTPCodeDetailEdits(
-                    hydratedFromCode: initialCode,
-                    userDescription: "",
-                    color: nil,
-                    viewConfig: .alwaysVisible,
-                    searchPassphrase: "",
-                    tags: []
-                ),
+                detail: .new(hydratedFromCode: initialCode),
                 isInitiallyDirty: true
             )
         case let .editing(code, metadata):
@@ -51,7 +44,8 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 color: metadata.color,
                 viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),
                 searchPassphrase: metadata.searchPassphrase ?? "",
-                tags: metadata.tags
+                tags: metadata.tags,
+                lockState: metadata.lockState
             ))
         }
     }
