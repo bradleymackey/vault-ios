@@ -231,6 +231,7 @@ struct SecureNoteDetailView: View {
             TextEditor(text: $viewModel.editingModel.detail.description)
                 .font(.callout)
                 .frame(minHeight: 60)
+                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
             Text(viewModel.strings.noteDescription)
         }
@@ -278,7 +279,9 @@ struct SecureNoteDetailView: View {
             TextEditor(text: $viewModel.editingModel.detail.contents)
                 .font(.callout)
                 .fontDesign(.monospaced)
-                .frame(minHeight: 250)
+                .frame(minHeight: 350)
+                .keyboardType(.default)
+                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
             Text(viewModel.strings.noteContentsTitle)
         }
