@@ -129,7 +129,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
     func test_isValid_invalidForEmptyPassphrase() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.searchPassphrase = ""
-        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.viewConfig = .requiresSearchPassphrase
 
         XCTAssertFalse(sut.isValid)
     }
@@ -139,7 +139,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         sut.secretBase32String = "AA"
         sut.issuerTitle = "any"
         sut.searchPassphrase = "passphrase"
-        sut.viewConfig = .onlyVisibleWhenSearchingRequiresPassphrase
+        sut.viewConfig = .requiresSearchPassphrase
 
         XCTAssertTrue(sut.isValid)
     }
