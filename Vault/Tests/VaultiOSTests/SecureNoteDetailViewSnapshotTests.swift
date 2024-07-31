@@ -37,6 +37,31 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func test_lockedState() async {
+        let sut = SecureNoteDetailView(
+            editingExistingNote: .init(title: "", contents: ""),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                lockState: .lockedWithNativeSecurity,
+                color: nil
+            ),
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
+        )
+
+        await snapshotScenarios(view: sut)
+    }
+
+    @MainActor
     func test_titleOnly() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
@@ -203,6 +228,7 @@ extension SecureNoteDetailViewSnapshotTests {
                     .dynamicTypeSize(dynamicTypeSize)
                     .preferredColorScheme(colorScheme)
                     .framedToTestDeviceSize()
+                    .environment(DeviceAuthenticationService())
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(
