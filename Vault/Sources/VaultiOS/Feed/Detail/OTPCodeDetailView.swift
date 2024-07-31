@@ -347,7 +347,14 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var passphraseEditingSection: some View {
         Section {
             Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
-                Text("Hide with passphrase")
+                FormRow(
+                    image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
+                    color: .primary,
+                    style: .standard
+                ) {
+                    Text("Hide with passphrase")
+                        .font(.body)
+                }
             }
             if viewModel.editingModel.detail.isHiddenWithPassphrase {
                 TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
