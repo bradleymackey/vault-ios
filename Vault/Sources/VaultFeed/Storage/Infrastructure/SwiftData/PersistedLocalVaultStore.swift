@@ -83,10 +83,13 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             $0.searchableLevel == full && $0.lockState == notLocked
         }
 
+        let orderedSame = ComparisonResult.orderedSame
         let passphrasePredicate = #Predicate<PersistedVaultItem> { item in
             item.searchableLevel == onlyPassphrase &&
-                // We need an EXACT match on the passphrase
-                item.searchPassphrase.flatMap { $0 == query } ?? false
+                // We need an EXACT match on the passphrase (case insensitive)
+                item.searchPassphrase.flatMap {
+                    $0.caseInsensitiveCompare(query) == orderedSame
+                } ?? false
         }
 
         let userDescriptionPredicate = #Predicate<PersistedVaultItem> {

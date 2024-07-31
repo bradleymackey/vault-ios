@@ -321,6 +321,9 @@ struct SecureNoteDetailView: View {
             }
             if viewModel.editingModel.detail.isHiddenWithPassphrase {
                 TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+                    .keyboardType(.default)
+                    .autocorrectionDisabled()
+                    .textInputAutocapitalization(.never)
             }
         } header: {
             Text(viewModel.strings.noteVisibilityTitle)

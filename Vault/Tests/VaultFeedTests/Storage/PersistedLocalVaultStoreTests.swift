@@ -495,9 +495,11 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
-    func test_retrieveMatchingQuery_requiresExactPassphraseMatch() async throws {
+    func test_retrieveMatchingQuery_requiresExactPassphraseMatchCaseInsensitive() async throws {
         let codes: [VaultItem.Write] = [
             anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "n")
+                .makeWritable(),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "N")
                 .makeWritable(),
             anyOTPAuthCode(accountName: "aaa")
                 .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "nn").makeWritable(),
@@ -512,7 +514,11 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         let query = VaultStoreQuery(searchText: "n")
         let result = try await sut.retrieve(query: query)
-        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0]], "Only the first item is an exact match")
+        XCTAssertEqual(
+            result.items.map(\.metadata.id),
+            [insertedIDs[0], insertedIDs[1]],
+            "Only the first item is an exact match"
+        )
         XCTAssertEqual(result.errors, [])
     }
 

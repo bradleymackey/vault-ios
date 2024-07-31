@@ -12,6 +12,9 @@ struct SearchTextField: View {
         HStack(spacing: 8) {
             TextField(title, text: $text)
                 .textFieldStyle(.plain)
+                .keyboardType(.default)
+                .autocorrectionDisabled()
+                .textInputAutocapitalization(.never)
                 .submitLabel(.done)
                 .focused($isFocused)
                 .padding(radius)
