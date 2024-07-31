@@ -431,6 +431,38 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_retrieveMatchingQuery_doesNotSearchContentsIfLocked() async throws {
+        let codes: [VaultItem.Write] = [
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(lockState: .notLocked).makeWritable(),
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(lockState: .lockedWithNativeSecurity).makeWritable(),
+            anySecureNote(contents: "aaa").wrapInAnyVaultItem(lockState: .lockedWithNativeSecurity).makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 1, "Only 1 note matches due to 2 items locked")
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingQuery_doesSearchTitleIfLocked() async throws {
+        let codes: [VaultItem.Write] = [
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(lockState: .notLocked).makeWritable(),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(lockState: .lockedWithNativeSecurity).makeWritable(),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(lockState: .lockedWithNativeSecurity).makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(searchText: "a")
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 3, "All 3 items returned, regardless of lock state")
+        XCTAssertEqual(result.errors, [])
+    }
+
     func test_retrieveMatchingQuery_returnsItemsSearchingByTitle() async throws {
         let codes: [VaultItem.Write] = [
             anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).makeWritable(),

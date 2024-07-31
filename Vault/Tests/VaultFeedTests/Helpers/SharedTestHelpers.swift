@@ -98,7 +98,8 @@ extension SecureNote {
         visibility: VaultItemVisibility = .always,
         tags: Set<VaultItemTag.Identifier> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String? = nil
+        searchPassphrase: String? = nil,
+        lockState: VaultItemLockState = .notLocked
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -106,7 +107,8 @@ extension SecureNote {
                 visibility: visibility,
                 tags: tags,
                 searchableLevel: searchableLevel,
-                searchPassphrase: searchPassphrase
+                searchPassphrase: searchPassphrase,
+                lockState: lockState
             ),
             item: .secureNote(self)
         )
