@@ -76,8 +76,11 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             $0.searchableLevel == full || $0.searchableLevel == onlyTitle
         }
 
+        // Can only search full content if searchable level is full AND the item isn't locked.
+        // If it's locked, we shouldn't be able to search the content.
+        let notLocked = VaultEncodingConstants.LockState.notLocked
         let contentSearchable = #Predicate<PersistedVaultItem> {
-            $0.searchableLevel == full
+            $0.searchableLevel == full && $0.lockState == notLocked
         }
 
         let passphrasePredicate = #Predicate<PersistedVaultItem> { item in

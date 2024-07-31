@@ -11,6 +11,15 @@ public enum VaultItemLockState: Equatable, Hashable, CaseIterable, IdentifiableS
 }
 
 extension VaultItemLockState {
+    public var isLocked: Bool {
+        switch self {
+        case .notLocked: false
+        case .lockedWithNativeSecurity: true
+        }
+    }
+}
+
+extension VaultItemLockState {
     public var systemIconName: String {
         switch self {
         case .notLocked: "lock.open"

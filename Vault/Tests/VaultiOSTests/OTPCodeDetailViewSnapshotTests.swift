@@ -40,6 +40,33 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func test_lockedState() async {
+        let sut = OTPCodeDetailView(
+            editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                lockState: .lockedWithNativeSecurity,
+                color: nil
+            ),
+            editor: OTPCodeDetailEditorMock(),
+            previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            openInEditMode: false,
+            presentationMode: .none
+        )
+
+        await snapshotScenarios(view: sut)
+    }
+
+    @MainActor
     func test_withUserDescription() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
@@ -108,6 +135,7 @@ extension OTPCodeDetailViewSnapshotTests {
                     .preferredColorScheme(colorScheme)
                     .framedToTestDeviceSize()
                     .environment(makePasteboard())
+                    .environment(DeviceAuthenticationService())
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(
