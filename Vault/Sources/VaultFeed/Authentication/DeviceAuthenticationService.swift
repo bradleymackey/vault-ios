@@ -16,33 +16,39 @@ public struct DeviceAuthenticationFailed: Error {}
 public final class DeviceAuthenticationService {
     public init() {}
 
+    /// Does this user even have biometrics enabled?
+    public var canAuthenticate: Bool {
+        let context = LAContext()
+        var error: NSError?
+        return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) || context
+            .canEvaluatePolicy(
+                .deviceOwnerAuthentication,
+                error: &error
+            )
+    }
+
     public func authenticate(reason: String) async throws -> DeviceAuthenticationSuccess {
         let context = LAContext()
         var error: NSError?
 
         if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            let result = try await context.evaluatePolicy(
-                .deviceOwnerAuthenticationWithBiometrics,
-                localizedReason: reason
-            )
-
-            guard result else {
-                throw DeviceAuthenticationFailed()
-            }
-
-            return .authenticated
+            return try await evaluate(with: .deviceOwnerAuthenticationWithBiometrics, context: context, reason: reason)
         }
 
         if context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) {
-            let result = try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
-
-            guard result else {
-                throw DeviceAuthenticationFailed()
-            }
-
-            return .authenticated
+            return try await evaluate(with: .deviceOwnerAuthentication, context: context, reason: reason)
         }
 
         return .authenticatedByDefault
+    }
+
+    private func evaluate(
+        with policy: LAPolicy,
+        context: LAContext,
+        reason: String
+    ) async throws -> DeviceAuthenticationSuccess {
+        let result = try await context.evaluatePolicy(policy, localizedReason: reason)
+        guard result else { throw DeviceAuthenticationFailed() }
+        return .authenticated
     }
 }
