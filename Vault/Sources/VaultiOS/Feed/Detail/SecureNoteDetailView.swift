@@ -289,14 +289,34 @@ struct SecureNoteDetailView: View {
 
     private var passphraseEditingSection: some View {
         Section {
+            Toggle(isOn: $viewModel.editingModel.detail.isLocked) {
+                FormRow(
+                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
+                    color: viewModel.editingModel.detail.isLocked ? .red : .green,
+                    style: .prominent
+                ) {
+                    VStack(alignment: .leading) {
+                        Text("Lock note")
+                            .font(.body)
+                        Text("Require authentication to view this note")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+            }
             Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
-                    color: .primary,
-                    style: .standard
+                    color: viewModel.editingModel.detail.isHiddenWithPassphrase ? .red : .green,
+                    style: .prominent
                 ) {
-                    Text("Hide with passphrase")
-                        .font(.body)
+                    VStack(alignment: .leading) {
+                        Text("Hide with passphrase")
+                            .font(.body)
+                        Text("Hide this note from being visible in the feed")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    }
                 }
             }
             if viewModel.editingModel.detail.isHiddenWithPassphrase {

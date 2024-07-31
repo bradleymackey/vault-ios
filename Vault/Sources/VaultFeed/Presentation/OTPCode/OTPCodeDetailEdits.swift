@@ -40,6 +40,18 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var lockState: VaultItemLockState
 
+    public var isLocked: Bool {
+        get {
+            switch lockState {
+            case .notLocked: false
+            case .lockedWithNativeSecurity: true
+            }
+        }
+        set {
+            lockState = newValue ? .lockedWithNativeSecurity : .notLocked
+        }
+    }
+
     public var isHiddenWithPassphrase: Bool {
         get {
             switch viewConfig {
