@@ -14,6 +14,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     }
 
     public let mode: Mode
+    public var isLocked: Bool
     public let allTags: [VaultItemTag]
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
@@ -28,7 +29,10 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         self.mode = mode
         self.allTags = allTags
         self.editor = editor
-
+        isLocked = switch mode {
+        case .creating: false
+        case let .editing(_, metadata): metadata.lockState.isLocked
+        }
         editingModel = switch mode {
         case .creating(.none):
             .init(detail: .new())

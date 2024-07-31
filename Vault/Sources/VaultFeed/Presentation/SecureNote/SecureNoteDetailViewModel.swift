@@ -13,6 +13,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
     }
 
     private let mode: Mode
+    public var isLocked: Bool
     public let allTags: [VaultItemTag]
     private let detailEditState = DetailEditState<SecureNoteDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
@@ -24,6 +25,10 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         self.mode = mode
         self.allTags = allTags
         self.editor = editor
+        isLocked = switch mode {
+        case .creating: false
+        case let .editing(_, metadata): metadata.lockState.isLocked
+        }
         editingModel = switch mode {
         case .creating:
             .init(detail: .new())

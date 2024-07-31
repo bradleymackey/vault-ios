@@ -12,6 +12,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
     var presentationMode: Binding<PresentationMode>?
     @ViewBuilder var contents: () -> ContentsView
 
+    @Environment(DeviceAuthenticationService.self) private var authenticationService: DeviceAuthenticationService
     @State private var isError = false
 
     private func dismiss() {
@@ -20,7 +21,11 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
 
     var body: some View {
         Form {
-            contents()
+            if viewModel.isLocked {
+                lockedSection
+            } else {
+                contents()
+            }
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -53,7 +58,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             // Only if this view is the root of the navigation stack should we show these actions.
             // If it isn't, it implies going back to the original context is more likely the correct
             // action to take.
-            if navigationPath.isEmpty {
+            if navigationPath.isEmpty, !viewModel.isLocked {
                 if viewModel.isInitialCreation {
                     cancelCreationItem
                 } else {
@@ -73,6 +78,19 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                 if !viewModel.isInitialCreation {
                     doneItem
                 }
+            }
+        }
+    }
+
+    private var lockedSection: some View {
+        Section {
+            Button {
+                Task { @MainActor in
+                    _ = try await authenticationService.authenticate(reason: "Unlock item")
+                    viewModel.isLocked = false
+                }
+            } label: {
+                Text("Unlock")
             }
         }
     }

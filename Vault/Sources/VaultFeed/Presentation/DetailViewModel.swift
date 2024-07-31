@@ -12,6 +12,7 @@ public protocol DetailViewModel: AnyObject, Observable {
     var isInEditMode: Bool { get }
     var isInitialCreation: Bool { get }
     var isSaving: Bool { get }
+    var isLocked: Bool { get set }
 
     func startEditing()
     func saveChanges() async

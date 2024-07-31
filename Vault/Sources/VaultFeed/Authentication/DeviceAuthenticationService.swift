@@ -1,14 +1,5 @@
 import Foundation
-import LocalAuthentication
-
-/// Uses the local device to authenticate the current user.
-///
-/// If no local authentication is available, succeed anyway.
-///
-/// @mockable
-public protocol DeviceAuthenticationService {
-    func authenticate(reason: String) async throws -> DeviceAuthenticationSuccess
-}
+@preconcurrency import LocalAuthentication
 
 public enum DeviceAuthenticationSuccess {
     case authenticated
@@ -17,23 +8,41 @@ public enum DeviceAuthenticationSuccess {
 
 public struct DeviceAuthenticationFailed: Error {}
 
-public final class DeviceAuthenticationServiceImpl: DeviceAuthenticationService {
+/// Uses the local device to authenticate the current user.
+///
+/// If no local authentication is available, succeed anyway.
+@Observable
+@MainActor
+public final class DeviceAuthenticationService {
     public init() {}
 
     public func authenticate(reason: String) async throws -> DeviceAuthenticationSuccess {
         let context = LAContext()
         var error: NSError?
 
-        guard context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) else {
-            return .authenticatedByDefault
+        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
+            let result = try await context.evaluatePolicy(
+                .deviceOwnerAuthenticationWithBiometrics,
+                localizedReason: reason
+            )
+
+            guard result else {
+                throw DeviceAuthenticationFailed()
+            }
+
+            return .authenticated
         }
 
-        let result = try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
+        if context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) {
+            let result = try await context.evaluatePolicy(.deviceOwnerAuthentication, localizedReason: reason)
 
-        guard result else {
-            throw DeviceAuthenticationFailed()
+            guard result else {
+                throw DeviceAuthenticationFailed()
+            }
+
+            return .authenticated
         }
 
-        return .authenticated
+        return .authenticatedByDefault
     }
 }

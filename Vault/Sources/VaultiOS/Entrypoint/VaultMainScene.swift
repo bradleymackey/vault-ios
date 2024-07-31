@@ -17,6 +17,7 @@ public struct VaultMainScene: Scene {
     @State private var isShowingCopyPaste = false
     @State private var backupStore = BackupPasswordStoreImpl(secureStorage: SecureStorageImpl(keychain: .default))
     @State private var tagFeedViewModel: VaultTagFeedViewModel<PersistedLocalVaultStore>
+    @State private var deviceAuthenticationService = DeviceAuthenticationService()
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -71,6 +72,7 @@ public struct VaultMainScene: Scene {
                     )
                     .environment(pasteboard)
                     .environment(clock)
+                    .environment(deviceAuthenticationService)
                 }
                 .tabItem {
                     Label(feedViewModel.title, systemImage: "key.horizontal.fill")
