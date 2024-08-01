@@ -88,6 +88,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                 LockedDetailView {
                     Task { @MainActor in
                         _ = try await authenticationService.authenticate(reason: "Unlock item")
+                        viewModel.isLocked = false
                     }
                 }
                 .padding()
