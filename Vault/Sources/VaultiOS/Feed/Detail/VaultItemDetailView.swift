@@ -84,14 +84,14 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
 
     private var lockedSection: some View {
         Section {
-            Button {
+            LockedDetailView {
                 Task { @MainActor in
                     _ = try await authenticationService.authenticate(reason: "Unlock item")
                     viewModel.isLocked = false
                 }
-            } label: {
-                Text("Unlock")
             }
+            .padding()
+            .modifier(HorizontallyCenter())
         }
     }
 
