@@ -320,10 +320,13 @@ struct SecureNoteDetailView: View {
                 }
             }
             if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
-                    .keyboardType(.default)
-                    .autocorrectionDisabled()
-                    .textInputAutocapitalization(.never)
+                FormRow(image: Image(systemName: "entry.lever.keypad.fill"), color: .blue, style: .standard) {
+                    TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
+                        .keyboardType(.default)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .textInputAutocapitalization(.never)
+                }
             }
         } header: {
             Text(viewModel.strings.noteVisibilityTitle)
