@@ -135,7 +135,7 @@ extension OTPCodeDetailViewSnapshotTests {
                     .preferredColorScheme(colorScheme)
                     .framedToTestDeviceSize()
                     .environment(makePasteboard())
-                    .environment(DeviceAuthenticationService())
+                    .environment(DeviceAuthenticationService(policy: .alwaysAllow))
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(
