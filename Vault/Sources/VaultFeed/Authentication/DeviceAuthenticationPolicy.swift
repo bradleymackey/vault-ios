@@ -30,6 +30,25 @@ extension DeviceAuthenticationPolicy where Self == DeviceAuthenticationPolicyAlw
     public static var alwaysDeny: Self { .init() }
 }
 
+public struct DeviceAuthenticationPolicyCannotAuthenticate: DeviceAuthenticationPolicy {
+    public init() {}
+
+    public var canAuthenicateWithPasscode: Bool { false }
+    public var canAuthenticateWithBiometrics: Bool { false }
+
+    public func authenticateWithPasscode(reason _: String) async throws -> Bool {
+        false
+    }
+
+    public func authenticateWithBiometrics(reason _: String) async throws -> Bool {
+        false
+    }
+}
+
+extension DeviceAuthenticationPolicy where Self == DeviceAuthenticationPolicyCannotAuthenticate {
+    public static var cannotAuthenticate: Self { .init() }
+}
+
 public struct DeviceAuthenticationPolicyAlwaysAllow: DeviceAuthenticationPolicy {
     public init() {}
 

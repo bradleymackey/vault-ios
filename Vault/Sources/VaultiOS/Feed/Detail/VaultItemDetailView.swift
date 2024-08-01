@@ -84,14 +84,38 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
 
     private var lockedSection: some View {
         Section {
-            LockedDetailView {
-                Task { @MainActor in
-                    _ = try await authenticationService.authenticate(reason: "Unlock item")
+            if authenticationService.canAuthenticate {
+                LockedDetailView {
+                    Task { @MainActor in
+                        _ = try await authenticationService.authenticate(reason: "Unlock item")
+                        viewModel.isLocked = false
+                    }
+                }
+                .padding()
+                .modifier(HorizontallyCenter())
+            } else {
+                FormRow(
+                    image: Image(systemName: "lock.trianglebadge.exclamationmark.fill"),
+                    color: .red,
+                    style: .standard
+                ) {
+                    VStack(alignment: .leading) {
+                        Text("No authentication")
+                            .font(.headline)
+                            .foregroundStyle(.red)
+                        Text(
+                            "This item is not protected due to no authentication being available. Add a passcode to your device to protect this item."
+                        )
+                        .foregroundStyle(.secondary)
+                    }
+                }
+
+                Button {
                     viewModel.isLocked = false
+                } label: {
+                    Text("Dismiss")
                 }
             }
-            .padding()
-            .modifier(HorizontallyCenter())
         }
     }
 
