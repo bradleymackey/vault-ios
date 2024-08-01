@@ -9,12 +9,33 @@ public final class DeviceAuthenticationService {
         self.policy = policy
     }
 
-    /// Does this user even have biometrics enabled?
-    public var canAuthenticate: Bool {
-        policy.isAuthenticationEnabled
+    public enum Success: Sendable {
+        case authenticated
     }
 
-    public func authenticate(reason: String) async throws -> DeviceAuthenticationSuccess {
-        try await policy.authenticate(reason: reason)
+    public enum Failed: Error, Sendable {
+        case noAuthenticationSetup
+        case authenticationFailure
+    }
+
+    /// Does this user even have biometrics enabled?
+    public var canAuthenticate: Bool {
+        policy.canAuthenicateWithPasscode || policy.canAuthenticateWithBiometrics
+    }
+
+    public func authenticate(reason: String) async throws -> Success {
+        if policy.canAuthenticateWithBiometrics {
+            let success = try await policy.authenticateWithBiometrics(reason: reason)
+            guard success else { throw Failed.authenticationFailure }
+            return .authenticated
+        }
+
+        if policy.canAuthenicateWithPasscode {
+            let success = try await policy.authenticateWithPasscode(reason: reason)
+            guard success else { throw Failed.authenticationFailure }
+            return .authenticated
+        }
+
+        throw Failed.noAuthenticationSetup
     }
 }
