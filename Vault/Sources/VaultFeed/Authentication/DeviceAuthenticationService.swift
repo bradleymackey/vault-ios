@@ -1,54 +1,41 @@
 import Foundation
-@preconcurrency import LocalAuthentication
-
-public enum DeviceAuthenticationSuccess {
-    case authenticated
-    case authenticatedByDefault
-}
-
-public struct DeviceAuthenticationFailed: Error {}
 
 /// Uses the local device to authenticate the current user.
-///
-/// If no local authentication is available, succeed anyway.
 @Observable
 @MainActor
 public final class DeviceAuthenticationService {
-    public init() {}
+    private let policy: any DeviceAuthenticationPolicy
+    public init(policy: any DeviceAuthenticationPolicy) {
+        self.policy = policy
+    }
+
+    public enum Success: Sendable {
+        case authenticated
+    }
+
+    public enum Failed: Error, Sendable {
+        case noAuthenticationSetup
+        case authenticationFailure
+    }
 
     /// Does this user even have biometrics enabled?
     public var canAuthenticate: Bool {
-        let context = LAContext()
-        var error: NSError?
-        return context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) || context
-            .canEvaluatePolicy(
-                .deviceOwnerAuthentication,
-                error: &error
-            )
+        policy.canAuthenicateWithPasscode || policy.canAuthenticateWithBiometrics
     }
 
-    public func authenticate(reason: String) async throws -> DeviceAuthenticationSuccess {
-        let context = LAContext()
-        var error: NSError?
-
-        if context.canEvaluatePolicy(.deviceOwnerAuthenticationWithBiometrics, error: &error) {
-            return try await evaluate(with: .deviceOwnerAuthenticationWithBiometrics, context: context, reason: reason)
+    public func authenticate(reason: String) async throws -> Success {
+        if policy.canAuthenticateWithBiometrics {
+            let success = try await policy.authenticateWithBiometrics(reason: reason)
+            guard success else { throw Failed.authenticationFailure }
+            return .authenticated
         }
 
-        if context.canEvaluatePolicy(.deviceOwnerAuthentication, error: &error) {
-            return try await evaluate(with: .deviceOwnerAuthentication, context: context, reason: reason)
+        if policy.canAuthenicateWithPasscode {
+            let success = try await policy.authenticateWithPasscode(reason: reason)
+            guard success else { throw Failed.authenticationFailure }
+            return .authenticated
         }
 
-        return .authenticatedByDefault
-    }
-
-    private func evaluate(
-        with policy: LAPolicy,
-        context: LAContext,
-        reason: String
-    ) async throws -> DeviceAuthenticationSuccess {
-        let result = try await context.evaluatePolicy(policy, localizedReason: reason)
-        guard result else { throw DeviceAuthenticationFailed() }
-        return .authenticated
+        throw Failed.noAuthenticationSetup
     }
 }
