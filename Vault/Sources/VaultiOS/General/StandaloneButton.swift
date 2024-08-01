@@ -18,6 +18,7 @@ public struct StandaloneButton<Content: View>: View {
                 .font(.callout)
                 .foregroundStyle(.white)
         }
+        .buttonStyle(.borderless)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
         .background(Color.accentColor)
