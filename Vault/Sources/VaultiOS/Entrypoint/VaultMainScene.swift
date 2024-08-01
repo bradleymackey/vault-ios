@@ -17,7 +17,7 @@ public struct VaultMainScene: Scene {
     @State private var isShowingCopyPaste = false
     @State private var backupStore = BackupPasswordStoreImpl(secureStorage: SecureStorageImpl(keychain: .default))
     @State private var tagFeedViewModel: VaultTagFeedViewModel<PersistedLocalVaultStore>
-    @State private var deviceAuthenticationService = DeviceAuthenticationService()
+    @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
