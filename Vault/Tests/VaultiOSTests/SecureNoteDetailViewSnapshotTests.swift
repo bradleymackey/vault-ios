@@ -62,6 +62,31 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func test_lockedStateNoAuthentication() async {
+        let sut = SecureNoteDetailView(
+            editingExistingNote: .init(title: "", contents: ""),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                lockState: .lockedWithNativeSecurity,
+                color: nil
+            ),
+            editor: SecureNoteDetailEditorMock(),
+            openInEditMode: false
+        )
+
+        await snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
+    }
+
+    @MainActor
     func test_titleOnly() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
@@ -219,7 +244,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
 
 extension SecureNoteDetailViewSnapshotTests {
     @MainActor
-    private func snapshotScenarios(view: some View, testName: String = #function) async {
+    private func snapshotScenarios(
+        view: some View,
+        deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
+        testName: String = #function
+    ) async {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
         for colorScheme in colorSchemes {
@@ -228,7 +257,7 @@ extension SecureNoteDetailViewSnapshotTests {
                     .dynamicTypeSize(dynamicTypeSize)
                     .preferredColorScheme(colorScheme)
                     .framedToTestDeviceSize()
-                    .environment(DeviceAuthenticationService(policy: .alwaysAllow))
+                    .environment(DeviceAuthenticationService(policy: deviceAuthenticationPolicy))
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(

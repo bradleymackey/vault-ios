@@ -67,6 +67,33 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func test_lockedStateNoAuthentication() async {
+        let sut = OTPCodeDetailView(
+            editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
+            navigationPath: .constant(NavigationPath()),
+            allTags: [],
+            storedMetadata: .init(
+                id: UUID(),
+                created: fixedTestDate(),
+                updated: fixedTestDate(),
+                userDescription: "",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                lockState: .lockedWithNativeSecurity,
+                color: nil
+            ),
+            editor: OTPCodeDetailEditorMock(),
+            previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            openInEditMode: false,
+            presentationMode: .none
+        )
+
+        await snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
+    }
+
+    @MainActor
     func test_withUserDescription() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
@@ -125,7 +152,11 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
 
 extension OTPCodeDetailViewSnapshotTests {
     @MainActor
-    private func snapshotScenarios(view: some View, testName: String = #function) async {
+    private func snapshotScenarios(
+        view: some View,
+        deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
+        testName: String = #function
+    ) async {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
         for colorScheme in colorSchemes {
@@ -135,7 +166,7 @@ extension OTPCodeDetailViewSnapshotTests {
                     .preferredColorScheme(colorScheme)
                     .framedToTestDeviceSize()
                     .environment(makePasteboard())
-                    .environment(DeviceAuthenticationService(policy: .alwaysAllow))
+                    .environment(DeviceAuthenticationService(policy: deviceAuthenticationPolicy))
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 
                 assertSnapshot(
