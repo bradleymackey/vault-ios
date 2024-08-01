@@ -380,6 +380,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
                     .keyboardType(.default)
                     .autocorrectionDisabled()
+                    .submitLabel(.done)
                     .textInputAutocapitalization(.never)
             }
         } header: {
