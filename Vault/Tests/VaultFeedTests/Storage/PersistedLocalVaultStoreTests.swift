@@ -105,11 +105,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_retrieveAll_returnsItemsInRelativeOrder() async throws {
-        let date1 = Date(timeIntervalSince1970: 100)
-        let date2 = Date(timeIntervalSince1970: 101)
         let codes: [VaultItem.Write] = [
-            uniqueVaultItem(relativeOrder: 3, updatedDate: date2).makeWritable(),
-            uniqueVaultItem(relativeOrder: 3, updatedDate: date1).makeWritable(),
+            uniqueVaultItem(relativeOrder: 3).makeWritable(),
+            uniqueVaultItem(relativeOrder: 3).makeWritable(),
             uniqueVaultItem(relativeOrder: 1).makeWritable(),
             uniqueVaultItem(relativeOrder: 2).makeWritable(),
             uniqueVaultItem(relativeOrder: .min).makeWritable(),
@@ -120,6 +118,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             let id = try await sut.insert(item: code)
             ids.append(id)
         }
+
+        // force item updated timestamps to change in this order
+        try await Task.sleep(for: .milliseconds(10))
+        try await sut.update(id: ids[1], item: uniqueVaultItem(relativeOrder: 3).makeWritable())
+        try await Task.sleep(for: .milliseconds(10))
+        try await sut.update(id: ids[0], item: uniqueVaultItem(relativeOrder: 3).makeWritable())
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.id), [
