@@ -26,7 +26,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         )
         let initialEdits = OTPCodeDetailEdits(
             hydratedFromCode: initialCode,
-            relativeOrder: nil,
+            relativeOrder: .max,
             userDescription: "mydesc",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -79,7 +79,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
         var edits = OTPCodeDetailEdits(
             hydratedFromCode: code,
-            relativeOrder: nil,
+            relativeOrder: .max,
             userDescription: "mydesc",
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
             viewConfig: .alwaysVisible,
@@ -275,7 +275,7 @@ extension VaultFeedDetailEditorAdapterTests {
     private func anyOTPCodeDetailEdits() -> OTPCodeDetailEdits {
         .init(
             codeType: .totp,
-            relativeOrder: nil,
+            relativeOrder: .max,
             totpPeriodLength: 30,
             hotpCounterValue: 0,
             secretBase32String: "",

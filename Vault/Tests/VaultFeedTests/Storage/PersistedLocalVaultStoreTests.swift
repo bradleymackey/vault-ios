@@ -104,6 +104,35 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_retrieveAll_returnsItemsInRelativeOrder() async throws {
+        let date1 = Date(timeIntervalSince1970: 100)
+        let date2 = Date(timeIntervalSince1970: 101)
+        let codes: [VaultItem.Write] = [
+            uniqueVaultItem(relativeOrder: 3, updatedDate: date2).makeWritable(),
+            uniqueVaultItem(relativeOrder: 3, updatedDate: date1).makeWritable(),
+            uniqueVaultItem(relativeOrder: 1).makeWritable(),
+            uniqueVaultItem(relativeOrder: 2).makeWritable(),
+            uniqueVaultItem(relativeOrder: .max).makeWritable(),
+            uniqueVaultItem(relativeOrder: 99).makeWritable(),
+        ]
+        var ids = [Identifier<VaultItem>]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            ids.append(id)
+        }
+
+        let result = try await sut.retrieve(query: .all)
+        XCTAssertEqual(result.items.map(\.id), [
+            ids[2], // 1
+            ids[3], // 2
+            ids[1], // 3, earlier updated
+            ids[0], // 3, later updated
+            ids[5], // 99
+            ids[4], // nil
+        ])
+        XCTAssertEqual(result.errors, [])
+    }
+
     @MainActor
     func test_retrieveAll_returnsCorruptedItemsAsErrors() async throws {
         let codes: [VaultItem.Write] = [

@@ -49,7 +49,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var id: UUID
     public var createdDate: Date
     public var updatedDate: Date
-    public var relativeOrder: UInt64?
+    public var relativeOrder: UInt64
     public var userDescription: String
     public var tags: Set<UUID>
     public var visibility: Visibility
@@ -65,7 +65,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         id: UUID,
         createdDate: Date,
         updatedDate: Date,
-        relativeOrder: UInt64?,
+        relativeOrder: UInt64,
         userDescription: String,
         tags: Set<UUID>,
         visibility: Visibility,

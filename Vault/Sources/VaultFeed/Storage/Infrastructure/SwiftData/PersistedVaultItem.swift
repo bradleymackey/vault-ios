@@ -6,7 +6,7 @@ import SwiftData
 final class PersistedVaultItem {
     @Attribute(.unique)
     var id: UUID
-    var relativeOrder: UInt64?
+    var relativeOrder: UInt64
     var createdDate: Date
     var updatedDate: Date
     var userDescription: String
@@ -26,7 +26,7 @@ final class PersistedVaultItem {
 
     init(
         id: UUID,
-        relativeOrder: UInt64?,
+        relativeOrder: UInt64,
         createdDate: Date,
         updatedDate: Date,
         userDescription: String,
