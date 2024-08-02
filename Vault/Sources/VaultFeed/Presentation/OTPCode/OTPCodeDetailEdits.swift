@@ -8,7 +8,7 @@ import VaultCore
 /// Fields are separated from the raw model type to make them easier to edit in place.
 /// From this model, they are merged with an existing model or written to a new model, as needed.
 public struct OTPCodeDetailEdits: EditableState, Sendable {
-    public var relativeOrder: UInt64?
+    public var relativeOrder: UInt64
 
     public var codeType: OTPAuthType.Kind
 
@@ -69,7 +69,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public init(
         codeType: OTPAuthType.Kind,
-        relativeOrder: UInt64?,
+        relativeOrder: UInt64,
         totpPeriodLength: UInt64,
         hotpCounterValue: UInt64,
         secretBase32String: String,
@@ -103,7 +103,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public init(
         hydratedFromCode code: OTPAuthCode,
-        relativeOrder: UInt64?,
+        relativeOrder: UInt64,
         userDescription: String,
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
@@ -176,7 +176,7 @@ extension OTPCodeDetailEdits {
     public static func new() -> OTPCodeDetailEdits {
         .init(
             codeType: .totp,
-            relativeOrder: nil,
+            relativeOrder: .min,
             totpPeriodLength: OTPAuthType.TOTP.defaultPeriod,
             hotpCounterValue: OTPAuthType.HOTP.defaultCounter,
             secretBase32String: "",
@@ -196,7 +196,7 @@ extension OTPCodeDetailEdits {
     public static func new(hydratedFromCode code: OTPAuthCode) -> OTPCodeDetailEdits {
         .init(
             hydratedFromCode: code,
-            relativeOrder: nil,
+            relativeOrder: .min,
             userDescription: "",
             color: nil,
             viewConfig: .alwaysVisible,

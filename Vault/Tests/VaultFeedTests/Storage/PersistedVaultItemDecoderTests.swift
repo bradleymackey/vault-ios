@@ -407,7 +407,7 @@ extension PersistedVaultItemDecoderTests {
 
     private func makePersistedItem(
         id: UUID = UUID(),
-        relativeOrder: UInt64? = nil,
+        relativeOrder: UInt64 = .max,
         createdDate: Date = Date(),
         updatedDate: Date = Date(),
         userDescription: String = "",

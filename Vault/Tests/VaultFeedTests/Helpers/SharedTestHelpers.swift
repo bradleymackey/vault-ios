@@ -42,6 +42,8 @@ func anyOTPAuthCode(
 /// The default payload is any OTPAuthCode.
 func uniqueVaultItem(
     item: VaultItem.Payload = .otpCode(anyOTPAuthCode()),
+    relativeOrder: UInt64 = .max,
+    updatedDate: Date = Date(),
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
     tags: Set<Identifier<VaultItemTag>> = [],
@@ -49,6 +51,8 @@ func uniqueVaultItem(
 ) -> VaultItem {
     VaultItem(
         metadata: anyVaultItemMetadata(
+            relativeOrder: relativeOrder,
+            updatedDate: updatedDate,
             userDescription: userDescription,
             visibility: visibility,
             tags: tags,
@@ -71,6 +75,8 @@ func uniqueVaultItem(
 }
 
 func anyVaultItemMetadata(
+    relativeOrder: UInt64 = .max,
+    updatedDate: Date = Date(),
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
     tags: Set<Identifier<VaultItemTag>> = [],
@@ -81,8 +87,8 @@ func anyVaultItemMetadata(
     .init(
         id: .new(),
         created: Date(),
-        updated: Date(),
-        relativeOrder: nil,
+        updated: updatedDate,
+        relativeOrder: relativeOrder,
         userDescription: userDescription,
         tags: tags,
         visibility: visibility,

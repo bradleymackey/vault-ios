@@ -187,7 +187,7 @@ struct VaultItemFeedView_Previews: PreviewProvider {
                     id: Identifier<VaultItem>(),
                     created: Date(),
                     updated: Date(),
-                    relativeOrder: nil,
+                    relativeOrder: .min,
                     userDescription: "My Cool Code",
                     tags: [],
                     visibility: .always,

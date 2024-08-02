@@ -83,7 +83,7 @@ extension VaultItem {
         public let id: Identifier<VaultItem>
         public let created: Date
         public var updated: Date
-        public var relativeOrder: UInt64?
+        public var relativeOrder: UInt64
         /// User-provided description about the item.
         public var userDescription: String
         public var visibility: VaultItemVisibility
@@ -98,7 +98,7 @@ extension VaultItem {
             id: Identifier<VaultItem>,
             created: Date,
             updated: Date,
-            relativeOrder: UInt64?,
+            relativeOrder: UInt64,
             userDescription: String,
             tags: Set<Identifier<VaultItemTag>>,
             visibility: VaultItemVisibility,
@@ -125,7 +125,7 @@ extension VaultItem {
 extension VaultItem {
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
-        public var relativeOrder: UInt64?
+        public var relativeOrder: UInt64
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: Payload
@@ -136,7 +136,7 @@ extension VaultItem {
         public var lockState: VaultItemLockState
 
         public init(
-            relativeOrder: UInt64?,
+            relativeOrder: UInt64,
             userDescription: String,
             color: VaultItemColor?,
             item: Payload,

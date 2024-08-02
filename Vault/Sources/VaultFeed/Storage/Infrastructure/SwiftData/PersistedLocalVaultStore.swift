@@ -18,7 +18,10 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: [SortDescriptor(\.updatedDate)]
+            sortBy: [
+                SortDescriptor(\.relativeOrder),
+                SortDescriptor(\.updatedDate),
+            ]
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)

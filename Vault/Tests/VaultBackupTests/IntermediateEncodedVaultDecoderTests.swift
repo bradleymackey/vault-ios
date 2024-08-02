@@ -48,7 +48,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             id: uuid1,
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
-            relativeOrder: nil,
+            relativeOrder: .min,
             userDescription: "",
             tags: [],
             visibility: .always,

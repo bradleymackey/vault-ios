@@ -5,7 +5,7 @@ import FoundationExtensions
 ///
 /// This is a partial edit, which will be merged with the current model to form an update.
 public struct SecureNoteDetailEdits: EditableState {
-    public var relativeOrder: UInt64?
+    public var relativeOrder: UInt64
 
     /// The title, which validates that there is actually content in the string.
     @FieldValidated(validationLogic: .stringRequiringContent)
@@ -60,7 +60,8 @@ public struct SecureNoteDetailEdits: EditableState {
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
-        lockState: VaultItemLockState
+        lockState: VaultItemLockState,
+        relativeOrder: UInt64
     ) {
         self.description = description
         self.title = title
@@ -70,6 +71,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.searchPassphrase = searchPassphrase
         self.tags = tags
         self.lockState = lockState
+        self.relativeOrder = relativeOrder
     }
 
     public var isValid: Bool {
@@ -98,7 +100,8 @@ extension SecureNoteDetailEdits {
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
+            relativeOrder: .min
         )
     }
 }
