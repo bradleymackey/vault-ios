@@ -20,7 +20,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             predicate: makePredicate(query: query),
             sortBy: [
                 SortDescriptor(\.relativeOrder),
-                SortDescriptor(\.updatedDate, order: .reverse),
+                SortDescriptor(\.updatedDate),
             ]
         )
         let results = try modelContext.fetch(descriptor)

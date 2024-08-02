@@ -123,12 +123,12 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.id), [
+            ids[4], // min (default position)
             ids[2], // 1
             ids[3], // 2
-            ids[1], // 3, earlier updated
             ids[0], // 3, later updated
+            ids[1], // 3, earlier updated
             ids[5], // 99
-            ids[4], // nil
         ])
         XCTAssertEqual(result.errors, [])
     }
