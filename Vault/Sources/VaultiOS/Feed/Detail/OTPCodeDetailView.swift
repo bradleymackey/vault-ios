@@ -432,7 +432,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 id: .new(),
                 created: Date(),
                 updated: Date(),
-                relativeOrder: .min,
+                relativeOrder: .max,
                 userDescription: "Description",
                 tags: [],
                 visibility: .always,

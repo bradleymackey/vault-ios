@@ -110,7 +110,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             uniqueVaultItem(relativeOrder: 3).makeWritable(),
             uniqueVaultItem(relativeOrder: 1).makeWritable(),
             uniqueVaultItem(relativeOrder: 2).makeWritable(),
-            uniqueVaultItem(relativeOrder: .min).makeWritable(),
+            uniqueVaultItem(relativeOrder: .max).makeWritable(),
             uniqueVaultItem(relativeOrder: 99).makeWritable(),
         ]
         var ids = [Identifier<VaultItem>]()
