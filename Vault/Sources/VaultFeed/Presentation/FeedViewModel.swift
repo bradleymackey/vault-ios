@@ -1,11 +1,12 @@
 import Combine
 import Foundation
+import FoundationExtensions
 
 @MainActor
 @Observable
 public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
     public var searchQuery: String = ""
-    public var filteringByTags: Set<VaultItemTag.Identifier> = []
+    public var filteringByTags: Set<Identifier<VaultItemTag>> = []
     public var codes = [VaultItem]()
     public var tags = [VaultItemTag]()
     public var errors = [VaultRetrievalResult<VaultItem>.Error]()
@@ -27,7 +28,7 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
         codes.first(where: { $0.id == id })
     }
 
-    public func toggleFiltering(tag: VaultItemTag.Identifier) {
+    public func toggleFiltering(tag: Identifier<VaultItemTag>) {
         if filteringByTags.contains(tag) {
             filteringByTags.remove(tag)
         } else {

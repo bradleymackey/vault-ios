@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 /// Encapsulates the edit state for a given code.
@@ -38,7 +39,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var color: VaultItemColor?
 
-    public var tags: Set<VaultItemTag.Identifier>
+    public var tags: Set<Identifier<VaultItemTag>>
 
     public var lockState: VaultItemLockState
 
@@ -79,7 +80,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         description: String,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
-        tags: Set<VaultItemTag.Identifier>,
+        tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         color: VaultItemColor?
     ) {
@@ -107,7 +108,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
-        tags: Set<VaultItemTag.Identifier>,
+        tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState
     ) {
         codeType = code.type.kind

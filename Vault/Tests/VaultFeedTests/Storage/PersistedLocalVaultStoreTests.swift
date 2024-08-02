@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftData
 import TestHelpers
 import VaultCore
@@ -943,7 +944,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyVaultItemTag().makeWritable(),
             anyVaultItemTag().makeWritable(),
         ]
-        var insertedIds = [VaultItemTag.Identifier]()
+        var insertedIds = [Identifier<VaultItemTag>]()
         for tag in otherTags {
             let id = try await sut.insertTag(item: tag)
             insertedIds.append(id)
@@ -1004,7 +1005,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyVaultItemTag().makeWritable(),
             anyVaultItemTag().makeWritable(),
         ]
-        var insertedIds = [VaultItemTag.Identifier]()
+        var insertedIds = [Identifier<VaultItemTag>]()
         for tag in initialTags {
             let id = try await sut.insertTag(item: tag)
             insertedIds.append(id)

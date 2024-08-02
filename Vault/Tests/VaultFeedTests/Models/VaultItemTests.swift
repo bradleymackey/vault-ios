@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import XCTest
 @testable import VaultFeed
@@ -68,7 +69,7 @@ extension VaultItemTests {
         updated: Date = Date(timeIntervalSince1970: 200),
         relativeOrder: UInt64? = nil,
         userDescription: String = "Any",
-        tags: Set<VaultItemTag.Identifier> = [],
+        tags: Set<Identifier<VaultItemTag>> = [],
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,

@@ -88,7 +88,7 @@ extension VaultItem {
         public var userDescription: String
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
-        public var tags: Set<VaultItemTag.Identifier>
+        public var tags: Set<Identifier<VaultItemTag>>
         public var searchPassphrase: String?
         public var lockState: VaultItemLockState
         /// The color tint for this item.
@@ -100,7 +100,7 @@ extension VaultItem {
             updated: Date,
             relativeOrder: UInt64?,
             userDescription: String,
-            tags: Set<VaultItemTag.Identifier>,
+            tags: Set<Identifier<VaultItemTag>>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
@@ -129,7 +129,7 @@ extension VaultItem {
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: Payload
-        public var tags: Set<VaultItemTag.Identifier>
+        public var tags: Set<Identifier<VaultItemTag>>
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphase: String?
@@ -140,7 +140,7 @@ extension VaultItem {
             userDescription: String,
             color: VaultItemColor?,
             item: Payload,
-            tags: Set<VaultItemTag.Identifier>,
+            tags: Set<Identifier<VaultItemTag>>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphase: String?,

@@ -31,9 +31,9 @@ extension VaultBackupItemDecoder {
         )
     }
 
-    private func decodeTags(ids: Set<UUID>) -> Set<VaultItemTag.Identifier> {
+    private func decodeTags(ids: Set<UUID>) -> Set<Identifier<VaultItemTag>> {
         ids.map {
-            VaultItemTag.Identifier(id: $0)
+            Identifier<VaultItemTag>(id: $0)
         }.reducedToSet()
     }
 

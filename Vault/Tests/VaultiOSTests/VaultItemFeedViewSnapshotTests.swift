@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import TestHelpers
 import VaultFeed
@@ -73,7 +74,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_searchBar_tagsBeingFiltered() async throws {
         let store = VaultStoreStub()
-        let tag1Id = VaultItemTag.Identifier()
+        let tag1Id = Identifier<VaultItemTag>()
         store.retrieveTagsResult = .success([
             VaultItemTag(id: tag1Id, name: "tag1"),
             VaultItemTag(id: .init(), name: "tag2", color: .gray),

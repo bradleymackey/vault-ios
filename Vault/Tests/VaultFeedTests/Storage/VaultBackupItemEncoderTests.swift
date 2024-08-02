@@ -15,7 +15,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
         let note = SecureNote(title: "title", contents: "contents")
-        let tags: Set<VaultItemTag.Identifier> = [.init(id: UUID())]
+        let tags: Set<Identifier<VaultItemTag>> = [.init(id: UUID())]
         let item = VaultItem(
             metadata: .init(
                 id: id,

@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreWriter
@@ -9,7 +10,7 @@ public struct VaultStoreQuery: Sendable, Equatable {
     /// Using `nil` equates to not querying by text and won't filter items by a search query.
     public var searchText: String?
     /// Require that the item includes **all** these search tags.
-    public var tags: Set<VaultItemTag.Identifier> = []
+    public var tags: Set<Identifier<VaultItemTag>> = []
 
     /// Return all items, don't filter the results.
     public static var all: VaultStoreQuery {
