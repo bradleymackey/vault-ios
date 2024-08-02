@@ -56,7 +56,7 @@ func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> Vaul
         id: id,
         created: Date(),
         updated: Date(),
-        relativeOrder: .max,
+        relativeOrder: .min,
         userDescription: "any",
         tags: [],
         visibility: .always,
