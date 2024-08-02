@@ -448,6 +448,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
+        relativeOrder: UInt64? = nil,
         userDescription: String = "",
         code: OTPAuthCode,
         color: VaultItemColor? = nil,
@@ -458,6 +459,7 @@ extension PersistedVaultItemEncoderTests {
         lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
         VaultItem.Write(
+            relativeOrder: relativeOrder,
             userDescription: userDescription,
             color: color,
             item: .otpCode(code),
@@ -490,6 +492,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
+        relativeOrder: UInt64? = nil,
         userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil,
@@ -497,6 +500,7 @@ extension PersistedVaultItemEncoderTests {
         lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
         VaultItem.Write(
+            relativeOrder: relativeOrder,
             userDescription: userDescription,
             color: color,
             item: .secureNote(note),

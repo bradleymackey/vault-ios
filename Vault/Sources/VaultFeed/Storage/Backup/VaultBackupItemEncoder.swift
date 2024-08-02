@@ -17,6 +17,7 @@ final class VaultBackupItemEncoder {
             id: storedItem.id,
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
+            relativeOrder: storedItem.metadata.relativeOrder,
             userDescription: storedItem.metadata.userDescription,
             tags: storedItem.metadata.tags.reducedToSet(\.id),
             visibility: encodeVisibility(metadata: storedItem.metadata),

@@ -20,6 +20,7 @@ extension VaultBackupItemDecoder {
             id: backupItem.id,
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
+            relativeOrder: backupItem.relativeOrder,
             userDescription: backupItem.userDescription,
             tags: decodeTags(ids: backupItem.tags),
             visibility: decodeVisibility(level: backupItem.visibility),

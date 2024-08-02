@@ -44,6 +44,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
                 hydratedFromCode: code,
+                relativeOrder: metadata.relativeOrder,
                 userDescription: metadata.userDescription,
                 color: metadata.color,
                 viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),

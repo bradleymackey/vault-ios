@@ -6,6 +6,7 @@ import SwiftData
 final class PersistedVaultItem {
     @Attribute(.unique)
     var id: UUID
+    var relativeOrder: UInt64?
     var createdDate: Date
     var updatedDate: Date
     var userDescription: String
@@ -25,6 +26,7 @@ final class PersistedVaultItem {
 
     init(
         id: UUID,
+        relativeOrder: UInt64?,
         createdDate: Date,
         updatedDate: Date,
         userDescription: String,
@@ -38,6 +40,7 @@ final class PersistedVaultItem {
         otpDetails: PersistedOTPDetails?
     ) {
         self.id = id
+        self.relativeOrder = relativeOrder
         self.createdDate = createdDate
         self.updatedDate = updatedDate
         self.userDescription = userDescription

@@ -21,6 +21,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 id: id,
                 created: createdDate,
                 updated: updateDate,
+                relativeOrder: 999_995,
                 userDescription: description,
                 tags: tags,
                 visibility: .always,
@@ -40,6 +41,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
         XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
+        XCTAssertEqual(encodedItem.relativeOrder, 999_995)
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
         XCTAssertEqual(encodedItem.visibility, .always)
@@ -69,6 +71,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 id: id,
                 created: createdDate,
                 updated: updateDate,
+                relativeOrder: 1234,
                 userDescription: description,
                 tags: [],
                 visibility: .always,
@@ -86,6 +89,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.id, id)
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
+        XCTAssertEqual(encodedItem.relativeOrder, 1234)
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "hello")
@@ -125,6 +129,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 id: id,
                 created: createdDate,
                 updated: updateDate,
+                relativeOrder: nil,
                 userDescription: description,
                 tags: [],
                 visibility: .always,
@@ -146,6 +151,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "test")
+        XCTAssertNil(encodedItem.relativeOrder)
         XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tags, [])
         XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
@@ -210,6 +216,7 @@ extension VaultBackupItemEncoderTests {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
+                relativeOrder: nil,
                 userDescription: "any",
                 tags: [],
                 visibility: .always,

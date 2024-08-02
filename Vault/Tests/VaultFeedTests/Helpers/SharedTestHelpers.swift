@@ -82,6 +82,7 @@ func anyVaultItemMetadata(
         id: UUID(),
         created: Date(),
         updated: Date(),
+        relativeOrder: nil,
         userDescription: userDescription,
         tags: tags,
         visibility: visibility,

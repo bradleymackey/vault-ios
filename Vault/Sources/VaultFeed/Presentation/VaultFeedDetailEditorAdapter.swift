@@ -14,6 +14,7 @@ public struct VaultFeedDetailEditorAdapter {
 extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
     public func createCode(initialEdits: OTPCodeDetailEdits) async throws {
         let newCodeVaultItem = try VaultItem.Write(
+            relativeOrder: initialEdits.relativeOrder,
             userDescription: initialEdits.description,
             color: initialEdits.color,
             item: .otpCode(initialEdits.asOTPAuthCode()),
@@ -35,6 +36,7 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
         try await vaultFeed.update(
             id: id,
             item: .init(
+                relativeOrder: edits.relativeOrder,
                 userDescription: edits.description,
                 color: edits.color,
                 item: .otpCode(item),
@@ -56,6 +58,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
     public func createNote(initialEdits: SecureNoteDetailEdits) async throws {
         let newSecureNote = SecureNote(title: initialEdits.title, contents: initialEdits.contents)
         let newVaultItem = VaultItem.Write(
+            relativeOrder: initialEdits.relativeOrder,
             userDescription: initialEdits.description,
             color: initialEdits.color,
             item: .secureNote(newSecureNote),
@@ -74,6 +77,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         updatedItem.title = edits.title
         updatedItem.contents = edits.contents
         let updatedVaultItem = VaultItem.Write(
+            relativeOrder: edits.relativeOrder,
             userDescription: edits.description,
             color: edits.color,
             item: .secureNote(updatedItem),

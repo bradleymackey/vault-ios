@@ -31,6 +31,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     /// This discards any non-deterministic data and identifiable information.
     public func makeWritable() -> VaultItem.Write {
         .init(
+            relativeOrder: metadata.relativeOrder,
             userDescription: metadata.userDescription,
             color: metadata.color,
             item: item,
@@ -82,6 +83,7 @@ extension VaultItem {
         public let id: UUID
         public let created: Date
         public var updated: Date
+        public var relativeOrder: UInt64?
         /// User-provided description about the item.
         public var userDescription: String
         public var visibility: VaultItemVisibility
@@ -96,6 +98,7 @@ extension VaultItem {
             id: UUID,
             created: Date,
             updated: Date,
+            relativeOrder: UInt64?,
             userDescription: String,
             tags: Set<VaultItemTag.Identifier>,
             visibility: VaultItemVisibility,
@@ -107,6 +110,7 @@ extension VaultItem {
             self.id = id
             self.created = created
             self.updated = updated
+            self.relativeOrder = relativeOrder
             self.userDescription = userDescription
             self.tags = tags
             self.visibility = visibility
@@ -121,6 +125,7 @@ extension VaultItem {
 extension VaultItem {
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
+        public var relativeOrder: UInt64?
         public var userDescription: String
         public var color: VaultItemColor?
         public var item: Payload
@@ -131,6 +136,7 @@ extension VaultItem {
         public var lockState: VaultItemLockState
 
         public init(
+            relativeOrder: UInt64?,
             userDescription: String,
             color: VaultItemColor?,
             item: Payload,
@@ -140,6 +146,7 @@ extension VaultItem {
             searchPassphase: String?,
             lockState: VaultItemLockState
         ) {
+            self.relativeOrder = relativeOrder
             self.userDescription = userDescription
             self.color = color
             self.item = item
