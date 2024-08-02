@@ -8,6 +8,7 @@ struct PersistedVaultItemDecoder {
             id: item.id,
             created: item.createdDate,
             updated: item.updatedDate,
+            relativeOrder: item.relativeOrder,
             userDescription: item.userDescription,
             tags: decodeTags(tags: item.tags),
             visibility: decodeVisibility(level: item.visibility),

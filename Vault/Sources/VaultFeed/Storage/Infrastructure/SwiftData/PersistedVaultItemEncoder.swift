@@ -46,6 +46,7 @@ extension PersistedVaultItemEncoder {
         }
         return try PersistedVaultItem(
             id: UUID(),
+            relativeOrder: newData.relativeOrder,
             createdDate: now,
             updatedDate: now,
             userDescription: newData.userDescription,
@@ -68,6 +69,7 @@ extension PersistedVaultItemEncoder {
     ) throws -> PersistedVaultItem {
         let now = currentDate()
         existingItem.updatedDate = now
+        existingItem.relativeOrder = newData.relativeOrder
         existingItem.userDescription = newData.userDescription
         existingItem.visibility = encodeVisibilityLevel(level: newData.visibility)
         existingItem.searchableLevel = encodeSearchableLevel(level: newData.searchableLevel)

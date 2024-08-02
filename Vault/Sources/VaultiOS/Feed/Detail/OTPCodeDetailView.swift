@@ -432,6 +432,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 id: UUID(),
                 created: Date(),
                 updated: Date(),
+                relativeOrder: nil,
                 userDescription: "Description",
                 tags: [],
                 visibility: .always,

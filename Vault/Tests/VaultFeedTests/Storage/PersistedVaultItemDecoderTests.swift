@@ -406,6 +406,7 @@ extension PersistedVaultItemDecoderTests {
 
     private func makePersistedItem(
         id: UUID = UUID(),
+        relativeOrder: UInt64? = nil,
         createdDate: Date = Date(),
         updatedDate: Date = Date(),
         userDescription: String = "",
@@ -430,6 +431,7 @@ extension PersistedVaultItemDecoderTests {
     ) -> PersistedVaultItem {
         let item = PersistedVaultItem(
             id: id,
+            relativeOrder: relativeOrder,
             createdDate: createdDate,
             updatedDate: updatedDate,
             userDescription: userDescription,

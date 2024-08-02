@@ -5,6 +5,8 @@ import FoundationExtensions
 ///
 /// This is a partial edit, which will be merged with the current model to form an update.
 public struct SecureNoteDetailEdits: EditableState {
+    public var relativeOrder: UInt64?
+
     /// The title, which validates that there is actually content in the string.
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var title: String = ""

@@ -18,6 +18,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             id: id,
             createdDate: createdDate,
             updatedDate: updateDate,
+            relativeOrder: 77777,
             userDescription: description,
             tags: [tag],
             visibility: .always,
@@ -41,6 +42,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.metadata.tags, [.init(id: tag)])
         XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
+        XCTAssertEqual(decodedItem.metadata.relativeOrder, 77777)
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
     }
@@ -65,6 +67,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             id: id,
             createdDate: createdDate,
             updatedDate: updateDate,
+            relativeOrder: 1234,
             userDescription: description,
             tags: [],
             visibility: .always,
@@ -98,6 +101,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.visibility, .always)
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.metadata.lockState, .lockedWithNativeSecurity)
+        XCTAssertEqual(decodedItem.metadata.relativeOrder, 1234)
         XCTAssertEqual(decodedItem.item.otpCode?.type, .totp(period: 30))
         XCTAssertEqual(decodedItem.item.otpCode?.data.secret, expectedSecret)
         XCTAssertEqual(decodedItem.item.otpCode?.data.accountName, "my acc")
@@ -115,6 +119,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             id: id,
             createdDate: createdDate,
             updatedDate: updateDate,
+            relativeOrder: 4321,
             userDescription: description,
             tags: [],
             visibility: .onlySearch,
@@ -142,6 +147,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.id, id)
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
+        XCTAssertEqual(decodedItem.metadata.relativeOrder, 4321)
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
         XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
         XCTAssertEqual(decodedItem.metadata.visibility, .onlySearch)
@@ -230,6 +236,7 @@ extension VaultBackupItemDecoderTests {
             id: id,
             createdDate: createdDate,
             updatedDate: updateDate,
+            relativeOrder: nil,
             userDescription: description,
             tags: [],
             visibility: .always,
@@ -255,6 +262,7 @@ extension VaultBackupItemDecoderTests {
             id: UUID(),
             createdDate: createdDate,
             updatedDate: updateDate,
+            relativeOrder: nil,
             userDescription: description,
             tags: [],
             visibility: .onlySearch,

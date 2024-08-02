@@ -33,6 +33,7 @@
         }
       },
       "lock_state" : "LOCKED_NATIVE",
+      "relative_order" : 666,
       "searchable_level" : "NONE",
       "tags" : [
         "493DF342-E537-4722-B6DC-6430A1413E34"
@@ -60,6 +61,7 @@
         }
       },
       "lock_state" : "NOT_LOCKED",
+      "relative_order" : 9999,
       "searchable_level" : "ONLY_TITLE",
       "tags" : [
         "493DF342-E537-4722-B6DC-6430A1413E34"

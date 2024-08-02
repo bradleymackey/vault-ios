@@ -20,6 +20,7 @@
         }
       },
       "lock_state" : "LOCKED_NATIVE",
+      "relative_order" : 999,
       "search_passphrase" : "pass",
       "searchable_level" : "FULL",
       "tags" : [

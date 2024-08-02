@@ -20,6 +20,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
+            relativeOrder: 1234,
             userDescription: "mydesc",
             color: color,
             viewConfig: .alwaysVisible,
@@ -40,6 +41,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
         XCTAssertEqual(sut.viewConfig, .alwaysVisible)
         XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
+        XCTAssertEqual(sut.relativeOrder, 1234)
     }
 
     func test_initHydratedFromCode_assignsHOTPCodeType() {
@@ -57,6 +59,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
+            relativeOrder: 4321,
             userDescription: "mydesc2",
             color: color,
             viewConfig: .alwaysVisible,
@@ -67,7 +70,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         XCTAssertEqual(sut.codeType, .hotp)
         XCTAssertEqual(sut.totpPeriodLength, 30, "Defaults TOTP to default for HOTP code")
-        XCTAssertEqual(sut.hotpCounterValue, 12345, "Defaults HOTP to max for TOTP code")
+        XCTAssertEqual(sut.hotpCounterValue, 12345)
         XCTAssertEqual(sut.algorithm, .sha256)
         XCTAssertEqual(sut.numberOfDigits, 6)
         XCTAssertEqual(sut.issuerTitle, "myiss2")
@@ -77,6 +80,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
         XCTAssertEqual(sut.viewConfig, .alwaysVisible)
         XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
+        XCTAssertEqual(sut.relativeOrder, 4321)
     }
 
     func test_init_emptySecretIsEmptySecretBase32String() {
@@ -84,6 +88,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
+            relativeOrder: nil,
             userDescription: "mydesc",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -100,6 +105,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
+            relativeOrder: nil,
             userDescription: "mydesc2",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -154,6 +160,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let code = anyTOTPAuthCode()
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
+            relativeOrder: nil,
             userDescription: "mydesc",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -171,6 +178,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let code = anyHOTPAuthCode()
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
+            relativeOrder: nil,
             userDescription: "mydesc2",
             color: nil,
             viewConfig: .alwaysVisible,
