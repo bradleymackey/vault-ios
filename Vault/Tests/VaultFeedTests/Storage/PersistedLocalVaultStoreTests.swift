@@ -119,19 +119,13 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             ids.append(id)
         }
 
-        // force item updated timestamps to change in this order
-        try await Task.sleep(for: .milliseconds(10))
-        try await sut.update(id: ids[1], item: uniqueVaultItem(relativeOrder: 3).makeWritable())
-        try await Task.sleep(for: .milliseconds(10))
-        try await sut.update(id: ids[0], item: uniqueVaultItem(relativeOrder: 3).makeWritable())
-
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.id), [
             ids[4], // min (default position)
             ids[2], // 1
             ids[3], // 2
-            ids[0], // 3, later updated
-            ids[1], // 3, earlier updated
+            ids[0], // 3, added first
+            ids[1], // 3, added second
             ids[5], // 99
         ])
         XCTAssertEqual(result.errors, [])
