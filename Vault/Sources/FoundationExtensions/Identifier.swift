@@ -19,3 +19,11 @@ extension Identifier: RawRepresentable {
         id
     }
 }
+
+// MARK: - Helpers
+
+extension Identifier {
+    public static func new() -> Self {
+        .init(id: UUID())
+    }
+}
