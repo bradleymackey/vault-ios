@@ -18,7 +18,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -44,7 +44,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -70,7 +70,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -96,7 +96,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -122,7 +122,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -149,7 +149,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -176,7 +176,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: date,
                 updated: date.addingTimeInterval(1), // different updated date
                 relativeOrder: nil,
@@ -202,7 +202,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -229,7 +229,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: date,
                 updated: date.addingTimeInterval(1), // different updated date
                 relativeOrder: nil,

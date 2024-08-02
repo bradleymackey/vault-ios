@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// A vault store that always errors on every method call.
 @MainActor
@@ -14,15 +15,15 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader {
         throw error
     }
 
-    public func insert(item _: VaultItem.Write) async throws -> UUID {
+    public func insert(item _: VaultItem.Write) async throws -> Identifier<VaultItem> {
         throw error
     }
 
-    public func update(id _: UUID, item _: VaultItem.Write) async throws {
+    public func update(id _: Identifier<VaultItem>, item _: VaultItem.Write) async throws {
         throw error
     }
 
-    public func delete(id _: UUID) async throws {
+    public func delete(id _: Identifier<VaultItem>) async throws {
         throw error
     }
 

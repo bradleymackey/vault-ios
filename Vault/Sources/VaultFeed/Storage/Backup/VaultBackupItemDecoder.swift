@@ -17,7 +17,7 @@ final class VaultBackupItemDecoder {
 extension VaultBackupItemDecoder {
     private func decodeMetadata(backupItem: VaultBackupItem) -> VaultItem.Metadata {
         .init(
-            id: backupItem.id,
+            id: Identifier(id: backupItem.id),
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
             relativeOrder: backupItem.relativeOrder,

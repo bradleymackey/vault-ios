@@ -34,15 +34,15 @@ public protocol VaultStoreWriter: Sendable {
     ///
     /// - Returns: The unique ID of the newly created item.
     @discardableResult
-    func insert(item: VaultItem.Write) async throws -> UUID
+    func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem>
 
     /// Update the item with the given `id`.
-    func update(id: UUID, item: VaultItem.Write) async throws
+    func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws
 
     /// Delete the item with the specific `id`.
     ///
     /// This should have no effect if the item does not exist.
-    func delete(id: UUID) async throws
+    func delete(id: Identifier<VaultItem>) async throws
 }
 
 /// @mockable

@@ -14,7 +14,7 @@ final class VaultBackupItemEncoder {
         case let .secureNote(note): .note(data: encodeNote(note: note))
         }
         return VaultBackupItem(
-            id: storedItem.id,
+            id: storedItem.id.rawValue,
             createdDate: storedItem.metadata.created,
             updatedDate: storedItem.metadata.updated,
             relativeOrder: storedItem.metadata.relativeOrder,

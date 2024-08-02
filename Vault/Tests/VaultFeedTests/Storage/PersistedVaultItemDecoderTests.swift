@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftData
 import TestHelpers
 import VaultCore
@@ -49,7 +50,7 @@ extension PersistedVaultItemDecoderTests {
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.id, id)
+        XCTAssertEqual(decoded.id.rawValue, id)
     }
 
     func test_decodeMetadata_createdDate() throws {

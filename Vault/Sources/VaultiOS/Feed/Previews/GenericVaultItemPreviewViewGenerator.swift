@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -73,7 +74,7 @@ public struct GenericVaultItemPreviewViewGenerator<
 }
 
 extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    public func textToCopyForVaultItem(id: UUID) -> String? {
+    public func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
         for generator in allGenerators {
             if let text = generator.textToCopyForVaultItem(id: id) {
                 return text
@@ -82,7 +83,7 @@ extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, V
         return nil
     }
 
-    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         for generator in allGenerators {
             if let action = generator.previewActionForVaultItem(id: id) {
                 return action

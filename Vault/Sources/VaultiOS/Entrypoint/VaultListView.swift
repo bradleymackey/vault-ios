@@ -22,7 +22,7 @@ struct VaultListView<
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Hashable, IdentifiableSelf {
-        case detail(UUID, VaultItem)
+        case detail(Identifier<VaultItem>, VaultItem)
         case creatingItem(CreatingItem)
     }
 

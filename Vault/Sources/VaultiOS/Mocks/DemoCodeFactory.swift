@@ -5,7 +5,7 @@ enum DemoVaultFactory {
     static func totpCode(issuer: String = "Ebay") -> VaultItem {
         .init(
             metadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,
@@ -31,7 +31,7 @@ enum DemoVaultFactory {
     static func hotpCode(issuer: String = "Ebay") -> VaultItem {
         .init(
             metadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,
@@ -57,7 +57,7 @@ enum DemoVaultFactory {
     static func secureNote(title: String = "Title", contents: String = "Contents...") -> VaultItem {
         .init(
             metadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,

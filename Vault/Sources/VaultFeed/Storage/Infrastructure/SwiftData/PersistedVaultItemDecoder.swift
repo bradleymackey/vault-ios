@@ -5,7 +5,7 @@ import VaultCore
 struct PersistedVaultItemDecoder {
     func decode(item: PersistedVaultItem) throws -> VaultItem {
         let metadata = try VaultItem.Metadata(
-            id: item.id,
+            id: Identifier(id: item.id),
             created: item.createdDate,
             updated: item.updatedDate,
             relativeOrder: item.relativeOrder,

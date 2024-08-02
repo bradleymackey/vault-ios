@@ -10,7 +10,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
     // MARK: Full items
 
     func test_encode_encodesNote() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
@@ -36,7 +36,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id)
+        XCTAssertEqual(encodedItem.id, id.rawValue)
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
@@ -51,7 +51,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
     }
 
     func test_encode_encodesTOTPCode() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
@@ -86,7 +86,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id)
+        XCTAssertEqual(encodedItem.id, id.rawValue)
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.relativeOrder, 1234)
@@ -109,7 +109,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
     }
 
     func test_encode_encodesHOTPCode() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
@@ -144,7 +144,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id)
+        XCTAssertEqual(encodedItem.id, id.rawValue)
         XCTAssertEqual(encodedItem.createdDate, createdDate)
         XCTAssertEqual(encodedItem.updatedDate, updateDate)
         XCTAssertEqual(encodedItem.userDescription, description)
@@ -213,7 +213,7 @@ extension VaultBackupItemEncoderTests {
         )
         return VaultItem(
             metadata: .init(
-                id: UUID(),
+                id: Identifier<VaultItem>(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,

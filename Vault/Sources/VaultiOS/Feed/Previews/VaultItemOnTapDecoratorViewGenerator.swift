@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultFeed
 
@@ -7,9 +8,9 @@ public struct VaultItemOnTapDecoratorViewGenerator<
 >: VaultItemPreviewViewGenerator {
     public typealias PreviewItem = Generator.PreviewItem
     public let generator: Generator
-    public let onTap: (UUID) -> Void
+    public let onTap: (Identifier<VaultItem>) -> Void
 
-    public init(generator: Generator, onTap: @escaping (UUID) -> Void) {
+    public init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) -> Void) {
         self.generator = generator
         self.onTap = onTap
     }
@@ -38,7 +39,7 @@ public struct VaultItemOnTapDecoratorViewGenerator<
 extension VaultItemOnTapDecoratorViewGenerator: VaultItemPreviewActionHandler
     where Generator: VaultItemPreviewActionHandler
 {
-    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         generator.previewActionForVaultItem(id: id)
     }
 }

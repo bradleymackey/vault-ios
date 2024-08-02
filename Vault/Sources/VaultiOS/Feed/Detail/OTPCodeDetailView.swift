@@ -429,7 +429,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
             navigationPath: .constant(.init()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,
@@ -457,11 +457,11 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
             // noop
         }
 
-        func updateCode(id _: UUID, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
+        func updateCode(id _: Identifier<VaultItem>, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
             // noop
         }
 
-        func deleteCode(id _: UUID) async throws {
+        func deleteCode(id _: Identifier<VaultItem>) async throws {
             // noop
         }
     }

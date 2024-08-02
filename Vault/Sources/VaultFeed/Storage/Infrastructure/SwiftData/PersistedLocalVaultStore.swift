@@ -153,23 +153,24 @@ extension VaultRetrievalResult where T == VaultItem {
 
 extension PersistedLocalVaultStore: VaultStoreWriter {
     @discardableResult
-    public func insert(item: VaultItem.Write) async throws -> UUID {
+    public func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem> {
         do {
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             let encoded = try encoder.encode(item: item)
 
             try modelContext.save()
-            return encoded.id
+            return Identifier(id: encoded.id)
         } catch {
             modelContext.rollback()
             throw error
         }
     }
 
-    public func update(id: UUID, item: VaultItem.Write) async throws {
+    public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         do {
+            let uuid = id.rawValue
             var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
-                item.id == id
+                item.id == uuid
             })
             descriptor.fetchLimit = 1
             guard let existing = try modelContext.fetch(descriptor).first else {
@@ -185,10 +186,11 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         }
     }
 
-    public func delete(id: UUID) async throws {
+    public func delete(id: Identifier<VaultItem>) async throws {
         do {
+            let uuid = id.rawValue
             try modelContext.delete(model: PersistedVaultItem.self, where: #Predicate {
-                $0.id == id
+                $0.id == uuid
             })
             try modelContext.save()
         } catch {

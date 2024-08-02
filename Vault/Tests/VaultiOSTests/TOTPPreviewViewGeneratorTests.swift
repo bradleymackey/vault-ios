@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import TestHelpers
 import VaultCore
@@ -38,7 +39,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
-        let sharedID = UUID()
+        let sharedID = Identifier<VaultItem>()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
@@ -50,7 +51,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_returnsSameTimerPeriodStateUsingCachedModels() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
-        let sharedID = UUID()
+        let sharedID = Identifier<VaultItem>()
         let models = collectCodeTimerPeriodState(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
         XCTAssertEqual(models.count, 2)
@@ -61,7 +62,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_previewActionForVaultItem_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
-        let code = sut.previewActionForVaultItem(id: UUID())
+        let code = sut.previewActionForVaultItem(id: .new())
 
         XCTAssertNil(code)
     }
@@ -70,7 +71,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
 
         for viewModel in viewModels {
@@ -86,7 +87,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_textToCopyForVaultItem_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
-        let code = sut.textToCopyForVaultItem(id: UUID())
+        let code = sut.textToCopyForVaultItem(id: Identifier<VaultItem>())
 
         XCTAssertNil(code)
     }
@@ -95,7 +96,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
 
         for viewModel in viewModels {
@@ -111,7 +112,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
-        let id = UUID()
+        let id = Identifier<VaultItem>()
 
         _ = sut.makeVaultPreviewView(item: anyTOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
 
@@ -181,7 +182,11 @@ extension TOTPPreviewViewGeneratorTests {
         factory: TOTPPreviewViewFactoryMock,
         when action: () -> Void
     ) {
-        let updaters = collectCodeTimerUpdaters(sut: sut, factory: factory, ids: [UUID(), UUID(), UUID()])
+        let updaters = collectCodeTimerUpdaters(
+            sut: sut,
+            factory: factory,
+            ids: [Identifier<VaultItem>(), Identifier<VaultItem>(), Identifier<VaultItem>()]
+        )
 
         for updater in updaters {
             XCTAssertEqual(updater.recalculateCallCount, 0)
@@ -198,7 +203,7 @@ extension TOTPPreviewViewGeneratorTests {
     private func collectFactoryParameters(
         sut: SUT,
         factory: TOTPPreviewViewFactoryMock,
-        ids: [UUID],
+        ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [(OTPCodePreviewViewModel, OTPCodeTimerPeriodState, OTPCodeTimerUpdaterMock)] {
@@ -235,7 +240,7 @@ extension TOTPPreviewViewGeneratorTests {
     private func collectCodePreviewViewModels(
         sut: SUT,
         factory: TOTPPreviewViewFactoryMock,
-        ids: [UUID],
+        ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [OTPCodePreviewViewModel] {
@@ -247,7 +252,7 @@ extension TOTPPreviewViewGeneratorTests {
     private func collectCodeTimerPeriodState(
         sut: SUT,
         factory: TOTPPreviewViewFactoryMock,
-        ids: [UUID],
+        ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [OTPCodeTimerPeriodState] {
@@ -259,7 +264,7 @@ extension TOTPPreviewViewGeneratorTests {
     private func collectCodeTimerUpdaters(
         sut: SUT,
         factory: TOTPPreviewViewFactoryMock,
-        ids: [UUID],
+        ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [OTPCodeTimerUpdaterMock] {

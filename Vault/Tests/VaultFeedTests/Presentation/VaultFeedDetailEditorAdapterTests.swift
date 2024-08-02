@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import VaultCore
 import VaultFeed
@@ -117,7 +118,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
         let edits = anyOTPCodeDetailEdits()
         await XCTAssertThrowsError(try await sut.updateCode(
-            id: UUID(),
+            id: .new(),
             item: uniqueCode(),
             edits: edits
         ))
@@ -128,7 +129,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
-        let id = UUID()
+        let id = Identifier<VaultItem>.new()
 
         let exp = expectation(description: "Wait for delete")
         feed.deleteHandler = { actualID in
@@ -146,7 +147,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.deleteCode(id: UUID()))
+        await XCTAssertThrowsError(try await sut.deleteCode(id: .new()))
     }
 
     @MainActor
@@ -235,7 +236,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.updateNote(id: UUID(), item: anySecureNote(), edits: .new()))
+        await XCTAssertThrowsError(try await sut.updateNote(id: .new(), item: anySecureNote(), edits: .new()))
     }
 
     @MainActor
@@ -243,7 +244,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = VaultFeedMock()
         let sut = makeSUT(feed: feed)
 
-        let id = UUID()
+        let id = Identifier<VaultItem>.new()
 
         let exp = expectation(description: "Wait for delete")
         feed.deleteHandler = { actualID in
@@ -261,7 +262,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let feed = FailingVaultFeed()
         let sut = makeSUT(feed: feed)
 
-        await XCTAssertThrowsError(try await sut.deleteNote(id: UUID()))
+        await XCTAssertThrowsError(try await sut.deleteNote(id: .new()))
     }
 }
 

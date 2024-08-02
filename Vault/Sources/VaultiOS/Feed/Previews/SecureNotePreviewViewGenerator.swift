@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -38,11 +39,11 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
 }
 
 extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         .openItemDetail(id)
     }
 
-    public func textToCopyForVaultItem(id _: UUID) -> String? {
+    public func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         "TODO"
     }
 }

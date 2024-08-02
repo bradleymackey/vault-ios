@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultFeed
 
 class FailingVaultFeed: VaultFeed {
@@ -12,11 +13,11 @@ class FailingVaultFeed: VaultFeed {
         throw StubError()
     }
 
-    func update(id _: UUID, item _: VaultItem.Write) async throws {
+    func update(id _: Identifier<VaultItem>, item _: VaultItem.Write) async throws {
         throw StubError()
     }
 
-    func delete(id _: UUID) async throws {
+    func delete(id _: Identifier<VaultItem>) async throws {
         throw StubError()
     }
 }

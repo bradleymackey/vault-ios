@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import TestHelpers
 import VaultCore
@@ -101,7 +102,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.previewActionForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.previewActionForVaultItem(id: UUID())
+        let action = sut.previewActionForVaultItem(id: .new())
 
         XCTAssertNil(action)
     }
@@ -116,7 +117,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.previewActionForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.previewActionForVaultItem(id: UUID())
+        let action = sut.previewActionForVaultItem(id: .new())
 
         XCTAssertEqual(action, .copyText("totp"))
     }
@@ -131,7 +132,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.previewActionForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.previewActionForVaultItem(id: UUID())
+        let action = sut.previewActionForVaultItem(id: .new())
 
         XCTAssertEqual(action, .copyText("hotp"))
     }
@@ -146,7 +147,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.previewActionForVaultItemValue = .copyText("secure note")
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.previewActionForVaultItem(id: UUID())
+        let action = sut.previewActionForVaultItem(id: .new())
 
         XCTAssertEqual(action, .copyText("secure note"))
     }
@@ -161,7 +162,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.textToCopyForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.textToCopyForVaultItem(id: UUID())
+        let action = sut.textToCopyForVaultItem(id: .new())
 
         XCTAssertNil(action)
     }
@@ -176,7 +177,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.textToCopyForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.textToCopyForVaultItem(id: UUID())
+        let action = sut.textToCopyForVaultItem(id: .new())
 
         XCTAssertEqual(action, "totp")
     }
@@ -191,7 +192,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.textToCopyForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.textToCopyForVaultItem(id: UUID())
+        let action = sut.textToCopyForVaultItem(id: .new())
 
         XCTAssertEqual(action, "hotp")
     }
@@ -206,7 +207,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         note.textToCopyForVaultItemValue = "secure note"
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let action = sut.textToCopyForVaultItem(id: UUID())
+        let action = sut.textToCopyForVaultItem(id: .new())
 
         XCTAssertEqual(action, "secure note")
     }
@@ -262,13 +263,13 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
     }
 
     var previewActionForVaultItemValue: VaultItemPreviewAction? = nil
-    func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
+    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         calledMethods.append(#function)
         return previewActionForVaultItemValue
     }
 
     var textToCopyForVaultItemValue: String? = nil
-    func textToCopyForVaultItem(id _: UUID) -> String? {
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
     }
@@ -300,13 +301,13 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
     }
 
     var previewActionForVaultItemValue: VaultItemPreviewAction? = nil
-    func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
+    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         calledMethods.append(#function)
         return previewActionForVaultItemValue
     }
 
     var textToCopyForVaultItemValue: String? = nil
-    func textToCopyForVaultItem(id _: UUID) -> String? {
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
     }
@@ -338,13 +339,13 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemP
     }
 
     var previewActionForVaultItemValue: VaultItemPreviewAction? = nil
-    func previewActionForVaultItem(id _: UUID) -> VaultItemPreviewAction? {
+    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         calledMethods.append(#function)
         return previewActionForVaultItemValue
     }
 
     var textToCopyForVaultItemValue: String? = nil
-    func textToCopyForVaultItem(id _: UUID) -> String? {
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
     }

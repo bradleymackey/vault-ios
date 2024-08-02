@@ -6,20 +6,20 @@ import XCTest
 
 final class VaultItemTests: XCTestCase {
     func test_isContentEqual_comparesIDs() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let item1 = makeVaultItem(id: id)
         let item2 = makeVaultItem(id: id)
 
         XCTAssertTrue(item1.isContentEqual(to: item2))
 
-        let item3 = makeVaultItem(id: UUID())
-        let item4 = makeVaultItem(id: UUID())
+        let item3 = makeVaultItem(id: Identifier<VaultItem>())
+        let item4 = makeVaultItem(id: Identifier<VaultItem>())
 
         XCTAssertFalse(item3.isContentEqual(to: item4))
     }
 
     func test_isContentEqual_comparesContent() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let item1 = makeVaultItem(id: id, userDescription: "hello")
         let item2 = makeVaultItem(id: id, userDescription: "hello")
 
@@ -32,7 +32,7 @@ final class VaultItemTests: XCTestCase {
     }
 
     func test_isContentEqual_doesNotCompareCreatedDate() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let date = Date(timeIntervalSince1970: 1234)
         let item1 = makeVaultItem(id: id, created: date)
         let item2 = makeVaultItem(id: id, created: date)
@@ -46,7 +46,7 @@ final class VaultItemTests: XCTestCase {
     }
 
     func test_isContentEqual_doesNotCompareUpdatedDate() {
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let date = Date(timeIntervalSince1970: 1234)
         let item1 = makeVaultItem(id: id, updated: date)
         let item2 = makeVaultItem(id: id, updated: date)
@@ -64,7 +64,7 @@ final class VaultItemTests: XCTestCase {
 
 extension VaultItemTests {
     private func makeVaultItem(
-        id: UUID,
+        id: Identifier<VaultItem>,
         created: Date = Date(timeIntervalSince1970: 100),
         updated: Date = Date(timeIntervalSince1970: 200),
         relativeOrder: UInt64? = nil,

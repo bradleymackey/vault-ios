@@ -79,7 +79,7 @@ func anyVaultItemMetadata(
     lockState: VaultItemLockState = .notLocked
 ) -> VaultItem.Metadata {
     .init(
-        id: UUID(),
+        id: .new(),
         created: Date(),
         updated: Date(),
         relativeOrder: nil,

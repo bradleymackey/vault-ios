@@ -24,7 +24,7 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
         sanitizedQuery != nil
     }
 
-    public func code(id: UUID) -> VaultItem? {
+    public func code(id: Identifier<VaultItem>) -> VaultItem? {
         codes.first(where: { $0.id == id })
     }
 
@@ -123,19 +123,19 @@ extension FeedViewModel: VaultFeed {
         await reloadData()
     }
 
-    public func update(id: UUID, item: VaultItem.Write) async throws {
+    public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         try await store.update(id: id, item: item)
         await invalidateCaches(id: id)
         await reloadData()
     }
 
-    public func delete(id: UUID) async throws {
+    public func delete(id: Identifier<VaultItem>) async throws {
         try await store.delete(id: id)
         await invalidateCaches(id: id)
         await reloadData()
     }
 
-    private func invalidateCaches(id: UUID) async {
+    private func invalidateCaches(id: Identifier<VaultItem>) async {
         for cache in caches {
             await cache.invalidateVaultItemDetailCache(forVaultItemWithID: id)
         }

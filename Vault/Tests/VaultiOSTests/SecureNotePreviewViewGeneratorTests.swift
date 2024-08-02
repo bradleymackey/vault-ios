@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import TestHelpers
 import VaultCore
@@ -36,7 +37,7 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_previewActionForVaultItem_opensItemDetailForGivenID() {
         let sut = makeSUT()
-        let itemID = UUID()
+        let itemID = Identifier<VaultItem>()
 
         let action = sut.previewActionForVaultItem(id: itemID)
 

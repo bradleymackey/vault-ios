@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -50,7 +51,7 @@ func anySecureNote() -> SecureNote {
     .init(title: "Hello World", contents: "This is my note")
 }
 
-func uniqueMetadata(id: UUID = UUID()) -> VaultItem.Metadata {
+func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> VaultItem.Metadata {
     .init(
         id: id,
         created: Date(),

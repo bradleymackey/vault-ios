@@ -111,7 +111,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             uniqueVaultItem().makeWritable(),
             uniqueVaultItem().makeWritable(),
         ]
-        var ids = [UUID]()
+        var ids = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             ids.append(id)
@@ -484,7 +484,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyTitle).makeWritable(),
             anyOTPAuthCode(issuerName: "aaabbb").wrapInAnyVaultItem(searchableLevel: .onlyTitle).makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -507,7 +507,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode(issuerName: "aaa")
                 .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "nnn").makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -533,7 +533,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode(accountName: "aaa")
                 .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "q").makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -557,7 +557,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode(accountName: "bbb").wrapInAnyVaultItem().makeWritable(), // not included
             anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem().makeWritable(),
         ]
-        var ids = [UUID]()
+        var ids = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             ids.append(id)
@@ -603,7 +603,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -622,7 +622,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -644,7 +644,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -665,7 +665,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1, tag2]).makeWritable(),
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).makeWritable(),
         ]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
             insertedIDs.append(id)
@@ -700,7 +700,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     func test_insert_returnsUniqueCodeIDAfterSuccessfulInsert() async throws {
         let code = uniqueVaultItem().makeWritable()
 
-        var ids = [UUID]()
+        var ids = [Identifier<VaultItem>]()
         for _ in 0 ..< 5 {
             let id = try await sut.insert(item: code)
             ids.append(id)
@@ -712,7 +712,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_deleteByID_hasNoEffectOnEmptyStore() async throws {
-        try await sut.delete(id: UUID())
+        try await sut.delete(id: .new())
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
@@ -741,7 +741,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        try await sut.delete(id: UUID())
+        try await sut.delete(id: Identifier<VaultItem>())
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), otherCodes.map(\.item.otpCode))
@@ -750,7 +750,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_updateByID_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
         do {
-            try await sut.update(id: UUID(), item: uniqueVaultItem().makeWritable())
+            try await sut.update(id: Identifier<VaultItem>(), item: uniqueVaultItem().makeWritable())
             XCTFail("Expected to throw error")
         } catch {
             // ignore
@@ -758,7 +758,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_updateByID_hasNoEffectOnEmptyStorageIfCodeDoesNotAlreadyExist() async throws {
-        try? await sut.update(id: UUID(), item: uniqueVaultItem().makeWritable())
+        try? await sut.update(id: Identifier<VaultItem>(), item: uniqueVaultItem().makeWritable())
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items, [])
@@ -775,7 +775,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             try await sut.insert(item: code)
         }
 
-        try? await sut.update(id: UUID(), item: uniqueVaultItem().makeWritable())
+        try? await sut.update(id: Identifier<VaultItem>(), item: uniqueVaultItem().makeWritable())
 
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.item.otpCode), codes.map(\.item.otpCode))
@@ -852,7 +852,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_exportVault_withContent() async throws {
         let items = [uniqueVaultItem(), uniqueVaultItem(), uniqueVaultItem()]
-        var insertedIDs = [UUID]()
+        var insertedIDs = [Identifier<VaultItem>]()
         for code in items {
             let id = try await sut.insert(item: code.makeWritable())
             insertedIDs.append(id)
@@ -1024,9 +1024,10 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {
-    fileprivate func corruptItemAlgorithm(id: UUID) async throws {
+    fileprivate func corruptItemAlgorithm(id: Identifier<VaultItem>) async throws {
+        let uuid = id.rawValue
         var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
-            item.id == id
+            item.id == uuid
         })
         descriptor.fetchLimit = 1
         guard let existing = try? modelContext.fetch(descriptor).first else {
