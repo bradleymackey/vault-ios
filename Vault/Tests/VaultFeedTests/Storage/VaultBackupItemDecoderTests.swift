@@ -32,7 +32,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
 
         let decodedItem = try sut.decode(backupItem: item)
 
-        XCTAssertEqual(decodedItem.id, id)
+        XCTAssertEqual(decodedItem.id.rawValue, id)
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
@@ -92,7 +92,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         let decodedItem = try sut.decode(backupItem: item)
 
         let expectedSecret = OTPAuthSecret(data: Data(hex: "ababababa"), format: .base32)
-        XCTAssertEqual(decodedItem.id, id)
+        XCTAssertEqual(decodedItem.id.rawValue, id)
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
@@ -144,7 +144,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         let decodedItem = try sut.decode(backupItem: item)
 
         let expectedSecret = OTPAuthSecret(data: Data(hex: "ababababaff"), format: .base32)
-        XCTAssertEqual(decodedItem.id, id)
+        XCTAssertEqual(decodedItem.id.rawValue, id)
         XCTAssertEqual(decodedItem.metadata.created, createdDate)
         XCTAssertEqual(decodedItem.metadata.updated, updateDate)
         XCTAssertEqual(decodedItem.metadata.relativeOrder, 4321)

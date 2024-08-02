@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 @MainActor
@@ -12,15 +13,15 @@ public final class VaultTagStoreErroring: VaultTagStore {
         throw error
     }
 
-    public func insertTag(item _: VaultItemTag.Write) async throws -> VaultItemTag.Identifier {
+    public func insertTag(item _: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
         throw error
     }
 
-    public func updateTag(id _: VaultItemTag.Identifier, item _: VaultItemTag.Write) async throws {
+    public func updateTag(id _: Identifier<VaultItemTag>, item _: VaultItemTag.Write) async throws {
         throw error
     }
 
-    public func deleteTag(id _: VaultItemTag.Identifier) async throws {
+    public func deleteTag(id _: Identifier<VaultItemTag>) async throws {
         throw error
     }
 }

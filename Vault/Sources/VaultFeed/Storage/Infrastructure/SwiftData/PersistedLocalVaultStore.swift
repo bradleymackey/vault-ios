@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftData
 
 /// Uses SwiftData with a CoreData backing layer to persist content.
@@ -49,7 +50,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         }
     }
 
-    private func makeTagsPredicate(matchingTags tags: Set<VaultItemTag.Identifier>) -> Predicate<PersistedVaultItem> {
+    private func makeTagsPredicate(matchingTags tags: Set<Identifier<VaultItemTag>>) -> Predicate<PersistedVaultItem> {
         if tags.isEmpty {
             // We're not filtering by any tags, so don't check tags.
             return .true
@@ -152,23 +153,24 @@ extension VaultRetrievalResult where T == VaultItem {
 
 extension PersistedLocalVaultStore: VaultStoreWriter {
     @discardableResult
-    public func insert(item: VaultItem.Write) async throws -> UUID {
+    public func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem> {
         do {
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             let encoded = try encoder.encode(item: item)
 
             try modelContext.save()
-            return encoded.id
+            return Identifier(id: encoded.id)
         } catch {
             modelContext.rollback()
             throw error
         }
     }
 
-    public func update(id: UUID, item: VaultItem.Write) async throws {
+    public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         do {
+            let uuid = id.rawValue
             var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
-                item.id == id
+                item.id == uuid
             })
             descriptor.fetchLimit = 1
             guard let existing = try modelContext.fetch(descriptor).first else {
@@ -184,10 +186,11 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         }
     }
 
-    public func delete(id: UUID) async throws {
+    public func delete(id: Identifier<VaultItem>) async throws {
         do {
+            let uuid = id.rawValue
             try modelContext.delete(model: PersistedVaultItem.self, where: #Predicate {
-                $0.id == id
+                $0.id == uuid
             })
             try modelContext.save()
         } catch {
@@ -233,20 +236,20 @@ extension PersistedLocalVaultStore: VaultTagStoreReader {
 
 extension PersistedLocalVaultStore: VaultTagStoreWriter {
     @discardableResult
-    public func insertTag(item: VaultItemTag.Write) async throws -> VaultItemTag.Identifier {
+    public func insertTag(item: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
         do {
             let encoder = PersistedVaultTagEncoder(context: modelContext)
             let newTag = encoder.encode(tag: item)
 
             try modelContext.save()
-            return VaultItemTag.Identifier(id: newTag.id)
+            return Identifier<VaultItemTag>(id: newTag.id)
         } catch {
             modelContext.rollback()
             throw error
         }
     }
 
-    public func updateTag(id: VaultItemTag.Identifier, item: VaultItemTag.Write) async throws {
+    public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
         do {
             let uuid = id.id
             var descriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { item in
@@ -266,7 +269,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
         }
     }
 
-    public func deleteTag(id: VaultItemTag.Identifier) async throws {
+    public func deleteTag(id: Identifier<VaultItemTag>) async throws {
         do {
             let uuid = id.id
             try modelContext.delete(model: PersistedVaultTag.self, where: #Predicate {

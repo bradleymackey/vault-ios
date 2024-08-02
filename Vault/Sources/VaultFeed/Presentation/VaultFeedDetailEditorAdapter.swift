@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 /// A `OTPCodeDetailEditor` that uses a feed for updating after a given edit.
@@ -28,7 +29,7 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
         try await vaultFeed.create(item: newCodeVaultItem)
     }
 
-    public func updateCode(id: UUID, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
+    public func updateCode(id: Identifier<VaultItem>, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
         var item = item
         item.data.accountName = edits.accountNameTitle
         item.data.issuer = edits.issuerTitle
@@ -49,7 +50,7 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
         )
     }
 
-    public func deleteCode(id: UUID) async throws {
+    public func deleteCode(id: Identifier<VaultItem>) async throws {
         try await vaultFeed.delete(id: id)
     }
 }
@@ -72,7 +73,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         try await vaultFeed.create(item: newVaultItem)
     }
 
-    public func updateNote(id: UUID, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
+    public func updateNote(id: Identifier<VaultItem>, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
         var updatedItem = item
         updatedItem.title = edits.title
         updatedItem.contents = edits.contents
@@ -91,7 +92,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
         try await vaultFeed.update(id: id, item: updatedVaultItem)
     }
 
-    public func deleteNote(id: UUID) async throws {
+    public func deleteNote(id: Identifier<VaultItem>) async throws {
         try await vaultFeed.delete(id: id)
     }
 }

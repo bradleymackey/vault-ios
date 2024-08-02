@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 @MainActor
@@ -11,7 +12,7 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
     public internal(set) var saveError: PresentationError?
     public internal(set) var deleteError: PresentationError?
 
-    private let tagId: VaultItemTag.Identifier?
+    private let tagId: Identifier<VaultItemTag>?
     private let store: Store
 
     public static var defaultIconOption: String {

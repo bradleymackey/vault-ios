@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftData
 import TestHelpers
 import VaultCore
@@ -454,7 +455,7 @@ extension PersistedVaultItemEncoderTests {
         color: VaultItemColor? = nil,
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
-        tags: Set<VaultItemTag.Identifier> = [],
+        tags: Set<Identifier<VaultItemTag>> = [],
         searchPassphrase: String = "",
         lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
@@ -496,7 +497,7 @@ extension PersistedVaultItemEncoderTests {
         userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil,
-        tags: Set<VaultItemTag.Identifier> = [],
+        tags: Set<Identifier<VaultItemTag>> = [],
         lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
         VaultItem.Write(

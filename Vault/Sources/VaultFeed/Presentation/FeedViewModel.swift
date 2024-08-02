@@ -1,11 +1,12 @@
 import Combine
 import Foundation
+import FoundationExtensions
 
 @MainActor
 @Observable
 public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
     public var searchQuery: String = ""
-    public var filteringByTags: Set<VaultItemTag.Identifier> = []
+    public var filteringByTags: Set<Identifier<VaultItemTag>> = []
     public var codes = [VaultItem]()
     public var tags = [VaultItemTag]()
     public var errors = [VaultRetrievalResult<VaultItem>.Error]()
@@ -23,11 +24,11 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
         sanitizedQuery != nil
     }
 
-    public func code(id: UUID) -> VaultItem? {
+    public func code(id: Identifier<VaultItem>) -> VaultItem? {
         codes.first(where: { $0.id == id })
     }
 
-    public func toggleFiltering(tag: VaultItemTag.Identifier) {
+    public func toggleFiltering(tag: Identifier<VaultItemTag>) {
         if filteringByTags.contains(tag) {
             filteringByTags.remove(tag)
         } else {
@@ -122,19 +123,19 @@ extension FeedViewModel: VaultFeed {
         await reloadData()
     }
 
-    public func update(id: UUID, item: VaultItem.Write) async throws {
+    public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         try await store.update(id: id, item: item)
         await invalidateCaches(id: id)
         await reloadData()
     }
 
-    public func delete(id: UUID) async throws {
+    public func delete(id: Identifier<VaultItem>) async throws {
         try await store.delete(id: id)
         await invalidateCaches(id: id)
         await reloadData()
     }
 
-    private func invalidateCaches(id: UUID) async {
+    private func invalidateCaches(id: Identifier<VaultItem>) async {
         for cache in caches {
             await cache.invalidateVaultItemDetailCache(forVaultItemWithID: id)
         }

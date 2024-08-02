@@ -17,7 +17,7 @@ final class VaultBackupItemDecoder {
 extension VaultBackupItemDecoder {
     private func decodeMetadata(backupItem: VaultBackupItem) -> VaultItem.Metadata {
         .init(
-            id: backupItem.id,
+            id: Identifier(id: backupItem.id),
             created: backupItem.createdDate,
             updated: backupItem.updatedDate,
             relativeOrder: backupItem.relativeOrder,
@@ -31,9 +31,9 @@ extension VaultBackupItemDecoder {
         )
     }
 
-    private func decodeTags(ids: Set<UUID>) -> Set<VaultItemTag.Identifier> {
+    private func decodeTags(ids: Set<UUID>) -> Set<Identifier<VaultItemTag>> {
         ids.map {
-            VaultItemTag.Identifier(id: $0)
+            Identifier<VaultItemTag>(id: $0)
         }.reducedToSet()
     }
 

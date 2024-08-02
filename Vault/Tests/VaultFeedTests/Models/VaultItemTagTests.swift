@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import XCTest
 @testable import VaultFeed
 
@@ -45,7 +46,7 @@ final class VaultItemTagTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultItemTagTests {
-    private func makeUniqueIdentifier() -> VaultItemTag.Identifier {
+    private func makeUniqueIdentifier() -> Identifier<VaultItemTag> {
         .init(id: UUID())
     }
 }

@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import XCTest
 @testable import VaultFeed
@@ -184,7 +185,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), item: uniqueVaultItem().makeWritable())
+        try await sut.update(id: .new(), item: uniqueVaultItem().makeWritable())
 
         await fulfillment(of: [exp])
     }
@@ -199,7 +200,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.update(id: UUID(), item: uniqueVaultItem().makeWritable())
+        try await sut.update(id: .new(), item: uniqueVaultItem().makeWritable())
 
         await fulfillment(of: [exp])
     }
@@ -215,7 +216,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try? await sut.update(id: UUID(), item: uniqueVaultItem().makeWritable())
+        try? await sut.update(id: .new(), item: uniqueVaultItem().makeWritable())
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -226,7 +227,7 @@ final class FeedViewModelTests: XCTestCase {
         let cache2 = VaultItemCacheMock()
         let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
-        let invalidateId = UUID()
+        let invalidateId = Identifier<VaultItem>()
         try await sut.update(id: invalidateId, item: uniqueVaultItem().makeWritable())
 
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [invalidateId])
@@ -243,7 +244,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.delete(id: UUID())
+        try await sut.delete(id: .new())
 
         await fulfillment(of: [exp])
     }
@@ -258,7 +259,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try await sut.delete(id: UUID())
+        try await sut.delete(id: .new())
 
         await fulfillment(of: [exp])
     }
@@ -274,7 +275,7 @@ final class FeedViewModelTests: XCTestCase {
 
         let sut = makeSUT(store: store)
 
-        try? await sut.delete(id: UUID())
+        try? await sut.delete(id: .new())
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -285,7 +286,7 @@ final class FeedViewModelTests: XCTestCase {
         let cache2 = VaultItemCacheMock()
         let sut = makeSUT(store: VaultStoreStub(), caches: [cache1, cache2])
 
-        let invalidateId = UUID()
+        let invalidateId = Identifier<VaultItem>()
         try await sut.delete(id: invalidateId)
 
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheArgValues, [invalidateId])

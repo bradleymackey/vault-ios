@@ -19,7 +19,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -47,7 +47,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -75,7 +75,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -103,7 +103,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,
@@ -131,7 +131,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             navigationPath: .constant(NavigationPath()),
             allTags: [],
             storedMetadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: fixedTestDate(),
                 updated: fixedTestDate(),
                 relativeOrder: nil,

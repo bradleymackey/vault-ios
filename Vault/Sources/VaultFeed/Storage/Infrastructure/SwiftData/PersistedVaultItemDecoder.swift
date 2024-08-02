@@ -5,7 +5,7 @@ import VaultCore
 struct PersistedVaultItemDecoder {
     func decode(item: PersistedVaultItem) throws -> VaultItem {
         let metadata = try VaultItem.Metadata(
-            id: item.id,
+            id: Identifier(id: item.id),
             created: item.createdDate,
             updated: item.updatedDate,
             relativeOrder: item.relativeOrder,
@@ -35,9 +35,9 @@ struct PersistedVaultItemDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoder {
-    private func decodeTags(tags: [PersistedVaultTag]) -> Set<VaultItemTag.Identifier> {
+    private func decodeTags(tags: [PersistedVaultTag]) -> Set<Identifier<VaultItemTag>> {
         tags.map {
-            VaultItemTag.Identifier(id: $0.id)
+            Identifier<VaultItemTag>(id: $0.id)
         }.reducedToSet()
     }
 

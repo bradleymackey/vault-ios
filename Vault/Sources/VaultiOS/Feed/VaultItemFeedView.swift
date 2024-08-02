@@ -1,4 +1,5 @@
 import CryptoEngine
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -183,7 +184,7 @@ struct VaultItemFeedView_Previews: PreviewProvider {
         store.retrieveQueryResult = .init(items: [
             .init(
                 metadata: .init(
-                    id: UUID(),
+                    id: Identifier<VaultItem>(),
                     created: Date(),
                     updated: Date(),
                     relativeOrder: nil,

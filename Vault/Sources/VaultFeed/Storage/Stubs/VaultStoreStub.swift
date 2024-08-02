@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// A vault store where return values can be easily stubbed for testing or
 /// other instances where we don't need a fully functional store.
@@ -16,18 +17,18 @@ public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
     }
 
     public var insertStoreCalled: () -> Void = {}
-    public func insert(item _: VaultItem.Write) async throws -> UUID {
+    public func insert(item _: VaultItem.Write) async throws -> Identifier<VaultItem> {
         insertStoreCalled()
-        return UUID()
+        return .new()
     }
 
     public var updateStoreCalled: () -> Void = {}
-    public func update(id _: UUID, item _: VaultItem.Write) async throws {
+    public func update(id _: Identifier<VaultItem>, item _: VaultItem.Write) async throws {
         updateStoreCalled()
     }
 
     public var deleteStoreCalled: () -> Void = {}
-    public func delete(id _: UUID) async throws {
+    public func delete(id _: Identifier<VaultItem>) async throws {
         deleteStoreCalled()
     }
 

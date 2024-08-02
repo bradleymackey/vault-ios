@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import TestHelpers
 import VaultCore
@@ -32,7 +33,11 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_makeOTPView_viewModelsAreInitiallyObfuscated() {
         let (sut, _, factory) = makeSUT()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
+        let viewModels = collectCodePreviewViewModels(
+            sut: sut,
+            factory: factory,
+            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
+        )
 
         XCTAssertEqual(viewModels.count, 2)
         XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
@@ -41,7 +46,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
-        let sharedID = UUID()
+        let sharedID = Identifier<VaultItem>()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
@@ -52,7 +57,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_makeOTPView_returnsSameIncrementerInstanceUsingCachedViewModels() {
         let (sut, _, factory) = makeSUT()
-        let sharedID = UUID()
+        let sharedID = Identifier<VaultItem>()
         let viewModels = collectCodeIncrementerViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
 
         XCTAssertEqual(viewModels.count, 2)
@@ -63,7 +68,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_previewActionForVaultItem_isNilIfCacheEmpty() {
         let (sut, _, _) = makeSUT()
 
-        let code = sut.previewActionForVaultItem(id: UUID())
+        let code = sut.previewActionForVaultItem(id: Identifier<VaultItem>())
 
         XCTAssertNil(code)
     }
@@ -72,7 +77,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_previewActionForVaultItem_isNilWhenCodeIsObfuscated() {
         let (sut, _, _) = makeSUT()
 
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
         let code = sut.previewActionForVaultItem(id: id)
 
@@ -82,7 +87,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let (sut, _, factory) = makeSUT()
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
 
         for viewModel in viewModels {
@@ -98,7 +103,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_textToCopyForVaultItem_isNilIfCacheEmpty() {
         let (sut, _, _) = makeSUT()
 
-        let code = sut.textToCopyForVaultItem(id: UUID())
+        let code = sut.textToCopyForVaultItem(id: Identifier<VaultItem>())
 
         XCTAssertNil(code)
     }
@@ -107,7 +112,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_textToCopyForVaultItem_isNilWhenCodeIsObfuscated() {
         let (sut, _, _) = makeSUT()
 
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
         let code = sut.textToCopyForVaultItem(id: id)
 
@@ -117,7 +122,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let (sut, _, factory) = makeSUT()
-        let id = UUID()
+        let id = Identifier<VaultItem>()
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
 
         for viewModel in viewModels {
@@ -151,7 +156,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() async throws {
         let (sut, _, _) = makeSUT()
 
-        let id = UUID()
+        let id = Identifier<VaultItem>()
 
         _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
 
@@ -189,7 +194,11 @@ extension HOTPPreviewViewGeneratorTests {
         factory: HOTPPreviewViewFactoryMock,
         when action: () -> Void
     ) {
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [UUID(), UUID()])
+        let viewModels = collectCodePreviewViewModels(
+            sut: sut,
+            factory: factory,
+            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
+        )
 
         for viewModel in viewModels {
             viewModel.update(code: .visible("1234"))
@@ -206,7 +215,7 @@ extension HOTPPreviewViewGeneratorTests {
     private func collectCodePreviewViewModels(
         sut: SUT,
         factory: HOTPPreviewViewFactoryMock,
-        ids: [UUID],
+        ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [OTPCodePreviewViewModel] {
@@ -240,7 +249,7 @@ extension HOTPPreviewViewGeneratorTests {
     private func collectCodeIncrementerViewModels(
         sut: SUT,
         factory: HOTPPreviewViewFactoryMock,
-        ids: [UUID],
+        ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> [OTPCodeIncrementerViewModel] {

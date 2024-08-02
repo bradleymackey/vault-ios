@@ -44,7 +44,7 @@ func uniqueVaultItem(
     item: VaultItem.Payload = .otpCode(anyOTPAuthCode()),
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
-    tags: Set<VaultItemTag.Identifier> = [],
+    tags: Set<Identifier<VaultItemTag>> = [],
     lockState: VaultItemLockState = .notLocked
 ) -> VaultItem {
     VaultItem(
@@ -73,13 +73,13 @@ func uniqueVaultItem(
 func anyVaultItemMetadata(
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
-    tags: Set<VaultItemTag.Identifier> = [],
+    tags: Set<Identifier<VaultItemTag>> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil,
     lockState: VaultItemLockState = .notLocked
 ) -> VaultItem.Metadata {
     .init(
-        id: UUID(),
+        id: .new(),
         created: Date(),
         updated: Date(),
         relativeOrder: nil,
@@ -97,7 +97,7 @@ extension SecureNote {
     func wrapInAnyVaultItem(
         userDescription: String = "",
         visibility: VaultItemVisibility = .always,
-        tags: Set<VaultItemTag.Identifier> = [],
+        tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked
@@ -120,7 +120,7 @@ extension OTPAuthCode {
     func wrapInAnyVaultItem(
         userDescription: String = "",
         visibility: VaultItemVisibility = .always,
-        tags: Set<VaultItemTag.Identifier> = [],
+        tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil
     ) -> VaultItem {

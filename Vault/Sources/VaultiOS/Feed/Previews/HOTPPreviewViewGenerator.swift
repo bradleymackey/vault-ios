@@ -11,9 +11,9 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
     let viewFactory: Factory
     let timer: any IntervalTimer
 
-    private var rendererCache = Cache<UUID, HOTPCodeRenderer>()
-    private var previewViewModelCache = Cache<UUID, OTPCodePreviewViewModel>()
-    private var incrementerViewModelCache = Cache<UUID, OTPCodeIncrementerViewModel>()
+    private var rendererCache = Cache<Identifier<VaultItem>, HOTPCodeRenderer>()
+    private var previewViewModelCache = Cache<Identifier<VaultItem>, OTPCodePreviewViewModel>()
+    private var incrementerViewModelCache = Cache<Identifier<VaultItem>, OTPCodeIncrementerViewModel>()
 
     public init(viewFactory: Factory, timer: any IntervalTimer) {
         self.viewFactory = viewFactory
@@ -52,12 +52,12 @@ extension HOTPPreviewViewGenerator {
 }
 
 extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         guard let visibleCode = textToCopyForVaultItem(id: id) else { return nil }
         return .copyText(visibleCode)
     }
 
-    public func textToCopyForVaultItem(id: UUID) -> String? {
+    public func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
         previewViewModelCache[id]?.code.visibleCode
     }
 }
@@ -65,7 +65,7 @@ extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopy
 // MARK: - Caching
 
 extension HOTPPreviewViewGenerator: VaultItemCache {
-    public nonisolated func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) async {
+    public nonisolated func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) async {
         await MainActor.run {
             rendererCache.remove(key: id)
             previewViewModelCache.remove(key: id)
@@ -85,13 +85,16 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
         incrementerViewModelCache.count
     }
 
-    private func makeRenderer(id: UUID, code: HOTPAuthCode) -> HOTPCodeRenderer {
+    private func makeRenderer(id: Identifier<VaultItem>, code: HOTPAuthCode) -> HOTPCodeRenderer {
         rendererCache.getOrCreateValue(for: id) {
             HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
         }
     }
 
-    private func makeIncrementerViewModel(id: UUID, code: HOTPAuthCode) -> OTPCodeIncrementerViewModel {
+    private func makeIncrementerViewModel(
+        id: Identifier<VaultItem>,
+        code: HOTPAuthCode
+    ) -> OTPCodeIncrementerViewModel {
         incrementerViewModelCache.getOrCreateValue(for: id) {
             OTPCodeIncrementerViewModel(
                 hotpRenderer: makeRenderer(id: id, code: code),

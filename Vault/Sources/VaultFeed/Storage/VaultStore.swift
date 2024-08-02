@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreWriter
@@ -9,7 +10,7 @@ public struct VaultStoreQuery: Sendable, Equatable {
     /// Using `nil` equates to not querying by text and won't filter items by a search query.
     public var searchText: String?
     /// Require that the item includes **all** these search tags.
-    public var tags: Set<VaultItemTag.Identifier> = []
+    public var tags: Set<Identifier<VaultItemTag>> = []
 
     /// Return all items, don't filter the results.
     public static var all: VaultStoreQuery {
@@ -33,15 +34,15 @@ public protocol VaultStoreWriter: Sendable {
     ///
     /// - Returns: The unique ID of the newly created item.
     @discardableResult
-    func insert(item: VaultItem.Write) async throws -> UUID
+    func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem>
 
     /// Update the item with the given `id`.
-    func update(id: UUID, item: VaultItem.Write) async throws
+    func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws
 
     /// Delete the item with the specific `id`.
     ///
     /// This should have no effect if the item does not exist.
-    func delete(id: UUID) async throws
+    func delete(id: Identifier<VaultItem>) async throws
 }
 
 /// @mockable

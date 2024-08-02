@@ -19,7 +19,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
 
     private var timerUpdaterCache = Cache<UInt64, any OTPCodeTimerUpdater>()
     private var timerPeriodStateCache = Cache<UInt64, OTPCodeTimerPeriodState>()
-    private var viewModelCache = Cache<UUID, OTPCodePreviewViewModel>()
+    private var viewModelCache = Cache<Identifier<VaultItem>, OTPCodePreviewViewModel>()
 
     public init(
         viewFactory: Factory,
@@ -66,12 +66,12 @@ extension TOTPPreviewViewGenerator {
 }
 
 extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    public func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction? {
+    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         guard let visibleCode = textToCopyForVaultItem(id: id) else { return nil }
         return .copyText(visibleCode)
     }
 
-    public func textToCopyForVaultItem(id: UUID) -> String? {
+    public func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
         viewModelCache[id]?.code.visibleCode
     }
 }
@@ -79,7 +79,7 @@ extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopy
 // MARK: - Caching
 
 extension TOTPPreviewViewGenerator: VaultItemCache {
-    public func invalidateVaultItemDetailCache(forVaultItemWithID id: UUID) {
+    public func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) {
         viewModelCache.remove(key: id)
         // don't invalidate period caches, as they are independant of the code detail
     }

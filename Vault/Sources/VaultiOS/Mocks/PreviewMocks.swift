@@ -12,7 +12,7 @@ struct CodeStoreFake: VaultStoreReader {
     let codes: [VaultItem] = [
         .init(
             metadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,
@@ -37,7 +37,7 @@ struct CodeStoreFake: VaultStoreReader {
         ),
         .init(
             metadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,
@@ -62,7 +62,7 @@ struct CodeStoreFake: VaultStoreReader {
         ),
         .init(
             metadata: .init(
-                id: UUID(),
+                id: .new(),
                 created: Date(),
                 updated: Date(),
                 relativeOrder: nil,

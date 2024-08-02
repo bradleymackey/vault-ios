@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -16,25 +17,25 @@ public protocol VaultItemPreviewViewGenerator {
 
 @MainActor
 public protocol VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id: UUID) -> String?
+    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String?
 }
 
 /// Handle a given action after interacting with a vault item.
 @MainActor
 public protocol VaultItemPreviewActionHandler {
-    func previewActionForVaultItem(id: UUID) -> VaultItemPreviewAction?
+    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction?
 }
 
 /// A kind of action that can be taken after interacting with a given vault item.
 public enum VaultItemPreviewAction: Equatable {
     case copyText(String)
-    case openItemDetail(UUID)
+    case openItemDetail(Identifier<VaultItem>)
 }
 
 // MARK: - Mock
 
 extension VaultItemPreviewViewGeneratorMock: VaultItemCopyActionHandler {
-    public func textToCopyForVaultItem(id _: UUID) -> String? {
+    public func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         nil
     }
 }

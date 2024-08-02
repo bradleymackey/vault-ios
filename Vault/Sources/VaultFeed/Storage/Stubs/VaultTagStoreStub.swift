@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 @MainActor
@@ -15,24 +16,24 @@ public final class VaultTagStoreStub: VaultTagStore {
     }
 
     public var insertTagCallCount = 0
-    public var insertTagResult = VaultItemTag.Identifier(id: UUID())
+    public var insertTagResult = Identifier<VaultItemTag>(id: UUID())
     public var insertTagCalled: (VaultItemTag.Write) -> Void = { _ in }
-    public func insertTag(item: VaultItemTag.Write) async throws -> VaultItemTag.Identifier {
+    public func insertTag(item: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
         insertTagCallCount += 1
         insertTagCalled(item)
         return insertTagResult
     }
 
     public var updateTagCallCount = 0
-    public var updateTagCalled: (VaultItemTag.Identifier, VaultItemTag.Write) -> Void = { _, _ in }
-    public func updateTag(id: VaultItemTag.Identifier, item: VaultItemTag.Write) async throws {
+    public var updateTagCalled: (Identifier<VaultItemTag>, VaultItemTag.Write) -> Void = { _, _ in }
+    public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
         updateTagCallCount += 1
         updateTagCalled(id, item)
     }
 
     public var deleteTagCallCount = 0
-    public var deleteTagCalled: (VaultItemTag.Identifier) -> Void = { _ in }
-    public func deleteTag(id: VaultItemTag.Identifier) async throws {
+    public var deleteTagCalled: (Identifier<VaultItemTag>) -> Void = { _ in }
+    public func deleteTag(id: Identifier<VaultItemTag>) async throws {
         deleteTagCallCount += 1
         deleteTagCalled(id)
     }

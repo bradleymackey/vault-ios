@@ -1,22 +1,14 @@
 import Foundation
+import FoundationExtensions
 
 public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
-    /// Uniquely identifies this tag.
-    public struct Identifier: Identifiable, Equatable, Hashable, Sendable {
-        public let id: UUID
-
-        public init(id: UUID = UUID()) {
-            self.id = id
-        }
-    }
-
     /// Static identifier for this item
-    public let id: Identifier
+    public let id: Identifier<VaultItemTag>
     public var name: String
     public var color: VaultItemColor?
     public var iconName: String?
 
-    public init(id: Identifier, name: String, color: VaultItemColor? = nil, iconName: String? = nil) {
+    public init(id: Identifier<VaultItemTag>, name: String, color: VaultItemColor? = nil, iconName: String? = nil) {
         self.id = id
         self.name = name
         self.color = color
