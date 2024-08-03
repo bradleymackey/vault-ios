@@ -171,14 +171,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 
     public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         do {
-            let uuid = id.rawValue
-            var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
-                item.id == uuid
-            })
-            descriptor.fetchLimit = 1
-            guard let existing = try modelContext.fetch(descriptor).first else {
-                throw Error.modelNotFound
-            }
+            let existing = try fetchVaultItem(id: id)
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             _ = try encoder.encode(item: item, existing: existing)
 
@@ -254,14 +247,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 
     public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
         do {
-            let uuid = id.id
-            var descriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { item in
-                item.id == uuid
-            })
-            descriptor.fetchLimit = 1
-            guard let existing = try modelContext.fetch(descriptor).first else {
-                throw Error.modelNotFound
-            }
+            let existing = try fetchVaultItemTag(id: id)
             let encoder = PersistedVaultTagEncoder(context: modelContext)
             _ = encoder.encode(tag: item, existing: existing)
 
@@ -283,5 +269,33 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
             modelContext.rollback()
             throw error
         }
+    }
+}
+
+// MARK: - Helpers
+
+extension PersistedLocalVaultStore {
+    private func fetchVaultItem(id: Identifier<VaultItem>) throws -> PersistedVaultItem {
+        let uuid = id.rawValue
+        var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
+            item.id == uuid
+        })
+        descriptor.fetchLimit = 1
+        guard let existing = try modelContext.fetch(descriptor).first else {
+            throw Error.modelNotFound
+        }
+        return existing
+    }
+
+    private func fetchVaultItemTag(id: Identifier<VaultItemTag>) throws -> PersistedVaultTag {
+        let uuid = id.id
+        var descriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { item in
+            item.id == uuid
+        })
+        descriptor.fetchLimit = 1
+        guard let existing = try modelContext.fetch(descriptor).first else {
+            throw Error.modelNotFound
+        }
+        return existing
     }
 }
