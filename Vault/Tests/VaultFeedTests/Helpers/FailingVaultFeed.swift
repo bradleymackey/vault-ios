@@ -20,4 +20,8 @@ class FailingVaultFeed: VaultFeed {
     func delete(id _: Identifier<VaultItem>) async throws {
         throw StubError()
     }
+
+    func reorder(items _: Set<Identifier<VaultItem>>, to _: VaultReorderingPosition) async throws {
+        throw StubError()
+    }
 }

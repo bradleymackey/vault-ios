@@ -846,6 +846,62 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_reorder_emptyItemsHasNoEffectOnEmptyStore() async throws {
+        try await sut.reorder(items: [], to: .start)
+    }
+
+    func test_reorder_nonEmptyItemsHasNoEffectOnEmptyStore() async throws {
+        try await sut.reorder(items: [.init(id: UUID())], to: .start)
+    }
+
+    func test_reorder_reorderToAfterThrowsErrorIfItemDoesNotExist() async throws {
+        let code = uniqueVaultItem().makeWritable()
+        let id = try await sut.insert(item: code)
+
+        let sut = try XCTUnwrap(self.sut)
+        await XCTAssertThrowsError(try await sut.reorder(items: [id], to: .after(.init(id: UUID()))))
+    }
+
+    func test_reorder_reordersAllItemsIfMovingToStart() async throws {
+        let codes = [
+            uniqueVaultItem().makeWritable(),
+            uniqueVaultItem().makeWritable(),
+            uniqueVaultItem().makeWritable(),
+        ]
+        var insertedIDs = [Identifier<VaultItem>]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        try await sut.reorder(items: [insertedIDs[2]], to: .start)
+
+        let result = try await sut.retrieve(query: .all)
+        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[2], insertedIDs[0], insertedIDs[1]])
+        XCTAssertEqual(result.items.map(\.metadata.relativeOrder), [0, 1, 2])
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_reorder_reordersAllIfMovingToAfterOtherItem() async throws {
+        let codes = [
+            uniqueVaultItem().makeWritable(),
+            uniqueVaultItem().makeWritable(),
+            uniqueVaultItem().makeWritable(),
+        ]
+        var insertedIDs = [Identifier<VaultItem>]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        try await sut.reorder(items: [insertedIDs[0]], to: .after(insertedIDs[1]))
+
+        let result = try await sut.retrieve(query: .all)
+        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[1], insertedIDs[0], insertedIDs[2]])
+        XCTAssertEqual(result.items.map(\.metadata.relativeOrder), [0, 1, 2])
+        XCTAssertEqual(result.errors, [])
+    }
+
     func test_exportVault_hasNoSideEffectsOnEmptyVault() async throws {
         _ = try await sut.exportVault(userDescription: "")
 

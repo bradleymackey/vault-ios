@@ -219,11 +219,10 @@ extension PersistedLocalVaultStore: VaultStoreReorderable {
             }()
             allItems.move(fromOffsets: IndexSet(originIndexes), toOffset: indexToMoveTo)
 
-//            print("Old", allItems.map(\.relativeOrder))
+            // Reorder all the items in their new current order.
             for (index, item) in allItems.enumerated() {
                 item.relativeOrder = UInt64(index)
             }
-//            print("New", allItems.map(\.relativeOrder))
 
             try modelContext.save()
         } catch {
