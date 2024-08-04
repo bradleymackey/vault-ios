@@ -89,9 +89,11 @@ public struct VaultItemFeedView<
                     listOfCodesHeader
                 }
             }
+            .scrollTargetLayout()
             .padding(.horizontal)
             .padding(.bottom)
         }
+        .scrollTargetBehavior(.viewAligned)
     }
 
     private var listOfCodesHeader: some View {
