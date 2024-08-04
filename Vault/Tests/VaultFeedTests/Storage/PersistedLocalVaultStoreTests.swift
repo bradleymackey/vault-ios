@@ -124,8 +124,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             ids[4], // min (default position)
             ids[2], // 1
             ids[3], // 2
-            ids[0], // 3, added first
-            ids[1], // 3, added second
+            ids[1], // 3, added second (more recently)
+            ids[0], // 3, added first (less recently)
             ids[5], // 99
         ])
         XCTAssertEqual(result.errors, [])
@@ -880,7 +880,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
-            insertedIDs.append(id)
+            // insert the id at the start because when using .relativeOrder, more recently created items are ordered
+            // first
+            insertedIDs.insert(id, at: 0)
         }
 
         try await sut.reorder(items: [insertedIDs[2]], to: .start)
@@ -900,7 +902,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
             let id = try await sut.insert(item: code)
-            insertedIDs.append(id)
+            // insert the id at the start because when using .relativeOrder, more recently created items are ordered
+            // first
+            insertedIDs.insert(id, at: 0)
         }
 
         try await sut.reorder(items: [insertedIDs[0]], to: .after(insertedIDs[1]))

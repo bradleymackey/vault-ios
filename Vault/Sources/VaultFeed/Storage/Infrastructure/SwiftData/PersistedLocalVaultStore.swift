@@ -201,6 +201,7 @@ extension PersistedLocalVaultStore: VaultStoreReorderable {
         do {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
+                // The same order that users see so the ordering is correct.
                 sortBy: VaultStoreQuery(sortOrder: .relativeOrder).vaultItemSortDescriptors
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
@@ -343,8 +344,12 @@ extension VaultStoreQuery {
         switch sortOrder {
         case .relativeOrder:
             [
+                // The priority is to sort by relative order.
+                // This is because this is due to the user's explicit ordering.
                 SortDescriptor(\.relativeOrder),
-                SortDescriptor(\.createdDate),
+                // If two items have the same relative order, we sort by created date.
+                // It's reversed so that newer items appear first.
+                SortDescriptor(\.createdDate, order: .reverse),
             ]
         case .createdDate:
             [
