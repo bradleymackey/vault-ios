@@ -14,7 +14,6 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
 
     private let store: Store
     private let caches: [any VaultItemCache]
-    private let sortOrder: VaultStoreSortOrder = .relativeOrder
 
     public init(store: Store, caches: [any VaultItemCache] = []) {
         self.store = store
@@ -101,7 +100,6 @@ extension FeedViewModel: VaultFeed {
         do {
             tags = try await store.retrieveTags()
             let query = VaultStoreQuery(
-                sortOrder: sortOrder,
                 filterText: sanitizedQuery,
                 filterTags: filteringByTags
             )
@@ -141,7 +139,7 @@ extension FeedViewModel: VaultFeed {
     }
 
     public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
-        try await store.reorder(originalOrder: sortOrder, items: items, to: position)
+        try await store.reorder(items: items, to: position)
     }
 
     private func invalidateCaches(id: Identifier<VaultItem>) async {

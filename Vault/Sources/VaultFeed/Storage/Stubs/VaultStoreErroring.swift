@@ -28,7 +28,6 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader {
     }
 
     public func reorder(
-        originalOrder _: VaultStoreSortOrder,
         items _: Set<Identifier<VaultItem>>,
         to _: VaultReorderingPosition
     ) async throws {

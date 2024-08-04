@@ -31,7 +31,6 @@ public protocol VaultStoreWriter: Sendable {
 public protocol VaultStoreReorderable: Sendable {
     /// Reorder the item with the given `id` to the given position and current view.
     func reorder(
-        originalOrder: VaultStoreSortOrder,
         items: Set<Identifier<VaultItem>>,
         to position: VaultReorderingPosition
     ) async throws

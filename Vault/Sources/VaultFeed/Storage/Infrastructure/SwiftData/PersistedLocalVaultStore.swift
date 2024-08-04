@@ -11,6 +11,13 @@ public final actor PersistedLocalVaultStore {
         case modelNotFound
         case relativeItemNotFound
     }
+
+    /// The sort order used by this store.
+    ///
+    /// This must be consistent for the lifetime of the store and application.
+    /// It is how items in the store are fetched and what reorders are performed against.
+    /// A change in this will affect the user-percieved order of their items.
+    var sortOrder: VaultStoreSortOrder = .relativeOrder
 }
 
 // MARK: - VaultStoreReader
@@ -19,7 +26,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: query.sortOrder.vaultItemSortDescriptors
+            sortBy: sortOrder.vaultItemSortDescriptors
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -198,7 +205,6 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 
 extension PersistedLocalVaultStore: VaultStoreReorderable {
     public func reorder(
-        originalOrder: VaultStoreSortOrder,
         items: Set<Identifier<VaultItem>>,
         to position: VaultReorderingPosition
     ) async throws {
@@ -206,7 +212,7 @@ extension PersistedLocalVaultStore: VaultStoreReorderable {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
                 // The same order that users see so the ordering is correct.
-                sortBy: originalOrder.vaultItemSortDescriptors
+                sortBy: sortOrder.vaultItemSortDescriptors
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
             var allItems = try modelContext.fetch(allItemsDescriptor)
