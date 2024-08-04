@@ -19,7 +19,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: vaultItemSortDescriptors
+            sortBy: userVisibleVaultItemSortOrder
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -201,7 +201,7 @@ extension PersistedLocalVaultStore: VaultStoreReorderable {
         do {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
-                sortBy: vaultItemSortDescriptors
+                sortBy: userVisibleVaultItemSortOrder
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
             var allItems = try modelContext.fetch(allItemsDescriptor)
@@ -311,7 +311,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {
-    private var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
+    private var userVisibleVaultItemSortOrder: [SortDescriptor<PersistedVaultItem>] {
         [
             SortDescriptor(\.relativeOrder),
             SortDescriptor(\.createdDate),

@@ -5,20 +5,35 @@ import VaultCore
 public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreReorderable & VaultStoreWriter
 
 public struct VaultStoreQuery: Sendable, Equatable {
+    public enum SortOrder: Equatable, Sendable {
+        /// Uses a sort order that's best suited for users.
+        ///
+        /// It sorts by the following values in this order: relativeOrder, createdDate.
+        case bestForUser
+        /// Respects the reverse of the created date, more useful for debugging.
+//        case reverseCreatedDate
+    }
+
+    /// The order that items will be returned.
+    public var sortOrder: SortOrder
+
     /// Require that the item includes this search text.
     ///
     /// Using `nil` equates to not querying by text and won't filter items by a search query.
     public var searchText: String?
+
     /// Require that the item includes **all** these search tags.
-    public var tags: Set<Identifier<VaultItemTag>> = []
+    public var tags: Set<Identifier<VaultItemTag>>
 
     /// Return all items, don't filter the results.
     public static var all: VaultStoreQuery {
-        .init(searchText: nil, tags: [])
+        .init(sortOrder: .bestForUser, searchText: nil, tags: [])
     }
 
-    public var isQuerying: Bool {
-        self != .all
+    init(sortOrder: SortOrder = .bestForUser, searchText: String? = nil, tags: Set<Identifier<VaultItemTag>> = []) {
+        self.sortOrder = sortOrder
+        self.searchText = searchText
+        self.tags = tags
     }
 }
 
