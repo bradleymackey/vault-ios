@@ -14,7 +14,7 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
 
     private let store: Store
     private let caches: [any VaultItemCache]
-    private let sortOrder: VaultStoreQuery.SortOrder = .relativeOrder
+    private let sortOrder: VaultStoreSortOrder = .relativeOrder
 
     public init(store: Store, caches: [any VaultItemCache] = []) {
         self.store = store

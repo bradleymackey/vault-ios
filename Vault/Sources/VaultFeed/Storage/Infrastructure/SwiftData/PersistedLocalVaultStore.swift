@@ -198,7 +198,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 
 extension PersistedLocalVaultStore: VaultStoreReorderable {
     public func reorder(
-        originalOrder: VaultStoreQuery.SortOrder,
+        originalOrder: VaultStoreSortOrder,
         items: Set<Identifier<VaultItem>>,
         to position: VaultReorderingPosition
     ) async throws {
@@ -343,7 +343,7 @@ extension PersistedLocalVaultStore {
 
 // MARK: - Helpers
 
-extension VaultStoreQuery.SortOrder {
+extension VaultStoreSortOrder {
     fileprivate var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
         switch self {
         case .relativeOrder:

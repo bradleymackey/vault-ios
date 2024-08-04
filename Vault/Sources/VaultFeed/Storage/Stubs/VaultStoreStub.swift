@@ -47,7 +47,7 @@ public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
 
     public var reorderCalled: (Set<Identifier<VaultItem>>, VaultReorderingPosition) -> Void = { _, _ in }
     public func reorder(
-        originalOrder _: VaultStoreQuery.SortOrder,
+        originalOrder _: VaultStoreSortOrder,
         items: Set<Identifier<VaultItem>>,
         to position: VaultReorderingPosition
     ) async throws {

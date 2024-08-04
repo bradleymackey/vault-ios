@@ -913,7 +913,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         try await sut.reorder(originalOrder: .relativeOrder, items: [insertedIDs[0]], to: .after(insertedIDs[1]))
 
-       let result = try await sut.retrieve(query: .init(sortOrder: .relativeOrder))
+        let result = try await sut.retrieve(query: .init(sortOrder: .relativeOrder))
         XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[1], insertedIDs[0], insertedIDs[2]])
         XCTAssertEqual(result.items.map(\.metadata.relativeOrder), [0, 1, 2])
         XCTAssertEqual(result.errors, [])
