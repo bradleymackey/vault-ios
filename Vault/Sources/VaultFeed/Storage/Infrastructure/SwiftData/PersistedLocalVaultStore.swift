@@ -11,6 +11,13 @@ public final actor PersistedLocalVaultStore {
         case modelNotFound
         case relativeItemNotFound
     }
+
+    /// The sort order used by this store.
+    ///
+    /// This must be consistent for the lifetime of the store and application.
+    /// It is how items in the store are fetched and what reorders are performed against.
+    /// A change in this will affect the user-percieved order of their items.
+    var sortOrder: VaultStoreSortOrder = .relativeOrder
 }
 
 // MARK: - VaultStoreReader
@@ -19,7 +26,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: vaultItemSortDescriptors
+            sortBy: sortOrder.vaultItemSortDescriptors
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -27,12 +34,12 @@ extension PersistedLocalVaultStore: VaultStoreReader {
 
     /// Creates a predicate that returns items when querying.
     private func makePredicate(query: VaultStoreQuery) -> Predicate<PersistedVaultItem> {
-        let tagsPredicate = makeTagsPredicate(matchingTags: query.tags)
-        if let searchText = query.searchText, searchText.isNotEmpty {
+        let tagsPredicate = makeTagsPredicate(matchingTags: query.filterTags)
+        if let filterText = query.filterText, filterText.isNotEmpty {
             // (1) Searching by text and (2) filtering by tags.
             // We don't need to filter by visibility level since all items should appear.
 
-            let searchPredicate = makeSearchTextPredicate(matchingText: searchText)
+            let searchPredicate = makeSearchTextPredicate(matchingText: filterText)
             return #Predicate<PersistedVaultItem> {
                 searchPredicate.evaluate($0) && tagsPredicate.evaluate($0)
             }
@@ -197,11 +204,15 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 // MARK: - VaultStoreReorderable
 
 extension PersistedLocalVaultStore: VaultStoreReorderable {
-    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+    public func reorder(
+        items: Set<Identifier<VaultItem>>,
+        to position: VaultReorderingPosition
+    ) async throws {
         do {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
-                sortBy: vaultItemSortDescriptors
+                // The same order that users see so the ordering is correct.
+                sortBy: sortOrder.vaultItemSortDescriptors
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
             var allItems = try modelContext.fetch(allItemsDescriptor)
@@ -311,13 +322,6 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {
-    private var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
-        [
-            SortDescriptor(\.relativeOrder),
-            SortDescriptor(\.createdDate),
-        ]
-    }
-
     private func fetchVaultItem(id: Identifier<VaultItem>) throws -> PersistedVaultItem {
         let uuid = id.rawValue
         var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
@@ -340,5 +344,27 @@ extension PersistedLocalVaultStore {
             throw Error.modelNotFound
         }
         return existing
+    }
+}
+
+// MARK: - Helpers
+
+extension VaultStoreSortOrder {
+    fileprivate var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
+        switch self {
+        case .relativeOrder:
+            [
+                // The priority is to sort by relative order.
+                // This is because this is due to the user's explicit ordering.
+                SortDescriptor(\.relativeOrder),
+                // If two items have the same relative order, we sort by created date.
+                // It's reversed so that newer items appear first.
+                SortDescriptor(\.createdDate, order: .reverse),
+            ]
+        case .createdDate:
+            [
+                SortDescriptor(\.createdDate),
+            ]
+        }
     }
 }

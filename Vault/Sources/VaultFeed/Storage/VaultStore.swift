@@ -4,24 +4,6 @@ import VaultCore
 
 public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreReorderable & VaultStoreWriter
 
-public struct VaultStoreQuery: Sendable, Equatable {
-    /// Require that the item includes this search text.
-    ///
-    /// Using `nil` equates to not querying by text and won't filter items by a search query.
-    public var searchText: String?
-    /// Require that the item includes **all** these search tags.
-    public var tags: Set<Identifier<VaultItemTag>> = []
-
-    /// Return all items, don't filter the results.
-    public static var all: VaultStoreQuery {
-        .init(searchText: nil, tags: [])
-    }
-
-    public var isQuerying: Bool {
-        self != .all
-    }
-}
-
 public protocol VaultStoreReader: Sendable {
     /// Retrieve items matching the given query.
     func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem>
@@ -48,7 +30,10 @@ public protocol VaultStoreWriter: Sendable {
 /// @mockable
 public protocol VaultStoreReorderable: Sendable {
     /// Reorder the item with the given `id` to the given position and current view.
-    func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws
+    func reorder(
+        items: Set<Identifier<VaultItem>>,
+        to position: VaultReorderingPosition
+    ) async throws
 }
 
 /// @mockable
