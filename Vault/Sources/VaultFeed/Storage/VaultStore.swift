@@ -30,7 +30,11 @@ public protocol VaultStoreWriter: Sendable {
 /// @mockable
 public protocol VaultStoreReorderable: Sendable {
     /// Reorder the item with the given `id` to the given position and current view.
-    func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws
+    func reorder(
+        originalOrder: VaultStoreQuery.SortOrder,
+        items: Set<Identifier<VaultItem>>,
+        to position: VaultReorderingPosition
+    ) async throws
 }
 
 /// @mockable

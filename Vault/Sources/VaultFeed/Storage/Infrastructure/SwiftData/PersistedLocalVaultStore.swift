@@ -19,7 +19,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: query.vaultItemSortDescriptors
+            sortBy: query.sortOrder.vaultItemSortDescriptors
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -197,12 +197,16 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 // MARK: - VaultStoreReorderable
 
 extension PersistedLocalVaultStore: VaultStoreReorderable {
-    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+    public func reorder(
+        originalOrder: VaultStoreQuery.SortOrder,
+        items: Set<Identifier<VaultItem>>,
+        to position: VaultReorderingPosition
+    ) async throws {
         do {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
                 // The same order that users see so the ordering is correct.
-                sortBy: VaultStoreQuery(sortOrder: .relativeOrder).vaultItemSortDescriptors
+                sortBy: originalOrder.vaultItemSortDescriptors
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
             var allItems = try modelContext.fetch(allItemsDescriptor)
@@ -339,9 +343,9 @@ extension PersistedLocalVaultStore {
 
 // MARK: - Helpers
 
-extension VaultStoreQuery {
+extension VaultStoreQuery.SortOrder {
     fileprivate var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
-        switch sortOrder {
+        switch self {
         case .relativeOrder:
             [
                 // The priority is to sort by relative order.

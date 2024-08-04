@@ -856,11 +856,11 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     }
 
     func test_reorder_emptyItemsHasNoEffectOnEmptyStore() async throws {
-        try await sut.reorder(items: [], to: .start)
+        try await sut.reorder(originalOrder: .createdDate, items: [], to: .start)
     }
 
     func test_reorder_nonEmptyItemsHasNoEffectOnEmptyStore() async throws {
-        try await sut.reorder(items: [.init(id: UUID())], to: .start)
+        try await sut.reorder(originalOrder: .createdDate, items: [.init(id: UUID())], to: .start)
     }
 
     func test_reorder_reorderToAfterThrowsErrorIfItemDoesNotExist() async throws {
@@ -868,7 +868,11 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let id = try await sut.insert(item: code)
 
         let sut = try XCTUnwrap(self.sut)
-        await XCTAssertThrowsError(try await sut.reorder(items: [id], to: .after(.init(id: UUID()))))
+        await XCTAssertThrowsError(try await sut.reorder(
+            originalOrder: .createdDate,
+            items: [id],
+            to: .after(.init(id: UUID()))
+        ))
     }
 
     func test_reorder_reordersAllItemsIfMovingToStart() async throws {
@@ -885,7 +889,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             insertedIDs.insert(id, at: 0)
         }
 
-        try await sut.reorder(items: [insertedIDs[2]], to: .start)
+        try await sut.reorder(originalOrder: .relativeOrder, items: [insertedIDs[2]], to: .start)
 
         let result = try await sut.retrieve(query: .init(sortOrder: .relativeOrder))
         XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[2], insertedIDs[0], insertedIDs[1]])
@@ -907,9 +911,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             insertedIDs.insert(id, at: 0)
         }
 
-        try await sut.reorder(items: [insertedIDs[0]], to: .after(insertedIDs[1]))
+        try await sut.reorder(originalOrder: .relativeOrder, items: [insertedIDs[0]], to: .after(insertedIDs[1]))
 
-        let result = try await sut.retrieve(query: .init(sortOrder: .relativeOrder))
+       let result = try await sut.retrieve(query: .init(sortOrder: .relativeOrder))
         XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[1], insertedIDs[0], insertedIDs[2]])
         XCTAssertEqual(result.items.map(\.metadata.relativeOrder), [0, 1, 2])
         XCTAssertEqual(result.errors, [])
