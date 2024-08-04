@@ -44,6 +44,11 @@ public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
     public func retrieveTags() async throws -> [VaultItemTag] {
         try retrieveTagsResult.get()
     }
+
+    public var reorderCalled: (Set<Identifier<VaultItem>>, VaultReorderingPosition) -> Void = { _, _ in }
+    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+        reorderCalled(items, position)
+    }
 }
 
 // MARK: - Helpers

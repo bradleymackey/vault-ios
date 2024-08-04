@@ -135,6 +135,10 @@ extension FeedViewModel: VaultFeed {
         await reloadData()
     }
 
+    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+        try await store.reorder(items: items, to: position)
+    }
+
     private func invalidateCaches(id: Identifier<VaultItem>) async {
         for cache in caches {
             await cache.invalidateVaultItemDetailCache(forVaultItemWithID: id)

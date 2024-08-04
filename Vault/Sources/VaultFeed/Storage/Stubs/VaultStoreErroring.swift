@@ -27,6 +27,10 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader {
         throw error
     }
 
+    public func reorder(items _: Set<Identifier<VaultItem>>, to _: VaultReorderingPosition) async throws {
+        throw error
+    }
+
     public func exportVault(userDescription _: String) async throws -> VaultApplicationPayload {
         throw error
     }

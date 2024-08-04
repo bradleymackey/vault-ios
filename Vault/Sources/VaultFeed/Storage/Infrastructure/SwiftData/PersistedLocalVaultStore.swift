@@ -9,6 +9,7 @@ import SwiftData
 public final actor PersistedLocalVaultStore {
     public enum Error: Swift.Error {
         case modelNotFound
+        case relativeItemNotFound
     }
 }
 
@@ -18,10 +19,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: [
-                SortDescriptor(\.relativeOrder),
-                SortDescriptor(\.createdDate),
-            ]
+            sortBy: vaultItemSortDescriptors
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -196,6 +194,45 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
     }
 }
 
+// MARK: - VaultStoreReorderable
+
+extension PersistedLocalVaultStore: VaultStoreReorderable {
+    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+        do {
+            var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
+                predicate: .true,
+                sortBy: vaultItemSortDescriptors
+            )
+            allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
+            var allItems = try modelContext.fetch(allItemsDescriptor)
+            let originIndexes = items.compactMap { item in allItems.firstIndex(where: { $0.id == item.rawValue }) }
+            let indexToMoveTo: Int = try {
+                switch position {
+                case .start:
+                    return 0
+                case let .after(id):
+                    guard let index = allItems.firstIndex(where: { $0.id == id.rawValue }) else {
+                        throw Error.relativeItemNotFound
+                    }
+                    return index + 1
+                }
+            }()
+            allItems.move(fromOffsets: IndexSet(originIndexes), toOffset: indexToMoveTo)
+
+//            print("Old", allItems.map(\.relativeOrder))
+            for (index, item) in allItems.enumerated() {
+                item.relativeOrder = UInt64(index)
+            }
+//            print("New", allItems.map(\.relativeOrder))
+
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}
+
 // MARK: - VaultStoreExporter
 
 extension PersistedLocalVaultStore: VaultStoreExporter {
@@ -275,6 +312,13 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {
+    private var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
+        [
+            SortDescriptor(\.relativeOrder),
+            SortDescriptor(\.createdDate),
+        ]
+    }
+
     private func fetchVaultItem(id: Identifier<VaultItem>) throws -> PersistedVaultItem {
         let uuid = id.rawValue
         var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
