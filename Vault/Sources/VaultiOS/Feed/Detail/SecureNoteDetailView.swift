@@ -227,7 +227,7 @@ struct SecureNoteDetailView: View {
                 fontStyle: .monospace,
                 textStyle: .body
             )
-            .frame(minHeight: 250, alignment: .top)
+            .frame(minHeight: 350, alignment: .top)
         } footer: {
             VStack(alignment: .leading, spacing: 16) {
                 if viewModel.tagsThatAreSelected.isNotEmpty {
