@@ -140,7 +140,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             id: uuid1,
             createdDate: date1,
             updatedDate: date1.addingTimeInterval(1234),
-            relativeOrder: .max,
+            relativeOrder: .min,
             userDescription: "",
             tags: [],
             visibility: .always,

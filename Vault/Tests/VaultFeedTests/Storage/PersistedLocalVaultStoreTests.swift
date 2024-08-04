@@ -110,7 +110,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             uniqueVaultItem(relativeOrder: 3).makeWritable(),
             uniqueVaultItem(relativeOrder: 1).makeWritable(),
             uniqueVaultItem(relativeOrder: 2).makeWritable(),
-            uniqueVaultItem(relativeOrder: .max).makeWritable(),
+            uniqueVaultItem(relativeOrder: .min).makeWritable(),
             uniqueVaultItem(relativeOrder: 99).makeWritable(),
         ]
         var ids = [Identifier<VaultItem>]()
@@ -736,6 +736,15 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let result = try await sut.retrieve(query: .all)
         XCTAssertEqual(result.items.map(\.id), ids)
         XCTAssertEqual(result.errors, [])
+    }
+
+    func test_insert_defaultRelativeOrderIsZero() async throws {
+        let code = uniqueVaultItem().makeWritable()
+
+        try await sut.insert(item: code)
+
+        let result = try await sut.retrieve(query: .all)
+        XCTAssertEqual(result.items.first?.metadata.relativeOrder, 0)
     }
 
     func test_deleteByID_hasNoEffectOnEmptyStore() async throws {

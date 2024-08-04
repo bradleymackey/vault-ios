@@ -67,7 +67,7 @@ extension VaultItemTests {
         id: Identifier<VaultItem>,
         created: Date = Date(timeIntervalSince1970: 100),
         updated: Date = Date(timeIntervalSince1970: 200),
-        relativeOrder: UInt64 = .max,
+        relativeOrder: UInt64 = .min,
         userDescription: String = "Any",
         tags: Set<Identifier<VaultItemTag>> = [],
         visibility: VaultItemVisibility = .always,

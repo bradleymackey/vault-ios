@@ -101,7 +101,7 @@ extension SecureNoteDetailEdits {
             searchPassphrase: "",
             tags: [],
             lockState: .notLocked,
-            relativeOrder: .max
+            relativeOrder: .min
         )
     }
 }

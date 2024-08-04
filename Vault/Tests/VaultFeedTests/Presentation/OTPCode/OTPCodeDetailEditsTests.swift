@@ -88,7 +88,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
-            relativeOrder: .max,
+            relativeOrder: .min,
             userDescription: "mydesc",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -105,7 +105,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
-            relativeOrder: .max,
+            relativeOrder: .min,
             userDescription: "mydesc2",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -160,7 +160,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let code = anyTOTPAuthCode()
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
-            relativeOrder: .max,
+            relativeOrder: .min,
             userDescription: "mydesc",
             color: nil,
             viewConfig: .alwaysVisible,
@@ -178,7 +178,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         let code = anyHOTPAuthCode()
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
-            relativeOrder: .max,
+            relativeOrder: .min,
             userDescription: "mydesc2",
             color: nil,
             viewConfig: .alwaysVisible,

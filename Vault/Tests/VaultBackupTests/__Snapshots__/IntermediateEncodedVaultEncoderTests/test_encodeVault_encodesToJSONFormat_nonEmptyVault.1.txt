@@ -13,7 +13,7 @@
         }
       },
       "lock_state" : "NOT_LOCKED",
-      "relative_order" : 18446744073709551615,
+      "relative_order" : 0,
       "search_passphrase" : "searchphrase",
       "searchable_level" : "FULL",
       "tags" : [

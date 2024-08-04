@@ -449,7 +449,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        relativeOrder: UInt64 = .max,
+        relativeOrder: UInt64 = .min,
         userDescription: String = "",
         code: OTPAuthCode,
         color: VaultItemColor? = nil,
@@ -493,7 +493,7 @@ extension PersistedVaultItemEncoderTests {
     }
 
     private func makeWritable(
-        relativeOrder: UInt64 = .max,
+        relativeOrder: UInt64 = .min,
         userDescription: String = "",
         note: SecureNote,
         color: VaultItemColor? = nil,
