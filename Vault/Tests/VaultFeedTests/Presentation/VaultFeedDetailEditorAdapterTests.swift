@@ -156,8 +156,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let sut = makeSUT(feed: feed)
         var initialEdits = SecureNoteDetailEdits.new()
         initialEdits.title = "new title"
-        initialEdits.description = "new description"
-        initialEdits.contents = "new contents"
+        initialEdits.contents = "first line\nsecond line"
         initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
         initialEdits.lockState = .lockedWithNativeSecurity
@@ -165,15 +164,14 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for creation")
         feed.createHandler = { data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "new description")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
             XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
             XCTAssertEqual(data.searchPassphase, "pass")
             switch data.item {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "new title")
-                XCTAssertEqual(note.contents, "new contents")
-                XCTAssertEqual(note.contents, "new contents")
+                XCTAssertEqual(note.contents, "first line\nsecond line")
             default:
                 XCTFail("invalid kind")
             }
@@ -205,22 +203,21 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
         var edits = SecureNoteDetailEdits.new()
         edits.title = "new title"
-        edits.description = "new description"
-        edits.contents = "new contents"
+        edits.contents = "first line\nsecond line"
         edits.viewConfig = .alwaysVisible
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
         feed.updateHandler = { _, data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "new description")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .always)
             XCTAssertEqual(data.searchableLevel, .full)
             XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "new title")
-                XCTAssertEqual(note.contents, "new contents")
+                XCTAssertEqual(note.contents, "first line\nsecond line")
             default:
                 XCTFail("invalid kind")
             }

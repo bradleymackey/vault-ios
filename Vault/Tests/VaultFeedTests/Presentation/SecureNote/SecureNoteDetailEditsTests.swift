@@ -44,6 +44,14 @@ final class SecureNoteDetailEditsTests: XCTestCase {
         XCTAssertTrue(sut.isValid)
     }
 
+    func test_description_isFirstLineOfContent() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.title = " A "
+        sut.contents = "First\nSecond\nThird"
+
+        XCTAssertEqual(sut.description, "First")
+    }
+
     func test_isHiddenWithPassphrase_falseIfAlwaysVisible() {
         var sut = SecureNoteDetailEdits.new()
         sut.title = " A "

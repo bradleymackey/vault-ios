@@ -23,13 +23,13 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_init_editingModelUsesInitialData() {
-        let note = SecureNote(title: "my title", contents: "my contents")
-        let metadata = anyVaultItemMetadata(userDescription: "my description")
+        let note = SecureNote(title: "my title", contents: "first line\nsecond line")
+        let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
         XCTAssertEqual(sut.editingModel.detail.title, note.title)
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
-        XCTAssertEqual(sut.editingModel.detail.description, metadata.userDescription)
+        XCTAssertEqual(sut.editingModel.detail.description, "first line")
     }
 
     @MainActor
@@ -278,23 +278,22 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     @MainActor
     func test_editingModel_initialStateUsesData() {
         var note = anySecureNote()
-        note.contents = "this is my contents"
+        note.contents = "first line\nsecond line"
         note.title = "this is my title"
-        var metadata = anyVaultItemMetadata()
-        metadata.userDescription = "description test"
+        let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.initialDetail.contents, note.contents)
         XCTAssertEqual(editing.initialDetail.title, note.title)
-        XCTAssertEqual(editing.initialDetail.description, metadata.userDescription)
+        XCTAssertEqual(editing.initialDetail.description, "first line")
     }
 
     @MainActor
     func test_editingModel_editingStateUsesData() {
         var note = anySecureNote()
-        note.contents = "this is my contents"
+        note.contents = "first line\nsecond line"
         note.title = "this is my title"
         var metadata = anyVaultItemMetadata()
         metadata.userDescription = "description test"
@@ -304,7 +303,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(editing.detail.contents, note.contents)
         XCTAssertEqual(editing.detail.title, note.title)
-        XCTAssertEqual(editing.detail.description, metadata.userDescription)
+        XCTAssertEqual(editing.detail.description, "first line")
     }
 
     @MainActor
