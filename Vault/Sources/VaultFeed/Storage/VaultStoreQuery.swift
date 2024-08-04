@@ -15,17 +15,19 @@ public struct VaultStoreQuery: Sendable, Equatable {
     /// The order that items will be returned.
     public var sortOrder: SortOrder
 
-    /// Require that the item includes this search text.
+    /// Filter items by the given query string.
     ///
     /// Using `nil` equates to not querying by text and won't filter items by a search query.
-    public var searchText: String?
+    public var filterText: String?
 
-    /// Require that the item includes **all** these search tags.
-    public var tags: Set<Identifier<VaultItemTag>>
+    /// Filter items by the given tags.
+    ///
+    /// Require that the item includes **any** of these search tags.
+    public var filterTags: Set<Identifier<VaultItemTag>>
 
-    init(sortOrder: SortOrder, searchText: String? = nil, tags: Set<Identifier<VaultItemTag>> = []) {
+    init(sortOrder: SortOrder, filterText: String? = nil, filterTags: Set<Identifier<VaultItemTag>> = []) {
         self.sortOrder = sortOrder
-        self.searchText = searchText
-        self.tags = tags
+        self.filterText = filterText
+        self.filterTags = filterTags
     }
 }

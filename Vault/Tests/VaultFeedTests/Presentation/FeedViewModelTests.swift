@@ -83,8 +83,8 @@ final class FeedViewModelTests: XCTestCase {
 
         let exp = expectation(description: "Wait for reload data")
         store.retrieveQueryCalled = { query in
-            XCTAssertEqual(query.searchText, "SOME QUERY 123")
-            XCTAssertEqual(query.tags, [])
+            XCTAssertEqual(query.filterText, "SOME QUERY 123")
+            XCTAssertEqual(query.filterTags, [])
             exp.fulfill()
         }
 

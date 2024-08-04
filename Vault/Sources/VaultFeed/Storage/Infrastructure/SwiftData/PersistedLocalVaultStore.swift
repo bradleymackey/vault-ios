@@ -27,12 +27,12 @@ extension PersistedLocalVaultStore: VaultStoreReader {
 
     /// Creates a predicate that returns items when querying.
     private func makePredicate(query: VaultStoreQuery) -> Predicate<PersistedVaultItem> {
-        let tagsPredicate = makeTagsPredicate(matchingTags: query.tags)
-        if let searchText = query.searchText, searchText.isNotEmpty {
+        let tagsPredicate = makeTagsPredicate(matchingTags: query.filterTags)
+        if let filterText = query.filterText, filterText.isNotEmpty {
             // (1) Searching by text and (2) filtering by tags.
             // We don't need to filter by visibility level since all items should appear.
 
-            let searchPredicate = makeSearchTextPredicate(matchingText: searchText)
+            let searchPredicate = makeSearchTextPredicate(matchingText: filterText)
             return #Predicate<PersistedVaultItem> {
                 searchPredicate.evaluate($0) && tagsPredicate.evaluate($0)
             }
