@@ -19,7 +19,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: userVisibleVaultItemSortOrder
+            sortBy: query.vaultItemSortDescriptors
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -201,7 +201,7 @@ extension PersistedLocalVaultStore: VaultStoreReorderable {
         do {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
-                sortBy: userVisibleVaultItemSortOrder
+                sortBy: VaultStoreQuery(sortOrder: .relativeOrder).vaultItemSortDescriptors
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
             var allItems = try modelContext.fetch(allItemsDescriptor)
@@ -311,13 +311,6 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {
-    private var userVisibleVaultItemSortOrder: [SortDescriptor<PersistedVaultItem>] {
-        [
-            SortDescriptor(\.relativeOrder),
-            SortDescriptor(\.createdDate),
-        ]
-    }
-
     private func fetchVaultItem(id: Identifier<VaultItem>) throws -> PersistedVaultItem {
         let uuid = id.rawValue
         var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
@@ -340,5 +333,23 @@ extension PersistedLocalVaultStore {
             throw Error.modelNotFound
         }
         return existing
+    }
+}
+
+// MARK: - Helpers
+
+extension VaultStoreQuery {
+    fileprivate var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
+        switch sortOrder {
+        case .relativeOrder:
+            [
+                SortDescriptor(\.relativeOrder),
+                SortDescriptor(\.createdDate),
+            ]
+        case .createdDate:
+            [
+                SortDescriptor(\.createdDate),
+            ]
+        }
     }
 }
