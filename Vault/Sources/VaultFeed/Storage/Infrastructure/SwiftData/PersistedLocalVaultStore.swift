@@ -9,6 +9,7 @@ import SwiftData
 public final actor PersistedLocalVaultStore {
     public enum Error: Swift.Error {
         case modelNotFound
+        case relativeItemNotFound
     }
 }
 
@@ -18,10 +19,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: [
-                SortDescriptor(\.relativeOrder),
-                SortDescriptor(\.createdDate),
-            ]
+            sortBy: vaultItemSortDescriptors
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -171,14 +169,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
 
     public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         do {
-            let uuid = id.rawValue
-            var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
-                item.id == uuid
-            })
-            descriptor.fetchLimit = 1
-            guard let existing = try modelContext.fetch(descriptor).first else {
-                throw Error.modelNotFound
-            }
+            let existing = try fetchVaultItem(id: id)
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             _ = try encoder.encode(item: item, existing: existing)
 
@@ -195,6 +186,44 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
             try modelContext.delete(model: PersistedVaultItem.self, where: #Predicate {
                 $0.id == uuid
             })
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}
+
+// MARK: - VaultStoreReorderable
+
+extension PersistedLocalVaultStore: VaultStoreReorderable {
+    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+        do {
+            var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
+                predicate: .true,
+                sortBy: vaultItemSortDescriptors
+            )
+            allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
+            var allItems = try modelContext.fetch(allItemsDescriptor)
+            let originIndexes = items.compactMap { item in allItems.firstIndex(where: { $0.id == item.rawValue }) }
+            let indexToMoveTo: Int = try {
+                switch position {
+                case .start:
+                    return 0
+                case let .after(id):
+                    guard let index = allItems.firstIndex(where: { $0.id == id.rawValue }) else {
+                        throw Error.relativeItemNotFound
+                    }
+                    return index + 1
+                }
+            }()
+            allItems.move(fromOffsets: IndexSet(originIndexes), toOffset: indexToMoveTo)
+
+            // Reorder all the items in their new current order.
+            for (index, item) in allItems.enumerated() {
+                item.relativeOrder = UInt64(index)
+            }
+
             try modelContext.save()
         } catch {
             modelContext.rollback()
@@ -254,14 +283,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 
     public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
         do {
-            let uuid = id.id
-            var descriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { item in
-                item.id == uuid
-            })
-            descriptor.fetchLimit = 1
-            guard let existing = try modelContext.fetch(descriptor).first else {
-                throw Error.modelNotFound
-            }
+            let existing = try fetchVaultItemTag(id: id)
             let encoder = PersistedVaultTagEncoder(context: modelContext)
             _ = encoder.encode(tag: item, existing: existing)
 
@@ -283,5 +305,40 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
             modelContext.rollback()
             throw error
         }
+    }
+}
+
+// MARK: - Helpers
+
+extension PersistedLocalVaultStore {
+    private var vaultItemSortDescriptors: [SortDescriptor<PersistedVaultItem>] {
+        [
+            SortDescriptor(\.relativeOrder),
+            SortDescriptor(\.createdDate),
+        ]
+    }
+
+    private func fetchVaultItem(id: Identifier<VaultItem>) throws -> PersistedVaultItem {
+        let uuid = id.rawValue
+        var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
+            item.id == uuid
+        })
+        descriptor.fetchLimit = 1
+        guard let existing = try modelContext.fetch(descriptor).first else {
+            throw Error.modelNotFound
+        }
+        return existing
+    }
+
+    private func fetchVaultItemTag(id: Identifier<VaultItemTag>) throws -> PersistedVaultTag {
+        let uuid = id.id
+        var descriptor = FetchDescriptor<PersistedVaultTag>(predicate: #Predicate { item in
+            item.id == uuid
+        })
+        descriptor.fetchLimit = 1
+        guard let existing = try modelContext.fetch(descriptor).first else {
+            throw Error.modelNotFound
+        }
+        return existing
     }
 }

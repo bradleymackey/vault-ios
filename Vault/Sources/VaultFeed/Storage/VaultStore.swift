@@ -2,7 +2,7 @@ import Foundation
 import FoundationExtensions
 import VaultCore
 
-public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreWriter
+public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreReorderable & VaultStoreWriter
 
 public struct VaultStoreQuery: Sendable, Equatable {
     /// Require that the item includes this search text.
@@ -43,6 +43,12 @@ public protocol VaultStoreWriter: Sendable {
     ///
     /// This should have no effect if the item does not exist.
     func delete(id: Identifier<VaultItem>) async throws
+}
+
+/// @mockable
+public protocol VaultStoreReorderable: Sendable {
+    /// Reorder the item with the given `id` to the given position and current view.
+    func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws
 }
 
 /// @mockable

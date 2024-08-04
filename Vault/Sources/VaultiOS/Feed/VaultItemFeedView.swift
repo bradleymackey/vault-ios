@@ -169,7 +169,16 @@ public struct VaultItemFeedView<
             .modifier(OTPCardViewModifier())
             .frame(width: 150)
         } moveAction: { from, to in
+            let movingIds = from.map { viewModel.codes[$0].id }.reducedToSet()
+            let targetPosition: VaultReorderingPosition = if to == 0 {
+                .start
+            } else {
+                .after(viewModel.codes[to - 1].id)
+            }
             viewModel.codes.move(fromOffsets: from, toOffset: to)
+            Task {
+                try await viewModel.reorder(items: movingIds, to: targetPosition)
+            }
         }
     }
 
@@ -187,7 +196,7 @@ struct VaultItemFeedView_Previews: PreviewProvider {
                     id: Identifier<VaultItem>(),
                     created: Date(),
                     updated: Date(),
-                    relativeOrder: .max,
+                    relativeOrder: .min,
                     userDescription: "My Cool Code",
                     tags: [],
                     visibility: .always,

@@ -6,6 +6,6 @@ extension FetchDescriptor {
     ///
     /// Uses an always-true predicate to match all items.
     static func all(sortBy: [SortDescriptor<T>] = []) -> Self {
-        FetchDescriptor(predicate: #Predicate { _ in true }, sortBy: sortBy)
+        FetchDescriptor(predicate: .true, sortBy: sortBy)
     }
 }

@@ -18,4 +18,6 @@ public protocol VaultFeed {
     func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws
 
     func delete(id: Identifier<VaultItem>) async throws
+
+    func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws
 }

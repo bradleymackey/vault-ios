@@ -176,7 +176,7 @@ extension OTPCodeDetailEdits {
     public static func new() -> OTPCodeDetailEdits {
         .init(
             codeType: .totp,
-            relativeOrder: .max,
+            relativeOrder: .min,
             totpPeriodLength: OTPAuthType.TOTP.defaultPeriod,
             hotpCounterValue: OTPAuthType.HOTP.defaultCounter,
             secretBase32String: "",
@@ -196,7 +196,7 @@ extension OTPCodeDetailEdits {
     public static func new(hydratedFromCode code: OTPAuthCode) -> OTPCodeDetailEdits {
         .init(
             hydratedFromCode: code,
-            relativeOrder: .max,
+            relativeOrder: .min,
             userDescription: "",
             color: nil,
             viewConfig: .alwaysVisible,
