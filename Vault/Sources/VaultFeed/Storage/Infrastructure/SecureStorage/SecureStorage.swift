@@ -23,6 +23,7 @@ public final class SecureStorageImpl: SecureStorage {
     }
 
     public func store(data: Data, forKey key: String) throws {
+        try keychain.remove(.credential(for: key))
         let accessPolicy = AccessPolicy(.whenUnlocked, options: [.userPresence])
         try keychain.store(data, query: .credential(for: key), accessPolicy: accessPolicy)
     }
