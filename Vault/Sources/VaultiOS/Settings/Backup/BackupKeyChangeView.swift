@@ -34,6 +34,7 @@ struct BackupKeyChangeView: View {
                     Text("Cancel")
                         .tint(.red)
                 }
+                .disabled(viewModel.newPassword.isLoading)
             }
         }
     }
@@ -60,25 +61,38 @@ struct BackupKeyChangeView: View {
             }
 
         } footer: {
-            StandaloneButton {
-                keyGenerationTask?.cancel()
-                keyGenerationTask = Task {
-                    await viewModel.saveEnteredPassword()
-                }
-            } content: {
-                if !viewModel.newPassword.isLoading {
-                    Text("Update Password")
-                } else {
-                    HStack(alignment: .center, spacing: 8) {
-                        ProgressView()
-                        Text("Generating")
-                            .shimmering(active: viewModel.newPassword.isLoading)
+            VStack(alignment: .center, spacing: 8) {
+                StandaloneButton {
+                    keyGenerationTask?.cancel()
+                    keyGenerationTask = Task {
+                        await viewModel.saveEnteredPassword()
                     }
+                } content: {
+                    Text("Update Password")
+                }
+                .animation(.none, value: viewModel.newPassword)
+                .disabled(!viewModel.canGenerateNewPassword)
+                .opacity(viewModel.canGenerateNewPassword ? 1 : 0.5)
+
+                switch viewModel.newPassword {
+                case .success:
+                    Label("Backup and password and vault encryption key updated successfully", systemImage: "checkmark")
+                        .foregroundStyle(.green)
+                case .keygenError, .keygenCancelled:
+                    Label("Error generating encryption key", systemImage: "questionmark.key.filled")
+                        .foregroundStyle(.red)
+                case .creating:
+                    HStack(alignment: .center, spacing: 4) {
+                        ProgressView()
+                        Text("Generating encryption key")
+                    }
+                case .passwordConfirmError:
+                    Label("Passwords do not match", systemImage: "xmark")
+                        .foregroundStyle(.red)
+                case .neutral:
+                    EmptyView()
                 }
             }
-            .animation(.none, value: viewModel.newPassword)
-            .disabled(!viewModel.canGenerateNewPassword)
-            .opacity(viewModel.canGenerateNewPassword ? 1 : 0.5)
             .padding()
             .modifier(HorizontallyCenter())
         }
@@ -119,7 +133,7 @@ struct BackupKeyChangeView: View {
                     Text("ID")
                 }
             } label: {
-                Label("Keygen Information", systemImage: "questionmark.key.filled")
+                Label("Keygen Information", systemImage: "key.horizontal.fill")
             }
 
             #if DEBUG
