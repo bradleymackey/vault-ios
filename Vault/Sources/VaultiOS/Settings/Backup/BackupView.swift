@@ -58,11 +58,12 @@ struct BackupView: View {
                 createButton
                 importButton
             case .error:
-                Text(viewModel.strings.backupPasswordErrorTitle)
+                Label(viewModel.strings.backupPasswordErrorTitle, systemImage: "key.slash.fill")
             }
         } footer: {
             if viewModel.passwordState == .error {
                 Text(viewModel.strings.backupPasswordErrorDetail)
+                    .foregroundStyle(.red)
             }
         }
     }

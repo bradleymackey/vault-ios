@@ -45,9 +45,11 @@ struct BackupKeyExportView: View {
                     .foregroundStyle(.red)
             }
         } footer: {
-            Text(
-                "Be careful showing your exported private key. It can be used to gain access to your encrypted vault backups."
+            Label(
+                "Be careful with this private key. It can be used to gain access to your encrypted vault backups.",
+                systemImage: "exclamationmark.triangle.fill"
             )
+            .foregroundStyle(.red)
         }
     }
 

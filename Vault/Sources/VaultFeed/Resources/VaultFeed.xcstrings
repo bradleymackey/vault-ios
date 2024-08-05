@@ -62,7 +62,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "There was an error fetching your backup password. Please try again."
+            "value" : "There was an error fetching your backup password. You might need to authenticate again."
           }
         }
       }
@@ -73,7 +73,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Password Error"
+            "value" : "Password retrieval error"
           }
         }
       }
