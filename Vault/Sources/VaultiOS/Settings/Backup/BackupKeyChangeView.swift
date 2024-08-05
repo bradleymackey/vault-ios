@@ -16,7 +16,6 @@ struct BackupKeyChangeView: View {
     var body: some View {
         Form {
             passwordSection
-            keySection
             detailsSection
         }
         .navigationTitle(Text("Backup Password"))
@@ -87,24 +86,6 @@ struct BackupKeyChangeView: View {
         .transition(.move(edge: .leading))
     }
 
-    private var keySection: some View {
-        Section {
-            switch viewModel.existingPassword {
-            case .loading:
-                Text("Loading")
-            case let .hasExistingPassword(backupPassword):
-                Text(backupPassword.key.toHexString())
-                Text(backupPassword.salt.toHexString())
-            case .noExistingPassword:
-                Text("None")
-            case .errorFetching:
-                Text("Error")
-            }
-        } header: {
-            Text("Current encryption key and salt")
-        }
-    }
-
     private var detailsSection: some View {
         Section {
             DisclosureGroup {
@@ -140,6 +121,29 @@ struct BackupKeyChangeView: View {
             } label: {
                 Label("Keygen Information", systemImage: "questionmark.key.filled")
             }
+
+            #if DEBUG
+            DisclosureGroup {
+                VStack(alignment: .leading, spacing: 8) {
+                    switch viewModel.existingPassword {
+                    case .loading:
+                        Text("Loading")
+                    case let .hasExistingPassword(backupPassword):
+                        Text(backupPassword.key.toHexString())
+                            .fontDesign(.monospaced)
+                        Text(backupPassword.salt.toHexString())
+                            .fontDesign(.monospaced)
+                    case .noExistingPassword:
+                        Text("None")
+                    case .errorFetching:
+                        Text("Error")
+                    }
+                }
+            } label: {
+                Text("DEBUG: Keygen Information")
+            }
+            .foregroundStyle(.secondary)
+            #endif
         }
     }
 }
