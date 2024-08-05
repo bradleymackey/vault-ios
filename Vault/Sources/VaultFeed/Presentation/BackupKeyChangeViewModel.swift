@@ -40,6 +40,15 @@ public final class BackupKeyChangeViewModel {
         encryptionKeyDeriver = deriverFactory.makeApplicationKeyDeriver()
     }
 
+    public var passwordConfirmMatches: Bool {
+        newlyEnteredPassword == newlyEnteredPasswordConfirm
+    }
+
+    public var canGenerateNewPassword: Bool {
+        !newPassword.isLoading && passwordConfirmMatches && !newlyEnteredPassword.isBlank && newlyEnteredPassword
+            .isNotEmpty
+    }
+
     public var encryptionKeyDeriverSignature: ApplicationKeyDeriver.Signature {
         encryptionKeyDeriver.signature
     }

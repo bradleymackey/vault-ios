@@ -41,12 +41,23 @@ struct BackupKeyChangeView: View {
 
     private var passwordSection: some View {
         Section {
-            SecureField("New Password", text: $viewModel.newlyEnteredPassword)
-                .disabled(viewModel.newPassword.isLoading)
+            FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
+                SecureField("New Password", text: $viewModel.newlyEnteredPassword)
+            }
+            .disabled(viewModel.newPassword.isLoading)
 
             if viewModel.newlyEnteredPassword.isNotEmpty {
-                SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
-                    .disabled(viewModel.newPassword.isLoading)
+                FormRow(
+                    image: Image(
+                        systemName: viewModel
+                            .passwordConfirmMatches ? "checkmark.circle.fill" : "xmark.circle.fill"
+                    ),
+                    color: viewModel.passwordConfirmMatches ? .green : .red,
+                    style: .standard
+                ) {
+                    SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
+                }
+                .disabled(viewModel.newPassword.isLoading)
             }
 
         } footer: {
@@ -67,7 +78,8 @@ struct BackupKeyChangeView: View {
                 }
             }
             .animation(.none, value: viewModel.newPassword)
-            .disabled(viewModel.newPassword.isLoading)
+            .disabled(!viewModel.canGenerateNewPassword)
+            .opacity(viewModel.canGenerateNewPassword ? 1 : 0.5)
             .padding()
             .modifier(HorizontallyCenter())
         }
