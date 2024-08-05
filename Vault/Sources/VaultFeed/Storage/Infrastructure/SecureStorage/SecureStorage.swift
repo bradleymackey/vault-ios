@@ -23,7 +23,7 @@ public final class SecureStorageImpl: SecureStorage {
     }
 
     public func store(data: Data, forKey key: String) throws {
-        let accessPolicy = AccessPolicy(.whenUnlocked, options: [.userPresence])
+        let accessPolicy = AccessPolicy(.whenUnlocked)
         try keychain.store(data, query: .credential(for: key), accessPolicy: accessPolicy)
     }
 
