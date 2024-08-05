@@ -12,9 +12,6 @@ public struct SecureNoteDetailEdits: EditableState {
     public var title: String = ""
 
     @FieldValidated(validationLogic: .alwaysValid)
-    public var description: String = ""
-
-    @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
     public var viewConfig: VaultItemViewConfiguration
@@ -54,7 +51,6 @@ public struct SecureNoteDetailEdits: EditableState {
 
     public init(
         title: String,
-        description: String,
         contents: String,
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
@@ -63,7 +59,6 @@ public struct SecureNoteDetailEdits: EditableState {
         lockState: VaultItemLockState,
         relativeOrder: UInt64
     ) {
-        self.description = description
         self.title = title
         self.contents = contents
         self.color = color
@@ -75,7 +70,7 @@ public struct SecureNoteDetailEdits: EditableState {
     }
 
     public var isValid: Bool {
-        $title.isValid && $description.isValid && $contents.isValid && isPassphraseValid
+        $title.isValid && $contents.isValid && isPassphraseValid
     }
 
     private var isPassphraseValid: Bool {
@@ -83,6 +78,11 @@ public struct SecureNoteDetailEdits: EditableState {
         case .requiresSearchPassphrase: $searchPassphrase.isValid
         default: true
         }
+    }
+
+    /// The description of this note, which is just the first line of content.
+    public var description: String {
+        String(contents.split(separator: "\n").first ?? "")
     }
 }
 
@@ -94,7 +94,6 @@ extension SecureNoteDetailEdits {
     public static func new() -> SecureNoteDetailEdits {
         .init(
             title: "",
-            description: "",
             contents: "",
             color: nil,
             viewConfig: .alwaysVisible,

@@ -66,7 +66,6 @@ struct SecureNoteDetailView: View {
         ) {
             if viewModel.isInEditMode {
                 noteTitleEditingSection
-                noteDescriptionEditingSection
                 noteContentsEditingSection
                 if viewModel.allTags.isNotEmpty {
                     tagSelectionSection
@@ -163,7 +162,7 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    // MARK: Title & Description
+    // MARK: Title
 
     private var noteMetadataContentSection: some View {
         Section {
@@ -176,13 +175,6 @@ struct SecureNoteDetailView: View {
                 .font(.title.bold())
                 .lineLimit(5)
                 .frame(maxWidth: .infinity)
-
-            if viewModel.editingModel.detail.description.isNotEmpty {
-                Text(viewModel.editingModel.detail.description)
-                    .foregroundStyle(.secondary)
-                    .font(.callout)
-                    .frame(maxWidth: .infinity)
-            }
         }
         .multilineTextAlignment(.center)
         .textSelection(.enabled)
@@ -226,17 +218,6 @@ struct SecureNoteDetailView: View {
         .padding(.vertical, 16)
     }
 
-    private var noteDescriptionEditingSection: some View {
-        Section {
-            TextEditor(text: $viewModel.editingModel.detail.description)
-                .font(.callout)
-                .frame(minHeight: 60)
-                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
-        } header: {
-            Text(viewModel.strings.noteDescription)
-        }
-    }
-
     // MARK: Contents
 
     private var noteContentsSection: some View {
@@ -246,7 +227,7 @@ struct SecureNoteDetailView: View {
                 fontStyle: .monospace,
                 textStyle: .body
             )
-            .frame(minHeight: 250, alignment: .top)
+            .frame(minHeight: 350, alignment: .top)
         } footer: {
             VStack(alignment: .leading, spacing: 16) {
                 if viewModel.tagsThatAreSelected.isNotEmpty {
