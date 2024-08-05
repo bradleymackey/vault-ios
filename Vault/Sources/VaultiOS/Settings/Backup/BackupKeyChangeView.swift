@@ -76,7 +76,7 @@ struct BackupKeyChangeView: View {
 
                 switch viewModel.newPassword {
                 case .success:
-                    Label("Backup and password and vault encryption key updated successfully", systemImage: "checkmark")
+                    Label("Password and vault encryption key updated successfully", systemImage: "checkmark")
                         .foregroundStyle(.green)
                 case .keygenError, .keygenCancelled:
                     Label("Error generating encryption key", systemImage: "questionmark.key.filled")
