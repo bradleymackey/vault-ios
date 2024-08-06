@@ -72,7 +72,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordCreateTitle)
             }
         }
@@ -82,7 +82,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }
@@ -92,7 +92,7 @@ struct BackupView: View {
         Button {
             modal = .exportPassword
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordExportTitle)
             }
         }
@@ -102,7 +102,7 @@ struct BackupView: View {
         Button {
             modal = .importPassword
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordImportTitle)
             }
         }
