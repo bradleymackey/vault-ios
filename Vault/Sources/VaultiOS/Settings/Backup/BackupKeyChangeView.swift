@@ -25,6 +25,9 @@ struct BackupKeyChangeView: View {
         .task {
             viewModel.loadInitialData()
         }
+        .onDisappear {
+            viewModel.didDisappear()
+        }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {

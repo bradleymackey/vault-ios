@@ -65,6 +65,10 @@ public final class BackupKeyChangeViewModel {
         }
     }
 
+    public func didDisappear() {
+        existingPassword = .loading
+    }
+
     private struct PasswordConfirmError: Error {}
 
     public func saveEnteredPassword() async {
