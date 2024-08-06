@@ -50,6 +50,7 @@ extension BackupViewModel {
         private init() {}
 
         public let homeTitle = localized(key: "backupHome.title")
+        public let backupPasswordSectionTitle = localized(key: "backupPasswordState.section.title")
         public let backupPasswordCreateTitle = localized(key: "backupPasswordState.create.title")
         public let backupPasswordUpdateTitle = localized(key: "backupPasswordState.update.title")
         public let backupPasswordExportTitle = localized(key: "backupPasswordState.export.title")

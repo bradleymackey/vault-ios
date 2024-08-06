@@ -24,7 +24,7 @@ struct BackupKeyImportView: View {
                 confirmImportSection
             }
         }
-        .navigationTitle(Text("Import Password"))
+        .navigationTitle(Text("Import Key"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {

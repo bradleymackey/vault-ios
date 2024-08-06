@@ -60,6 +60,8 @@ struct BackupView: View {
             case .error:
                 Label(viewModel.strings.backupPasswordErrorTitle, systemImage: "key.slash.fill")
             }
+        } header: {
+            Text(viewModel.strings.backupPasswordSectionTitle)
         } footer: {
             if viewModel.passwordState == .error {
                 Text(viewModel.strings.backupPasswordErrorDetail)

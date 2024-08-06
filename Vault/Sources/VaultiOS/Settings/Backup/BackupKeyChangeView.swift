@@ -18,7 +18,7 @@ struct BackupKeyChangeView: View {
             passwordSection
             detailsSection
         }
-        .navigationTitle(Text("Backup Password"))
+        .navigationTitle(Text("Key Generator"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.newPassword.isLoading)
         .animation(.easeOut, value: viewModel.newlyEnteredPassword.isNotEmpty)
@@ -68,7 +68,7 @@ struct BackupKeyChangeView: View {
                         await viewModel.saveEnteredPassword()
                     }
                 } content: {
-                    Text("Update Password")
+                    Text("Generate Key")
                 }
                 .animation(.none, value: viewModel.newPassword)
                 .disabled(!viewModel.canGenerateNewPassword)

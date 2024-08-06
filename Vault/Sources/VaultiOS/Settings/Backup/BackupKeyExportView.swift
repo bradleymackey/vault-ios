@@ -16,7 +16,7 @@ struct BackupKeyExportView: View {
         Form {
             exportSection
         }
-        .navigationTitle(Text("Export Password"))
+        .navigationTitle(Text("Export Key"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
