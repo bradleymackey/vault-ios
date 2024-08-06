@@ -16,15 +16,17 @@ struct BackupKeyChangeView: View {
     var body: some View {
         Form {
             passwordSection
-            keySection
             detailsSection
         }
-        .navigationTitle(Text("Backup Password"))
+        .navigationTitle(Text("Key Generator"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.newPassword.isLoading)
         .animation(.easeOut, value: viewModel.newlyEnteredPassword.isNotEmpty)
         .task {
             viewModel.loadInitialData()
+        }
+        .onDisappear {
+            viewModel.didDisappear()
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -35,62 +37,70 @@ struct BackupKeyChangeView: View {
                     Text("Cancel")
                         .tint(.red)
                 }
+                .disabled(viewModel.newPassword.isLoading)
             }
         }
     }
 
     private var passwordSection: some View {
         Section {
-            SecureField("New Password", text: $viewModel.newlyEnteredPassword)
-                .disabled(viewModel.newPassword.isLoading)
+            FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
+                SecureField("New Password", text: $viewModel.newlyEnteredPassword)
+            }
+            .disabled(viewModel.newPassword.isLoading)
 
             if viewModel.newlyEnteredPassword.isNotEmpty {
-                SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
-                    .disabled(viewModel.newPassword.isLoading)
+                FormRow(
+                    image: Image(
+                        systemName: viewModel
+                            .passwordConfirmMatches ? "checkmark.circle.fill" : "xmark.circle.fill"
+                    ),
+                    color: viewModel.passwordConfirmMatches ? .green : .red,
+                    style: .standard
+                ) {
+                    SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
+                }
+                .disabled(viewModel.newPassword.isLoading)
             }
 
         } footer: {
-            StandaloneButton {
-                keyGenerationTask?.cancel()
-                keyGenerationTask = Task {
-                    await viewModel.saveEnteredPassword()
-                }
-            } content: {
-                if !viewModel.newPassword.isLoading {
-                    Text("Update Password")
-                } else {
-                    HStack(alignment: .center, spacing: 8) {
-                        ProgressView()
-                        Text("Generating")
-                            .shimmering(active: viewModel.newPassword.isLoading)
+            VStack(alignment: .center, spacing: 8) {
+                StandaloneButton {
+                    keyGenerationTask?.cancel()
+                    keyGenerationTask = Task {
+                        await viewModel.saveEnteredPassword()
                     }
+                } content: {
+                    Text("Generate Key")
+                }
+                .animation(.none, value: viewModel.newPassword)
+                .disabled(!viewModel.canGenerateNewPassword)
+                .opacity(viewModel.canGenerateNewPassword ? 1 : 0.5)
+
+                switch viewModel.newPassword {
+                case .success:
+                    Label("Password and vault encryption key updated successfully", systemImage: "checkmark")
+                        .foregroundStyle(.green)
+                case .keygenError, .keygenCancelled:
+                    Label("Error generating encryption key", systemImage: "questionmark.key.filled")
+                        .foregroundStyle(.red)
+                case .creating:
+                    HStack(alignment: .center, spacing: 4) {
+                        ProgressView()
+                        Text("Generating encryption key")
+                    }
+                case .passwordConfirmError:
+                    Label("Passwords do not match", systemImage: "xmark")
+                        .foregroundStyle(.red)
+                case .neutral:
+                    EmptyView()
                 }
             }
-            .animation(.none, value: viewModel.newPassword)
-            .disabled(viewModel.newPassword.isLoading)
             .padding()
             .modifier(HorizontallyCenter())
         }
         .animation(.easeOut, value: viewModel.newlyEnteredPassword)
         .transition(.move(edge: .leading))
-    }
-
-    private var keySection: some View {
-        Section {
-            switch viewModel.existingPassword {
-            case .loading:
-                Text("Loading")
-            case let .hasExistingPassword(backupPassword):
-                Text(backupPassword.key.toHexString())
-                Text(backupPassword.salt.toHexString())
-            case .noExistingPassword:
-                Text("None")
-            case .errorFetching:
-                Text("Error")
-            }
-        } header: {
-            Text("Current encryption key and salt")
-        }
     }
 
     private var detailsSection: some View {
@@ -126,8 +136,31 @@ struct BackupKeyChangeView: View {
                     Text("ID")
                 }
             } label: {
-                Label("Keygen Information", systemImage: "questionmark.key.filled")
+                Label("Keygen Information", systemImage: "key.horizontal.fill")
             }
+
+            #if DEBUG
+            DisclosureGroup {
+                VStack(alignment: .leading, spacing: 8) {
+                    switch viewModel.existingPassword {
+                    case .loading:
+                        Text("Loading")
+                    case let .hasExistingPassword(backupPassword):
+                        Text(backupPassword.key.toHexString())
+                            .fontDesign(.monospaced)
+                        Text(backupPassword.salt.toHexString())
+                            .fontDesign(.monospaced)
+                    case .noExistingPassword:
+                        Text("None")
+                    case .errorFetching:
+                        Text("Error")
+                    }
+                }
+            } label: {
+                Text("DEBUG: Keygen Information")
+            }
+            .foregroundStyle(.secondary)
+            #endif
         }
     }
 }

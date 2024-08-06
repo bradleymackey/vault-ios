@@ -43,13 +43,24 @@ struct BackupView: View {
         .task {
             viewModel.fetchContent()
         }
+        .onDisappear {
+            viewModel.onDisappear()
+        }
     }
 
     private var createPasswordSection: some View {
         Section {
             switch viewModel.passwordState {
             case .loading:
-                Text(viewModel.strings.backupPasswordLoadingTitle)
+                VStack(alignment: .center, spacing: 4) {
+                    Image(systemName: "lock.fill")
+                        .font(.largeTitle)
+                    Text(viewModel.strings.backupPasswordLoadingTitle)
+                        .font(.body)
+                }
+                .foregroundStyle(.secondary)
+                .padding()
+                .containerRelativeFrame(.horizontal)
             case .hasExistingPassword:
                 updateButton
                 exportButton
@@ -58,11 +69,14 @@ struct BackupView: View {
                 createButton
                 importButton
             case .error:
-                Text(viewModel.strings.backupPasswordErrorTitle)
+                Label(viewModel.strings.backupPasswordErrorTitle, systemImage: "key.slash.fill")
             }
+        } header: {
+            Text(viewModel.strings.backupPasswordSectionTitle)
         } footer: {
             if viewModel.passwordState == .error {
                 Text(viewModel.strings.backupPasswordErrorDetail)
+                    .foregroundStyle(.red)
             }
         }
     }
@@ -71,7 +85,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordCreateTitle)
             }
         }
@@ -81,7 +95,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }
@@ -91,7 +105,7 @@ struct BackupView: View {
         Button {
             modal = .exportPassword
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordExportTitle)
             }
         }
@@ -101,7 +115,7 @@ struct BackupView: View {
         Button {
             modal = .importPassword
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .blue) {
+            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordImportTitle)
             }
         }

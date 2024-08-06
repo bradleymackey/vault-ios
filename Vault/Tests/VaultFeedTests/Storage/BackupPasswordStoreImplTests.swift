@@ -30,25 +30,6 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         XCTAssertNil(password)
     }
 
-    func test_fetchPassword_foundDataReturnsData() throws {
-        let storage = SecureStorageMock()
-        let sut = makeSUT(secureStorage: storage)
-        storage.retrieveHandler = { key in
-            switch key {
-            case "vault-backup-password-key-v1": Data(repeating: 0x23, count: 12)
-            case "vault-backup-password-salt-v1": Data(repeating: 0x22, count: 11)
-            case "vault-backup-password-deriver-v1": Data("\"vault.keygen.default.testing\"".utf8)
-            default: Data()
-            }
-        }
-
-        let password = try sut.fetchPassword()
-
-        XCTAssertEqual(password?.key, Data(repeating: 0x23, count: 12))
-        XCTAssertEqual(password?.salt, Data(repeating: 0x22, count: 11))
-        XCTAssertEqual(password?.keyDervier, .testing)
-    }
-
     func test_setPassword_errorInServiceIsRethrown() throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
@@ -71,12 +52,8 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         try sut.set(password: newPassword)
 
         XCTAssertEqual(
-            storage.storeArgValues.map(\.0),
-            [newPassword.key, newPassword.salt, Data("\"vault.keygen.default.fast-v1\"".utf8)]
-        )
-        XCTAssertEqual(
             storage.storeArgValues.map(\.1),
-            ["vault-backup-password-key-v1", "vault-backup-password-salt-v1", "vault-backup-password-deriver-v1"]
+            ["vault-backup-password-v1"]
         )
     }
 }

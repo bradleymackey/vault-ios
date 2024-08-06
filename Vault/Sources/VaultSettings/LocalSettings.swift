@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 
 @Observable
 public final class LocalSettings {

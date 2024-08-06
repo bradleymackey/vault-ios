@@ -6,6 +6,7 @@ import SwiftSecurity
 /// @mockable
 public protocol SecureStorage {
     /// Locally stores data with a restrictive access policy.
+    /// Overrides existing value if it exists.
     ///
     /// - Throws: Internal error is thrown if we cannot retrieve from the Keychain.
     func store(data: Data, forKey key: String) throws
@@ -23,6 +24,7 @@ public final class SecureStorageImpl: SecureStorage {
     }
 
     public func store(data: Data, forKey key: String) throws {
+        try keychain.remove(.credential(for: key))
         let accessPolicy = AccessPolicy(.whenUnlocked, options: [.userPresence])
         try keychain.store(data, query: .credential(for: key), accessPolicy: accessPolicy)
     }
