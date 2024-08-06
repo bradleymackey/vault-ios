@@ -24,7 +24,7 @@
 
 import TestHelpers
 import XCTest
-@testable import VaultSettings
+@testable import FoundationExtensions
 
 final class DefaultsKitTests: XCTestCase {
     // swiftlint:disable:next implicitly_unwrapped_optional

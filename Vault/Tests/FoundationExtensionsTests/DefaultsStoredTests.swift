@@ -1,5 +1,5 @@
 import Foundation
-import VaultSettings
+import FoundationExtensions
 import XCTest
 
 final class DefaultsStoredTests: XCTestCase {

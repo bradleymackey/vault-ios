@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// Local settings for the codes.
 public struct LocalSettingsState {
