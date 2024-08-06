@@ -22,6 +22,10 @@ public final class BackupViewModel {
     public func fetchContent() {
         fetchPasswordState()
     }
+
+    public func onDisappear() {
+        passwordState = .loading
+    }
 }
 
 // MARK: - Password

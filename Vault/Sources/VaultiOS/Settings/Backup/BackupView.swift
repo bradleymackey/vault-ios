@@ -43,13 +43,24 @@ struct BackupView: View {
         .task {
             viewModel.fetchContent()
         }
+        .onDisappear {
+            viewModel.onDisappear()
+        }
     }
 
     private var createPasswordSection: some View {
         Section {
             switch viewModel.passwordState {
             case .loading:
-                Text(viewModel.strings.backupPasswordLoadingTitle)
+                VStack(alignment: .center, spacing: 4) {
+                    Image(systemName: "lock.fill")
+                        .font(.largeTitle)
+                    Text(viewModel.strings.backupPasswordLoadingTitle)
+                        .font(.body)
+                }
+                .foregroundStyle(.secondary)
+                .padding()
+                .containerRelativeFrame(.horizontal)
             case .hasExistingPassword:
                 updateButton
                 exportButton
