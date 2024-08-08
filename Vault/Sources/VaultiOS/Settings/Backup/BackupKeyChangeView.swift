@@ -15,15 +15,40 @@ struct BackupKeyChangeView: View {
 
     var body: some View {
         Form {
-            passwordSection
-            detailsSection
+            switch viewModel.permissionState {
+            case .loading:
+                VStack {
+                    ProgressView()
+                        .font(.largeTitle)
+                    Text("Authentication required")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                }
+                .containerRelativeFrame(.horizontal)
+                .foregroundStyle(.secondary)
+                .padding()
+            case .allowed:
+                passwordSection
+                detailsSection
+            case .denied:
+                VStack {
+                    Image(systemName: "lock.slash.fill")
+                        .font(.largeTitle)
+                    Text("Access denied")
+                        .font(.headline)
+                        .multilineTextAlignment(.center)
+                }
+                .containerRelativeFrame(.horizontal)
+                .foregroundStyle(.secondary)
+                .padding()
+            }
         }
         .navigationTitle(Text("Key Generator"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.newPassword.isLoading)
         .animation(.easeOut, value: viewModel.newlyEnteredPassword.isNotEmpty)
         .task {
-            viewModel.loadInitialData()
+            await viewModel.onAppear()
         }
         .onDisappear {
             viewModel.didDisappear()
@@ -141,6 +166,11 @@ struct BackupKeyChangeView: View {
 
             #if DEBUG
             DisclosureGroup {
+                Button {
+                    viewModel.loadExistingPassword()
+                } label: {
+                    Text("Fetch existing password")
+                }
                 VStack(alignment: .leading, spacing: 8) {
                     switch viewModel.existingPassword {
                     case .loading:

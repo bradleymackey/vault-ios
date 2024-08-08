@@ -22,24 +22,53 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_loadInitialData_loadsKeyIfItExists() {
+    func test_init_initialPermissionStateLoading() {
+        let sut = makeSUT()
+
+        XCTAssertEqual(sut.permissionState, .loading)
+    }
+
+    @MainActor
+    func test_onAppear_permissonStateAllowedIfNoError() async {
+        let store = BackupPasswordStoreMock()
+        store.checkStorePermissionHandler = {}
+        let sut = makeSUT(store: store)
+
+        await sut.onAppear()
+
+        XCTAssertEqual(sut.permissionState, .allowed)
+    }
+
+    @MainActor
+    func test_onAppear_permissionStateDeniedIfError() async {
+        let store = BackupPasswordStoreMock()
+        store.checkStorePermissionHandler = { throw anyNSError() }
+        let sut = makeSUT(store: store)
+
+        await sut.onAppear()
+
+        XCTAssertEqual(sut.permissionState, .denied)
+    }
+
+    @MainActor
+    func test_loadExistingPassword_loadsKeyIfItExists() async {
         let store = BackupPasswordStoreMock()
         let password = randomBackupPassword()
         store.fetchPasswordHandler = { password }
         let sut = makeSUT(store: store)
 
-        sut.loadInitialData()
+        sut.loadExistingPassword()
 
         XCTAssertEqual(sut.existingPassword, .hasExistingPassword(password))
     }
 
     @MainActor
-    func test_loadInitialData_doesNotLoadKeyIfItDoesNotExist() {
+    func test_loadExistingPassword_doesNotLoadKeyIfItDoesNotExist() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { nil }
         let sut = makeSUT(store: store)
 
-        sut.loadInitialData()
+        sut.loadExistingPassword()
 
         XCTAssertEqual(sut.existingPassword, .noExistingPassword)
     }
