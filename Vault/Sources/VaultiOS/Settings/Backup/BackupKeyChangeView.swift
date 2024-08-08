@@ -152,6 +152,8 @@ struct BackupKeyChangeView: View {
                             .fontDesign(.monospaced)
                     case .noExistingPassword:
                         Text("None")
+                    case .authenticationFailed:
+                        Text("Authentication Failed")
                     case .errorFetching:
                         Text("Error")
                     }

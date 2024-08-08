@@ -7,6 +7,7 @@ import VaultBackup
 public final class BackupKeyChangeViewModel {
     public enum ExistingPasswordState: Equatable, Hashable {
         case loading
+        case authenticationFailed
         case hasExistingPassword(BackupPassword)
         case noExistingPassword
         case errorFetching
@@ -60,6 +61,8 @@ public final class BackupKeyChangeViewModel {
             } else {
                 existingPassword = .noExistingPassword
             }
+        } catch is DeviceAuthenticationFailure {
+            existingPassword = .authenticationFailed
         } catch {
             existingPassword = .errorFetching
         }
