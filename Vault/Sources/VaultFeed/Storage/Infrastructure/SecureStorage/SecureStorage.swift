@@ -4,7 +4,7 @@ import SwiftSecurity
 /// Stores data securely on the device (most likely the keychain).
 ///
 /// @mockable
-public protocol SecureStorage {
+public protocol SecureStorage: Sendable {
     /// Locally stores data with a restrictive access policy.
     /// Overrides existing value if it exists.
     ///
