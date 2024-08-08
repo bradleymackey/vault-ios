@@ -108,6 +108,7 @@ struct SecureNoteDetailView: View {
                     title: "None",
                     subtitle: "Add a tag to categorize this item"
                 )
+                .containerRelativeFrame(.horizontal)
                 .padding()
             }
 

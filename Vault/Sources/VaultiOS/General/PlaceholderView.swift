@@ -20,7 +20,6 @@ struct PlaceholderView: View {
                 }
             }
         }
-        .containerRelativeFrame(.horizontal)
         .textCase(.none)
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.center)

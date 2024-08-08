@@ -55,6 +55,7 @@ struct BackupView: View {
                 PlaceholderView(systemIcon: "lock.fill", title: viewModel.strings.backupPasswordLoadingTitle)
                     .foregroundStyle(.secondary)
                     .padding()
+                    .containerRelativeFrame(.horizontal)
             case .hasExistingPassword:
                 updateButton
                 exportButton
@@ -66,6 +67,7 @@ struct BackupView: View {
                 PlaceholderView(systemIcon: "key.slash.fill", title: viewModel.strings.backupPasswordErrorTitle)
                     .foregroundStyle(.secondary)
                     .padding()
+                    .containerRelativeFrame(.horizontal)
             }
         } header: {
             Text(viewModel.strings.backupPasswordSectionTitle)

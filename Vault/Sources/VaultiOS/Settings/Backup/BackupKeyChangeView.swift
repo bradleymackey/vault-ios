@@ -20,6 +20,7 @@ struct BackupKeyChangeView: View {
                 PlaceholderView(systemIcon: "lock.fill", title: "Authentication required")
                     .foregroundStyle(.secondary)
                     .padding()
+                    .containerRelativeFrame(.horizontal)
             case .allowed:
                 passwordSection
                 detailsSection
@@ -29,6 +30,7 @@ struct BackupKeyChangeView: View {
                     title: "Authentication Failed",
                     subtitle: "Please try again"
                 )
+                .containerRelativeFrame(.horizontal)
                 .foregroundStyle(.secondary)
                 .padding()
             }

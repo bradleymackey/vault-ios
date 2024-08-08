@@ -308,6 +308,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     title: "None",
                     subtitle: "Add a tag to categorize this item"
                 )
+                .containerRelativeFrame(.horizontal)
                 .padding()
             }
 
