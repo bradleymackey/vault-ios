@@ -18,19 +18,19 @@ public final class DeviceAuthenticationService {
         policy.canAuthenicateWithPasscode || policy.canAuthenticateWithBiometrics
     }
 
-    public func authenticate(reason: String) async throws -> Success {
+    public func authenticate(reason: String) async throws -> Result<Success, DeviceAuthenticationFailure> {
         if policy.canAuthenticateWithBiometrics {
             let success = try await policy.authenticateWithBiometrics(reason: reason)
-            guard success else { throw DeviceAuthenticationFailure.authenticationFailure }
-            return .authenticated
+            guard success else { return .failure(.authenticationFailure) }
+            return .success(.authenticated)
         }
 
         if policy.canAuthenicateWithPasscode {
             let success = try await policy.authenticateWithPasscode(reason: reason)
-            guard success else { throw DeviceAuthenticationFailure.authenticationFailure }
-            return .authenticated
+            guard success else { return .failure(.authenticationFailure) }
+            return .success(.authenticated)
         }
 
-        throw DeviceAuthenticationFailure.noAuthenticationSetup
+        return .failure(.noAuthenticationSetup)
     }
 }
