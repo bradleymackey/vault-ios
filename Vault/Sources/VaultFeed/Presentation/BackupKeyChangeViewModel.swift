@@ -13,7 +13,7 @@ public final class BackupKeyChangeViewModel {
     }
 
     public enum NewPasswordState: Equatable, Hashable {
-        case neutral
+        case initial
         case creating
         case keygenError
         case keygenCancelled
@@ -22,7 +22,7 @@ public final class BackupKeyChangeViewModel {
 
         public var isLoading: Bool {
             switch self {
-            case .neutral, .keygenError, .keygenCancelled, .passwordConfirmError, .success: false
+            case .initial, .keygenError, .keygenCancelled, .passwordConfirmError, .success: false
             case .creating: true
             }
         }
@@ -31,7 +31,7 @@ public final class BackupKeyChangeViewModel {
     public var newlyEnteredPassword = ""
     public var newlyEnteredPasswordConfirm = ""
     public private(set) var existingPassword: ExistingPasswordState = .loading
-    public private(set) var newPassword: NewPasswordState = .neutral
+    public private(set) var newPassword: NewPasswordState = .initial
     private let encryptionKeyDeriver: ApplicationKeyDeriver
     private let store: any BackupPasswordStore
 

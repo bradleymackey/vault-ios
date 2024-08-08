@@ -92,7 +92,7 @@ struct BackupKeyChangeView: View {
                 case .passwordConfirmError:
                     Label("Passwords do not match", systemImage: "xmark")
                         .foregroundStyle(.red)
-                case .neutral:
+                case .initial:
                     EmptyView()
                 }
             }
