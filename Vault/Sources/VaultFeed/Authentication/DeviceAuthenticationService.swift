@@ -15,22 +15,19 @@ public final class DeviceAuthenticationService {
 
     /// Does this user even have biometrics enabled?
     public var canAuthenticate: Bool {
-        policy.canAuthenicateWithPasscode || policy.canAuthenticateWithBiometrics
+        policy.canAuthenticate
     }
 
     public func authenticate(reason: String) async throws -> Result<Success, DeviceAuthenticationFailure> {
-        if policy.canAuthenticateWithBiometrics {
-            let success = try await policy.authenticateWithBiometrics(reason: reason)
-            guard success else { return .failure(.authenticationFailure) }
-            return .success(.authenticated)
+        guard canAuthenticate else {
+            return .failure(.noAuthenticationSetup)
         }
 
-        if policy.canAuthenicateWithPasscode {
-            let success = try await policy.authenticateWithPasscode(reason: reason)
-            guard success else { return .failure(.authenticationFailure) }
-            return .success(.authenticated)
+        let authenticated = try await policy.authenticate(reason: reason)
+        guard authenticated else {
+            return .failure(.authenticationFailure)
         }
 
-        return .failure(.noAuthenticationSetup)
+        return .success(.authenticated)
     }
 }
