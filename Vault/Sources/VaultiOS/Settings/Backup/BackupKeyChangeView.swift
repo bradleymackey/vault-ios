@@ -17,28 +17,18 @@ struct BackupKeyChangeView: View {
         Form {
             switch viewModel.permissionState {
             case .loading:
-                VStack {
-                    ProgressView()
-                        .font(.largeTitle)
-                    Text("Authentication required")
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                }
-                .containerRelativeFrame(.horizontal)
-                .foregroundStyle(.secondary)
-                .padding()
+                PlaceholderView(systemIcon: "lock.fill", title: "Authentication required")
+                    .foregroundStyle(.secondary)
+                    .padding()
             case .allowed:
                 passwordSection
                 detailsSection
             case .denied:
-                VStack {
-                    Image(systemName: "lock.slash.fill")
-                        .font(.largeTitle)
-                    Text("Access denied")
-                        .font(.headline)
-                        .multilineTextAlignment(.center)
-                }
-                .containerRelativeFrame(.horizontal)
+                PlaceholderView(
+                    systemIcon: "lock.slash.fill",
+                    title: "Authentication Failed",
+                    subtitle: "Please try again"
+                )
                 .foregroundStyle(.secondary)
                 .padding()
             }
