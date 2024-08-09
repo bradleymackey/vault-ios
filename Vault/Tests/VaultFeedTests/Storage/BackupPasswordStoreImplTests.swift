@@ -4,6 +4,7 @@ import XCTest
 @testable import VaultFeed
 
 final class BackupPasswordStoreImplTests: XCTestCase {
+    @MainActor
     func test_init_hasNoSecureStorageSideEffects() {
         let storage = SecureStorageMock()
         _ = makeSUT(secureStorage: storage)
@@ -12,6 +13,23 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         XCTAssertEqual(storage.storeCallCount, 0)
     }
 
+    @MainActor
+    func test_checkStorePermission_throwsIfCannotAuthenticate() async throws {
+        let policy = DeviceAuthenticationPolicyAlwaysDeny()
+        let sut = makeSUT(authenticationPolicy: policy)
+
+        await XCTAssertThrowsError(try await sut.checkStorePermission())
+    }
+
+    @MainActor
+    func test_checkStorePermission_doesNotThrowIfCanAuthenticate() async throws {
+        let policy = DeviceAuthenticationPolicyAlwaysAllow()
+        let sut = makeSUT(authenticationPolicy: policy)
+
+        try await sut.checkStorePermission()
+    }
+
+    @MainActor
     func test_fetchPassword_fetchErrorRethrowsError() throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
@@ -20,6 +38,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         XCTAssertThrowsError(try sut.fetchPassword())
     }
 
+    @MainActor
     func test_fetchPassword_notFoundAnyReturnsNil() throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
@@ -30,6 +49,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         XCTAssertNil(password)
     }
 
+    @MainActor
     func test_setPassword_errorInServiceIsRethrown() throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
@@ -40,6 +60,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         XCTAssertThrowsError(try sut.set(password: anyBackupPassword()))
     }
 
+    @MainActor
     func test_setPassword_setsDataEncodedCorrectly() throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
@@ -61,10 +82,12 @@ final class BackupPasswordStoreImplTests: XCTestCase {
 // MARK: - Helpers
 
 extension BackupPasswordStoreImplTests {
+    @MainActor
     private func makeSUT(
-        secureStorage: SecureStorageMock = SecureStorageMock()
+        secureStorage: SecureStorageMock = SecureStorageMock(),
+        authenticationPolicy: any DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow()
     ) -> BackupPasswordStoreImpl {
-        BackupPasswordStoreImpl(secureStorage: secureStorage)
+        BackupPasswordStoreImpl(secureStorage: secureStorage, authenticationPolicy: authenticationPolicy)
     }
 
     private func anyBackupPassword() -> BackupPassword {

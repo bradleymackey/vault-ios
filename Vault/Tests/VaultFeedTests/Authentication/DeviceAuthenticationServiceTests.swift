@@ -56,7 +56,8 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         )
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))
+        let result = try await sut.authenticate(reason: "reason")
+        XCTAssertEqual(result, .failure(.noAuthenticationSetup))
         XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
         XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
     }
@@ -71,7 +72,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .authenticated)
+        XCTAssertEqual(result, .success(.authenticated))
         XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
         XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
     }
@@ -85,7 +86,8 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithBiometricsHandler = { _ in false }
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))
+        let result = try await sut.authenticate(reason: "reason")
+        XCTAssertEqual(result, .failure(.authenticationFailure))
         XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
         XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
     }
@@ -114,7 +116,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .authenticated)
+        XCTAssertEqual(result, .success(.authenticated))
         XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
         XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 1)
     }
@@ -128,7 +130,8 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithPasscodeHandler = { _ in false }
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))
+        let result = try await sut.authenticate(reason: "reason")
+        XCTAssertEqual(result, .failure(.authenticationFailure))
         XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
         XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 1)
     }

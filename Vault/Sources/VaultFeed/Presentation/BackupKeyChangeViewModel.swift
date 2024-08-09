@@ -5,15 +5,22 @@ import VaultBackup
 @MainActor
 @Observable
 public final class BackupKeyChangeViewModel {
+    public enum PermissionState: Equatable, Hashable {
+        case loading
+        case allowed
+        case denied
+    }
+
     public enum ExistingPasswordState: Equatable, Hashable {
         case loading
+        case authenticationFailed
         case hasExistingPassword(BackupPassword)
         case noExistingPassword
         case errorFetching
     }
 
     public enum NewPasswordState: Equatable, Hashable {
-        case neutral
+        case initial
         case creating
         case keygenError
         case keygenCancelled
@@ -22,7 +29,7 @@ public final class BackupKeyChangeViewModel {
 
         public var isLoading: Bool {
             switch self {
-            case .neutral, .keygenError, .keygenCancelled, .passwordConfirmError, .success: false
+            case .initial, .keygenError, .keygenCancelled, .passwordConfirmError, .success: false
             case .creating: true
             }
         }
@@ -30,8 +37,9 @@ public final class BackupKeyChangeViewModel {
 
     public var newlyEnteredPassword = ""
     public var newlyEnteredPasswordConfirm = ""
+    public private(set) var permissionState: PermissionState = .loading
     public private(set) var existingPassword: ExistingPasswordState = .loading
-    public private(set) var newPassword: NewPasswordState = .neutral
+    public private(set) var newPassword: NewPasswordState = .initial
     private let encryptionKeyDeriver: ApplicationKeyDeriver
     private let store: any BackupPasswordStore
 
@@ -53,20 +61,17 @@ public final class BackupKeyChangeViewModel {
         encryptionKeyDeriver.signature
     }
 
-    public func loadInitialData() {
+    public func onAppear() async {
         do {
-            if let password = try store.fetchPassword() {
-                existingPassword = .hasExistingPassword(password)
-            } else {
-                existingPassword = .noExistingPassword
-            }
+            try await store.checkStorePermission()
+            permissionState = .allowed
         } catch {
-            existingPassword = .errorFetching
+            permissionState = .denied
         }
     }
 
     public func didDisappear() {
-        existingPassword = .loading
+        permissionState = .loading
     }
 
     private struct PasswordConfirmError: Error {}
@@ -90,6 +95,20 @@ public final class BackupKeyChangeViewModel {
             newPassword = .keygenCancelled
         } catch {
             newPassword = .keygenError
+        }
+    }
+
+    public func loadExistingPassword() {
+        do {
+            if let password = try store.fetchPassword() {
+                existingPassword = .hasExistingPassword(password)
+            } else {
+                existingPassword = .noExistingPassword
+            }
+        } catch is DeviceAuthenticationFailure {
+            existingPassword = .authenticationFailed
+        } catch {
+            existingPassword = .errorFetching
         }
     }
 

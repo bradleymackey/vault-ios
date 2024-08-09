@@ -16,7 +16,10 @@ public struct VaultMainScene: Scene {
     @State private var settingsViewModel = SettingsViewModel()
     @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
-    @State private var backupStore = BackupPasswordStoreImpl(secureStorage: SecureStorageImpl(keychain: .default))
+    @State private var backupStore = BackupPasswordStoreImpl(
+        secureStorage: SecureStorageImpl(keychain: .default),
+        authenticationPolicy: .default
+    )
     @State private var tagFeedViewModel: VaultTagFeedViewModel<PersistedLocalVaultStore>
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
 

@@ -97,6 +97,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
             title: viewModel.strings.noTagsTitle,
             subtitle: viewModel.strings.noTagsDescription
         )
+        .containerRelativeFrame(.horizontal)
         .modifier(VerticallyCenterUpperThird(alignment: .center))
         .padding(24)
     }

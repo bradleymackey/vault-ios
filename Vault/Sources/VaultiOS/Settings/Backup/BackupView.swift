@@ -52,15 +52,10 @@ struct BackupView: View {
         Section {
             switch viewModel.passwordState {
             case .loading:
-                VStack(alignment: .center, spacing: 4) {
-                    Image(systemName: "lock.fill")
-                        .font(.largeTitle)
-                    Text(viewModel.strings.backupPasswordLoadingTitle)
-                        .font(.body)
-                }
-                .foregroundStyle(.secondary)
-                .padding()
-                .containerRelativeFrame(.horizontal)
+                PlaceholderView(systemIcon: "lock.fill", title: viewModel.strings.backupPasswordLoadingTitle)
+                    .foregroundStyle(.secondary)
+                    .padding()
+                    .containerRelativeFrame(.horizontal)
             case .hasExistingPassword:
                 updateButton
                 exportButton
@@ -69,7 +64,10 @@ struct BackupView: View {
                 createButton
                 importButton
             case .error:
-                Label(viewModel.strings.backupPasswordErrorTitle, systemImage: "key.slash.fill")
+                PlaceholderView(systemIcon: "key.slash.fill", title: viewModel.strings.backupPasswordErrorTitle)
+                    .foregroundStyle(.secondary)
+                    .padding()
+                    .containerRelativeFrame(.horizontal)
             }
         } header: {
             Text(viewModel.strings.backupPasswordSectionTitle)

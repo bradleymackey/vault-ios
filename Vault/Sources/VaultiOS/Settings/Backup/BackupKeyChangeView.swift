@@ -15,15 +15,32 @@ struct BackupKeyChangeView: View {
 
     var body: some View {
         Form {
-            passwordSection
-            detailsSection
+            switch viewModel.permissionState {
+            case .loading:
+                PlaceholderView(systemIcon: "lock.fill", title: "Authentication required")
+                    .foregroundStyle(.secondary)
+                    .padding()
+                    .containerRelativeFrame(.horizontal)
+            case .allowed:
+                passwordSection
+                detailsSection
+            case .denied:
+                PlaceholderView(
+                    systemIcon: "lock.slash.fill",
+                    title: "Authentication Failed",
+                    subtitle: "Please try again"
+                )
+                .containerRelativeFrame(.horizontal)
+                .foregroundStyle(.secondary)
+                .padding()
+            }
         }
         .navigationTitle(Text("Key Generator"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.newPassword.isLoading)
         .animation(.easeOut, value: viewModel.newlyEnteredPassword.isNotEmpty)
         .task {
-            viewModel.loadInitialData()
+            await viewModel.onAppear()
         }
         .onDisappear {
             viewModel.didDisappear()
@@ -92,7 +109,7 @@ struct BackupKeyChangeView: View {
                 case .passwordConfirmError:
                     Label("Passwords do not match", systemImage: "xmark")
                         .foregroundStyle(.red)
-                case .neutral:
+                case .initial:
                     EmptyView()
                 }
             }
@@ -141,6 +158,11 @@ struct BackupKeyChangeView: View {
 
             #if DEBUG
             DisclosureGroup {
+                Button {
+                    viewModel.loadExistingPassword()
+                } label: {
+                    Text("Fetch existing password")
+                }
                 VStack(alignment: .leading, spacing: 8) {
                     switch viewModel.existingPassword {
                     case .loading:
@@ -152,6 +174,8 @@ struct BackupKeyChangeView: View {
                             .fontDesign(.monospaced)
                     case .noExistingPassword:
                         Text("None")
+                    case .authenticationFailed:
+                        Text("Authentication Failed")
                     case .errorFetching:
                         Text("Error")
                     }

@@ -9,6 +9,24 @@ public protocol DeviceAuthenticationPolicy: Sendable {
     func authenticateWithPasscode(reason: String) async throws -> Bool
 }
 
+extension DeviceAuthenticationPolicy {
+    public var canAuthenticate: Bool {
+        canAuthenicateWithPasscode || canAuthenticateWithBiometrics
+    }
+
+    public func authenticate(reason: String) async throws -> Bool {
+        if canAuthenticateWithBiometrics {
+            return try await authenticateWithBiometrics(reason: reason)
+        }
+
+        if canAuthenicateWithPasscode {
+            return try await authenticateWithPasscode(reason: reason)
+        }
+
+        return false
+    }
+}
+
 // MARK: - Implementations
 
 public struct DeviceAuthenticationPolicyAlwaysDeny: DeviceAuthenticationPolicy {
