@@ -307,6 +307,17 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
 
     public func deleteTag(id: Identifier<VaultItemTag>) async throws {
         do {
+            // Firstly, remove the tag from all items that contain it.
+            let tagsPredicate = makeTagsPredicate(matchingTags: [id])
+            let fetchDescriptor = FetchDescriptor(predicate: tagsPredicate)
+            let allItems: [PersistedVaultItem] = try modelContext.fetch(fetchDescriptor)
+            for item in allItems {
+                item.tags.removeAll(where: { $0.id == id.id })
+                modelContext.insert(item)
+            }
+            try modelContext.save()
+
+            // Then delete the tag itself.
             let uuid = id.id
             try modelContext.delete(model: PersistedVaultTag.self, where: #Predicate {
                 $0.id == uuid

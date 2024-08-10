@@ -1062,6 +1062,33 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.map(\.id), insertedIds)
     }
 
+    func test_deleteTag_removesFromModels() async throws {
+        let otherTags = [
+            anyVaultItemTag().makeWritable(),
+            anyVaultItemTag().makeWritable(),
+            anyVaultItemTag().makeWritable(),
+        ]
+        var insertedTagIds = [Identifier<VaultItemTag>]()
+        for tag in otherTags {
+            let id = try await sut.insertTag(item: tag)
+            insertedTagIds.append(id)
+        }
+
+        let item1 = uniqueVaultItem(tags: insertedTagIds.reducedToSet()).makeWritable()
+        let item2 = uniqueVaultItem(tags: [insertedTagIds[1], insertedTagIds[2]]).makeWritable()
+
+        try await sut.insert(item: item1)
+        try await sut.insert(item: item2)
+
+        try await sut.deleteTag(id: insertedTagIds[0])
+
+        let result = try await sut.retrieve(query: .init())
+        let firstItem = result.items[0]
+        XCTAssertEqual(firstItem.metadata.tags, [insertedTagIds[1], insertedTagIds[2]])
+        let secondItem = result.items[1]
+        XCTAssertEqual(secondItem.metadata.tags, [insertedTagIds[1], insertedTagIds[2]])
+    }
+
     func test_updateTag_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
         do {
             try await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().makeWritable())
