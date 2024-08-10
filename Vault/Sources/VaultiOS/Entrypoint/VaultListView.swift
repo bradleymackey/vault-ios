@@ -109,6 +109,8 @@ struct VaultListView<
                 NavigationStack {
                     VaultTagFeedView(viewModel: .init(store: feedViewModel.store))
                 }
+                .presentationDragIndicator(.visible)
+                .presentationDetents([.medium, .large])
             }
         }
         .onChange(of: modal) { _, newValue in

@@ -37,19 +37,11 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarLeading) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     modal = .creatingTag
                 } label: {
                     Label(viewModel.strings.createTagTitle, systemImage: "plus")
-                }
-            }
-
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    dismiss()
-                } label: {
-                    Text("Done")
                 }
             }
         }
