@@ -7,7 +7,7 @@ import VaultSettings
 
 @MainActor
 public struct VaultItemFeedView<
-    Store: VaultStore & VaultTagStoreReader,
+    Store: VaultStore & VaultTagStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload

@@ -6,7 +6,7 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Store: VaultStore & VaultTagStoreReader,
+    Store: VaultStore & VaultTagStore,
     Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
 >: View
     where Generator.PreviewItem == VaultItem.Payload
@@ -24,6 +24,7 @@ struct VaultListView<
     enum Modal: Hashable, IdentifiableSelf {
         case detail(Identifier<VaultItem>, VaultItem)
         case creatingItem(CreatingItem)
+        case tags
     }
 
     var body: some View {
@@ -35,6 +36,14 @@ struct VaultListView<
             gridSpacing: 12
         )
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    modal = .tags
+                } label: {
+                    Label("Tags", systemImage: "tag.fill")
+                }
+            }
+
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button {
@@ -95,6 +104,10 @@ struct VaultListView<
                         previewGenerator: viewGenerator,
                         navigationPath: $navigationPath
                     )
+                }
+            case .tags:
+                NavigationStack {
+                    VaultTagFeedView(viewModel: .init(store: feedViewModel.store))
                 }
             }
         }

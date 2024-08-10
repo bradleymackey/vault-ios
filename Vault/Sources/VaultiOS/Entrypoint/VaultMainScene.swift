@@ -20,7 +20,6 @@ public struct VaultMainScene: Scene {
         secureStorage: SecureStorageImpl(keychain: .default),
         authenticationPolicy: .default
     )
-    @State private var tagFeedViewModel: VaultTagFeedViewModel<PersistedLocalVaultStore>
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
 
     private let toastOptions = SimpleToastOptions(
@@ -49,12 +48,10 @@ public struct VaultMainScene: Scene {
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
-        let tagFeedViewModel = VaultTagFeedViewModel(store: store)
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
         _feedViewModel = State(wrappedValue: feed)
-        _tagFeedViewModel = State(wrappedValue: tagFeedViewModel)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
         _notePreviewGenerator = State(wrappedValue: note)
@@ -80,13 +77,6 @@ public struct VaultMainScene: Scene {
                 }
                 .tabItem {
                     Label(feedViewModel.title, systemImage: "key.horizontal.fill")
-                }
-
-                NavigationStack {
-                    VaultTagFeedView(viewModel: tagFeedViewModel)
-                }
-                .tabItem {
-                    Label(tagFeedViewModel.strings.title, systemImage: "tag")
                 }
 
                 NavigationStack {

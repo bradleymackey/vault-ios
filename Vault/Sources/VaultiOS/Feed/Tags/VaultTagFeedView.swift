@@ -5,8 +5,10 @@ import VaultFeed
 
 @MainActor
 struct VaultTagFeedView<Store: VaultTagStore>: View {
-    var viewModel: VaultTagFeedViewModel<Store>
+    @State private var viewModel: VaultTagFeedViewModel<Store>
     @State private var modal: Modal?
+
+    @Environment(\.dismiss) private var dismiss
 
     init(viewModel: VaultTagFeedViewModel<Store>) {
         self.viewModel = viewModel
@@ -33,13 +35,21 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
             }
         }
         .navigationTitle(viewModel.strings.title)
-        .navigationBarTitleDisplayMode(.automatic)
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            ToolbarItem(placement: .topBarLeading) {
                 Button {
                     modal = .creatingTag
                 } label: {
                     Label(viewModel.strings.createTagTitle, systemImage: "plus")
+                }
+            }
+
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
                 }
             }
         }

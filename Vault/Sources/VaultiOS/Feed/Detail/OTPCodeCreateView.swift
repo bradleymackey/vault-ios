@@ -7,7 +7,7 @@ import VaultFeed
 
 @MainActor
 struct OTPCodeCreateView<
-    Store: VaultStore & VaultTagStoreReader,
+    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
     var feedViewModel: FeedViewModel<Store>
