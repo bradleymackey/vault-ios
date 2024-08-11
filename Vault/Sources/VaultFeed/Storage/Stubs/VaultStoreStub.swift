@@ -25,10 +25,10 @@ public final class VaultStoreStub: VaultStore, VaultTagStore {
     public private(set) var calledMethods: [CalledMethod] = []
 
     public var retrieveQueryResult = VaultRetrievalResult<VaultItem>()
-    public var retrieveQueryCalled: (VaultStoreQuery) -> Void = { _ in }
+    public var retrieveQueryCalled: (VaultStoreQuery) throws -> Void = { _ in }
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         calledMethods.append(.retrieve)
-        retrieveQueryCalled(query)
+        try retrieveQueryCalled(query)
         return retrieveQueryResult
     }
 
