@@ -41,6 +41,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.4.1"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
+        .package(url: "https://github.com/reddavis/Asynchrone", exact: "0.22.0"),
     ],
     targets: [
         .target(
@@ -199,6 +200,7 @@ let package = Package(
         ),
         .target(
             name: "FoundationExtensions",
+            dependencies: [.product(name: "Asynchrone", package: "Asynchrone")],
             swiftSettings: swiftSettings,
             plugins: [.plugin(name: "RunMockolo")]
         ),
