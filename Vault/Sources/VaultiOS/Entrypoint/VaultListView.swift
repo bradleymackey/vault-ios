@@ -15,11 +15,18 @@ struct VaultListView<
     var localSettings: LocalSettings
     var viewGenerator: Generator
 
+    init(feedViewModel: FeedViewModel<Store>, localSettings: LocalSettings, viewGenerator: Generator) {
+        self.feedViewModel = feedViewModel
+        self.localSettings = localSettings
+        self.viewGenerator = viewGenerator
+        _tagFeedViewModel = .init(wrappedValue: .init(store: feedViewModel.store))
+    }
+
+    @State private var tagFeedViewModel: VaultTagFeedViewModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
-    @State private var tagsState = UUID()
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Hashable, IdentifiableSelf {
@@ -108,13 +115,13 @@ struct VaultListView<
                 }
             case .tags:
                 NavigationStack {
-                    VaultTagFeedView(viewModel: .init(store: feedViewModel.store), tagsState: $tagsState)
+                    VaultTagFeedView(viewModel: tagFeedViewModel)
                 }
                 .presentationDragIndicator(.visible)
                 .presentationDetents([.medium, .large])
             }
         }
-        .onChange(of: tagsState) { _, _ in
+        .onChange(of: tagFeedViewModel.tags) { _, _ in
             Task {
                 await feedViewModel.reloadData()
             }

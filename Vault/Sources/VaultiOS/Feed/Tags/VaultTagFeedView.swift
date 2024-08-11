@@ -6,14 +6,12 @@ import VaultFeed
 @MainActor
 struct VaultTagFeedView: View {
     @State private var viewModel: VaultTagFeedViewModel
-    @Binding var tagsState: UUID
     @State private var modal: Modal?
 
     @Environment(\.dismiss) private var dismiss
 
-    init(viewModel: VaultTagFeedViewModel, tagsState: Binding<UUID>) {
+    init(viewModel: VaultTagFeedViewModel) {
         self.viewModel = viewModel
-        _tagsState = tagsState
     }
 
     enum Modal: Hashable, IdentifiableSelf {
@@ -38,9 +36,6 @@ struct VaultTagFeedView: View {
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: viewModel.tags) { _, _ in
-            tagsState = UUID()
-        }
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
