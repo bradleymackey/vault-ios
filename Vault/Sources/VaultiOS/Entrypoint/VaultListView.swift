@@ -19,6 +19,7 @@ struct VaultListView<
     @State private var isEditing = false
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
+    @State private var tagsState = UUID()
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Hashable, IdentifiableSelf {
@@ -107,10 +108,15 @@ struct VaultListView<
                 }
             case .tags:
                 NavigationStack {
-                    VaultTagFeedView(viewModel: .init(store: feedViewModel.store))
+                    VaultTagFeedView(viewModel: .init(store: feedViewModel.store), tagsState: $tagsState)
                 }
                 .presentationDragIndicator(.visible)
                 .presentationDetents([.medium, .large])
+            }
+        }
+        .onChange(of: tagsState) { _, _ in
+            Task {
+                await feedViewModel.reloadData()
             }
         }
         .onChange(of: modal) { _, newValue in
