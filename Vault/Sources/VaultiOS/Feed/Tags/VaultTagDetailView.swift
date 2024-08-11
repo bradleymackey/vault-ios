@@ -3,14 +3,14 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-struct VaultTagDetailView<Store: VaultTagStore>: View {
-    @State private var viewModel: VaultTagDetailViewModel<Store>
+struct VaultTagDetailView: View {
+    @State private var viewModel: VaultTagDetailViewModel
     @State private var selectedColor: Color
 
     @Environment(\.dismiss) private var dismiss
     private var didUpdateItems: () async -> Void
 
-    init(viewModel: VaultTagDetailViewModel<Store>, didUpdateItems: @escaping () async -> Void) {
+    init(viewModel: VaultTagDetailViewModel, didUpdateItems: @escaping () async -> Void) {
         self.viewModel = viewModel
         _selectedColor = State(initialValue: viewModel.color.color)
         self.didUpdateItems = didUpdateItems

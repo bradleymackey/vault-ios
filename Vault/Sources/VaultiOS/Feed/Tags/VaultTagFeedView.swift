@@ -4,13 +4,13 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-struct VaultTagFeedView<Store: VaultTagStore>: View {
-    @State private var viewModel: VaultTagFeedViewModel<Store>
+struct VaultTagFeedView: View {
+    @State private var viewModel: VaultTagFeedViewModel
     @State private var modal: Modal?
 
     @Environment(\.dismiss) private var dismiss
 
-    init(viewModel: VaultTagFeedViewModel<Store>) {
+    init(viewModel: VaultTagFeedViewModel) {
         self.viewModel = viewModel
     }
 
@@ -49,7 +49,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
             switch content {
             case .creatingTag:
                 NavigationStack {
-                    VaultTagDetailView<Store>(
+                    VaultTagDetailView(
                         viewModel: .init(store: viewModel.store, existingTag: nil),
                         didUpdateItems: {
                             await viewModel.reloadData()
@@ -58,7 +58,7 @@ struct VaultTagFeedView<Store: VaultTagStore>: View {
                 }
             case let .editingTag(tag):
                 NavigationStack {
-                    VaultTagDetailView<Store>(
+                    VaultTagDetailView(
                         viewModel: .init(store: viewModel.store, existingTag: tag),
                         didUpdateItems: {
                             await viewModel.reloadData()
