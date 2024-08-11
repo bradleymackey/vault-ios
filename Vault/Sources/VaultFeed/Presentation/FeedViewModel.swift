@@ -4,15 +4,15 @@ import FoundationExtensions
 
 @MainActor
 @Observable
-public final class FeedViewModel<Store: VaultStore & VaultTagStoreReader> {
+public final class FeedViewModel<Store: VaultStore & VaultTagStore> {
     public var searchQuery: String = ""
     public var filteringByTags: Set<Identifier<VaultItemTag>> = []
     public var codes = [VaultItem]()
     public var tags = [VaultItemTag]()
     public var errors = [VaultRetrievalResult<VaultItem>.Error]()
     public private(set) var retrievalError: PresentationError?
+    public let store: Store
 
-    private let store: Store
     private let caches: [any VaultItemCache]
 
     public init(store: Store, caches: [any VaultItemCache] = []) {

@@ -3,19 +3,19 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class VaultTagFeedViewModel<Store: VaultTagStore> {
+public final class VaultTagFeedViewModel {
     public private(set) var tags = [VaultItemTag]()
     public private(set) var retrievalError: PresentationError?
     public private(set) var state: State = .base
 
-    public let store: Store
+    public let store: any VaultTagStore
     public let strings = VaultTagFeedViewModelStrings()
 
     public enum State {
         case base, loaded
     }
 
-    public init(store: Store) {
+    public init(store: any VaultTagStore) {
         self.store = store
     }
 

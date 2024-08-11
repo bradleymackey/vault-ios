@@ -6,7 +6,7 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Store: VaultStore & VaultTagStoreReader,
+    Store: VaultStore & VaultTagStore,
     Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
 >: View
     where Generator.PreviewItem == VaultItem.Payload
@@ -15,6 +15,14 @@ struct VaultListView<
     var localSettings: LocalSettings
     var viewGenerator: Generator
 
+    init(feedViewModel: FeedViewModel<Store>, localSettings: LocalSettings, viewGenerator: Generator) {
+        self.feedViewModel = feedViewModel
+        self.localSettings = localSettings
+        self.viewGenerator = viewGenerator
+        _tagFeedViewModel = .init(wrappedValue: .init(store: feedViewModel.store))
+    }
+
+    @State private var tagFeedViewModel: VaultTagFeedViewModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
@@ -24,6 +32,7 @@ struct VaultListView<
     enum Modal: Hashable, IdentifiableSelf {
         case detail(Identifier<VaultItem>, VaultItem)
         case creatingItem(CreatingItem)
+        case tags
     }
 
     var body: some View {
@@ -35,6 +44,14 @@ struct VaultListView<
             gridSpacing: 12
         )
         .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    modal = .tags
+                } label: {
+                    Label("Tags", systemImage: "tag.fill")
+                }
+            }
+
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button {
@@ -96,6 +113,17 @@ struct VaultListView<
                         navigationPath: $navigationPath
                     )
                 }
+            case .tags:
+                NavigationStack {
+                    VaultTagFeedView(viewModel: tagFeedViewModel)
+                }
+                .presentationDragIndicator(.visible)
+                .presentationDetents([.medium, .large])
+            }
+        }
+        .onChange(of: tagFeedViewModel.tags) { _, _ in
+            Task {
+                await feedViewModel.reloadData()
             }
         }
         .onChange(of: modal) { _, newValue in

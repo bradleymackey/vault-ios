@@ -6,7 +6,7 @@ import FoundationExtensions
 ///
 /// This should be able to be used in place of any full `VaultStore`.
 @MainActor
-public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
+public final class VaultStoreStub: VaultStore, VaultTagStore {
     public init() {}
 
     public var retrieveQueryResult = VaultRetrievalResult<VaultItem>()
@@ -40,17 +40,32 @@ public final class VaultStoreStub: VaultStore, VaultTagStoreReader {
         exportVaultHandler(userDescription)
     }
 
-    public var retrieveTagsResult: Result<[VaultItemTag], any Error> = .success([])
-    public func retrieveTags() async throws -> [VaultItemTag] {
-        try retrieveTagsResult.get()
-    }
-
     public var reorderCalled: (Set<Identifier<VaultItem>>, VaultReorderingPosition) -> Void = { _, _ in }
     public func reorder(
         items: Set<Identifier<VaultItem>>,
         to position: VaultReorderingPosition
     ) async throws {
         reorderCalled(items, position)
+    }
+
+    public var retrieveTagsResult: Result<[VaultItemTag], any Error> = .success([])
+    public func retrieveTags() async throws -> [VaultItemTag] {
+        try retrieveTagsResult.get()
+    }
+
+    public var insertTagCalled: (VaultItemTag.Write) -> Identifier<VaultItemTag> = { _ in .new() }
+    public func insertTag(item: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
+        insertTagCalled(item)
+    }
+
+    public var updateTagCalled: (Identifier<VaultItemTag>, VaultItemTag.Write) -> Void = { _, _ in }
+    public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
+        updateTagCalled(id, item)
+    }
+
+    public var deleteTagCalled: (Identifier<VaultItemTag>) -> Void = { _ in }
+    public func deleteTag(id: Identifier<VaultItemTag>) async throws {
+        deleteTagCalled(id)
     }
 }
 

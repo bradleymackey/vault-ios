@@ -1,6 +1,15 @@
 {
-  "originHash" : "62b1663c3d0b8108befe804255bb82fbd803caac2df2f9962c89d1ec278106f2",
+  "originHash" : "5820f240e49e179761ac536d2c1d749d79f2cad9f399049041e54b4f1c594f43",
   "pins" : [
+    {
+      "identity" : "asynchrone",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/reddavis/Asynchrone",
+      "state" : {
+        "revision" : "1ddfcd3bc93277f68dffb793fc60001902f2517b",
+        "version" : "0.22.0"
+      }
+    },
     {
       "identity" : "bigint",
       "kind" : "remoteSourceControl",

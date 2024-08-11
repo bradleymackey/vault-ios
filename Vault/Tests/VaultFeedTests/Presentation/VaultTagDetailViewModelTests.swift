@@ -151,10 +151,10 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
 extension VaultTagDetailViewModelTests {
     @MainActor
-    func makeSUT<S: VaultTagStore>(
-        store: S = VaultTagStoreStub(),
+    func makeSUT(
+        store: any VaultTagStore = VaultTagStoreStub(),
         existingTag: VaultItemTag? = nil
-    ) -> VaultTagDetailViewModel<S> {
+    ) -> VaultTagDetailViewModel {
         .init(store: store, existingTag: existingTag)
     }
 }

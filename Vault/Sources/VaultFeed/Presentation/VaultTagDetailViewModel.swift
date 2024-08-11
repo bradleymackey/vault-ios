@@ -4,7 +4,7 @@ import VaultCore
 
 @MainActor
 @Observable
-public final class VaultTagDetailViewModel<Store: VaultTagStore> {
+public final class VaultTagDetailViewModel {
     public let strings = VaultTagDetailViewModelStrings()
     public var title: String
     public var color: VaultItemColor
@@ -13,7 +13,7 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
     public internal(set) var deleteError: PresentationError?
 
     private let tagId: Identifier<VaultItemTag>?
-    private let store: Store
+    private let store: any VaultTagStore
 
     public static var defaultIconOption: String {
         VaultItemTag.defaultIconName
@@ -75,7 +75,7 @@ public final class VaultTagDetailViewModel<Store: VaultTagStore> {
         ]
     }
 
-    public init(store: Store, existingTag: VaultItemTag?) {
+    public init(store: any VaultTagStore, existingTag: VaultItemTag?) {
         self.store = store
         if let existingTag {
             tagId = existingTag.id

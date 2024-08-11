@@ -3,7 +3,7 @@ import FoundationExtensions
 
 /// A vault store that always errors on every method call.
 @MainActor
-public final class VaultStoreErroring: VaultStore, VaultTagStoreReader {
+public final class VaultStoreErroring: VaultStore, VaultTagStoreReader, VaultTagStoreWriter {
     public var error: any Error
     public init(error: any Error) {
         self.error = error
@@ -39,6 +39,18 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader {
     }
 
     public func retrieveTags() async throws -> [VaultItemTag] {
+        throw error
+    }
+
+    public func deleteTag(id _: Identifier<VaultItemTag>) async throws {
+        throw error
+    }
+
+    public func insertTag(item _: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
+        throw error
+    }
+
+    public func updateTag(id _: Identifier<VaultItemTag>, item _: VaultItemTag.Write) async throws {
         throw error
     }
 }
