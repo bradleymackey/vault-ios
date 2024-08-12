@@ -148,6 +148,57 @@ final class VaultDataModelTests: XCTestCase {
 
         XCTAssertNil(sut.itemsRetrievalError)
     }
+
+    @MainActor
+    func test_insert_createsItemInStoreAndReloads() async throws {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+        let item = uniqueVaultItem().makeWritable()
+
+        try await sut.insert(item: item)
+
+        XCTAssertEqual(store.calledMethods, [.insert, .retrieve])
+    }
+
+    @MainActor
+    func test_update_updatesItemInvalidatesAndReloads() async throws {
+        let store = VaultStoreStub()
+        let cache1 = VaultItemCacheMock()
+        let cache2 = VaultItemCacheMock()
+        let sut = makeSUT(vaultStore: store, itemCaches: [cache1, cache2])
+        let item = uniqueVaultItem().makeWritable()
+
+        try await sut.update(itemID: .new(), data: item)
+
+        XCTAssertEqual(store.calledMethods, [.update, .retrieve])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
+    }
+
+    @MainActor
+    func test_delete_deletesItemInvalidatesAndReloads() async throws {
+        let store = VaultStoreStub()
+        let cache1 = VaultItemCacheMock()
+        let cache2 = VaultItemCacheMock()
+        let sut = makeSUT(vaultStore: store, itemCaches: [cache1, cache2])
+
+        try await sut.delete(itemID: .new())
+
+        XCTAssertEqual(store.calledMethods, [.delete, .retrieve])
+        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
+        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
+    }
+
+    @MainActor
+    func test_reorder_reordersItemsInStore() async throws {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+        let items = [uniqueVaultItem(), uniqueVaultItem()].map(\.id)
+
+        try await sut.reorder(items: Set(items), to: .start)
+
+        XCTAssertEqual(store.calledMethods, [.reorder])
+    }
 }
 
 // MARK: - Helpers

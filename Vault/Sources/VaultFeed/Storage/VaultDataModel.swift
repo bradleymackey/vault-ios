@@ -6,6 +6,8 @@ import FoundationExtensions
 /// Uses an underlying store and provides observations to the underlying data when it changes.
 /// This should be the primary way to interact with the vault data layer (and its underlying stores),
 /// to ensure that we have a consistent view of the available data!
+///
+/// This is isolated to the main actor for the purposes of UI interop.
 @MainActor
 @Observable
 public final class VaultDataModel: Sendable {
@@ -52,7 +54,17 @@ public final class VaultDataModel: Sendable {
     }
 }
 
-// MARK: Loading
+// MARK: - Helpers
+
+extension VaultDataModel {
+    private func invalidateCaches(itemID: Identifier<VaultItem>) async {
+        for itemCache in itemCaches {
+            await itemCache.invalidateVaultItemDetailCache(forVaultItemWithID: itemID)
+        }
+    }
+}
+
+// MARK: - Fetching
 
 extension VaultDataModel {
     /// Reloads all data in the model.
@@ -93,5 +105,30 @@ extension VaultDataModel {
                 debugDescription: error.localizedDescription
             )
         }
+    }
+}
+
+// MARK: - Writing
+
+extension VaultDataModel {
+    public func insert(item: VaultItem.Write) async throws {
+        try await vaultStore.insert(item: item)
+        await reloadItems()
+    }
+
+    public func update(itemID id: Identifier<VaultItem>, data: VaultItem.Write) async throws {
+        try await vaultStore.update(id: id, item: data)
+        await invalidateCaches(itemID: id)
+        await reloadItems()
+    }
+
+    public func delete(itemID: Identifier<VaultItem>) async throws {
+        try await vaultStore.delete(id: itemID)
+        await invalidateCaches(itemID: itemID)
+        await reloadItems()
+    }
+
+    public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
+        try await vaultStore.reorder(items: items, to: position)
     }
 }
