@@ -224,12 +224,26 @@ final class VaultDataModelTests: XCTestCase {
 
     @MainActor
     func test_deleteTag_deletesTagInStoreAndReloads() async throws {
-        let store = VaultTagStoreStub()
-        let sut = makeSUT(vaultTagStore: store)
+        let tagStore = VaultTagStoreStub()
+        let sut = makeSUT(vaultTagStore: tagStore)
 
         try await sut.delete(tagID: .new())
 
-        XCTAssertEqual(store.calledMethods, [.deleteTag, .retrieveTags])
+        XCTAssertEqual(tagStore.calledMethods, [.deleteTag, .retrieveTags])
+    }
+
+    @MainActor
+    func test_deleteTag_removesFromCurrentFilteringAndReloads() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let sut = makeSUT(vaultStore: store, vaultTagStore: tagStore)
+        let tagID = Identifier<VaultItemTag>.new()
+        sut.itemsFilteringByTags = [tagID]
+
+        try await sut.delete(tagID: tagID)
+
+        XCTAssertEqual(store.calledMethods, [.retrieve])
+        XCTAssertEqual(sut.itemsFilteringByTags, [])
     }
 }
 

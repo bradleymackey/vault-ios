@@ -146,5 +146,7 @@ extension VaultDataModel {
     public func delete(tagID: Identifier<VaultItemTag>) async throws {
         try await vaultTagStore.deleteTag(id: tagID)
         await reloadTags()
+        itemsFilteringByTags.remove(tagID)
+        await reloadItems()
     }
 }
