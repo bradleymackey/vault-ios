@@ -199,6 +199,38 @@ final class VaultDataModelTests: XCTestCase {
 
         XCTAssertEqual(store.calledMethods, [.reorder])
     }
+
+    @MainActor
+    func test_insertTag_createsTagInStoreAndReloads() async throws {
+        let store = VaultTagStoreStub()
+        let sut = makeSUT(vaultTagStore: store)
+        let tag = anyVaultItemTag().makeWritable()
+
+        try await sut.insert(tag: tag)
+
+        XCTAssertEqual(store.calledMethods, [.insertTag, .retrieveTags])
+    }
+
+    @MainActor
+    func test_updateTag_updatesTagInStoreAndReloads() async throws {
+        let store = VaultTagStoreStub()
+        let sut = makeSUT(vaultTagStore: store)
+        let tag = anyVaultItemTag().makeWritable()
+
+        try await sut.update(tagID: .new(), data: tag)
+
+        XCTAssertEqual(store.calledMethods, [.updateTag, .retrieveTags])
+    }
+
+    @MainActor
+    func test_deleteTag_deletesTagInStoreAndReloads() async throws {
+        let store = VaultTagStoreStub()
+        let sut = makeSUT(vaultTagStore: store)
+
+        try await sut.delete(tagID: .new())
+
+        XCTAssertEqual(store.calledMethods, [.deleteTag, .retrieveTags])
+    }
 }
 
 // MARK: - Helpers

@@ -32,7 +32,7 @@ public final class VaultDataModel: Sendable {
 
     // MARK: Items
 
-    public private(set) var items = [VaultItem]()
+    public var items = [VaultItem]()
     public private(set) var itemErrors = [VaultRetrievalResult<VaultItem>.Error]()
     public private(set) var itemsState: State = .base
     public private(set) var itemsRetrievalError: PresentationError?
@@ -130,5 +130,21 @@ extension VaultDataModel {
 
     public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
         try await vaultStore.reorder(items: items, to: position)
+        // don't reload, assume UI state has reordered items directly
+    }
+
+    public func insert(tag: VaultItemTag.Write) async throws {
+        try await vaultTagStore.insertTag(item: tag)
+        await reloadTags()
+    }
+
+    public func update(tagID id: Identifier<VaultItemTag>, data: VaultItemTag.Write) async throws {
+        try await vaultTagStore.updateTag(id: id, item: data)
+        await reloadTags()
+    }
+
+    public func delete(tagID: Identifier<VaultItemTag>) async throws {
+        try await vaultTagStore.deleteTag(id: tagID)
+        await reloadTags()
     }
 }
