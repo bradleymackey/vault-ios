@@ -37,6 +37,24 @@ final class VaultDataModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_isSearching_whenQueryingItems() {
+        let sut = makeSUT()
+        sut.itemsSearchQuery = " \tSOME QUERY 123\n "
+
+        XCTAssertTrue(sut.isSearching)
+    }
+
+    @MainActor
+    func test_isSearching_whenNotQueryingItems() {
+        let sut = makeSUT()
+        sut.itemsSearchQuery = ""
+        // filtering tags does not count as searching
+        sut.itemsFilteringByTags = [.init(id: UUID())]
+
+        XCTAssertFalse(sut.isSearching)
+    }
+
+    @MainActor
     func test_reloadItems_populatesNoItemsFromEmptyStore() async {
         let sut = makeSUT(vaultStore: VaultStoreStub.empty)
 

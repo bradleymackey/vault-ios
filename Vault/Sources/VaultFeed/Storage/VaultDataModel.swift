@@ -18,6 +18,10 @@ public final class VaultDataModel: Sendable {
     public var itemsSearchQuery: String = ""
     public var itemsFilteringByTags: Set<Identifier<VaultItemTag>> = []
 
+    public var isSearching: Bool {
+        itemsSanitizedQuery != nil
+    }
+
     private var itemsSanitizedQuery: String? {
         let trimmed = itemsSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isNotEmpty else { return nil }
