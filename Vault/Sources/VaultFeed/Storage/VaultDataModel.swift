@@ -62,6 +62,18 @@ extension VaultDataModel {
             await itemCache.invalidateVaultItemDetailCache(forVaultItemWithID: itemID)
         }
     }
+
+    public func code(id: Identifier<VaultItem>) -> VaultItem? {
+        items.first(where: { $0.id == id })
+    }
+
+    public func toggleFiltering(tag: Identifier<VaultItemTag>) {
+        if itemsFilteringByTags.contains(tag) {
+            itemsFilteringByTags.remove(tag)
+        } else {
+            itemsFilteringByTags.insert(tag)
+        }
+    }
 }
 
 // MARK: - Fetching

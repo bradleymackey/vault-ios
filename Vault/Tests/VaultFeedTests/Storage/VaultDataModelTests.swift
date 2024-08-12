@@ -55,6 +55,27 @@ final class VaultDataModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_toggleFiltering_addsTagToFiltering() {
+        let sut = makeSUT()
+        let tagID = Identifier<VaultItemTag>.new()
+
+        sut.toggleFiltering(tag: tagID)
+
+        XCTAssertEqual(sut.itemsFilteringByTags, [tagID])
+    }
+
+    @MainActor
+    func test_toggleFiltering_removesTagFromFiltering() {
+        let sut = makeSUT()
+        let tagID = Identifier<VaultItemTag>.new()
+        sut.itemsFilteringByTags = [tagID]
+
+        sut.toggleFiltering(tag: tagID)
+
+        XCTAssertEqual(sut.itemsFilteringByTags, [])
+    }
+
+    @MainActor
     func test_reloadItems_populatesNoItemsFromEmptyStore() async {
         let sut = makeSUT(vaultStore: VaultStoreStub.empty)
 
