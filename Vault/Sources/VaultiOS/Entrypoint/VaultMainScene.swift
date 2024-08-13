@@ -21,6 +21,7 @@ public struct VaultMainScene: Scene {
         authenticationPolicy: .default
     )
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
+    @State private var vaultDataModel: VaultDataModel
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -48,6 +49,11 @@ public struct VaultMainScene: Scene {
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
+        let vaultDataModel = VaultDataModel(
+            vaultStore: store,
+            vaultTagStore: store,
+            itemCaches: [totp, hotp]
+        )
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
@@ -56,6 +62,7 @@ public struct VaultMainScene: Scene {
         _hotpPreviewGenerator = State(wrappedValue: hotp)
         _notePreviewGenerator = State(wrappedValue: note)
         _localSettings = State(wrappedValue: localSettings)
+        _vaultDataModel = State(wrappedValue: vaultDataModel)
     }
 
     public var body: some Scene {
@@ -74,6 +81,7 @@ public struct VaultMainScene: Scene {
                     .environment(pasteboard)
                     .environment(clock)
                     .environment(deviceAuthenticationService)
+                    .environment(vaultDataModel)
                 }
                 .tabItem {
                     Label(feedViewModel.title, systemImage: "key.horizontal.fill")
