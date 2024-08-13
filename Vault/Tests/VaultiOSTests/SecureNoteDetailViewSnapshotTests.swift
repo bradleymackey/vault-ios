@@ -16,7 +16,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -42,7 +42,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -68,7 +68,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -94,7 +94,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -120,7 +120,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -147,7 +147,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: longContent),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -174,7 +174,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: date,
@@ -200,7 +200,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: ""),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -227,7 +227,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents"),
             navigationPath: .constant(NavigationPath()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: date,

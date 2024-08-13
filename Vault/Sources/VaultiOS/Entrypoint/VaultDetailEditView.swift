@@ -15,6 +15,7 @@ struct VaultDetailEditView<
     var openInEditMode: Bool
     @Binding var navigationPath: NavigationPath
 
+    @Environment(VaultDataModel.self) private var dataModel
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
@@ -23,7 +24,7 @@ struct VaultDetailEditView<
             OTPCodeDetailView(
                 editingExistingCode: storedCode,
                 navigationPath: $navigationPath,
-                allTags: feedViewModel.tags,
+                dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 previewGenerator: previewGenerator,
@@ -34,7 +35,7 @@ struct VaultDetailEditView<
             SecureNoteDetailView(
                 editingExistingNote: storedNote,
                 navigationPath: $navigationPath,
-                allTags: feedViewModel.tags,
+                dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
                 editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 openInEditMode: openInEditMode

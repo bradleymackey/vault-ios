@@ -11,6 +11,7 @@ struct VaultDetailCreateView<
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
+    @Environment(VaultDataModel.self) private var dataModel
 
     var body: some View {
         switch creatingItem {
@@ -24,7 +25,7 @@ struct VaultDetailCreateView<
             SecureNoteDetailView(
                 newNoteWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                 navigationPath: $navigationPath,
-                allTags: feedViewModel.tags
+                dataModel: dataModel
             )
         }
     }

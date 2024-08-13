@@ -40,7 +40,7 @@ public final class VaultDataModel: Sendable {
 
     // MARK: Tags
 
-    public private(set) var allTags = [VaultItemTag]()
+    public var allTags = [VaultItemTag]()
     public private(set) var allTagsState: State = .base
     public private(set) var allTagsRetrievalError: PresentationError?
 

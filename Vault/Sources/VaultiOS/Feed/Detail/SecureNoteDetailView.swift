@@ -19,7 +19,7 @@ struct SecureNoteDetailView: View {
     init(
         editingExistingNote note: SecureNote,
         navigationPath: Binding<NavigationPath>,
-        allTags: [VaultItemTag],
+        dataModel: VaultDataModel,
         storedMetadata: VaultItem.Metadata,
         editor: any SecureNoteDetailEditor,
         openInEditMode: Bool
@@ -27,7 +27,7 @@ struct SecureNoteDetailView: View {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .editing(note: note, metadata: storedMetadata),
-            allTags: allTags,
+            dataModel: dataModel,
             editor: editor
         ))
         _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
@@ -40,12 +40,12 @@ struct SecureNoteDetailView: View {
     init(
         newNoteWithEditor editor: any SecureNoteDetailEditor,
         navigationPath: Binding<NavigationPath>,
-        allTags: [VaultItemTag]
+        dataModel: VaultDataModel
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .creating,
-            allTags: allTags,
+            dataModel: dataModel,
             editor: editor
         ))
         _selectedColor = .init(initialValue: VaultItemColor.default.color)

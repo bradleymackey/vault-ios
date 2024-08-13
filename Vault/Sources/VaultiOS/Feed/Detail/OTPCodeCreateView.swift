@@ -25,6 +25,7 @@ struct OTPCodeCreateView<
 
     // 'dismiss' applies in the context that it's defined in!
     @Environment(\.presentationMode) private var presentationMode
+    @Environment(VaultDataModel.self) private var dataModel
     @State private var isCodeImagePickerGalleryVisible = false
     @State private var scanner = SingleCodeScanner(intervalTimer: IntervalTimerImpl()) { string in
         guard let uri = OTPAuthURI(string: string) else {
@@ -69,7 +70,7 @@ struct OTPCodeCreateView<
                 OTPCodeDetailView(
                     newCodeWithContext: nil,
                     navigationPath: $navigationPath,
-                    allTags: feedViewModel.tags,
+                    dataModel: dataModel,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
@@ -78,7 +79,7 @@ struct OTPCodeCreateView<
                 OTPCodeDetailView(
                     newCodeWithContext: scannedCode,
                     navigationPath: $navigationPath,
-                    allTags: feedViewModel.tags,
+                    dataModel: dataModel,
                     editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
