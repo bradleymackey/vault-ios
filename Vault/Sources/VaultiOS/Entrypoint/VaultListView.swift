@@ -116,11 +116,6 @@ struct VaultListView<
                 .presentationDetents([.medium, .large])
             }
         }
-        .onChange(of: dataModel.allTags) { _, _ in
-            Task {
-                await dataModel.reloadItems()
-            }
-        }
         .onChange(of: modal) { _, newValue in
             // When the detail modal is dismissed, exit editing mode.
             if newValue == nil { isEditing = false }
