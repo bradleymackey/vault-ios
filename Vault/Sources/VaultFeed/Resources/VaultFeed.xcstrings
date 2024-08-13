@@ -519,94 +519,6 @@
         }
       }
     },
-    "feedViewModel.cancelEdits.title" : {
-      "extractionState" : "migrated",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Cancel"
-          }
-        }
-      }
-    },
-    "feedViewModel.create.code" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Code"
-          }
-        }
-      }
-    },
-    "feedViewModel.create.code.enterKeyManually.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Enter details manually"
-          }
-        }
-      }
-    },
-    "feedViewModel.create.code.scanCode.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Scan Code"
-          }
-        }
-      }
-    },
-    "feedViewModel.create.note" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Note"
-          }
-        }
-      }
-    },
-    "feedViewModel.create.selectImageFromLibrary.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Select image from library"
-          }
-        }
-      }
-    },
-    "feedViewModel.doneEditing.title" : {
-      "extractionState" : "migrated",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Done"
-          }
-        }
-      }
-    },
-    "feedViewModel.edit.title" : {
-      "extractionState" : "migrated",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Edit"
-          }
-        }
-      }
-    },
     "feedViewModel.list.title" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -614,17 +526,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vault"
-          }
-        }
-      }
-    },
-    "feedViewModel.saveEdits.title" : {
-      "extractionState" : "migrated",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Save"
           }
         }
       }
@@ -652,13 +553,35 @@
         }
       }
     },
-    "feedViewModel.searchPrompt.title" : {
-      "extractionState" : "migrated",
+    "itemDetail.cancelEdits.title" : {
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Search"
+            "value" : "Cancel"
+          }
+        }
+      }
+    },
+    "itemDetail.doneEditing.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        }
+      }
+    },
+    "itemDetail.edit.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit"
           }
         }
       }
@@ -696,6 +619,17 @@
         }
       }
     },
+    "itemDetail.saveEdits.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
+          }
+        }
+      }
+    },
     "itemDetail.visibility.subtitle" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -728,6 +662,9 @@
           }
         }
       }
+    },
+    "Key" : {
+      "extractionState" : "manual"
     },
     "noteDetail.action.delete.confirm.subtitle" : {
       "extractionState" : "migrated",

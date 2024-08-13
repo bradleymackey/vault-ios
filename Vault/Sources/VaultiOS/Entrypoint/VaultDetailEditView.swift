@@ -4,12 +4,10 @@ import VaultCore
 import VaultFeed
 
 struct VaultDetailEditView<
-    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View
     where PreviewGenerator.PreviewItem == VaultItem.Payload
 {
-    var feedViewModel: FeedViewModel<Store>
     var storedItem: VaultItem
     var previewGenerator: PreviewGenerator
     var openInEditMode: Bool

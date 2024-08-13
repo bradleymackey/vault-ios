@@ -7,7 +7,6 @@ import VaultSettings
 /// Entrypoint scene for the vault app.
 @MainActor
 public struct VaultMainScene: Scene {
-    @State private var feedViewModel: FeedViewModel<PersistedLocalVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<TOTPPreviewViewFactoryImpl>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<HOTPPreviewViewFactoryImpl>
     @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
@@ -47,7 +46,6 @@ public struct VaultMainScene: Scene {
             timer: timer
         )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
-        let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
         let vaultDataModel = VaultDataModel(
             vaultStore: store,
@@ -57,7 +55,6 @@ public struct VaultMainScene: Scene {
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
-        _feedViewModel = State(wrappedValue: feed)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
         _notePreviewGenerator = State(wrappedValue: note)
@@ -70,7 +67,6 @@ public struct VaultMainScene: Scene {
             TabView {
                 NavigationStack {
                     VaultListView(
-                        feedViewModel: feedViewModel,
                         localSettings: localSettings,
                         viewGenerator: GenericVaultItemPreviewViewGenerator(
                             totpGenerator: totpPreviewGenerator,
@@ -84,7 +80,7 @@ public struct VaultMainScene: Scene {
                     .environment(vaultDataModel)
                 }
                 .tabItem {
-                    Label(feedViewModel.title, systemImage: "key.horizontal.fill")
+                    Label("Vault", systemImage: "key.horizontal.fill")
                 }
 
                 NavigationStack {

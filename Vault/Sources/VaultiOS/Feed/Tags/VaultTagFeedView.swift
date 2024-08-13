@@ -8,6 +8,7 @@ struct VaultTagFeedView: View {
     @State private var viewModel: VaultTagFeedViewModel
     @State private var modal: Modal?
 
+    @Environment(VaultDataModel.self) private var dataModel
     @Environment(\.dismiss) private var dismiss
 
     init(viewModel: VaultTagFeedViewModel) {
@@ -21,12 +22,12 @@ struct VaultTagFeedView: View {
 
     var body: some View {
         VStack {
-            switch viewModel.state {
+            switch dataModel.allTagsState {
             case .base:
                 // Initially empty view before loaded so we don't flash the noTagsView
                 EmptyView()
             case .loaded:
-                if viewModel.tags.isEmpty {
+                if dataModel.allTags.isEmpty {
                     noTagsView
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                 } else {
@@ -50,32 +51,23 @@ struct VaultTagFeedView: View {
             case .creatingTag:
                 NavigationStack {
                     VaultTagDetailView(
-                        viewModel: .init(store: viewModel.store, existingTag: nil),
-                        didUpdateItems: {
-                            await viewModel.reloadData()
-                        }
+                        viewModel: .init(dataModel: dataModel, existingTag: nil)
                     )
                 }
             case let .editingTag(tag):
                 NavigationStack {
                     VaultTagDetailView(
-                        viewModel: .init(store: viewModel.store, existingTag: tag),
-                        didUpdateItems: {
-                            await viewModel.reloadData()
-                        }
+                        viewModel: .init(dataModel: dataModel, existingTag: tag)
                     )
                 }
             }
-        }
-        .task {
-            await viewModel.onAppear()
         }
     }
 
     private var list: some View {
         List {
             Section {
-                ForEach(viewModel.tags) { tag in
+                ForEach(dataModel.allTags) { tag in
                     Button {
                         modal = .editingTag(tag)
                     } label: {

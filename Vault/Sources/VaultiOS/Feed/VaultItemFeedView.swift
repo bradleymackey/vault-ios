@@ -7,27 +7,24 @@ import VaultSettings
 
 @MainActor
 public struct VaultItemFeedView<
-    Store: VaultStore & VaultTagStore,
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload
 {
-    @Bindable public var viewModel: FeedViewModel<Store>
     public var localSettings: LocalSettings
     public var viewGenerator: ViewGenerator
     @Binding public var isEditing: Bool
     public var gridSpacing: Double
 
+    @Environment(VaultDataModel.self) private var dataModel
     @State private var isReordering = false
 
     public init(
-        viewModel: FeedViewModel<Store>,
         localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
         isEditing: Binding<Bool>,
         gridSpacing: Double = 8
     ) {
-        self.viewModel = viewModel
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
         _isEditing = Binding(projectedValue: isEditing)
@@ -38,19 +35,19 @@ public struct VaultItemFeedView<
         VStack {
             listOfCodesView
         }
-        .navigationTitle(Text(viewModel.title))
+        .navigationTitle(Text(dataModel.feedTitle))
         .navigationBarTitleDisplayMode(.large)
         .task {
-            await viewModel.onAppear()
+            await dataModel.reloadData()
         }
-        .onChange(of: viewModel.searchQuery) { _, _ in
+        .onChange(of: dataModel.itemsSearchQuery) { _, _ in
             Task {
-                await viewModel.reloadData()
+                await dataModel.reloadItems()
             }
         }
-        .onChange(of: viewModel.filteringByTags) { _, _ in
+        .onChange(of: dataModel.itemsFilteringByTags) { _, _ in
             Task {
-                await viewModel.reloadData()
+                await dataModel.reloadItems()
             }
         }
     }
@@ -80,7 +77,7 @@ public struct VaultItemFeedView<
         ScrollView {
             LazyVGrid(columns: columns, pinnedViews: [.sectionHeaders]) {
                 Section {
-                    if viewModel.codes.isNotEmpty {
+                    if dataModel.items.isNotEmpty {
                         vaultItemsList
                     } else {
                         noCodesFoundView
@@ -98,41 +95,42 @@ public struct VaultItemFeedView<
 
     private var listOfCodesHeader: some View {
         VStack(alignment: .leading, spacing: 12) {
-            SearchTextField(title: viewModel.searchCodesPromptTitle, text: $viewModel.searchQuery)
-            if viewModel.tags.isNotEmpty {
+            @Bindable var dataModel = dataModel
+            SearchTextField(title: "Search", text: $dataModel.itemsSearchQuery)
+            if dataModel.allTags.isNotEmpty {
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack {
-                        ForEach(viewModel.tags) { tag in
-                            TagPillView(tag: tag, isSelected: viewModel.filteringByTags.contains(tag.id))
+                        ForEach(dataModel.allTags) { tag in
+                            TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
                                 .id(tag)
                                 .onTapGesture {
-                                    viewModel.toggleFiltering(tag: tag.id)
+                                    dataModel.toggleFiltering(tag: tag.id)
                                 }
                         }
                     }
                     .font(.callout)
                 }
                 .scrollClipDisabled()
-                if viewModel.filteringByTags.isNotEmpty {
+                if dataModel.itemsFilteringByTags.isNotEmpty {
                     filteringByTagsInfoSection
                 }
             }
         }
         .padding(.vertical, 8)
         .background(Color(UIColor.systemBackground))
-        .animation(.easeOut, value: viewModel.filteringByTags)
+        .animation(.easeOut, value: dataModel.itemsFilteringByTags)
     }
 
     /// Small informational section when we are filtering by tags
     private var filteringByTagsInfoSection: some View {
         HStack {
-            Text("Filtering by tags: \(viewModel.filteringByTags.count)")
+            Text("Filtering by tags: \(dataModel.itemsFilteringByTags.count)")
                 .foregroundColor(.secondary)
 
             Spacer()
 
             Button {
-                viewModel.filteringByTags.removeAll()
+                dataModel.itemsFilteringByTags.removeAll()
             } label: {
                 Label("Clear tags", systemImage: "xmark")
             }
@@ -144,7 +142,7 @@ public struct VaultItemFeedView<
 
     private var vaultItemsList: some View {
         ReorderableForEach(
-            items: viewModel.codes,
+            items: dataModel.items,
             isDragging: $isReordering,
             isEnabled: isEditing
         ) { storedItem in
@@ -171,15 +169,15 @@ public struct VaultItemFeedView<
             .modifier(OTPCardViewModifier())
             .frame(width: 150)
         } moveAction: { from, to in
-            let movingIds = from.map { viewModel.codes[$0].id }.reducedToSet()
+            let movingIds = from.map { dataModel.items[$0].id }.reducedToSet()
             let targetPosition: VaultReorderingPosition = if to == 0 {
                 .start
             } else {
-                .after(viewModel.codes[to - 1].id)
+                .after(dataModel.items[to - 1].id)
             }
-            viewModel.codes.move(fromOffsets: from, toOffset: to)
+            dataModel.items.move(fromOffsets: from, toOffset: to)
             Task {
-                try await viewModel.reorder(items: movingIds, to: targetPosition)
+                try await dataModel.reorder(items: movingIds, to: targetPosition)
             }
         }
     }
@@ -218,7 +216,6 @@ struct VaultItemFeedView_Previews: PreviewProvider {
             ),
         ])
         return VaultItemFeedView(
-            viewModel: .init(store: store),
             localSettings: .init(defaults: .init(userDefaults: .standard)),
             viewGenerator: GenericGenerator(),
             isEditing: .constant(false)

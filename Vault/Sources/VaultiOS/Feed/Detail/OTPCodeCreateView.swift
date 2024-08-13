@@ -7,10 +7,8 @@ import VaultFeed
 
 @MainActor
 struct OTPCodeCreateView<
-    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
-    var feedViewModel: FeedViewModel<Store>
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
 
@@ -43,14 +41,14 @@ struct OTPCodeCreateView<
         Form {
             section
         }
-        .navigationTitle(Text(feedViewModel.scanCodeTitle))
+        .navigationTitle(Text("Scan Code"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Text(feedViewModel.cancelEditsTitle)
+                    Text("Cancel")
                         .foregroundStyle(.red)
                 }
             }
@@ -93,12 +91,12 @@ struct OTPCodeCreateView<
             Button {
                 isCodeImagePickerGalleryVisible = true
             } label: {
-                Label(feedViewModel.inputSelectImageFromLibraryTitle, systemImage: "qrcode.viewfinder")
+                Label("Select image from library", systemImage: "qrcode.viewfinder")
             }
             .foregroundStyle(.primary)
 
             NavigationLink(value: CreationMode.manually) {
-                Label(feedViewModel.inputEnterCodeManuallyTitle, systemImage: "entry.lever.keypad")
+                Label("Enter details manually", systemImage: "entry.lever.keypad")
             }
             .foregroundStyle(.primary)
         } header: {

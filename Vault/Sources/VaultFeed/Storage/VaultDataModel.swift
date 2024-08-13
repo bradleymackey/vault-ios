@@ -24,6 +24,14 @@ public final class VaultDataModel: Sendable {
         itemsSanitizedQuery != nil
     }
 
+    public var feedTitle: String {
+        if isSearching {
+            localized(key: "feedViewModel.searching.title.\(items.count)")
+        } else {
+            localized(key: "feedViewModel.list.title")
+        }
+    }
+
     private var itemsSanitizedQuery: String? {
         let trimmed = itemsSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isNotEmpty else { return nil }

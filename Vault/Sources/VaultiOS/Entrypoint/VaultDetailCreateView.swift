@@ -4,10 +4,8 @@ import VaultCore
 import VaultFeed
 
 struct VaultDetailCreateView<
-    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
-    var feedViewModel: FeedViewModel<Store>
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
@@ -17,7 +15,6 @@ struct VaultDetailCreateView<
         switch creatingItem {
         case .otpCode:
             OTPCodeCreateView(
-                feedViewModel: feedViewModel,
                 previewGenerator: previewGenerator,
                 navigationPath: $navigationPath
             )

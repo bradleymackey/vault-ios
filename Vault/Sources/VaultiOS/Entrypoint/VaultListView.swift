@@ -6,23 +6,21 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Store: VaultStore & VaultTagStore,
     Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
 >: View
     where Generator.PreviewItem == VaultItem.Payload
 {
-    var feedViewModel: FeedViewModel<Store>
     var localSettings: LocalSettings
     var viewGenerator: Generator
 
-    init(feedViewModel: FeedViewModel<Store>, localSettings: LocalSettings, viewGenerator: Generator) {
-        self.feedViewModel = feedViewModel
+    init(localSettings: LocalSettings, viewGenerator: Generator) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
-        _tagFeedViewModel = .init(wrappedValue: .init(store: feedViewModel.store))
+        _tagFeedViewModel = .init(wrappedValue: .init())
     }
 
     @State private var tagFeedViewModel: VaultTagFeedViewModel
+    @Environment(VaultDataModel.self) private var dataModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
     @State private var modal: Modal?
@@ -37,7 +35,6 @@ struct VaultListView<
 
     var body: some View {
         VaultItemFeedView(
-            viewModel: feedViewModel,
             localSettings: localSettings,
             viewGenerator: interactableViewGenerator(),
             isEditing: $isEditing,
@@ -58,7 +55,7 @@ struct VaultListView<
                         modal = .creatingItem(.otpCode)
                     } label: {
                         LabeledContent {
-                            Text(feedViewModel.createCodeTitle)
+                            Text("Code")
                         } label: {
                             Image(systemName: "qrcode")
                         }
@@ -68,7 +65,7 @@ struct VaultListView<
                         modal = .creatingItem(.secureNote)
                     } label: {
                         LabeledContent {
-                            Text(feedViewModel.createNoteTitle)
+                            Text("Note")
                         } label: {
                             Image(systemName: "text.alignleft")
                         }
@@ -78,14 +75,14 @@ struct VaultListView<
                 }
             }
 
-            if !feedViewModel.codes.isEmpty {
+            if !dataModel.items.isEmpty {
                 ToolbarItem(placement: .topBarLeading) {
                     Button {
                         withAnimation(.easeInOut(duration: 0.2)) {
                             isEditing.toggle()
                         }
                     } label: {
-                        Text(isEditing ? feedViewModel.doneEditingTitle : feedViewModel.editTitle)
+                        Text(isEditing ? "Done" : "Edit")
                             .fontWeight(isEditing ? .semibold : .regular)
                             .animation(.none)
                     }
@@ -97,7 +94,6 @@ struct VaultListView<
             case let .detail(_, storedCode):
                 NavigationStack(path: $navigationPath) {
                     VaultDetailEditView(
-                        feedViewModel: feedViewModel,
                         storedItem: storedCode,
                         previewGenerator: viewGenerator,
                         openInEditMode: isEditing,
@@ -107,7 +103,6 @@ struct VaultListView<
             case let .creatingItem(creatingItem):
                 NavigationStack(path: $navigationPath) {
                     VaultDetailCreateView(
-                        feedViewModel: feedViewModel,
                         creatingItem: creatingItem,
                         previewGenerator: viewGenerator,
                         navigationPath: $navigationPath
@@ -121,9 +116,9 @@ struct VaultListView<
                 .presentationDetents([.medium, .large])
             }
         }
-        .onChange(of: tagFeedViewModel.tags) { _, _ in
+        .onChange(of: dataModel.allTags) { _, _ in
             Task {
-                await feedViewModel.reloadData()
+                await dataModel.reloadItems()
             }
         }
         .onChange(of: modal) { _, newValue in
@@ -143,14 +138,14 @@ struct VaultListView<
     {
         VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
             if isEditing {
-                guard let item = feedViewModel.code(id: id) else { return }
+                guard let item = dataModel.code(id: id) else { return }
                 modal = .detail(id, item)
             } else if let previewAction = viewGenerator.previewActionForVaultItem(id: id) {
                 switch previewAction {
                 case let .copyText(text):
                     pasteboard.copy(text)
                 case let .openItemDetail(id):
-                    guard let item = feedViewModel.code(id: id) else { return }
+                    guard let item = dataModel.code(id: id) else { return }
                     modal = .detail(id, item)
                 }
             }

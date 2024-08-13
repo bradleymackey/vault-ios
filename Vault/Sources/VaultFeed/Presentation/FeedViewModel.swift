@@ -44,40 +44,16 @@ public final class FeedViewModel<Store: VaultStore & VaultTagStore> {
         }
     }
 
-    public var editTitle: String {
-        localized(key: "feedViewModel.edit.title")
-    }
-
-    public var doneEditingTitle: String {
-        localized(key: "feedViewModel.doneEditing.title")
-    }
-
     public var searchCodesPromptTitle: String {
         localized(key: "feedViewModel.searchPrompt.title")
-    }
-
-    public var createCodeTitle: String {
-        localized(key: "feedViewModel.create.code")
     }
 
     public var cancelEditsTitle: String {
         localized(key: "feedViewModel.cancelEdits.title")
     }
 
-    public var createNoteTitle: String {
-        localized(key: "feedViewModel.create.note")
-    }
-
     public var inputEnterCodeManuallyTitle: String {
         localized(key: "feedViewModel.create.code.enterKeyManually.title")
-    }
-
-    public var inputSelectImageFromLibraryTitle: String {
-        localized(key: "feedViewModel.create.selectImageFromLibrary.title")
-    }
-
-    public var scanCodeTitle: String {
-        localized(key: "feedViewModel.create.code.scanCode.title")
     }
 
     public var cameraErrorTitle: String {

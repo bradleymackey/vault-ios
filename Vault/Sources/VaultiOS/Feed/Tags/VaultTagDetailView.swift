@@ -8,12 +8,10 @@ struct VaultTagDetailView: View {
     @State private var selectedColor: Color
 
     @Environment(\.dismiss) private var dismiss
-    private var didUpdateItems: () async -> Void
 
-    init(viewModel: VaultTagDetailViewModel, didUpdateItems: @escaping () async -> Void) {
+    init(viewModel: VaultTagDetailViewModel) {
         self.viewModel = viewModel
         _selectedColor = State(initialValue: viewModel.color.color)
-        self.didUpdateItems = didUpdateItems
     }
 
     var body: some View {
@@ -32,7 +30,6 @@ struct VaultTagDetailView: View {
                 Button {
                     Task {
                         await viewModel.save()
-                        await didUpdateItems()
                         dismiss()
                     }
                 } label: {
@@ -110,7 +107,6 @@ struct VaultTagDetailView: View {
             Button {
                 Task {
                     await viewModel.delete()
-                    await didUpdateItems()
                     dismiss()
                 }
             } label: {
