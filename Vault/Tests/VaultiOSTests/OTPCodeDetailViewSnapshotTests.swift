@@ -17,7 +17,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -45,7 +45,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -73,7 +73,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -101,7 +101,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),
@@ -129,7 +129,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: fixedTestDate(),

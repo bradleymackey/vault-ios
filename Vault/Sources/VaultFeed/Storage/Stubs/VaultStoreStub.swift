@@ -6,7 +6,7 @@ import FoundationExtensions
 ///
 /// This should be able to be used in place of any full `VaultStore`.
 @MainActor
-public final class VaultStoreStub: VaultStore, VaultTagStore {
+public final class VaultStoreStub: VaultStore {
     public init() {}
 
     public enum CalledMethod: Equatable, Hashable {
@@ -67,38 +67,6 @@ public final class VaultStoreStub: VaultStore, VaultTagStore {
     ) async throws {
         calledMethods.append(.reorder)
         reorderCalled(items, position)
-    }
-
-    public var retrieveTagsCallCount = 0
-    public var retrieveTagsResult: Result<[VaultItemTag], any Error> = .success([])
-    public func retrieveTags() async throws -> [VaultItemTag] {
-        calledMethods.append(.retrieveTags)
-        retrieveTagsCallCount += 1
-        return try retrieveTagsResult.get()
-    }
-
-    public var insertTagCallCount = 0
-    public var insertTagCalled: (VaultItemTag.Write) -> Identifier<VaultItemTag> = { _ in .new() }
-    public func insertTag(item: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
-        calledMethods.append(.insertTag)
-        insertTagCallCount += 1
-        return insertTagCalled(item)
-    }
-
-    public var updateTagCallCount = 0
-    public var updateTagCalled: (Identifier<VaultItemTag>, VaultItemTag.Write) -> Void = { _, _ in }
-    public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
-        calledMethods.append(.updateTag)
-        updateTagCallCount += 1
-        updateTagCalled(id, item)
-    }
-
-    public var deleteTagCallCount = 0
-    public var deleteTagCalled: (Identifier<VaultItemTag>) -> Void = { _ in }
-    public func deleteTag(id: Identifier<VaultItemTag>) async throws {
-        calledMethods.append(.deleteTag)
-        deleteTagCallCount += 1
-        deleteTagCalled(id)
     }
 }
 

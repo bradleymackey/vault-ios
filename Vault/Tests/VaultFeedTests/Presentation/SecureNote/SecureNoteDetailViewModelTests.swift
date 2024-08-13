@@ -341,7 +341,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -355,7 +355,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -369,7 +369,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -383,7 +383,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -399,7 +399,7 @@ extension SecureNoteDetailViewModelTests {
         storedNote: SecureNote = anySecureNote(),
         storedMetadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(
             mode: .editing(note: storedNote, metadata: storedMetadata),
@@ -411,7 +411,7 @@ extension SecureNoteDetailViewModelTests {
     @MainActor
     private func makeSUTCreating(
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
     }
@@ -419,7 +419,7 @@ extension SecureNoteDetailViewModelTests {
     @MainActor
     private func makeSUT(
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
     )
         -> SecureNoteDetailViewModel
     {
