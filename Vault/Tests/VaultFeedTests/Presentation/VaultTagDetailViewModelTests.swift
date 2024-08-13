@@ -6,8 +6,9 @@ import XCTest
 final class VaultTagDetailViewModelTests: XCTestCase {
     @MainActor
     func test_init_hasNotSideEffectsOnStore() async {
-        let store = VaultTagStoreStub.empty
-        _ = makeSUT(store: store)
+        let store = VaultStoreStub.empty
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        _ = makeSUT(dataModel: dataModel)
 
         XCTAssertEqual(store.retrieveTagsCallCount, 0)
         XCTAssertEqual(store.insertTagCallCount, 0)
@@ -56,8 +57,9 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_save_newTagInsertsIntoStore() async {
-        let store = VaultTagStoreStub.empty
-        let sut = makeSUT(store: store)
+        let store = VaultStoreStub.empty
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await sut.save()
 
@@ -68,9 +70,10 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_save_existingTagUpdatesIntoStore() async {
-        let store = VaultTagStoreStub.empty
+        let store = VaultStoreStub.empty
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
         let tag = VaultItemTag(id: .init(), name: "tag")
-        let sut = makeSUT(store: store, existingTag: tag)
+        let sut = makeSUT(dataModel: dataModel, existingTag: tag)
 
         await sut.save()
 
@@ -81,8 +84,9 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_save_insertErrorSetsSaveError() async {
-        let store = VaultTagStoreErroring(error: TestError())
-        let sut = makeSUT(store: store)
+        let store = VaultStoreErroring(error: TestError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await sut.save()
 
@@ -91,9 +95,10 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_save_updateErrorSetsSaveError() async {
-        let store = VaultTagStoreErroring(error: TestError())
+        let store = VaultStoreErroring(error: TestError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
         let tag = VaultItemTag(id: .init(), name: "tag")
-        let sut = makeSUT(store: store, existingTag: tag)
+        let sut = makeSUT(dataModel: dataModel, existingTag: tag)
 
         await sut.save()
 
@@ -102,8 +107,9 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_delete_noExistingTagDoesNotCallDelete() async {
-        let store = VaultTagStoreStub.empty
-        let sut = makeSUT(store: store)
+        let store = VaultStoreStub.empty
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await sut.delete()
 
@@ -113,9 +119,10 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_delete_existingTagCallsDelete() async {
-        let store = VaultTagStoreStub.empty
+        let store = VaultStoreStub.empty
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
         let tag = VaultItemTag(id: .init(), name: "tag")
-        let sut = makeSUT(store: store, existingTag: tag)
+        let sut = makeSUT(dataModel: dataModel, existingTag: tag)
 
         await sut.delete()
 
@@ -125,9 +132,10 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_delete_deleteErrorSetsDeleteError() async {
-        let store = VaultTagStoreErroring(error: TestError())
+        let store = VaultStoreErroring(error: TestError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
         let tag = VaultItemTag(id: .init(), name: "tag")
-        let sut = makeSUT(store: store, existingTag: tag)
+        let sut = makeSUT(dataModel: dataModel, existingTag: tag)
 
         await sut.delete()
 
@@ -152,9 +160,9 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 extension VaultTagDetailViewModelTests {
     @MainActor
     func makeSUT(
-        store: any VaultTagStore = VaultTagStoreStub(),
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
         existingTag: VaultItemTag? = nil
     ) -> VaultTagDetailViewModel {
-        .init(store: store, existingTag: existingTag)
+        .init(dataModel: dataModel, existingTag: existingTag)
     }
 }

@@ -5,21 +5,21 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-final class VaultFeedDetailEditorAdapterTests: XCTestCase {
+final class VaultDataModelEditorAdapterTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
-        let feed = VaultFeedMock()
-        _ = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        _ = makeSUT(dataModel: dataModel)
 
-        XCTAssertEqual(feed.createCallCount, 0)
-        XCTAssertEqual(feed.updateCallCount, 0)
-        XCTAssertEqual(feed.deleteCallCount, 0)
+        XCTAssertEqual(store.calledMethods, [])
     }
 
     @MainActor
     func test_createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
-        let feed = VaultFeedMock()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
         let initialCode = OTPAuthCode(
             type: .totp(period: 40),
             data: .init(secret: .empty(), algorithm: .sha256, digits: .default, accountName: "myacc", issuer: "myiss")
@@ -36,7 +36,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         )
 
         let exp = expectation(description: "Wait for creation")
-        feed.createHandler = { data in
+        store.insertStoreCalled = { data in
             defer { exp.fulfill() }
             switch data.item {
             case let .otpCode(code):
@@ -57,8 +57,9 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_createCode_propagatesFailureOnError() async throws {
-        let feed = FailingVaultFeed()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreErroring(error: anyNSError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         let edits = anyOTPCodeDetailEdits()
         await XCTAssertThrowsError(try await sut.createCode(initialEdits: edits))
@@ -66,8 +67,9 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_updateCode_translatesCodeDataForCall() async throws {
-        let feed = VaultFeedMock()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         var code = uniqueCode()
         code.data.accountName = "old account name"
@@ -93,7 +95,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
-        feed.updateHandler = { _, data in
+        store.updateStoreCalled = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
             XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
@@ -113,8 +115,9 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_updateCode_propagatesFailureOnError() async {
-        let feed = FailingVaultFeed()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreErroring(error: anyNSError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         let edits = anyOTPCodeDetailEdits()
         await XCTAssertThrowsError(try await sut.updateCode(
@@ -126,13 +129,14 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_deletesFromFeed() async throws {
-        let feed = VaultFeedMock()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         let id = Identifier<VaultItem>.new()
 
         let exp = expectation(description: "Wait for delete")
-        feed.deleteHandler = { actualID in
+        store.deleteStoreCalled = { actualID in
             XCTAssertEqual(id, actualID)
             exp.fulfill()
         }
@@ -144,16 +148,19 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_deleteCode_propagatesFailureOnError() async {
-        let feed = FailingVaultFeed()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreErroring(error: anyNSError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.deleteCode(id: .new()))
     }
 
     @MainActor
     func test_createNote_createsNoteInFeed() async throws {
-        let feed = VaultFeedMock()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
+
         var initialEdits = SecureNoteDetailEdits.new()
         initialEdits.title = "new title"
         initialEdits.contents = "first line\nsecond line"
@@ -162,7 +169,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         initialEdits.lockState = .lockedWithNativeSecurity
 
         let exp = expectation(description: "Wait for creation")
-        feed.createHandler = { data in
+        store.insertStoreCalled = { data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
@@ -184,16 +191,18 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_createNote_propagatesFailureOnError() async throws {
-        let feed = FailingVaultFeed()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreErroring(error: anyNSError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.createNote(initialEdits: .new()))
     }
 
     @MainActor
     func test_updateNote_updatesNoteInFeed() async throws {
-        let feed = VaultFeedMock()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         var note = anySecureNote()
         note.title = "old title"
@@ -208,7 +217,7 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
-        feed.updateHandler = { _, data in
+        store.updateStoreCalled = { _, data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .always)
@@ -230,21 +239,23 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_updateNote_propagatesFailureOnError() async {
-        let feed = FailingVaultFeed()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreErroring(error: anyNSError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.updateNote(id: .new(), item: anySecureNote(), edits: .new()))
     }
 
     @MainActor
     func test_deleteNote_deletesFromFeed() async throws {
-        let feed = VaultFeedMock()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         let id = Identifier<VaultItem>.new()
 
         let exp = expectation(description: "Wait for delete")
-        feed.deleteHandler = { actualID in
+        store.deleteStoreCalled = { actualID in
             XCTAssertEqual(id, actualID)
             exp.fulfill()
         }
@@ -256,17 +267,20 @@ final class VaultFeedDetailEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_deleteNote_propagatesFailureOnError() async {
-        let feed = FailingVaultFeed()
-        let sut = makeSUT(feed: feed)
+        let store = VaultStoreErroring(error: anyNSError())
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.deleteNote(id: .new()))
     }
 }
 
-extension VaultFeedDetailEditorAdapterTests {
+extension VaultDataModelEditorAdapterTests {
     @MainActor
-    private func makeSUT(feed: any VaultFeed) -> VaultFeedDetailEditorAdapter {
-        VaultFeedDetailEditorAdapter(vaultFeed: feed)
+    private func makeSUT(
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+    ) -> VaultDataModelEditorAdapter {
+        VaultDataModelEditorAdapter(dataModel: dataModel)
     }
 
     private func anyOTPCodeDetailEdits() -> OTPCodeDetailEdits {

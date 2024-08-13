@@ -341,8 +341,10 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel.allTags = [tag1, tag2, tag3]
 
-        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = []
 
         XCTAssertEqual(sut.remainingTags, [tag1, tag2, tag3])
@@ -353,8 +355,10 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel.allTags = [tag1, tag2, tag3]
 
-        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = [tag1.id]
 
         XCTAssertEqual(sut.remainingTags, [tag2, tag3])
@@ -365,8 +369,10 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel.allTags = [tag1, tag2, tag3]
 
+        let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = []
 
         XCTAssertEqual(sut.tagsThatAreSelected, [])
@@ -377,8 +383,10 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let sut = makeSUT(allTags: [tag1, tag2, tag3])
+        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
+        dataModel.allTags = [tag1, tag2, tag3]
 
+        let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = [tag1.id, tag3.id]
 
         XCTAssertEqual(sut.tagsThatAreSelected, [tag1, tag3])
@@ -390,30 +398,32 @@ extension SecureNoteDetailViewModelTests {
     private func makeSUTEditing(
         storedNote: SecureNote = anySecureNote(),
         storedMetadata: VaultItem.Metadata = anyVaultItemMetadata(),
-        editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock()
+        editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(
             mode: .editing(note: storedNote, metadata: storedMetadata),
-            allTags: [],
+            dataModel: dataModel,
             editor: editor
         )
     }
 
     @MainActor
     private func makeSUTCreating(
-        editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock()
+        editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(mode: .creating, allTags: [], editor: editor)
+        SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
     }
 
     @MainActor
     private func makeSUT(
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
-        allTags: [VaultItemTag] = []
+        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub())
     )
         -> SecureNoteDetailViewModel
     {
-        SecureNoteDetailViewModel(mode: .creating, allTags: allTags, editor: editor)
+        SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
     }
 
     @MainActor

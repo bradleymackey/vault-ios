@@ -7,7 +7,6 @@ import VaultSettings
 /// Entrypoint scene for the vault app.
 @MainActor
 public struct VaultMainScene: Scene {
-    @State private var feedViewModel: FeedViewModel<PersistedLocalVaultStore>
     @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<TOTPPreviewViewFactoryImpl>
     @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<HOTPPreviewViewFactoryImpl>
     @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
@@ -21,6 +20,7 @@ public struct VaultMainScene: Scene {
         authenticationPolicy: .default
     )
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
+    @State private var vaultDataModel: VaultDataModel
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -46,16 +46,20 @@ public struct VaultMainScene: Scene {
             timer: timer
         )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
-        let feed = FeedViewModel(store: store, caches: [totp, hotp])
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
+        let vaultDataModel = VaultDataModel(
+            vaultStore: store,
+            vaultTagStore: store,
+            itemCaches: [totp, hotp]
+        )
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
-        _feedViewModel = State(wrappedValue: feed)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
         _notePreviewGenerator = State(wrappedValue: note)
         _localSettings = State(wrappedValue: localSettings)
+        _vaultDataModel = State(wrappedValue: vaultDataModel)
     }
 
     public var body: some Scene {
@@ -63,7 +67,6 @@ public struct VaultMainScene: Scene {
             TabView {
                 NavigationStack {
                     VaultListView(
-                        feedViewModel: feedViewModel,
                         localSettings: localSettings,
                         viewGenerator: GenericVaultItemPreviewViewGenerator(
                             totpGenerator: totpPreviewGenerator,
@@ -74,9 +77,10 @@ public struct VaultMainScene: Scene {
                     .environment(pasteboard)
                     .environment(clock)
                     .environment(deviceAuthenticationService)
+                    .environment(vaultDataModel)
                 }
                 .tabItem {
-                    Label(feedViewModel.title, systemImage: "key.horizontal.fill")
+                    Label("Vault", systemImage: "key.horizontal.fill")
                 }
 
                 NavigationStack {

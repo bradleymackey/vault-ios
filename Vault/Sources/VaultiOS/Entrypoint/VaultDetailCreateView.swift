@@ -4,27 +4,25 @@ import VaultCore
 import VaultFeed
 
 struct VaultDetailCreateView<
-    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
-    var feedViewModel: FeedViewModel<Store>
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
+    @Environment(VaultDataModel.self) private var dataModel
 
     var body: some View {
         switch creatingItem {
         case .otpCode:
             OTPCodeCreateView(
-                feedViewModel: feedViewModel,
                 previewGenerator: previewGenerator,
                 navigationPath: $navigationPath
             )
         case .secureNote:
             SecureNoteDetailView(
-                newNoteWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                newNoteWithEditor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 navigationPath: $navigationPath,
-                allTags: feedViewModel.tags
+                dataModel: dataModel
             )
         }
     }

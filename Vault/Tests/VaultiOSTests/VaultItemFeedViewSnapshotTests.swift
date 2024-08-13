@@ -16,11 +16,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_noCodes() async throws {
         let store = VaultStoreStub()
-        let viewModel = FeedViewModel(store: store)
-        let sut = makeSUT(viewModel: viewModel)
-            .framedToTestDeviceSize()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        await dataModel.reloadData()
 
-        await viewModel.onAppear()
+        let sut = makeSUT(dataModel: dataModel)
+            .framedToTestDeviceSize()
 
         assertSnapshot(matching: sut, as: .image)
     }
@@ -29,11 +29,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = VaultStoreStub()
         store.retrieveQueryResult = .init(items: [uniqueVaultItem()])
-        let viewModel = FeedViewModel(store: store)
-        let sut = makeSUT(viewModel: viewModel)
-            .framedToTestDeviceSize()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        await dataModel.reloadData()
 
-        await viewModel.onAppear()
+        let sut = makeSUT(dataModel: dataModel)
+            .framedToTestDeviceSize()
 
         assertSnapshot(matching: sut, as: .image)
     }
@@ -46,11 +46,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
             uniqueVaultItem(),
             uniqueVaultItem(),
         ])
-        let viewModel = FeedViewModel(store: store)
-        let sut = makeSUT(viewModel: viewModel)
-            .framedToTestDeviceSize()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        await dataModel.reloadData()
 
-        await viewModel.onAppear()
+        let sut = makeSUT(dataModel: dataModel)
+            .framedToTestDeviceSize()
 
         assertSnapshot(matching: sut, as: .image)
     }
@@ -62,11 +62,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
             VaultItemTag(id: .init(), name: "tag1"),
             VaultItemTag(id: .init(), name: "tag2", color: .gray),
         ])
-        let viewModel = FeedViewModel(store: store)
-        let sut = makeSUT(viewModel: viewModel)
-            .framedToTestDeviceSize()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        await dataModel.reloadData()
 
-        await viewModel.onAppear()
+        let sut = makeSUT(dataModel: dataModel)
+            .framedToTestDeviceSize()
 
         assertSnapshot(matching: sut, as: .image)
     }
@@ -79,13 +79,13 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
             VaultItemTag(id: tag1Id, name: "tag1"),
             VaultItemTag(id: .init(), name: "tag2", color: .gray),
         ])
-        let viewModel = FeedViewModel(store: store)
-        let sut = makeSUT(viewModel: viewModel)
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel)
             .framedToTestDeviceSize()
 
-        viewModel.filteringByTags = [tag1Id]
-
-        await viewModel.onAppear()
+        dataModel.itemsFilteringByTags = [tag1Id]
 
         assertSnapshot(matching: sut, as: .image)
     }
@@ -94,13 +94,11 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultItemFeedViewSnapshotTests {
-    typealias SUT = VaultItemFeedView<VaultStoreStub, VaultItemPreviewViewGeneratorMock>
-
     @MainActor
     private func makeSUT(
-        viewModel: FeedViewModel<VaultStoreStub>,
+        dataModel: VaultDataModel,
         localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
-    ) -> SUT {
+    ) -> some View {
         let generator = VaultItemPreviewViewGeneratorMock.mockGenerating {
             ZStack {
                 Color.blue
@@ -110,10 +108,10 @@ extension VaultItemFeedViewSnapshotTests {
             .frame(minHeight: 100)
         }
         return VaultItemFeedView(
-            viewModel: viewModel,
             localSettings: localSettings,
             viewGenerator: generator,
             isEditing: .constant(false)
         )
+        .environment(dataModel)
     }
 }

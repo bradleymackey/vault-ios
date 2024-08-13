@@ -2,17 +2,16 @@ import Foundation
 import FoundationExtensions
 import VaultCore
 
-/// A `OTPCodeDetailEditor` that uses a feed for updating after a given edit.
 @MainActor
-public struct VaultFeedDetailEditorAdapter {
-    private let vaultFeed: any VaultFeed
+public struct VaultDataModelEditorAdapter {
+    private let dataModel: VaultDataModel
 
-    public init(vaultFeed: any VaultFeed) {
-        self.vaultFeed = vaultFeed
+    public init(dataModel: VaultDataModel) {
+        self.dataModel = dataModel
     }
 }
 
-extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
+extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
     public func createCode(initialEdits: OTPCodeDetailEdits) async throws {
         let newCodeVaultItem = try VaultItem.Write(
             relativeOrder: initialEdits.relativeOrder,
@@ -26,7 +25,7 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
             lockState: initialEdits.lockState
         )
 
-        try await vaultFeed.create(item: newCodeVaultItem)
+        try await dataModel.insert(item: newCodeVaultItem)
     }
 
     public func updateCode(id: Identifier<VaultItem>, item: OTPAuthCode, edits: OTPCodeDetailEdits) async throws {
@@ -34,9 +33,9 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
         item.data.accountName = edits.accountNameTitle
         item.data.issuer = edits.issuerTitle
 
-        try await vaultFeed.update(
-            id: id,
-            item: .init(
+        try await dataModel.update(
+            itemID: id,
+            data: .init(
                 relativeOrder: edits.relativeOrder,
                 userDescription: edits.description,
                 color: edits.color,
@@ -51,11 +50,11 @@ extension VaultFeedDetailEditorAdapter: OTPCodeDetailEditor {
     }
 
     public func deleteCode(id: Identifier<VaultItem>) async throws {
-        try await vaultFeed.delete(id: id)
+        try await dataModel.delete(itemID: id)
     }
 }
 
-extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
+extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
     public func createNote(initialEdits: SecureNoteDetailEdits) async throws {
         let newSecureNote = SecureNote(title: initialEdits.title, contents: initialEdits.contents)
         let newVaultItem = VaultItem.Write(
@@ -70,7 +69,7 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             lockState: initialEdits.lockState
         )
 
-        try await vaultFeed.create(item: newVaultItem)
+        try await dataModel.insert(item: newVaultItem)
     }
 
     public func updateNote(id: Identifier<VaultItem>, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
@@ -89,10 +88,10 @@ extension VaultFeedDetailEditorAdapter: SecureNoteDetailEditor {
             lockState: edits.lockState
         )
 
-        try await vaultFeed.update(id: id, item: updatedVaultItem)
+        try await dataModel.update(itemID: id, data: updatedVaultItem)
     }
 
     public func deleteNote(id: Identifier<VaultItem>) async throws {
-        try await vaultFeed.delete(id: id)
+        try await dataModel.delete(itemID: id)
     }
 }

@@ -26,7 +26,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     init(
         editingExistingCode code: OTPAuthCode,
         navigationPath: Binding<NavigationPath>,
-        allTags: [VaultItemTag],
+        dataModel: VaultDataModel,
         storedMetadata: VaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
@@ -36,7 +36,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .editing(code: code, metadata: storedMetadata),
-            allTags: allTags,
+            dataModel: dataModel,
             editor: editor
         ))
         self.previewGenerator = previewGenerator
@@ -51,7 +51,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     init(
         newCodeWithContext initialCode: OTPAuthCode?,
         navigationPath: Binding<NavigationPath>,
-        allTags: [VaultItemTag],
+        dataModel: VaultDataModel,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
         presentationMode: Binding<PresentationMode>?
@@ -59,7 +59,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .creating(initialCode: initialCode),
-            allTags: allTags,
+            dataModel: dataModel,
             editor: editor
         ))
         self.previewGenerator = previewGenerator
@@ -427,7 +427,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 data: .init(secret: .empty(), accountName: "Test")
             ),
             navigationPath: .constant(.init()),
-            allTags: [],
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: Date(),

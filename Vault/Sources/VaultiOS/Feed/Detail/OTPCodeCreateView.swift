@@ -7,10 +7,8 @@ import VaultFeed
 
 @MainActor
 struct OTPCodeCreateView<
-    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
-    var feedViewModel: FeedViewModel<Store>
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
 
@@ -25,6 +23,7 @@ struct OTPCodeCreateView<
 
     // 'dismiss' applies in the context that it's defined in!
     @Environment(\.presentationMode) private var presentationMode
+    @Environment(VaultDataModel.self) private var dataModel
     @State private var isCodeImagePickerGalleryVisible = false
     @State private var scanner = SingleCodeScanner(intervalTimer: IntervalTimerImpl()) { string in
         guard let uri = OTPAuthURI(string: string) else {
@@ -42,14 +41,14 @@ struct OTPCodeCreateView<
         Form {
             section
         }
-        .navigationTitle(Text(feedViewModel.scanCodeTitle))
+        .navigationTitle(Text("Scan Code"))
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
                     presentationMode.wrappedValue.dismiss()
                 } label: {
-                    Text(feedViewModel.cancelEditsTitle)
+                    Text("Cancel")
                         .foregroundStyle(.red)
                 }
             }
@@ -69,8 +68,8 @@ struct OTPCodeCreateView<
                 OTPCodeDetailView(
                     newCodeWithContext: nil,
                     navigationPath: $navigationPath,
-                    allTags: feedViewModel.tags,
-                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                    dataModel: dataModel,
+                    editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
                 )
@@ -78,8 +77,8 @@ struct OTPCodeCreateView<
                 OTPCodeDetailView(
                     newCodeWithContext: scannedCode,
                     navigationPath: $navigationPath,
-                    allTags: feedViewModel.tags,
-                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                    dataModel: dataModel,
+                    editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
                 )
@@ -92,12 +91,12 @@ struct OTPCodeCreateView<
             Button {
                 isCodeImagePickerGalleryVisible = true
             } label: {
-                Label(feedViewModel.inputSelectImageFromLibraryTitle, systemImage: "qrcode.viewfinder")
+                Label("Select image from library", systemImage: "qrcode.viewfinder")
             }
             .foregroundStyle(.primary)
 
             NavigationLink(value: CreationMode.manually) {
-                Label(feedViewModel.inputEnterCodeManuallyTitle, systemImage: "entry.lever.keypad")
+                Label("Enter details manually", systemImage: "entry.lever.keypad")
             }
             .foregroundStyle(.primary)
         } header: {

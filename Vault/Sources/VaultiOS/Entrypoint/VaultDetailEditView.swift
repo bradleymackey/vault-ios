@@ -4,17 +4,16 @@ import VaultCore
 import VaultFeed
 
 struct VaultDetailEditView<
-    Store: VaultStore & VaultTagStore,
     PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
 >: View
     where PreviewGenerator.PreviewItem == VaultItem.Payload
 {
-    var feedViewModel: FeedViewModel<Store>
     var storedItem: VaultItem
     var previewGenerator: PreviewGenerator
     var openInEditMode: Bool
     @Binding var navigationPath: NavigationPath
 
+    @Environment(VaultDataModel.self) private var dataModel
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
@@ -23,9 +22,9 @@ struct VaultDetailEditView<
             OTPCodeDetailView(
                 editingExistingCode: storedCode,
                 navigationPath: $navigationPath,
-                allTags: feedViewModel.tags,
+                dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
-                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 previewGenerator: previewGenerator,
                 openInEditMode: openInEditMode,
                 presentationMode: presentationMode
@@ -34,9 +33,9 @@ struct VaultDetailEditView<
             SecureNoteDetailView(
                 editingExistingNote: storedNote,
                 navigationPath: $navigationPath,
-                allTags: feedViewModel.tags,
+                dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
-                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 openInEditMode: openInEditMode
             )
         }

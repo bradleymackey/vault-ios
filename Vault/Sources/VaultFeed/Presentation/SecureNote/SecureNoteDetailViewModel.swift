@@ -14,16 +14,16 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
 
     private let mode: Mode
     public var isLocked: Bool
-    public let allTags: [VaultItemTag]
+    public let dataModel: VaultDataModel
     private let detailEditState = DetailEditState<SecureNoteDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
     private let isFinishedSubject = PassthroughSubject<Void, Never>()
     private let editor: any SecureNoteDetailEditor
 
     /// Create a view model for an existing note.
-    public init(mode: Mode, allTags: [VaultItemTag], editor: any SecureNoteDetailEditor) {
+    public init(mode: Mode, dataModel: VaultDataModel, editor: any SecureNoteDetailEditor) {
         self.mode = mode
-        self.allTags = allTags
+        self.dataModel = dataModel
         self.editor = editor
         isLocked = switch mode {
         case .creating: false
@@ -46,13 +46,17 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         }
     }
 
+    public var allTags: [VaultItemTag] {
+        dataModel.allTags
+    }
+
     /// Tags which haven't been added to this item yet.
     public var remainingTags: [VaultItemTag] {
-        allTags.filter { !editingModel.detail.tags.contains($0.id) }
+        dataModel.allTags.filter { !editingModel.detail.tags.contains($0.id) }
     }
 
     public var tagsThatAreSelected: [VaultItemTag] {
-        allTags.filter { editingModel.detail.tags.contains($0.id) }
+        dataModel.allTags.filter { editingModel.detail.tags.contains($0.id) }
     }
 
     public var isInEditMode: Bool {
@@ -155,10 +159,10 @@ extension SecureNoteDetailViewModel {
         public let descriptionSubtitle = localized(key: "noteDetail.description.subtitle")
         public let createdDateTitle = localized(key: "noteDetail.listSection.created.title")
         public let updatedDateTitle = localized(key: "noteDetail.listSection.updated.title")
-        public let doneEditingTitle = localized(key: "feedViewModel.doneEditing.title")
-        public let saveEditsTitle = localized(key: "feedViewModel.saveEdits.title")
-        public let cancelEditsTitle = localized(key: "feedViewModel.cancelEdits.title")
-        public let startEditingTitle = localized(key: "feedViewModel.edit.title")
+        public let doneEditingTitle = localized(key: "itemDetail.doneEditing.title")
+        public let saveEditsTitle = localized(key: "itemDetail.saveEdits.title")
+        public let cancelEditsTitle = localized(key: "itemDetail.cancelEdits.title")
+        public let startEditingTitle = localized(key: "itemDetail.edit.title")
         public let noteTitle = localized(key: "noteDetail.field.noteTitle.title")
         public let noteTitleExample = localized(key: "noteDetail.field.noteTitle.example")
         public let noteDescription = localized(key: "noteDetail.field.noteDescription.title")

@@ -13,7 +13,7 @@ public final class VaultTagDetailViewModel {
     public internal(set) var deleteError: PresentationError?
 
     private let tagId: Identifier<VaultItemTag>?
-    private let store: any VaultTagStore
+    private let dataModel: VaultDataModel
 
     public static var defaultIconOption: String {
         VaultItemTag.defaultIconName
@@ -75,8 +75,8 @@ public final class VaultTagDetailViewModel {
         ]
     }
 
-    public init(store: any VaultTagStore, existingTag: VaultItemTag?) {
-        self.store = store
+    public init(dataModel: VaultDataModel, existingTag: VaultItemTag?) {
+        self.dataModel = dataModel
         if let existingTag {
             tagId = existingTag.id
             color = existingTag.color ?? .tagDefault
@@ -111,9 +111,9 @@ public final class VaultTagDetailViewModel {
     public func save() async {
         do {
             if let tagId {
-                try await store.updateTag(id: tagId, item: makeWritableTag())
+                try await dataModel.update(tagID: tagId, data: makeWritableTag())
             } else {
-                try await store.insertTag(item: makeWritableTag())
+                try await dataModel.insert(tag: makeWritableTag())
             }
         } catch {
             saveError = .init(
@@ -128,7 +128,7 @@ public final class VaultTagDetailViewModel {
     public func delete() async {
         do {
             guard let tagId else { return }
-            try await store.deleteTag(id: tagId)
+            try await dataModel.delete(tagID: tagId)
         } catch {
             deleteError = .init(
                 userTitle: strings.deleteErrorTitle,

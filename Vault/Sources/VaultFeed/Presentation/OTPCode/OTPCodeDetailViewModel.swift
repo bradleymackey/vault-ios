@@ -15,7 +15,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
 
     public let mode: Mode
     public var isLocked: Bool
-    public let allTags: [VaultItemTag]
+    public let dataModel: VaultDataModel
     private let editor: any OTPCodeDetailEditor
     private let detailEditState = DetailEditState<OTPCodeDetailEdits>()
     private let didEncounterErrorSubject = PassthroughSubject<any Error, Never>()
@@ -23,11 +23,11 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
 
     public init(
         mode: Mode,
-        allTags: [VaultItemTag],
+        dataModel: VaultDataModel,
         editor: any OTPCodeDetailEditor
     ) {
         self.mode = mode
-        self.allTags = allTags
+        self.dataModel = dataModel
         self.editor = editor
         isLocked = switch mode {
         case .creating: false
@@ -55,9 +55,17 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         }
     }
 
+    public var allTags: [VaultItemTag] {
+        dataModel.allTags
+    }
+
     /// Tags which haven't been added to this item yet.
     public var remainingTags: [VaultItemTag] {
-        allTags.filter { !editingModel.detail.tags.contains($0.id) }
+        dataModel.allTags.filter { !editingModel.detail.tags.contains($0.id) }
+    }
+
+    public var tagsThatAreSelected: [VaultItemTag] {
+        dataModel.allTags.filter { editingModel.detail.tags.contains($0.id) }
     }
 
     public var isInitialCreation: Bool {
@@ -89,10 +97,6 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         } else {
             strings.siteNameEmptyTitle
         }
-    }
-
-    public var tagsThatAreSelected: [VaultItemTag] {
-        allTags.filter { editingModel.detail.tags.contains($0.id) }
     }
 
     public var detailMenuItems: [DetailEntry] {
@@ -236,10 +240,10 @@ extension OTPCodeDetailViewModel {
         public let deleteConfirmSubtitle = localized(key: "codeDetail.action.delete.confirm.subtitle")
         public let createdDateTitle = localized(key: "codeDetail.listSection.created.title")
         public let updatedDateTitle = localized(key: "codeDetail.listSection.updated.title")
-        public let doneEditingTitle = localized(key: "feedViewModel.doneEditing.title")
-        public let saveEditsTitle = localized(key: "feedViewModel.saveEdits.title")
-        public let cancelEditsTitle = localized(key: "feedViewModel.cancelEdits.title")
-        public let startEditingTitle = localized(key: "feedViewModel.edit.title")
+        public let doneEditingTitle = localized(key: "itemDetail.doneEditing.title")
+        public let saveEditsTitle = localized(key: "itemDetail.saveEdits.title")
+        public let cancelEditsTitle = localized(key: "itemDetail.cancelEdits.title")
+        public let startEditingTitle = localized(key: "itemDetail.edit.title")
         public let siteNameTitle = localized(key: "codeDetail.field.siteName.title")
         public let siteNameEmptyTitle = localized(key: "codeDetail.field.siteName.empty.title")
         public let accountNameTitle = localized(key: "codeDetail.field.accountName.title")
