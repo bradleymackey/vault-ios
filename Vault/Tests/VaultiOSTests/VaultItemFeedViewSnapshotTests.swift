@@ -62,10 +62,12 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     func test_searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        tagStore.retrieveTagsResult = [
-            VaultItemTag(id: .init(), name: "tag1"),
-            VaultItemTag(id: .init(), name: "tag2", color: .gray),
-        ]
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: .init(), name: "tag1"),
+                VaultItemTag(id: .init(), name: "tag2", color: .gray),
+            ]
+        }
         let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
@@ -80,10 +82,12 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()
-        tagStore.retrieveTagsResult = [
-            VaultItemTag(id: tag1Id, name: "tag1"),
-            VaultItemTag(id: .init(), name: "tag2", color: .gray),
-        ]
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: tag1Id, name: "tag1"),
+                VaultItemTag(id: .init(), name: "tag2", color: .gray),
+            ]
+        }
         let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
