@@ -9,8 +9,8 @@ struct BackupKeyChangeView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(store: store, deriverFactory: ApplicationKeyDeriverFactoryImpl()))
+    init(viewModel: BackupKeyChangeViewModel) {
+        _viewModel = .init(wrappedValue: viewModel)
     }
 
     var body: some View {

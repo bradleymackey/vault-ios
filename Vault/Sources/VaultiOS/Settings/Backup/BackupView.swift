@@ -28,7 +28,10 @@ struct BackupView: View {
             switch sheet {
             case .updatePassword:
                 NavigationStack {
-                    BackupKeyChangeView(store: backupStore)
+                    BackupKeyChangeView(viewModel: .init(
+                        store: backupStore,
+                        deriverFactory: ApplicationKeyDeriverFactoryImpl()
+                    ))
                 }
             case .exportPassword:
                 NavigationStack {
