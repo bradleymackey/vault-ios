@@ -37,7 +37,7 @@ public final class BackupKeyChangeViewModel {
 
     public var newlyEnteredPassword = ""
     public var newlyEnteredPasswordConfirm = ""
-    public private(set) var permissionState: PermissionState = .loading
+    public internal(set) var permissionState: PermissionState = .loading
     public private(set) var existingPassword: ExistingPasswordState = .loading
     public private(set) var newPassword: NewPasswordState = .initial
     private let encryptionKeyDeriver: ApplicationKeyDeriver

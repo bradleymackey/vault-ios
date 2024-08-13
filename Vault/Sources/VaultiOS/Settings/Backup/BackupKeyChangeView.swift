@@ -9,8 +9,8 @@ struct BackupKeyChangeView: View {
 
     @Environment(\.dismiss) private var dismiss
 
-    init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(store: store, deriverFactory: ApplicationKeyDeriverFactoryImpl()))
+    init(viewModel: BackupKeyChangeViewModel) {
+        _viewModel = .init(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -46,15 +46,27 @@ struct BackupKeyChangeView: View {
             viewModel.didDisappear()
         }
         .toolbar {
-            ToolbarItem(placement: .cancellationAction) {
-                Button {
-                    keyGenerationTask?.cancel()
-                    dismiss()
-                } label: {
-                    Text("Cancel")
-                        .tint(.red)
+            switch viewModel.newPassword {
+            case .initial, .creating, .keygenCancelled, .keygenError, .passwordConfirmError:
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        keyGenerationTask?.cancel()
+                        dismiss()
+                    } label: {
+                        Text("Cancel")
+                            .tint(.red)
+                    }
+                    .disabled(viewModel.newPassword.isLoading)
                 }
-                .disabled(viewModel.newPassword.isLoading)
+            case .success:
+                ToolbarItem(placement: .confirmationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Done")
+                    }
+                    .disabled(viewModel.newPassword.isLoading)
+                }
             }
         }
     }
