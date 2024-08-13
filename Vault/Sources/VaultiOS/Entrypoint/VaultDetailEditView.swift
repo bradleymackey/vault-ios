@@ -26,7 +26,7 @@ struct VaultDetailEditView<
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
-                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 previewGenerator: previewGenerator,
                 openInEditMode: openInEditMode,
                 presentationMode: presentationMode
@@ -37,7 +37,7 @@ struct VaultDetailEditView<
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
-                editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 openInEditMode: openInEditMode
             )
         }

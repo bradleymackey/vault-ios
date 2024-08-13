@@ -121,7 +121,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_createItem_updatesStore() async throws {
         let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store update")
-        store.insertStoreCalled = {
+        store.insertStoreCalled = { _ in
             exp.fulfill()
         }
 
@@ -179,7 +179,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_updateCode_updatesStore() async throws {
         let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store update")
-        store.updateStoreCalled = {
+        store.updateStoreCalled = { _, _ in
             exp.fulfill()
         }
 
@@ -238,7 +238,7 @@ final class FeedViewModelTests: XCTestCase {
     func test_deleteCode_removesFromStore() async throws {
         let store = VaultStoreStub()
         let exp = expectation(description: "Wait for store delete")
-        store.deleteStoreCalled = {
+        store.deleteStoreCalled = { _ in
             exp.fulfill()
         }
 

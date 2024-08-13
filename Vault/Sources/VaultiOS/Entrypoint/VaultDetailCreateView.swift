@@ -23,7 +23,7 @@ struct VaultDetailCreateView<
             )
         case .secureNote:
             SecureNoteDetailView(
-                newNoteWithEditor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                newNoteWithEditor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 navigationPath: $navigationPath,
                 dataModel: dataModel
             )

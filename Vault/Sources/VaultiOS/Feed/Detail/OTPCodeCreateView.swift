@@ -71,7 +71,7 @@ struct OTPCodeCreateView<
                     newCodeWithContext: nil,
                     navigationPath: $navigationPath,
                     dataModel: dataModel,
-                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                    editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
                 )
@@ -80,7 +80,7 @@ struct OTPCodeCreateView<
                     newCodeWithContext: scannedCode,
                     navigationPath: $navigationPath,
                     dataModel: dataModel,
-                    editor: VaultFeedDetailEditorAdapter(vaultFeed: feedViewModel),
+                    editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                     previewGenerator: previewGenerator,
                     presentationMode: presentationMode
                 )

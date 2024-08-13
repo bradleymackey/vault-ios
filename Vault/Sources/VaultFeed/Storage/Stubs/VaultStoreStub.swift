@@ -32,23 +32,23 @@ public final class VaultStoreStub: VaultStore, VaultTagStore {
         return retrieveQueryResult
     }
 
-    public var insertStoreCalled: () -> Void = {}
-    public func insert(item _: VaultItem.Write) async throws -> Identifier<VaultItem> {
+    public var insertStoreCalled: (VaultItem.Write) -> Void = { _ in }
+    public func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem> {
         calledMethods.append(.insert)
-        insertStoreCalled()
+        insertStoreCalled(item)
         return .new()
     }
 
-    public var updateStoreCalled: () -> Void = {}
-    public func update(id _: Identifier<VaultItem>, item _: VaultItem.Write) async throws {
+    public var updateStoreCalled: (Identifier<VaultItem>, VaultItem.Write) -> Void = { _, _ in }
+    public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         calledMethods.append(.update)
-        updateStoreCalled()
+        updateStoreCalled(id, item)
     }
 
-    public var deleteStoreCalled: () -> Void = {}
-    public func delete(id _: Identifier<VaultItem>) async throws {
+    public var deleteStoreCalled: (Identifier<VaultItem>) -> Void = { _ in }
+    public func delete(id: Identifier<VaultItem>) async throws {
         calledMethods.append(.delete)
-        deleteStoreCalled()
+        deleteStoreCalled(id)
     }
 
     public var exportVaultHandler: (String) -> VaultApplicationPayload = { _ in
