@@ -39,7 +39,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         )
 
         let exp = expectation(description: "Wait for creation")
-        store.insertStoreCalled = { data in
+        store.insertHandler = { data in
             defer { exp.fulfill() }
             switch data.item {
             case let .otpCode(code):
@@ -51,6 +51,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             default:
                 XCTFail("invalid kind")
             }
+            return .new()
         }
 
         try await sut.createCode(initialEdits: initialEdits)
@@ -99,7 +100,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
-        store.updateStoreCalled = { _, data in
+        store.updateHandler = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
             XCTAssertEqual(data.searchPassphase, "new pass")
             switch data.item {
@@ -142,7 +143,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let id = Identifier<VaultItem>.new()
 
         let exp = expectation(description: "Wait for delete")
-        store.deleteStoreCalled = { actualID in
+        store.deleteHandler = { actualID in
             XCTAssertEqual(id, actualID)
             exp.fulfill()
         }
@@ -177,7 +178,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         initialEdits.lockState = .lockedWithNativeSecurity
 
         let exp = expectation(description: "Wait for creation")
-        store.insertStoreCalled = { data in
+        store.insertHandler = { data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
@@ -190,6 +191,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             default:
                 XCTFail("invalid kind")
             }
+            return .new()
         }
 
         try await sut.createNote(initialEdits: initialEdits)
@@ -227,7 +229,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
 
         let exp = expectation(description: "Wait for update")
-        store.updateStoreCalled = { _, data in
+        store.updateHandler = { _, data in
             defer { exp.fulfill() }
             XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .always)
@@ -266,7 +268,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let id = Identifier<VaultItem>.new()
 
         let exp = expectation(description: "Wait for delete")
-        store.deleteStoreCalled = { actualID in
+        store.deleteHandler = { actualID in
             XCTAssertEqual(id, actualID)
             exp.fulfill()
         }

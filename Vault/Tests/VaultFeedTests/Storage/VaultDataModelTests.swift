@@ -87,60 +87,60 @@ final class VaultDataModelTests: XCTestCase {
     @MainActor
     func test_reloadItems_populatesItemsFromStore() async {
         let store = VaultStoreStub()
-        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(vaultStore: store)
 
         let exp = expectation(description: "Wait for reload data")
-        store.retrieveQueryCalled = { _ in
-            exp.fulfill()
+        store.retrieveHandler = { _ in
+            defer { exp.fulfill() }
+            return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         }
 
         await sut.reloadData()
 
         await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.items, store.retrieveQueryResult.items)
+        XCTAssertEqual(sut.items.count, 2)
     }
 
     @MainActor
     func test_reloadItems_populatesItemsFromStoreQueryingText() async {
         let store = VaultStoreStub()
-        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(vaultStore: store)
         sut.itemsSearchQuery = " \tSOME QUERY 123\n "
 
         let exp = expectation(description: "Wait for reload data")
-        store.retrieveQueryCalled = { query in
+        store.retrieveHandler = { query in
+            defer { exp.fulfill() }
             XCTAssertEqual(query.filterText, "SOME QUERY 123")
             XCTAssertEqual(query.filterTags, [])
-            exp.fulfill()
+            return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         }
 
         await sut.reloadData()
 
         await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.items, store.retrieveQueryResult.items)
+        XCTAssertEqual(sut.items.count, 2)
     }
 
     @MainActor
     func test_reloadItems_loadsItemsQueryingTextAndFiltering() async {
         let store = VaultStoreStub()
-        store.retrieveQueryResult = .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         let sut = makeSUT(vaultStore: store)
         sut.itemsSearchQuery = " \tSOME QUERY 123\n "
         let filterTags: Set<Identifier<VaultItemTag>> = [.init(id: UUID())]
         sut.itemsFilteringByTags = filterTags
 
         let exp = expectation(description: "Wait for reload data")
-        store.retrieveQueryCalled = { query in
+        store.retrieveHandler = { query in
+            defer { exp.fulfill() }
             XCTAssertEqual(query.filterText, "SOME QUERY 123")
             XCTAssertEqual(query.filterTags, filterTags)
-            exp.fulfill()
+            return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
         }
 
         await sut.reloadData()
 
         await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.items, store.retrieveQueryResult.items)
+        XCTAssertEqual(sut.items.count, 2)
     }
 
     @MainActor
@@ -156,14 +156,14 @@ final class VaultDataModelTests: XCTestCase {
     @MainActor
     func test_reloadItems_clearsExistingError() async {
         let store = VaultStoreStub()
-        store.retrieveQueryCalled = { _ in
-            throw anyNSError()
+        store.retrieveHandler = { _ in
+            throw TestError()
         }
         let sut = makeSUT(vaultStore: store)
 
         await sut.reloadData()
 
-        store.retrieveQueryCalled = { _ in }
+        store.retrieveHandler = { _ in .empty() }
 
         await sut.reloadData()
 

@@ -30,7 +30,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        store.retrieveQueryResult = .init(items: [uniqueVaultItem()])
+        store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
         let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
@@ -44,11 +44,13 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     func test_layout_multipleCodesAtMediumSize() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        store.retrieveQueryResult = .init(items: [
-            uniqueVaultItem(),
-            uniqueVaultItem(),
-            uniqueVaultItem(),
-        ])
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+            ])
+        }
         let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 

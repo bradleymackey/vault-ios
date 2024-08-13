@@ -190,7 +190,7 @@ public struct VaultItemFeedView<
 struct VaultItemFeedView_Previews: PreviewProvider {
     static var previews: some View {
         let store = VaultStoreStub()
-        store.retrieveQueryResult = .init(items: [
+        store.retrieveHandler = { _ in .init(items: [
             .init(
                 metadata: .init(
                     id: Identifier<VaultItem>(),
@@ -215,6 +215,7 @@ struct VaultItemFeedView_Previews: PreviewProvider {
                 ))
             ),
         ])
+        }
         return VaultItemFeedView(
             localSettings: .init(defaults: .init(userDefaults: .standard)),
             viewGenerator: GenericGenerator(),

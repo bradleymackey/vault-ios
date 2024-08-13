@@ -24,49 +24,58 @@ public final class VaultStoreStub: VaultStore {
 
     public private(set) var calledMethods: [CalledMethod] = []
 
-    public var retrieveQueryResult = VaultRetrievalResult<VaultItem>()
-    public var retrieveQueryCalled: (VaultStoreQuery) throws -> Void = { _ in }
+    public private(set) var retrieveCallCount = 0
+    public var retrieveHandler: (VaultStoreQuery) throws -> VaultRetrievalResult<VaultItem> = { _ in .empty() }
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         calledMethods.append(.retrieve)
-        try retrieveQueryCalled(query)
-        return retrieveQueryResult
+        retrieveCallCount += 1
+        return try retrieveHandler(query)
     }
 
-    public var insertStoreCalled: (VaultItem.Write) -> Void = { _ in }
+    public private(set) var insertCallCount = 0
+    public var insertHandler: (VaultItem.Write) throws -> Identifier<VaultItem> = { _ in .new() }
     public func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem> {
         calledMethods.append(.insert)
-        insertStoreCalled(item)
-        return .new()
+        insertCallCount += 1
+        return try insertHandler(item)
     }
 
-    public var updateStoreCalled: (Identifier<VaultItem>, VaultItem.Write) -> Void = { _, _ in }
+    public private(set) var updateCallCount = 0
+    public var updateHandler: (Identifier<VaultItem>, VaultItem.Write) throws -> Void = { _, _ in }
     public func update(id: Identifier<VaultItem>, item: VaultItem.Write) async throws {
         calledMethods.append(.update)
-        updateStoreCalled(id, item)
+        updateCallCount += 1
+        try updateHandler(id, item)
     }
 
-    public var deleteStoreCalled: (Identifier<VaultItem>) -> Void = { _ in }
+    public private(set) var deleteCallCount = 0
+    public var deleteHandler: (Identifier<VaultItem>) throws -> Void = { _ in }
     public func delete(id: Identifier<VaultItem>) async throws {
         calledMethods.append(.delete)
-        deleteStoreCalled(id)
+        deleteCallCount += 1
+        try deleteHandler(id)
     }
 
-    public var exportVaultHandler: (String) -> VaultApplicationPayload = { _ in
+    public private(set) var exportVaultCallCount = 0
+    public var exportVaultHandler: (String) throws -> VaultApplicationPayload = { _ in
         VaultApplicationPayload(userDescription: "any", items: [], tags: [])
     }
 
     public func exportVault(userDescription: String) async throws -> VaultApplicationPayload {
         calledMethods.append(.export)
-        return exportVaultHandler(userDescription)
+        exportVaultCallCount += 1
+        return try exportVaultHandler(userDescription)
     }
 
-    public var reorderCalled: (Set<Identifier<VaultItem>>, VaultReorderingPosition) -> Void = { _, _ in }
+    public private(set) var reorderCallCount = 0
+    public var reorderHandler: (Set<Identifier<VaultItem>>, VaultReorderingPosition) throws -> Void = { _, _ in }
     public func reorder(
         items: Set<Identifier<VaultItem>>,
         to position: VaultReorderingPosition
     ) async throws {
         calledMethods.append(.reorder)
-        reorderCalled(items, position)
+        reorderCallCount += 1
+        try reorderHandler(items, position)
     }
 }
 
