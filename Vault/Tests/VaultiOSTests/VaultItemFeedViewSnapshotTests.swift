@@ -16,7 +16,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_noCodes() async throws {
         let store = VaultStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let tagStore = VaultTagStoreStub()
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -28,8 +29,9 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_singleCodeAtMediumSize() async throws {
         let store = VaultStoreStub()
-        store.retrieveQueryResult = .init(items: [uniqueVaultItem()])
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let tagStore = VaultTagStoreStub()
+        store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -41,12 +43,15 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_multipleCodesAtMediumSize() async throws {
         let store = VaultStoreStub()
-        store.retrieveQueryResult = .init(items: [
-            uniqueVaultItem(),
-            uniqueVaultItem(),
-            uniqueVaultItem(),
-        ])
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let tagStore = VaultTagStoreStub()
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+            ])
+        }
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -58,11 +63,14 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
         let store = VaultStoreStub()
-        store.retrieveTagsResult = .success([
-            VaultItemTag(id: .init(), name: "tag1"),
-            VaultItemTag(id: .init(), name: "tag2", color: .gray),
-        ])
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let tagStore = VaultTagStoreStub()
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: .init(), name: "tag1"),
+                VaultItemTag(id: .init(), name: "tag2", color: .gray),
+            ]
+        }
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -74,12 +82,15 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_searchBar_tagsBeingFiltered() async throws {
         let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()
-        store.retrieveTagsResult = .success([
-            VaultItemTag(id: tag1Id, name: "tag1"),
-            VaultItemTag(id: .init(), name: "tag2", color: .gray),
-        ])
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: tag1Id, name: "tag1"),
+                VaultItemTag(id: .init(), name: "tag2", color: .gray),
+            ]
+        }
+        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)

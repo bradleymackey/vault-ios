@@ -427,7 +427,7 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 data: .init(secret: .empty(), accountName: "Test")
             ),
             navigationPath: .constant(.init()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultStoreStub()),
+            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
             storedMetadata: .init(
                 id: .new(),
                 created: Date(),
