@@ -1,11 +1,14 @@
 import Foundation
 import FoundationExtensions
 import SwiftUI
+import VaultCore
 import VaultFeed
 
 @MainActor
 struct BackupView: View {
     @Environment(BackupPasswordStoreImpl.self) var backupStore
+    @Environment(EpochClock.self) var clock
+    @Environment(VaultDataModel.self) var dataModel
     @State private var viewModel: BackupViewModel
     @State private var modal: Modal?
 
@@ -30,7 +33,19 @@ struct BackupView: View {
             switch sheet {
             case .pdfBackup:
                 NavigationStack {
-                    Text("PDF Backup")
+                    // FIXME: use the actual key
+                    BackupCreatePDFView(viewModel: .init(
+                        backupExporter: .init(
+                            clock: clock,
+                            backupPassword: .init(
+                                key: Data.random(count: 32),
+                                salt: Data.random(count: 32),
+                                keyDervier: .fastV1
+                            )
+                        ),
+                        dataModel: dataModel,
+                        clock: clock
+                    ))
                 }
             case .updatePassword:
                 NavigationStack {
