@@ -17,7 +17,7 @@ struct BackupKeyChangeView: View {
         Form {
             switch viewModel.permissionState {
             case .loading:
-                PlaceholderView(systemIcon: "lock.fill", title: "Authentication required")
+                PlaceholderView(systemIcon: "lock.fill", title: "Locked")
                     .foregroundStyle(.secondary)
                     .padding()
                     .containerRelativeFrame(.horizontal)
