@@ -1,11 +1,14 @@
 import Foundation
 import FoundationExtensions
 import SwiftUI
+import VaultCore
 import VaultFeed
 
 @MainActor
 struct BackupView: View {
     @Environment(BackupPasswordStoreImpl.self) var backupStore
+    @Environment(EpochClock.self) var clock
+    @Environment(VaultDataModel.self) var dataModel
     @State private var viewModel: BackupViewModel
     @State private var modal: Modal?
 
@@ -17,15 +20,33 @@ struct BackupView: View {
         case updatePassword
         case exportPassword
         case importPassword
+        case pdfBackup
     }
 
     var body: some View {
         Form {
+            createExportSection
             createPasswordSection
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
+            case .pdfBackup:
+                NavigationStack {
+                    // FIXME: use the actual key
+                    BackupCreatePDFView(viewModel: .init(
+                        backupExporter: .init(
+                            clock: clock,
+                            backupPassword: .init(
+                                key: Data.random(count: 32),
+                                salt: Data.random(count: 32),
+                                keyDervier: .fastV1
+                            )
+                        ),
+                        dataModel: dataModel,
+                        clock: clock
+                    ))
+                }
             case .updatePassword:
                 NavigationStack {
                     BackupKeyChangeView(viewModel: .init(
@@ -51,6 +72,20 @@ struct BackupView: View {
         }
     }
 
+    private var createExportSection: some View {
+        Section {
+            Button {
+                modal = .pdfBackup
+            } label: {
+                FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
+                    Text("Create PDF Backup")
+                }
+            }
+        } header: {
+            Text("Backups")
+        }
+    }
+
     private var createPasswordSection: some View {
         Section {
             switch viewModel.passwordState {
@@ -67,18 +102,17 @@ struct BackupView: View {
                 createButton
                 importButton
             case .error:
-                PlaceholderView(systemIcon: "key.slash.fill", title: viewModel.strings.backupPasswordErrorTitle)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                    .containerRelativeFrame(.horizontal)
+                PlaceholderView(
+                    systemIcon: "key.slash.fill",
+                    title: viewModel.strings.backupPasswordErrorTitle,
+                    subtitle: viewModel.strings.backupPasswordErrorDetail
+                )
+                .foregroundStyle(.secondary)
+                .padding()
+                .containerRelativeFrame(.horizontal)
             }
         } header: {
             Text(viewModel.strings.backupPasswordSectionTitle)
-        } footer: {
-            if viewModel.passwordState == .error {
-                Text(viewModel.strings.backupPasswordErrorDetail)
-                    .foregroundStyle(.red)
-            }
         }
     }
 

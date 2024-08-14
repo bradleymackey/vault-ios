@@ -4,16 +4,16 @@ import VaultBackup
 import VaultCore
 
 /// From an application-level vault, create the encrypted vault.
-final class BackupExporter {
+public final class BackupExporter {
     private let clock: EpochClock
     private let backupPassword: BackupPassword
 
-    init(clock: EpochClock, backupPassword: BackupPassword) {
+    public init(clock: EpochClock, backupPassword: BackupPassword) {
         self.clock = clock
         self.backupPassword = backupPassword
     }
 
-    func createEncryptedBackup(payload: VaultApplicationPayload) throws -> EncryptedVault {
+    public func createEncryptedBackup(payload: VaultApplicationPayload) throws -> EncryptedVault {
         let encryptionKey = try backupPassword.newVaultKeyWithRandomIV()
         let backupEncoder = VaultBackupEncoder(
             clock: clock,

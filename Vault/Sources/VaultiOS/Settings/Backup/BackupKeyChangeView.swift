@@ -17,7 +17,7 @@ struct BackupKeyChangeView: View {
         Form {
             switch viewModel.permissionState {
             case .loading:
-                PlaceholderView(systemIcon: "lock.fill", title: "Authentication required")
+                PlaceholderView(systemIcon: "lock.fill", title: "Locked")
                     .foregroundStyle(.secondary)
                     .padding()
                     .containerRelativeFrame(.horizontal)
@@ -108,10 +108,10 @@ struct BackupKeyChangeView: View {
 
                 switch viewModel.newPassword {
                 case .success:
-                    Label("Password and vault encryption key updated successfully", systemImage: "checkmark")
+                    Label("Vault encryption key updated successfully", systemImage: "checkmark.circle.fill")
                         .foregroundStyle(.green)
                 case .keygenError, .keygenCancelled:
-                    Label("Error generating encryption key", systemImage: "questionmark.key.filled")
+                    Label("Error generating encryption key", systemImage: "xmark.octagon.fill")
                         .foregroundStyle(.red)
                 case .creating:
                     HStack(alignment: .center, spacing: 4) {

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct VaultApplicationPayload: Sendable {
+public struct VaultApplicationPayload: Sendable, Equatable {
     public var userDescription: String
     public var items: [VaultItem]
     public var tags: [VaultItemTag]

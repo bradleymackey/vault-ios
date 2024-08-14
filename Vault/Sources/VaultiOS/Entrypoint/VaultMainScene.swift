@@ -74,10 +74,6 @@ public struct VaultMainScene: Scene {
                             noteGenerator: notePreviewGenerator
                         )
                     )
-                    .environment(pasteboard)
-                    .environment(clock)
-                    .environment(deviceAuthenticationService)
-                    .environment(vaultDataModel)
                 }
                 .tabItem {
                     Label("Vault", systemImage: "key.horizontal.fill")
@@ -98,6 +94,10 @@ public struct VaultMainScene: Scene {
                     .padding(.top, 24)
             }
             .environment(backupStore)
+            .environment(pasteboard)
+            .environment(clock)
+            .environment(deviceAuthenticationService)
+            .environment(vaultDataModel)
         }
     }
 }

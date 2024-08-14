@@ -266,6 +266,21 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertEqual(store.calledMethods, [.retrieve])
         XCTAssertEqual(sut.itemsFilteringByTags, [])
     }
+
+    @MainActor
+    func test_makeExport_exportsFromVaultStore() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let sut = makeSUT(vaultStore: store, vaultTagStore: tagStore)
+
+        let payload = VaultApplicationPayload(userDescription: "any", items: [], tags: [])
+        store.exportVaultHandler = { _ in payload }
+        let exported = try await sut.makeExport(userDescription: "desc")
+
+        XCTAssertEqual(exported, payload)
+        XCTAssertEqual(store.calledMethods, [.export])
+        XCTAssertEqual(tagStore.calledMethods, [])
+    }
 }
 
 // MARK: - Helpers
