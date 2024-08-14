@@ -17,15 +17,21 @@ struct BackupView: View {
         case updatePassword
         case exportPassword
         case importPassword
+        case pdfBackup
     }
 
     var body: some View {
         Form {
+            createExportSection
             createPasswordSection
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
+            case .pdfBackup:
+                NavigationStack {
+                    Text("PDF Backup")
+                }
             case .updatePassword:
                 NavigationStack {
                     BackupKeyChangeView(viewModel: .init(
@@ -48,6 +54,20 @@ struct BackupView: View {
         }
         .onDisappear {
             viewModel.onDisappear()
+        }
+    }
+
+    private var createExportSection: some View {
+        Section {
+            Button {
+                modal = .pdfBackup
+            } label: {
+                FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
+                    Text("Create PDF Backup")
+                }
+            }
+        } header: {
+            Text("Backups")
         }
     }
 
