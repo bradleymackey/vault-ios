@@ -170,3 +170,12 @@ extension VaultDataModel {
         await reloadItems()
     }
 }
+
+// MARK: - Export
+
+extension VaultDataModel {
+    public func makeExport(userDescription: String) async throws -> VaultApplicationPayload {
+        // No need to refetch items, this export is pulled directly from the store.
+        try await vaultStore.exportVault(userDescription: userDescription)
+    }
+}
