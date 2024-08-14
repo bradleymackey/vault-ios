@@ -67,18 +67,17 @@ struct BackupView: View {
                 createButton
                 importButton
             case .error:
-                PlaceholderView(systemIcon: "key.slash.fill", title: viewModel.strings.backupPasswordErrorTitle)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                    .containerRelativeFrame(.horizontal)
+                PlaceholderView(
+                    systemIcon: "key.slash.fill",
+                    title: viewModel.strings.backupPasswordErrorTitle,
+                    subtitle: viewModel.strings.backupPasswordErrorDetail
+                )
+                .foregroundStyle(.secondary)
+                .padding()
+                .containerRelativeFrame(.horizontal)
             }
         } header: {
             Text(viewModel.strings.backupPasswordSectionTitle)
-        } footer: {
-            if viewModel.passwordState == .error {
-                Text(viewModel.strings.backupPasswordErrorDetail)
-                    .foregroundStyle(.red)
-            }
         }
     }
 
