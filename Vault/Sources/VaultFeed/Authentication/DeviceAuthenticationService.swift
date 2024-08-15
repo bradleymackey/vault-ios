@@ -18,6 +18,7 @@ public final class DeviceAuthenticationService {
         policy.canAuthenticate
     }
 
+    /// Throws only for internal errors, not for authentication failures.
     public func authenticate(reason: String) async throws -> Result<Success, DeviceAuthenticationFailure> {
         guard canAuthenticate else {
             return .failure(.noAuthenticationSetup)
@@ -29,5 +30,14 @@ public final class DeviceAuthenticationService {
         }
 
         return .success(.authenticated)
+    }
+
+    /// Throws if the user is not authenticated or for any other error.
+    public func validateAuthentication(reason: String) async throws {
+        let result = try await policy
+            .authenticate(reason: "Validate access to the backup password store.")
+        guard result else {
+            throw DeviceAuthenticationFailure.authenticationFailure
+        }
     }
 }
