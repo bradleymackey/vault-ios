@@ -24,10 +24,8 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
     @MainActor
     func test_onAppear_permissonStateAllowedIfNoError() async {
-        let store = BackupPasswordStoreMock()
-        store.checkStorePermissionHandler = {}
-        let dataModel = anyVaultDataModel(backupPasswordStore: store)
-        let sut = makeSUT(dataModel: dataModel)
+        let authenticationService = DeviceAuthenticationService(policy: .alwaysAllow)
+        let sut = makeSUT(authenticationService: authenticationService)
 
         await sut.onAppear()
 
@@ -36,7 +34,7 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
     @MainActor
     func test_onAppear_permissionStateDeniedIfError() async {
-        let authenticationService = DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysDeny())
+        let authenticationService = DeviceAuthenticationService(policy: .alwaysDeny)
         let sut = makeSUT(authenticationService: authenticationService)
 
         await sut.onAppear()

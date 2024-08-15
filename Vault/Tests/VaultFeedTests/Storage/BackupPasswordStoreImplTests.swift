@@ -14,22 +14,6 @@ final class BackupPasswordStoreImplTests: XCTestCase {
     }
 
     @MainActor
-    func test_checkStorePermission_throwsIfCannotAuthenticate() async throws {
-        let policy = DeviceAuthenticationPolicyAlwaysDeny()
-        let sut = makeSUT(authenticationPolicy: policy)
-
-        await XCTAssertThrowsError(try await sut.checkStorePermission())
-    }
-
-    @MainActor
-    func test_checkStorePermission_doesNotThrowIfCanAuthenticate() async throws {
-        let policy = DeviceAuthenticationPolicyAlwaysAllow()
-        let sut = makeSUT(authenticationPolicy: policy)
-
-        try await sut.checkStorePermission()
-    }
-
-    @MainActor
     func test_fetchPassword_fetchErrorRethrowsError() throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
