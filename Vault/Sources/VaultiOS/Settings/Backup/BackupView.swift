@@ -58,7 +58,7 @@ struct BackupView: View {
                 }
             case .exportPassword:
                 NavigationStack {
-                    BackupKeyExportView(store: backupStore)
+                    BackupKeyExportView(viewModel: .init(exporter: .init(dataModel: dataModel)))
                 }
             case .importPassword:
                 NavigationStack {

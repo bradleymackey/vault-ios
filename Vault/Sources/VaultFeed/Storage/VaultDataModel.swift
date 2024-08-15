@@ -54,7 +54,7 @@ public final class VaultDataModel: Sendable {
 
     // MARK: - Backup Password
 
-    public enum BackupPasswordState: Equatable {
+    public enum BackupPasswordState: Sendable, Equatable {
         case notFetched
         case notCreated
         case fetched(BackupPassword)
@@ -120,6 +120,7 @@ extension VaultDataModel {
 extension VaultDataModel {
     public func loadBackupPassword() async {
         do {
+            if case .fetched = backupPassword { return }
             let password = try backupPasswordStore.fetchPassword()
             if let password {
                 backupPassword = .fetched(password)

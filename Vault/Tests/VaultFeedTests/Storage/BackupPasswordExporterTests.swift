@@ -4,6 +4,7 @@ import XCTest
 @testable import VaultFeed
 
 final class BackupPasswordExporterTests: XCTestCase {
+    @MainActor
     func test_init_hasNoStoreSideEffects() {
         let store = BackupPasswordStoreMock()
         _ = makeSUT(store: store)
@@ -12,7 +13,8 @@ final class BackupPasswordExporterTests: XCTestCase {
         XCTAssertEqual(store.fetchPasswordCallCount, 0)
     }
 
-    func test_makeExport_encodesFromStore() throws {
+    @MainActor
+    func test_makeExport_encodesFromStore() async throws {
         let keyData = Data(repeating: 0x68, count: 10)
         let saltData = Data(repeating: 0x69, count: 20)
         let examplePassword = BackupPassword(key: keyData, salt: saltData, keyDervier: .testing)
@@ -22,7 +24,7 @@ final class BackupPasswordExporterTests: XCTestCase {
         }
         let sut = makeSUT(store: store)
 
-        let export = try sut.makeExport()
+        let export = try await sut.makeExport()
 
         let str = try XCTUnwrap(String(data: export, encoding: .utf8))
 
@@ -36,33 +38,36 @@ final class BackupPasswordExporterTests: XCTestCase {
         """)
     }
 
-    func test_makeExport_throwsIfNoPassword() {
+    @MainActor
+    func test_makeExport_throwsIfNoPassword() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = {
             nil
         }
         let sut = makeSUT(store: store)
 
-        XCTAssertThrowsError(try sut.makeExport())
+        await XCTAssertThrowsError(try await sut.makeExport())
     }
 
-    func test_makeExport_throwsForStoreError() {
+    @MainActor
+    func test_makeExport_throwsForStoreError() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = {
             throw NSError(domain: "any", code: 100)
         }
         let sut = makeSUT(store: store)
 
-        XCTAssertThrowsError(try sut.makeExport())
+        await XCTAssertThrowsError(try await sut.makeExport())
     }
 }
 
 // MARK: - Helpers
 
 extension BackupPasswordExporterTests {
+    @MainActor
     private func makeSUT(
         store: BackupPasswordStoreMock = BackupPasswordStoreMock()
     ) -> BackupPasswordExporter {
-        BackupPasswordExporter(store: store)
+        BackupPasswordExporter(dataModel: anyVaultDataModel(backupPasswordStore: store))
     }
 }
