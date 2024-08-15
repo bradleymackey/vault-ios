@@ -4,7 +4,6 @@ import VaultSettings
 
 @MainActor
 public struct SettingsHomeView: View {
-    @Environment(BackupPasswordStoreImpl.self) var backupStore
     private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 
@@ -41,7 +40,7 @@ public struct SettingsHomeView: View {
     private var exportSection: some View {
         Section {
             NavigationLink {
-                BackupView(store: backupStore)
+                BackupView()
             } label: {
                 FormRow(
                     image: Image(systemName: "doc.on.doc.fill"),

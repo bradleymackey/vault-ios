@@ -4,45 +4,8 @@ import Foundation
 @MainActor
 @Observable
 public final class BackupViewModel {
-    public enum PasswordState: Equatable, Hashable {
-        case loading
-        case hasExistingPassword
-        case noExistingPassword
-        case error
-    }
-
-    public private(set) var passwordState: PasswordState = .loading
-
-    private let store: any BackupPasswordStore
-
-    public init(store: any BackupPasswordStore) {
-        self.store = store
-    }
-
-    public func fetchContent() {
-        fetchPasswordState()
-    }
-
-    public func onDisappear() {
-        passwordState = .loading
-    }
-}
-
-// MARK: - Password
-
-extension BackupViewModel {
-    private func fetchPasswordState() {
-        do {
-            let password = try store.fetchPassword()
-            if password != nil {
-                passwordState = .hasExistingPassword
-            } else {
-                passwordState = .noExistingPassword
-            }
-        } catch {
-            passwordState = .error
-        }
-    }
+    public let strings = Strings()
+    public init() {}
 }
 
 // MARK: - Strings
@@ -50,8 +13,7 @@ extension BackupViewModel {
 extension BackupViewModel {
     @MainActor
     public struct Strings {
-        fileprivate static var shared = Strings()
-        private init() {}
+        init() {}
 
         public let homeTitle = localized(key: "backupHome.title")
         public let backupPasswordSectionTitle = localized(key: "backupPasswordState.section.title")
@@ -62,9 +24,5 @@ extension BackupViewModel {
         public let backupPasswordLoadingTitle = localized(key: "backupPasswordState.loading.title")
         public let backupPasswordErrorTitle = localized(key: "backupPasswordState.retrieveError.title")
         public let backupPasswordErrorDetail = localized(key: "backupPasswordState.retrieveError.detail")
-    }
-
-    public var strings: Strings {
-        Strings.shared
     }
 }

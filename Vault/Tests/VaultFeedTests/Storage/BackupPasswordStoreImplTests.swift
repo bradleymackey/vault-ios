@@ -68,10 +68,9 @@ final class BackupPasswordStoreImplTests: XCTestCase {
 extension BackupPasswordStoreImplTests {
     @MainActor
     private func makeSUT(
-        secureStorage: SecureStorageMock = SecureStorageMock(),
-        authenticationPolicy: any DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow()
+        secureStorage: SecureStorageMock = SecureStorageMock()
     ) -> BackupPasswordStoreImpl {
-        BackupPasswordStoreImpl(secureStorage: secureStorage, authenticationPolicy: authenticationPolicy)
+        BackupPasswordStoreImpl(secureStorage: secureStorage)
     }
 
     private func anyBackupPassword() -> BackupPassword {
