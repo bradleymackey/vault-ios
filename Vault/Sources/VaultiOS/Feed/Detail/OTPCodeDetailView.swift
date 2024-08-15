@@ -427,7 +427,11 @@ struct OTPCodeDetailView_Previews: PreviewProvider {
                 data: .init(secret: .empty(), accountName: "Test")
             ),
             navigationPath: .constant(.init()),
-            dataModel: VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
+            dataModel: VaultDataModel(
+                vaultStore: VaultStoreStub(),
+                vaultTagStore: VaultTagStoreStub(),
+                backupPasswordStore: BackupPasswordStoreMock()
+            ),
             storedMetadata: .init(
                 id: .new(),
                 created: Date(),

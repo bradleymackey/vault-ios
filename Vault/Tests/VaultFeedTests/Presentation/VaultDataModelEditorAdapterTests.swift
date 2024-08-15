@@ -10,7 +10,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_init_hasNoSideEffects() {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         _ = makeSUT(dataModel: dataModel)
 
         XCTAssertEqual(store.calledMethods, [])
@@ -21,7 +21,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
         let initialCode = OTPAuthCode(
             type: .totp(period: 40),
@@ -62,7 +62,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     @MainActor
     func test_createCode_propagatesFailureOnError() async throws {
         let store = VaultStoreErroring(error: anyNSError())
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
         let edits = anyOTPCodeDetailEdits()
@@ -73,7 +73,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_updateCode_translatesCodeDataForCall() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         var code = uniqueCode()
@@ -122,7 +122,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_updateCode_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: TestError())
         let tagStore = VaultTagStoreErroring(error: TestError())
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         let edits = anyOTPCodeDetailEdits()
@@ -137,7 +137,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_deleteCode_deletesFromFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         let id = Identifier<VaultItem>.new()
@@ -157,7 +157,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_deleteCode_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: TestError())
         let tagStore = VaultTagStoreErroring(error: TestError())
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.deleteCode(id: .new()))
@@ -167,7 +167,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_createNote_createsNoteInFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         var initialEdits = SecureNoteDetailEdits.new()
@@ -203,7 +203,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_createNote_propagatesFailureOnError() async throws {
         let store = VaultStoreErroring(error: TestError())
         let tagStore = VaultTagStoreErroring(error: TestError())
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.createNote(initialEdits: .new()))
@@ -213,7 +213,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_updateNote_updatesNoteInFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         var note = anySecureNote()
@@ -252,7 +252,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     @MainActor
     func test_updateNote_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: anyNSError())
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.updateNote(id: .new(), item: anySecureNote(), edits: .new()))
@@ -262,7 +262,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     func test_deleteNote_deletesFromFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         let id = Identifier<VaultItem>.new()
@@ -281,7 +281,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     @MainActor
     func test_deleteNote_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: anyNSError())
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: store)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
         await XCTAssertThrowsError(try await sut.deleteNote(id: .new()))
@@ -291,7 +291,11 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
 extension VaultDataModelEditorAdapterTests {
     @MainActor
     private func makeSUT(
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
+        dataModel: VaultDataModel = VaultDataModel(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        )
     ) -> VaultDataModelEditorAdapter {
         VaultDataModelEditorAdapter(dataModel: dataModel)
     }

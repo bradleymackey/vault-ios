@@ -403,7 +403,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
+        let dataModel = anyVaultDataModel()
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -417,7 +417,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
+        let dataModel = anyVaultDataModel()
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -431,7 +431,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
+        let dataModel = anyVaultDataModel()
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -445,7 +445,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
-        let dataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub())
+        let dataModel = anyVaultDataModel()
         dataModel.allTags = [tag1, tag2, tag3]
 
         let sut = makeSUT(dataModel: dataModel)
@@ -460,7 +460,11 @@ extension OTPCodeDetailViewModelTests {
     private func makeSUTCreating(
         editor: OTPCodeDetailEditorMock = .defaultMock(),
         initialCode: OTPAuthCode? = nil,
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
+        dataModel: VaultDataModel = VaultDataModel(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        ),
         allTags _: [VaultItemTag] = [],
         file: StaticString = #filePath,
         line: UInt = #line
@@ -481,7 +485,11 @@ extension OTPCodeDetailViewModelTests {
         code: OTPAuthCode = uniqueCode(),
         metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: OTPCodeDetailEditorMock = .defaultMock(),
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
+        dataModel: VaultDataModel = VaultDataModel(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        ),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {
@@ -501,7 +509,11 @@ extension OTPCodeDetailViewModelTests {
         code: OTPAuthCode = uniqueCode(),
         metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         editor: OTPCodeDetailEditorMock = .defaultMock(),
-        dataModel: VaultDataModel = VaultDataModel(vaultStore: VaultStoreStub(), vaultTagStore: VaultTagStoreStub()),
+        dataModel: VaultDataModel = VaultDataModel(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        ),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeDetailViewModel {

@@ -14,6 +14,15 @@ func uniqueCode() -> OTPAuthCode {
     )
 }
 
+@MainActor
+func anyVaultDataModel(
+    vaultStore: some VaultStore = VaultStoreStub(),
+    vaultTagStore: some VaultTagStore = VaultTagStoreStub(),
+    backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock()
+) -> VaultDataModel {
+    VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
+}
+
 // MARK: - VaultItem
 
 func anySecureNote(

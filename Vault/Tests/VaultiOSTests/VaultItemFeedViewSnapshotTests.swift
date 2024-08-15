@@ -17,7 +17,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     func test_layout_noCodes() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -31,7 +31,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -51,7 +51,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
                 uniqueVaultItem(),
             ])
         }
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -70,7 +70,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
                 VaultItemTag(id: .init(), name: "tag2", color: .gray),
             ]
         }
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
@@ -90,7 +90,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
                 VaultItemTag(id: .init(), name: "tag2", color: .gray),
             ]
         }
-        let dataModel = VaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
