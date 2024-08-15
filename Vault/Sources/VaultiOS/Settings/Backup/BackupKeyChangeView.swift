@@ -171,26 +171,11 @@ struct BackupKeyChangeView: View {
             #if DEBUG
             DisclosureGroup {
                 Button {
-                    viewModel.loadExistingPassword()
+                    Task {
+                        await viewModel.loadExistingPassword()
+                    }
                 } label: {
                     Text("Fetch existing password")
-                }
-                VStack(alignment: .leading, spacing: 8) {
-                    switch viewModel.existingPassword {
-                    case .loading:
-                        Text("Loading")
-                    case let .hasExistingPassword(backupPassword):
-                        Text(backupPassword.key.toHexString())
-                            .fontDesign(.monospaced)
-                        Text(backupPassword.salt.toHexString())
-                            .fontDesign(.monospaced)
-                    case .noExistingPassword:
-                        Text("None")
-                    case .authenticationFailed:
-                        Text("Authentication Failed")
-                    case .errorFetching:
-                        Text("Error")
-                    }
                 }
             } label: {
                 Text("DEBUG: Keygen Information")

@@ -9,6 +9,7 @@ struct BackupView: View {
     @Environment(BackupPasswordStoreImpl.self) var backupStore
     @Environment(EpochClock.self) var clock
     @Environment(VaultDataModel.self) var dataModel
+    @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var viewModel: BackupViewModel
     @State private var modal: Modal?
 
@@ -50,7 +51,8 @@ struct BackupView: View {
             case .updatePassword:
                 NavigationStack {
                     BackupKeyChangeView(viewModel: .init(
-                        store: backupStore,
+                        dataModel: dataModel,
+                        authenticationService: authenticationService,
                         deriverFactory: ApplicationKeyDeriverFactoryImpl()
                     ))
                 }
