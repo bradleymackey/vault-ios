@@ -20,17 +20,16 @@ public final class BackupKeyImportViewModel {
     public private(set) var importState: ImportState = .waiting
     public private(set) var overrideBehaviour: ImportOverrideBehaviour?
 
-    private let store: any BackupPasswordStore
-    private var initialPassword: BackupPassword?
+    private let dataModel: VaultDataModel
 
-    public init(store: any BackupPasswordStore) {
-        self.store = store
-        initialPassword = try? store.fetchPassword()
+    public init(dataModel: VaultDataModel) {
+        self.dataModel = dataModel
     }
 
-    public func stageImport(password: BackupPassword) {
+    public func stageImport(password: BackupPassword) async {
         importState = .staged(password)
-        if let initialPassword {
+        await dataModel.loadBackupPassword()
+        if case let .fetched(initialPassword) = dataModel.backupPassword {
             if password == initialPassword {
                 overrideBehaviour = .matchesExisting
             } else {
@@ -44,7 +43,7 @@ public final class BackupKeyImportViewModel {
     public func commitStagedImport() {
         guard case let .staged(password) = importState else { return }
         do {
-            try store.set(password: password)
+            try dataModel.store(backupPassword: password)
             importState = .imported
         } catch {
             importState = .error

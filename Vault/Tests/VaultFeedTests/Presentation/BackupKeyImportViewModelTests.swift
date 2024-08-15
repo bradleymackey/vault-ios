@@ -6,11 +6,11 @@ import XCTest
 
 final class BackupKeyImportViewModelTests: XCTestCase {
     @MainActor
-    func test_init_loadsFromStoreInitially() {
+    func test_init_hasNoSideEffects() {
         let store = BackupPasswordStoreMock()
         _ = makeSUT(store: store)
 
-        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+        XCTAssertEqual(store.fetchPasswordCallCount, 0)
         XCTAssertEqual(store.setCallCount, 0)
     }
 
@@ -33,13 +33,13 @@ final class BackupKeyImportViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_commitStagedImport_importsAndUpdatesState() {
+    func test_commitStagedImport_importsAndUpdatesState() async {
         let importData = Data(repeating: 0x44, count: 13)
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(store: store)
         let password = BackupPassword(key: importData, salt: importData, keyDervier: .testing)
 
-        sut.stageImport(password: password)
+        await sut.stageImport(password: password)
         sut.commitStagedImport()
 
         XCTAssertEqual(store.setArgValues, [password])
@@ -47,14 +47,14 @@ final class BackupKeyImportViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_importPassword_setsStateToErrorIfOperationFails() {
+    func test_importPassword_setsStateToErrorIfOperationFails() async {
         let store = BackupPasswordStoreMock()
         store.setHandler = { _ in
             throw anyNSError()
         }
         let sut = makeSUT(store: store)
 
-        sut.stageImport(password: .init(key: Data(), salt: Data(), keyDervier: .testing))
+        await sut.stageImport(password: .init(key: Data(), salt: Data(), keyDervier: .testing))
         sut.commitStagedImport()
 
         XCTAssertEqual(store.setCallCount, 1)
@@ -69,6 +69,6 @@ extension BackupKeyImportViewModelTests {
     private func makeSUT(
         store: BackupPasswordStoreMock = BackupPasswordStoreMock()
     ) -> BackupKeyImportViewModel {
-        BackupKeyImportViewModel(store: store)
+        BackupKeyImportViewModel(dataModel: anyVaultDataModel(backupPasswordStore: store))
     }
 }

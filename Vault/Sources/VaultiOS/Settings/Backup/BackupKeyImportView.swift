@@ -11,8 +11,8 @@ struct BackupKeyImportView: View {
         try BackupPasswordDecoder().decode(qrCode: qrCode)
     }
 
-    init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(store: store))
+    init(viewModel: BackupKeyImportViewModel) {
+        _viewModel = .init(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -37,7 +37,9 @@ struct BackupKeyImportView: View {
             }
         }
         .onReceive(scanner.itemScannedPublisher()) { password in
-            viewModel.stageImport(password: password)
+            Task {
+                await viewModel.stageImport(password: password)
+            }
         }
         .onChange(of: viewModel.importState) { _, newValue in
             if newValue == .imported {
