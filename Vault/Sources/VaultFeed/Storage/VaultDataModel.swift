@@ -134,6 +134,11 @@ extension VaultDataModel {
             ))
         }
     }
+
+    public func store(backupPassword: BackupPassword) throws {
+        try backupPasswordStore.set(password: backupPassword)
+        self.backupPassword = .fetched(backupPassword)
+    }
 }
 
 // MARK: - Fetching

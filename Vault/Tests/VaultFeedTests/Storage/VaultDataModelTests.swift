@@ -319,6 +319,32 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertTrue(sut.backupPassword.isError)
         XCTAssertEqual(store.fetchPasswordCallCount, 1)
     }
+
+    @MainActor
+    func test_storeBackupPassword_setsInStoreAndUpdatesEntry() async throws {
+        let store = BackupPasswordStoreMock()
+        store.setHandler = { _ in }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        let password = BackupPassword(key: Data.random(count: 32), salt: Data(), keyDervier: .testing)
+        try sut.store(backupPassword: password)
+
+        XCTAssertEqual(sut.backupPassword, .fetched(password))
+        XCTAssertEqual(store.setCallCount, 1)
+    }
+
+    @MainActor
+    func test_storeBackupPassword_errorDoesNotUpdateEntry() async throws {
+        let store = BackupPasswordStoreMock()
+        store.setHandler = { _ in throw TestError() }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        let password = BackupPassword(key: Data.random(count: 32), salt: Data(), keyDervier: .testing)
+        await XCTAssertThrowsError(try await sut.store(backupPassword: password))
+
+        XCTAssertEqual(sut.backupPassword, .notFetched) // still initial value
+        XCTAssertEqual(store.setCallCount, 1)
+    }
 }
 
 // MARK: - Helpers
