@@ -253,13 +253,13 @@ let package = Package(
 
         .binaryTarget(
             name: "swiftformat",
-            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.53.6/swiftformat.artifactbundle.zip",
-            checksum: "588b4469708decd9944717fbd284095189f63c720de3bae781e6487004b18d90"
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.54.3/swiftformat.artifactbundle.zip",
+            checksum: "b9d4e1a76449ab0c3beb3eb34fb3dcf396589afb1ee75764767a6ef541c63d67"
         ),
         .binaryTarget(
             name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.54.0/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "963121d6babf2bf5fd66a21ac9297e86d855cbc9d28322790646b88dceca00f1"
+            url: "https://github.com/realm/SwiftLint/releases/download/0.56.1/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: "146ef723e83d301b9f1ef647dc924a55dae293887e633618e76f8cb526292f0c"
         ),
         .executableTarget(
             name: "KeygenSpeedtest",

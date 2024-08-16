@@ -156,7 +156,6 @@ struct SwiftFormatTool: ParsableCommand {
         var arguments = directories + [
             "--config", swiftLintConfig,
             // Required for SwiftLint to emit a non-zero exit code on lint failure
-            "--strict",
             "--quiet",
         ]
 
@@ -166,6 +165,8 @@ struct SwiftFormatTool: ParsableCommand {
 
         if autocorrect {
             arguments += ["--fix"]
+        } else {
+            arguments += ["--strict"]
         }
 
         return Command(
