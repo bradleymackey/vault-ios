@@ -8,7 +8,7 @@ public actor BackupPasswordExporter {
         self.backupPassword = backupPassword
     }
 
-    public func makeExport() async throws -> Data {
+    public func makeExport() throws -> Data {
         let backupExport = BackupPasswordExport.createV1Export(
             key: backupPassword.key,
             salt: backupPassword.salt,
