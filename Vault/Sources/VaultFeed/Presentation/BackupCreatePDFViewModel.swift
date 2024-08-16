@@ -59,12 +59,12 @@ public final class BackupCreatePDFViewModel {
     public var userDescriptionEncrypted: String = "I should use the Vault app to import this backup."
     public var createdDocument: PDFDocument?
 
-    private let backupExporter: BackupExporter
+    private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
     private let clock: EpochClock
 
-    public init(backupExporter: BackupExporter, dataModel: VaultDataModel, clock: EpochClock) {
-        self.backupExporter = backupExporter
+    public init(backupPassword: BackupPassword, dataModel: VaultDataModel, clock: EpochClock) {
+        self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
     }
@@ -92,6 +92,7 @@ public final class BackupCreatePDFViewModel {
             authorName: authorName
         )
         let applicationPayload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
+        let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
         let encryptedVault = try backupExporter.createEncryptedBackup(payload: applicationPayload)
         let exportPayload = VaultExportPayload(
             encryptedVault: encryptedVault,
