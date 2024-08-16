@@ -6,11 +6,6 @@ import XCTest
 @testable import VaultiOS
 
 final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_layout_codeVisible() {
         let sut = makeSUT(state: .visible("123456"))

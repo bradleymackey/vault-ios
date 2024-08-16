@@ -5,11 +5,6 @@ import TestHelpers
 import XCTest
 
 final class PDFDataBlockDocumentRendererTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     func test_render_drawsEmptyPDFDocument() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let pdf = try XCTUnwrap(sut.render(document: emptyDocument()))

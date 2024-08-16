@@ -8,11 +8,6 @@ import XCTest
 @testable import VaultiOS
 
 final class HOTPPreviewViewGeneratorTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_init_hasNoSideEffects() {
         let (_, timer, factory) = makeSUT()

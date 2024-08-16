@@ -8,11 +8,6 @@ import VaultSettings
 import XCTest
 
 final class VaultItemFeedViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_layout_noCodes() async throws {
         let store = VaultStoreStub()

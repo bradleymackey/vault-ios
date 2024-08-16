@@ -6,11 +6,6 @@ import XCTest
 @testable import VaultiOS
 
 final class SecureNotePreviewViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_layout_titleOnly() {
         let sut = makeSUT(title: "Title", description: nil)

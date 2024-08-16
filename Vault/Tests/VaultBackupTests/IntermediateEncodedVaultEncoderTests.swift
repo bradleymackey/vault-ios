@@ -4,11 +4,6 @@ import XCTest
 @testable import VaultBackup
 
 final class IntermediateEncodedVaultEncoderTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_encodeVault_encodesToJSONFormat_emptyVault() throws {
         let sut = makeSUT()

@@ -6,11 +6,6 @@ import XCTest
 @testable import VaultiOS
 
 final class SecureNoteDetailViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_emptyState() async {
         let sut = SecureNoteDetailView(

@@ -4,11 +4,6 @@ import XCTest
 @testable import VaultiOS
 
 final class CodeIconPlaceholderViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     func test_layout_smallSize() {
         let view = OTPCodeIconPlaceholderView(iconFontSize: 22)
 

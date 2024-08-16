@@ -8,11 +8,6 @@ import VaultiOS
 import XCTest
 
 final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_init_hasNoSideEffects() {
         let totp = TOTPGeneratorMock()
