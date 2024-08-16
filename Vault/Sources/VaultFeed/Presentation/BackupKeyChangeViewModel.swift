@@ -6,12 +6,6 @@ import VaultBackup
 @MainActor
 @Observable
 public final class BackupKeyChangeViewModel {
-    public enum PermissionState: Equatable, Hashable {
-        case loading
-        case allowed
-        case denied
-    }
-
     public enum NewPasswordState: Equatable, Hashable {
         case initial
         case creating
@@ -30,7 +24,7 @@ public final class BackupKeyChangeViewModel {
 
     public var newlyEnteredPassword = ""
     public var newlyEnteredPasswordConfirm = ""
-    public internal(set) var permissionState: PermissionState = .loading
+    public internal(set) var permissionState: PermissionState = .undetermined
     public private(set) var newPassword: NewPasswordState = .initial
     private let encryptionKeyDeriver: ApplicationKeyDeriver<Bits256>
     private let authenticationService: DeviceAuthenticationService
@@ -70,7 +64,7 @@ public final class BackupKeyChangeViewModel {
     }
 
     public func didDisappear() {
-        permissionState = .loading
+        permissionState = .undetermined
     }
 
     private struct PasswordConfirmError: Error {}
@@ -83,7 +77,7 @@ public final class BackupKeyChangeViewModel {
 
             newPassword = .creating
             let createdBackupPassword = try await computeNewKey(password: newlyEnteredPassword)
-            try dataModel.store(backupPassword: createdBackupPassword)
+            try await dataModel.store(backupPassword: createdBackupPassword)
             newPassword = .success
             newlyEnteredPassword = ""
             newlyEnteredPasswordConfirm = ""

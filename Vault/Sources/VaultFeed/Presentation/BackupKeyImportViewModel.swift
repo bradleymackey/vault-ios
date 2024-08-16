@@ -40,10 +40,10 @@ public final class BackupKeyImportViewModel {
         }
     }
 
-    public func commitStagedImport() {
+    public func commitStagedImport() async {
         guard case let .staged(password) = importState else { return }
         do {
-            try dataModel.store(backupPassword: password)
+            try await dataModel.store(backupPassword: password)
             importState = .imported
         } catch {
             importState = .error

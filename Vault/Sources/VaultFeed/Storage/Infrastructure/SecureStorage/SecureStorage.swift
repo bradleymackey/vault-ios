@@ -9,14 +9,14 @@ public protocol SecureStorage: Sendable {
     /// Overrides existing value if it exists.
     ///
     /// - Throws: Internal error is thrown if we cannot retrieve from the Keychain.
-    func store(data: Data, forKey key: String) throws
+    func store(data: Data, forKey key: String) async throws
     /// Returns `nil` if the data does not exist for this key.
     ///
     /// - Throws: Internal error is thrown if we cannot retrieve from the Keychain.
-    func retrieve(key: String) throws -> Data?
+    func retrieve(key: String) async throws -> Data?
 }
 
-public final class SecureStorageImpl: SecureStorage {
+public actor SecureStorageImpl: SecureStorage {
     private let keychain: Keychain
 
     public init(keychain: Keychain) {

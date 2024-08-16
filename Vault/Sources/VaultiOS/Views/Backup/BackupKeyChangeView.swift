@@ -16,7 +16,7 @@ struct BackupKeyChangeView: View {
     var body: some View {
         Form {
             switch viewModel.permissionState {
-            case .loading:
+            case .undetermined:
                 PlaceholderView(systemIcon: "lock.fill", title: "Locked")
                     .foregroundStyle(.secondary)
                     .padding()

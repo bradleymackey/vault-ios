@@ -2,23 +2,17 @@ import CryptoDocumentExporter
 import Foundation
 
 public actor BackupPasswordExporter {
-    private let dataModel: VaultDataModel
+    private let backupPassword: BackupPassword
 
-    public init(dataModel: VaultDataModel) {
-        self.dataModel = dataModel
+    public init(backupPassword: BackupPassword) {
+        self.backupPassword = backupPassword
     }
 
-    public struct NoPasswordError: Error {}
-
-    public func makeExport() async throws -> Data {
-        await dataModel.loadBackupPassword()
-        guard case let .fetched(password) = await dataModel.backupPassword else {
-            throw NoPasswordError()
-        }
+    public func makeExport() throws -> Data {
         let backupExport = BackupPasswordExport.createV1Export(
-            key: password.key,
-            salt: password.salt,
-            keyDeriver: password.keyDervier
+            key: backupPassword.key,
+            salt: backupPassword.salt,
+            keyDeriver: backupPassword.keyDervier
         )
         return try makeExportEncoder().encode(backupExport)
     }

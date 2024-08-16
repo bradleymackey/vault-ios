@@ -12,7 +12,7 @@ import FoundationExtensions
 @Observable
 public final class VaultDataModel: Sendable {
     public enum State {
-        case base, loaded
+        case base, loaded, loading
     }
 
     // MARK: Searching Items
@@ -60,6 +60,13 @@ public final class VaultDataModel: Sendable {
         case fetched(BackupPassword)
         case error(PresentationError)
 
+        public var fetchedPassword: BackupPassword? {
+            switch self {
+            case let .fetched(password): password
+            default: nil
+            }
+        }
+
         public var isError: Bool {
             switch self {
             case .error: true
@@ -69,6 +76,7 @@ public final class VaultDataModel: Sendable {
     }
 
     public private(set) var backupPassword: BackupPasswordState = .notFetched
+    public private(set) var backupPasswordLoadingState: LoadingState = .notLoading
 
     // MARK: - Init
 
@@ -110,8 +118,10 @@ extension VaultDataModel {
         }
     }
 
-    public func appEnteredBackground() {
+    /// Ensures that any sensitive data is removed from memory.
+    public func purgeSensitiveData() {
         backupPassword = .notFetched
+        backupPasswordLoadingState = .notLoading
     }
 }
 
@@ -121,7 +131,9 @@ extension VaultDataModel {
     public func loadBackupPassword() async {
         do {
             if case .fetched = backupPassword { return }
-            let password = try backupPasswordStore.fetchPassword()
+            backupPasswordLoadingState = .loading
+            defer { backupPasswordLoadingState = .notLoading }
+            let password = try await backupPasswordStore.fetchPassword()
             if let password {
                 backupPassword = .fetched(password)
             } else {
@@ -136,8 +148,8 @@ extension VaultDataModel {
         }
     }
 
-    public func store(backupPassword: BackupPassword) throws {
-        try backupPasswordStore.set(password: backupPassword)
+    public func store(backupPassword: BackupPassword) async throws {
+        try await backupPasswordStore.set(password: backupPassword)
         self.backupPassword = .fetched(backupPassword)
     }
 }

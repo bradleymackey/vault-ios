@@ -22,11 +22,11 @@ final class BackupKeyImportViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_commitStagedImport_noActionIfNothingStagedd() {
+    func test_commitStagedImport_noActionIfNothingStaged() async {
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(store: store)
 
-        sut.commitStagedImport()
+        await sut.commitStagedImport()
 
         XCTAssertEqual(store.setArgValues, [])
         XCTAssertEqual(sut.importState, .waiting)
@@ -39,7 +39,7 @@ final class BackupKeyImportViewModelTests: XCTestCase {
         let password = BackupPassword(key: .repeating(byte: 0x44), salt: Data(), keyDervier: .testing)
 
         await sut.stageImport(password: password)
-        sut.commitStagedImport()
+        await sut.commitStagedImport()
 
         XCTAssertEqual(store.setArgValues, [password])
         XCTAssertEqual(sut.importState, .imported)
@@ -54,7 +54,7 @@ final class BackupKeyImportViewModelTests: XCTestCase {
         let sut = makeSUT(store: store)
 
         await sut.stageImport(password: .init(key: .zero(), salt: .random(count: 10), keyDervier: .testing))
-        sut.commitStagedImport()
+        await sut.commitStagedImport()
 
         XCTAssertEqual(store.setCallCount, 1)
         XCTAssertEqual(sut.importState, .error)

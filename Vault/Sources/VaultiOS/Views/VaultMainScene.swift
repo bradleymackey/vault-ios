@@ -18,6 +18,8 @@ public struct VaultMainScene: Scene {
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
     @State private var vaultDataModel: VaultDataModel
 
+    @Environment(\.scenePhase) private var scenePhase
+
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
         animation: .spring,
@@ -97,6 +99,16 @@ public struct VaultMainScene: Scene {
             .environment(clock)
             .environment(deviceAuthenticationService)
             .environment(vaultDataModel)
+        }
+        .onChange(of: scenePhase) { _, newValue in
+            switch newValue {
+            case .background:
+                vaultDataModel.purgeSensitiveData()
+            case .active, .inactive:
+                break
+            @unknown default:
+                break
+            }
         }
     }
 }

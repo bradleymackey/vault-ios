@@ -87,7 +87,9 @@ struct BackupKeyImportView: View {
                 switch viewModel.overrideBehaviour {
                 case .overridesExisting:
                     StandaloneButton {
-                        viewModel.commitStagedImport()
+                        Task {
+                            await viewModel.commitStagedImport()
+                        }
                     } content: {
                         Label("Confirm Import", systemImage: "checkmark")
                     }
@@ -95,7 +97,9 @@ struct BackupKeyImportView: View {
                     EmptyView()
                 case nil:
                     StandaloneButton {
-                        viewModel.commitStagedImport()
+                        Task {
+                            await viewModel.commitStagedImport()
+                        }
                     } content: {
                         Label("Import", systemImage: "checkmark")
                     }

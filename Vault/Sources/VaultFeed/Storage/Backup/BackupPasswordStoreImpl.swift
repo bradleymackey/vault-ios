@@ -9,11 +9,11 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
         self.secureStorage = secureStorage
     }
 
-    public func fetchPassword() throws -> BackupPassword? {
+    public func fetchPassword() async throws -> BackupPassword? {
         struct NotFoundInKeychain: Error {}
 
-        func fetchDataFromKeychainIfPresent(key: String) throws -> Data {
-            if let item = try secureStorage.retrieve(key: key) {
+        func fetchDataFromKeychainIfPresent(key: String) async throws -> Data {
+            if let item = try await secureStorage.retrieve(key: key) {
                 item
             } else {
                 throw NotFoundInKeychain()
@@ -21,7 +21,7 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
         }
 
         do {
-            let encodedPassword = try fetchDataFromKeychainIfPresent(key: KeychainKey.backupPassword)
+            let encodedPassword = try await fetchDataFromKeychainIfPresent(key: KeychainKey.backupPassword)
             let decoded = try backupPasswordDecoder().decode(BackupPasswordContainer.self, from: encodedPassword)
             return decoded.password
         } catch is NotFoundInKeychain {
@@ -29,10 +29,10 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
         }
     }
 
-    public func set(password: BackupPassword) throws {
+    public func set(password: BackupPassword) async throws {
         let container = BackupPasswordContainer(password: password)
         let encodedPassword = try backupPasswordEncoder().encode(container)
-        try secureStorage.store(data: encodedPassword, forKey: KeychainKey.backupPassword)
+        try await secureStorage.store(data: encodedPassword, forKey: KeychainKey.backupPassword)
     }
 }
 

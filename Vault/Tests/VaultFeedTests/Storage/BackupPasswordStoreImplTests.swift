@@ -14,38 +14,39 @@ final class BackupPasswordStoreImplTests: XCTestCase {
     }
 
     @MainActor
-    func test_fetchPassword_fetchErrorRethrowsError() throws {
+    func test_fetchPassword_fetchErrorRethrowsError() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.retrieveHandler = { _ in throw anyNSError() }
 
-        XCTAssertThrowsError(try sut.fetchPassword())
+        await XCTAssertThrowsError(try await sut.fetchPassword())
     }
 
     @MainActor
-    func test_fetchPassword_notFoundAnyReturnsNil() throws {
+    func test_fetchPassword_notFoundAnyReturnsNil() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.retrieveHandler = { _ in nil }
 
-        let password = try sut.fetchPassword()
+        let password = try await sut.fetchPassword()
 
         XCTAssertNil(password)
     }
 
     @MainActor
-    func test_setPassword_errorInServiceIsRethrown() throws {
+    func test_setPassword_errorInServiceIsRethrown() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.storeHandler = { _, _ in
             throw anyNSError()
         }
 
-        XCTAssertThrowsError(try sut.set(password: anyBackupPassword()))
+        let password = anyBackupPassword()
+        await XCTAssertThrowsError(try await sut.set(password: password))
     }
 
     @MainActor
-    func test_setPassword_setsDataEncodedCorrectly() throws {
+    func test_setPassword_setsDataEncodedCorrectly() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         let newPassword = BackupPassword(
@@ -54,7 +55,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
             keyDervier: .fastV1
         )
 
-        try sut.set(password: newPassword)
+        try await sut.set(password: newPassword)
 
         XCTAssertEqual(
             storage.storeArgValues.map(\.1),

@@ -23,7 +23,7 @@ struct VaultTagFeedView: View {
     var body: some View {
         VStack {
             switch dataModel.allTagsState {
-            case .base:
+            case .base, .loading:
                 // Initially empty view before loaded so we don't flash the noTagsView
                 EmptyView()
             case .loaded:
