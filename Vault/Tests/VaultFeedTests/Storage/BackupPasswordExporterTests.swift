@@ -5,23 +5,10 @@ import XCTest
 
 final class BackupPasswordExporterTests: XCTestCase {
     @MainActor
-    func test_init_hasNoStoreSideEffects() {
-        let store = BackupPasswordStoreMock()
-        _ = makeSUT(store: store)
-
-        XCTAssertEqual(store.setCallCount, 0)
-        XCTAssertEqual(store.fetchPasswordCallCount, 0)
-    }
-
-    @MainActor
     func test_makeExport_encodesFromStore() async throws {
         let saltData = Data(repeating: 0x69, count: 20)
         let examplePassword = BackupPassword(key: .repeating(byte: 0x68), salt: saltData, keyDervier: .testing)
-        let store = BackupPasswordStoreMock()
-        store.fetchPasswordHandler = {
-            examplePassword
-        }
-        let sut = makeSUT(store: store)
+        let sut = makeSUT(backupPassword: examplePassword)
 
         let export = try await sut.makeExport()
 
@@ -36,28 +23,6 @@ final class BackupPasswordExporterTests: XCTestCase {
         }
         """)
     }
-
-    @MainActor
-    func test_makeExport_throwsIfNoPassword() async {
-        let store = BackupPasswordStoreMock()
-        store.fetchPasswordHandler = {
-            nil
-        }
-        let sut = makeSUT(store: store)
-
-        await XCTAssertThrowsError(try await sut.makeExport())
-    }
-
-    @MainActor
-    func test_makeExport_throwsForStoreError() async {
-        let store = BackupPasswordStoreMock()
-        store.fetchPasswordHandler = {
-            throw NSError(domain: "any", code: 100)
-        }
-        let sut = makeSUT(store: store)
-
-        await XCTAssertThrowsError(try await sut.makeExport())
-    }
 }
 
 // MARK: - Helpers
@@ -65,8 +30,8 @@ final class BackupPasswordExporterTests: XCTestCase {
 extension BackupPasswordExporterTests {
     @MainActor
     private func makeSUT(
-        store: BackupPasswordStoreMock = BackupPasswordStoreMock()
+        backupPassword: BackupPassword
     ) -> BackupPasswordExporter {
-        BackupPasswordExporter(dataModel: anyVaultDataModel(backupPasswordStore: store))
+        BackupPasswordExporter(backupPassword: backupPassword)
     }
 }

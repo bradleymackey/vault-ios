@@ -60,6 +60,13 @@ public final class VaultDataModel: Sendable {
         case fetched(BackupPassword)
         case error(PresentationError)
 
+        public var fetchedPassword: BackupPassword? {
+            switch self {
+            case let .fetched(password): password
+            default: nil
+            }
+        }
+
         public var isError: Bool {
             switch self {
             case .error: true

@@ -15,15 +15,17 @@ struct BackupView: View {
 
     enum Modal: IdentifiableSelf {
         case updatePassword
-        case exportPassword
+        case exportPassword(BackupPassword)
         case importPassword
         case pdfBackup(BackupPassword)
     }
 
     var body: some View {
         Form {
-            createExportSection
             createPasswordSection
+            if let password = dataModel.backupPassword.fetchedPassword {
+                createExportSection(password: password)
+            }
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
         .alert("Backup Password Error", isPresented: $noPasswordAlert, actions: {
@@ -54,10 +56,10 @@ struct BackupView: View {
                         deriverFactory: ApplicationKeyDeriverFactoryImpl()
                     ))
                 }
-            case .exportPassword:
+            case let .exportPassword(password):
                 NavigationStack {
                     BackupKeyExportView(viewModel: .init(
-                        exporter: .init(dataModel: dataModel),
+                        exporter: .init(backupPassword: password),
                         authenticationService: authenticationService
                     ))
                 }
@@ -72,14 +74,10 @@ struct BackupView: View {
         }
     }
 
-    private var createExportSection: some View {
+    private func createExportSection(password: BackupPassword) -> some View {
         Section {
             Button {
-                if case let .fetched(password) = dataModel.backupPassword {
-                    modal = .pdfBackup(password)
-                } else {
-                    noPasswordAlert = true
-                }
+                modal = .pdfBackup(password)
             } label: {
                 FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
                     Text("Create PDF Backup")
@@ -98,9 +96,9 @@ struct BackupView: View {
                     .foregroundStyle(.secondary)
                     .padding()
                     .containerRelativeFrame(.horizontal)
-            case .fetched:
+            case let .fetched(password):
                 updateButton
-                exportButton
+                exportButton(password: password)
                 importButton
             case .notCreated:
                 createButton
@@ -140,9 +138,9 @@ struct BackupView: View {
         }
     }
 
-    private var exportButton: some View {
+    private func exportButton(password: BackupPassword) -> some View {
         Button {
-            modal = .exportPassword
+            modal = .exportPassword(password)
         } label: {
             FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue, style: .standard) {
                 Text(viewModel.strings.backupPasswordExportTitle)
