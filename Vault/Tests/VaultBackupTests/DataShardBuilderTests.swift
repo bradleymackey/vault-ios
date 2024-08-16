@@ -5,7 +5,7 @@ import XCTest
 
 final class DataShardBuilderTests: XCTestCase {
     func test_makeShards_makesOneChunkForEmptyData() {
-        let id = UUID()
+        let id: UInt16 = 123
         let sut = DataShardBuilder(groupIDGenerator: { id })
 
         let shards = sut.makeShards(from: Data())
@@ -16,7 +16,7 @@ final class DataShardBuilderTests: XCTestCase {
 
     func test_makeShards_makesOneChunk() {
         let inputData = Array(repeating: UInt8(33), count: 356)
-        let id = UUID()
+        let id: UInt16 = 123
         let sut = DataShardBuilder(groupIDGenerator: { id })
 
         let shards = sut.makeShards(from: Data(inputData))

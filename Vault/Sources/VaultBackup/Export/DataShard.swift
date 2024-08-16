@@ -8,8 +8,8 @@ struct DataShard: Equatable, Codable {
     var data: Data
 
     enum CodingKeys: String, CodingKey {
-        case group = "GROUP"
-        case data = "DATA"
+        case group = "G"
+        case data = "D"
     }
 }
 
@@ -18,7 +18,8 @@ extension DataShard {
         /// An ID shared by all of the `SplitDataBlock` instances in this series.
         ///
         /// This ensures we can detect if a block is not in the group.
-        var id: UUID
+        /// It doesn't need to be globally unique, just roughly unique to each individual user.
+        var id: UInt16
         /// The number that this block is in the group.
         var number: Int
         /// The total number of blocks in the group.
@@ -26,8 +27,8 @@ extension DataShard {
 
         enum CodingKeys: String, CodingKey {
             case id = "ID"
-            case number = "NUM"
-            case totalNumber = "TOT_NUM"
+            case number = "I"
+            case totalNumber = "N"
         }
     }
 }
