@@ -25,18 +25,12 @@ public final class BackupCreatePDFViewModel {
 
         public var localizedTitle: String {
             switch self {
-            case .a3:
-                return "A3"
-            case .a4:
-                return "A4"
-            case .a5:
-                return "A5"
-            case .usLetter:
-                return "US Letter"
-            case .usLegal:
-                return "US Legal"
-            case .usTabloid:
-                return "US Tabloid"
+            case .a3: "A3"
+            case .a4: "A4"
+            case .a5: "A5"
+            case .usLetter: "US Letter"
+            case .usLegal: "US Legal"
+            case .usTabloid: "US Tabloid"
             }
         }
 
