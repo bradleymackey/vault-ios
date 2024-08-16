@@ -4,17 +4,17 @@ import FoundationExtensions
 /// A key used to encrypt or decrypt a vault.
 public struct VaultKey {
     /// The key data for a vault.
-    public var key: Key256Bit
+    public var key: KeyData<Bits256>
     /// Initialization vector.
-    public var iv: Key256Bit
+    public var iv: KeyData<Bits256>
 
-    public init(key: Key256Bit, iv: Key256Bit) {
+    public init(key: KeyData<Bits256>, iv: KeyData<Bits256>) {
         self.key = key
         self.iv = iv
     }
 
     /// Creates a new key with a random IV.
-    public static func newKeyWithRandomIV(key: Key256Bit) -> VaultKey {
+    public static func newKeyWithRandomIV(key: KeyData<Bits256>) -> VaultKey {
         .init(key: key, iv: .random())
     }
 }

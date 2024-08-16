@@ -1,18 +1,19 @@
 import Foundation
 
-public struct Key256Bit: Equatable, Hashable, Sendable {
+/// A key that is generic over a specific bit length.
+public struct KeyData<Length: KeyLength>: Equatable, Hashable, Sendable {
     public let data: Data
 
     public struct LengthError: Error {}
 
     public init(data: Data) throws {
-        guard data.count == Self.length else { throw LengthError() }
+        guard data.count == Length.bytes else { throw LengthError() }
         self.data = data
     }
 }
 
-extension Key256Bit {
-    public static var length: Int { 32 }
+extension KeyData {
+    public static var length: Int { Length.bytes }
 
     public static func random() -> Self {
         // Force try: This is of the same length as the key, so it will not throw.
@@ -23,4 +24,15 @@ extension Key256Bit {
         // Force try: This is of the same length as the key, so it will not throw.
         try! .init(data: Data(repeating: byte, count: length))
     }
+}
+
+// MARK: - KeyLength
+
+public protocol KeyLength: Sendable {
+    static var bytes: Int { get }
+}
+
+/// A key that is 256 bits in length.
+public struct Bits256: KeyLength {
+    public static var bytes: Int { 32 }
 }
