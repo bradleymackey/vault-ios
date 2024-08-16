@@ -14,7 +14,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let sut = makeSUT(tilesPerRow: 3)
         let pdf = try XCTUnwrap(sut.render(document: emptyDocument()))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsSingleImage() throws {
@@ -22,7 +22,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(content: [.dataBlock([anyData()])])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsRowOfImages() throws {
@@ -30,7 +30,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 3))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsLabelsOfDifferentStyles() throws {
@@ -63,7 +63,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         ])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsIntersposedImagesAndTitles() throws {
@@ -78,7 +78,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         ])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsLabelsOnNextPageIfNotEnoughRoom() throws {
@@ -100,8 +100,8 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         ])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
-        assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
+        assertSnapshot(of: pdf, as: .pdf(page: 1), named: "page1")
+        assertSnapshot(of: pdf, as: .pdf(page: 2), named: "page2")
     }
 
     func test_render_drawsGridRowOfImagesWith10TilesPerRow() throws {
@@ -109,7 +109,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 24))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsMultiplePagesOfImages() throws {
@@ -117,8 +117,8 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 14))])
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
-        assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
+        assertSnapshot(of: pdf, as: .pdf(page: 1), named: "page1")
+        assertSnapshot(of: pdf, as: .pdf(page: 2), named: "page2")
     }
 
     func test_render_ignoresOffsetForTitleOnSecondPage() throws {
@@ -136,8 +136,8 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf(page: 1), named: "page1")
-        assertSnapshot(matching: pdf, as: .pdf(page: 2), named: "page2")
+        assertSnapshot(of: pdf, as: .pdf(page: 1), named: "page1")
+        assertSnapshot(of: pdf, as: .pdf(page: 2), named: "page2")
     }
 
     func test_render_drawsTitleAboveImages() throws {
@@ -155,7 +155,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsLongTitleAboveImages() throws {
@@ -174,7 +174,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsSubtitleAboveImages() throws {
@@ -193,7 +193,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsTitleAndSubtitleAboveImages() throws {
@@ -212,7 +212,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_respectsPageNoMargin() throws {
@@ -227,7 +227,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf(page: 1))
+        assertSnapshot(of: pdf, as: .pdf(page: 1))
     }
 
     func test_render_repectsPageOffCenterMargins() throws {
@@ -242,7 +242,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf(page: 1))
+        assertSnapshot(of: pdf, as: .pdf(page: 1))
     }
 
     func test_render_labelsRespectPadding() throws {
@@ -258,38 +258,38 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
         )
         let pdf = try XCTUnwrap(sut.render(document: document))
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsShortHeaders() throws {
         let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: ShortHeaderGenerator())
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsLongHeaders() throws {
         let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: LongHeaderGenerator())
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsLeftHeadersOnly() throws {
         let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: LeftHeaderGenerator())
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsRightHeadersOnly() throws {
         let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: RightHeaderGenerator())
 
-        assertSnapshot(matching: pdf, as: .pdf())
+        assertSnapshot(of: pdf, as: .pdf())
     }
 
     func test_render_drawsHeadersOnAllPages() throws {
         let pdf = try makeDocumentWithHeaderGenerator(headerGenerator: PageNumberHeaderGenerator(), numberOfImages: 50)
 
-        assertSnapshot(matching: pdf, as: .pdf(page: 1))
-        assertSnapshot(matching: pdf, as: .pdf(page: 2))
+        assertSnapshot(of: pdf, as: .pdf(page: 1))
+        assertSnapshot(of: pdf, as: .pdf(page: 2))
     }
 
     // MARK: - Helpers

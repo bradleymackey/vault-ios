@@ -15,7 +15,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
     func test_layout_codeVisible() {
         let sut = makeSUT(state: .visible("123456"))
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -23,42 +23,42 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         let error = PresentationError(userTitle: "userTitle", debugDescription: "debugDescription")
         let sut = makeSUT(state: .error(error, digits: 6))
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_codeNotReady() {
         let sut = makeSUT(state: .notReady)
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_noMoreCodes() {
         let sut = makeSUT(state: .finished)
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_obfuscateWithoutMessage() {
         let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: nil))
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_obfuscateWithMessage() {
         let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: "Custom message"))
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_obfuscateWithLongMessage() {
         let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: longMessage()))
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -68,7 +68,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
             let code = String(Array(repeating: Character("0"), count: count))
             let sut = makeSUT(state: .visible(code))
 
-            assertSnapshot(matching: sut, as: .image, named: "\(count)-digits")
+            assertSnapshot(of: sut, as: .image, named: "\(count)-digits")
         }
     }
 
@@ -76,14 +76,14 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
     func test_textWrapping_longIssuerStaysOnTwoLines() {
         let sut = makeSUT(issuer: longMessage())
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_textWrapping_longAccountNameStaysOnTwoLines() {
         let sut = makeSUT(accountName: longMessage())
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     // MARK: - Helpers

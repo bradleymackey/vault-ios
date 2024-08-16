@@ -16,6 +16,6 @@ final class LiteratureViewSnapshotTests: XCTestCase {
         }
         .framedToTestDeviceSize()
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 }

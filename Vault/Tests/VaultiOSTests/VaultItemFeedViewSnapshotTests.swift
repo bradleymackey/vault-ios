@@ -23,7 +23,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
             .framedToTestDeviceSize()
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -37,7 +37,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
             .framedToTestDeviceSize()
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -57,7 +57,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
             .framedToTestDeviceSize()
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -76,7 +76,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
             .framedToTestDeviceSize()
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -98,7 +98,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 
         dataModel.itemsFilteringByTags = [tag1Id]
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 }
 

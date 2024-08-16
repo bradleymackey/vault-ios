@@ -15,21 +15,21 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
     func test_layout_titleOnly() {
         let sut = makeSUT(title: "Title", description: nil)
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_titleOnlyLong() {
         let sut = makeSUT(title: "Title that is a little bit long, but's that's OK", description: nil)
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
     func test_layout_titleAndDescription() {
         let sut = makeSUT(title: "Title", description: "Short description")
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -37,7 +37,7 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
         let description = Array(repeating: "Testing description", count: 50).joined(separator: " ")
         let sut = makeSUT(title: "Title", description: description)
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 
     @MainActor
@@ -46,7 +46,7 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
         let description = Array(repeating: "Description", count: 50).joined(separator: " ")
         let sut = makeSUT(title: title, description: description)
 
-        assertSnapshot(matching: sut, as: .image)
+        assertSnapshot(of: sut, as: .image)
     }
 }
 
