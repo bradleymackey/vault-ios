@@ -12,7 +12,7 @@ import FoundationExtensions
 @Observable
 public final class VaultDataModel: Sendable {
     public enum State {
-        case base, loaded
+        case base, loaded, loading
     }
 
     // MARK: Searching Items
