@@ -345,6 +345,18 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertEqual(sut.backupPassword, .notFetched) // still initial value
         XCTAssertEqual(store.setCallCount, 1)
     }
+
+    @MainActor
+    func test_purgeSensitiveData_clearsBackupPassword() async {
+        let store = BackupPasswordStoreMock()
+        store.fetchPasswordHandler = { BackupPassword(key: .random(), salt: Data(), keyDervier: .testing) }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        await sut.loadBackupPassword()
+        sut.purgeSensitiveData()
+
+        XCTAssertEqual(sut.backupPassword, .notFetched)
+    }
 }
 
 // MARK: - Helpers

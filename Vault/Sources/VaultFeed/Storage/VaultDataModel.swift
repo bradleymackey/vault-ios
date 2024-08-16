@@ -110,7 +110,8 @@ extension VaultDataModel {
         }
     }
 
-    public func appEnteredBackground() {
+    /// Ensures that any sensitive data is removed from memory.
+    public func purgeSensitiveData() {
         backupPassword = .notFetched
     }
 }
