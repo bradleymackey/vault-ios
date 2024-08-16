@@ -8,6 +8,6 @@ final class OpenSourceViewSnapshotTests: XCTestCase {
         let view = OpenSourceView()
             .framedToTestDeviceSize()
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 }

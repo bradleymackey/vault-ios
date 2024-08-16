@@ -4,11 +4,6 @@ import XCTest
 @testable import VaultiOS
 
 final class LiteratureViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_layout_bodyWithSecondaryText() {
         let view = NavigationStack {
@@ -16,6 +11,6 @@ final class LiteratureViewSnapshotTests: XCTestCase {
         }
         .framedToTestDeviceSize()
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 }

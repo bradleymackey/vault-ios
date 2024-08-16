@@ -7,11 +7,6 @@ import XCTest
 @testable import VaultiOS
 
 final class OTPCodeDetailViewSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_emptyState() async {
         let sut = OTPCodeDetailView(

@@ -9,11 +9,6 @@ import XCTest
 @testable import VaultiOS
 
 final class SecureNotePreviewViewGeneratorTests: XCTestCase {
-    override func setUp() async throws {
-        try await super.setUp()
-//        isRecording = true
-    }
-
     @MainActor
     func test_init_hasNoSideEffects() {
         let factory = SecureNotePreviewViewFactoryMock()

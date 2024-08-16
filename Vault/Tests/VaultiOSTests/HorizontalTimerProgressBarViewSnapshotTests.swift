@@ -10,7 +10,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
             color: .blue
         ).frame(width: 150, height: 20)
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 
     func test_layout_halfFull() {
@@ -19,7 +19,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
             color: .blue
         ).frame(width: 150, height: 20)
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 
     func test_layout_full() {
@@ -28,7 +28,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
             color: .blue
         ).frame(width: 150, height: 20)
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 
     func test_layout_setsBackgroundColor() {
@@ -38,7 +38,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
             backgroundColor: .red
         ).frame(width: 150, height: 20)
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 
     func test_redactedPlaceholder_showsEmptyProgressBar() {
@@ -50,7 +50,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         .redacted(reason: .placeholder)
         .frame(width: 150, height: 20)
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 
     func test_redactedPrivacy_showsProgressStill() {
@@ -58,6 +58,6 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
             .redacted(reason: .privacy)
             .frame(width: 150, height: 20)
 
-        assertSnapshot(matching: view, as: .image)
+        assertSnapshot(of: view, as: .image)
     }
 }

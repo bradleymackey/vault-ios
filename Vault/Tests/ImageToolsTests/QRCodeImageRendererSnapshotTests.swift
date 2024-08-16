@@ -10,7 +10,7 @@ final class QRCodeImageRendererSnapshotTests: XCTestCase {
 
         let image = try XCTUnwrap(sut.makeImage(fromData: Data()))
 
-        assertSnapshot(matching: image, as: .image)
+        assertSnapshot(of: image, as: .image)
     }
 
     func test_makeImage_generatesWithSomeData() throws {
@@ -19,7 +19,7 @@ final class QRCodeImageRendererSnapshotTests: XCTestCase {
         let data = Data(repeating: 0xFF, count: 200)
         let image = try XCTUnwrap(sut.makeImage(fromData: data))
 
-        assertSnapshot(matching: image, as: .image)
+        assertSnapshot(of: image, as: .image)
     }
 }
 

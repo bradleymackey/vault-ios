@@ -34,12 +34,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.16.0"),
-        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.3.0"),
-        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.2"),
+        .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.4"),
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.4.1"),
+        .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.3"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
-        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.3.1"),
-        .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.4.1"),
+        .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.5.0"),
+        .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
     ],
     targets: [

@@ -5,11 +5,6 @@ import VaultBackup
 import XCTest
 
 final class VaultExportSnapshotTests: XCTestCase {
-    override func setUp() {
-        super.setUp()
-//        isRecording = true
-    }
-
     func test_makeDocument_createsExpectedContent() throws {
         let encryptedData = Data(repeating: 0x45, count: 10000)
         let authData = Data(repeating: 0x23, count: 200)

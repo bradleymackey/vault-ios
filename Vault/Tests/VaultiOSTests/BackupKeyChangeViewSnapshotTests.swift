@@ -7,10 +7,6 @@ import XCTest
 @testable import VaultiOS
 
 final class BackupKeyChangeViewSnapshotTests: XCTestCase {
-    override func setUp() {
-//        isRecording = true
-    }
-
     @MainActor
     func test_layout() async {
         let viewModel = BackupKeyChangeViewModel(
