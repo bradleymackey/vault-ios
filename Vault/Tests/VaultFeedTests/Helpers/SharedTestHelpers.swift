@@ -23,6 +23,10 @@ func anyVaultDataModel(
     VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
 }
 
+func anyBackupPassword() -> BackupPassword {
+    .init(key: .random(count: 32), salt: .random(count: 32), keyDervier: .testing)
+}
+
 // MARK: - VaultItem
 
 func anySecureNote(

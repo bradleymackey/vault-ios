@@ -13,6 +13,13 @@ public final class BackupCreatePDFViewModel {
         case loading
         case error(PresentationError)
         case success
+
+        public var isError: Bool {
+            switch self {
+            case .error: true
+            default: false
+            }
+        }
     }
 
     public enum Size: IdentifiableSelf {
