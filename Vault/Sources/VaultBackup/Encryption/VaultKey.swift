@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// A key used to encrypt or decrypt a vault.
 public struct VaultKey {

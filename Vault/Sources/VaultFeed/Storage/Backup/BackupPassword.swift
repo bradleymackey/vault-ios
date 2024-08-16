@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import VaultBackup
 
 public struct BackupPassword: Equatable, Hashable, Sendable {

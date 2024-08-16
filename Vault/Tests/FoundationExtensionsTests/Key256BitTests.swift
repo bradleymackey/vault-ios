@@ -1,6 +1,6 @@
 import Foundation
-import VaultBackup
 import XCTest
+@testable import FoundationExtensions
 
 final class Key256BitTests: XCTestCase {
     func test_init_invalidKeyLengthThrows() {
