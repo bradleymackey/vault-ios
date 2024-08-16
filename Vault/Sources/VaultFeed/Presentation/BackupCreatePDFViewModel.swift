@@ -13,6 +13,13 @@ public final class BackupCreatePDFViewModel {
         case loading
         case error(PresentationError)
         case success
+
+        public var isError: Bool {
+            switch self {
+            case .error: true
+            default: false
+            }
+        }
     }
 
     public enum Size: IdentifiableSelf {
@@ -25,18 +32,12 @@ public final class BackupCreatePDFViewModel {
 
         public var localizedTitle: String {
             switch self {
-            case .a3:
-                return "A3"
-            case .a4:
-                return "A4"
-            case .a5:
-                return "A5"
-            case .usLetter:
-                return "US Letter"
-            case .usLegal:
-                return "US Legal"
-            case .usTabloid:
-                return "US Tabloid"
+            case .a3: "A3"
+            case .a4: "A4"
+            case .a5: "A5"
+            case .usLetter: "US Letter"
+            case .usLegal: "US Legal"
+            case .usTabloid: "US Tabloid"
             }
         }
 
@@ -59,12 +60,12 @@ public final class BackupCreatePDFViewModel {
     public var userDescriptionEncrypted: String = "I should use the Vault app to import this backup."
     public var createdDocument: PDFDocument?
 
-    private let backupExporter: BackupExporter
+    private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
     private let clock: EpochClock
 
-    public init(backupExporter: BackupExporter, dataModel: VaultDataModel, clock: EpochClock) {
-        self.backupExporter = backupExporter
+    public init(backupPassword: BackupPassword, dataModel: VaultDataModel, clock: EpochClock) {
+        self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
     }
@@ -92,6 +93,7 @@ public final class BackupCreatePDFViewModel {
             authorName: authorName
         )
         let applicationPayload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
+        let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
         let encryptedVault = try backupExporter.createEncryptedBackup(payload: applicationPayload)
         let exportPayload = VaultExportPayload(
             encryptedVault: encryptedVault,

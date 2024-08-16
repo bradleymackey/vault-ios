@@ -11,12 +11,13 @@ struct BackupView: View {
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var viewModel = BackupViewModel()
     @State private var modal: Modal?
+    @State private var noPasswordAlert = false
 
     enum Modal: IdentifiableSelf {
         case updatePassword
         case exportPassword
         case importPassword
-        case pdfBackup
+        case pdfBackup(BackupPassword)
     }
 
     var body: some View {
@@ -25,20 +26,22 @@ struct BackupView: View {
             createPasswordSection
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
+        .alert("Backup Password Error", isPresented: $noPasswordAlert, actions: {
+            Button("Reload", role: .cancel) {
+                Task {
+                    await dataModel.loadBackupPassword()
+                }
+            }
+            Button("Cancel", role: .destructive) {}
+        }, message: {
+            Text("Unable to load your encryption key. Please try again.")
+        })
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
-            case .pdfBackup:
+            case let .pdfBackup(password):
                 NavigationStack {
-                    // FIXME: use the actual key
                     BackupCreatePDFView(viewModel: .init(
-                        backupExporter: .init(
-                            clock: clock,
-                            backupPassword: .init(
-                                key: Data.random(count: 32),
-                                salt: Data.random(count: 32),
-                                keyDervier: .fastV1
-                            )
-                        ),
+                        backupPassword: password,
                         dataModel: dataModel,
                         clock: clock
                     ))
@@ -69,7 +72,11 @@ struct BackupView: View {
     private var createExportSection: some View {
         Section {
             Button {
-                modal = .pdfBackup
+                if case let .fetched(password) = dataModel.backupPassword {
+                    modal = .pdfBackup(password)
+                } else {
+                    noPasswordAlert = true
+                }
             } label: {
                 FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
                     Text("Create PDF Backup")
