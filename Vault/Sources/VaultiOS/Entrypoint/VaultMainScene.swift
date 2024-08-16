@@ -15,10 +15,6 @@ public struct VaultMainScene: Scene {
     @State private var settingsViewModel = SettingsViewModel()
     @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
-    @State private var backupStore = BackupPasswordStoreImpl(
-        secureStorage: SecureStorageImpl(keychain: .default),
-        authenticationPolicy: .default
-    )
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
     @State private var vaultDataModel: VaultDataModel
 
@@ -47,9 +43,13 @@ public struct VaultMainScene: Scene {
         )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
+        let backupStore = BackupPasswordStoreImpl(
+            secureStorage: SecureStorageImpl(keychain: .default)
+        )
         let vaultDataModel = VaultDataModel(
             vaultStore: store,
             vaultTagStore: store,
+            backupPasswordStore: backupStore,
             itemCaches: [totp, hotp]
         )
 
@@ -93,7 +93,6 @@ public struct VaultMainScene: Scene {
                 ToastAlertMessageView.copiedToClipboard()
                     .padding(.top, 24)
             }
-            .environment(backupStore)
             .environment(pasteboard)
             .environment(clock)
             .environment(deviceAuthenticationService)

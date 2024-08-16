@@ -8,17 +8,11 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
         let store = BackupPasswordStoreMock()
-        _ = makeSUT(store: store)
+        let dataModel = anyVaultDataModel(backupPasswordStore: store)
+        _ = makeSUT(dataModel: dataModel)
 
         XCTAssertEqual(store.fetchPasswordCallCount, 0)
         XCTAssertEqual(store.setCallCount, 0)
-    }
-
-    @MainActor
-    func test_init_existingPasswordInitialStateIsLoading() {
-        let sut = makeSUT()
-
-        XCTAssertEqual(sut.existingPassword, .loading)
     }
 
     @MainActor
@@ -30,9 +24,8 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
     @MainActor
     func test_onAppear_permissonStateAllowedIfNoError() async {
-        let store = BackupPasswordStoreMock()
-        store.checkStorePermissionHandler = {}
-        let sut = makeSUT(store: store)
+        let authenticationService = DeviceAuthenticationService(policy: .alwaysAllow)
+        let sut = makeSUT(authenticationService: authenticationService)
 
         await sut.onAppear()
 
@@ -41,9 +34,8 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
     @MainActor
     func test_onAppear_permissionStateDeniedIfError() async {
-        let store = BackupPasswordStoreMock()
-        store.checkStorePermissionHandler = { throw anyNSError() }
-        let sut = makeSUT(store: store)
+        let authenticationService = DeviceAuthenticationService(policy: .alwaysDeny)
+        let sut = makeSUT(authenticationService: authenticationService)
 
         await sut.onAppear()
 
@@ -51,26 +43,16 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_loadExistingPassword_loadsKeyIfItExists() async {
+    func test_loadExistingPassword_callsLoadFromDataModel() async {
         let store = BackupPasswordStoreMock()
         let password = randomBackupPassword()
         store.fetchPasswordHandler = { password }
-        let sut = makeSUT(store: store)
+        let dataModel = anyVaultDataModel(backupPasswordStore: store)
+        let sut = makeSUT(dataModel: dataModel)
 
-        sut.loadExistingPassword()
+        await sut.loadExistingPassword()
 
-        XCTAssertEqual(sut.existingPassword, .hasExistingPassword(password))
-    }
-
-    @MainActor
-    func test_loadExistingPassword_doesNotLoadKeyIfItDoesNotExist() async {
-        let store = BackupPasswordStoreMock()
-        store.fetchPasswordHandler = { nil }
-        let sut = makeSUT(store: store)
-
-        sut.loadExistingPassword()
-
-        XCTAssertEqual(sut.existingPassword, .noExistingPassword)
+        XCTAssertEqual(store.fetchPasswordCallCount, 1)
     }
 
     @MainActor
@@ -125,23 +107,6 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
         XCTAssertEqual(sut.newlyEnteredPassword, "", "resets password")
         XCTAssertEqual(sut.newlyEnteredPasswordConfirm, "", "resets password")
     }
-
-    @MainActor
-    func test_saveEnteredPassword_successUpdatesExistingPassword() async {
-        let sut = makeSUT()
-
-        sut.newlyEnteredPassword = "hello"
-        sut.newlyEnteredPasswordConfirm = "hello"
-
-        await sut.saveEnteredPassword()
-
-        switch sut.existingPassword {
-        case let .hasExistingPassword(pw):
-            XCTAssertEqual(pw.salt.count, 48)
-        default:
-            XCTFail("Unexpected case")
-        }
-    }
 }
 
 // MARK: - Helpers
@@ -149,10 +114,20 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 extension BackupKeyChangeViewModelTests {
     @MainActor
     private func makeSUT(
-        store: BackupPasswordStoreMock = BackupPasswordStoreMock(),
+        dataModel: VaultDataModel = VaultDataModel(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        ),
+        authenticationService: DeviceAuthenticationService =
+            DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
         deriverFactory: any ApplicationKeyDeriverFactory = TestApplicationKeyDeriverFactory()
     ) -> BackupKeyChangeViewModel {
-        BackupKeyChangeViewModel(store: store, deriverFactory: deriverFactory)
+        BackupKeyChangeViewModel(
+            dataModel: dataModel,
+            authenticationService: authenticationService,
+            deriverFactory: deriverFactory
+        )
     }
 
     private func anyBackupPassword() -> BackupPassword {

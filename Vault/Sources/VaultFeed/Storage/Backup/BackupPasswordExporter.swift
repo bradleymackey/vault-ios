@@ -1,17 +1,18 @@
 import CryptoDocumentExporter
 import Foundation
 
-public final class BackupPasswordExporter {
-    private let store: any BackupPasswordStore
+public actor BackupPasswordExporter {
+    private let dataModel: VaultDataModel
 
-    public init(store: any BackupPasswordStore) {
-        self.store = store
+    public init(dataModel: VaultDataModel) {
+        self.dataModel = dataModel
     }
 
     public struct NoPasswordError: Error {}
 
-    public func makeExport() throws -> Data {
-        guard let password = try store.fetchPassword() else {
+    public func makeExport() async throws -> Data {
+        await dataModel.loadBackupPassword()
+        guard case let .fetched(password) = await dataModel.backupPassword else {
             throw NoPasswordError()
         }
         let backupExport = BackupPasswordExport.createV1Export(

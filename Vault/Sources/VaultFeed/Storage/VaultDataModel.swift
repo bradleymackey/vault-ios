@@ -3,9 +3,9 @@ import FoundationExtensions
 
 /// Provides access to the vault data layer for the UI layer.
 ///
-/// Uses an underlying store and provides observations to the underlying data when it changes.
+/// Uses the underlying data stores and provides observations to the underlying data when it changes.
 /// This should be the primary way to interact with the vault data layer (and its underlying stores),
-/// to ensure that we have a consistent view of the available data!
+/// to ensure that we have a consistent view of the available data at all times, regardless of the view.
 ///
 /// This is isolated to the main actor for the purposes of UI interop.
 @MainActor
@@ -52,12 +52,39 @@ public final class VaultDataModel: Sendable {
     public private(set) var allTagsState: State = .base
     public private(set) var allTagsRetrievalError: PresentationError?
 
+    // MARK: - Backup Password
+
+    public enum BackupPasswordState: Sendable, Equatable {
+        case notFetched
+        case notCreated
+        case fetched(BackupPassword)
+        case error(PresentationError)
+
+        public var isError: Bool {
+            switch self {
+            case .error: true
+            default: false
+            }
+        }
+    }
+
+    public private(set) var backupPassword: BackupPasswordState = .notFetched
+
+    // MARK: - Init
+
     private let vaultStore: any VaultStore
     private let vaultTagStore: any VaultTagStore
+    private let backupPasswordStore: any BackupPasswordStore
 
-    public init(vaultStore: any VaultStore, vaultTagStore: any VaultTagStore, itemCaches: [any VaultItemCache] = []) {
+    public init(
+        vaultStore: any VaultStore,
+        vaultTagStore: any VaultTagStore,
+        backupPasswordStore: any BackupPasswordStore,
+        itemCaches: [any VaultItemCache] = []
+    ) {
         self.vaultStore = vaultStore
         self.vaultTagStore = vaultTagStore
+        self.backupPasswordStore = backupPasswordStore
         self.itemCaches = itemCaches
     }
 }
@@ -81,6 +108,37 @@ extension VaultDataModel {
         } else {
             itemsFilteringByTags.insert(tag)
         }
+    }
+
+    public func appEnteredBackground() {
+        backupPassword = .notFetched
+    }
+}
+
+// MARK: - Backup Password
+
+extension VaultDataModel {
+    public func loadBackupPassword() async {
+        do {
+            if case .fetched = backupPassword { return }
+            let password = try backupPasswordStore.fetchPassword()
+            if let password {
+                backupPassword = .fetched(password)
+            } else {
+                backupPassword = .notCreated
+            }
+        } catch {
+            backupPassword = .error(PresentationError(
+                userTitle: "Encryption Key Error",
+                userDescription: "Unable to load encryption key from storage",
+                debugDescription: error.localizedDescription
+            ))
+        }
+    }
+
+    public func store(backupPassword: BackupPassword) throws {
+        try backupPasswordStore.set(password: backupPassword)
+        self.backupPassword = .fetched(backupPassword)
     }
 }
 

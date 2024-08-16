@@ -6,6 +6,15 @@ import VaultFeed
 import VaultiOS
 import VaultSettings
 
+@MainActor
+func anyVaultDataModel(
+    vaultStore: any VaultStore = VaultStoreStub(),
+    vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
+    backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock()
+) -> VaultDataModel {
+    VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
+}
+
 extension VaultItemPreviewViewGeneratorMock {
     static func defaultMock() -> VaultItemPreviewViewGeneratorMock {
         mockGenerating {

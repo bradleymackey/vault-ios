@@ -6,15 +6,11 @@ import VaultFeed
 
 @MainActor
 struct BackupView: View {
-    @Environment(BackupPasswordStoreImpl.self) var backupStore
     @Environment(EpochClock.self) var clock
     @Environment(VaultDataModel.self) var dataModel
-    @State private var viewModel: BackupViewModel
+    @Environment(DeviceAuthenticationService.self) var authenticationService
+    @State private var viewModel = BackupViewModel()
     @State private var modal: Modal?
-
-    init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(store: store))
-    }
 
     enum Modal: IdentifiableSelf {
         case updatePassword
@@ -50,25 +46,23 @@ struct BackupView: View {
             case .updatePassword:
                 NavigationStack {
                     BackupKeyChangeView(viewModel: .init(
-                        store: backupStore,
+                        dataModel: dataModel,
+                        authenticationService: authenticationService,
                         deriverFactory: ApplicationKeyDeriverFactoryImpl()
                     ))
                 }
             case .exportPassword:
                 NavigationStack {
-                    BackupKeyExportView(store: backupStore)
+                    BackupKeyExportView(viewModel: .init(exporter: .init(dataModel: dataModel)))
                 }
             case .importPassword:
                 NavigationStack {
-                    BackupKeyImportView(store: backupStore)
+                    BackupKeyImportView(viewModel: .init(dataModel: dataModel))
                 }
             }
         }
         .task {
-            viewModel.fetchContent()
-        }
-        .onDisappear {
-            viewModel.onDisappear()
+            await dataModel.loadBackupPassword()
         }
     }
 
@@ -88,17 +82,17 @@ struct BackupView: View {
 
     private var createPasswordSection: some View {
         Section {
-            switch viewModel.passwordState {
-            case .loading:
+            switch dataModel.backupPassword {
+            case .notFetched:
                 PlaceholderView(systemIcon: "lock.fill", title: viewModel.strings.backupPasswordLoadingTitle)
                     .foregroundStyle(.secondary)
                     .padding()
                     .containerRelativeFrame(.horizontal)
-            case .hasExistingPassword:
+            case .fetched:
                 updateButton
                 exportButton
                 importButton
-            case .noExistingPassword:
+            case .notCreated:
                 createButton
                 importButton
             case .error:

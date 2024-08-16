@@ -18,9 +18,9 @@ public final class BackupKeyExportViewModel {
         self.exporter = exporter
     }
 
-    public func createExport() {
+    public func createExport() async {
         do {
-            let exportData = try exporter.makeExport()
+            let exportData = try await exporter.makeExport()
             exportState = .exported(exportData)
         } catch {
             exportState = .error(error)

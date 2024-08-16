@@ -1,22 +1,11 @@
 import CryptoEngine
 import Foundation
 
-@Observable
 public final class BackupPasswordStoreImpl: BackupPasswordStore {
     private let secureStorage: any SecureStorage
-    private let authenticationPolicy: any DeviceAuthenticationPolicy
 
-    public init(secureStorage: any SecureStorage, authenticationPolicy: any DeviceAuthenticationPolicy) {
+    public init(secureStorage: any SecureStorage) {
         self.secureStorage = secureStorage
-        self.authenticationPolicy = authenticationPolicy
-    }
-
-    public func checkStorePermission() async throws {
-        let result = try await authenticationPolicy
-            .authenticate(reason: "Validate access to the backup password store.")
-        guard result else {
-            throw DeviceAuthenticationFailure.authenticationFailure
-        }
     }
 
     public func fetchPassword() throws -> BackupPassword? {

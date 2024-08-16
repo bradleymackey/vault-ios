@@ -13,8 +13,11 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_layout() async {
-        let store = BackupPasswordStoreMock()
-        let viewModel = BackupKeyChangeViewModel(store: store, deriverFactory: ApplicationKeyDeriverFactoryImpl())
+        let viewModel = BackupKeyChangeViewModel(
+            dataModel: anyVaultDataModel(),
+            authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
+            deriverFactory: ApplicationKeyDeriverFactoryImpl()
+        )
         let sut = BackupKeyChangeView(viewModel: viewModel)
 
         await snapshotScenarios(view: sut)
@@ -22,8 +25,11 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_layoutAuthenticated() async {
-        let store = BackupPasswordStoreMock()
-        let viewModel = BackupKeyChangeViewModel(store: store, deriverFactory: ApplicationKeyDeriverFactoryImpl())
+        let viewModel = BackupKeyChangeViewModel(
+            dataModel: anyVaultDataModel(),
+            authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
+            deriverFactory: ApplicationKeyDeriverFactoryImpl()
+        )
         viewModel.permissionState = .allowed
         let sut = BackupKeyChangeView(viewModel: viewModel)
 

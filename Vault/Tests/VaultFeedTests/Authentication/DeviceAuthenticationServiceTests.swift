@@ -163,6 +163,44 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
         XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
     }
+
+    @MainActor
+    func test_validateAuthentication_doesNotThrowIfValid() async throws {
+        let policy = DeviceAuthenticationPolicyMock(
+            canAuthenicateWithPasscode: true,
+            canAuthenticateWithBiometrics: true
+        )
+        policy.authenticateWithBiometricsHandler = { _ in true }
+        let sut = makeSUT(policy: policy)
+
+        try await sut.validateAuthentication(reason: "reason")
+        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
+        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+    }
+
+    @MainActor
+    func test_validateAuthentication_throwsForNotAuthenticated() async throws {
+        let policy = DeviceAuthenticationPolicyMock(
+            canAuthenicateWithPasscode: true,
+            canAuthenticateWithBiometrics: true
+        )
+        policy.authenticateWithBiometricsHandler = { _ in false }
+        let sut = makeSUT(policy: policy)
+
+        await XCTAssertThrowsError(try await sut.validateAuthentication(reason: "reason"))
+    }
+
+    @MainActor
+    func test_validateAuthentication_throwsForInternalError() async throws {
+        let policy = DeviceAuthenticationPolicyMock(
+            canAuthenicateWithPasscode: true,
+            canAuthenticateWithBiometrics: true
+        )
+        policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
+        let sut = makeSUT(policy: policy)
+
+        await XCTAssertThrowsError(try await sut.validateAuthentication(reason: "reason"))
+    }
 }
 
 // MARK: - Helpers

@@ -25,6 +25,7 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertNil(sut.itemsRetrievalError)
         XCTAssertEqual(sut.allTags, [])
         XCTAssertEqual(sut.allTagsState, .base)
+        XCTAssertEqual(sut.backupPassword, .notFetched)
         XCTAssertNil(sut.allTagsRetrievalError)
     }
 
@@ -281,6 +282,69 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertEqual(store.calledMethods, [.export])
         XCTAssertEqual(tagStore.calledMethods, [])
     }
+
+    @MainActor
+    func test_loadBackupPassword_setsFetchedFromStore() async throws {
+        let store = BackupPasswordStoreMock()
+        let password = BackupPassword(key: Data(), salt: Data(), keyDervier: .testing)
+        store.fetchPasswordHandler = { password }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        await sut.loadBackupPassword()
+
+        XCTAssertEqual(sut.backupPassword, .fetched(password))
+        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+    }
+
+    @MainActor
+    func test_loadBackupPassword_setsNotCreatedIfNotInStore() async throws {
+        let store = BackupPasswordStoreMock()
+        store.fetchPasswordHandler = { nil }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        await sut.loadBackupPassword()
+
+        XCTAssertEqual(sut.backupPassword, .notCreated)
+        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+    }
+
+    @MainActor
+    func test_loadBackupPassword_setsErrorIfStoreError() async throws {
+        let store = BackupPasswordStoreMock()
+        store.fetchPasswordHandler = { throw TestError() }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        await sut.loadBackupPassword()
+
+        XCTAssertTrue(sut.backupPassword.isError)
+        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+    }
+
+    @MainActor
+    func test_storeBackupPassword_setsInStoreAndUpdatesEntry() async throws {
+        let store = BackupPasswordStoreMock()
+        store.setHandler = { _ in }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        let password = BackupPassword(key: Data.random(count: 32), salt: Data(), keyDervier: .testing)
+        try sut.store(backupPassword: password)
+
+        XCTAssertEqual(sut.backupPassword, .fetched(password))
+        XCTAssertEqual(store.setCallCount, 1)
+    }
+
+    @MainActor
+    func test_storeBackupPassword_errorDoesNotUpdateEntry() async throws {
+        let store = BackupPasswordStoreMock()
+        store.setHandler = { _ in throw TestError() }
+        let sut = makeSUT(backupPasswordStore: store)
+
+        let password = BackupPassword(key: Data.random(count: 32), salt: Data(), keyDervier: .testing)
+        await XCTAssertThrowsError(try await sut.store(backupPassword: password))
+
+        XCTAssertEqual(sut.backupPassword, .notFetched) // still initial value
+        XCTAssertEqual(store.setCallCount, 1)
+    }
 }
 
 // MARK: - Helpers
@@ -290,8 +354,14 @@ extension VaultDataModelTests {
     private func makeSUT(
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
+        backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         itemCaches: [any VaultItemCache] = []
     ) -> VaultDataModel {
-        VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, itemCaches: itemCaches)
+        VaultDataModel(
+            vaultStore: vaultStore,
+            vaultTagStore: vaultTagStore,
+            backupPasswordStore: backupPasswordStore,
+            itemCaches: itemCaches
+        )
     }
 }

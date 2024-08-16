@@ -8,8 +8,8 @@ struct BackupKeyExportView: View {
     @State private var viewModel: BackupKeyExportViewModel
     @Environment(\.dismiss) private var dismiss
 
-    init(store: any BackupPasswordStore) {
-        _viewModel = .init(initialValue: .init(exporter: .init(store: store)))
+    init(viewModel: BackupKeyExportViewModel) {
+        _viewModel = State(wrappedValue: viewModel)
     }
 
     var body: some View {
@@ -55,7 +55,9 @@ struct BackupKeyExportView: View {
 
     private var exportButton: some View {
         Button {
-            viewModel.createExport()
+            Task {
+                await viewModel.createExport()
+            }
         } label: {
             Text("Show Private Key")
         }

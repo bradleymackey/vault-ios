@@ -11,14 +11,6 @@ public final class BackupKeyChangeViewModel {
         case denied
     }
 
-    public enum ExistingPasswordState: Equatable, Hashable {
-        case loading
-        case authenticationFailed
-        case hasExistingPassword(BackupPassword)
-        case noExistingPassword
-        case errorFetching
-    }
-
     public enum NewPasswordState: Equatable, Hashable {
         case initial
         case creating
@@ -38,13 +30,18 @@ public final class BackupKeyChangeViewModel {
     public var newlyEnteredPassword = ""
     public var newlyEnteredPasswordConfirm = ""
     public internal(set) var permissionState: PermissionState = .loading
-    public private(set) var existingPassword: ExistingPasswordState = .loading
     public private(set) var newPassword: NewPasswordState = .initial
     private let encryptionKeyDeriver: ApplicationKeyDeriver
-    private let store: any BackupPasswordStore
+    private let authenticationService: DeviceAuthenticationService
+    private let dataModel: VaultDataModel
 
-    public init(store: any BackupPasswordStore, deriverFactory: some ApplicationKeyDeriverFactory) {
-        self.store = store
+    public init(
+        dataModel: VaultDataModel,
+        authenticationService: DeviceAuthenticationService,
+        deriverFactory: some ApplicationKeyDeriverFactory
+    ) {
+        self.authenticationService = authenticationService
+        self.dataModel = dataModel
         encryptionKeyDeriver = deriverFactory.makeApplicationKeyDeriver()
     }
 
@@ -63,7 +60,8 @@ public final class BackupKeyChangeViewModel {
 
     public func onAppear() async {
         do {
-            try await store.checkStorePermission()
+            try await authenticationService
+                .validateAuthentication(reason: "Authenticate to change the backup password.")
             permissionState = .allowed
         } catch {
             permissionState = .denied
@@ -84,9 +82,8 @@ public final class BackupKeyChangeViewModel {
 
             newPassword = .creating
             let createdBackupPassword = try await computeNewKey(password: newlyEnteredPassword)
-            try store.set(password: createdBackupPassword)
+            try dataModel.store(backupPassword: createdBackupPassword)
             newPassword = .success
-            existingPassword = .hasExistingPassword(createdBackupPassword)
             newlyEnteredPassword = ""
             newlyEnteredPasswordConfirm = ""
         } catch is PasswordConfirmError {
@@ -98,18 +95,8 @@ public final class BackupKeyChangeViewModel {
         }
     }
 
-    public func loadExistingPassword() {
-        do {
-            if let password = try store.fetchPassword() {
-                existingPassword = .hasExistingPassword(password)
-            } else {
-                existingPassword = .noExistingPassword
-            }
-        } catch is DeviceAuthenticationFailure {
-            existingPassword = .authenticationFailed
-        } catch {
-            existingPassword = .errorFetching
-        }
+    public func loadExistingPassword() async {
+        await dataModel.loadBackupPassword()
     }
 
     private nonisolated func computeNewKey(password: String) async throws -> BackupPassword {
