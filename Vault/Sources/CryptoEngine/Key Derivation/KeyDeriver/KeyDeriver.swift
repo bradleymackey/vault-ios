@@ -1,11 +1,13 @@
 import Foundation
+import FoundationExtensions
 
 /// Can derive a key, for example a KDF such as *scrypt*.
 ///
 /// https://en.wikipedia.org/wiki/Key_derivation_function
 ///
-/// @mockable
-public protocol KeyDeriver: Sendable {
-    func key(password: Data, salt: Data) throws -> Data
+/// @mockable(typealias: Length = Bits256)
+public protocol KeyDeriver<Length>: Sendable {
+    associatedtype Length: KeyLength
+    func key(password: Data, salt: Data) throws -> KeyData<Length>
     var uniqueAlgorithmIdentifier: String { get }
 }

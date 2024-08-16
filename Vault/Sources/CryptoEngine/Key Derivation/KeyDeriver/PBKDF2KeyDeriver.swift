@@ -1,27 +1,29 @@
 import Foundation
+import FoundationExtensions
 internal import CryptoSwift
 
-public struct PBKDF2KeyDeriver: KeyDeriver {
+public struct PBKDF2KeyDeriver<Length: KeyLength>: KeyDeriver {
     public let parameters: Parameters
 
     init(parameters: Parameters) {
         self.parameters = parameters
     }
 
-    public func key(password: Data, salt: Data) throws -> Data {
+    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         let engine = try PKCS5.PBKDF2(
             password: password.bytes,
             salt: salt.bytes,
             iterations: parameters.iterations,
-            keyLength: parameters.keyLength,
+            keyLength: Length.bytes,
             variant: parameters.variant.hmacVariant
         )
-        return try Data(engine.calculate())
+        let data = try Data(engine.calculate())
+        return try KeyData(data: data)
     }
 
     public var uniqueAlgorithmIdentifier: String {
         let parameters = [
-            "keyLength=\(parameters.keyLength)",
+            "keyLength=\(Length.bytes)",
             "iterations=\(parameters.iterations)",
             "variant=\(parameters.variant)",
         ]
@@ -38,12 +40,10 @@ extension PBKDF2KeyDeriver {
             case sha384
         }
 
-        public var keyLength: Int
         public var iterations: Int
         public var variant: Variant
 
-        public init(keyLength: Int, iterations: Int, variant: Variant) {
-            self.keyLength = keyLength
+        public init(iterations: Int, variant: Variant) {
             self.iterations = iterations
             self.variant = variant
         }

@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 /// A `KeyDeriver` that can actually be used for vault encryption.
 ///
@@ -8,21 +9,21 @@ import Foundation
 /// Things should only be made into an `ApplicationKeyDeriver` if they are deemed
 /// to be good enough for encryption. This helps to prevent accidental errors like
 /// using some random `KeyDeriver` at the application level.
-public struct ApplicationKeyDeriver: KeyDeriver {
+public struct ApplicationKeyDeriver<Length: KeyLength>: KeyDeriver {
     /// The resilient signature that identifies this key deriver.
     ///
     /// Using the signature, this allows us to lookup the algorithm that was used
     /// during the key generation.
     public let signature: Signature
 
-    private let deriver: any KeyDeriver
+    private let deriver: any KeyDeriver<Length>
 
-    public init(deriver: any KeyDeriver, signature: Signature) {
+    public init(deriver: any KeyDeriver<Length>, signature: Signature) {
         self.deriver = deriver
         self.signature = signature
     }
 
-    public func key(password: Data, salt: Data) throws -> Data {
+    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         try deriver.key(password: password, salt: salt)
     }
 

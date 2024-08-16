@@ -1,10 +1,11 @@
 internal import CryptoSwift
 import Foundation
+import FoundationExtensions
 
 /// Derives keys using the *scrypt* algorithm.
 ///
 /// https://en.wikipedia.org/wiki/Scrypt
-public struct ScryptKeyDeriver: KeyDeriver {
+public struct ScryptKeyDeriver<Length: KeyLength>: KeyDeriver {
     public let parameters: Parameters
 
     public init(parameters: Parameters) {
@@ -15,21 +16,22 @@ public struct ScryptKeyDeriver: KeyDeriver {
     ///
     /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
     /// current thread.
-    public func key(password: Data, salt: Data) throws -> Data {
+    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         let engine = try Scrypt(
             password: password.bytes,
             salt: salt.bytes,
-            dkLen: parameters.keyLength,
+            dkLen: Length.bytes,
             N: parameters.costFactor,
             r: parameters.blockSizeFactor,
             p: parameters.parallelizationFactor
         )
-        return try Data(engine.calculate())
+        let data = try Data(engine.calculate())
+        return try KeyData(data: data)
     }
 
     public var uniqueAlgorithmIdentifier: String {
         let parameters = [
-            "keyLength=\(parameters.keyLength)",
+            "keyLength=\(Length.bytes)",
             "costFactor=\(parameters.costFactor)",
             "blockSizeFactor=\(parameters.blockSizeFactor)",
             "parallelizationFactor=\(parameters.parallelizationFactor)",
@@ -43,11 +45,6 @@ public struct ScryptKeyDeriver: KeyDeriver {
 
 extension ScryptKeyDeriver {
     public struct Parameters: Sendable {
-        /// **dkLen**
-        ///
-        /// Desired key length in bytes (Intended output length in octets of the derived key; a positive integer
-        /// satisfying dkLen ≤ (232− 1) * hLen.)
-        public var keyLength: Int
         /// **N**
         ///
         /// CPU/memory cost parameter – Must be a power of 2 (e.g. 1024)
@@ -61,8 +58,7 @@ extension ScryptKeyDeriver {
         /// Parallelization parameter. (1 .. 232-1 * hLen/MFlen)
         public var parallelizationFactor: Int
 
-        public init(keyLength: Int, costFactor: Int, blockSizeFactor: Int, parallelizationFactor: Int) {
-            self.keyLength = keyLength
+        public init(costFactor: Int, blockSizeFactor: Int, parallelizationFactor: Int) {
             self.costFactor = costFactor
             self.blockSizeFactor = blockSizeFactor
             self.parallelizationFactor = parallelizationFactor

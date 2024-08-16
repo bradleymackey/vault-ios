@@ -24,7 +24,7 @@ func anyVaultDataModel(
 }
 
 func anyBackupPassword() -> BackupPassword {
-    .init(key: .random(count: 32), salt: .random(count: 32), keyDervier: .testing)
+    .init(key: .random(), salt: .random(count: 32), keyDervier: .testing)
 }
 
 // MARK: - VaultItem

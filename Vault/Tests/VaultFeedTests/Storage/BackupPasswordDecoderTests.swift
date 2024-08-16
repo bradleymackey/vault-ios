@@ -9,10 +9,27 @@ final class BackupPasswordDecoderTests: XCTestCase {
 
         let str = """
         {
-          "KEY" : "aGhoaGhoaGhoaA==",
+          "KEY" : "aGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGg=",
           "KEY_DERIVER" : "vault.keygen.default.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "0.0.0"
+        }
+        """
+        let data = Data(str.utf8)
+
+        XCTAssertThrowsError(try sut.decode(data: data))
+        XCTAssertThrowsError(try sut.decode(qrCode: str))
+    }
+
+    func test_decode_throwsErrorIfKeyLengthIncorrect() {
+        let sut = makeSUT()
+
+        let str = """
+        {
+          "KEY" : "aGhoaGhoaGhoaA==",
+          "KEY_DERIVER" : "vault.keygen.default.testing",
+          "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
+          "VERSION" : "1.0.0"
         }
         """
         let data = Data(str.utf8)
@@ -26,7 +43,7 @@ final class BackupPasswordDecoderTests: XCTestCase {
 
         let str = """
         {
-          "KEY" : "aGhoaGhoaGhoaA==",
+          "KEY" : "aGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGg=",
           "KEY_DERIVER" : "vault.keygen.default.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "1.0.0"
@@ -36,9 +53,9 @@ final class BackupPasswordDecoderTests: XCTestCase {
         let resultData = try sut.decode(data: data)
         let resultQR = try sut.decode(qrCode: str)
 
-        XCTAssertEqual(resultData.key, Data(repeating: 0x68, count: 10))
+        XCTAssertEqual(resultData.key, .repeating(byte: 0x68))
         XCTAssertEqual(resultData.salt, Data(repeating: 0x69, count: 20))
-        XCTAssertEqual(resultQR.key, Data(repeating: 0x68, count: 10))
+        XCTAssertEqual(resultQR.key, .repeating(byte: 0x68))
         XCTAssertEqual(resultQR.salt, Data(repeating: 0x69, count: 20))
     }
 }

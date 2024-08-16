@@ -15,9 +15,8 @@ final class BackupPasswordExporterTests: XCTestCase {
 
     @MainActor
     func test_makeExport_encodesFromStore() async throws {
-        let keyData = Data(repeating: 0x68, count: 10)
         let saltData = Data(repeating: 0x69, count: 20)
-        let examplePassword = BackupPassword(key: keyData, salt: saltData, keyDervier: .testing)
+        let examplePassword = BackupPassword(key: .repeating(byte: 0x68), salt: saltData, keyDervier: .testing)
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = {
             examplePassword
@@ -30,7 +29,7 @@ final class BackupPasswordExporterTests: XCTestCase {
 
         XCTAssertEqual(str, """
         {
-          "KEY" : "aGhoaGhoaGhoaA==",
+          "KEY" : "aGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGg=",
           "KEY_DERIVER" : "vault.keygen.default.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "1.0.0"
