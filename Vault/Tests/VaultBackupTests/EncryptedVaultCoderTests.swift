@@ -58,7 +58,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
     func test_encodeShard_encodesToExpectedFormat() throws {
         let shard = DataShard(
             group: .init(
-                id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+                id: 0,
                 number: 1,
                 totalNumber: 2
             ),
@@ -72,11 +72,11 @@ final class EncryptedVaultCoderTests: XCTestCase {
             String(data: result, encoding: .utf8),
             """
             {
-              "DATA" : "ZGF0YQ==",
-              "GROUP" : {
-                "ID" : "00000000-0000-0000-0000-000000000000",
-                "NUM" : 1,
-                "TOT_NUM" : 2
+              "D" : "ZGF0YQ==",
+              "G" : {
+                "I" : 1,
+                "ID" : 0,
+                "N" : 2
               }
             }
             """
@@ -85,7 +85,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
     func test_decodeShard_decodesFromExpectedFormat() {
         let shardData = Data("""
-        {"DATA":"ZGF0YQ==","GROUP":{"ID":"00000000-0000-0000-0000-000000000000","NUM":1,"TOT_NUM":2}}
+        {"D":"ZGF0YQ==","G":{"ID":0,"I":1,"N":2}}
         """.utf8)
         let sut = EncryptedVaultCoder()
 
@@ -93,7 +93,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
         XCTAssertEqual(result, DataShard(
             group: .init(
-                id: UUID(uuidString: "00000000-0000-0000-0000-000000000000")!,
+                id: 0,
                 number: 1,
                 totalNumber: 2
             ),

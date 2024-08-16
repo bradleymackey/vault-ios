@@ -44,7 +44,7 @@ public struct VaultBackupPDFGenerator {
     private var dataShardBuilder: DataShardBuilder {
         #if DEBUG
         // Use a deterministic group ID in debug builds for deterministic test results.
-        return DataShardBuilder(groupIDGenerator: { UUID(uuidString: "00000000-0000-0000-0000-000000000000")! })
+        return DataShardBuilder(groupIDGenerator: { 0 })
         #else
         return DataShardBuilder()
         #endif
