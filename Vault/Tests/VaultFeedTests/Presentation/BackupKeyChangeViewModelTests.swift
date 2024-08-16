@@ -20,7 +20,7 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     func test_init_initialPermissionStateLoading() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.permissionState, .loading)
+        XCTAssertEqual(sut.permissionState, .undetermined)
     }
 
     @MainActor
