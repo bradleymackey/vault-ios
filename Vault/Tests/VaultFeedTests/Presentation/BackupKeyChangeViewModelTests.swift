@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import XCTest
 @testable import VaultFeed
@@ -131,17 +132,17 @@ extension BackupKeyChangeViewModelTests {
     }
 
     private func anyBackupPassword() -> BackupPassword {
-        BackupPassword(key: Data(repeating: 0x45, count: 10), salt: Data(), keyDervier: .testing)
+        BackupPassword(key: .repeating(byte: 0x45), salt: Data(), keyDervier: .testing)
     }
 
     private func randomBackupPassword() -> BackupPassword {
-        BackupPassword(key: Data.random(count: 10), salt: Data(), keyDervier: .testing)
+        BackupPassword(key: .random(), salt: Data(), keyDervier: .testing)
     }
 
     private struct KeyDeriverErroring: KeyDeriver {
         var uniqueAlgorithmIdentifier: String { "err" }
 
-        func key(password _: Data, salt _: Data) throws -> Data {
+        func key(password _: Data, salt _: Data) throws -> KeyData<Bits256> {
             struct Err: Error {}
             throw Err()
         }

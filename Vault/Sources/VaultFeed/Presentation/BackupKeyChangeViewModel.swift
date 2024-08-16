@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import VaultBackup
 
 @MainActor
@@ -31,7 +32,7 @@ public final class BackupKeyChangeViewModel {
     public var newlyEnteredPasswordConfirm = ""
     public internal(set) var permissionState: PermissionState = .loading
     public private(set) var newPassword: NewPasswordState = .initial
-    private let encryptionKeyDeriver: ApplicationKeyDeriver
+    private let encryptionKeyDeriver: ApplicationKeyDeriver<Bits256>
     private let authenticationService: DeviceAuthenticationService
     private let dataModel: VaultDataModel
 
@@ -54,7 +55,7 @@ public final class BackupKeyChangeViewModel {
             .isNotEmpty
     }
 
-    public var encryptionKeyDeriverSignature: ApplicationKeyDeriver.Signature {
+    public var encryptionKeyDeriverSignature: ApplicationKeyDeriver<Bits256>.Signature {
         encryptionKeyDeriver.signature
     }
 

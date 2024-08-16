@@ -1,10 +1,11 @@
 import Foundation
+import FoundationExtensions
 import VaultCore
 
 public final class VaultBackupDecoder {
-    private let key: Data
+    private let key: KeyData<Bits256>
 
-    public init(key: Data) {
+    public init(key: KeyData<Bits256>) {
         self.key = key
     }
 
@@ -17,7 +18,7 @@ public final class VaultBackupDecoder {
         guard encryptedVault.version.isCompatible(with: "1.0.0") else {
             throw DecodingError.incompatibleVersion
         }
-        let encodedVault = try VaultDecryptor(key: key).decrypt(encryptedVault: encryptedVault)
+        let encodedVault = try VaultDecryptor(key: key.data).decrypt(encryptedVault: encryptedVault)
         let backupPayload = try IntermediateEncodedVaultDecoder().decode(encodedVault: encodedVault)
         return backupPayload
     }

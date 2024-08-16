@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 
 public final class BackupPasswordStoreImpl: BackupPasswordStore {
     private let secureStorage: any SecureStorage
@@ -40,9 +41,9 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
 extension BackupPasswordStoreImpl {
     /// Codable container that is stored in the keychain.
     private struct BackupPasswordContainer: Codable {
-        var key: Data
+        var key: KeyData<Bits256>
         var salt: Data
-        var keyDervier: ApplicationKeyDeriver.Signature
+        var keyDervier: ApplicationKeyDeriver<Bits256>.Signature
 
         init(password: BackupPassword) {
             key = password.key

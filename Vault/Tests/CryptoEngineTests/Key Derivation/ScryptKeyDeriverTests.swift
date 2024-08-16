@@ -1,12 +1,12 @@
 import CryptoEngine
 import CryptoSwift
+import FoundationExtensions
 import TestHelpers
 import XCTest
 
 final class ScryptKeyDeriverTests: XCTestCase {
     func test_key_doesNotThrowForValidParameters() async {
-        let params = ScryptKeyDeriver.Parameters(
-            keyLength: 32,
+        let params = ScryptKeyDeriver<Bits64>.Parameters(
             costFactor: 1 << 4,
             blockSizeFactor: 2,
             parallelizationFactor: 1
@@ -17,13 +17,12 @@ final class ScryptKeyDeriverTests: XCTestCase {
     }
 
     func test_key_throwsForInvalidParameters() async {
-        let params = ScryptKeyDeriver.Parameters(
-            keyLength: 32,
+        let params = ScryptKeyDeriver<Bits64>.Parameters(
             costFactor: 16385,
             blockSizeFactor: 8,
             parallelizationFactor: 1
         )
-        let sut = ScryptKeyDeriver(parameters: params)
+        let sut = ScryptKeyDeriver<Bits64>(parameters: params)
 
         await XCTAssertThrowsError(try sut.key(password: anyData(), salt: anyData()))
     }
@@ -40,7 +39,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         let sut = makeSUT(parameters: .fastForTesting)
 
         let key = try sut.key(password: password, salt: salt)
-        XCTAssertEqual(key, Data(hex: "14a1ba9b9236df39"))
+        XCTAssertEqual(key.data, Data(hex: "14a1ba9b9236df39"))
     }
 
     func test_key_generatesValidKeyWithEmptyPassword() async throws {
@@ -49,7 +48,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         let sut = makeSUT(parameters: .fastForTesting)
 
         let key = try sut.key(password: password, salt: salt)
-        XCTAssertEqual(key, Data(hex: "fa09cf2f564fb137"))
+        XCTAssertEqual(key.data, Data(hex: "fa09cf2f564fb137"))
     }
 
     func test_key_generatesTheSameKeyMultipleTimes() async throws {
@@ -57,7 +56,7 @@ final class ScryptKeyDeriverTests: XCTestCase {
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
 
-        let expected = Data(hex: "fa09cf2f564fb137")
+        let expected = try KeyData<Bits64>(data: Data(hex: "fa09cf2f564fb137"))
         let keys = try [
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),
@@ -68,7 +67,6 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
     func test_uniqueAlgorithmIdentifier_matchesParameters() {
         let sut = makeSUT(parameters: .init(
-            keyLength: 123,
             costFactor: 998,
             blockSizeFactor: 432,
             parallelizationFactor: 555
@@ -76,13 +74,16 @@ final class ScryptKeyDeriverTests: XCTestCase {
 
         XCTAssertEqual(
             sut.uniqueAlgorithmIdentifier,
-            "SCRYPT<keyLength=123;costFactor=998;blockSizeFactor=432;parallelizationFactor=555>"
+            "SCRYPT<keyLength=8;costFactor=998;blockSizeFactor=432;parallelizationFactor=555>"
         )
     }
 
     // MARK: - Helpers
 
-    private func makeSUT(parameters: ScryptKeyDeriver.Parameters = .fastForTesting) -> ScryptKeyDeriver {
+    private func makeSUT(
+        parameters: ScryptKeyDeriver<Bits64>
+            .Parameters = .fastForTesting
+    ) -> ScryptKeyDeriver<Bits64> {
         ScryptKeyDeriver(parameters: parameters)
     }
 }
@@ -90,7 +91,6 @@ final class ScryptKeyDeriverTests: XCTestCase {
 extension ScryptKeyDeriver.Parameters {
     static var fastForTesting: Self {
         .init(
-            keyLength: 8,
             costFactor: 16,
             blockSizeFactor: 2,
             parallelizationFactor: 1

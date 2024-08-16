@@ -1,10 +1,11 @@
 import Foundation
+import FoundationExtensions
 
 /// A key deriver that is composed of a sequence of other `KeyDeriver`s
-public struct CombinationKeyDeriver: KeyDeriver {
-    private let derivers: [any KeyDeriver]
+public struct CombinationKeyDeriver<Length: KeyLength>: KeyDeriver {
+    private let derivers: [any KeyDeriver<Length>]
 
-    public init(derivers: [any KeyDeriver]) {
+    public init(derivers: [any KeyDeriver<Length>]) {
         self.derivers = derivers
     }
 
@@ -12,11 +13,12 @@ public struct CombinationKeyDeriver: KeyDeriver {
         case noKeyDerviers
     }
 
-    public func key(password: Data, salt: Data) throws -> Data {
-        guard derivers.isNotEmpty else { throw KeyDeriverError.noKeyDerviers }
-        return try derivers.reduce(password) { currentKey, keyDeriver in
+    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
+        guard let first = derivers.first else { throw KeyDeriverError.noKeyDerviers }
+        let firstGeneration = try first.key(password: password, salt: salt)
+        return try derivers[1...].reduce(firstGeneration) { currentKey, keyDeriver in
             try Task.checkCancellation()
-            return try keyDeriver.key(password: currentKey, salt: salt)
+            return try keyDeriver.key(password: currentKey.data, salt: salt)
         }
     }
 

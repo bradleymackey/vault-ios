@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import VaultCore
 import XCTest
@@ -87,7 +88,7 @@ extension VaultBackupEncoderTests {
         clock: EpochClock = anyClock(),
         key: VaultKey,
         keygenSalt: Data = Data(),
-        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1,
+        keygenSignature: ApplicationKeyDeriver<Bits256>.Signature = .fastV1,
         paddingMode: VaultBackupEncoder.PaddingMode = .none
     ) -> VaultBackupEncoder {
         VaultBackupEncoder(

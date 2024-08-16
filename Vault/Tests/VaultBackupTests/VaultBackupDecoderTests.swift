@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import VaultCore
 import XCTest
@@ -6,7 +7,7 @@ import XCTest
 
 final class VaultBackupDecoderTests: XCTestCase {
     func test_extractBackupPayload_throwsForIncompatibleVersion() throws {
-        let key = Data(repeating: 0xAA, count: 32)
+        let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
         var encryptedVault = EncryptedVault(
@@ -22,7 +23,7 @@ final class VaultBackupDecoderTests: XCTestCase {
     }
 
     func test_extractBackupPayload_decryptsVaultWithCorrectKey() throws {
-        let key = Data(repeating: 0xAA, count: 32)
+        let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -48,7 +49,7 @@ final class VaultBackupDecoderTests: XCTestCase {
     }
 
     func test_extractBackupPayload_failsToDecryptGoodPayloadForInvalidKey() throws {
-        let key = Data(repeating: 0xBB, count: 32)
+        let key = KeyData<Bits256>.repeating(byte: 0xBB)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -69,7 +70,7 @@ final class VaultBackupDecoderTests: XCTestCase {
     }
 
     func test_extractBackupPayload_failsToDecryptMalformedAuthentication() throws {
-        let key = Data(repeating: 0xAA, count: 32)
+        let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
@@ -94,7 +95,7 @@ final class VaultBackupDecoderTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultBackupDecoderTests {
-    private func makeSUT(key: Data) -> VaultBackupDecoder {
+    private func makeSUT(key: KeyData<Bits256>) -> VaultBackupDecoder {
         VaultBackupDecoder(key: key)
     }
 }

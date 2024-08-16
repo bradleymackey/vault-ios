@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import TestHelpers
 import XCTest
 @testable import VaultBackup
@@ -63,7 +64,7 @@ extension VaultEncryptorTests {
     private func makeSUT(
         key: VaultKey,
         keygenSalt: Data = Data(),
-        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1
+        keygenSignature: ApplicationKeyDeriver<Bits256>.Signature = .fastV1
     ) -> VaultEncryptor {
         let sut = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
         trackForMemoryLeaks(sut)

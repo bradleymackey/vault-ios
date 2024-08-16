@@ -12,8 +12,25 @@ public struct KeyData<Length: KeyLength>: Equatable, Hashable, Sendable {
     }
 }
 
+extension KeyData: Codable {
+    public func encode(to encoder: any Encoder) throws {
+        var container = encoder.singleValueContainer()
+        try container.encode(data)
+    }
+
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.singleValueContainer()
+        let data = try container.decode(Data.self)
+        try self.init(data: data)
+    }
+}
+
 extension KeyData {
     public static var length: Int { Length.bytes }
+
+    public static func zero() -> Self {
+        .repeating(byte: 0x00)
+    }
 
     public static func random() -> Self {
         // Force try: This is of the same length as the key, so it will not throw.
@@ -32,7 +49,12 @@ public protocol KeyLength: Sendable {
     static var bytes: Int { get }
 }
 
-/// A key that is 256 bits in length.
+/// A key that is 256 bits (32 bytes) in length.
 public struct Bits256: KeyLength {
     public static var bytes: Int { 32 }
+}
+
+/// A key that is 64 bits (8 bytes) in length.
+public struct Bits64: KeyLength {
+    public static var bytes: Int { 8 }
 }

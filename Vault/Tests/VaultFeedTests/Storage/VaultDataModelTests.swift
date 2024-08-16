@@ -286,7 +286,7 @@ final class VaultDataModelTests: XCTestCase {
     @MainActor
     func test_loadBackupPassword_setsFetchedFromStore() async throws {
         let store = BackupPasswordStoreMock()
-        let password = BackupPassword(key: Data(), salt: Data(), keyDervier: .testing)
+        let password = BackupPassword(key: .zero(), salt: Data(), keyDervier: .testing)
         store.fetchPasswordHandler = { password }
         let sut = makeSUT(backupPasswordStore: store)
 
@@ -326,7 +326,7 @@ final class VaultDataModelTests: XCTestCase {
         store.setHandler = { _ in }
         let sut = makeSUT(backupPasswordStore: store)
 
-        let password = BackupPassword(key: Data.random(count: 32), salt: Data(), keyDervier: .testing)
+        let password = BackupPassword(key: .random(), salt: Data(), keyDervier: .testing)
         try sut.store(backupPassword: password)
 
         XCTAssertEqual(sut.backupPassword, .fetched(password))
@@ -339,7 +339,7 @@ final class VaultDataModelTests: XCTestCase {
         store.setHandler = { _ in throw TestError() }
         let sut = makeSUT(backupPasswordStore: store)
 
-        let password = BackupPassword(key: Data.random(count: 32), salt: Data(), keyDervier: .testing)
+        let password = BackupPassword(key: .random(), salt: Data(), keyDervier: .testing)
         await XCTAssertThrowsError(try await sut.store(backupPassword: password))
 
         XCTAssertEqual(sut.backupPassword, .notFetched) // still initial value

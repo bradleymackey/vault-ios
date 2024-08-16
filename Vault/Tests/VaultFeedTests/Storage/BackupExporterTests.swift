@@ -6,7 +6,7 @@ import XCTest
 
 final class BackupExporterTests: XCTestCase {
     func test_createEncryptedBackup_usesDifferentIVEachIteration() throws {
-        let password = BackupPassword(key: .random(count: 32), salt: .random(count: 32), keyDervier: .testing)
+        let password = BackupPassword(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
         var seenData = Set<Data>()
@@ -23,9 +23,8 @@ final class BackupExporterTests: XCTestCase {
     }
 
     func test_createEncryptedBackup_createsBackupWithNoItems() throws {
-        let key = Data.random(count: 32)
         let salt = Data.random(count: 32)
-        let password = BackupPassword(key: key, salt: salt, keyDervier: .testing)
+        let password = BackupPassword(key: .random(), salt: salt, keyDervier: .testing)
         let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
         let payload = VaultApplicationPayload(userDescription: "my backup", items: [], tags: [])
@@ -38,9 +37,8 @@ final class BackupExporterTests: XCTestCase {
     }
 
     func test_createEncryptedBackup_createsBackupWithSomeItems() throws {
-        let key = Data.random(count: 32)
         let salt = Data.random(count: 32)
-        let password = BackupPassword(key: key, salt: salt, keyDervier: .testing)
+        let password = BackupPassword(key: .random(), salt: salt, keyDervier: .testing)
         let sut = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
 
         let payload = VaultApplicationPayload(
