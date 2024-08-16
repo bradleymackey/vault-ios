@@ -12,9 +12,4 @@ public struct VaultKey {
         self.key = key
         self.iv = iv
     }
-
-    /// Creates a new key with a random IV.
-    public static func newKeyWithRandomIV(key: KeyData<Bits256>) -> VaultKey {
-        .init(key: key, iv: .random())
-    }
 }
