@@ -76,6 +76,7 @@ public final class VaultDataModel: Sendable {
     }
 
     public private(set) var backupPassword: BackupPasswordState = .notFetched
+    public private(set) var backupPasswordLoadingState: LoadingState = .notLoading
 
     // MARK: - Init
 
@@ -120,6 +121,7 @@ extension VaultDataModel {
     /// Ensures that any sensitive data is removed from memory.
     public func purgeSensitiveData() {
         backupPassword = .notFetched
+        backupPasswordLoadingState = .notLoading
     }
 }
 
@@ -129,6 +131,8 @@ extension VaultDataModel {
     public func loadBackupPassword() async {
         do {
             if case .fetched = backupPassword { return }
+            backupPasswordLoadingState = .loading
+            defer { backupPasswordLoadingState = .notLoading }
             let password = try backupPasswordStore.fetchPassword()
             if let password {
                 backupPassword = .fetched(password)
