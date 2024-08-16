@@ -133,7 +133,7 @@ extension VaultDataModel {
             if case .fetched = backupPassword { return }
             backupPasswordLoadingState = .loading
             defer { backupPasswordLoadingState = .notLoading }
-            let password = try backupPasswordStore.fetchPassword()
+            let password = try await backupPasswordStore.fetchPassword()
             if let password {
                 backupPassword = .fetched(password)
             } else {
@@ -148,8 +148,8 @@ extension VaultDataModel {
         }
     }
 
-    public func store(backupPassword: BackupPassword) throws {
-        try backupPasswordStore.set(password: backupPassword)
+    public func store(backupPassword: BackupPassword) async throws {
+        try await backupPasswordStore.set(password: backupPassword)
         self.backupPassword = .fetched(backupPassword)
     }
 }

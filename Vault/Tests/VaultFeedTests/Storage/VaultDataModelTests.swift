@@ -327,7 +327,7 @@ final class VaultDataModelTests: XCTestCase {
         let sut = makeSUT(backupPasswordStore: store)
 
         let password = BackupPassword(key: .random(), salt: Data(), keyDervier: .testing)
-        try sut.store(backupPassword: password)
+        try await sut.store(backupPassword: password)
 
         XCTAssertEqual(sut.backupPassword, .fetched(password))
         XCTAssertEqual(store.setCallCount, 1)

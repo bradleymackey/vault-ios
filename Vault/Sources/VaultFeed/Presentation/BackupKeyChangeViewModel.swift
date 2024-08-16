@@ -77,7 +77,7 @@ public final class BackupKeyChangeViewModel {
 
             newPassword = .creating
             let createdBackupPassword = try await computeNewKey(password: newlyEnteredPassword)
-            try dataModel.store(backupPassword: createdBackupPassword)
+            try await dataModel.store(backupPassword: createdBackupPassword)
             newPassword = .success
             newlyEnteredPassword = ""
             newlyEnteredPasswordConfirm = ""
