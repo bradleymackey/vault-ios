@@ -7,7 +7,7 @@ import XCTest
 
 final class VaultBackupEncoderTests: XCTestCase {
     func test_createExportPayload_encryptedVaultDataIsExpectedVault() throws {
-        let key = try VaultKey(key: Data(repeating: 0xAA, count: 32), iv: Data(repeating: 0xAB, count: 32))
+        let key = VaultKey(key: .repeating(byte: 0xAA), iv: .repeating(byte: 0xAB))
         let sut = makeSUT(key: key)
 
         let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
@@ -38,7 +38,7 @@ final class VaultBackupEncoderTests: XCTestCase {
     }
 
     func test_createExportPayload_encryptedVaultDataIsExpectedVaultWithFixedPadding() throws {
-        let key = try VaultKey(key: Data(repeating: 0xAA, count: 32), iv: Data(repeating: 0xAB, count: 32))
+        let key = VaultKey(key: .repeating(byte: 0xAA), iv: .repeating(byte: 0xAB))
         let padding = VaultBackupEncoder.PaddingMode.fixed(data: Data(repeating: 0xF1, count: 45))
         let sut = makeSUT(key: key, paddingMode: padding)
 
@@ -72,7 +72,7 @@ final class VaultBackupEncoderTests: XCTestCase {
 
     func test_createExportPayload_includesKeySaltUnmodifiedInPayload() throws {
         let salt = Data.random(count: 34)
-        let sut = try makeSUT(key: anyKey(), keygenSalt: salt)
+        let sut = makeSUT(key: anyKey(), keygenSalt: salt)
 
         let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
 
@@ -104,6 +104,6 @@ private func anyClock() -> EpochClock {
     EpochClock(makeCurrentTime: { 1234 })
 }
 
-private func anyKey() throws -> VaultKey {
-    try VaultKey(key: Data(repeating: 0x34, count: 32), iv: Data(repeating: 0x35, count: 32))
+private func anyKey() -> VaultKey {
+    .init(key: .random(), iv: .random())
 }

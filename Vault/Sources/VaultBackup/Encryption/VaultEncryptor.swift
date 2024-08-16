@@ -8,8 +8,8 @@ final class VaultEncryptor {
     private let keygenSignature: ApplicationKeyDeriver.Signature
 
     init(key: VaultKey, keygenSalt: Data, keygenSignature: ApplicationKeyDeriver.Signature) {
-        encryptor = AESGCMEncryptor(key: key.key)
-        iv = key.iv
+        encryptor = AESGCMEncryptor(key: key.key.data)
+        iv = key.iv.data
         self.keygenSalt = keygenSalt
         self.keygenSignature = keygenSignature
     }

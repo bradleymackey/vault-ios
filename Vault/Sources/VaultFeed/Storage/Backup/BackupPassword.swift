@@ -29,6 +29,7 @@ extension BackupPassword {
     }
 
     public func newVaultKeyWithRandomIV() throws -> VaultKey {
-        try VaultKey.newKeyWithRandomIV(key: key)
+        let key = try Key256Bit(data: key)
+        return VaultKey.newKeyWithRandomIV(key: key)
     }
 }
