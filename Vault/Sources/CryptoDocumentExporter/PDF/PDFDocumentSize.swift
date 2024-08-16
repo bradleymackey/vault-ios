@@ -44,7 +44,7 @@ extension PDFDocumentSize {
     /// This ensures that the squares sizing remains roughly constant, no matter the size of the paper.
     public var idealNumberOfHorizontalSquaresForPaperSize: UInt {
         let (width, _) = inchDimensions
-        return UInt(width * 0.9)
+        return UInt(width * 0.8)
     }
 }
 
