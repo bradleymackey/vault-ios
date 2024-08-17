@@ -43,6 +43,13 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
 
         assertSnapshot(of: sut, as: .image)
     }
+
+    @MainActor
+    func test_layout_lockedIcon() {
+        let sut = makeSUT(isLocked: true)
+
+        assertSnapshot(of: sut, as: .image)
+    }
 }
 
 // MARK: - Helpers
@@ -51,9 +58,15 @@ extension SecureNotePreviewViewSnapshotTests {
     @MainActor
     private func makeSUT(
         title: String = "Title",
-        description: String? = "Short Description"
+        description: String? = "Short Description",
+        isLocked: Bool = false
     ) -> some View {
-        let viewModel = SecureNotePreviewViewModel(title: title, description: description, color: .default)
+        let viewModel = SecureNotePreviewViewModel(
+            title: title,
+            description: description,
+            color: .default,
+            isLocked: isLocked
+        )
         return SecureNotePreviewView(viewModel: viewModel, behaviour: .normal)
             .frame(width: 250)
     }
