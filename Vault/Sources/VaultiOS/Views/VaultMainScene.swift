@@ -112,20 +112,26 @@ public struct VaultMainScene: Scene {
                             noteGenerator: notePreviewGenerator
                         )
                     )
+                    .navigationBarTitleDisplayMode(.inline)
                 case .settings:
                     NavigationStack {
                         VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
                     }
+                    .navigationBarTitleDisplayMode(.inline)
                 case .backups:
                     NavigationStack {
                         BackupView()
                     }
+                    .navigationBarTitleDisplayMode(.inline)
                 case .restoreBackup:
                     NavigationStack {
                         RestoreBackupView()
                     }
+                    .navigationBarTitleDisplayMode(.inline)
                 case .none:
                     Text("Select an option from the sidebar")
+                        .navigationBarTitleDisplayMode(.inline)
+                        .navigationTitle("")
                 }
             }
             .onReceive(pasteboard.didPaste()) {
