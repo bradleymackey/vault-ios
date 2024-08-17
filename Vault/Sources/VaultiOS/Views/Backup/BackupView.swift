@@ -27,10 +27,12 @@ struct BackupView: View {
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
-                createPasswordSection(existingPassword: nil)
+                currentKeySection(existingPassword: nil)
             case let .fetched(password):
-                createPasswordSection(existingPassword: password)
+                currentKeySection(existingPassword: password)
+                overrideKeySection(existingPassword: password)
             }
+
             if let password = dataModel.backupPassword.fetchedPassword {
                 createExportSection(password: password)
             }
@@ -85,18 +87,26 @@ struct BackupView: View {
         .transition(.slide)
     }
 
-    private func createPasswordSection(existingPassword: BackupPassword?) -> some View {
+    private func currentKeySection(existingPassword: BackupPassword?) -> some View {
         Section {
             if let existingPassword {
-                updateButton
                 exportButton(password: existingPassword)
-                importButton
             } else {
                 createButton
                 importButton
             }
         } header: {
             Text("Encryption Key")
+        }
+        .transition(.slide)
+    }
+
+    private func overrideKeySection(existingPassword _: BackupPassword) -> some View {
+        Section {
+            updateButton
+            importButton
+        } header: {
+            Text("Override Encryption Key")
         }
         .transition(.slide)
     }
@@ -143,7 +153,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple, style: .standard) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .red, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }
@@ -153,7 +163,7 @@ struct BackupView: View {
         Button {
             modal = .exportPassword(password)
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .green, style: .standard) {
                 Text(viewModel.strings.backupPasswordExportTitle)
             }
         }
