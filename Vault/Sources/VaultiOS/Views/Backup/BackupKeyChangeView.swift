@@ -94,14 +94,15 @@ struct BackupKeyChangeView: View {
 
         } footer: {
             VStack(alignment: .center, spacing: 8) {
-                StandaloneButton {
+                Button {
                     keyGenerationTask?.cancel()
                     keyGenerationTask = Task {
                         await viewModel.saveEnteredPassword()
                     }
-                } content: {
+                } label: {
                     Text("Generate Key")
                 }
+                .modifier(ProminentButtonModifier())
                 .animation(.none, value: viewModel.newPassword)
                 .disabled(!viewModel.canGenerateNewPassword)
                 .opacity(viewModel.canGenerateNewPassword ? 1 : 0.5)

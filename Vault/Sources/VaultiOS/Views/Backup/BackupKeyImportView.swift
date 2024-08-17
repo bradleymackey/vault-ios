@@ -86,23 +86,21 @@ struct BackupKeyImportView: View {
             VStack(alignment: .center) {
                 switch viewModel.overrideBehaviour {
                 case .overridesExisting:
-                    StandaloneButton {
-                        Task {
-                            await viewModel.commitStagedImport()
-                        }
-                    } content: {
+                    AsyncButton {
+                        await viewModel.commitStagedImport()
+                    } label: {
                         Label("Confirm Import", systemImage: "checkmark")
                     }
+                    .modifier(ProminentButtonModifier())
                 case .matchesExisting:
                     EmptyView()
                 case nil:
-                    StandaloneButton {
-                        Task {
-                            await viewModel.commitStagedImport()
-                        }
-                    } content: {
+                    AsyncButton {
+                        await viewModel.commitStagedImport()
+                    } label: {
                         Label("Import", systemImage: "checkmark")
                     }
+                    .modifier(ProminentButtonModifier())
                 }
             }
             .frame(maxWidth: .infinity)

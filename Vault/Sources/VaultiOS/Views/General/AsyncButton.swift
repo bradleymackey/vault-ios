@@ -6,7 +6,7 @@ import SwiftUI
 /// Attribution: https://www.swiftbysundell.com/articles/building-an-async-swiftui-button/
 struct AsyncButton<Label: View>: View {
     var progressAlignment: Alignment = .center
-    var action: () async -> Void
+    var action: () async throws -> Void
     var actionOptions = Set(ActionOption.allCases)
     @ViewBuilder var label: () -> Label
 
@@ -31,7 +31,7 @@ struct AsyncButton<Label: View>: View {
                         }
                     }
 
-                    await action()
+                    try await action()
                     progressViewTask?.cancel()
 
                     isDisabled = false
