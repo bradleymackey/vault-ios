@@ -15,11 +15,9 @@ public struct SettingsHomeView: View {
     public var body: some View {
         Form {
             viewOptionsSection
-            exportSection
             policySection
         }
         .navigationTitle(viewModel.title)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var viewOptionsSection: some View {
@@ -34,34 +32,6 @@ public struct SettingsHomeView: View {
                     Text(viewModel.pasteTTLTitle)
                 }
             }
-        }
-    }
-
-    private var exportSection: some View {
-        Section {
-            NavigationLink {
-                BackupView()
-            } label: {
-                FormRow(
-                    image: Image(systemName: "doc.on.doc.fill"),
-                    color: .blue
-                ) {
-                    Text("Backups")
-                }
-            }
-
-            NavigationLink {
-                RestoreBackupView()
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.fill"),
-                    color: .blue
-                ) {
-                    Text(viewModel.restoreBackupTitle)
-                }
-            }
-        } header: {
-            Text("Backups")
         }
     }
 

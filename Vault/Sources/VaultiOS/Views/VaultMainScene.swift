@@ -17,6 +17,14 @@ public struct VaultMainScene: Scene {
     @State private var isShowingCopyPaste = false
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
     @State private var vaultDataModel: VaultDataModel
+    @State private var selectedView: SidebarItem? = .items
+
+    enum SidebarItem: Hashable {
+        case items
+        case backups
+        case restoreBackup
+        case settings
+    }
 
     @Environment(\.scenePhase) private var scenePhase
 
@@ -66,8 +74,36 @@ public struct VaultMainScene: Scene {
 
     public var body: some Scene {
         WindowGroup {
-            TabView {
-                NavigationStack {
+            NavigationSplitView {
+                List(selection: $selectedView) {
+                    Section {
+                        NavigationLink(value: SidebarItem.items) {
+                            Label("Items", systemImage: "key.horizontal.fill")
+                        }
+                    }
+
+                    Section {
+                        NavigationLink(value: SidebarItem.backups) {
+                            Label("Backups", systemImage: "doc.on.doc.fill")
+                        }
+
+                        NavigationLink(value: SidebarItem.restoreBackup) {
+                            Label("Restore Backup", systemImage: "square.and.arrow.down.fill")
+                        }
+                    }
+
+                    Section {
+                        NavigationLink(value: SidebarItem.settings) {
+                            Label("Settings", systemImage: "gear")
+                        }
+                    }
+                }
+                .navigationTitle("Vault")
+                .listStyle(.sidebar)
+            } detail: {
+                // Show the selected view in the detail area
+                switch selectedView {
+                case .items:
                     VaultListView(
                         localSettings: localSettings,
                         viewGenerator: GenericVaultItemPreviewViewGenerator(
@@ -76,16 +112,20 @@ public struct VaultMainScene: Scene {
                             noteGenerator: notePreviewGenerator
                         )
                     )
-                }
-                .tabItem {
-                    Label("Vault", systemImage: "key.horizontal.fill")
-                }
-
-                NavigationStack {
-                    VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
-                }
-                .tabItem {
-                    Label(settingsViewModel.title, systemImage: "gear")
+                case .settings:
+                    NavigationStack {
+                        VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
+                    }
+                case .backups:
+                    NavigationStack {
+                        BackupView()
+                    }
+                case .restoreBackup:
+                    NavigationStack {
+                        RestoreBackupView()
+                    }
+                case .none:
+                    Text("Select an option from the sidebar")
                 }
             }
             .onReceive(pasteboard.didPaste()) {
