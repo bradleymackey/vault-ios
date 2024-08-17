@@ -21,6 +21,8 @@ public struct VaultMainScene: Scene {
 
     enum SidebarItem: Hashable {
         case items
+        case backups
+        case restoreBackup
         case settings
     }
 
@@ -78,6 +80,19 @@ public struct VaultMainScene: Scene {
                         NavigationLink(value: SidebarItem.items) {
                             Label("Items", systemImage: "key.horizontal.fill")
                         }
+                    }
+
+                    Section {
+                        NavigationLink(value: SidebarItem.backups) {
+                            Label("Backups", systemImage: "doc.on.doc.fill")
+                        }
+
+                        NavigationLink(value: SidebarItem.restoreBackup) {
+                            Label("Restore Backup", systemImage: "square.and.arrow.down.fill")
+                        }
+                    }
+
+                    Section {
                         NavigationLink(value: SidebarItem.settings) {
                             Label("Settings", systemImage: "gear")
                         }
@@ -97,7 +112,17 @@ public struct VaultMainScene: Scene {
                         )
                     )
                 case .settings:
-                    VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
+                    NavigationStack {
+                        VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
+                    }
+                case .backups:
+                    NavigationStack {
+                        BackupView()
+                    }
+                case .restoreBackup:
+                    NavigationStack {
+                        RestoreBackupView()
+                    }
                 case .none:
                     Text("Select an option from the sidebar")
                 }
