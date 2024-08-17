@@ -8,9 +8,9 @@ public struct SecureNotePreviewView: View {
 
     public var body: some View {
         VStack(alignment: .center, spacing: 8) {
-            VStack(alignment: .center, spacing: 4) {
+            HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Image(systemName: "doc.text.fill")
-                    .font(.title3)
+                    .font(.headline)
                     .foregroundStyle(viewModel.color.color)
                 Text(viewModel.visibleTitle)
                     .font(.headline)
@@ -21,13 +21,20 @@ public struct SecureNotePreviewView: View {
             .layoutPriority(100)
 
             if let description = viewModel.description, description.isNotEmpty {
-                descriptionLabel(text: description)
+                Spacer()
+
+                Text(description)
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                    .tint(.secondary)
                     .layoutPriority(99)
-                    .multilineTextAlignment(.leading)
+                    .multilineTextAlignment(.center)
+
+                Spacer()
             }
         }
         .frame(maxHeight: .infinity)
-        .padding(2)
+        .padding(8)
         .shimmering(active: isShimmering)
         .aspectRatio(1, contentMode: .fill)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
@@ -39,23 +46,24 @@ public struct SecureNotePreviewView: View {
         case .editingState: true
         }
     }
-
-    private func descriptionLabel(text: String) -> some View {
-        Text(text)
-            .font(.footnote)
-            .foregroundStyle(.secondary)
-            .tint(.secondary)
-    }
 }
 
-struct SecureNotePreviewView_Previews: PreviewProvider {
-    static var previews: some View {
-        SecureNotePreviewView(
-            viewModel: .init(title: "Test title", description: "desc", color: .init(red: 0, green: 0, blue: 0)),
-            behaviour: .normal
-        )
-        .frame(width: 200, height: 200)
-        .modifier(OTPCardViewModifier())
-        .padding()
-    }
+#Preview {
+    SecureNotePreviewView(
+        viewModel: .init(title: "Test title", description: "desc", color: .init(red: 0, green: 0, blue: 0)),
+        behaviour: .normal
+    )
+    .frame(width: 200, height: 200)
+    .modifier(OTPCardViewModifier())
+    .padding()
+}
+
+#Preview {
+    SecureNotePreviewView(
+        viewModel: .init(title: "Test title", description: "", color: .init(red: 0, green: 0, blue: 0)),
+        behaviour: .normal
+    )
+    .frame(width: 200, height: 200)
+    .modifier(OTPCardViewModifier())
+    .padding()
 }
