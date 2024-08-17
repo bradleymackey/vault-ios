@@ -347,26 +347,26 @@ final class VaultDataModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_showBackupPasswordRetryFetchAction_errorState() async {
+    func test_backupPassword_errorState() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { throw TestError() }
         let sut = makeSUT(backupPasswordStore: store)
 
         await sut.loadBackupPassword()
 
-        XCTAssertTrue(sut.showBackupPasswordRetryFetchAction)
+        XCTAssertTrue(sut.backupPassword.isRetryable)
     }
 
     @MainActor
-    func test_showBackupPasswordRetryFetchAction_notFetched() async {
+    func test_backupPassword_notFetched() async {
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(backupPasswordStore: store)
 
-        XCTAssertTrue(sut.showBackupPasswordRetryFetchAction)
+        XCTAssertTrue(sut.backupPassword.isRetryable)
     }
 
     @MainActor
-    func test_showBackupPasswordRetryFetchAction_fetched() async {
+    func test_backupPassword_fetched() async {
         let store = BackupPasswordStoreMock()
         let password = BackupPassword(key: .zero(), salt: Data(), keyDervier: .testing)
         store.fetchPasswordHandler = { password }
@@ -374,18 +374,18 @@ final class VaultDataModelTests: XCTestCase {
 
         await sut.loadBackupPassword()
 
-        XCTAssertFalse(sut.showBackupPasswordRetryFetchAction)
+        XCTAssertFalse(sut.backupPassword.isRetryable)
     }
 
     @MainActor
-    func test_showBackupPasswordRetryFetchAction_notCreated() async {
+    func test_backupPassword_notCreated() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { nil }
         let sut = makeSUT(backupPasswordStore: store)
 
         await sut.loadBackupPassword()
 
-        XCTAssertFalse(sut.showBackupPasswordRetryFetchAction)
+        XCTAssertFalse(sut.backupPassword.isRetryable)
     }
 
     @MainActor

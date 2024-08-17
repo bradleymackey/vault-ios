@@ -69,9 +69,6 @@ struct BackupView: View {
                 }
             }
         }
-        .task {
-            await dataModel.loadBackupPassword()
-        }
     }
 
     private func createExportSection(password: BackupPassword) -> some View {
@@ -114,7 +111,7 @@ struct BackupView: View {
                 .containerRelativeFrame(.horizontal)
             }
 
-            if dataModel.showBackupPasswordRetryFetchAction {
+            if dataModel.backupPassword.isRetryable {
                 authenticateButton
             }
         } header: {
@@ -123,12 +120,10 @@ struct BackupView: View {
     }
 
     private var authenticateButton: some View {
-        Button {
-            Task {
-                await dataModel.loadBackupPassword()
-            }
+        AsyncButton(progressAlignment: .center) {
+            await dataModel.loadBackupPassword()
         } label: {
-            FormRow(image: Image(systemName: "arrow.clockwise"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
                 Text("Authenticate")
             }
         }
