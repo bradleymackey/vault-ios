@@ -11,7 +11,6 @@ struct BackupView: View {
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var viewModel = BackupViewModel()
     @State private var modal: Modal?
-    @State private var noPasswordAlert = false
 
     enum Modal: IdentifiableSelf {
         case updatePassword
@@ -22,22 +21,22 @@ struct BackupView: View {
 
     var body: some View {
         Form {
-            createPasswordSection
+            switch dataModel.backupPassword {
+            case .error:
+                authenticateSection(isError: true)
+            case .notFetched:
+                authenticateSection(isError: false)
+            case .notCreated:
+                createPasswordSection(existingPassword: nil)
+            case let .fetched(password):
+                createPasswordSection(existingPassword: password)
+            }
             if let password = dataModel.backupPassword.fetchedPassword {
                 createExportSection(password: password)
             }
         }
+        .animation(.default, value: dataModel.backupPassword)
         .navigationTitle(Text(viewModel.strings.homeTitle))
-        .alert("Backup Password Error", isPresented: $noPasswordAlert, actions: {
-            Button("Reload", role: .cancel) {
-                Task {
-                    await dataModel.loadBackupPassword()
-                }
-            }
-            Button("Cancel", role: .destructive) {}
-        }, message: {
-            Text("Unable to load your encryption key. Please try again.")
-        })
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case let .pdfBackup(password):
@@ -83,44 +82,41 @@ struct BackupView: View {
         } header: {
             Text("Backups")
         }
+        .transition(.slide)
     }
 
-    private var createPasswordSection: some View {
+    private func createPasswordSection(existingPassword: BackupPassword?) -> some View {
         Section {
-            switch dataModel.backupPassword {
-            case .notFetched:
-                PlaceholderView(
-                    systemIcon: "lock.fill",
-                    title: viewModel.strings.backupPasswordLoadingTitle,
-                    subtitle: "Authenticate to access backup settings"
-                )
-                .foregroundStyle(.secondary)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-            case let .fetched(password):
+            if let existingPassword {
                 updateButton
-                exportButton(password: password)
+                exportButton(password: existingPassword)
                 importButton
-            case .notCreated:
+            } else {
                 createButton
                 importButton
-            case .error:
-                PlaceholderView(
-                    systemIcon: "key.slash.fill",
-                    title: viewModel.strings.backupPasswordErrorTitle,
-                    subtitle: viewModel.strings.backupPasswordErrorDetail
-                )
-                .foregroundStyle(.secondary)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-            }
-
-            if dataModel.backupPassword.isRetryable {
-                authenticateButton
             }
         } header: {
-            Text(viewModel.strings.backupPasswordSectionTitle)
+            Text("Encryption Key")
         }
+        .transition(.slide)
+    }
+
+    private func authenticateSection(isError: Bool) -> some View {
+        Section {
+            PlaceholderView(
+                systemIcon: isError ? "key.slash.fill" : "lock.fill",
+                title: isError ? viewModel.strings.backupPasswordErrorTitle : viewModel.strings
+                    .backupPasswordLoadingTitle,
+                subtitle: isError ? viewModel.strings
+                    .backupPasswordErrorDetail : "Authenticate to access backup settings"
+            )
+            .foregroundStyle(.secondary)
+            .padding()
+            .containerRelativeFrame(.horizontal)
+
+            authenticateButton
+        }
+        .transition(.slide)
     }
 
     private var authenticateButton: some View {
