@@ -27,11 +27,9 @@ struct VaultTagDetailView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             ToolbarItem(placement: .confirmationAction) {
-                Button {
-                    Task {
-                        await viewModel.save()
-                        dismiss()
-                    }
+                AsyncButton {
+                    await viewModel.save()
+                    dismiss()
                 } label: {
                     Text("Save")
                 }
@@ -104,11 +102,9 @@ struct VaultTagDetailView: View {
 
     private var deleteSection: some View {
         Section {
-            Button {
-                Task {
-                    await viewModel.delete()
-                    dismiss()
-                }
+            AsyncButton {
+                await viewModel.delete()
+                dismiss()
             } label: {
                 FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
                     Text("Delete Tag")

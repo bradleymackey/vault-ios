@@ -39,12 +39,10 @@ struct AsyncButton<Label: View>: View {
                 }
             },
             label: {
-                ZStack(alignment: progressAlignment) {
-                    label().opacity(showProgressView ? 0 : 1)
-
-                    if showProgressView {
-                        ProgressView()
-                    }
+                if showProgressView {
+                    ProgressView()
+                } else {
+                    label()
                 }
             }
         )

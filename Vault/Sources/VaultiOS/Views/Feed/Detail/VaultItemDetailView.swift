@@ -156,8 +156,8 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
 
     private var saveDirtyChangesItem: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
-            Button {
-                Task { await viewModel.saveChanges() }
+            AsyncButton {
+                await viewModel.saveChanges()
             } label: {
                 Text(viewModel.strings.saveEditsTitle)
                     .tint(.accentColor)

@@ -170,10 +170,8 @@ struct BackupKeyChangeView: View {
 
             #if DEBUG
             DisclosureGroup {
-                Button {
-                    Task {
-                        await viewModel.loadExistingPassword()
-                    }
+                AsyncButton {
+                    await viewModel.loadExistingPassword()
                 } label: {
                     Text("Fetch existing password")
                 }

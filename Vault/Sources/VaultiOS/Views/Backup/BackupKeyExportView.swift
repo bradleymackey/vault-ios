@@ -54,10 +54,8 @@ struct BackupKeyExportView: View {
     }
 
     private var exportButton: some View {
-        Button {
-            Task {
-                await viewModel.createExport()
-            }
+        AsyncButton {
+            await viewModel.createExport()
         } label: {
             Text("Show Private Key")
         }
