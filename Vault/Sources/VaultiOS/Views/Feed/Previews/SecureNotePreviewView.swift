@@ -9,7 +9,7 @@ public struct SecureNotePreviewView: View {
     public var body: some View {
         VStack(alignment: .center, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Image(systemName: "doc.text.fill")
+                Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")
                     .font(.headline)
                     .foregroundStyle(viewModel.color.color)
                 Text(viewModel.visibleTitle)
@@ -50,7 +50,12 @@ public struct SecureNotePreviewView: View {
 
 #Preview {
     SecureNotePreviewView(
-        viewModel: .init(title: "Test title", description: "desc", color: .init(red: 0, green: 0, blue: 0)),
+        viewModel: .init(
+            title: "Test title",
+            description: "desc",
+            color: .init(red: 0, green: 0, blue: 0),
+            isLocked: true
+        ),
         behaviour: .normal
     )
     .frame(width: 200, height: 200)
@@ -60,7 +65,12 @@ public struct SecureNotePreviewView: View {
 
 #Preview {
     SecureNotePreviewView(
-        viewModel: .init(title: "Test title", description: "", color: .init(red: 0, green: 0, blue: 0)),
+        viewModel: .init(
+            title: "Test title",
+            description: "",
+            color: .init(red: 0, green: 0, blue: 0),
+            isLocked: false
+        ),
         behaviour: .normal
     )
     .frame(width: 200, height: 200)
