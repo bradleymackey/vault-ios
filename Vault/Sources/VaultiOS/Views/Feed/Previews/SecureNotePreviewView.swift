@@ -11,11 +11,11 @@ public struct SecureNotePreviewView: View {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")
                     .font(.headline)
-                    .foregroundStyle(viewModel.color.color)
+                    .foregroundStyle(isEditing ? .white : viewModel.color.color)
                 Text(viewModel.visibleTitle)
                     .font(.headline)
             }
-            .foregroundStyle(.primary)
+            .foregroundStyle(isEditing ? .white : .primary)
             .tint(.primary)
             .multilineTextAlignment(.center)
             .layoutPriority(100)
@@ -25,7 +25,7 @@ public struct SecureNotePreviewView: View {
 
                 Text(description)
                     .font(.callout)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(isEditing ? .white : .secondary)
                     .tint(.secondary)
                     .layoutPriority(99)
                     .multilineTextAlignment(.center)
@@ -35,12 +35,12 @@ public struct SecureNotePreviewView: View {
         }
         .frame(maxHeight: .infinity)
         .padding(8)
-        .shimmering(active: isShimmering)
+        .shimmering(active: isEditing)
         .aspectRatio(1, contentMode: .fill)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    private var isShimmering: Bool {
+    private var isEditing: Bool {
         switch behaviour {
         case .normal: false
         case .editingState: true

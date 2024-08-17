@@ -25,6 +25,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         }
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
+        .shimmering(active: isEditing)
     }
 
     private var labelsStack: some View {
@@ -32,6 +33,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             icon
                 .padding(.top, 2)
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.visibleIssuer)
+                .foregroundStyle(isEditing ? .white : .primary)
             Spacer()
         }
         .padding(.horizontal, 2)
@@ -55,7 +57,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .padding(.horizontal, 2)
-                .foregroundColor(.primary)
+                .foregroundColor(isEditing ? .white : .primary)
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -74,7 +76,14 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 Color.red
             }
         case .editingState:
-            Color.blue
+            Color.white
+        }
+    }
+
+    private var isEditing: Bool {
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
         }
     }
 }
