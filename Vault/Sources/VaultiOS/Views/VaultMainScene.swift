@@ -99,6 +99,7 @@ public struct VaultMainScene: Scene {
                     }
                 }
                 .navigationTitle("Vault")
+                .listStyle(.sidebar)
             } detail: {
                 // Show the selected view in the detail area
                 switch selectedView {
