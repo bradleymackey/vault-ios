@@ -89,10 +89,14 @@ struct BackupView: View {
         Section {
             switch dataModel.backupPassword {
             case .notFetched:
-                PlaceholderView(systemIcon: "lock.fill", title: viewModel.strings.backupPasswordLoadingTitle)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                    .containerRelativeFrame(.horizontal)
+                PlaceholderView(
+                    systemIcon: "lock.fill",
+                    title: viewModel.strings.backupPasswordLoadingTitle,
+                    subtitle: "Authenticate to access backup settings"
+                )
+                .foregroundStyle(.secondary)
+                .padding()
+                .containerRelativeFrame(.horizontal)
             case let .fetched(password):
                 updateButton
                 exportButton(password: password)
