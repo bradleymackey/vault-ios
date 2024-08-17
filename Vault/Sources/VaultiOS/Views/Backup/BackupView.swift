@@ -96,18 +96,6 @@ struct BackupView: View {
                     .foregroundStyle(.secondary)
                     .padding()
                     .containerRelativeFrame(.horizontal)
-
-                if dataModel.backupPasswordLoadingState.isNotLoading {
-                    Button {
-                        Task {
-                            await dataModel.loadBackupPassword()
-                        }
-                    } label: {
-                        FormRow(image: Image(systemName: "arrow.clockwise"), color: .blue, style: .standard) {
-                            Text("Authenticate")
-                        }
-                    }
-                }
             case let .fetched(password):
                 updateButton
                 exportButton(password: password)
@@ -125,8 +113,24 @@ struct BackupView: View {
                 .padding()
                 .containerRelativeFrame(.horizontal)
             }
+
+            if dataModel.showBackupPasswordRetryFetchAction {
+                authenticateButton
+            }
         } header: {
             Text(viewModel.strings.backupPasswordSectionTitle)
+        }
+    }
+
+    private var authenticateButton: some View {
+        Button {
+            Task {
+                await dataModel.loadBackupPassword()
+            }
+        } label: {
+            FormRow(image: Image(systemName: "arrow.clockwise"), color: .blue, style: .standard) {
+                Text("Authenticate")
+            }
         }
     }
 

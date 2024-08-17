@@ -123,6 +123,16 @@ extension VaultDataModel {
         backupPassword = .notFetched
         backupPasswordLoadingState = .notLoading
     }
+
+    /// If the password hasn't been fetched, but we could retry a fetch, this will be `true`.
+    ///
+    /// It's a good indicator if we should show a "Retry Load Password" button.
+    public var showBackupPasswordRetryFetchAction: Bool {
+        switch backupPassword {
+        case .error, .notFetched: backupPasswordLoadingState.isNotLoading
+        case .notCreated, .fetched: false
+        }
+    }
 }
 
 // MARK: - Backup Password
