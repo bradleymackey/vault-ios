@@ -5,6 +5,7 @@ import SwiftUI
 ///
 /// Attribution: https://www.swiftbysundell.com/articles/building-an-async-swiftui-button/
 struct AsyncButton<Label: View>: View {
+    var progressAlignment: Alignment = .center
     var action: () async -> Void
     var actionOptions = Set(ActionOption.allCases)
     @ViewBuilder var label: () -> Label
@@ -38,7 +39,7 @@ struct AsyncButton<Label: View>: View {
                 }
             },
             label: {
-                ZStack {
+                ZStack(alignment: progressAlignment) {
                     label().opacity(showProgressView ? 0 : 1)
 
                     if showProgressView {
