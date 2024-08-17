@@ -21,6 +21,10 @@ struct BackupView: View {
 
     var body: some View {
         Form {
+            if let password = dataModel.backupPassword.fetchedPassword {
+                currentBackupsSection(password: password)
+            }
+
             switch dataModel.backupPassword {
             case .error:
                 authenticateSection(isError: true)
@@ -31,10 +35,6 @@ struct BackupView: View {
             case let .fetched(password):
                 currentKeySection(existingPassword: password)
                 overrideKeySection(existingPassword: password)
-            }
-
-            if let password = dataModel.backupPassword.fetchedPassword {
-                createExportSection(password: password)
             }
         }
         .animation(.default, value: dataModel.backupPassword)
@@ -72,8 +72,17 @@ struct BackupView: View {
         }
     }
 
-    private func createExportSection(password: BackupPassword) -> some View {
+    private func currentBackupsSection(password: BackupPassword) -> some View {
         Section {
+            VStack {
+                Text("Backups")
+                    .font(.headline)
+
+                Text("Most recent")
+                Text("Any changes since last backup?")
+            }
+            .containerRelativeFrame(.horizontal)
+
             Button {
                 modal = .pdfBackup(password)
             } label: {
