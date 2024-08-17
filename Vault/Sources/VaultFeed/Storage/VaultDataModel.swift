@@ -67,6 +67,13 @@ public final class VaultDataModel: Sendable {
             }
         }
 
+        public var isRetryable: Bool {
+            switch self {
+            case .error, .notFetched: true
+            case .notCreated, .fetched: false
+            }
+        }
+
         public var isError: Bool {
             switch self {
             case .error: true
@@ -122,16 +129,6 @@ extension VaultDataModel {
     public func purgeSensitiveData() {
         backupPassword = .notFetched
         backupPasswordLoadingState = .notLoading
-    }
-
-    /// If the password hasn't been fetched, but we could retry a fetch, this will be `true`.
-    ///
-    /// It's a good indicator if we should show a "Retry Load Password" button.
-    public var showBackupPasswordRetryFetchAction: Bool {
-        switch backupPassword {
-        case .error, .notFetched: backupPasswordLoadingState.isNotLoading
-        case .notCreated, .fetched: false
-        }
     }
 }
 

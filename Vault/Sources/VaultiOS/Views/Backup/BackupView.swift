@@ -69,9 +69,6 @@ struct BackupView: View {
                 }
             }
         }
-        .task {
-            await dataModel.loadBackupPassword()
-        }
     }
 
     private func createExportSection(password: BackupPassword) -> some View {
@@ -92,10 +89,14 @@ struct BackupView: View {
         Section {
             switch dataModel.backupPassword {
             case .notFetched:
-                PlaceholderView(systemIcon: "lock.fill", title: viewModel.strings.backupPasswordLoadingTitle)
-                    .foregroundStyle(.secondary)
-                    .padding()
-                    .containerRelativeFrame(.horizontal)
+                PlaceholderView(
+                    systemIcon: "lock.fill",
+                    title: viewModel.strings.backupPasswordLoadingTitle,
+                    subtitle: "Authenticate to access backup settings"
+                )
+                .foregroundStyle(.secondary)
+                .padding()
+                .containerRelativeFrame(.horizontal)
             case let .fetched(password):
                 updateButton
                 exportButton(password: password)
@@ -114,7 +115,7 @@ struct BackupView: View {
                 .containerRelativeFrame(.horizontal)
             }
 
-            if dataModel.showBackupPasswordRetryFetchAction {
+            if dataModel.backupPassword.isRetryable {
                 authenticateButton
             }
         } header: {
@@ -123,12 +124,10 @@ struct BackupView: View {
     }
 
     private var authenticateButton: some View {
-        Button {
-            Task {
-                await dataModel.loadBackupPassword()
-            }
+        AsyncButton(progressAlignment: .center) {
+            await dataModel.loadBackupPassword()
         } label: {
-            FormRow(image: Image(systemName: "arrow.clockwise"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
                 Text("Authenticate")
             }
         }

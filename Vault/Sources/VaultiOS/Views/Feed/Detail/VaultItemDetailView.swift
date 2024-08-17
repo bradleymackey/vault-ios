@@ -85,14 +85,22 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
     private var lockedSection: some View {
         Section {
             if authenticationService.canAuthenticate {
-                LockedDetailView {
-                    Task { @MainActor in
-                        _ = try await authenticationService.authenticate(reason: "Unlock item")
-                        viewModel.isLocked = false
+                PlaceholderView(
+                    systemIcon: "lock.fill",
+                    title: "Item Locked",
+                    subtitle: "Unlock this item to view its contents."
+                )
+                .padding()
+                .containerRelativeFrame(.horizontal)
+
+                AsyncButton {
+                    try await authenticationService.validateAuthentication(reason: "Unlock item")
+                    viewModel.isLocked = false
+                } label: {
+                    FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
+                        Text("Unlock")
                     }
                 }
-                .padding()
-                .modifier(HorizontallyCenter())
             } else {
                 FormRow(
                     image: Image(systemName: "lock.trianglebadge.exclamationmark.fill"),
@@ -156,8 +164,8 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
 
     private var saveDirtyChangesItem: some ToolbarContent {
         ToolbarItem(placement: .confirmationAction) {
-            Button {
-                Task { await viewModel.saveChanges() }
+            AsyncButton {
+                await viewModel.saveChanges()
             } label: {
                 Text(viewModel.strings.saveEditsTitle)
                     .tint(.accentColor)

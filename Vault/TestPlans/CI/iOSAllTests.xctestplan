@@ -20,6 +20,10 @@
       {
         "key" : "TZ",
         "value" : "UTC"
+      },
+      {
+        "key" : "SNAPSHOT_TESTING_RECORD",
+        "value" : "missing"
       }
     ],
     "language" : "en",

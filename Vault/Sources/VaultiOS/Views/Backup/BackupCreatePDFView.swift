@@ -28,10 +28,9 @@ struct BackupCreatePDFView: View {
             case .success:
                 Text("Success")
             }
-            Button {
-                Task {
-                    await viewModel.createPDF()
-                }
+
+            AsyncButton {
+                await viewModel.createPDF()
             } label: {
                 Text("Make PDF")
             }
