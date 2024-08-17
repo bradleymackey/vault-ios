@@ -19,7 +19,6 @@ public struct SettingsHomeView: View {
             policySection
         }
         .navigationTitle(viewModel.title)
-        .navigationBarTitleDisplayMode(.inline)
     }
 
     private var viewOptionsSection: some View {

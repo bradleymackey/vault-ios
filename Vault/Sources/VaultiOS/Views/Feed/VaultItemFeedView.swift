@@ -36,7 +36,6 @@ public struct VaultItemFeedView<
             listOfCodesView
         }
         .navigationTitle(Text(dataModel.feedTitle))
-        .navigationBarTitleDisplayMode(.large)
         .task {
             await dataModel.reloadData()
         }
