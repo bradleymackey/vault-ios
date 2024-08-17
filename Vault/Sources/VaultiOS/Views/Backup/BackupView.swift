@@ -11,7 +11,6 @@ struct BackupView: View {
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var viewModel = BackupViewModel()
     @State private var modal: Modal?
-    @State private var noPasswordAlert = false
 
     enum Modal: IdentifiableSelf {
         case updatePassword
@@ -22,22 +21,24 @@ struct BackupView: View {
 
     var body: some View {
         Form {
-            createPasswordSection
             if let password = dataModel.backupPassword.fetchedPassword {
-                createExportSection(password: password)
+                currentBackupsSection(password: password)
+            }
+
+            switch dataModel.backupPassword {
+            case .error:
+                authenticateSection(isError: true)
+            case .notFetched:
+                authenticateSection(isError: false)
+            case .notCreated:
+                currentKeySection(existingPassword: nil)
+            case let .fetched(password):
+                currentKeySection(existingPassword: password)
+                overrideKeySection(existingPassword: password)
             }
         }
+        .animation(.default, value: dataModel.backupPassword)
         .navigationTitle(Text(viewModel.strings.homeTitle))
-        .alert("Backup Password Error", isPresented: $noPasswordAlert, actions: {
-            Button("Reload", role: .cancel) {
-                Task {
-                    await dataModel.loadBackupPassword()
-                }
-            }
-            Button("Cancel", role: .destructive) {}
-        }, message: {
-            Text("Unable to load your encryption key. Please try again.")
-        })
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case let .pdfBackup(password):
@@ -71,8 +72,17 @@ struct BackupView: View {
         }
     }
 
-    private func createExportSection(password: BackupPassword) -> some View {
+    private func currentBackupsSection(password: BackupPassword) -> some View {
         Section {
+            VStack {
+                Text("Backups")
+                    .font(.headline)
+
+                Text("Most recent")
+                Text("Any changes since last backup?")
+            }
+            .containerRelativeFrame(.horizontal)
+
             Button {
                 modal = .pdfBackup(password)
             } label: {
@@ -83,44 +93,49 @@ struct BackupView: View {
         } header: {
             Text("Backups")
         }
+        .transition(.slide)
     }
 
-    private var createPasswordSection: some View {
+    private func currentKeySection(existingPassword: BackupPassword?) -> some View {
         Section {
-            switch dataModel.backupPassword {
-            case .notFetched:
-                PlaceholderView(
-                    systemIcon: "lock.fill",
-                    title: viewModel.strings.backupPasswordLoadingTitle,
-                    subtitle: "Authenticate to access backup settings"
-                )
-                .foregroundStyle(.secondary)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-            case let .fetched(password):
-                updateButton
-                exportButton(password: password)
-                importButton
-            case .notCreated:
+            if let existingPassword {
+                exportButton(password: existingPassword)
+            } else {
                 createButton
                 importButton
-            case .error:
-                PlaceholderView(
-                    systemIcon: "key.slash.fill",
-                    title: viewModel.strings.backupPasswordErrorTitle,
-                    subtitle: viewModel.strings.backupPasswordErrorDetail
-                )
-                .foregroundStyle(.secondary)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-            }
-
-            if dataModel.backupPassword.isRetryable {
-                authenticateButton
             }
         } header: {
-            Text(viewModel.strings.backupPasswordSectionTitle)
+            Text("Encryption Key")
         }
+        .transition(.slide)
+    }
+
+    private func overrideKeySection(existingPassword _: BackupPassword) -> some View {
+        Section {
+            updateButton
+            importButton
+        } header: {
+            Text("Override Encryption Key")
+        }
+        .transition(.slide)
+    }
+
+    private func authenticateSection(isError: Bool) -> some View {
+        Section {
+            PlaceholderView(
+                systemIcon: isError ? "key.slash.fill" : "lock.fill",
+                title: isError ? viewModel.strings.backupPasswordErrorTitle : viewModel.strings
+                    .backupPasswordLoadingTitle,
+                subtitle: isError ? viewModel.strings
+                    .backupPasswordErrorDetail : "Authenticate to access backup settings"
+            )
+            .foregroundStyle(.secondary)
+            .padding()
+            .containerRelativeFrame(.horizontal)
+
+            authenticateButton
+        }
+        .transition(.slide)
     }
 
     private var authenticateButton: some View {
@@ -147,7 +162,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .purple, style: .standard) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .red, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }
@@ -157,7 +172,7 @@ struct BackupView: View {
         Button {
             modal = .exportPassword(password)
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .green, style: .standard) {
                 Text(viewModel.strings.backupPasswordExportTitle)
             }
         }

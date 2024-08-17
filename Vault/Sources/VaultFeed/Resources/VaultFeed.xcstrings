@@ -18,7 +18,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create Key"
+            "value" : "Create New Key"
           }
         }
       }
@@ -29,7 +29,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Export Key"
+            "value" : "Export Current Key"
           }
         }
       }
@@ -40,7 +40,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Import Key"
+            "value" : "Import Different Key"
           }
         }
       }
@@ -84,7 +84,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Backup Encryption Key"
+            "value" : "Encryption Key"
           }
         }
       }
@@ -95,7 +95,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Update Key"
+            "value" : "Update Current Key"
           }
         }
       }
