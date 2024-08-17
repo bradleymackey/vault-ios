@@ -105,13 +105,13 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             makePreviewView(accountName: "Normal", renderer: codeRenderer)
-                .modifier(OTPCardViewModifier())
+                .modifier(VaultCardModifier())
                 .onAppear {
                     codeRenderer.subject.send("123456")
                 }
 
             makePreviewView(accountName: "Finished", renderer: finishedRenderer)
-                .modifier(OTPCardViewModifier())
+                .modifier(VaultCardModifier())
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }

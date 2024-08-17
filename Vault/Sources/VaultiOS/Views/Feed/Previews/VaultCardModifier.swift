@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-public struct OTPCardViewModifier: ViewModifier {
+public struct VaultCardModifier: ViewModifier {
     public enum Context {
         case prominent
         case secondary
@@ -37,6 +37,6 @@ public struct OTPCardViewModifier: ViewModifier {
 struct OTPCardViewModifier_Previews: PreviewProvider {
     static var previews: some View {
         Text("Testing")
-            .modifier(OTPCardViewModifier())
+            .modifier(VaultCardModifier())
     }
 }

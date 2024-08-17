@@ -59,7 +59,7 @@ public struct SecureNotePreviewView: View {
         behaviour: .normal
     )
     .frame(width: 200, height: 200)
-    .modifier(OTPCardViewModifier())
+    .modifier(VaultCardModifier())
     .padding()
 }
 
@@ -74,6 +74,6 @@ public struct SecureNotePreviewView: View {
         behaviour: .normal
     )
     .frame(width: 200, height: 200)
-    .modifier(OTPCardViewModifier())
+    .modifier(VaultCardModifier())
     .padding()
 }
