@@ -23,6 +23,7 @@ struct VaultListView<
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
+    @State private var isShowingEditSheet = false
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
     @Environment(\.scenePhase) private var scenePhase
@@ -43,9 +44,9 @@ struct VaultListView<
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
-                    modal = .tags
+                    isShowingEditSheet.toggle()
                 } label: {
-                    Label("Tags", systemImage: "tag.fill")
+                    Label("Edit", systemImage: "ellipsis.circle")
                 }
             }
 
@@ -74,21 +75,24 @@ struct VaultListView<
                     Image(systemName: "plus")
                 }
             }
-
-            if !dataModel.items.isEmpty {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button {
-                        withAnimation(.easeInOut(duration: 0.2)) {
-                            isEditing.toggle()
-                        }
-                    } label: {
-                        Text(isEditing ? "Done" : "Edit")
-                            .fontWeight(isEditing ? .semibold : .regular)
-                            .animation(.none)
-                    }
+        }
+        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
+            if dataModel.items.isNotEmpty {
+                Button {
+                    isEditing = true
+                } label: {
+                    Label("Edit Items", systemImage: "pencil")
                 }
             }
-        }
+
+            Button {
+                modal = .tags
+            } label: {
+                Label("Edit Tags", systemImage: "tag.fill")
+            }
+
+            Button("Cancel", role: .cancel) {}
+        })
         .sheet(item: $modal, onDismiss: nil) { visible in
             switch visible {
             case let .detail(_, storedCode):
