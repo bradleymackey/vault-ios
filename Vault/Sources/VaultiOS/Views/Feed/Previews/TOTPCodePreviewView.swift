@@ -26,6 +26,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
         .shimmering(active: isEditing)
+        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
     }
 
     private var labelsStack: some View {
@@ -96,13 +97,11 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 40) {
             makePreview(issuer: "Working Example", renderer: codeRenderer)
-                .modifier(VaultCardModifier())
                 .onAppear {
                     codeRenderer.subject.send("1234567")
                 }
 
             makePreview(issuer: "Working Example with Very long title and stuff", renderer: codeRenderer)
-                .modifier(VaultCardModifier())
                 .onAppear {
                     codeRenderer.subject.send("1234567")
                 }
@@ -110,7 +109,6 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
             makePreview(issuer: "", renderer: codeRenderer)
 
             makePreview(issuer: "Code Error Example", renderer: errorRenderer)
-                .modifier(VaultCardModifier())
                 .onAppear {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
                 }

@@ -38,6 +38,7 @@ public struct SecureNotePreviewView: View {
         .shimmering(active: isEditing)
         .aspectRatio(1, contentMode: .fill)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
     }
 
     private var isEditing: Bool {
@@ -59,7 +60,6 @@ public struct SecureNotePreviewView: View {
         behaviour: .normal
     )
     .frame(width: 200, height: 200)
-    .modifier(VaultCardModifier())
     .padding()
 }
 
@@ -74,6 +74,5 @@ public struct SecureNotePreviewView: View {
         behaviour: .normal
     )
     .frame(width: 200, height: 200)
-    .modifier(VaultCardModifier())
     .padding()
 }

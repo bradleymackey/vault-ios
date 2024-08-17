@@ -21,6 +21,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
         .shimmering(active: isEditing)
+        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
     }
 
     @ViewBuilder
@@ -105,13 +106,11 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             makePreviewView(accountName: "Normal", renderer: codeRenderer)
-                .modifier(VaultCardModifier())
                 .onAppear {
                     codeRenderer.subject.send("123456")
                 }
 
             makePreviewView(accountName: "Finished", renderer: finishedRenderer)
-                .modifier(VaultCardModifier())
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }

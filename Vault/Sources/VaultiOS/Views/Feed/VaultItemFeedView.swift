@@ -154,7 +154,6 @@ public struct VaultItemFeedView<
                 .frame(width: geo.size.width, height: geo.size.height)
             }
             .aspectRatio(1, contentMode: .fit)
-            .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
         } previewContent: { storedItem in
             GeometryReader { geo in
                 viewGenerator.makeVaultPreviewView(
@@ -165,7 +164,6 @@ public struct VaultItemFeedView<
                 .frame(width: geo.size.width, height: geo.size.height)
             }
             .aspectRatio(1, contentMode: .fit)
-            .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
             .frame(width: 150)
         } moveAction: { from, to in
             let movingIds = from.map { dataModel.items[$0].id }.reducedToSet()
