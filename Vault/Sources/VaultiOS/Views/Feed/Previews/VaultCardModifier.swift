@@ -1,8 +1,9 @@
 import Foundation
 import SwiftUI
 
-public struct OTPCardViewModifier: ViewModifier {
+public struct VaultCardModifier: ViewModifier {
     public enum Context {
+        case prominent
         case secondary
         case tertiary
     }
@@ -22,6 +23,7 @@ public struct OTPCardViewModifier: ViewModifier {
 
     private var backgroundColor: Color {
         switch context {
+        case .prominent: Color.blue
         case .secondary: Color(UIColor.secondarySystemBackground)
         case .tertiary: Color(UIColor.tertiarySystemBackground)
         }
@@ -35,6 +37,6 @@ public struct OTPCardViewModifier: ViewModifier {
 struct OTPCardViewModifier_Previews: PreviewProvider {
     static var previews: some View {
         Text("Testing")
-            .modifier(OTPCardViewModifier())
+            .modifier(VaultCardModifier())
     }
 }

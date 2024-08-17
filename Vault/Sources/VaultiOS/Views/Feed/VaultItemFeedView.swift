@@ -55,7 +55,7 @@ public struct VaultItemFeedView<
         PlaceholderView(systemIcon: "key.viewfinder", title: localized(key: "codeFeed.noCodes.title"))
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
-            .modifier(OTPCardViewModifier())
+            .modifier(VaultCardModifier())
     }
 
     private var reorderingBehaviour: VaultItemViewBehaviour {
@@ -154,7 +154,6 @@ public struct VaultItemFeedView<
                 .frame(width: geo.size.width, height: geo.size.height)
             }
             .aspectRatio(1, contentMode: .fit)
-            .modifier(OTPCardViewModifier(context: .secondary))
         } previewContent: { storedItem in
             GeometryReader { geo in
                 viewGenerator.makeVaultPreviewView(
@@ -165,7 +164,6 @@ public struct VaultItemFeedView<
                 .frame(width: geo.size.width, height: geo.size.height)
             }
             .aspectRatio(1, contentMode: .fit)
-            .modifier(OTPCardViewModifier())
             .frame(width: 150)
         } moveAction: { from, to in
             let movingIds = from.map { dataModel.items[$0].id }.reducedToSet()

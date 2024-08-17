@@ -20,6 +20,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         }
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
+        .shimmering(active: isEditing)
+        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
     }
 
     @ViewBuilder
@@ -44,6 +46,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             icon
                 .padding(.top, 2)
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.visibleIssuer)
+                .foregroundStyle(isEditing ? .white : .primary)
             Spacer()
         }
         .padding(.horizontal, 2)
@@ -66,7 +69,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             OTPCodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
-                .foregroundColor(.primary)
+                .foregroundColor(isEditing ? .white : .primary)
         }
     }
 
@@ -86,6 +89,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     private var canLoadNextCode: Bool {
         previewViewModel.code.allowsNextCodeToBeGenerated && behaviour == .normal
     }
+
+    private var isEditing: Bool {
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
+        }
+    }
 }
 
 struct HOTPCodePreviewView_Previews: PreviewProvider {
@@ -96,13 +106,11 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 20) {
             makePreviewView(accountName: "Normal", renderer: codeRenderer)
-                .modifier(OTPCardViewModifier())
                 .onAppear {
                     codeRenderer.subject.send("123456")
                 }
 
             makePreviewView(accountName: "Finished", renderer: finishedRenderer)
-                .modifier(OTPCardViewModifier())
                 .onAppear {
                     finishedRenderer.subject.send(completion: .finished)
                 }

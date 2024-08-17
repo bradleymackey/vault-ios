@@ -25,6 +25,8 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
         }
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
+        .shimmering(active: isEditing)
+        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
     }
 
     private var labelsStack: some View {
@@ -32,6 +34,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
             icon
                 .padding(.top, 2)
             OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.visibleIssuer)
+                .foregroundStyle(isEditing ? .white : .primary)
             Spacer()
         }
         .padding(.horizontal, 2)
@@ -55,7 +58,7 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
                 .padding(.horizontal, 2)
-                .foregroundColor(.primary)
+                .foregroundColor(isEditing ? .white : .primary)
         }
         .frame(maxWidth: .infinity, alignment: .center)
     }
@@ -74,7 +77,14 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
                 Color.red
             }
         case .editingState:
-            Color.blue
+            Color.white
+        }
+    }
+
+    private var isEditing: Bool {
+        switch behaviour {
+        case .normal: false
+        case .editingState: true
         }
     }
 }
@@ -87,13 +97,11 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
     static var previews: some View {
         VStack(spacing: 40) {
             makePreview(issuer: "Working Example", renderer: codeRenderer)
-                .modifier(OTPCardViewModifier())
                 .onAppear {
                     codeRenderer.subject.send("1234567")
                 }
 
             makePreview(issuer: "Working Example with Very long title and stuff", renderer: codeRenderer)
-                .modifier(OTPCardViewModifier())
                 .onAppear {
                     codeRenderer.subject.send("1234567")
                 }
@@ -101,7 +109,6 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
             makePreview(issuer: "", renderer: codeRenderer)
 
             makePreview(issuer: "Code Error Example", renderer: errorRenderer)
-                .modifier(OTPCardViewModifier())
                 .onAppear {
                     errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
                 }

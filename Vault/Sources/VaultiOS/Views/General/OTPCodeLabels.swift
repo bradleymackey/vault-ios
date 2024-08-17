@@ -8,14 +8,14 @@ struct OTPCodeLabels: View {
         VStack(alignment: .leading, spacing: 0) {
             Text(issuerNameFormatted)
                 .font(.headline.bold())
-                .foregroundColor(.primary)
+                .foregroundStyle(.primary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .truncationMode(.tail)
                 .minimumScaleFactor(0.8)
             Text(accountNameFormatted)
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundStyle(.secondary)
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
         }

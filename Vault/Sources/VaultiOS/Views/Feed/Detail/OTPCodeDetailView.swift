@@ -250,7 +250,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             .frame(maxWidth: 220)
             .padding(4) // some additional padding because it's bigger
             .padding(.horizontal, 4)
-            .modifier(OTPCardViewModifier(context: .secondary))
             .overlay(
                 RoundedRectangle(cornerRadius: 16)
                     .stroke(.secondary, lineWidth: 4)
