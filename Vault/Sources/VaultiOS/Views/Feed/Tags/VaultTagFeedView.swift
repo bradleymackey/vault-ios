@@ -80,6 +80,14 @@ struct VaultTagFeedView: View {
                         }
                     }
                 }
+                .onDelete { indexSet in
+                    let ids = indexSet.map { dataModel.allTags[$0].id }
+                    Task {
+                        for id in ids {
+                            try await dataModel.delete(tagID: id)
+                        }
+                    }
+                }
             }
         }
         .listStyle(.plain)
