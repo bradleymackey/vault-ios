@@ -16,10 +16,8 @@ struct VaultListView<
     init(localSettings: LocalSettings, viewGenerator: Generator) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
-        _tagFeedViewModel = .init(wrappedValue: .init())
     }
 
-    @State private var tagFeedViewModel: VaultTagFeedViewModel
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @State private var isEditing = false
@@ -31,7 +29,6 @@ struct VaultListView<
     enum Modal: Hashable, IdentifiableSelf {
         case detail(Identifier<VaultItem>, VaultItem)
         case creatingItem(CreatingItem)
-        case tags
     }
 
     var body: some View {
@@ -42,11 +39,13 @@ struct VaultListView<
             gridSpacing: 12
         )
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                Button {
-                    isShowingEditSheet.toggle()
-                } label: {
-                    Label("Edit", systemImage: "ellipsis.circle")
+            if dataModel.items.isNotEmpty {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button {
+                        isShowingEditSheet.toggle()
+                    } label: {
+                        Label("Edit", systemImage: "ellipsis.circle")
+                    }
                 }
             }
 
@@ -77,18 +76,10 @@ struct VaultListView<
             }
         }
         .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
-            if dataModel.items.isNotEmpty {
-                Button {
-                    isEditing = true
-                } label: {
-                    Label("Edit Items", systemImage: "pencil")
-                }
-            }
-
             Button {
-                modal = .tags
+                isEditing = true
             } label: {
-                Label("Edit Tags", systemImage: "tag.fill")
+                Label("Edit Items", systemImage: "pencil")
             }
 
             Button("Cancel", role: .cancel) {}
@@ -112,12 +103,6 @@ struct VaultListView<
                         navigationPath: $navigationPath
                     )
                 }
-            case .tags:
-                NavigationStack {
-                    VaultTagFeedView(viewModel: tagFeedViewModel)
-                }
-                .presentationDragIndicator(.visible)
-                .presentationDetents([.medium, .large])
             }
         }
         .onChange(of: modal) { _, newValue in
