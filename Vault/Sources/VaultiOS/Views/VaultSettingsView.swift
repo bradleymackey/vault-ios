@@ -15,6 +15,7 @@ public struct VaultSettingsView: View {
     public var body: some View {
         Form {
             viewOptionsSection
+            aboutSection
             policySection
         }
         .navigationTitle(viewModel.title)
@@ -35,7 +36,7 @@ public struct VaultSettingsView: View {
         }
     }
 
-    private var policySection: some View {
+    private var aboutSection: some View {
         Section {
             NavigationLink {
                 AboutView(viewModel: viewModel)
@@ -58,15 +59,19 @@ public struct VaultSettingsView: View {
                     Text(viewModel.openSourceTitle)
                 }
             }
+        }
+    }
 
+    private var policySection: some View {
+        Section {
             NavigationLink {
-                ThirdPartyView()
+                SettingsDocumentView(title: viewModel.termsOfUseTitle, viewModel: TermsOfServiceViewModel())
             } label: {
                 FormRow(
-                    image: Image(systemName: "text.book.closed.fill"),
-                    color: .blue
+                    image: Image(systemName: "person.fill.checkmark"),
+                    color: .green
                 ) {
-                    Text(viewModel.thirdPartyTitle)
+                    Text(viewModel.termsOfUseTitle)
                 }
             }
 
@@ -82,17 +87,15 @@ public struct VaultSettingsView: View {
             }
 
             NavigationLink {
-                SettingsDocumentView(title: viewModel.termsOfUseTitle, viewModel: TermsOfServiceViewModel())
+                ThirdPartyView()
             } label: {
                 FormRow(
-                    image: Image(systemName: "person.fill.checkmark"),
-                    color: .green
+                    image: Image(systemName: "text.book.closed.fill"),
+                    color: .blue
                 ) {
-                    Text(viewModel.termsOfUseTitle)
+                    Text(viewModel.thirdPartyTitle)
                 }
             }
-        } header: {
-            Text(viewModel.policyAndLegacySectionTitle)
         }
     }
 }
