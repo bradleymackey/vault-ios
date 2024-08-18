@@ -25,7 +25,6 @@ public struct LiteratureView: View {
             .padding(24)
         }
         .navigationTitle(Text(title))
-        .navigationBarTitleDisplayMode(.large)
     }
 }
 
