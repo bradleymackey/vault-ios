@@ -161,8 +161,8 @@ extension OTPAuthCode {
 func anyVaultItemTag(
     id: UUID = UUID(),
     name: String = "name",
-    color: VaultItemColor? = nil,
-    iconName: String? = nil
+    color: VaultItemColor = .tagDefault,
+    iconName: String = VaultItemTag.defaultIconName
 ) -> VaultItemTag {
     VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
 }

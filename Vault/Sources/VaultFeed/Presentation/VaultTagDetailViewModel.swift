@@ -6,9 +6,8 @@ import VaultCore
 @Observable
 public final class VaultTagDetailViewModel {
     public let strings = VaultTagDetailViewModelStrings()
-    public var title: String
-    public var color: VaultItemColor
-    public var systemIconName: String
+    private let existingTag: VaultItemTag.Write
+    public var currentTag: VaultItemTag.Write
     public internal(set) var saveError: PresentationError?
     public internal(set) var deleteError: PresentationError?
 
@@ -77,19 +76,17 @@ public final class VaultTagDetailViewModel {
 
     public init(dataModel: VaultDataModel, existingTag: VaultItemTag?) {
         self.dataModel = dataModel
-        if let existingTag {
-            tagId = existingTag.id
-            color = existingTag.color ?? .tagDefault
-            title = existingTag.name
-            let existingIcon = existingTag.iconName ?? Self.defaultIconOption
-            let currentIcon = Self.systemIconOptions.contains(existingIcon) ? existingIcon : Self.defaultIconOption
-            systemIconName = currentIcon
+        self.existingTag = if let existingTag {
+            existingTag.makeWritable()
         } else {
-            tagId = nil
-            color = .tagDefault
-            title = ""
-            systemIconName = Self.defaultIconOption
+            .new()
         }
+        currentTag = self.existingTag
+        tagId = existingTag?.id
+    }
+
+    public var isDirty: Bool {
+        existingTag != currentTag
     }
 
     public var isExistingItem: Bool {
@@ -101,11 +98,11 @@ public final class VaultTagDetailViewModel {
     }
 
     private func makeWritableTag() -> VaultItemTag.Write {
-        .init(name: title, color: color, iconName: systemIconName)
+        currentTag
     }
 
     public var isValidToSave: Bool {
-        title.isNotEmpty && !title.isBlank
+        currentTag.name.isNotEmpty && !currentTag.name.isBlank
     }
 
     public func save() async {

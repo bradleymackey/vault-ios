@@ -31,9 +31,9 @@ final class VaultBackupTagDecoderTests: XCTestCase {
 
         let decoded = try sut.decode(tag: item)
 
-        XCTAssertEqual(decoded.color?.red, 0.4)
-        XCTAssertEqual(decoded.color?.green, 0.5)
-        XCTAssertEqual(decoded.color?.blue, 0.6)
+        XCTAssertEqual(decoded.color.red, 0.4)
+        XCTAssertEqual(decoded.color.green, 0.5)
+        XCTAssertEqual(decoded.color.blue, 0.6)
     }
 
     func test_decode_iconName() throws {

@@ -27,20 +27,9 @@ final class VaultTagDetailViewModelTests: XCTestCase {
     func test_init_whenExistingTagIsNil_setsDefaultValues() async {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.title, "")
-        XCTAssertEqual(sut.color, .tagDefault)
-        XCTAssertEqual(sut.systemIconName, "tag.fill")
-    }
-
-    @MainActor
-    func test_init_whenExistingTagIsNotNil_fallsBackToDefaultTagIfIconNameInvalid() async {
-        let color = VaultItemColor.random()
-        let tag = VaultItemTag(id: .init(), name: "tag", color: color, iconName: "tagicon")
-        let sut = makeSUT(existingTag: tag)
-
-        XCTAssertEqual(sut.title, "tag")
-        XCTAssertEqual(sut.color, color)
-        XCTAssertEqual(sut.systemIconName, "tag.fill")
+        XCTAssertEqual(sut.currentTag.name, "")
+        XCTAssertEqual(sut.currentTag.color, .tagDefault)
+        XCTAssertEqual(sut.currentTag.iconName, "tag.fill")
     }
 
     @MainActor
@@ -49,9 +38,9 @@ final class VaultTagDetailViewModelTests: XCTestCase {
         let tag = VaultItemTag(id: .init(), name: "tag", color: color, iconName: "figure.2.arms.open")
         let sut = makeSUT(existingTag: tag)
 
-        XCTAssertEqual(sut.title, "tag")
-        XCTAssertEqual(sut.color, color)
-        XCTAssertEqual(sut.systemIconName, "figure.2.arms.open")
+        XCTAssertEqual(sut.currentTag.name, "tag")
+        XCTAssertEqual(sut.currentTag.color, color)
+        XCTAssertEqual(sut.currentTag.iconName, "figure.2.arms.open")
     }
 
     @MainActor

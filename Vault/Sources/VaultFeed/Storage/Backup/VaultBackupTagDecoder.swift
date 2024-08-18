@@ -7,14 +7,14 @@ final class VaultBackupTagDecoder {
             id: .init(id: tag.id),
             name: tag.title,
             color: decodeColor(color: tag.color),
-            iconName: tag.iconName
+            iconName: tag.iconName ?? VaultItemTag.defaultIconName
         )
     }
 }
 
 extension VaultBackupTagDecoder {
-    private func decodeColor(color: VaultBackupRGBColor?) -> VaultItemColor? {
-        guard let color else { return nil }
+    private func decodeColor(color: VaultBackupRGBColor?) -> VaultItemColor {
+        guard let color else { return .tagDefault }
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 }

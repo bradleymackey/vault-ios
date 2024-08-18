@@ -5,10 +5,15 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
     /// Static identifier for this item
     public let id: Identifier<VaultItemTag>
     public var name: String
-    public var color: VaultItemColor?
-    public var iconName: String?
+    public var color: VaultItemColor
+    public var iconName: String
 
-    public init(id: Identifier<VaultItemTag>, name: String, color: VaultItemColor? = nil, iconName: String? = nil) {
+    public init(
+        id: Identifier<VaultItemTag>,
+        name: String,
+        color: VaultItemColor = .tagDefault,
+        iconName: String = Self.defaultIconName
+    ) {
         self.id = id
         self.name = name
         self.color = color
@@ -33,13 +38,19 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
 extension VaultItemTag {
     public struct Write: Equatable, Sendable {
         public var name: String
-        public var color: VaultItemColor?
-        public var iconName: String?
+        public var color: VaultItemColor
+        public var iconName: String
 
-        public init(name: String, color: VaultItemColor?, iconName: String?) {
+        public init(name: String, color: VaultItemColor, iconName: String) {
             self.name = name
             self.color = color
             self.iconName = iconName
         }
+    }
+}
+
+extension VaultItemTag.Write {
+    public static func new() -> Self {
+        .init(name: "", color: .tagDefault, iconName: VaultItemTag.defaultIconName)
     }
 }

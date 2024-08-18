@@ -980,9 +980,9 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
     func test_retrieveTags_returnsMultipleTags() async throws {
         let items = [
-            VaultItemTag.Write(name: "any1", color: nil, iconName: nil),
-            VaultItemTag.Write(name: "any2", color: nil, iconName: nil),
-            VaultItemTag.Write(name: "any3", color: nil, iconName: nil),
+            VaultItemTag.Write(name: "any1", color: .tagDefault, iconName: "any"),
+            VaultItemTag.Write(name: "any2", color: .tagDefault, iconName: "any"),
+            VaultItemTag.Write(name: "any3", color: .tagDefault, iconName: "any"),
         ]
         var insertedIDs = [UUID]()
         for tag in items {

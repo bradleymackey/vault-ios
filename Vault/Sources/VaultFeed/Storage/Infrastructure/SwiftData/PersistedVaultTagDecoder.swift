@@ -6,7 +6,7 @@ struct PersistedVaultTagDecoder {
             id: .init(id: item.id),
             name: item.title,
             color: decodeColor(item.color),
-            iconName: item.iconName
+            iconName: item.iconName ?? VaultItemTag.defaultIconName
         )
     }
 }
@@ -14,8 +14,8 @@ struct PersistedVaultTagDecoder {
 // MARK: - Helpers
 
 extension PersistedVaultTagDecoder {
-    private func decodeColor(_ color: PersistedColor?) -> VaultItemColor? {
-        guard let color else { return nil }
+    private func decodeColor(_ color: PersistedColor?) -> VaultItemColor {
+        guard let color else { return .tagDefault }
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 }

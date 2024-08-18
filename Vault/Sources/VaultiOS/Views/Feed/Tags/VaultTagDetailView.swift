@@ -11,7 +11,7 @@ struct VaultTagDetailView: View {
 
     init(viewModel: VaultTagDetailViewModel) {
         self.viewModel = viewModel
-        _selectedColor = State(initialValue: viewModel.color.color)
+        _selectedColor = State(initialValue: viewModel.currentTag.color.color)
     }
 
     var body: some View {
@@ -46,7 +46,7 @@ struct VaultTagDetailView: View {
             }
         }
         .onChange(of: selectedColor.hashValue) { _, _ in
-            viewModel.color = VaultItemColor(color: selectedColor)
+            viewModel.currentTag.color = VaultItemColor(color: selectedColor)
         }
     }
 
@@ -56,9 +56,9 @@ struct VaultTagDetailView: View {
                 TagPillView(
                     tag: .init(
                         id: .init(),
-                        name: viewModel.title,
-                        color: viewModel.color,
-                        iconName: viewModel.systemIconName
+                        name: viewModel.currentTag.name,
+                        color: viewModel.currentTag.color,
+                        iconName: viewModel.currentTag.iconName
                     ),
                     isSelected: true
                 )
@@ -73,7 +73,7 @@ struct VaultTagDetailView: View {
 
     private var tagNameSection: some View {
         Section {
-            TextField("My Tag", text: $viewModel.title)
+            TextField("My Tag", text: $viewModel.currentTag.name)
         } header: {
             Text("Tag Name")
         }
@@ -87,11 +87,11 @@ struct VaultTagDetailView: View {
                         .font(.system(.title2))
                         .padding(8)
                         .foregroundStyle(
-                            viewModel.systemIconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)
+                            viewModel.currentTag.iconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)
                                 .opacity(0.5)
                         )
                         .onTapGesture {
-                            viewModel.systemIconName = icon
+                            viewModel.currentTag.iconName = icon
                         }
                 }
             }
