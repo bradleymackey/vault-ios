@@ -19,29 +19,12 @@ struct AboutView: View {
                 Label("Backups", systemImage: "doc.on.doc.fill")
             }
 
-            dataPrivacySection
+            NavigationLink {
+                SettingsDocumentView(title: "About Security", viewModel: AboutSecurityViewModel())
+            } label: {
+                Label("Security", systemImage: "lock.fill")
+            }
         }
         .navigationTitle(Text(viewModel.aboutTitle))
-    }
-}
-
-// MARK: - Data Privacy
-
-extension AboutView {
-    private var dataPrivacySection: some View {
-        DisclosureGroup {
-            Group {
-                Text("Your codes are only visible on the device you set them up on.")
-                Text(
-                    "They are only backed up to iCloud with your explicit approval, and are not sent to any other server."
-                )
-                Text(
-                    "Individuals that are particularly security conscious should build the app from source (as this app is open-source)."
-                )
-            }
-            .foregroundColor(.secondary)
-        } label: {
-            Label("Data Privacy", systemImage: "lock.fill")
-        }
     }
 }

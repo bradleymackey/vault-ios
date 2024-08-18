@@ -13,3 +13,10 @@ public final class AboutBackupsViewModel: FileBackedContentViewModel {
 
     public init() {}
 }
+
+public final class AboutSecurityViewModel: FileBackedContentViewModel {
+    public let fileName: String = "About-Security"
+    public let fileExtension: String = "md"
+
+    public init() {}
+}
