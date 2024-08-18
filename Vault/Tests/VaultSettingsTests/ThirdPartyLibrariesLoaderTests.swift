@@ -17,6 +17,7 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
             "Defaults",
             "CodeScanner",
             "swift-security",
+            "swift-markdown-ui",
         ])
     }
 
