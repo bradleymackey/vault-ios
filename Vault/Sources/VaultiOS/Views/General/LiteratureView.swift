@@ -4,10 +4,10 @@ import SwiftUI
 /// A view that displays a single block of scrolling text.
 public struct LiteratureView: View {
     public var title: String
-    public var bodyText: String
+    public var bodyText: AttributedString
     public var bodyColor: Color
 
-    public init(title: String, bodyText: String, bodyColor: Color) {
+    public init(title: String, bodyText: AttributedString, bodyColor: Color) {
         self.title = title
         self.bodyText = bodyText
         self.bodyColor = bodyColor

@@ -8,7 +8,7 @@ public protocol FileBackedContentViewModel {
 
 extension FileBackedContentViewModel {
     /// Load the content from this file.
-    public func loadContent() -> String? {
+    public func loadContent() -> AttributedString? {
         guard let path = Bundle.module.path(forResource: fileName, ofType: fileExtension) else {
             return nil
         }
@@ -16,7 +16,10 @@ extension FileBackedContentViewModel {
         guard let contents = try? Data(contentsOf: url) else {
             return nil
         }
-        return String(data: contents, encoding: .utf8)
+        guard let string = String(data: contents, encoding: .utf8) else {
+            return nil
+        }
+        return AttributedString(string)
     }
 
     public var errorLoadingMessage: String {
