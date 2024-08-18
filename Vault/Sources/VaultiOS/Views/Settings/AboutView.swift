@@ -7,35 +7,16 @@ struct AboutView: View {
 
     var body: some View {
         Form {
-            whatAreCodesSection
+            NavigationLink {
+                SettingsDocumentView(title: "About Codes", viewModel: AboutCodesViewModel())
+            } label: {
+                Label("What are codes?", systemImage: "questionmark.circle.fill")
+            }
+
             backupSection
             dataPrivacySection
         }
         .navigationTitle(Text(viewModel.aboutTitle))
-    }
-}
-
-// MARK: - What are Codes
-
-extension AboutView {
-    private var whatAreCodesSection: some View {
-        DisclosureGroup {
-            Group {
-                Text(
-                    "Two-factor authentication (2FA) codes are used to provide an extra layer of security when logging into websites."
-                )
-                Text(
-                    "Some websites offer this ability to make your account more secure, as you need a username, password and a code to login."
-                )
-                Text(
-                    "Once setup, only your device knows how to generate these codes for your account. This means that you need physical access to this device to login to the account. The advantage of this is that if your username and password are compromised, a hacker still won't be able to login to your account because they don't have access to this device with your 2FA code."
-                )
-                Text("It's a best-practice to setup 2FA for all your accounts that support this.")
-            }
-            .foregroundColor(.secondary)
-        } label: {
-            Label("What are codes?", systemImage: "questionmark.circle.fill")
-        }
     }
 }
 
