@@ -85,6 +85,10 @@ public final class VaultTagDetailViewModel {
         tagId = existingTag?.id
     }
 
+    public var isNew: Bool {
+        tagId == nil
+    }
+
     public var isDirty: Bool {
         existingTag != currentTag
     }

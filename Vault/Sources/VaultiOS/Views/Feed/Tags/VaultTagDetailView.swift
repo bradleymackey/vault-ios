@@ -26,14 +26,16 @@ struct VaultTagDetailView: View {
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .confirmationAction) {
-                AsyncButton {
-                    await viewModel.save()
-                    dismiss()
-                } label: {
-                    Text("Save")
+            if viewModel.isDirty {
+                ToolbarItem(placement: .confirmationAction) {
+                    AsyncButton {
+                        await viewModel.save()
+                        dismiss()
+                    } label: {
+                        Text("Save")
+                    }
+                    .disabled(!viewModel.isValidToSave)
                 }
-                .disabled(!viewModel.isValidToSave)
             }
 
             ToolbarItem(placement: .cancellationAction) {
