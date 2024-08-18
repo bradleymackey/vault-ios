@@ -1,4 +1,5 @@
 import Foundation
+import VaultCore
 
 /// A view model for content that is loaded from a resource file.
 public protocol FileBackedContentViewModel {
@@ -8,7 +9,7 @@ public protocol FileBackedContentViewModel {
 
 extension FileBackedContentViewModel {
     /// Load the content from this file.
-    public func loadContent() -> AttributedString? {
+    public func loadContent() -> FormattedString? {
         guard let path = Bundle.module.path(forResource: fileName, ofType: fileExtension) else {
             return nil
         }
@@ -19,7 +20,10 @@ extension FileBackedContentViewModel {
         guard let string = String(data: contents, encoding: .utf8) else {
             return nil
         }
-        return AttributedString(string)
+        return switch fileExtension {
+        case "md": .markdown(MarkdownString(content: string))
+        default: .raw(string)
+        }
     }
 
     public var errorLoadingMessage: String {

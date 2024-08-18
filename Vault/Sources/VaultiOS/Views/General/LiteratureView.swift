@@ -1,13 +1,15 @@
 import Foundation
+import MarkdownUI
 import SwiftUI
+import VaultCore
 
 /// A view that displays a single block of scrolling text.
 public struct LiteratureView: View {
     public var title: String
-    public var bodyText: AttributedString
+    public var bodyText: FormattedString
     public var bodyColor: Color
 
-    public init(title: String, bodyText: AttributedString, bodyColor: Color) {
+    public init(title: String, bodyText: FormattedString, bodyColor: Color) {
         self.title = title
         self.bodyText = bodyText
         self.bodyColor = bodyColor
@@ -16,10 +18,15 @@ public struct LiteratureView: View {
     public var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading) {
-                Text(bodyText)
-                    .font(.body)
-                    .foregroundStyle(bodyColor)
-                    .frame(maxWidth: .infinity, alignment: .leading)
+                switch bodyText {
+                case let .raw(string):
+                    Text(string)
+                        .font(.body)
+                        .foregroundStyle(bodyColor)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                case let .markdown(markdownString):
+                    Markdown(MarkdownContent(markdownString.content))
+                }
             }
             .padding(.vertical, 8)
             .padding(24)
@@ -28,14 +35,10 @@ public struct LiteratureView: View {
     }
 }
 
-struct LiteratureView_Previews: PreviewProvider {
-    static var previews: some View {
-        NavigationStack {
-            LiteratureView(
-                title: "Testing",
-                bodyText: "Hi there, what's up\n\nSecond\nThird\nFourth\nFifth",
-                bodyColor: .secondary
-            )
-        }
-    }
+#Preview {
+    LiteratureView(
+        title: "Testing",
+        bodyText: .markdown(.init(content: "Hi there, what's up\n\nSecond\nThird\nFourth\nFifth")),
+        bodyColor: .secondary
+    )
 }
