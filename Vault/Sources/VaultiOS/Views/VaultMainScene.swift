@@ -21,6 +21,7 @@ public struct VaultMainScene: Scene {
 
     enum SidebarItem: Hashable {
         case items
+        case tags
         case backups
         case restoreBackup
         case settings
@@ -80,6 +81,9 @@ public struct VaultMainScene: Scene {
                         NavigationLink(value: SidebarItem.items) {
                             Label("Items", systemImage: "key.horizontal.fill")
                         }
+                        NavigationLink(value: SidebarItem.tags) {
+                            Label("Tags", systemImage: "tag.fill")
+                        }
                     }
 
                     Section {
@@ -113,6 +117,10 @@ public struct VaultMainScene: Scene {
                         )
                     )
                     .navigationBarTitleDisplayMode(.inline)
+                case .tags:
+                    NavigationStack {
+                        VaultTagFeedView(viewModel: .init())
+                    }
                 case .settings:
                     NavigationStack {
                         VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)

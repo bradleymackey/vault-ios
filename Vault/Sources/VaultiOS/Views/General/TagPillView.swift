@@ -23,7 +23,7 @@ struct TagPillView: View {
     }
 
     private var tagColor: Color {
-        (tag.color?.color ?? Color.accentColor).opacity(isSelected ? 1 : 0.8)
+        tag.color.color.opacity(isSelected ? 1 : 0.8)
     }
 
     private var contrastingColor: Color {

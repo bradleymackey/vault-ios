@@ -313,8 +313,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
             ForEach(viewModel.tagsThatAreSelected) { tag in
                 FormRow(
-                    image: Image(systemName: tag.iconName ?? VaultItemTag.defaultIconName),
-                    color: tag.color?.color ?? .primary,
+                    image: Image(systemName: tag.iconName),
+                    color: tag.color.color,
                     style: .standard
                 ) {
                     Text(tag.name)

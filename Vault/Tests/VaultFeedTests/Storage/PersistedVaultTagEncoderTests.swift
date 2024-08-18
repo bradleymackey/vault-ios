@@ -48,15 +48,6 @@ extension PersistedVaultTagEncoderTests {
         XCTAssertEqual(encoded.title, name)
     }
 
-    func test_encode_colorNil() throws {
-        let sut = makeSUT()
-        let item = makeWritableVaultItemTag(color: nil)
-
-        let encoded = sut.encode(tag: item)
-
-        XCTAssertNil(encoded.color)
-    }
-
     func test_encode_colorWithValues() throws {
         let sut = makeSUT()
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
@@ -89,8 +80,8 @@ extension PersistedVaultTagEncoderTests {
 
     private func makeWritableVaultItemTag(
         name: String = "Any",
-        color: VaultItemColor? = nil,
-        iconName: String? = nil
+        color: VaultItemColor = .tagDefault,
+        iconName: String = VaultItemTag.defaultIconName
     ) -> VaultItemTag.Write {
         .init(
             name: name,
@@ -102,8 +93,8 @@ extension PersistedVaultTagEncoderTests {
     private func makeVaultItemTag(
         id: UUID = UUID(),
         name: String = "Any",
-        color: VaultItemColor? = nil,
-        iconName: String? = nil
+        color: VaultItemColor = .tagDefault,
+        iconName: String = VaultItemTag.defaultIconName
     ) -> VaultItemTag {
         .init(
             id: .init(id: id),

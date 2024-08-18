@@ -16,7 +16,7 @@ final class VaultBackupTagEncoder {
 
 extension VaultBackupTagEncoder {
     private func encodeColor(tag: VaultItemTag) -> VaultBackupRGBColor? {
-        guard let color = tag.color else { return nil }
+        let color = tag.color
         return .init(red: color.red, green: color.green, blue: color.blue)
     }
 }

@@ -46,13 +46,13 @@ extension PersistedVaultTagDecoderTests {
         XCTAssertEqual(decoded.name, name)
     }
 
-    func test_decode_colorNil() throws {
+    func test_decode_colorNilIsTagDefault() throws {
         let item = makePersistedTag(color: nil)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertNil(decoded.color)
+        XCTAssertEqual(decoded.color, .tagDefault)
     }
 
     func test_decode_colorWithValues() throws {
@@ -62,9 +62,9 @@ extension PersistedVaultTagDecoderTests {
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.color?.red, 0.5)
-        XCTAssertEqual(decoded.color?.green, 0.6)
-        XCTAssertEqual(decoded.color?.blue, 0.7)
+        XCTAssertEqual(decoded.color.red, 0.5)
+        XCTAssertEqual(decoded.color.green, 0.6)
+        XCTAssertEqual(decoded.color.blue, 0.7)
     }
 
     func test_decode_iconName() throws {

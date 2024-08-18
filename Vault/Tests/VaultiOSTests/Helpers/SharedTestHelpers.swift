@@ -15,6 +15,15 @@ func anyVaultDataModel(
     VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
 }
 
+func anyVaultItemTag(
+    id: UUID = UUID(),
+    name: String = "name",
+    color: VaultItemColor = .tagDefault,
+    iconName: String = VaultItemTag.defaultIconName
+) -> VaultItemTag {
+    VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
+}
+
 extension VaultItemPreviewViewGeneratorMock {
     static func defaultMock() -> VaultItemPreviewViewGeneratorMock {
         mockGenerating {
