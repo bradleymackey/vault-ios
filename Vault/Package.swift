@@ -41,6 +41,7 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.5.0"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
+        .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.0"),
     ],
     targets: [
         .target(
@@ -52,6 +53,7 @@ let package = Package(
                 "SimpleToast",
                 "CodeScanner",
                 "FoundationExtensions",
+                .product(name: "MarkdownUI", package: "swift-markdown-ui"),
             ],
             resources: [
                 .process("Resources/Feed.xcstrings"),
@@ -165,7 +167,10 @@ let package = Package(
         ),
         .target(
             name: "VaultSettings",
-            dependencies: ["FoundationExtensions"],
+            dependencies: [
+                "FoundationExtensions",
+                "VaultCore",
+            ],
             resources: [
                 .process("Resources/Settings.xcstrings"),
             ],
