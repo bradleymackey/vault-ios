@@ -6,3 +6,10 @@ public final class AboutCodesViewModel: FileBackedContentViewModel {
 
     public init() {}
 }
+
+public final class AboutBackupsViewModel: FileBackedContentViewModel {
+    public let fileName: String = "About-Backups"
+    public let fileExtension: String = "md"
+
+    public init() {}
+}

@@ -38,7 +38,7 @@ public struct LiteratureView: View {
 #Preview {
     LiteratureView(
         title: "Testing",
-        bodyText: .markdown(.init(content: "Hi there, what's up\n\nSecond\nThird\nFourth\nFifth")),
+        bodyText: .markdown(.init("Hi there, what's up\n\nSecond\nThird\nFourth\nFifth")),
         bodyColor: .secondary
     )
 }

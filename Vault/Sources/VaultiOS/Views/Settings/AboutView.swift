@@ -10,33 +10,18 @@ struct AboutView: View {
             NavigationLink {
                 SettingsDocumentView(title: "About Codes", viewModel: AboutCodesViewModel())
             } label: {
-                Label("What are codes?", systemImage: "questionmark.circle.fill")
+                Label("What are 2FA codes?", systemImage: "questionmark.circle.fill")
             }
 
-            backupSection
+            NavigationLink {
+                SettingsDocumentView(title: "About Backups", viewModel: AboutBackupsViewModel())
+            } label: {
+                Label("Backups", systemImage: "doc.on.doc.fill")
+            }
+
             dataPrivacySection
         }
         .navigationTitle(Text(viewModel.aboutTitle))
-    }
-}
-
-// MARK: - Backups
-
-extension AboutView {
-    private var backupSection: some View {
-        DisclosureGroup {
-            Group {
-                Text("Backups are important to create as your codes are only stored on this device.")
-                Text(
-                    "This means if you were to lose this device, your codes will be gone forever and you may not be able to recover your accounts."
-                )
-                Text("You can backup your codes to iCloud or to paper that you can print off and store securely.")
-                Text("Backups are required to be encrypted with a password to ensure only you can restore them.")
-            }
-            .foregroundColor(.secondary)
-        } label: {
-            Label("Backups", systemImage: "doc.on.doc.fill")
-        }
     }
 }
 

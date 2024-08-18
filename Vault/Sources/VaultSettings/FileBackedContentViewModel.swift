@@ -21,7 +21,7 @@ extension FileBackedContentViewModel {
             return nil
         }
         return switch fileExtension {
-        case "md": .markdown(MarkdownString(content: string))
+        case "md": .markdown(MarkdownString(string))
         default: .raw(string)
         }
     }
