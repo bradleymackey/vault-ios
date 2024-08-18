@@ -6,19 +6,13 @@ struct ThirdPartyDetailView: View {
     let library: ThirdPartyLibrary
 
     var body: some View {
-        ScrollView(.vertical) {
-            Text(library.licence)
-                .font(.callout)
-                .foregroundColor(.secondary)
-                .padding(24)
-        }
-        .navigationTitle(Text(library.name))
-        .toolbar {
-            ToolbarItem(placement: .primaryAction) {
-                Link(destination: library.url) {
-                    Image(systemName: "link")
+        LiteratureView(title: library.name, bodyText: .markdown(.init(library.licence)), bodyColor: .secondary)
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Link(destination: library.url) {
+                        Image(systemName: "link")
+                    }
                 }
             }
-        }
     }
 }
