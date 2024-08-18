@@ -26,6 +26,7 @@ public struct LiteratureView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                 case let .markdown(markdownString):
                     Markdown(MarkdownContent(markdownString.content))
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
             .padding(.vertical, 8)
