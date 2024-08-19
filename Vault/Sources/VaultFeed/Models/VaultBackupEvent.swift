@@ -10,7 +10,9 @@ struct VaultBackupEvent: Equatable, Hashable, Sendable {
     /// The date that this backup was made.
     var date: Date
     /// The action that was taken on this backup to reach the current state.
-    var action: Action
+    var kind: Kind
+    /// The location where this event took place in relation to.
+    var location: Location
     /// Hash of all deterministic data that was backed up (application payload).
     ///
     /// This hash is used to check what data was actually backed up, so no random data or timestamps should be
@@ -19,11 +21,13 @@ struct VaultBackupEvent: Equatable, Hashable, Sendable {
 }
 
 extension VaultBackupEvent {
-    enum Action: Equatable, Hashable, Sendable {
-        case exportedToPDF
-        case importedFromPDF
-        case exportedToOtherDevice
-        case importedMergedFromOtherDevice
-        case importedOverriddenFromOtherDevice
+    enum Kind: Equatable, Hashable, Sendable {
+        case exported
+        case imported
+    }
+
+    enum Location: Equatable, Hashable, Sendable {
+        case pdfBackup
+        case otherDevice
     }
 }
