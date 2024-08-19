@@ -35,4 +35,9 @@ enum VaultEncodingConstants {
         static let onlyTitle = "ONLY_TITLE"
         static let onlyPassphrase = "ONLY_PASSPHRASE"
     }
+
+    enum TextFormat {
+        static let plain = "PLAIN"
+        static let markdown = "MARKDOWN"
+    }
 }

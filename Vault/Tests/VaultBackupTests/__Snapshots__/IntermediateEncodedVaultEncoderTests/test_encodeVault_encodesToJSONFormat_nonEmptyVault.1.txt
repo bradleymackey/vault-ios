@@ -7,6 +7,7 @@
       "item" : {
         "note" : {
           "data" : {
+            "format" : "PLAIN",
             "raw_contents" : "contents of note",
             "title" : "Hello world"
           }
@@ -29,6 +30,8 @@
       "item" : {
         "note" : {
           "data" : {
+            "format" : "MARKDOWN",
+            "raw_contents" : "contents",
             "title" : "Hello world again"
           }
         }

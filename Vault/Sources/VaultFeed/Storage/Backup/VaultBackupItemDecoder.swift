@@ -141,6 +141,13 @@ extension VaultBackupItemDecoder {
 
 extension VaultBackupItemDecoder {
     private func decodeSecureNote(data: VaultBackupItem.Note) -> SecureNote {
-        SecureNote(title: data.title, contents: data.rawContents ?? "")
+        SecureNote(title: data.title, contents: data.rawContents ?? "", format: decodeTextFormat(format: data.format))
+    }
+
+    private func decodeTextFormat(format: VaultBackupItem.TextFormat) -> TextFormat {
+        switch format {
+        case .plain: .plain
+        case .markdown: .markdown
+        }
     }
 }

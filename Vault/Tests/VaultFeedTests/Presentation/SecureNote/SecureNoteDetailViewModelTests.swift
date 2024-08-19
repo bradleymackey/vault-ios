@@ -23,13 +23,14 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
     @MainActor
     func test_init_editingModelUsesInitialData() {
-        let note = SecureNote(title: "my title", contents: "first line\nsecond line")
+        let note = SecureNote(title: "my title", contents: "first line\nsecond line", format: .plain)
         let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
         XCTAssertEqual(sut.editingModel.detail.title, note.title)
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
         XCTAssertEqual(sut.editingModel.detail.description, "first line")
+        XCTAssertEqual(sut.editingModel.detail.textFormat, .plain)
     }
 
     @MainActor
@@ -39,6 +40,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.title, "")
         XCTAssertEqual(sut.editingModel.detail.contents, "")
         XCTAssertEqual(sut.editingModel.detail.description, "")
+        XCTAssertEqual(sut.editingModel.detail.textFormat, .markdown)
     }
 
     @MainActor

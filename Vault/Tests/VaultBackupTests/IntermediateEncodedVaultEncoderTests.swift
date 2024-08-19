@@ -67,7 +67,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             searchPassphrase: "passphrase",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .note(data: .init(title: "Example Note", rawContents: "Example note"))
+            item: .note(data: .init(title: "Example Note", rawContents: "Example note", format: .markdown))
         )
         let backup = anyBackupPayload(
             created: date,
@@ -142,7 +142,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             searchableLevel: .full,
             searchPassphrase: "searchphrase",
             lockState: .notLocked,
-            item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
+            item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
         let uuid2 = try XCTUnwrap(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
@@ -157,7 +157,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .none,
             lockState: .lockedWithNativeSecurity,
-            item: .note(data: .init(title: "Hello world again"))
+            item: .note(data: .init(title: "Hello world again", rawContents: "contents", format: .markdown))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
         let uuid3 = try XCTUnwrap(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))

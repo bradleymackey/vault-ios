@@ -53,7 +53,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let note = SecureNoteGeneratorMock()
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
-        let noteItem = SecureNote(title: "Title", contents: "Contents")
+        let noteItem = SecureNote(title: "Title", contents: "Contents", format: .markdown)
         let view = sut.makeVaultPreviewView(item: .secureNote(noteItem), metadata: uniqueMetadata(), behaviour: .normal)
 
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)

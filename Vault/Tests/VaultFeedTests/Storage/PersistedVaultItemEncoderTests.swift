@@ -420,7 +420,7 @@ extension PersistedVaultItemEncoderTests {
 extension PersistedVaultItemEncoderTests {
     func test_encodeNote_title() throws {
         let sut = makeSUT()
-        let item = makeWritable(note: makeSecretNoteValue(title: "this is my title"))
+        let item = makeWritable(note: anySecureNote(title: "this is my title"))
 
         let encoded = try sut.encode(item: item)
         XCTAssertEqual(encoded.noteDetails?.title, "this is my title")
@@ -428,7 +428,7 @@ extension PersistedVaultItemEncoderTests {
 
     func test_encodeNote_contents() throws {
         let sut = makeSUT()
-        let item = makeWritable(note: makeSecretNoteValue(contents: "this is the note contents"))
+        let item = makeWritable(note: anySecureNote(contents: "this is the note contents"))
 
         let encoded = try sut.encode(item: item)
         XCTAssertEqual(encoded.noteDetails?.contents, "this is the note contents")
@@ -511,12 +511,5 @@ extension PersistedVaultItemEncoderTests {
             searchPassphase: "",
             lockState: lockState
         )
-    }
-
-    private func makeSecretNoteValue(
-        title: String = "note title",
-        contents: String = "note contents"
-    ) -> SecureNote {
-        SecureNote(title: title, contents: contents)
     }
 }

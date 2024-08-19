@@ -66,7 +66,7 @@ func uniqueVaultItem() -> VaultItem {
 }
 
 func anySecureNote() -> SecureNote {
-    .init(title: "Hello World", contents: "This is my note")
+    .init(title: "Hello World", contents: "This is my note", format: .markdown)
 }
 
 func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> VaultItem.Metadata {
