@@ -168,7 +168,6 @@ struct SecureNoteDetailView: View {
     private var noteMetadataContentSection: some View {
         Section {
             noteIconHeader
-                .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
 
             Text(viewModel.visibleTitle)
@@ -201,8 +200,8 @@ struct SecureNoteDetailView: View {
     }
 
     private var noteIconHeader: some View {
-        Image(systemName: "doc.text.fill")
-            .font(.largeTitle)
+        Image(systemName: viewModel.editingModel.detail.isLocked ? "lock.doc.fill" : "doc.text.fill")
+            .font(.title)
             .foregroundStyle(selectedColor)
     }
 
