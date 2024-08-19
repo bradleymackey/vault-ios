@@ -11,9 +11,9 @@ struct VaultBackupState: Equatable, Hashable, Codable, Sendable {
     /// The action that was taken on this backup to reach the current state.
     var action: Action
     /// Hash of all items
-    var itemsHash: SHA256Hash
+    var itemsHash: Hash.SHA256
     /// Hash of all tags
-    var tagsHash: SHA256Hash
+    var tagsHash: Hash.SHA256
 }
 
 extension VaultBackupState {

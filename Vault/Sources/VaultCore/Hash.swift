@@ -1,14 +1,18 @@
 import Foundation
 
-public struct SHA256Hash: Hashable, Equatable, Sendable {
-    public let value: String
+public enum Hash {}
 
-    public init(value: String) {
-        self.value = value
+extension Hash {
+    public struct SHA256: Hashable, Equatable, Sendable {
+        public let value: String
+
+        public init(value: String) {
+            self.value = value
+        }
     }
 }
 
-extension SHA256Hash: Codable {
+extension Hash.SHA256: Codable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(value)
