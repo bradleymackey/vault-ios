@@ -233,6 +233,7 @@ struct SecureNoteDetailView: View {
                 .frame(minHeight: 450, alignment: .top)
             case .markdown:
                 Markdown(.init(viewModel.editingModel.detail.contents))
+                    .textSelection(.enabled)
                     .frame(minHeight: 450, alignment: .top)
             }
         } footer: {
