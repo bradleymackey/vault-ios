@@ -475,8 +475,9 @@ extension PersistedVaultItemDecoderTests {
 
     private func makePersistedNoteDetails(
         title: String = "my title",
-        contents: String = ""
+        contents: String = "",
+        format: String = VaultEncodingConstants.TextFormat.plain
     ) -> PersistedNoteDetails {
-        PersistedNoteDetails(title: title, contents: contents)
+        PersistedNoteDetails(title: title, contents: contents, format: format)
     }
 }

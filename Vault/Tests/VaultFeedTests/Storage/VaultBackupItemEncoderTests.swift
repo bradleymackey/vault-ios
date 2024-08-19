@@ -14,7 +14,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
         let description = "my user description"
-        let note = SecureNote(title: "title", contents: "contents")
+        let note = SecureNote(title: "title", contents: "contents", format: .markdown)
         let tags: Set<Identifier<VaultItemTag>> = [.init(id: UUID())]
         let item = VaultItem(
             metadata: .init(
@@ -48,6 +48,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
         XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+        XCTAssertEqual(encodedItem.item.noteData?.format, .markdown)
     }
 
     func test_encode_encodesTOTPCode() {

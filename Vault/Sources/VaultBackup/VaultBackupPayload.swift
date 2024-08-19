@@ -124,6 +124,11 @@ extension VaultBackupItem {
         case lockedWithNativeSecurity = "LOCKED_NATIVE"
     }
 
+    public enum TextFormat: String, Codable {
+        case plain = "PLAIN"
+        case markdown = "MARKDOWN"
+    }
+
     /// A backed up OTP code.
     public struct OTP: Codable, Equatable {
         public var secretFormat: String
@@ -163,10 +168,12 @@ extension VaultBackupItem {
     public struct Note: Codable, Equatable {
         public var title: String
         public var rawContents: String?
+        public var format: TextFormat
 
-        public init(title: String, rawContents: String? = nil) {
+        public init(title: String, rawContents: String?, format: TextFormat) {
             self.title = title
             self.rawContents = rawContents
+            self.format = format
         }
     }
 }

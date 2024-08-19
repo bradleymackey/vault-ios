@@ -1,6 +1,7 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import VaultCore
 import XCTest
 @testable import VaultFeed
 
@@ -74,7 +75,8 @@ extension VaultItemTests {
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
-        color: VaultItemColor? = nil
+        color: VaultItemColor? = nil,
+        format: TextFormat = .markdown
     ) -> VaultItem {
         VaultItem(
             metadata: .init(
@@ -90,7 +92,7 @@ extension VaultItemTests {
                 lockState: lockState,
                 color: color
             ),
-            item: .secureNote(.init(title: "title", contents: "contents"))
+            item: .secureNote(.init(title: "title", contents: "contents", format: format))
         )
     }
 }

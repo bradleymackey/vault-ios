@@ -21,9 +21,10 @@ struct PersistedVaultItemDecoder {
             let otpCode = try decodeOTPCode(otp: otp)
             return VaultItem(metadata: metadata, item: .otpCode(otpCode))
         } else if let note = item.noteDetails {
-            let note = SecureNote(
+            let note = try SecureNote(
                 title: note.title,
-                contents: note.contents
+                contents: note.contents,
+                format: decodeTextFormat(value: note.format)
             )
             return VaultItem(metadata: metadata, item: .secureNote(note))
         } else {
@@ -126,6 +127,14 @@ extension PersistedVaultItemDecoder {
         case VaultEncodingConstants.LockState.lockedWithNativeSecurity: .lockedWithNativeSecurity
         case nil: .notLocked
         default: throw VaultItemDecodingError.invalidLockState
+        }
+    }
+
+    private func decodeTextFormat(value: String) throws -> TextFormat {
+        switch value {
+        case VaultEncodingConstants.TextFormat.plain: .plain
+        case VaultEncodingConstants.TextFormat.markdown: .markdown
+        default: throw VaultItemDecodingError.invalidTextFormat
         }
     }
 }

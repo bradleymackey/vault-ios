@@ -175,7 +175,15 @@ extension PersistedVaultItemEncoder {
     ) -> PersistedNoteDetails {
         PersistedNoteDetails(
             title: newData.title,
-            contents: newData.contents
+            contents: newData.contents,
+            format: encodeTextFormat(newData.format)
         )
+    }
+
+    private func encodeTextFormat(_ format: TextFormat) -> String {
+        switch format {
+        case .plain: VaultEncodingConstants.TextFormat.plain
+        case .markdown: VaultEncodingConstants.TextFormat.markdown
+        }
     }
 }

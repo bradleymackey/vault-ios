@@ -123,6 +123,13 @@ extension VaultBackupItemEncoder {
 
 extension VaultBackupItemEncoder {
     private func encodeNote(note: SecureNote) -> VaultBackupItem.Note {
-        .init(title: note.title, rawContents: note.contents)
+        .init(title: note.title, rawContents: note.contents, format: encodeFormat(note: note))
+    }
+
+    private func encodeFormat(note: SecureNote) -> VaultBackupItem.TextFormat {
+        switch note.format {
+        case .plain: .plain
+        case .markdown: .markdown
+        }
     }
 }

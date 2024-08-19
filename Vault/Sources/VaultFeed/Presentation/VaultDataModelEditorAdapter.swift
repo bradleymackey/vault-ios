@@ -56,7 +56,11 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
 
 extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
     public func createNote(initialEdits: SecureNoteDetailEdits) async throws {
-        let newSecureNote = SecureNote(title: initialEdits.title, contents: initialEdits.contents)
+        let newSecureNote = SecureNote(
+            title: initialEdits.title,
+            contents: initialEdits.contents,
+            format: initialEdits.textFormat
+        )
         let newVaultItem = VaultItem.Write(
             relativeOrder: initialEdits.relativeOrder,
             userDescription: initialEdits.description,

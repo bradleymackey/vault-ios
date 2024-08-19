@@ -8,6 +8,7 @@ public enum VaultItemDecodingError: Error, Sendable {
     case invalidSearchableLevel
     case invalidVisibility
     case invalidLockState
+    case invalidTextFormat
     case missingItemDetail
     case missingPeriodForTOTP
     case missingCounterForHOTP

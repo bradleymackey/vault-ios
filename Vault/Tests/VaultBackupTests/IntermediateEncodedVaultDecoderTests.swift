@@ -54,7 +54,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             lockState: .lockedWithNativeSecurity,
-            item: .note(data: .init(title: "Hello world", rawContents: "contents of note"))
+            item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
         let uuid2 = try XCTUnwrap(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
@@ -68,7 +68,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .none,
             lockState: .notLocked,
-            item: .note(data: .init(title: "Hello world again"))
+            item: .note(data: .init(title: "Hello world again", rawContents: nil, format: .markdown))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
         let uuid3 = try XCTUnwrap(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))

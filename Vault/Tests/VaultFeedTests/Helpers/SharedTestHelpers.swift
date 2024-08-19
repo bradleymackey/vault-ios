@@ -31,9 +31,10 @@ func anyBackupPassword() -> BackupPassword {
 
 func anySecureNote(
     title: String = "",
-    contents: String = ""
+    contents: String = "",
+    format: TextFormat = .markdown
 ) -> SecureNote {
-    SecureNote(title: title, contents: contents)
+    SecureNote(title: title, contents: contents, format: format)
 }
 
 func anyOTPAuthCode(

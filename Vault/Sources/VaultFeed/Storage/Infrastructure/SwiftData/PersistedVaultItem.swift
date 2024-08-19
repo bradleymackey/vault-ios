@@ -97,12 +97,14 @@ final class PersistedOTPDetails {
 final class PersistedNoteDetails {
     var title: String
     var contents: String
+    var format: String
 
     @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.noteDetails)
     var vaultItem: PersistedVaultItem?
 
-    init(title: String, contents: String) {
+    init(title: String, contents: String, format: String) {
         self.title = title
         self.contents = contents
+        self.format = format
     }
 }

@@ -26,7 +26,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             searchPassphrase: "hello",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .note(data: .init(title: "title", rawContents: "contents"))
+            item: .note(data: .init(title: "title", rawContents: "contents", format: .markdown))
         )
         let sut = makeSUT()
 
@@ -45,6 +45,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.relativeOrder, 77777)
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
+        XCTAssertEqual(decodedItem.item.secureNote?.format, .markdown)
     }
 
     func test_decodeNote_decodeswithNilContentsIntoEmptyString() throws {
@@ -244,7 +245,7 @@ extension VaultBackupItemDecoderTests {
             searchPassphrase: "",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .note(data: .init(title: "title", rawContents: contents))
+            item: .note(data: .init(title: "title", rawContents: contents, format: .markdown))
         )
     }
 

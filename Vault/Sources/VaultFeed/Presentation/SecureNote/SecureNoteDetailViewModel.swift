@@ -36,6 +36,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
             .init(detail: .init(
                 title: note.title,
                 contents: note.contents,
+                textFormat: note.format,
                 color: metadata.color,
                 viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),
                 searchPassphrase: metadata.searchPassphrase ?? "",

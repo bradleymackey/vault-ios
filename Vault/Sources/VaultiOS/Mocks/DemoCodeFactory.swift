@@ -69,7 +69,7 @@ enum DemoVaultFactory {
                 lockState: .notLocked,
                 color: VaultItemColor(color: .red)
             ),
-            item: .secureNote(.init(title: title, contents: contents))
+            item: .secureNote(.init(title: title, contents: contents, format: .markdown))
         )
     }
 }

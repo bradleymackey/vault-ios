@@ -1,4 +1,5 @@
 import FoundationExtensions
+import MarkdownUI
 import SwiftUI
 import VaultCore
 import VaultFeed
@@ -167,7 +168,6 @@ struct SecureNoteDetailView: View {
     private var noteMetadataContentSection: some View {
         Section {
             noteIconHeader
-                .padding(.vertical, 8)
                 .frame(maxWidth: .infinity)
 
             Text(viewModel.visibleTitle)
@@ -200,8 +200,8 @@ struct SecureNoteDetailView: View {
     }
 
     private var noteIconHeader: some View {
-        Image(systemName: "doc.text.fill")
-            .font(.largeTitle)
+        Image(systemName: viewModel.editingModel.detail.isLocked ? "lock.doc.fill" : "doc.text.fill")
+            .font(.title)
             .foregroundStyle(selectedColor)
     }
 
@@ -222,12 +222,19 @@ struct SecureNoteDetailView: View {
 
     private var noteContentsSection: some View {
         Section {
-            SelectableText(
-                viewModel.editingModel.detail.contents,
-                fontStyle: .monospace,
-                textStyle: .body
-            )
-            .frame(minHeight: 350, alignment: .top)
+            switch viewModel.editingModel.detail.textFormat {
+            case .plain:
+                SelectableText(
+                    viewModel.editingModel.detail.contents,
+                    fontStyle: .monospace,
+                    textStyle: .callout
+                )
+                .frame(minHeight: 450, alignment: .top)
+            case .markdown:
+                Markdown(.init(viewModel.editingModel.detail.contents))
+                    .textSelection(.enabled)
+                    .frame(minHeight: 450, alignment: .top)
+            }
         } footer: {
             VStack(alignment: .leading, spacing: 16) {
                 if viewModel.tagsThatAreSelected.isNotEmpty {
@@ -270,6 +277,17 @@ struct SecureNoteDetailView: View {
 
     private var passphraseEditingSection: some View {
         Section {
+            Picker(selection: $viewModel.editingModel.detail.textFormat) {
+                ForEach(TextFormat.allCases, id: \.self) { format in
+                    Text(format.localizedString)
+                        .tag(format)
+                }
+            } label: {
+                FormRow(image: Image(systemName: "text.justify.left"), color: .accentColor, style: .standard) {
+                    Text("Text Format")
+                }
+            }
+
             Toggle(isOn: $viewModel.editingModel.detail.isLocked) {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),

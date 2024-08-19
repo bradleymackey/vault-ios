@@ -1,5 +1,6 @@
 import Foundation
 import FoundationExtensions
+import VaultCore
 
 /// Encapsulates editing state for a given note.
 ///
@@ -22,6 +23,8 @@ public struct SecureNoteDetailEdits: EditableState {
     public var color: VaultItemColor?
 
     public var tags: Set<Identifier<VaultItemTag>>
+
+    public var textFormat: TextFormat
 
     public var lockState: VaultItemLockState
 
@@ -52,6 +55,7 @@ public struct SecureNoteDetailEdits: EditableState {
     public init(
         title: String,
         contents: String,
+        textFormat: TextFormat,
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
@@ -61,6 +65,7 @@ public struct SecureNoteDetailEdits: EditableState {
     ) {
         self.title = title
         self.contents = contents
+        self.textFormat = textFormat
         self.color = color
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
@@ -95,6 +100,7 @@ extension SecureNoteDetailEdits {
         .init(
             title: "",
             contents: "",
+            textFormat: .markdown,
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
