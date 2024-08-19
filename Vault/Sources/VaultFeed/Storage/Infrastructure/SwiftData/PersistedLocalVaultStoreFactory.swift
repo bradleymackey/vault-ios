@@ -11,10 +11,15 @@ public final class PersistedLocalVaultStoreFactory {
     public func makeVaultStore() -> PersistedLocalVaultStore {
         do {
             let storeURL = try getDocumentDirectory().appending(path: "PersistedLocalVaultStore-Main")
+            let configuration = ModelConfiguration(
+                "PersistedLocalVaultStore",
+                schema: .init(versionedSchema: PersistedSchemaLatestVersion.self),
+                url: storeURL
+            )
             let container = try ModelContainer(
-                for: PersistedVaultItem.self,
-                migrationPlan: nil,
-                configurations: .init(url: storeURL)
+                for: PersistedVaultItem.self, PersistedVaultTag.self,
+                migrationPlan: PersistedSchemaMigrationPlan.self,
+                configurations: configuration
             )
             return PersistedLocalVaultStore(modelContainer: container)
         } catch {
