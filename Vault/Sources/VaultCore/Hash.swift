@@ -1,6 +1,9 @@
 import Foundation
 
-public enum Hash {}
+/// Namespace for hash types.
+///
+/// Hashes are strongly-typed to a particular model.
+public enum Hash<T> {}
 
 extension Hash {
     public struct SHA256: Hashable, Equatable, Sendable {
