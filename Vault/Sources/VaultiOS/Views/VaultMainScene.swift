@@ -12,7 +12,6 @@ public struct VaultMainScene: Scene {
     @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
     @State private var pasteboard: Pasteboard
     @State private var localSettings: LocalSettings
-    @State private var settingsViewModel = SettingsViewModel()
     @State private var isShowingCopyPaste = false
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
     @State private var vaultDataModel: VaultDataModel
@@ -130,7 +129,7 @@ public struct VaultMainScene: Scene {
                     }
                 case .settings:
                     NavigationStack {
-                        VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
+                        VaultSettingsView(viewModel: SettingsViewModel(), localSettings: localSettings)
                     }
                     .navigationBarTitleDisplayMode(.inline)
                 case .backups:
