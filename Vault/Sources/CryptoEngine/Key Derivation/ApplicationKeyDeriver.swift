@@ -9,21 +9,21 @@ import FoundationExtensions
 /// Things should only be made into an `ApplicationKeyDeriver` if they are deemed
 /// to be good enough for encryption. This helps to prevent accidental errors like
 /// using some random `KeyDeriver` at the application level.
-public struct ApplicationKeyDeriver<Length: KeyLength>: KeyDeriver {
+public struct ApplicationKeyDeriver: KeyDeriver {
     /// The resilient signature that identifies this key deriver.
     ///
     /// Using the signature, this allows us to lookup the algorithm that was used
     /// during the key generation.
     public let signature: Signature
 
-    private let deriver: any KeyDeriver<Length>
+    private let deriver: any KeyDeriver<Bits256>
 
-    public init(deriver: any KeyDeriver<Length>, signature: Signature) {
+    public init(deriver: any KeyDeriver<Bits256>, signature: Signature) {
         self.deriver = deriver
         self.signature = signature
     }
 
-    public func key(password: Data, salt: Data) throws -> KeyData<Length> {
+    public func key(password: Data, salt: Data) throws -> KeyData<Bits256> {
         try deriver.key(password: password, salt: salt)
     }
 

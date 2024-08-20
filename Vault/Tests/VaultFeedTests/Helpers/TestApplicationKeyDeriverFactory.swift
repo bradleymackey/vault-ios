@@ -4,7 +4,7 @@ import FoundationExtensions
 import VaultFeed
 
 final class TestApplicationKeyDeriverFactory: ApplicationKeyDeriverFactory {
-    func makeApplicationKeyDeriver() -> ApplicationKeyDeriver<Bits256> {
+    func makeApplicationKeyDeriver() -> ApplicationKeyDeriver {
         VaultAppKeyDerivers.testing
     }
 }

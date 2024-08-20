@@ -64,7 +64,7 @@ extension VaultEncryptorTests {
     private func makeSUT(
         key: VaultKey,
         keygenSalt: Data = Data(),
-        keygenSignature: ApplicationKeyDeriver<Bits256>.Signature = .fastV1
+        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1
     ) -> VaultEncryptor {
         let sut = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
         trackForMemoryLeaks(sut)

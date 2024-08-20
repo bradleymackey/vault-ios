@@ -88,7 +88,7 @@ extension VaultBackupEncoderTests {
         clock: EpochClock = anyClock(),
         key: VaultKey,
         keygenSalt: Data = Data(),
-        keygenSignature: ApplicationKeyDeriver<Bits256>.Signature = .fastV1,
+        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1,
         paddingMode: VaultBackupEncoder.PaddingMode = .none
     ) -> VaultBackupEncoder {
         VaultBackupEncoder(

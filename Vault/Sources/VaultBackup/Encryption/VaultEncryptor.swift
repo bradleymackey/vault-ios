@@ -6,9 +6,9 @@ final class VaultEncryptor {
     private let encryptor: AESGCMEncryptor
     private let iv: Data
     private let keygenSalt: Data
-    private let keygenSignature: ApplicationKeyDeriver<Bits256>.Signature
+    private let keygenSignature: ApplicationKeyDeriver.Signature
 
-    init(key: VaultKey, keygenSalt: Data, keygenSignature: ApplicationKeyDeriver<Bits256>.Signature) {
+    init(key: VaultKey, keygenSalt: Data, keygenSignature: ApplicationKeyDeriver.Signature) {
         encryptor = AESGCMEncryptor(key: key.key.data)
         iv = key.iv.data
         self.keygenSalt = keygenSalt
