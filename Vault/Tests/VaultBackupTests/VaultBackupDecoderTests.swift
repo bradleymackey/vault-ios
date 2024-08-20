@@ -15,7 +15,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
-            keygenSignature: .fastV1
+            keygenSignature: "my-signature"
         )
         encryptedVault.version = "2.0.0"
 
@@ -37,7 +37,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: .fastV1
+            keygenSignature: "my-signature"
         )
 
         let backup = try sut.extractBackupPayload(from: encryptedVault)
@@ -63,7 +63,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: .fastV1
+            keygenSignature: "my-signature"
         )
 
         XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
@@ -85,7 +85,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: .fastV1
+            keygenSignature: "my-signature"
         )
 
         XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))

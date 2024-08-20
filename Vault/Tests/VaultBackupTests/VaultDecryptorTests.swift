@@ -12,7 +12,7 @@ final class VaultDecryptorTests: XCTestCase {
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
-            keygenSignature: .fastV1
+            keygenSignature: "signature"
         )
 
         let decrypted = try sut.decrypt(encryptedVault: vault)
@@ -28,7 +28,7 @@ final class VaultDecryptorTests: XCTestCase {
             authentication: Data(hex: "0x1234"),
             encryptionIV: Data(hex: "0x1234"),
             keygenSalt: Data(hex: "0x11"),
-            keygenSignature: .fastV1
+            keygenSignature: "signature"
         )
 
         XCTAssertThrowsError(try sut.decrypt(encryptedVault: vault))
@@ -47,7 +47,7 @@ final class VaultDecryptorTests: XCTestCase {
             authentication: authentication,
             encryptionIV: iv,
             keygenSalt: Data(),
-            keygenSignature: .fastV1
+            keygenSignature: "signature"
         )
 
         let decrypted = try sut.decrypt(encryptedVault: vault)

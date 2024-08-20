@@ -49,11 +49,11 @@ final class VaultEncryptorTests: XCTestCase {
     func test_encrypt_placesKeygenSignatureIntoPayloadUnchanged() throws {
         let plainData = Data(hex: "0x41414141414141")
         let encodedVault = IntermediateEncodedVault(data: plainData)
-        let sut = makeSUT(key: anyVaultKey(), keygenSignature: .secureV1)
+        let sut = makeSUT(key: anyVaultKey(), keygenSignature: "my-signature")
 
         let result = try sut.encrypt(encodedVault: encodedVault)
 
-        XCTAssertEqual(result.keygenSignature, .secureV1)
+        XCTAssertEqual(result.keygenSignature, "my-signature")
     }
 }
 
@@ -64,7 +64,7 @@ extension VaultEncryptorTests {
     private func makeSUT(
         key: VaultKey,
         keygenSalt: Data = Data(),
-        keygenSignature: ApplicationKeyDeriver.Signature = .fastV1
+        keygenSignature: String = "my-signature"
     ) -> VaultEncryptor {
         let sut = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
         trackForMemoryLeaks(sut)

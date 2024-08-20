@@ -8,7 +8,7 @@ public final class VaultBackupEncoder {
     private let clock: EpochClock
     private let key: VaultKey
     private let keygenSalt: Data
-    private let keygenSignature: ApplicationKeyDeriver.Signature
+    private let keygenSignature: String
     private let paddingMode: PaddingMode
 
     public enum PaddingMode: Equatable {
@@ -21,7 +21,7 @@ public final class VaultBackupEncoder {
         clock: EpochClock,
         key: VaultKey,
         keygenSalt: Data,
-        keygenSignature: ApplicationKeyDeriver.Signature,
+        keygenSignature: String,
         paddingMode: PaddingMode = .random
     ) {
         self.clock = clock

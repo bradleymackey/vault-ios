@@ -32,7 +32,7 @@ final class BackupExporterTests: XCTestCase {
 
         XCTAssertEqual(backup.encryptionIV.count, 32)
         XCTAssertEqual(backup.keygenSalt, salt)
-        XCTAssertEqual(backup.keygenSignature, .testing)
+        XCTAssertEqual(backup.keygenSignature, "vault.keygen.default.testing")
         XCTAssertEqual(backup.version, "1.0.0")
     }
 
@@ -50,7 +50,7 @@ final class BackupExporterTests: XCTestCase {
 
         XCTAssertEqual(backup.encryptionIV.count, 32)
         XCTAssertEqual(backup.keygenSalt, salt)
-        XCTAssertEqual(backup.keygenSignature, .testing)
+        XCTAssertEqual(backup.keygenSignature, "vault.keygen.default.testing")
         XCTAssertEqual(backup.version, "1.0.0")
     }
 }

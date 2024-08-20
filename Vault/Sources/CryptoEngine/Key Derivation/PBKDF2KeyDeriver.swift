@@ -5,7 +5,7 @@ internal import CryptoSwift
 public struct PBKDF2KeyDeriver<Length: KeyLength>: KeyDeriver {
     public let parameters: Parameters
 
-    init(parameters: Parameters) {
+    public init(parameters: Parameters) {
         self.parameters = parameters
     }
 

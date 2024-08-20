@@ -1,7 +1,7 @@
-import CryptoEngine
 import Foundation
 import TestHelpers
 import XCTest
+@testable import VaultFeed
 
 /// We don't actually want to run key derivation, as it may be very slow.
 /// To check the algorithm's correctness, we verify the identifier.
