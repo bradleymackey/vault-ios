@@ -4,11 +4,11 @@ import VaultSettings
 
 @MainActor
 public struct VaultSettingsView: View {
-    private var viewModel: SettingsViewModel
+    @State private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 
     public init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
-        self.viewModel = viewModel
+        _viewModel = State(wrappedValue: viewModel)
         _localSettings = Bindable(wrappedValue: localSettings)
     }
 

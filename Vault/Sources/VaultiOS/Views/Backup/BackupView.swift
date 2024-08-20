@@ -6,7 +6,6 @@ import VaultFeed
 
 @MainActor
 struct BackupView: View {
-    @Environment(EpochClock.self) var clock
     @Environment(VaultDataModel.self) var dataModel
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @Environment(VaultInjector.self) var injector
@@ -47,7 +46,7 @@ struct BackupView: View {
                     BackupCreatePDFView(viewModel: .init(
                         backupPassword: password,
                         dataModel: dataModel,
-                        clock: clock,
+                        clock: injector.clock,
                         backupEventLogger: injector.backupEventLogger
                     ))
                 }
@@ -56,7 +55,7 @@ struct BackupView: View {
                     BackupKeyChangeView(viewModel: .init(
                         dataModel: dataModel,
                         authenticationService: authenticationService,
-                        deriverFactory: VaultKeyDeriverFactoryImpl()
+                        deriverFactory: injector.vaultKeyDeriverFactory
                     ))
                 }
             case let .exportPassword(password):
@@ -68,7 +67,7 @@ struct BackupView: View {
                 }
             case .importPassword:
                 NavigationStack {
-                    BackupKeyImportView(viewModel: .init(dataModel: dataModel))
+                    BackupKeyImportView(viewModel: .init(dataModel: dataModel), intervalTimer: injector.intervalTimer)
                 }
             }
         }

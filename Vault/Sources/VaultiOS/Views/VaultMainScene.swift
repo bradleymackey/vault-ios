@@ -12,8 +12,6 @@ public struct VaultMainScene: Scene {
     @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
     @State private var pasteboard: Pasteboard
     @State private var localSettings: LocalSettings
-    @State private var settingsViewModel = SettingsViewModel()
-    @State private var clock: EpochClock
     @State private var isShowingCopyPaste = false
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
     @State private var vaultDataModel: VaultDataModel
@@ -65,10 +63,14 @@ public struct VaultMainScene: Scene {
             itemCaches: [totp, hotp]
         )
         let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
-        let injector = VaultInjector(backupEventLogger: backupEventLogger)
+        let injector = VaultInjector(
+            clock: clock,
+            intervalTimer: timer,
+            backupEventLogger: backupEventLogger,
+            vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl()
+        )
 
         _pasteboard = State(wrappedValue: pasteboard)
-        _clock = State(wrappedValue: clock)
         _totpPreviewGenerator = State(wrappedValue: totp)
         _hotpPreviewGenerator = State(wrappedValue: hotp)
         _notePreviewGenerator = State(wrappedValue: note)
@@ -127,7 +129,7 @@ public struct VaultMainScene: Scene {
                     }
                 case .settings:
                     NavigationStack {
-                        VaultSettingsView(viewModel: settingsViewModel, localSettings: localSettings)
+                        VaultSettingsView(viewModel: SettingsViewModel(), localSettings: localSettings)
                     }
                     .navigationBarTitleDisplayMode(.inline)
                 case .backups:
@@ -154,7 +156,6 @@ public struct VaultMainScene: Scene {
                     .padding(.top, 24)
             }
             .environment(pasteboard)
-            .environment(clock)
             .environment(deviceAuthenticationService)
             .environment(vaultDataModel)
             .environment(injector)

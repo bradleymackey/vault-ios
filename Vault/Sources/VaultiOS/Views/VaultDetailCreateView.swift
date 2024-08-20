@@ -10,13 +10,15 @@ struct VaultDetailCreateView<
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
     @Environment(VaultDataModel.self) private var dataModel
+    @Environment(VaultInjector.self) private var injector
 
     var body: some View {
         switch creatingItem {
         case .otpCode:
             OTPCodeCreateView(
                 previewGenerator: previewGenerator,
-                navigationPath: $navigationPath
+                navigationPath: $navigationPath,
+                intervalTimer: injector.intervalTimer
             )
         case .secureNote:
             SecureNoteDetailView(

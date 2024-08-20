@@ -7,12 +7,13 @@ import VaultFeed
 struct BackupKeyImportView: View {
     @Environment(\.dismiss) private var dismiss
     @State private var viewModel: BackupKeyImportViewModel
-    @State private var scanner = SingleCodeScanner(intervalTimer: IntervalTimerImpl()) { qrCode in
-        try BackupPasswordDecoder().decode(qrCode: qrCode)
-    }
+    @State private var scanner: SingleCodeScanner<BackupPassword>
 
-    init(viewModel: BackupKeyImportViewModel) {
+    init(viewModel: BackupKeyImportViewModel, intervalTimer: any IntervalTimer) {
         _viewModel = .init(wrappedValue: viewModel)
+        _scanner = .init(wrappedValue: SingleCodeScanner(intervalTimer: intervalTimer) { qrCode in
+            try BackupPasswordDecoder().decode(qrCode: qrCode)
+        })
     }
 
     var body: some View {
