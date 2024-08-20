@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import VaultCore
 
@@ -19,7 +20,7 @@ struct VaultBackupEvent: Equatable, Hashable, Sendable {
     ///
     /// This hash is used to check what data was actually backed up, so no random data or timestamps should be
     /// included in this hash.
-    var payloadHash: Hash<VaultApplicationPayload>.SHA256
+    var payloadHash: Digest<VaultApplicationPayload>.SHA256
 }
 
 extension VaultBackupEvent {

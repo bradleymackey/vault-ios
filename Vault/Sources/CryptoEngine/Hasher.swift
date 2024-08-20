@@ -5,10 +5,10 @@ internal import CryptoSwift
 public struct Hasher {
     public init() {}
 
-    public func sha256(value: some Digestable) throws -> Data {
+    public func sha256<T: Digestable>(value: T) throws -> Digest<T>.SHA256 {
         let encoded = try hashEncoder().encode(value.digestableData)
         let bytes = SHA2(variant: .sha256).calculate(for: encoded.bytes)
-        return Data(bytes)
+        return .init(value: Data(bytes))
     }
 }
 

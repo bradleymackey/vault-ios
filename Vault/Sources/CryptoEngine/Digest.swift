@@ -1,12 +1,11 @@
-import CryptoEngine
 import Foundation
 
 /// Namespace for hash types.
 ///
 /// Hashes are strongly-typed to a particular model.
-public enum Hash<T> {}
+public enum Digest<T> {}
 
-extension Hash {
+extension Digest {
     public struct SHA256: Hashable, Equatable, Sendable {
         public let value: Data
 
@@ -14,15 +13,14 @@ extension Hash {
             self.value = value
         }
 
-        public static func makeHash(_ value: some Digestable) throws -> Self {
+        public static func makeHash(_ value: T) throws -> Self where T: Digestable {
             let hasher = Hasher()
-            let data = try hasher.sha256(value: value)
-            return .init(value: data)
+            return try hasher.sha256(value: value)
         }
     }
 }
 
-extension Hash.SHA256: Codable {
+extension Digest.SHA256: Codable {
     public func encode(to encoder: any Encoder) throws {
         var container = encoder.singleValueContainer()
         try container.encode(value)

@@ -64,20 +64,27 @@ public final class BackupCreatePDFViewModel {
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
     private let clock: EpochClock
+    private let backupEventLogger: any BackupEventLogger
 
-    public init(backupPassword: BackupPassword, dataModel: VaultDataModel, clock: EpochClock) {
+    public init(
+        backupPassword: BackupPassword,
+        dataModel: VaultDataModel,
+        clock: EpochClock,
+        backupEventLogger: any BackupEventLogger
+    ) {
         self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
+        self.backupEventLogger = backupEventLogger
     }
 
     public func createPDF() async {
         do {
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
-            let hash = try Hasher().sha256(value: payload)
-            // TODO: save an export entry with the hash
             createdDocument = try await makeBackupPDFDocument(payload: payload)
+            let hash = try Hasher().sha256(value: payload)
+            backupEventLogger.exportedToPDF(date: clock.currentDate, hash: hash)
             state = .success
         } catch {
             state = .error(.init(
