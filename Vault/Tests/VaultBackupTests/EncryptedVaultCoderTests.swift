@@ -10,7 +10,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
             keygenSalt: Data("keySalt".utf8),
-            keygenSignature: .fastV1
+            keygenSignature: "signature"
         )
         let sut = EncryptedVaultCoder()
 
@@ -25,7 +25,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
               "ENCRYPTION_IV" : "aXY=",
               "ENCRYPTION_VERSION" : "1.0.0",
               "KEYGEN_SALT" : "a2V5U2FsdA==",
-              "KEYGEN_SIGNATURE" : "vault.keygen.default.fast-v1"
+              "KEYGEN_SIGNATURE" : "signature"
             }
             """
         )
@@ -39,7 +39,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
           "ENCRYPTION_IV" : "aXY=",
           "ENCRYPTION_VERSION" : "1.0.0",
           "KEYGEN_SALT" : "a2V5U2FsdA==",
-          "KEYGEN_SIGNATURE" : "vault.keygen.default.fast-v1"
+          "KEYGEN_SIGNATURE" : "signature"
         }
         """.utf8)
         let sut = EncryptedVaultCoder()
@@ -51,7 +51,7 @@ final class EncryptedVaultCoderTests: XCTestCase {
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
             keygenSalt: Data("keySalt".utf8),
-            keygenSignature: .fastV1
+            keygenSignature: "signature"
         ))
     }
 

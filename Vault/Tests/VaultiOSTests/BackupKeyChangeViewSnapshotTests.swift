@@ -12,7 +12,7 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-            deriverFactory: ApplicationKeyDeriverFactoryImpl()
+            deriverFactory: VaultKeyDeriverFactoryImpl()
         )
         let sut = BackupKeyChangeView(viewModel: viewModel)
 
@@ -24,7 +24,7 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-            deriverFactory: ApplicationKeyDeriverFactoryImpl()
+            deriverFactory: VaultKeyDeriverFactoryImpl()
         )
         viewModel.permissionState = .allowed
         let sut = BackupKeyChangeView(viewModel: viewModel)

@@ -54,7 +54,7 @@ struct BackupView: View {
                     BackupKeyChangeView(viewModel: .init(
                         dataModel: dataModel,
                         authenticationService: authenticationService,
-                        deriverFactory: ApplicationKeyDeriverFactoryImpl()
+                        deriverFactory: VaultKeyDeriverFactoryImpl()
                     ))
                 }
             case let .exportPassword(password):

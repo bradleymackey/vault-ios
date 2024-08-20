@@ -26,18 +26,18 @@ public final class BackupKeyChangeViewModel {
     public var newlyEnteredPasswordConfirm = ""
     public internal(set) var permissionState: PermissionState = .undetermined
     public private(set) var newPassword: NewPasswordState = .initial
-    private let encryptionKeyDeriver: ApplicationKeyDeriver<Bits256>
+    private let encryptionKeyDeriver: VaultKeyDeriver
     private let authenticationService: DeviceAuthenticationService
     private let dataModel: VaultDataModel
 
     public init(
         dataModel: VaultDataModel,
         authenticationService: DeviceAuthenticationService,
-        deriverFactory: some ApplicationKeyDeriverFactory
+        deriverFactory: some VaultKeyDeriverFactory
     ) {
         self.authenticationService = authenticationService
         self.dataModel = dataModel
-        encryptionKeyDeriver = deriverFactory.makeApplicationKeyDeriver()
+        encryptionKeyDeriver = deriverFactory.makeVaultKeyDeriver()
     }
 
     public var passwordConfirmMatches: Bool {
@@ -49,7 +49,7 @@ public final class BackupKeyChangeViewModel {
             .isNotEmpty
     }
 
-    public var encryptionKeyDeriverSignature: ApplicationKeyDeriver<Bits256>.Signature {
+    public var encryptionKeyDeriverSignature: VaultKeyDeriver.Signature {
         encryptionKeyDeriver.signature
     }
 

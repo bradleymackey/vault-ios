@@ -21,7 +21,7 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
                 authentication: Data(),
                 encryptionIV: Data(),
                 keygenSalt: Data(),
-                keygenSignature: .fastV1
+                keygenSignature: "my-signature"
             ),
             userDescription: "my vault",
             created: Date(timeIntervalSince1970: 2000)

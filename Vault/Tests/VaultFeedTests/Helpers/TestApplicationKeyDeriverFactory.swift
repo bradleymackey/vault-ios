@@ -3,8 +3,8 @@ import Foundation
 import FoundationExtensions
 import VaultFeed
 
-final class TestApplicationKeyDeriverFactory: ApplicationKeyDeriverFactory {
-    func makeApplicationKeyDeriver() -> ApplicationKeyDeriver<Bits256> {
-        VaultAppKeyDerivers.testing
+final class TestVaultKeyDeriverFactory: VaultKeyDeriverFactory {
+    func makeVaultKeyDeriver() -> VaultKeyDeriver {
+        VaultKeyDeriver.testing
     }
 }

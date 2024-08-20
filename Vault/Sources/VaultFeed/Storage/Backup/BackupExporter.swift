@@ -19,7 +19,7 @@ public final class BackupExporter {
             clock: clock,
             key: encryptionKey,
             keygenSalt: backupPassword.salt,
-            keygenSignature: backupPassword.keyDervier,
+            keygenSignature: backupPassword.keyDervier.rawValue,
             paddingMode: .random
         )
         let itemEncoder = VaultBackupItemEncoder()

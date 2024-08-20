@@ -28,14 +28,14 @@ public struct EncryptedVault: Equatable, Codable {
     /// If we didn't store the salt in the payload, we would be unable to derive the encryption key.
     public var keygenSalt: Data
     /// The signature of the algorithm that was used to generate the encryption key.
-    public var keygenSignature: ApplicationKeyDeriver<Bits256>.Signature
+    public var keygenSignature: String
 
     public init(
         data: Data,
         authentication: Data,
         encryptionIV: Data,
         keygenSalt: Data,
-        keygenSignature: ApplicationKeyDeriver<Bits256>.Signature
+        keygenSignature: String
     ) {
         self.data = data
         self.authentication = authentication

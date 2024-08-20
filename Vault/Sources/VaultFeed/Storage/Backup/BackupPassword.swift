@@ -10,9 +10,9 @@ public struct BackupPassword: Equatable, Hashable, Sendable {
     /// The salt used in the keygen process to derive `key`.
     public var salt: Data
     /// The keygen that was used to derive this password.
-    public var keyDervier: ApplicationKeyDeriver<Bits256>.Signature
+    public var keyDervier: VaultKeyDeriver.Signature
 
-    public init(key: KeyData<Bits256>, salt: Data, keyDervier: ApplicationKeyDeriver<Bits256>.Signature) {
+    public init(key: KeyData<Bits256>, salt: Data, keyDervier: VaultKeyDeriver.Signature) {
         self.key = key
         self.salt = salt
         self.keyDervier = keyDervier
@@ -24,7 +24,7 @@ public struct BackupPassword: Equatable, Hashable, Sendable {
 extension BackupPassword {
     /// Creates a new encryption key.
     public static func createEncryptionKey(
-        deriver: ApplicationKeyDeriver<Bits256>,
+        deriver: VaultKeyDeriver,
         password: String
     ) throws -> BackupPassword {
         let salt = Data.random(count: 48)
