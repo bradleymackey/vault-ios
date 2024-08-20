@@ -67,7 +67,7 @@ struct BackupView: View {
                 }
             case .importPassword:
                 NavigationStack {
-                    BackupKeyImportView(viewModel: .init(dataModel: dataModel))
+                    BackupKeyImportView(viewModel: .init(dataModel: dataModel), intervalTimer: injector.intervalTimer)
                 }
             }
         }
