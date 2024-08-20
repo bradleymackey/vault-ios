@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 import VaultCore
@@ -51,6 +52,16 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
         // The 'writable' content is all deterministic
         makeWritable() == other.makeWritable() &&
             id == other.id
+    }
+}
+
+extension VaultItem: Digestable {
+    public var digestableData: some Encodable {
+        struct Container: Encodable {
+            var id: UUID
+            var updatedDate: Date
+        }
+        return Container(id: metadata.id.rawValue, updatedDate: metadata.updated)
     }
 }
 

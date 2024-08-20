@@ -14,7 +14,7 @@ extension Hash {
             self.value = value
         }
 
-        public static func makeHash(_ value: T) throws -> Self where T: Encodable {
+        public static func makeHash(_ value: some Digestable) throws -> Self {
             let hasher = Hasher()
             let data = try hasher.sha256(value: value)
             return .init(value: data)

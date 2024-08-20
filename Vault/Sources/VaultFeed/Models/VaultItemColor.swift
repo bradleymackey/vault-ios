@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 
 public struct VaultItemColor: Equatable, Hashable, Sendable {
@@ -9,6 +10,15 @@ public struct VaultItemColor: Equatable, Hashable, Sendable {
         self.red = red
         self.green = green
         self.blue = blue
+    }
+}
+
+extension VaultItemColor: Digestable {
+    public var digestableData: some Encodable {
+        struct DigestData: Encodable {
+            var red, green, blue: Double
+        }
+        return DigestData(red: red, green: green, blue: blue)
     }
 }
 
