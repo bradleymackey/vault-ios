@@ -11,7 +11,7 @@ public struct CodeTimerHorizontalBarView: View {
 
     @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(EpochClock.self) var clock
+    @Environment(VaultInjector.self) var injector
 
     public var body: some View {
         GeometryReader { proxy in
@@ -41,7 +41,7 @@ public struct CodeTimerHorizontalBarView: View {
     }
 
     private func resetAnimation(animateReset: Bool) {
-        let currentTime = clock.currentTime
+        let currentTime = injector.clock.currentTime
         withAnimation(
             .linear(duration: animateReset ? 0.15 : 0), {
                 currentFractionCompleted = timerState.animationState.initialFraction(currentTime: currentTime)

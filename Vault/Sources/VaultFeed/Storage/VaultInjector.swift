@@ -1,4 +1,5 @@
 import Foundation
+import VaultCore
 
 /// Object to retain and share non-observable dependencies across views.
 ///
@@ -6,9 +7,20 @@ import Foundation
 /// This is a good place to store and subsequently inject them.
 @Observable
 public final class VaultInjector {
+    public let clock: EpochClock
+    public let intervalTimer: any IntervalTimer
     public let backupEventLogger: any BackupEventLogger
+    public let vaultKeyDeriverFactory: any VaultKeyDeriverFactory
 
-    public init(backupEventLogger: any BackupEventLogger) {
+    public init(
+        clock: EpochClock,
+        intervalTimer: any IntervalTimer,
+        backupEventLogger: any BackupEventLogger,
+        vaultKeyDeriverFactory: any VaultKeyDeriverFactory
+    ) {
+        self.clock = clock
+        self.intervalTimer = intervalTimer
         self.backupEventLogger = backupEventLogger
+        self.vaultKeyDeriverFactory = vaultKeyDeriverFactory
     }
 }
