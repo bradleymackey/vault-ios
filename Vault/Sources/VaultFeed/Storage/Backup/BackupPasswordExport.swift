@@ -8,7 +8,7 @@ public struct BackupPasswordExport {
     var version: SemVer
     var key: KeyData<Bits256>
     var salt: Data
-    var keyDeriver: ApplicationKeyDeriver.Signature
+    var keyDeriver: VaultKeyDeriver.Signature
 }
 
 extension BackupPasswordExport: Codable {
@@ -26,7 +26,7 @@ extension BackupPasswordExport {
     static func createV1Export(
         key: KeyData<Bits256>,
         salt: Data,
-        keyDeriver: ApplicationKeyDeriver.Signature
+        keyDeriver: VaultKeyDeriver.Signature
     ) -> BackupPasswordExport {
         BackupPasswordExport(
             version: "1.0.0",

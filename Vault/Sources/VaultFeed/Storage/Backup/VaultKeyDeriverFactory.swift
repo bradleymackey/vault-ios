@@ -3,19 +3,19 @@ import Foundation
 import FoundationExtensions
 
 /// @mockable
-public protocol ApplicationKeyDeriverFactory {
-    func makeApplicationKeyDeriver() -> ApplicationKeyDeriver
+public protocol VaultKeyDeriverFactory {
+    func makeVaultKeyDeriver() -> VaultKeyDeriver
 }
 
-public struct ApplicationKeyDeriverFactoryImpl: ApplicationKeyDeriverFactory {
+public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
     public init() {}
-    public func makeApplicationKeyDeriver() -> ApplicationKeyDeriver {
+    public func makeVaultKeyDeriver() -> VaultKeyDeriver {
         #if DEBUG
         // A fast key dervier that is relatively insecure, but runs in <5s in DEBUG on any reasonable hardware.
-        return VaultAppKeyDerivers.V1.fast
+        return VaultKeyDeriver.V1.fast
         #else
         // This is very slow to run in DEBUG, due to lack of optimizations.
-        return VaultAppKeyDerivers.V1.secure
+        return VaultKeyDeriver.V1.secure
         #endif
     }
 }

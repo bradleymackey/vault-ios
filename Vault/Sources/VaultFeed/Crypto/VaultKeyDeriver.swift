@@ -2,11 +2,66 @@ import CryptoEngine
 import Foundation
 import FoundationExtensions
 
-public enum VaultAppKeyDerivers {
+/// A `KeyDeriver` that can actually be used for vault encryption.
+///
+/// It contains a resilient `signature`, such that we can lookup the exact
+/// algorithm and all parameters when we decrypt.
+///
+/// Things should only be made into an `VaultKeyDeriver` if they are deemed
+/// to be good enough for encryption. This helps to prevent accidental errors like
+/// using some random `KeyDeriver` at the application level.
+public struct VaultKeyDeriver: KeyDeriver {
+    /// The resilient signature that identifies this key deriver.
+    ///
+    /// Using the signature, this allows us to lookup the algorithm that was used
+    /// during the key generation.
+    public let signature: Signature
+
+    private let deriver: any KeyDeriver<Bits256>
+
+    public init(deriver: any KeyDeriver<Bits256>, signature: Signature) {
+        self.deriver = deriver
+        self.signature = signature
+    }
+
+    public func key(password: Data, salt: Data) throws -> KeyData<Bits256> {
+        try deriver.key(password: password, salt: salt)
+    }
+
+    public var uniqueAlgorithmIdentifier: String {
+        deriver.uniqueAlgorithmIdentifier
+    }
+}
+
+extension VaultKeyDeriver {
+    /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
+    /// so a given key can be recreated.
+    public enum Signature: String, Equatable, Codable, Identifiable, Sendable {
+        case testing = "vault.keygen.default.testing"
+        case fastV1 = "vault.keygen.default.fast-v1"
+        case secureV1 = "vault.keygen.default.secure-v1"
+
+        public var id: String {
+            rawValue
+        }
+
+        public var userVisibleDescription: String {
+            switch self {
+            case .testing: "Vault Default • Testing"
+            case .fastV1: "Vault Default – FAST v1"
+            case .secureV1: "Vault Default – SECURE v1"
+            }
+        }
+    }
+}
+
+// MARK: - Derviers
+
+extension VaultKeyDeriver {
     /// A key deriver that's really fast, just for testing.
-    public static let testing: ApplicationKeyDeriver = {
+    public static let testing: VaultKeyDeriver = {
         let deriver = HKDFKeyDeriver<Bits256>(parameters: .init(variant: .sha3_sha512))
-        return ApplicationKeyDeriver(
+        return VaultKeyDeriver(
             deriver: deriver,
             signature: .fastV1
         )
@@ -19,12 +74,12 @@ public enum VaultAppKeyDerivers {
         /// It still uses a combination of key derivation functions for increased security.
         ///
         /// This should be used in places where security is not required or for testing.
-        public static let fast: ApplicationKeyDeriver = {
+        public static let fast: VaultKeyDeriver = {
             var derivers = [any KeyDeriver<Bits256>]()
             derivers.append(PBKDF2_fast)
             derivers.append(HKDF_sha3_512_single)
             derivers.append(scrypt_fast)
-            return ApplicationKeyDeriver(
+            return VaultKeyDeriver(
                 deriver: CombinationKeyDeriver(derivers: derivers),
                 signature: .fastV1
             )
@@ -40,14 +95,14 @@ public enum VaultAppKeyDerivers {
         /// in the event that an offline encrypted vault is obtained by a bad actor.
         ///
         /// This is intended to be the initial production version of the KDF for the Vault app.
-        public static let secure: ApplicationKeyDeriver = {
+        public static let secure: VaultKeyDeriver = {
             var derivers = [any KeyDeriver<Bits256>]()
             // Initial PBKDF2 for strong password hashing
             derivers.append(PBKDF2_secure)
             derivers.append(HKDF_sha3_512_single)
             // Scrypt for memory-hard key derivation
             derivers.append(scrypt_secure)
-            return ApplicationKeyDeriver(
+            return VaultKeyDeriver(
                 deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
                 signature: .secureV1
             )
@@ -57,7 +112,7 @@ public enum VaultAppKeyDerivers {
 
 // MARK: - Atoms
 
-extension VaultAppKeyDerivers.V1 {
+extension VaultKeyDeriver.V1 {
     private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(parameters: .init(
         iterations: 2000,
         variant: .sha384

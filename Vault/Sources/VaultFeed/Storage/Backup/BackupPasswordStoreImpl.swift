@@ -43,7 +43,7 @@ extension BackupPasswordStoreImpl {
     private struct BackupPasswordContainer: Codable {
         var key: KeyData<Bits256>
         var salt: Data
-        var keyDervier: ApplicationKeyDeriver.Signature
+        var keyDervier: VaultKeyDeriver.Signature
 
         init(password: BackupPassword) {
             key = password.key

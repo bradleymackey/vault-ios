@@ -70,9 +70,9 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
     @MainActor
     func test_saveEnteredPassword_isKeygenErrorIfGenerationError() async {
-        let deriverFactory = ApplicationKeyDeriverFactoryMock()
-        deriverFactory.makeApplicationKeyDeriverHandler = {
-            ApplicationKeyDeriver(deriver: KeyDeriverErroring(), signature: .testing)
+        let deriverFactory = VaultKeyDeriverFactoryMock()
+        deriverFactory.makeVaultKeyDeriverHandler = {
+            VaultKeyDeriver(deriver: KeyDeriverErroring(), signature: .testing)
         }
         let sut = makeSUT(deriverFactory: deriverFactory)
 
@@ -122,7 +122,7 @@ extension BackupKeyChangeViewModelTests {
         ),
         authenticationService: DeviceAuthenticationService =
             DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-        deriverFactory: any ApplicationKeyDeriverFactory = TestApplicationKeyDeriverFactory()
+        deriverFactory: any VaultKeyDeriverFactory = TestVaultKeyDeriverFactory()
     ) -> BackupKeyChangeViewModel {
         BackupKeyChangeViewModel(
             dataModel: dataModel,
