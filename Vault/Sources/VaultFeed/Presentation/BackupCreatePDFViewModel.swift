@@ -1,4 +1,5 @@
 import CryptoDocumentExporter
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 import PDFKit
@@ -63,17 +64,27 @@ public final class BackupCreatePDFViewModel {
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
     private let clock: EpochClock
+    private let backupEventLogger: any BackupEventLogger
 
-    public init(backupPassword: BackupPassword, dataModel: VaultDataModel, clock: EpochClock) {
+    public init(
+        backupPassword: BackupPassword,
+        dataModel: VaultDataModel,
+        clock: EpochClock,
+        backupEventLogger: any BackupEventLogger
+    ) {
         self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
+        self.backupEventLogger = backupEventLogger
     }
 
     public func createPDF() async {
         do {
             state = .loading
-            createdDocument = try await makeBackupPDFDocument()
+            let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
+            createdDocument = try await makeBackupPDFDocument(payload: payload)
+            let hash = try Hasher().sha256(value: payload)
+            backupEventLogger.exportedToPDF(date: clock.currentDate, hash: hash)
             state = .success
         } catch {
             state = .error(.init(
@@ -85,16 +96,15 @@ public final class BackupCreatePDFViewModel {
     }
 
     /// Exports and encrypts the full vault from storage, rendering to a PDF
-    private func makeBackupPDFDocument() async throws -> PDFDocument {
+    private func makeBackupPDFDocument(payload: VaultApplicationPayload) async throws -> PDFDocument {
         let pdfCreator = VaultBackupPDFGenerator(
             size: size.documentSize,
             documentTitle: "Backup",
             applicationName: "Vault",
             authorName: authorName
         )
-        let applicationPayload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
         let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
-        let encryptedVault = try backupExporter.createEncryptedBackup(payload: applicationPayload)
+        let encryptedVault = try backupExporter.createEncryptedBackup(payload: payload)
         let exportPayload = VaultExportPayload(
             encryptedVault: encryptedVault,
             userDescription: userHint,

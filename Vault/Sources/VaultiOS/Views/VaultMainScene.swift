@@ -17,6 +17,7 @@ public struct VaultMainScene: Scene {
     @State private var isShowingCopyPaste = false
     @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
     @State private var vaultDataModel: VaultDataModel
+    @State private var injector: VaultInjector
     @State private var selectedView: SidebarItem? = .items
 
     enum SidebarItem: Hashable {
@@ -63,6 +64,8 @@ public struct VaultMainScene: Scene {
             backupPasswordStore: backupStore,
             itemCaches: [totp, hotp]
         )
+        let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
+        let injector = VaultInjector(backupEventLogger: backupEventLogger)
 
         _pasteboard = State(wrappedValue: pasteboard)
         _clock = State(wrappedValue: clock)
@@ -71,6 +74,7 @@ public struct VaultMainScene: Scene {
         _notePreviewGenerator = State(wrappedValue: note)
         _localSettings = State(wrappedValue: localSettings)
         _vaultDataModel = State(wrappedValue: vaultDataModel)
+        _injector = State(wrappedValue: injector)
     }
 
     public var body: some Scene {
@@ -153,6 +157,7 @@ public struct VaultMainScene: Scene {
             .environment(clock)
             .environment(deviceAuthenticationService)
             .environment(vaultDataModel)
+            .environment(injector)
         }
         .onChange(of: scenePhase) { _, newValue in
             switch newValue {

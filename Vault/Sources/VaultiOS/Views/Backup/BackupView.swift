@@ -9,6 +9,7 @@ struct BackupView: View {
     @Environment(EpochClock.self) var clock
     @Environment(VaultDataModel.self) var dataModel
     @Environment(DeviceAuthenticationService.self) var authenticationService
+    @Environment(VaultInjector.self) var injector
     @State private var viewModel = BackupViewModel()
     @State private var modal: Modal?
 
@@ -46,7 +47,8 @@ struct BackupView: View {
                     BackupCreatePDFView(viewModel: .init(
                         backupPassword: password,
                         dataModel: dataModel,
-                        clock: clock
+                        clock: clock,
+                        backupEventLogger: injector.backupEventLogger
                     ))
                 }
             case .updatePassword:

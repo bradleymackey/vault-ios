@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 
@@ -30,6 +31,17 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
     /// This discards any non-deterministic data and identifiable information.
     public func makeWritable() -> VaultItemTag.Write {
         .init(name: name, color: color, iconName: iconName)
+    }
+}
+
+extension VaultItemTag: Digestable {
+    public var digestableData: some Encodable {
+        struct DigestData: Encodable {
+            var id: UUID
+            var name: String
+            var iconName: String
+        }
+        return DigestData(id: id.id, name: name, iconName: iconName)
     }
 }
 
