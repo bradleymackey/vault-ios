@@ -7,12 +7,14 @@ import VaultCore
 ///
 /// It doesn't need to be encrypted or protected as it doesn't contain any sensitive data.
 struct VaultBackupEvent: Equatable, Hashable, Sendable {
-    /// The date that this backup was made.
-    var date: Date
+    /// The timestamp associated with the backup.
+    ///
+    /// This is the actual date that the backup was created, not the date that the backup was imported or exported.
+    var backupDate: Date
+    /// The date that this backup event was performed (import/export).
+    var eventDate: Date
     /// The action that was taken on this backup to reach the current state.
     var kind: Kind
-    /// The location where this event took place in relation to.
-    var location: Location
     /// Hash of all deterministic data that was backed up (application payload).
     ///
     /// This hash is used to check what data was actually backed up, so no random data or timestamps should be
@@ -22,12 +24,7 @@ struct VaultBackupEvent: Equatable, Hashable, Sendable {
 
 extension VaultBackupEvent {
     enum Kind: Equatable, Hashable, Sendable {
-        case exported
-        case imported
-    }
-
-    enum Location: Equatable, Hashable, Sendable {
-        case pdfBackup
-        case otherDevice
+        case exportedToPDF
+        case importedToPDF
     }
 }
