@@ -1,4 +1,5 @@
 import CryptoDocumentExporter
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 import PDFKit
@@ -73,7 +74,10 @@ public final class BackupCreatePDFViewModel {
     public func createPDF() async {
         do {
             state = .loading
-            createdDocument = try await makeBackupPDFDocument()
+            let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
+            let hash = try Hasher().sha256(value: payload)
+            // TODO: save an export entry with the hash
+            createdDocument = try await makeBackupPDFDocument(payload: payload)
             state = .success
         } catch {
             state = .error(.init(
@@ -85,16 +89,15 @@ public final class BackupCreatePDFViewModel {
     }
 
     /// Exports and encrypts the full vault from storage, rendering to a PDF
-    private func makeBackupPDFDocument() async throws -> PDFDocument {
+    private func makeBackupPDFDocument(payload: VaultApplicationPayload) async throws -> PDFDocument {
         let pdfCreator = VaultBackupPDFGenerator(
             size: size.documentSize,
             documentTitle: "Backup",
             applicationName: "Vault",
             authorName: authorName
         )
-        let applicationPayload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
         let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
-        let encryptedVault = try backupExporter.createEncryptedBackup(payload: applicationPayload)
+        let encryptedVault = try backupExporter.createEncryptedBackup(payload: payload)
         let exportPayload = VaultExportPayload(
             encryptedVault: encryptedVault,
             userDescription: userHint,
