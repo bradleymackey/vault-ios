@@ -75,7 +75,6 @@ struct SecureNoteDetailView: View {
                     deleteSection
                 }
             } else {
-                noteMetadataContentSection
                 noteContentsSection
             }
         }
@@ -164,16 +163,6 @@ struct SecureNoteDetailView: View {
 
     // MARK: Title
 
-    private var noteMetadataContentSection: some View {
-        Section {
-            noteIconHeader
-                .frame(maxWidth: .infinity)
-        }
-        .multilineTextAlignment(.center)
-        .textSelection(.enabled)
-        .noListBackground()
-    }
-
     private var noteIconHeader: some View {
         Image(systemName: viewModel.editingModel.detail.isLocked ? "lock.doc.fill" : "doc.text.fill")
             .font(.title)
@@ -181,16 +170,17 @@ struct SecureNoteDetailView: View {
     }
 
     private var noteIconPickerHeader: some View {
-        VStack(spacing: 8) {
+        HStack(spacing: 8) {
             noteIconHeader
-
-            ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
-                EmptyView()
-            })
-            .labelsHidden()
+                .padding(8)
+                .background(Circle().fill(Color(UIColor.secondarySystemBackground)))
+                .padding(8)
+                .background(Circle().fill(AngularGradient(
+                    gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .pink]),
+                    center: .center
+                ).opacity(0.8)))
+                .overlay(ColorPicker("", selection: $selectedColor).labelsHidden().opacity(0.015))
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 16)
     }
 
     // MARK: Contents
@@ -210,6 +200,10 @@ struct SecureNoteDetailView: View {
                     .textSelection(.enabled)
                     .frame(minHeight: 450, alignment: .top)
             }
+        } header: {
+            noteIconHeader
+                .containerRelativeFrame(.horizontal)
+                .padding(.vertical, 4)
         } footer: {
             VStack(alignment: .leading, spacing: 16) {
                 if viewModel.tagsThatAreSelected.isNotEmpty {
@@ -247,6 +241,8 @@ struct SecureNoteDetailView: View {
                 .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
             noteIconPickerHeader
+                .containerRelativeFrame(.horizontal)
+                .padding(.vertical, 4)
         }
     }
 
