@@ -4,14 +4,14 @@ import VaultCore
 import VaultFeed
 
 @MainActor
-public struct TOTPCodePreviewView<TimerBar: View>: View {
+struct TOTPCodePreviewView<TimerBar: View>: View {
     var previewViewModel: OTPCodePreviewViewModel
     var timerView: TimerBar
     var behaviour: VaultItemViewBehaviour
 
     @Namespace private var codeTimerAnimation
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
             Spacer()
@@ -89,51 +89,21 @@ public struct TOTPCodePreviewView<TimerBar: View>: View {
     }
 }
 
-struct TOTPCodePreviewView_Previews: PreviewProvider {
-    private static let codeRenderer = OTPCodeRendererMock()
-    private static let errorRenderer = OTPCodeRendererMock()
-    private static let finishedRenderer = OTPCodeRendererMock()
+#Preview {
+    let clock = EpochClock { 20 }
+    let injector = VaultInjector(
+        clock: clock,
+        intervalTimer: IntervalTimerImpl(),
+        backupEventLogger: BackupEventLoggerMock(),
+        vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl()
+    )
+    let codeRenderer = OTPCodeRendererMock()
+    let errorRenderer = OTPCodeRendererMock()
+    let finishedRenderer = OTPCodeRendererMock()
+    let subject = PassthroughSubject<OTPCodeTimerState, Never>()
 
-    static var previews: some View {
-        VStack(spacing: 40) {
-            makePreview(issuer: "Working Example", renderer: codeRenderer)
-                .onAppear {
-                    codeRenderer.subject.send("1234567")
-                }
-
-            makePreview(issuer: "Working Example with Very long title and stuff", renderer: codeRenderer)
-                .onAppear {
-                    codeRenderer.subject.send("1234567")
-                }
-
-            makePreview(issuer: "", renderer: codeRenderer)
-
-            makePreview(issuer: "Code Error Example", renderer: errorRenderer)
-                .onAppear {
-                    errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
-                }
-
-            makePreview(issuer: "Finished Example", renderer: finishedRenderer)
-                .onAppear {
-                    finishedRenderer.subject.send(completion: .finished)
-                }
-
-            makePreview(issuer: "Obfuscated", renderer: codeRenderer, behaviour: .editingState(message: "Editing..."))
-                .onAppear {
-                    finishedRenderer.subject.send(completion: .finished)
-                }
-
-            makePreview(issuer: "Obfuscated (no msg)", renderer: codeRenderer, behaviour: .editingState(message: nil))
-                .onAppear {
-                    finishedRenderer.subject.send(completion: .finished)
-                }
-        }
-        .onAppear {
-            subject.send(.init(startTime: 15, endTime: 100))
-        }
-    }
-
-    static func makePreview(
+    @MainActor
+    func makePreview(
         issuer: String,
         renderer: OTPCodeRendererMock,
         behaviour: VaultItemViewBehaviour = .normal
@@ -147,15 +117,50 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
-                timerState: OTPCodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher()),
+                timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
                 color: .blue
             ),
             behaviour: behaviour
         )
-        .frame(width: 250, height: 100)
     }
 
-    private static let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
+    return ScrollView(.vertical) {
+        makePreview(issuer: "Working Example", renderer: codeRenderer)
+            .onAppear {
+                codeRenderer.subject.send("1234567")
+            }
 
-    static let clock = EpochClock { 20 }
+        makePreview(issuer: "Working Example with Very long title and stuff", renderer: codeRenderer)
+            .onAppear {
+                codeRenderer.subject.send("1234567")
+            }
+
+        makePreview(issuer: "", renderer: codeRenderer)
+
+        makePreview(issuer: "Code Error Example", renderer: errorRenderer)
+            .onAppear {
+                errorRenderer.subject.send(completion: .failure(NSError(domain: "sdf", code: 1)))
+            }
+
+        makePreview(issuer: "Finished Example", renderer: finishedRenderer)
+            .onAppear {
+                finishedRenderer.subject.send(completion: .finished)
+            }
+
+        makePreview(issuer: "Obfuscated", renderer: codeRenderer, behaviour: .editingState(message: "Editing..."))
+            .onAppear {
+                finishedRenderer.subject.send(completion: .finished)
+            }
+
+        makePreview(issuer: "Obfuscated (no msg)", renderer: codeRenderer, behaviour: .editingState(message: nil))
+            .onAppear {
+                finishedRenderer.subject.send(completion: .finished)
+            }
+    }
+    .padding()
+    .padding()
+    .environment(injector)
+    .onAppear {
+        subject.send(.init(startTime: 15, endTime: 100))
+    }
 }

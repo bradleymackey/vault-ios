@@ -4,14 +4,14 @@ import VaultFeed
 
 /// @mockable(typealias: SecureNoteView = AnyView)
 @MainActor
-public protocol SecureNotePreviewViewFactory {
+protocol SecureNotePreviewViewFactory {
     associatedtype SecureNoteView: View
     func makeSecureNoteView(viewModel: SecureNotePreviewViewModel, behaviour: VaultItemViewBehaviour) -> SecureNoteView
 }
 
-public struct SecureNotePreviewViewFactoryImpl: SecureNotePreviewViewFactory {
-    public init() {}
-    public func makeSecureNoteView(
+struct SecureNotePreviewViewFactoryImpl: SecureNotePreviewViewFactory {
+    init() {}
+    func makeSecureNoteView(
         viewModel: SecureNotePreviewViewModel,
         behaviour: VaultItemViewBehaviour
     ) -> some View {

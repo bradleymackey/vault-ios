@@ -2,11 +2,11 @@ import Combine
 import SwiftUI
 import VaultFeed
 
-public struct OTPCodeTextView: View {
+struct OTPCodeTextView: View {
     var codeState: OTPCodeState
     var scaledDigitSpacing: Double = 8
 
-    public var body: some View {
+    var body: some View {
         switch codeState {
         case .notReady, .finished, .obfuscated:
             placeholderCode(digits: 6)
@@ -80,37 +80,35 @@ extension [Character] {
     }
 }
 
-struct CodeTextView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            OTPCodeTextView(
-                codeState: .visible("123456")
-            )
+#Preview {
+    VStack {
+        OTPCodeTextView(
+            codeState: .visible("123456")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("1234567")
-            )
+        OTPCodeTextView(
+            codeState: .visible("1234567")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("12345678")
-            )
+        OTPCodeTextView(
+            codeState: .visible("12345678")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("123456789")
-            )
+        OTPCodeTextView(
+            codeState: .visible("123456789")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("1234567890")
-            )
+        OTPCodeTextView(
+            codeState: .visible("1234567890")
+        )
 
-            OTPCodeTextView(
-                codeState: .finished
-            )
+        OTPCodeTextView(
+            codeState: .finished
+        )
 
-            OTPCodeTextView(
-                codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6)
-            )
-        }
-        .font(.system(.largeTitle, design: .monospaced))
+        OTPCodeTextView(
+            codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6)
+        )
     }
+    .font(.system(.largeTitle, design: .monospaced))
 }

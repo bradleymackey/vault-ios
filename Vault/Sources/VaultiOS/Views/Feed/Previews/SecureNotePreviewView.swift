@@ -2,11 +2,11 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-public struct SecureNotePreviewView: View {
+struct SecureNotePreviewView: View {
     var viewModel: SecureNotePreviewViewModel
     var behaviour: VaultItemViewBehaviour
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .center, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")

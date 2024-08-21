@@ -9,19 +9,18 @@ import VaultFeed
 ///
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
-    public typealias PreviewItem = TOTPAuthCode
+final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
+    typealias PreviewItem = TOTPAuthCode
 
-    let viewFactory: Factory
-    let updaterFactory: any OTPCodeTimerUpdaterFactory
-    let clock: EpochClock
-    let timer: any IntervalTimer
-
+    private let viewFactory: Factory
+    private let updaterFactory: any OTPCodeTimerUpdaterFactory
+    private let clock: EpochClock
+    private let timer: any IntervalTimer
     private var timerUpdaterCache = Cache<UInt64, any OTPCodeTimerUpdater>()
     private var timerPeriodStateCache = Cache<UInt64, OTPCodeTimerPeriodState>()
     private var viewModelCache = Cache<Identifier<VaultItem>, OTPCodePreviewViewModel>()
 
-    public init(
+    init(
         viewFactory: Factory,
         updaterFactory: any OTPCodeTimerUpdaterFactory,
         clock: EpochClock,
@@ -33,7 +32,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
         self.timer = timer
     }
 
-    public func makeVaultPreviewView(
+    func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -46,19 +45,19 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
         )
     }
 
-    public func scenePhaseDidChange(to scene: ScenePhase) {
+    func scenePhaseDidChange(to scene: ScenePhase) {
         if scene == .active {
             recalculateAllTimers()
         }
     }
 
-    public func didAppear() {
+    func didAppear() {
         recalculateAllTimers()
     }
 }
 
 extension TOTPPreviewViewGenerator {
-    public func recalculateAllTimers() {
+    func recalculateAllTimers() {
         for timerUpdater in timerUpdaterCache.values {
             timerUpdater.recalculate()
         }
@@ -66,12 +65,12 @@ extension TOTPPreviewViewGenerator {
 }
 
 extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
+    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         guard let visibleCode = textToCopyForVaultItem(id: id) else { return nil }
         return .copyText(visibleCode)
     }
 
-    public func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
+    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
         viewModelCache[id]?.code.visibleCode
     }
 }
@@ -79,7 +78,7 @@ extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopy
 // MARK: - Caching
 
 extension TOTPPreviewViewGenerator: VaultItemCache {
-    public func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) {
+    func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) {
         viewModelCache.remove(key: id)
         // don't invalidate period caches, as they are independant of the code detail
     }
@@ -106,7 +105,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
     private func makeTimerPeriodState(period: UInt64) -> OTPCodeTimerPeriodState {
         timerPeriodStateCache.getOrCreateValue(for: period) {
             let timerController = makeTimerController(period: period)
-            return OTPCodeTimerPeriodState(clock: clock, statePublisher: timerController.timerUpdatedPublisher())
+            return OTPCodeTimerPeriodState(statePublisher: timerController.timerUpdatedPublisher())
         }
     }
 

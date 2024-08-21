@@ -4,16 +4,16 @@ import UniformTypeIdentifiers
 import VaultCore
 import VaultFeed
 
-public struct CodeTimerHorizontalBarView: View {
+struct CodeTimerHorizontalBarView: View {
     var timerState: OTPCodeTimerPeriodState
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
     @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(VaultInjector.self) var injector
+    @Environment(VaultInjector.self) private var injector
 
-    public var body: some View {
+    var body: some View {
         GeometryReader { proxy in
             HorizontalTimerProgressBarView(
                 fractionCompleted: currentFractionCompleted,
@@ -57,21 +57,20 @@ public struct CodeTimerHorizontalBarView: View {
     }
 }
 
-struct CodeTimerHorizontalBarView_Previews: PreviewProvider {
-    static var previews: some View {
-        CodeTimerHorizontalBarView(
-            timerState: OTPCodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher())
-        )
-        .frame(width: 250, height: 20)
-        .previewLayout(.fixed(width: 300, height: 300))
-        .onAppear {
-            subject.send(OTPCodeTimerState(startTime: 15, endTime: 60))
-        }
+#Preview {
+    let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
+    return CodeTimerHorizontalBarView(
+        timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher())
+    )
+    .frame(width: 250, height: 20)
+    .previewLayout(.fixed(width: 300, height: 300))
+    .onAppear {
+        subject.send(OTPCodeTimerState(startTime: 15, endTime: 60))
     }
-
-    // MARK: - Helpers
-
-    private static let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
-
-    static let clock = EpochClock { 40 }
+    .environment(VaultInjector(
+        clock: EpochClock { 40 },
+        intervalTimer: IntervalTimerImpl(),
+        backupEventLogger: BackupEventLoggerMock(),
+        vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl()
+    ))
 }

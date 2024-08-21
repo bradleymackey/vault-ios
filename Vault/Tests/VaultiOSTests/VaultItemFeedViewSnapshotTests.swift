@@ -3,9 +3,9 @@ import FoundationExtensions
 import SwiftUI
 import TestHelpers
 import VaultFeed
-import VaultiOS
 import VaultSettings
 import XCTest
+@testable import VaultiOS
 
 final class VaultItemFeedViewSnapshotTests: XCTestCase {
     @MainActor

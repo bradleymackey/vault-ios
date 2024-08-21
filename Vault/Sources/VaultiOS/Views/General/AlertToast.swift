@@ -1,11 +1,11 @@
-@_exported import SimpleToast
+import SimpleToast
 import SwiftUI
 
-public struct ToastAlertMessageView: View {
-    public var title: String
-    public var image: Image
+struct ToastAlertMessageView: View {
+    var title: String
+    var image: Image
 
-    public var body: some View {
+    var body: some View {
         Label {
             Text(title)
         } icon: {
@@ -21,7 +21,7 @@ public struct ToastAlertMessageView: View {
 }
 
 extension ToastAlertMessageView {
-    public static func copiedToClipboard() -> ToastAlertMessageView {
+    static func copiedToClipboard() -> ToastAlertMessageView {
         .init(title: localized(key: "code.copyied"), image: Image(systemName: "doc.on.doc.fill"))
     }
 }

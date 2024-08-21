@@ -2,12 +2,12 @@ import FoundationExtensions
 import SwiftUI
 import VaultSettings
 
-public struct ThirdPartyView: View {
+struct ThirdPartyView: View {
     @State private var libraries = [ThirdPartyLibrary]()
     @State private var loadingError = false
-    public init() {}
+    init() {}
 
-    public var body: some View {
+    var body: some View {
         List {
             if loadingError {
                 errorSection
@@ -48,4 +48,8 @@ public struct ThirdPartyView: View {
             Text("Error loading")
         }
     }
+}
+
+#Preview {
+    ThirdPartyView()
 }

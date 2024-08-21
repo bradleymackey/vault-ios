@@ -6,20 +6,20 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-public struct VaultItemFeedView<
+struct VaultItemFeedView<
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload
 {
-    public var localSettings: LocalSettings
-    public var viewGenerator: ViewGenerator
-    @Binding public var isEditing: Bool
-    public var gridSpacing: Double
+    var localSettings: LocalSettings
+    var viewGenerator: ViewGenerator
+    @Binding var isEditing: Bool
+    var gridSpacing: Double
 
     @Environment(VaultDataModel.self) private var dataModel
     @State private var isReordering = false
 
-    public init(
+    init(
         localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
         isEditing: Binding<Bool>,
@@ -31,7 +31,7 @@ public struct VaultItemFeedView<
         self.gridSpacing = gridSpacing
     }
 
-    public var body: some View {
+    var body: some View {
         VStack {
             listOfCodesView
         }
@@ -184,57 +184,61 @@ public struct VaultItemFeedView<
     }
 }
 
-struct VaultItemFeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        let store = VaultStoreStub()
-        store.retrieveHandler = { _ in .init(items: [
-            .init(
-                metadata: .init(
-                    id: Identifier<VaultItem>(),
-                    created: Date(),
-                    updated: Date(),
-                    relativeOrder: .min,
-                    userDescription: "My Cool Code",
-                    tags: [],
-                    visibility: .always,
-                    searchableLevel: .full,
-                    searchPassphrase: "",
-                    lockState: .notLocked,
-                    color: VaultItemColor(color: .green)
-                ),
-                item: .otpCode(.init(
-                    type: .totp(),
-                    data: .init(
-                        secret: .empty(),
-                        accountName: "example@example.com",
-                        issuer: "i"
-                    )
-                ))
+#Preview {
+    let store = VaultStoreStub()
+    let dataModel = VaultDataModel(
+        vaultStore: store,
+        vaultTagStore: VaultTagStoreStub(),
+        backupPasswordStore: BackupPasswordStoreMock()
+    )
+    store.retrieveHandler = { _ in .init(items: [
+        .init(
+            metadata: .init(
+                id: Identifier<VaultItem>(),
+                created: Date(),
+                updated: Date(),
+                relativeOrder: .min,
+                userDescription: "My Cool Code",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                lockState: .notLocked,
+                color: VaultItemColor(color: .green)
             ),
-        ])
-        }
-        return VaultItemFeedView(
-            localSettings: .init(defaults: .init(userDefaults: .standard)),
-            viewGenerator: GenericGenerator(),
-            isEditing: .constant(false)
-        )
+            item: .otpCode(.init(
+                type: .totp(),
+                data: .init(
+                    secret: .empty(),
+                    accountName: "example@example.com",
+                    issuer: "i"
+                )
+            ))
+        ),
+    ])
+    }
+    return VaultItemFeedView(
+        localSettings: .init(defaults: .init(userDefaults: .standard)),
+        viewGenerator: GenericGenerator(),
+        isEditing: .constant(false)
+    )
+    .environment(dataModel)
+}
+
+private struct GenericGenerator: VaultItemPreviewViewGenerator {
+    func makeVaultPreviewView(
+        item _: VaultItem.Payload,
+        metadata _: VaultItem.Metadata,
+        behaviour _: VaultItemViewBehaviour
+    ) -> some View {
+        Text("Code")
     }
 
-    struct GenericGenerator: VaultItemPreviewViewGenerator {
-        func makeVaultPreviewView(
-            item _: VaultItem.Payload,
-            metadata _: VaultItem.Metadata,
-            behaviour _: VaultItemViewBehaviour
-        ) -> some View {
-            Text("Code")
-        }
+    func scenePhaseDidChange(to _: ScenePhase) {
+        // noop
+    }
 
-        func scenePhaseDidChange(to _: ScenePhase) {
-            // noop
-        }
-
-        func didAppear() {
-            // noop
-        }
+    func didAppear() {
+        // noop
     }
 }

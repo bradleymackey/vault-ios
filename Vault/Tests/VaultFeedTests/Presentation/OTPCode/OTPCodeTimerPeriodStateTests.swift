@@ -29,6 +29,6 @@ final class OTPCodeTimerPeriodStateTests: XCTestCase {
     // MARK: - Helpers
 
     private func makeSUT(pub: AnyPublisher<OTPCodeTimerState, Never>) -> OTPCodeTimerPeriodState {
-        OTPCodeTimerPeriodState(clock: EpochClock(makeCurrentTime: { 100 }), statePublisher: pub)
+        OTPCodeTimerPeriodState(statePublisher: pub)
     }
 }

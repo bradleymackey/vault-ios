@@ -1,27 +1,27 @@
 import Foundation
 import SwiftUI
 
-public struct FormRow<Content: View>: View {
-    public var image: Image
-    public var color: Color
-    public var style: Style
-    public var content: () -> Content
+struct FormRow<Content: View>: View {
+    var image: Image
+    var color: Color
+    var style: Style
+    var content: () -> Content
 
     private let prominentIconSize: Double = 28
 
-    public enum Style {
+    enum Style {
         case prominent
         case standard
     }
 
-    public init(image: Image, color: Color, style: Style = .prominent, @ViewBuilder content: @escaping () -> Content) {
+    init(image: Image, color: Color, style: Style = .prominent, @ViewBuilder content: @escaping () -> Content) {
         self.image = image
         self.color = color
         self.style = style
         self.content = content
     }
 
-    public var body: some View {
+    var body: some View {
         HStack(alignment: .center, spacing: 16) {
             switch style {
             case .prominent:

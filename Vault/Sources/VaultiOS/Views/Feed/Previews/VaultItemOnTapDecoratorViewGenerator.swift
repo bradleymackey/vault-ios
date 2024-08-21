@@ -3,19 +3,19 @@ import FoundationExtensions
 import SwiftUI
 import VaultFeed
 
-public struct VaultItemOnTapDecoratorViewGenerator<
+struct VaultItemOnTapDecoratorViewGenerator<
     Generator: VaultItemPreviewViewGenerator
 >: VaultItemPreviewViewGenerator {
-    public typealias PreviewItem = Generator.PreviewItem
-    public let generator: Generator
-    public let onTap: (Identifier<VaultItem>) -> Void
+    typealias PreviewItem = Generator.PreviewItem
+    let generator: Generator
+    let onTap: (Identifier<VaultItem>) -> Void
 
-    public init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) -> Void) {
+    init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) -> Void) {
         self.generator = generator
         self.onTap = onTap
     }
 
-    public func makeVaultPreviewView(
+    func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -27,11 +27,11 @@ public struct VaultItemOnTapDecoratorViewGenerator<
         }
     }
 
-    public func scenePhaseDidChange(to scene: ScenePhase) {
+    func scenePhaseDidChange(to scene: ScenePhase) {
         generator.scenePhaseDidChange(to: scene)
     }
 
-    public func didAppear() {
+    func didAppear() {
         generator.didAppear()
     }
 }
@@ -39,7 +39,7 @@ public struct VaultItemOnTapDecoratorViewGenerator<
 extension VaultItemOnTapDecoratorViewGenerator: VaultItemPreviewActionHandler
     where Generator: VaultItemPreviewActionHandler
 {
-    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
+    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         generator.previewActionForVaultItem(id: id)
     }
 }

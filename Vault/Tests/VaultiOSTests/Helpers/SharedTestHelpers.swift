@@ -3,8 +3,8 @@ import FoundationExtensions
 import SwiftUI
 import VaultCore
 import VaultFeed
-import VaultiOS
 import VaultSettings
+@testable import VaultiOS
 
 @MainActor
 func anyVaultDataModel(

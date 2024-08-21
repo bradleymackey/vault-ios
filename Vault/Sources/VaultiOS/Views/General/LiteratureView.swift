@@ -4,18 +4,18 @@ import SwiftUI
 import VaultCore
 
 /// A view that displays a single block of scrolling text.
-public struct LiteratureView: View {
-    public var title: String
-    public var bodyText: FormattedString
-    public var bodyColor: Color
+struct LiteratureView: View {
+    var title: String
+    var bodyText: FormattedString
+    var bodyColor: Color
 
-    public init(title: String, bodyText: FormattedString, bodyColor: Color) {
+    init(title: String, bodyText: FormattedString, bodyColor: Color) {
         self.title = title
         self.bodyText = bodyText
         self.bodyColor = bodyColor
     }
 
-    public var body: some View {
+    var body: some View {
         ScrollView(.vertical, showsIndicators: true) {
             VStack(alignment: .leading) {
                 switch bodyText {

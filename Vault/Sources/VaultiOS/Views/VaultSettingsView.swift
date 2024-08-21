@@ -3,16 +3,16 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-public struct VaultSettingsView: View {
+struct VaultSettingsView: View {
     @State private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 
-    public init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
+    init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
         _viewModel = State(wrappedValue: viewModel)
         _localSettings = Bindable(wrappedValue: localSettings)
     }
 
-    public var body: some View {
+    var body: some View {
         Form {
             viewOptionsSection
             aboutSection

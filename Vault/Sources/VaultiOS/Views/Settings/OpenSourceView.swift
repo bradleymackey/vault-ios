@@ -2,8 +2,8 @@ import Foundation
 import SwiftUI
 import VaultSettings
 
-public struct OpenSourceView: View {
-    public var body: some View {
+struct OpenSourceView: View {
+    var body: some View {
         GeometryReader { geometry in
             ScrollView {
                 container
@@ -45,4 +45,8 @@ public struct OpenSourceView: View {
         .foregroundStyle(.secondary)
         .multilineTextAlignment(.leading)
     }
+}
+
+#Preview {
+    OpenSourceView()
 }

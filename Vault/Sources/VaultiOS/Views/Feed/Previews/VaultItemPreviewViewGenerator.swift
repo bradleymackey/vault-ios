@@ -6,7 +6,7 @@ import VaultFeed
 
 /// @mockable(typealias: PreviewView = AnyView; PreviewItem = VaultItem.Payload)
 @MainActor
-public protocol VaultItemPreviewViewGenerator {
+protocol VaultItemPreviewViewGenerator {
     associatedtype PreviewItem
     associatedtype PreviewView: View
     func makeVaultPreviewView(item: PreviewItem, metadata: VaultItem.Metadata, behaviour: VaultItemViewBehaviour)
@@ -16,18 +16,18 @@ public protocol VaultItemPreviewViewGenerator {
 }
 
 @MainActor
-public protocol VaultItemCopyActionHandler {
+protocol VaultItemCopyActionHandler {
     func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String?
 }
 
 /// Handle a given action after interacting with a vault item.
 @MainActor
-public protocol VaultItemPreviewActionHandler {
+protocol VaultItemPreviewActionHandler {
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction?
 }
 
 /// A kind of action that can be taken after interacting with a given vault item.
-public enum VaultItemPreviewAction: Equatable {
+enum VaultItemPreviewAction: Equatable {
     case copyText(String)
     case openItemDetail(Identifier<VaultItem>)
 }
@@ -35,7 +35,7 @@ public enum VaultItemPreviewAction: Equatable {
 // MARK: - Mock
 
 extension VaultItemPreviewViewGeneratorMock: VaultItemCopyActionHandler {
-    public func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         nil
     }
 }

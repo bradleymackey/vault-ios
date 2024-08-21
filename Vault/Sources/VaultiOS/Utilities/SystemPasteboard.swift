@@ -4,7 +4,7 @@ import VaultCore
 import VaultSettings
 
 /// @mockable
-public protocol SystemPasteboard {
+protocol SystemPasteboard {
     /// Copy the given string to the pasteboard.
     ///
     /// `ttl` is the amount of time that this should live in the pasteboard.
@@ -13,15 +13,15 @@ public protocol SystemPasteboard {
 }
 
 /// The live iOS system pasteboard.
-public struct SystemPasteboardImpl: SystemPasteboard {
+struct SystemPasteboardImpl: SystemPasteboard {
     private let pasteboard = UIPasteboard.general
     private let clock: EpochClock
 
-    public init(clock: EpochClock) {
+    init(clock: EpochClock) {
         self.clock = clock
     }
 
-    public func copy(string: String, ttl: Double?) {
+    func copy(string: String, ttl: Double?) {
         var options: [UIPasteboard.OptionsKey: Any] = [.localOnly: false]
         if let ttl {
             let expiryDate = Date(timeIntervalSince1970: clock.currentTime).addingTimeInterval(ttl)

@@ -4,8 +4,8 @@ import SwiftUI
 import TestHelpers
 import VaultCore
 import VaultFeed
-import VaultiOS
 import XCTest
+@testable import VaultiOS
 
 final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
     @MainActor
