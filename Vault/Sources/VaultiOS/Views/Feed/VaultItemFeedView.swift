@@ -6,20 +6,20 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-public struct VaultItemFeedView<
+struct VaultItemFeedView<
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload
 {
-    public var localSettings: LocalSettings
-    public var viewGenerator: ViewGenerator
-    @Binding public var isEditing: Bool
-    public var gridSpacing: Double
+    var localSettings: LocalSettings
+    var viewGenerator: ViewGenerator
+    @Binding var isEditing: Bool
+    var gridSpacing: Double
 
     @Environment(VaultDataModel.self) private var dataModel
     @State private var isReordering = false
 
-    public init(
+    init(
         localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
         isEditing: Binding<Bool>,
@@ -31,7 +31,7 @@ public struct VaultItemFeedView<
         self.gridSpacing = gridSpacing
     }
 
-    public var body: some View {
+    var body: some View {
         VStack {
             listOfCodesView
         }

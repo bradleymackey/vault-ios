@@ -1,6 +1,5 @@
 import Foundation
 import VaultCore
-import VaultFeed
 
 /// @mockable
 public protocol OTPCodeTimerUpdaterFactory {

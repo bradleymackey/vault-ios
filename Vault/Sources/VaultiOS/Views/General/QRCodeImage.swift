@@ -3,15 +3,15 @@ import ImageTools
 import SwiftUI
 import UIKit
 
-public struct QRCodeImage: View {
+struct QRCodeImage: View {
     @State private var viewModel = ViewModel()
     @State private var data: Data
 
-    public init(data: Data) {
+    init(data: Data) {
         self.data = data
     }
 
-    public var body: some View {
+    var body: some View {
         ZStack(alignment: .center) {
             qrImage
         }

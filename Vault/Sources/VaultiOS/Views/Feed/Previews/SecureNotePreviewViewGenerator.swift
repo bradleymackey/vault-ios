@@ -5,18 +5,18 @@ import VaultCore
 import VaultFeed
 
 @MainActor
-public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory>: VaultItemPreviewViewGenerator {
-    public typealias PreviewItem = SecureNote
+final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory>: VaultItemPreviewViewGenerator {
+    typealias PreviewItem = SecureNote
 
     private let viewFactory: Factory
 
-    public init(
+    init(
         viewFactory: Factory
     ) {
         self.viewFactory = viewFactory
     }
 
-    public func makeVaultPreviewView(
+    func makeVaultPreviewView(
         item: SecureNote,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -30,21 +30,21 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
         return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }
 
-    public func scenePhaseDidChange(to _: ScenePhase) {
+    func scenePhaseDidChange(to _: ScenePhase) {
         // noop
     }
 
-    public func didAppear() {
+    func didAppear() {
         // noop
     }
 }
 
 extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    public func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
+    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         .openItemDetail(id)
     }
 
-    public func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         "TODO"
     }
 }

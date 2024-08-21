@@ -1,11 +1,11 @@
 import Foundation
 import SwiftUI
 
-public struct OTPCodeIconPlaceholderView: View {
-    public let iconFontSize: Double
-    public var backgroundColor: Color = .gray
+struct OTPCodeIconPlaceholderView: View {
+    let iconFontSize: Double
+    var backgroundColor: Color = .gray
 
-    public var body: some View {
+    var body: some View {
         ZStack(alignment: .center) {
             backgroundColor
             Image(systemName: "key.horizontal.fill")
@@ -20,8 +20,6 @@ public struct OTPCodeIconPlaceholderView: View {
     }
 }
 
-struct OTPCodeIconPlaceholderView_Previews: PreviewProvider {
-    static var previews: some View {
-        OTPCodeIconPlaceholderView(iconFontSize: 20)
-    }
+#Preview {
+    OTPCodeIconPlaceholderView(iconFontSize: 20)
 }

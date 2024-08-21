@@ -1,8 +1,8 @@
 import Foundation
 import FoundationExtensions
-import VaultiOS
 import VaultSettings
 import XCTest
+@testable import VaultiOS
 
 final class PasteboardTests: XCTestCase {
     @MainActor

@@ -2,11 +2,11 @@ import Combine
 import SwiftUI
 import VaultFeed
 
-public struct OTPCodeTextView: View {
+struct OTPCodeTextView: View {
     var codeState: OTPCodeState
     var scaledDigitSpacing: Double = 8
 
-    public var body: some View {
+    var body: some View {
         switch codeState {
         case .notReady, .finished, .obfuscated:
             placeholderCode(digits: 6)

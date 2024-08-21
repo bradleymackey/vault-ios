@@ -1,19 +1,19 @@
 import Foundation
 import SwiftUI
 
-public struct VaultCardModifier: ViewModifier {
-    public enum Context {
+struct VaultCardModifier: ViewModifier {
+    enum Context {
         case prominent
         case secondary
         case tertiary
     }
 
     var context: Context
-    public init(context: Context = .secondary) {
+    init(context: Context = .secondary) {
         self.context = context
     }
 
-    public func body(content: Content) -> some View {
+    func body(content: Content) -> some View {
         content
             .padding(8)
             .background(backgroundColor)
@@ -34,9 +34,7 @@ public struct VaultCardModifier: ViewModifier {
     }
 }
 
-struct OTPCardViewModifier_Previews: PreviewProvider {
-    static var previews: some View {
-        Text("Testing")
-            .modifier(VaultCardModifier())
-    }
+#Preview {
+    Text("Testing")
+        .modifier(VaultCardModifier())
 }

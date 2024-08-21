@@ -4,14 +4,14 @@ import VaultCore
 import VaultFeed
 
 @MainActor
-public struct TOTPCodePreviewView<TimerBar: View>: View {
+struct TOTPCodePreviewView<TimerBar: View>: View {
     var previewViewModel: OTPCodePreviewViewModel
     var timerView: TimerBar
     var behaviour: VaultItemViewBehaviour
 
     @Namespace private var codeTimerAnimation
 
-    public var body: some View {
+    var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
             Spacer()

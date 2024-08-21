@@ -4,7 +4,7 @@ import VaultFeed
 
 /// @mockable(typealias: TOTPView = AnyView)
 @MainActor
-public protocol TOTPPreviewViewFactory {
+protocol TOTPPreviewViewFactory {
     associatedtype TOTPView: View
     func makeTOTPView(
         viewModel: OTPCodePreviewViewModel,
@@ -15,9 +15,9 @@ public protocol TOTPPreviewViewFactory {
         -> TOTPView
 }
 
-public struct TOTPPreviewViewFactoryImpl: TOTPPreviewViewFactory {
-    public init() {}
-    public func makeTOTPView(
+struct TOTPPreviewViewFactoryImpl: TOTPPreviewViewFactory {
+    init() {}
+    func makeTOTPView(
         viewModel: OTPCodePreviewViewModel,
         periodState: OTPCodeTimerPeriodState,
         updater _: any OTPCodeTimerUpdater,

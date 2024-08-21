@@ -4,16 +4,16 @@ import UniformTypeIdentifiers
 import VaultCore
 import VaultFeed
 
-public struct CodeTimerHorizontalBarView: View {
+struct CodeTimerHorizontalBarView: View {
     var timerState: OTPCodeTimerPeriodState
     var color: Color = .blue
     var backgroundColor: Color = .init(UIColor.systemGray2).opacity(0.3)
 
     @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
-    @Environment(VaultInjector.self) var injector
+    @Environment(VaultInjector.self) private var injector
 
-    public var body: some View {
+    var body: some View {
         GeometryReader { proxy in
             HorizontalTimerProgressBarView(
                 fractionCompleted: currentFractionCompleted,
