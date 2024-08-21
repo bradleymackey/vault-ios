@@ -34,7 +34,6 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
             .init(detail: .new())
         case let .editing(note, metadata):
             .init(detail: .init(
-                title: note.title,
                 contents: note.contents,
                 textFormat: note.format,
                 color: metadata.color,
@@ -66,15 +65,6 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
 
     public var isSaving: Bool {
         detailEditState.isSaving
-    }
-
-    /// The configured title of the note, as viewed by the user.
-    public var visibleTitle: String {
-        if editingModel.detail.title.isNotEmpty {
-            editingModel.detail.title
-        } else {
-            strings.noteEmptyTitleTitle
-        }
     }
 
     public var isInitialCreation: Bool {

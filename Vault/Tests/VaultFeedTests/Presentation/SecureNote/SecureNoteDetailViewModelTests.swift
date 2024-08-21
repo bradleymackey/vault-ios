@@ -27,9 +27,9 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
-        XCTAssertEqual(sut.editingModel.detail.title, note.title)
+        XCTAssertEqual(sut.editingModel.detail.title, "first line")
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
-        XCTAssertEqual(sut.editingModel.detail.description, "first line")
+        XCTAssertEqual(sut.editingModel.detail.description, "second line")
         XCTAssertEqual(sut.editingModel.detail.textFormat, .plain)
     }
 
@@ -288,8 +288,8 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.initialDetail.contents, note.contents)
-        XCTAssertEqual(editing.initialDetail.title, note.title)
-        XCTAssertEqual(editing.initialDetail.description, "first line")
+        XCTAssertEqual(editing.initialDetail.title, "first line")
+        XCTAssertEqual(editing.initialDetail.description, "second line")
     }
 
     @MainActor
@@ -304,8 +304,8 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.detail.contents, note.contents)
-        XCTAssertEqual(editing.detail.title, note.title)
-        XCTAssertEqual(editing.detail.description, "first line")
+        XCTAssertEqual(editing.detail.title, "first line")
+        XCTAssertEqual(editing.detail.description, "second line")
     }
 
     @MainActor
@@ -320,22 +320,6 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let sut = makeSUTEditing()
 
         XCTAssertTrue(sut.shouldShowDeleteButton)
-    }
-
-    @MainActor
-    func test_visibleTitle_isPlaceholderIfUserTitleIsEmpty() {
-        let sut = makeSUT()
-        sut.editingModel.detail.title = ""
-
-        XCTAssertEqual(sut.visibleTitle, "Untitled Note")
-    }
-
-    @MainActor
-    func test_visibleTitle_isUserTitleIfNotEmpty() {
-        let sut = makeSUT()
-        sut.editingModel.detail.title = "my title"
-
-        XCTAssertEqual(sut.visibleTitle, "my title")
     }
 
     @MainActor

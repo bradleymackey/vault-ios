@@ -4,23 +4,8 @@ import XCTest
 @testable import VaultFeed
 
 final class SecureNoteDetailEditsTests: XCTestCase {
-    func test_isValid_invalidForEmptyTitle() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.title = ""
-
-        XCTAssertFalse(sut.isValid)
-    }
-
-    func test_isValid_invalidForBlankTitle() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.title = " "
-
-        XCTAssertFalse(sut.isValid)
-    }
-
     func test_isValid_validForTitleWithContents() {
         var sut = SecureNoteDetailEdits.new()
-        sut.title = " A "
         sut.contents = "Nice"
 
         XCTAssertTrue(sut.isValid)
@@ -28,7 +13,6 @@ final class SecureNoteDetailEditsTests: XCTestCase {
 
     func test_isValid_invalidForEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
-        sut.title = " A "
         sut.viewConfig = .requiresSearchPassphrase
         sut.searchPassphrase = ""
 
@@ -37,24 +21,42 @@ final class SecureNoteDetailEditsTests: XCTestCase {
 
     func test_isValid_validForNonEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
-        sut.title = " A "
         sut.viewConfig = .requiresSearchPassphrase
         sut.searchPassphrase = "passphrase"
 
         XCTAssertTrue(sut.isValid)
     }
 
-    func test_description_isFirstLineOfContent() {
+    func test_title_isFirstLineOfContent() {
         var sut = SecureNoteDetailEdits.new()
-        sut.title = " A "
         sut.contents = "First\nSecond\nThird"
 
-        XCTAssertEqual(sut.description, "First")
+        XCTAssertEqual(sut.title, "First")
+    }
+
+    func test_title_skipsEmptyLines() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.contents = "\n\nFirst\n\nSecond\nThird"
+
+        XCTAssertEqual(sut.title, "First")
+    }
+
+    func test_description_isSecondLineOfContent() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.contents = "First\nSecond\nThird"
+
+        XCTAssertEqual(sut.description, "Second")
+    }
+
+    func test_description_skipsEmptyLines() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.contents = "\n\n\nFirst\n\n\nSecond\nThird"
+
+        XCTAssertEqual(sut.description, "Second")
     }
 
     func test_isHiddenWithPassphrase_falseIfAlwaysVisible() {
         var sut = SecureNoteDetailEdits.new()
-        sut.title = " A "
         sut.viewConfig = .alwaysVisible
         XCTAssertFalse(sut.isHiddenWithPassphrase)
 
@@ -64,7 +66,6 @@ final class SecureNoteDetailEditsTests: XCTestCase {
 
     func test_isHiddenWithPassphrase_trueIfRequiresPassphrase() {
         var sut = SecureNoteDetailEdits.new()
-        sut.title = " A "
         sut.viewConfig = .requiresSearchPassphrase
         XCTAssertTrue(sut.isHiddenWithPassphrase)
 

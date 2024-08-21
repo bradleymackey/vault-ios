@@ -66,7 +66,6 @@ struct SecureNoteDetailView: View {
             presentationMode: presentationMode
         ) {
             if viewModel.isInEditMode {
-                noteTitleEditingSection
                 noteContentsEditingSection
                 if viewModel.allTags.isNotEmpty {
                     tagSelectionSection
@@ -169,34 +168,10 @@ struct SecureNoteDetailView: View {
         Section {
             noteIconHeader
                 .frame(maxWidth: .infinity)
-
-            Text(viewModel.visibleTitle)
-                .foregroundStyle(.primary)
-                .font(.title.bold())
-                .lineLimit(5)
-                .frame(maxWidth: .infinity)
         }
         .multilineTextAlignment(.center)
         .textSelection(.enabled)
         .noListBackground()
-    }
-
-    private var noteTitleEditingSection: some View {
-        Section {
-            TextField(text: $viewModel.editingModel.detail.title) {
-                Text(viewModel.strings.noteTitle)
-            }
-        } header: {
-            noteIconPickerHeader
-        } footer: {
-            switch viewModel.editingModel.detail.$title {
-            case let .error(.some(message)):
-                Text(message)
-                    .foregroundStyle(Color.red)
-            case _:
-                EmptyView()
-            }
-        }
     }
 
     private var noteIconHeader: some View {
@@ -271,7 +246,7 @@ struct SecureNoteDetailView: View {
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
-            Text(viewModel.strings.noteContentsTitle)
+            noteIconPickerHeader
         }
     }
 
