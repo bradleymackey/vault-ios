@@ -8,10 +8,6 @@ import VaultCore
 public struct SecureNoteDetailEdits: EditableState {
     public var relativeOrder: UInt64
 
-    /// The title, which validates that there is actually content in the string.
-    @FieldValidated(validationLogic: .stringRequiringContent)
-    public var title: String = ""
-
     @FieldValidated(validationLogic: .alwaysValid)
     public var contents: String = ""
 
@@ -53,7 +49,6 @@ public struct SecureNoteDetailEdits: EditableState {
     }
 
     public init(
-        title: String,
         contents: String,
         textFormat: TextFormat,
         color: VaultItemColor?,
@@ -63,7 +58,6 @@ public struct SecureNoteDetailEdits: EditableState {
         lockState: VaultItemLockState,
         relativeOrder: UInt64
     ) {
-        self.title = title
         self.contents = contents
         self.textFormat = textFormat
         self.color = color
@@ -75,7 +69,7 @@ public struct SecureNoteDetailEdits: EditableState {
     }
 
     public var isValid: Bool {
-        $title.isValid && $contents.isValid && isPassphraseValid
+        $contents.isValid && isPassphraseValid
     }
 
     private var isPassphraseValid: Bool {
@@ -85,9 +79,25 @@ public struct SecureNoteDetailEdits: EditableState {
         }
     }
 
-    /// The description of this note, which is just the first line of content.
+    /// The description of this note, which is just the first non-empty line of content.
+    public var title: String {
+        let firstLine = contents
+            .split(separator: "\n")
+            .lazy
+            .filter { !$0.isBlank }
+            .first
+        return String(firstLine ?? "")
+    }
+
+    /// The description of this note, which is just the second non-empty line of content.
     public var description: String {
-        String(contents.split(separator: "\n").first ?? "")
+        let secondLine = contents
+            .split(separator: "\n")
+            .lazy
+            .filter { !$0.isBlank }
+            .dropFirst()
+            .first
+        return String(secondLine ?? "")
     }
 }
 
@@ -98,7 +108,6 @@ extension SecureNoteDetailEdits {
     /// All initial values are sensible defaults.
     public static func new() -> SecureNoteDetailEdits {
         .init(
-            title: "",
             contents: "",
             textFormat: .markdown,
             color: nil,
