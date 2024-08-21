@@ -60,7 +60,7 @@ struct CodeTimerHorizontalBarView: View {
 #Preview {
     let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
     return CodeTimerHorizontalBarView(
-        timerState: OTPCodeTimerPeriodState(clock: EpochClock { 40 }, statePublisher: subject.eraseToAnyPublisher())
+        timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher())
     )
     .frame(width: 250, height: 20)
     .previewLayout(.fixed(width: 300, height: 300))

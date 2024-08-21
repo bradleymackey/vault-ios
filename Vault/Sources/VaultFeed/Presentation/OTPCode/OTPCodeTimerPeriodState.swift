@@ -1,6 +1,5 @@
 import Combine
 import Foundation
-import VaultCore
 
 /// Tracks the state for a given timer period.
 ///
@@ -12,7 +11,7 @@ public final class OTPCodeTimerPeriodState {
 
     private var stateCancellable: AnyCancellable?
 
-    public init(clock _: EpochClock, statePublisher: AnyPublisher<OTPCodeTimerState, Never>) {
+    public init(statePublisher: AnyPublisher<OTPCodeTimerState, Never>) {
         stateCancellable = statePublisher
             .sink { [weak self] state in
                 self?.animationState = .countdownFrom(timerState: state)

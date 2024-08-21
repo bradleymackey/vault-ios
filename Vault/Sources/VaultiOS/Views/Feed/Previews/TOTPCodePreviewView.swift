@@ -147,7 +147,7 @@ struct TOTPCodePreviewView_Previews: PreviewProvider {
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
-                timerState: OTPCodeTimerPeriodState(clock: clock, statePublisher: subject.eraseToAnyPublisher()),
+                timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
                 color: .blue
             ),
             behaviour: behaviour
