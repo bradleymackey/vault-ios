@@ -38,12 +38,10 @@ struct OTPCodeLabels: View {
     }
 }
 
-struct OTPCodeLabels_Preview: PreviewProvider {
-    static var previews: some View {
-        VStack(spacing: 20) {
-            OTPCodeLabels(accountName: "", issuer: "")
-            OTPCodeLabels(accountName: "test@test.com", issuer: "")
-            OTPCodeLabels(accountName: "test@test.com", issuer: "Authority")
-        }
+#Preview {
+    VStack(alignment: .leading, spacing: 20) {
+        OTPCodeLabels(accountName: "", issuer: "")
+        OTPCodeLabels(accountName: "test@test.com", issuer: "")
+        OTPCodeLabels(accountName: "test@test.com", issuer: "Authority")
     }
 }

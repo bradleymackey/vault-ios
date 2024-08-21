@@ -184,57 +184,61 @@ struct VaultItemFeedView<
     }
 }
 
-struct VaultItemFeedView_Previews: PreviewProvider {
-    static var previews: some View {
-        let store = VaultStoreStub()
-        store.retrieveHandler = { _ in .init(items: [
-            .init(
-                metadata: .init(
-                    id: Identifier<VaultItem>(),
-                    created: Date(),
-                    updated: Date(),
-                    relativeOrder: .min,
-                    userDescription: "My Cool Code",
-                    tags: [],
-                    visibility: .always,
-                    searchableLevel: .full,
-                    searchPassphrase: "",
-                    lockState: .notLocked,
-                    color: VaultItemColor(color: .green)
-                ),
-                item: .otpCode(.init(
-                    type: .totp(),
-                    data: .init(
-                        secret: .empty(),
-                        accountName: "example@example.com",
-                        issuer: "i"
-                    )
-                ))
+#Preview {
+    let store = VaultStoreStub()
+    let dataModel = VaultDataModel(
+        vaultStore: store,
+        vaultTagStore: VaultTagStoreStub(),
+        backupPasswordStore: BackupPasswordStoreMock()
+    )
+    store.retrieveHandler = { _ in .init(items: [
+        .init(
+            metadata: .init(
+                id: Identifier<VaultItem>(),
+                created: Date(),
+                updated: Date(),
+                relativeOrder: .min,
+                userDescription: "My Cool Code",
+                tags: [],
+                visibility: .always,
+                searchableLevel: .full,
+                searchPassphrase: "",
+                lockState: .notLocked,
+                color: VaultItemColor(color: .green)
             ),
-        ])
-        }
-        return VaultItemFeedView(
-            localSettings: .init(defaults: .init(userDefaults: .standard)),
-            viewGenerator: GenericGenerator(),
-            isEditing: .constant(false)
-        )
+            item: .otpCode(.init(
+                type: .totp(),
+                data: .init(
+                    secret: .empty(),
+                    accountName: "example@example.com",
+                    issuer: "i"
+                )
+            ))
+        ),
+    ])
+    }
+    return VaultItemFeedView(
+        localSettings: .init(defaults: .init(userDefaults: .standard)),
+        viewGenerator: GenericGenerator(),
+        isEditing: .constant(false)
+    )
+    .environment(dataModel)
+}
+
+private struct GenericGenerator: VaultItemPreviewViewGenerator {
+    func makeVaultPreviewView(
+        item _: VaultItem.Payload,
+        metadata _: VaultItem.Metadata,
+        behaviour _: VaultItemViewBehaviour
+    ) -> some View {
+        Text("Code")
     }
 
-    struct GenericGenerator: VaultItemPreviewViewGenerator {
-        func makeVaultPreviewView(
-            item _: VaultItem.Payload,
-            metadata _: VaultItem.Metadata,
-            behaviour _: VaultItemViewBehaviour
-        ) -> some View {
-            Text("Code")
-        }
+    func scenePhaseDidChange(to _: ScenePhase) {
+        // noop
+    }
 
-        func scenePhaseDidChange(to _: ScenePhase) {
-            // noop
-        }
-
-        func didAppear() {
-            // noop
-        }
+    func didAppear() {
+        // noop
     }
 }

@@ -26,8 +26,9 @@ struct DetailSubtitleView: View {
     }
 }
 
-struct DetailSubtitleView_Previews: PreviewProvider {
-    static var previews: some View {
+#Preview {
+    Group {
+        DetailSubtitleView(title: "Test", subtitle: nil)
         DetailSubtitleView(title: "Test", subtitle: "hello world")
     }
 }

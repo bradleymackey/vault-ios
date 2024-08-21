@@ -135,33 +135,28 @@ extension View {
     }
 }
 
-#if DEBUG
-struct Shimmer_Previews: PreviewProvider {
-    static var previews: some View {
-        Group {
-            Text("SwiftUI Shimmer")
-            if #available(iOS 14.0, macOS 11.0, tvOS 14.0, watchOS 7.0, *) {
-                Text("SwiftUI Shimmer").preferredColorScheme(.light)
-                Text("SwiftUI Shimmer").preferredColorScheme(.dark)
-                VStack(alignment: .leading) {
-                    Text("Loading...").font(.title)
-                    Text(String(repeating: "Shimmer", count: 12))
-                        .redacted(reason: .placeholder)
-                }.frame(maxWidth: 200)
-            }
-        }
-        .padding()
-        .shimmering()
-        .previewLayout(.sizeThatFits)
-
+#Preview {
+    Group {
+        Text("SwiftUI Shimmer").preferredColorScheme(.light)
+        Text("SwiftUI Shimmer").preferredColorScheme(.dark)
         VStack(alignment: .leading) {
-            Text("مرحبًا")
-            Text("← Right-to-left layout direction").font(.body)
-            Text("שלום")
-        }
-        .font(.largeTitle)
-        .shimmering()
-        .environment(\.layoutDirection, .rightToLeft)
+            Text("Loading...").font(.title)
+            Text(String(repeating: "Shimmer", count: 12))
+                .redacted(reason: .placeholder)
+        }.frame(maxWidth: 200)
     }
+    .padding()
+    .shimmering()
+    .previewLayout(.sizeThatFits)
 }
-#endif
+
+#Preview("Right-to-Left") {
+    VStack(alignment: .leading) {
+        Text("مرحبًا")
+        Text("← Right-to-left layout direction").font(.body)
+        Text("שלום")
+    }
+    .font(.largeTitle)
+    .shimmering()
+    .environment(\.layoutDirection, .rightToLeft)
+}

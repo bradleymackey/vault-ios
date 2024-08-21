@@ -98,43 +98,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 }
 
-struct HOTPCodePreviewView_Previews: PreviewProvider {
-    private static let codeRenderer = OTPCodeRendererMock()
-    private static let finishedRenderer = OTPCodeRendererMock()
-    private static let errorRenderer = OTPCodeRendererMock()
+#Preview {
+    let codeRenderer = OTPCodeRendererMock()
+    let finishedRenderer = OTPCodeRendererMock()
+    let errorRenderer = OTPCodeRendererMock()
 
-    static var previews: some View {
-        VStack(spacing: 20) {
-            makePreviewView(accountName: "Normal", renderer: codeRenderer)
-                .onAppear {
-                    codeRenderer.subject.send("123456")
-                }
-
-            makePreviewView(accountName: "Finished", renderer: finishedRenderer)
-                .onAppear {
-                    finishedRenderer.subject.send(completion: .finished)
-                }
-
-            makePreviewView(accountName: "Error", renderer: errorRenderer)
-                .onAppear {
-                    errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
-                }
-
-            makePreviewView(
-                accountName: "Obfuscate",
-                renderer: codeRenderer,
-                behaviour: .editingState(message: "editing")
-            )
-
-            makePreviewView(
-                accountName: "Obfuscate (no msg)",
-                renderer: codeRenderer,
-                behaviour: .editingState(message: nil)
-            )
-        }
-    }
-
-    private static func makePreviewView(
+    @MainActor
+    func makePreviewView(
         accountName: String,
         renderer: OTPCodeRendererMock,
         behaviour: VaultItemViewBehaviour = .normal
@@ -158,6 +128,35 @@ struct HOTPCodePreviewView_Previews: PreviewProvider {
             previewViewModel: previewViewModel,
             behaviour: behaviour
         )
-        .frame(width: 250, height: 100)
     }
+
+    return ScrollView(.vertical) {
+        makePreviewView(accountName: "Normal", renderer: codeRenderer)
+            .onAppear {
+                codeRenderer.subject.send("123456")
+            }
+
+        makePreviewView(accountName: "Finished", renderer: finishedRenderer)
+            .onAppear {
+                finishedRenderer.subject.send(completion: .finished)
+            }
+
+        makePreviewView(accountName: "Error", renderer: errorRenderer)
+            .onAppear {
+                errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
+            }
+
+        makePreviewView(
+            accountName: "Obfuscate",
+            renderer: codeRenderer,
+            behaviour: .editingState(message: "editing")
+        )
+
+        makePreviewView(
+            accountName: "Obfuscate (no msg)",
+            renderer: codeRenderer,
+            behaviour: .editingState(message: nil)
+        )
+    }
+    .padding(.horizontal, 32)
 }
