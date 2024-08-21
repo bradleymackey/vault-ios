@@ -325,3 +325,48 @@ struct SecureNoteDetailView: View {
         }
     }
 }
+
+#Preview("Viewing") {
+    SecureNoteDetailView(
+        editingExistingNote: .init(
+            title: "Hello",
+            contents: "This is the contents, it is long \n\n## Nice title",
+            format: .markdown
+        ),
+        navigationPath: .constant(.init()),
+        dataModel: .init(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        ),
+        storedMetadata: .init(
+            id: .init(),
+            created: .init(),
+            updated: .init(),
+            relativeOrder: 0,
+            userDescription: "testing",
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "",
+            lockState: .notLocked,
+            color: nil
+        ),
+        editor: SecureNoteDetailEditorMock(),
+        openInEditMode: false
+    )
+    .environment(DeviceAuthenticationService(policy: .alwaysAllow))
+}
+
+#Preview("Editing") {
+    SecureNoteDetailView(
+        newNoteWithEditor: SecureNoteDetailEditorMock(),
+        navigationPath: .init(projectedValue: .constant(.init())),
+        dataModel: .init(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        )
+    )
+    .environment(DeviceAuthenticationService(policy: .alwaysAllow))
+}
