@@ -417,56 +417,38 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     }
 }
 
-struct OTPCodeDetailView_Previews: PreviewProvider {
-    private static let codeRenderer = OTPCodeRendererMock()
-
-    static var previews: some View {
-        OTPCodeDetailView(
-            editingExistingCode: .init(
-                type: .totp(),
-                data: .init(secret: .empty(), accountName: "Test")
-            ),
-            navigationPath: .constant(.init()),
-            dataModel: VaultDataModel(
-                vaultStore: VaultStoreStub(),
-                vaultTagStore: VaultTagStoreStub(),
-                backupPasswordStore: BackupPasswordStoreMock()
-            ),
-            storedMetadata: .init(
-                id: .new(),
-                created: Date(),
-                updated: Date(),
-                relativeOrder: .min,
-                userDescription: "Description",
-                tags: [],
-                visibility: .always,
-                searchableLevel: .full,
-                searchPassphrase: "",
-                lockState: .notLocked,
-                color: VaultItemColor(color: .green)
-            ),
-            editor: StubEditor(),
-            previewGenerator: VaultItemPreviewViewGeneratorMock(),
-            openInEditMode: false,
-            presentationMode: nil
-        )
-        .environment(Pasteboard(
-            SystemPasteboardImpl(clock: .init(makeCurrentTime: { 100 })),
-            localSettings: .init(defaults: .init(userDefaults: .standard))
-        ))
-    }
-
-    class StubEditor: OTPCodeDetailEditor {
-        func createCode(initialEdits _: OTPCodeDetailEdits) async throws {
-            // noop
-        }
-
-        func updateCode(id _: Identifier<VaultItem>, item _: OTPAuthCode, edits _: OTPCodeDetailEdits) async throws {
-            // noop
-        }
-
-        func deleteCode(id _: Identifier<VaultItem>) async throws {
-            // noop
-        }
-    }
+#Preview {
+    OTPCodeDetailView(
+        editingExistingCode: .init(
+            type: .totp(),
+            data: .init(secret: .empty(), accountName: "Test")
+        ),
+        navigationPath: .constant(.init()),
+        dataModel: VaultDataModel(
+            vaultStore: VaultStoreStub(),
+            vaultTagStore: VaultTagStoreStub(),
+            backupPasswordStore: BackupPasswordStoreMock()
+        ),
+        storedMetadata: .init(
+            id: .new(),
+            created: Date(),
+            updated: Date(),
+            relativeOrder: .min,
+            userDescription: "Description",
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "",
+            lockState: .notLocked,
+            color: VaultItemColor(color: .green)
+        ),
+        editor: OTPCodeDetailEditorMock(),
+        previewGenerator: VaultItemPreviewViewGeneratorMock(),
+        openInEditMode: false,
+        presentationMode: nil
+    )
+    .environment(Pasteboard(
+        SystemPasteboardImpl(clock: .init(makeCurrentTime: { 100 })),
+        localSettings: .init(defaults: .init(userDefaults: .standard))
+    ))
 }

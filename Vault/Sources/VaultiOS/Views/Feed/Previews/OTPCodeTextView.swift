@@ -80,37 +80,35 @@ extension [Character] {
     }
 }
 
-struct CodeTextView_Previews: PreviewProvider {
-    static var previews: some View {
-        VStack {
-            OTPCodeTextView(
-                codeState: .visible("123456")
-            )
+#Preview {
+    VStack {
+        OTPCodeTextView(
+            codeState: .visible("123456")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("1234567")
-            )
+        OTPCodeTextView(
+            codeState: .visible("1234567")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("12345678")
-            )
+        OTPCodeTextView(
+            codeState: .visible("12345678")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("123456789")
-            )
+        OTPCodeTextView(
+            codeState: .visible("123456789")
+        )
 
-            OTPCodeTextView(
-                codeState: .visible("1234567890")
-            )
+        OTPCodeTextView(
+            codeState: .visible("1234567890")
+        )
 
-            OTPCodeTextView(
-                codeState: .finished
-            )
+        OTPCodeTextView(
+            codeState: .finished
+        )
 
-            OTPCodeTextView(
-                codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6)
-            )
-        }
-        .font(.system(.largeTitle, design: .monospaced))
+        OTPCodeTextView(
+            codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6)
+        )
     }
+    .font(.system(.largeTitle, design: .monospaced))
 }
