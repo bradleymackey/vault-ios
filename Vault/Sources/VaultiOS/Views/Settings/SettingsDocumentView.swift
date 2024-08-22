@@ -1,6 +1,6 @@
 import Foundation
 import SwiftUI
-import VaultCore
+import VaultFeed
 import VaultSettings
 
 /// A settings screen where the content is populated by a `FileBackedContentViewModel`

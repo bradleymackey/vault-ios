@@ -1,6 +1,6 @@
 import Foundation
 import UIKit
-import VaultCore
+import VaultFeed
 import VaultSettings
 
 /// @mockable

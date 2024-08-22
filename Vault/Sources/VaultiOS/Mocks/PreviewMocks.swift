@@ -1,7 +1,6 @@
 import Combine
 import Foundation
 import SwiftUI
-import VaultCore
 import VaultFeed
 
 func forceRunLoopAdvance() {

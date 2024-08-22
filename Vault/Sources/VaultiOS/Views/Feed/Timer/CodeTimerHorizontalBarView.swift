@@ -1,7 +1,6 @@
 import Combine
 import SwiftUI
 import UniformTypeIdentifiers
-import VaultCore
 import VaultFeed
 
 struct CodeTimerHorizontalBarView: View {

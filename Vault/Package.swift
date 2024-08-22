@@ -49,7 +49,6 @@ let package = Package(
             dependencies: [
                 "VaultFeed",
                 "VaultSettings",
-                "VaultCore",
                 "SimpleToast",
                 "CodeScanner",
                 "FoundationExtensions",

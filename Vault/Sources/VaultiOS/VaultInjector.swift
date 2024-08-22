@@ -1,5 +1,5 @@
 import Foundation
-import VaultCore
+import VaultFeed
 
 /// Object to retain and share non-observable dependencies across views.
 ///

@@ -1,7 +1,7 @@
 import Foundation
 import MarkdownUI
 import SwiftUI
-import VaultCore
+import VaultFeed
 
 /// A view that displays a single block of scrolling text.
 struct LiteratureView: View {
