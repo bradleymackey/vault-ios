@@ -57,7 +57,7 @@ struct SecureNotePreviewView: View {
     }
 
     private var description: String? {
-        guard let description = viewModel.description, !description.isBlank else { return nil }
+        guard let description = viewModel.description, !description.isEmpty, !description.isBlank else { return nil }
         switch viewModel.textFormat {
         case .plain: return description
         case .markdown: return MarkdownContent(description).renderPlainText()

@@ -45,6 +45,13 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func test_layout_emptyDescriptionRendersNothing() {
+        let sut = makeSUT(title: "Title", description: "")
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @MainActor
     func test_layout_lockedIcon() {
         let sut = makeSUT(isLocked: true)
 
