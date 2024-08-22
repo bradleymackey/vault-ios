@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import TestHelpers
 import VaultCore
@@ -46,6 +47,22 @@ final class BackupEventLoggerImplTests: XCTestCase {
         sut.exportedToPDF(date: date, hash: .init(value: Data(hex: "1234")))
 
         XCTAssertEqual(beforeKeys.symmetricDifference(defaults.keys), ["vault.backup.last-event"])
+    }
+
+    func test_loggedEventPublisher_logsOnSuccess() throws {
+        let defaults = try testUserDefaults()
+        let sut = makeSUT(defaults: defaults)
+        let date = Date(timeIntervalSince1970: 1234)
+        var bag = Set<AnyCancellable>()
+
+        let exp = expectation(description: "Wait for exp")
+        sut.loggedEventPublisher.sink { _ in
+            exp.fulfill()
+        }.store(in: &bag)
+
+        sut.exportedToPDF(date: date, hash: .init(value: Data(hex: "1234")))
+
+        wait(for: [exp])
     }
 }
 

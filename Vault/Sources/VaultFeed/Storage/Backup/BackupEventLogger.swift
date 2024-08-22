@@ -1,3 +1,4 @@
+import Combine
 import CryptoEngine
 import Foundation
 import FoundationExtensions
@@ -9,6 +10,8 @@ import VaultCore
 public protocol BackupEventLogger {
     func lastBackupEvent() -> VaultBackupEvent?
     func exportedToPDF(date: Date, hash: Digest<VaultApplicationPayload>.SHA256)
+    /// Publishes whenever an event is logged.
+    var loggedEventPublisher: AnyPublisher<VaultBackupEvent, Never> { get }
 }
 
 // MARK: - Impl
@@ -17,6 +20,7 @@ public final class BackupEventLoggerImpl: BackupEventLogger {
     private let defaults: Defaults
     private let clock: EpochClock
     private let backupEventKey = Key<VaultBackupEvent>("vault.backup.last-event")
+    private let loggedEventSubject = PassthroughSubject<VaultBackupEvent, Never>()
 
     public init(defaults: Defaults, clock: EpochClock) {
         self.defaults = defaults
@@ -34,6 +38,15 @@ public final class BackupEventLoggerImpl: BackupEventLogger {
             kind: .exportedToPDF,
             payloadHash: hash
         )
-        try? defaults.set(event, for: backupEventKey)
+        do {
+            try defaults.set(event, for: backupEventKey)
+            loggedEventSubject.send(event)
+        } catch {
+            // no event
+        }
+    }
+
+    public var loggedEventPublisher: AnyPublisher<VaultBackupEvent, Never> {
+        loggedEventSubject.eraseToAnyPublisher()
     }
 }
