@@ -1,7 +1,5 @@
 import Foundation
-import FoundationExtensions
 import SwiftUI
-import VaultCore
 import VaultFeed
 
 typealias GeneratorWithActions = VaultItemCopyActionHandler & VaultItemPreviewActionHandler &

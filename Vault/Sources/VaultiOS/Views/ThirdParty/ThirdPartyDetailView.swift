@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import VaultFeed
 import VaultSettings
 
 struct ThirdPartyDetailView: View {

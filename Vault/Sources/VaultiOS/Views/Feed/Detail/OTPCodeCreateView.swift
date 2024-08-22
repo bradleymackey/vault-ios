@@ -1,8 +1,6 @@
 import CodeScanner
 import Foundation
-import FoundationExtensions
 import SwiftUI
-import VaultCore
 import VaultFeed
 
 @MainActor

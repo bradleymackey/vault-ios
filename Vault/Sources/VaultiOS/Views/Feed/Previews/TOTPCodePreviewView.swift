@@ -1,6 +1,5 @@
 import Combine
 import SwiftUI
-import VaultCore
 import VaultFeed
 
 @MainActor

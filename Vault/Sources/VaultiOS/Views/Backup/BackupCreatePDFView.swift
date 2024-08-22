@@ -1,5 +1,4 @@
 import Foundation
-import FoundationExtensions
 import PDFKit
 import SwiftUI
 import VaultFeed

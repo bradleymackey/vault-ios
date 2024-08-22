@@ -1,7 +1,5 @@
-import FoundationExtensions
 import SimpleToast
 import SwiftUI
-import VaultCore
 import VaultFeed
 import VaultSettings
 
