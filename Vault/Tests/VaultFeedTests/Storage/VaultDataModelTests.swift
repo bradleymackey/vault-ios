@@ -92,6 +92,25 @@ final class VaultDataModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_init_initialPayloadHashIsNil() {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+
+        XCTAssertNil(sut.currentPayloadHash)
+    }
+
+    @MainActor
+    func test_setup_computesCurrentPayloadHash() async {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+
+        await sut.setup()
+
+        XCTAssertEqual(store.calledMethods, [.export])
+        XCTAssertNotNil(sut.currentPayloadHash)
+    }
+
+    @MainActor
     func test_isSearching_whenQueryingItems() {
         let sut = makeSUT()
         sut.itemsSearchQuery = " \tSOME QUERY 123\n "
@@ -246,7 +265,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.update(itemID: .new(), data: item)
 
-        XCTAssertEqual(store.calledMethods, [.update, .retrieve])
+        XCTAssertEqual(store.calledMethods, [.update, .retrieve, .export])
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
         XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
     }
@@ -260,7 +279,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.delete(itemID: .new())
 
-        XCTAssertEqual(store.calledMethods, [.delete, .retrieve])
+        XCTAssertEqual(store.calledMethods, [.delete, .retrieve, .export])
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
         XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
     }
@@ -273,7 +292,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.reorder(items: Set(items), to: .start)
 
-        XCTAssertEqual(store.calledMethods, [.reorder])
+        XCTAssertEqual(store.calledMethods, [.reorder, .export])
     }
 
     @MainActor
@@ -318,7 +337,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.delete(tagID: tagID)
 
-        XCTAssertEqual(store.calledMethods, [.retrieve])
+        XCTAssertEqual(store.calledMethods, [.retrieve, .export])
         XCTAssertEqual(sut.itemsFilteringByTags, [])
     }
 

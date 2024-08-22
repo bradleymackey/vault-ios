@@ -1,4 +1,5 @@
 import Combine
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 
@@ -88,7 +89,13 @@ public final class VaultDataModel: Sendable {
 
     // MARK: - Backup Events
 
+    /// The last time the user's vault was backed up.
+    /// This will always be kept up-to-date.
     public private(set) var lastBackupEvent: VaultBackupEvent?
+
+    /// An up-to-date hash of the current user data payload.
+    /// This is so it can be compared to the last backup event to see if we have any changes.
+    public private(set) var currentPayloadHash: Digest<VaultApplicationPayload>.SHA256?
 
     // MARK: - Init
 
@@ -114,11 +121,26 @@ public final class VaultDataModel: Sendable {
         monitorBackupEvents()
     }
 
+    /// Initial setup to ensure the model is in a good state.
+    public func setup() async {
+        await updateCurrentPayloadHash()
+    }
+
     private func monitorBackupEvents() {
         lastBackupEvent = backupEventLogger.lastBackupEvent()
         backupEventLogger.loggedEventPublisher.sink { [weak self] newEvent in
             self?.lastBackupEvent = newEvent
         }.store(in: &observationBag)
+    }
+
+    /// Updates the current payload hash in the background.
+    private func updateCurrentPayloadHash() async {
+        currentPayloadHash = try? await computeVaultHash()
+    }
+
+    private nonisolated func computeVaultHash() async throws -> Digest<VaultApplicationPayload>.SHA256 {
+        let exported = try await vaultStore.exportVault(userDescription: "")
+        return try Digest<VaultApplicationPayload>.SHA256.makeHash(exported)
     }
 }
 
@@ -235,27 +257,32 @@ extension VaultDataModel {
         try await vaultStore.update(id: id, item: data)
         await invalidateCaches(itemID: id)
         await reloadItems()
+        await updateCurrentPayloadHash()
     }
 
     public func delete(itemID: Identifier<VaultItem>) async throws {
         try await vaultStore.delete(id: itemID)
         await invalidateCaches(itemID: itemID)
         await reloadItems()
+        await updateCurrentPayloadHash()
     }
 
     public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
         try await vaultStore.reorder(items: items, to: position)
         // don't reload, assume UI state has reordered items directly
+        await updateCurrentPayloadHash()
     }
 
     public func insert(tag: VaultItemTag.Write) async throws {
         try await vaultTagStore.insertTag(item: tag)
         await reloadTags()
+        await updateCurrentPayloadHash()
     }
 
     public func update(tagID id: Identifier<VaultItemTag>, data: VaultItemTag.Write) async throws {
         try await vaultTagStore.updateTag(id: id, item: data)
         await reloadTags()
+        await updateCurrentPayloadHash()
     }
 
     public func delete(tagID: Identifier<VaultItemTag>) async throws {
@@ -263,6 +290,7 @@ extension VaultDataModel {
         await reloadTags()
         itemsFilteringByTags.remove(tagID)
         await reloadItems()
+        await updateCurrentPayloadHash()
     }
 }
 
