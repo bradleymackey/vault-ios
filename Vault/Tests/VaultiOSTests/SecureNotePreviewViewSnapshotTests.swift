@@ -50,6 +50,20 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
 
         assertSnapshot(of: sut, as: .image)
     }
+
+    @MainActor
+    func test_textFormat_plainText() {
+        let sut = makeSUT(title: "## Hello", description: "## description", textFormat: .plain)
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @MainActor
+    func test_textFormat_markdown() {
+        let sut = makeSUT(title: "## Hello", description: "## description", textFormat: .markdown)
+
+        assertSnapshot(of: sut, as: .image)
+    }
 }
 
 // MARK: - Helpers
@@ -59,13 +73,15 @@ extension SecureNotePreviewViewSnapshotTests {
     private func makeSUT(
         title: String = "Title",
         description: String? = "Short Description",
-        isLocked: Bool = false
+        isLocked: Bool = false,
+        textFormat: TextFormat = .plain
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: title,
             description: description,
             color: .default,
-            isLocked: isLocked
+            isLocked: isLocked,
+            textFormat: textFormat
         )
         return SecureNotePreviewView(viewModel: viewModel, behaviour: .normal)
             .frame(width: 250)

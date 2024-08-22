@@ -1,3 +1,4 @@
+import MarkdownUI
 import SwiftUI
 import VaultFeed
 
@@ -12,7 +13,7 @@ struct SecureNotePreviewView: View {
                 Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")
                     .font(.headline)
                     .foregroundStyle(isEditing ? .white : viewModel.color.color)
-                Text(viewModel.visibleTitle)
+                Text(title)
                     .font(.headline)
             }
             .foregroundStyle(isEditing ? .white : .primary)
@@ -20,7 +21,7 @@ struct SecureNotePreviewView: View {
             .multilineTextAlignment(.center)
             .layoutPriority(100)
 
-            if let description = viewModel.description, description.isNotEmpty {
+            if let description {
                 Spacer()
 
                 Text(description)
@@ -47,15 +48,31 @@ struct SecureNotePreviewView: View {
         case .editingState: true
         }
     }
+
+    private var title: String {
+        switch viewModel.textFormat {
+        case .plain: viewModel.visibleTitle
+        case .markdown: MarkdownContent(viewModel.visibleTitle).renderPlainText()
+        }
+    }
+
+    private var description: String? {
+        guard let description = viewModel.description, !description.isBlank else { return nil }
+        switch viewModel.textFormat {
+        case .plain: return description
+        case .markdown: return MarkdownContent(description).renderPlainText()
+        }
+    }
 }
 
 #Preview {
     SecureNotePreviewView(
         viewModel: .init(
-            title: "Test title",
+            title: "## Test title",
             description: "desc",
             color: .init(red: 0, green: 0, blue: 0),
-            isLocked: true
+            isLocked: true,
+            textFormat: .markdown
         ),
         behaviour: .normal
     )
@@ -69,7 +86,8 @@ struct SecureNotePreviewView: View {
             title: "Test title",
             description: "",
             color: .init(red: 0, green: 0, blue: 0),
-            isLocked: false
+            isLocked: false,
+            textFormat: .plain
         ),
         behaviour: .normal
     )
