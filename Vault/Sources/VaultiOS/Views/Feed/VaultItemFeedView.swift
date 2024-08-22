@@ -187,7 +187,8 @@ struct VaultItemFeedView<
     let dataModel = VaultDataModel(
         vaultStore: store,
         vaultTagStore: VaultTagStoreStub(),
-        backupPasswordStore: BackupPasswordStoreMock()
+        backupPasswordStore: BackupPasswordStoreMock(),
+        backupEventLogger: BackupEventLoggerMock()
     )
     store.retrieveHandler = { _ in .init(items: [
         .init(

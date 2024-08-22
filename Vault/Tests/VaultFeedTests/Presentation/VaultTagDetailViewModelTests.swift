@@ -52,7 +52,7 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
         await sut.save()
 
-        XCTAssertEqual(store.calledMethods, [])
+        XCTAssertEqual(store.calledMethods, [.export])
         XCTAssertEqual(tagStore.calledMethods, [.insertTag, .retrieveTags])
         XCTAssertNil(sut.saveError)
     }
@@ -67,7 +67,7 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
         await sut.save()
 
-        XCTAssertEqual(store.calledMethods, [])
+        XCTAssertEqual(store.calledMethods, [.export])
         XCTAssertEqual(tagStore.calledMethods, [.updateTag, .retrieveTags])
         XCTAssertNil(sut.saveError)
     }
@@ -121,7 +121,7 @@ final class VaultTagDetailViewModelTests: XCTestCase {
 
         await sut.delete()
 
-        XCTAssertEqual(store.calledMethods, [.retrieve])
+        XCTAssertEqual(store.calledMethods, [.retrieve, .export])
         XCTAssertEqual(tagStore.calledMethods, [.deleteTag, .retrieveTags])
         XCTAssertNil(sut.deleteError)
     }
@@ -160,7 +160,8 @@ extension VaultTagDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         ),
         existingTag: VaultItemTag? = nil
     ) -> VaultTagDetailViewModel {

@@ -118,7 +118,8 @@ extension BackupKeyChangeViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         ),
         authenticationService: DeviceAuthenticationService =
             DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),

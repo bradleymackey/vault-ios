@@ -388,14 +388,21 @@ extension SecureNoteDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
-        )
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
+        ),
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(
+        let sut = SecureNoteDetailViewModel(
             mode: .editing(note: storedNote, metadata: storedMetadata),
             dataModel: dataModel,
             editor: editor
         )
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(editor, file: file, line: line)
+        trackForMemoryLeaks(dataModel, file: file, line: line)
+        return sut
     }
 
     @MainActor
@@ -404,10 +411,17 @@ extension SecureNoteDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
-        )
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
+        ),
+        file: StaticString = #filePath,
+        line: UInt = #line
     ) -> SecureNoteDetailViewModel {
-        SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
+        let sut = SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(editor, file: file, line: line)
+        trackForMemoryLeaks(dataModel, file: file, line: line)
+        return sut
     }
 
     @MainActor
@@ -416,12 +430,19 @@ extension SecureNoteDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
-        )
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
+        ),
+        file: StaticString = #filePath,
+        line: UInt = #line
     )
         -> SecureNoteDetailViewModel
     {
-        SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
+        let sut = SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(editor, file: file, line: line)
+        trackForMemoryLeaks(dataModel, file: file, line: line)
+        return sut
     }
 
     @MainActor

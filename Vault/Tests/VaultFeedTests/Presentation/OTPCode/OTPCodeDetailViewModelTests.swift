@@ -463,7 +463,8 @@ extension OTPCodeDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         ),
         allTags _: [VaultItemTag] = [],
         file: StaticString = #filePath,
@@ -488,7 +489,8 @@ extension OTPCodeDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         ),
         file: StaticString = #filePath,
         line: UInt = #line
@@ -512,7 +514,8 @@ extension OTPCodeDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         ),
         file: StaticString = #filePath,
         line: UInt = #line

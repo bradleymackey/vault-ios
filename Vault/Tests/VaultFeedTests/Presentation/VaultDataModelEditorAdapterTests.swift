@@ -292,7 +292,8 @@ extension VaultDataModelEditorAdapterTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         )
     ) -> VaultDataModelEditorAdapter {
         VaultDataModelEditorAdapter(dataModel: dataModel)

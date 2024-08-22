@@ -6,13 +6,67 @@ import XCTest
 
 final class VaultDataModelTests: XCTestCase {
     @MainActor
-    func test_init_hasNoSideEffects() {
+    func test_init_hasNoStoreSideEffects() {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         _ = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
 
         XCTAssertEqual(vaultStore.calledMethods, [])
         XCTAssertEqual(vaultTagStore.calledMethods, [])
+    }
+
+    @MainActor
+    func test_init_initiallyFetchesBackupState() {
+        let logger = BackupEventLoggerMock()
+        logger.lastBackupEventHandler = { .init(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: Data())
+        ) }
+        let sut = makeSUT(backupEventLogger: logger)
+
+        XCTAssertEqual(logger.lastBackupEventCallCount, 1)
+        XCTAssertNotNil(sut.lastBackupEvent)
+    }
+
+    @MainActor
+    func test_init_initiallyFetchesBackupStateNil() {
+        let logger = BackupEventLoggerMock()
+        logger.lastBackupEventHandler = { nil }
+        let sut = makeSUT(backupEventLogger: logger)
+
+        XCTAssertEqual(logger.lastBackupEventCallCount, 1)
+        XCTAssertNil(sut.lastBackupEvent)
+    }
+
+    @MainActor
+    func test_init_monitorsChangesToBackupEventLogger() {
+        let logger = BackupEventLoggerMock()
+        logger.lastBackupEventHandler = { nil }
+        let sut = makeSUT(backupEventLogger: logger)
+
+        XCTAssertNil(sut.lastBackupEvent)
+
+        let event = VaultBackupEvent(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: Data())
+        )
+        logger.loggedEventPublisherSubject.send(event)
+
+        XCTAssertEqual(sut.lastBackupEvent, event)
+
+        let event2 = VaultBackupEvent(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: .random(count: 32))
+        )
+        logger.loggedEventPublisherSubject.send(event2)
+
+        XCTAssertEqual(sut.lastBackupEvent, event2)
     }
 
     @MainActor
@@ -35,6 +89,25 @@ final class VaultDataModelTests: XCTestCase {
 
         XCTAssertEqual(sut.itemsSearchQuery, "")
         XCTAssertEqual(sut.itemsFilteringByTags, [])
+    }
+
+    @MainActor
+    func test_init_initialPayloadHashIsNil() {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+
+        XCTAssertNil(sut.currentPayloadHash)
+    }
+
+    @MainActor
+    func test_setup_computesCurrentPayloadHash() async {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+
+        await sut.setup()
+
+        XCTAssertEqual(store.calledMethods, [.export])
+        XCTAssertNotNil(sut.currentPayloadHash)
     }
 
     @MainActor
@@ -192,7 +265,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.update(itemID: .new(), data: item)
 
-        XCTAssertEqual(store.calledMethods, [.update, .retrieve])
+        XCTAssertEqual(store.calledMethods, [.update, .retrieve, .export])
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
         XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
     }
@@ -206,7 +279,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.delete(itemID: .new())
 
-        XCTAssertEqual(store.calledMethods, [.delete, .retrieve])
+        XCTAssertEqual(store.calledMethods, [.delete, .retrieve, .export])
         XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
         XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
     }
@@ -219,7 +292,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.reorder(items: Set(items), to: .start)
 
-        XCTAssertEqual(store.calledMethods, [.reorder])
+        XCTAssertEqual(store.calledMethods, [.reorder, .export])
     }
 
     @MainActor
@@ -264,7 +337,7 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.delete(tagID: tagID)
 
-        XCTAssertEqual(store.calledMethods, [.retrieve])
+        XCTAssertEqual(store.calledMethods, [.retrieve, .export])
         XCTAssertEqual(sut.itemsFilteringByTags, [])
     }
 
@@ -409,12 +482,14 @@ extension VaultDataModelTests {
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+        backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = []
     ) -> VaultDataModel {
         VaultDataModel(
             vaultStore: vaultStore,
             vaultTagStore: vaultTagStore,
             backupPasswordStore: backupPasswordStore,
+            backupEventLogger: backupEventLogger,
             itemCaches: itemCaches
         )
     }

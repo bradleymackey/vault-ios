@@ -10,9 +10,15 @@ import VaultSettings
 func anyVaultDataModel(
     vaultStore: any VaultStore = VaultStoreStub(),
     vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
-    backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock()
+    backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+    backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
 ) -> VaultDataModel {
-    VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
+    VaultDataModel(
+        vaultStore: vaultStore,
+        vaultTagStore: vaultTagStore,
+        backupPasswordStore: backupPasswordStore,
+        backupEventLogger: backupEventLogger
+    )
 }
 
 func anyVaultItemTag(

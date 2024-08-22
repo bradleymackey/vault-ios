@@ -55,13 +55,14 @@ public struct VaultMainScene: Scene {
         let backupStore = BackupPasswordStoreImpl(
             secureStorage: SecureStorageImpl(keychain: .default)
         )
+        let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
         let vaultDataModel = VaultDataModel(
             vaultStore: store,
             vaultTagStore: store,
             backupPasswordStore: backupStore,
+            backupEventLogger: backupEventLogger,
             itemCaches: [totp, hotp]
         )
-        let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
         let injector = VaultInjector(
             clock: clock,
             intervalTimer: timer,
@@ -153,6 +154,9 @@ public struct VaultMainScene: Scene {
             .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
                 ToastAlertMessageView.copiedToClipboard()
                     .padding(.top, 24)
+            }
+            .task {
+                await vaultDataModel.setup()
             }
             .environment(pasteboard)
             .environment(deviceAuthenticationService)

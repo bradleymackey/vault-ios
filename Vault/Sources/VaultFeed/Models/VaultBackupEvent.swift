@@ -21,6 +21,13 @@ public struct VaultBackupEvent: Equatable, Hashable, Codable, Sendable {
     /// This hash is used to check what data was actually backed up, so no random data or timestamps should be
     /// included in this hash.
     public var payloadHash: Digest<VaultApplicationPayload>.SHA256
+
+    public init(backupDate: Date, eventDate: Date, kind: Kind, payloadHash: Digest<VaultApplicationPayload>.SHA256) {
+        self.backupDate = backupDate
+        self.eventDate = eventDate
+        self.kind = kind
+        self.payloadHash = payloadHash
+    }
 }
 
 extension VaultBackupEvent {
