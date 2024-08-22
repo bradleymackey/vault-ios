@@ -218,10 +218,12 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         var note = anySecureNote()
         note.title = "old title"
         note.contents = "old contents"
+        note.format = .plain
         var item = uniqueVaultItem(item: .secureNote(note))
         item.metadata.userDescription = "old description"
 
         var edits = SecureNoteDetailEdits.new()
+        edits.textFormat = .markdown
         edits.contents = "first line\nsecond line"
         edits.viewConfig = .alwaysVisible
         edits.searchPassphrase = "new pass"
@@ -237,6 +239,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "first line")
                 XCTAssertEqual(note.contents, "first line\nsecond line")
+                XCTAssertEqual(note.format, .markdown)
             default:
                 XCTFail("invalid kind")
             }

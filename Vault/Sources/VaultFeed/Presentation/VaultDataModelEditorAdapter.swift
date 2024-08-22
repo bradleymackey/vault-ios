@@ -77,14 +77,12 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
     }
 
     public func updateNote(id: Identifier<VaultItem>, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
-        var updatedItem = item
-        updatedItem.title = edits.title
-        updatedItem.contents = edits.contents
+        let updatedNote = SecureNote(title: edits.title, contents: edits.contents, format: edits.textFormat)
         let updatedVaultItem = VaultItem.Write(
             relativeOrder: edits.relativeOrder,
             userDescription: edits.description,
             color: edits.color,
-            item: .secureNote(updatedItem),
+            item: .secureNote(updatedNote),
             tags: edits.tags,
             visibility: edits.viewConfig.visibility,
             searchableLevel: edits.viewConfig.searchableLevel,
