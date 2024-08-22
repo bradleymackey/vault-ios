@@ -7,25 +7,32 @@ import VaultCore
 /// Because there's no cloud sync, each individual device will have it's own state in regards to the backup state.
 ///
 /// It doesn't need to be encrypted or protected as it doesn't contain any sensitive data.
-struct VaultBackupEvent: Equatable, Hashable, Sendable {
+public struct VaultBackupEvent: Equatable, Hashable, Codable, Sendable {
     /// The timestamp associated with the backup.
     ///
     /// This is the actual date that the backup was created, not the date that the backup was imported or exported.
-    var backupDate: Date
+    public var backupDate: Date
     /// The date that this backup event was performed (import/export).
-    var eventDate: Date
+    public var eventDate: Date
     /// The action that was taken on this backup to reach the current state.
-    var kind: Kind
+    public var kind: Kind
     /// Hash of all deterministic data that was backed up (application payload).
     ///
     /// This hash is used to check what data was actually backed up, so no random data or timestamps should be
     /// included in this hash.
-    var payloadHash: Digest<VaultApplicationPayload>.SHA256
+    public var payloadHash: Digest<VaultApplicationPayload>.SHA256
 }
 
 extension VaultBackupEvent {
-    enum Kind: Equatable, Hashable, Sendable {
-        case exportedToPDF
-        case importedToPDF
+    public enum Kind: String, Equatable, Hashable, Sendable, Codable {
+        case exportedToPDF = "EXPORT_TO_PDF"
+        case importedToPDF = "IMPORT_FROM_PDF"
+
+        public var localizedTitle: String {
+            switch self {
+            case .exportedToPDF: "Exported to PDF"
+            case .importedToPDF: "Imported from PDF"
+            }
+        }
     }
 }

@@ -27,6 +27,15 @@ func anyBackupPassword() -> BackupPassword {
     .init(key: .random(), salt: .random(count: 32), keyDervier: .testing)
 }
 
+func testUserDefaults() throws -> UserDefaults {
+    struct NoDefaults: Error {}
+    let id = UUID()
+    let defaults = UserDefaults(suiteName: id.uuidString)
+    guard let defaults else { throw NoDefaults() }
+    defaults.removePersistentDomain(forName: id.uuidString)
+    return defaults
+}
+
 // MARK: - VaultItem
 
 func anySecureNote(
@@ -202,3 +211,9 @@ func anyNSError() -> NSError {
 }
 
 struct TestError: Error {}
+
+extension UserDefaults {
+    var keys: Set<String> {
+        dictionaryRepresentation().keys.reducedToSet()
+    }
+}
