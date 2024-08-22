@@ -155,6 +155,9 @@ public struct VaultMainScene: Scene {
                 ToastAlertMessageView.copiedToClipboard()
                     .padding(.top, 24)
             }
+            .task {
+                await vaultDataModel.setup()
+            }
             .environment(pasteboard)
             .environment(deviceAuthenticationService)
             .environment(vaultDataModel)
