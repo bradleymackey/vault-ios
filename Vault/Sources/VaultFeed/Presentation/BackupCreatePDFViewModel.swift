@@ -23,7 +23,7 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
-    public enum Size: IdentifiableSelf {
+    public enum Size: Equatable, IdentifiableSelf, CaseIterable {
         case a3
         case a4
         case a5
@@ -55,10 +55,11 @@ public final class BackupCreatePDFViewModel {
     }
 
     public private(set) var state: State = .idle
-    public private(set) var size: Size = .a4
-    public var authorName: String = "User"
-    public var userHint: String = "This is a backup of my Vault data."
-    public var userDescriptionEncrypted: String = "I should use the Vault app to import this backup."
+    public var size: Size = .a4
+    public var authorName: String = "Vault"
+    public var userHint: String =
+        "This is my description. You can use the Vault app to import this data if you lose access to this data."
+    public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
     public var createdDocument: PDFDocument?
 
     private let backupPassword: BackupPassword
