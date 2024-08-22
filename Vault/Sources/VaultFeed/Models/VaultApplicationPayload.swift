@@ -17,13 +17,13 @@ public struct VaultApplicationPayload: Sendable, Equatable {
 
 extension VaultApplicationPayload: Digestable {
     public var digestableData: some Encodable {
+        // The user description is not included in the digest.
+        // We only want the digest to represent substantive data so we can compare when data has changed.
         struct DigestPayload<I: Encodable, T: Encodable>: Encodable {
-            public var userDescription: String
             public var items: [I]
             public var tags: [T]
         }
         return DigestPayload(
-            userDescription: userDescription,
             items: items.map(\.digestableData),
             tags: tags.map(\.digestableData)
         )
