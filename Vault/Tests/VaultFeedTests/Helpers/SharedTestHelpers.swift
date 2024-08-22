@@ -18,9 +18,15 @@ func uniqueCode() -> OTPAuthCode {
 func anyVaultDataModel(
     vaultStore: some VaultStore = VaultStoreStub(),
     vaultTagStore: some VaultTagStore = VaultTagStoreStub(),
-    backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock()
+    backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock(),
+    backupEventLogger: some BackupEventLogger = BackupEventLoggerMock()
 ) -> VaultDataModel {
-    VaultDataModel(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
+    VaultDataModel(
+        vaultStore: vaultStore,
+        vaultTagStore: vaultTagStore,
+        backupPasswordStore: backupPasswordStore,
+        backupEventLogger: backupEventLogger
+    )
 }
 
 func anyBackupPassword() -> BackupPassword {

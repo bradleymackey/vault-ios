@@ -42,7 +42,8 @@ extension VaultTagFeedViewSnapshotTests {
         let dataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: vaultTagStore,
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         )
         await dataModel.reloadData()
         return VaultTagFeedView(viewModel: .init())

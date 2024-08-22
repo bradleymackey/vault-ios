@@ -388,7 +388,8 @@ extension SecureNoteDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         )
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(
@@ -404,7 +405,8 @@ extension SecureNoteDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         )
     ) -> SecureNoteDetailViewModel {
         SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
@@ -416,7 +418,8 @@ extension SecureNoteDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         )
     )
         -> SecureNoteDetailViewModel

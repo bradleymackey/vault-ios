@@ -331,7 +331,8 @@ struct SecureNoteDetailView: View {
         dataModel: .init(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         ),
         storedMetadata: .init(
             id: .init(),
@@ -359,7 +360,8 @@ struct SecureNoteDetailView: View {
         dataModel: .init(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
-            backupPasswordStore: BackupPasswordStoreMock()
+            backupPasswordStore: BackupPasswordStoreMock(),
+            backupEventLogger: BackupEventLoggerMock()
         )
     )
     .environment(DeviceAuthenticationService(policy: .alwaysAllow))

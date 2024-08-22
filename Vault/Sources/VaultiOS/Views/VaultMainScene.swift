@@ -55,13 +55,14 @@ public struct VaultMainScene: Scene {
         let backupStore = BackupPasswordStoreImpl(
             secureStorage: SecureStorageImpl(keychain: .default)
         )
+        let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
         let vaultDataModel = VaultDataModel(
             vaultStore: store,
             vaultTagStore: store,
             backupPasswordStore: backupStore,
+            backupEventLogger: backupEventLogger,
             itemCaches: [totp, hotp]
         )
-        let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
         let injector = VaultInjector(
             clock: clock,
             intervalTimer: timer,

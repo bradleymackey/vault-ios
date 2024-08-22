@@ -6,13 +6,67 @@ import XCTest
 
 final class VaultDataModelTests: XCTestCase {
     @MainActor
-    func test_init_hasNoSideEffects() {
+    func test_init_hasNoStoreSideEffects() {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         _ = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
 
         XCTAssertEqual(vaultStore.calledMethods, [])
         XCTAssertEqual(vaultTagStore.calledMethods, [])
+    }
+
+    @MainActor
+    func test_init_initiallyFetchesBackupState() {
+        let logger = BackupEventLoggerMock()
+        logger.lastBackupEventHandler = { .init(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: Data())
+        ) }
+        let sut = makeSUT(backupEventLogger: logger)
+
+        XCTAssertEqual(logger.lastBackupEventCallCount, 1)
+        XCTAssertNotNil(sut.lastBackupEvent)
+    }
+
+    @MainActor
+    func test_init_initiallyFetchesBackupStateNil() {
+        let logger = BackupEventLoggerMock()
+        logger.lastBackupEventHandler = { nil }
+        let sut = makeSUT(backupEventLogger: logger)
+
+        XCTAssertEqual(logger.lastBackupEventCallCount, 1)
+        XCTAssertNil(sut.lastBackupEvent)
+    }
+
+    @MainActor
+    func test_init_monitorsChangesToBackupEventLogger() {
+        let logger = BackupEventLoggerMock()
+        logger.lastBackupEventHandler = { nil }
+        let sut = makeSUT(backupEventLogger: logger)
+
+        XCTAssertNil(sut.lastBackupEvent)
+
+        let event = VaultBackupEvent(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: Data())
+        )
+        logger.loggedEventPublisherSubject.send(event)
+
+        XCTAssertEqual(sut.lastBackupEvent, event)
+
+        let event2 = VaultBackupEvent(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: .random(count: 32))
+        )
+        logger.loggedEventPublisherSubject.send(event2)
+
+        XCTAssertEqual(sut.lastBackupEvent, event2)
     }
 
     @MainActor
@@ -409,12 +463,14 @@ extension VaultDataModelTests {
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+        backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = []
     ) -> VaultDataModel {
         VaultDataModel(
             vaultStore: vaultStore,
             vaultTagStore: vaultTagStore,
             backupPasswordStore: backupPasswordStore,
+            backupEventLogger: backupEventLogger,
             itemCaches: itemCaches
         )
     }

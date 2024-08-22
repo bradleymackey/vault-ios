@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import FoundationExtensions
 
@@ -85,22 +86,39 @@ public final class VaultDataModel: Sendable {
     public private(set) var backupPassword: BackupPasswordState = .notFetched
     public private(set) var backupPasswordLoadingState: LoadingState = .notLoading
 
+    // MARK: - Backup Events
+
+    public private(set) var lastBackupEvent: VaultBackupEvent?
+
     // MARK: - Init
 
     private let vaultStore: any VaultStore
     private let vaultTagStore: any VaultTagStore
     private let backupPasswordStore: any BackupPasswordStore
+    private let backupEventLogger: any BackupEventLogger
+    private var observationBag = Set<AnyCancellable>()
 
     public init(
         vaultStore: any VaultStore,
         vaultTagStore: any VaultTagStore,
         backupPasswordStore: any BackupPasswordStore,
+        backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = []
     ) {
         self.vaultStore = vaultStore
         self.vaultTagStore = vaultTagStore
         self.backupPasswordStore = backupPasswordStore
+        self.backupEventLogger = backupEventLogger
         self.itemCaches = itemCaches
+
+        monitorBackupEvents()
+    }
+
+    private func monitorBackupEvents() {
+        lastBackupEvent = backupEventLogger.lastBackupEvent()
+        backupEventLogger.loggedEventPublisher.sink { [weak self] newEvent in
+            self?.lastBackupEvent = newEvent
+        }.store(in: &observationBag)
     }
 }
 
