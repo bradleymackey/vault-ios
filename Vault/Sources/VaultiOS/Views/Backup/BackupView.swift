@@ -73,7 +73,10 @@ struct BackupView: View {
 
     private func currentBackupsSection(password: BackupPassword) -> some View {
         Section {
-            LastBackupSummaryView(lastBackup: dataModel.lastBackupEvent)
+            LastBackupSummaryView(
+                lastBackup: dataModel.lastBackupEvent,
+                currentHash: dataModel.currentPayloadHash
+            )
 
             Button {
                 modal = .pdfBackup(password)

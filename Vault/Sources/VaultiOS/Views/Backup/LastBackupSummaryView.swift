@@ -1,9 +1,11 @@
+import CryptoEngine
 import Foundation
 import SwiftUI
 import VaultFeed
 
 struct LastBackupSummaryView: View {
     var lastBackup: VaultBackupEvent?
+    var currentHash: Digest<VaultApplicationPayload>.SHA256?
 
     var body: some View {
         VStack(alignment: .center, spacing: 4) {
@@ -16,6 +18,28 @@ struct LastBackupSummaryView: View {
                     .foregroundStyle(.primary)
                 Text(lastBackup.kind.localizedTitle)
                     .foregroundStyle(.secondary)
+
+                if let currentHash {
+                    if lastBackup.payloadHash == currentHash {
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: "checkmark.circle.fill")
+                            Text("Latest changes backed up")
+                        }
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(.green)
+                        .textCase(.uppercase)
+                        .padding(.top, 8)
+                    } else {
+                        HStack(alignment: .firstTextBaseline) {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                            Text("Recent changes have not been backed up")
+                        }
+                        .font(.caption2.weight(.medium))
+                        .foregroundStyle(.orange)
+                        .textCase(.uppercase)
+                        .padding(.top, 8)
+                    }
+                }
             } else {
                 Text("You have never created a backup and are at risk of data loss.")
                     .multilineTextAlignment(.center)
@@ -48,5 +72,17 @@ struct LastBackupSummaryView: View {
             kind: .exportedToPDF,
             payloadHash: .init(value: Data(hex: "ababa"))
         ))
+        LastBackupSummaryView(lastBackup: VaultBackupEvent(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: Data(hex: "ababa"))
+        ), currentHash: .init(value: Data()))
+        LastBackupSummaryView(lastBackup: VaultBackupEvent(
+            backupDate: Date(),
+            eventDate: Date(),
+            kind: .exportedToPDF,
+            payloadHash: .init(value: Data(hex: "ababa"))
+        ), currentHash: .init(value: Data(hex: "ababa")))
     }
 }
