@@ -65,6 +65,7 @@ public final class BackupCreatePDFViewModel {
     public var userHint: String = ""
     public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
     public var createdDocument: PDFDocument?
+    public var createdDocumentURL: URL?
 
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
@@ -94,6 +95,9 @@ public final class BackupCreatePDFViewModel {
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
             createdDocument = try await makeBackupPDFDocument(payload: payload)
+            let url = FileManager().temporaryDirectory.appending(path: "doc.pdf")
+            createdDocumentURL = url
+            createdDocument?.write(to: url)
             let hash = try Hasher().sha256(value: payload)
 
             try? defaults.set(size, for: Self.pdfSizeKey)

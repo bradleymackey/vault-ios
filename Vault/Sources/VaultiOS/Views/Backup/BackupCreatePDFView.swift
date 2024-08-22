@@ -32,8 +32,31 @@ struct BackupCreatePDFView: View {
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
             case let .pdf(document):
-                PDFViewer(document)
+                pdfPreview(document: document)
             }
+        }
+    }
+
+    private func pdfPreview(document: PDFDocument) -> some View {
+        NavigationStack {
+            PDFViewer(document)
+                .navigationTitle(Text("PDF"))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    if let url = viewModel.createdDocumentURL {
+                        ToolbarItem(placement: .primaryAction) {
+                            ShareLink(item: url)
+                        }
+                    }
+
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(role: .cancel) {
+                            modal = nil
+                        } label: {
+                            Text("Close")
+                        }
+                    }
+                }
         }
     }
 
