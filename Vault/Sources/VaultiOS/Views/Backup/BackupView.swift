@@ -73,14 +73,7 @@ struct BackupView: View {
 
     private func currentBackupsSection(password: BackupPassword) -> some View {
         Section {
-            VStack {
-                Text("Backups")
-                    .font(.headline)
-
-                Text("Most recent")
-                Text("Any changes since last backup?")
-            }
-            .containerRelativeFrame(.horizontal)
+            LastBackupSummaryView(lastBackup: dataModel.lastBackupEvent)
 
             Button {
                 modal = .pdfBackup(password)
@@ -89,8 +82,6 @@ struct BackupView: View {
                     Text("Create PDF Backup")
                 }
             }
-        } header: {
-            Text("Backups")
         }
         .transition(.slide)
     }
