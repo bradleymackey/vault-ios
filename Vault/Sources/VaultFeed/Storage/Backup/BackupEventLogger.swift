@@ -7,6 +7,7 @@ import VaultCore
 ///
 /// @mockable
 public protocol BackupEventLogger {
+    func lastBackupEvent() -> VaultBackupEvent?
     func exportedToPDF(date: Date, hash: Digest<VaultApplicationPayload>.SHA256)
 }
 
@@ -15,9 +16,15 @@ public protocol BackupEventLogger {
 public final class BackupEventLoggerImpl: BackupEventLogger {
     private let defaults: Defaults
     private let clock: EpochClock
+    private let backupEventKey = Key<VaultBackupEvent>("vault.backup.last-event")
+
     public init(defaults: Defaults, clock: EpochClock) {
         self.defaults = defaults
         self.clock = clock
+    }
+
+    public func lastBackupEvent() -> VaultBackupEvent? {
+        defaults.get(for: backupEventKey)
     }
 
     public func exportedToPDF(date: Date, hash: Digest<VaultApplicationPayload>.SHA256) {
@@ -27,5 +34,6 @@ public final class BackupEventLoggerImpl: BackupEventLogger {
             kind: .exportedToPDF,
             payloadHash: hash
         )
+        try? defaults.set(event, for: backupEventKey)
     }
 }
