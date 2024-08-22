@@ -23,7 +23,8 @@ final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory
             title: item.title,
             description: metadata.userDescription,
             color: metadata.color ?? .default,
-            isLocked: metadata.lockState.isLocked
+            isLocked: metadata.lockState.isLocked,
+            textFormat: item.format
         )
         return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }

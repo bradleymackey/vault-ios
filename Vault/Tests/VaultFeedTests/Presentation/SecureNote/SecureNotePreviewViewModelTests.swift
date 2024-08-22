@@ -6,7 +6,13 @@ import XCTest
 
 final class SecureNotePreviewViewModelTests: XCTestCase {
     func test_visibleTitle_isPlaceholderEmptyTitleIfTitleEmpty() {
-        let sut = SecureNotePreviewViewModel(title: "", description: "description", color: .default, isLocked: false)
+        let sut = SecureNotePreviewViewModel(
+            title: "",
+            description: "description",
+            color: .default,
+            isLocked: false,
+            textFormat: .plain
+        )
 
         XCTAssertEqual(sut.visibleTitle, "Untitled Note")
     }
@@ -16,7 +22,8 @@ final class SecureNotePreviewViewModelTests: XCTestCase {
             title: "title",
             description: "description",
             color: .default,
-            isLocked: false
+            isLocked: false,
+            textFormat: .plain
         )
 
         XCTAssertEqual(sut.visibleTitle, "title")
