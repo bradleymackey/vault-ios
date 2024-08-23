@@ -23,7 +23,7 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
-    public enum Size: Equatable, IdentifiableSelf, CaseIterable, Codable {
+    public enum Size: Equatable, IdentifiableSelf, CaseIterable, Codable, Sendable {
         case a3
         case a4
         case a5
@@ -113,7 +113,11 @@ public final class BackupCreatePDFViewModel {
             ))
         }
     }
+}
 
+// MARK: - PDF Generation
+
+extension BackupCreatePDFViewModel {
     /// Exports and encrypts the full vault from storage, rendering to a PDF
     private func makeBackupPDFDocument(payload: VaultApplicationPayload) async throws -> PDFDocument {
         let pdfCreator = VaultBackupPDFGenerator(
@@ -122,13 +126,18 @@ public final class BackupCreatePDFViewModel {
             applicationName: "Vault",
             authorName: authorName
         )
+        let exportPayload = try await makeExportPayload(payload: payload)
+        return try pdfCreator.makePDF(payload: exportPayload)
+    }
+
+    /// Encrypt on background thread.
+    private nonisolated func makeExportPayload(payload: VaultApplicationPayload) async throws -> VaultExportPayload {
         let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
         let encryptedVault = try backupExporter.createEncryptedBackup(payload: payload)
-        let exportPayload = VaultExportPayload(
+        return await VaultExportPayload(
             encryptedVault: encryptedVault,
             userDescription: userHint,
             created: clock.currentDate
         )
-        return try pdfCreator.makePDF(payload: exportPayload)
     }
 }

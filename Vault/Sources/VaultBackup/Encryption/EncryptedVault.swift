@@ -3,7 +3,7 @@ import Foundation
 import FoundationExtensions
 
 /// The encrypted vault that contains enough information to decrypt, given that the user only knows the key.
-public struct EncryptedVault: Equatable, Codable {
+public struct EncryptedVault: Equatable, Codable, Sendable {
     /// The version of the encrypted vault format.
     /// This is to allow for backwards-incompatible changes in the future.
     ///

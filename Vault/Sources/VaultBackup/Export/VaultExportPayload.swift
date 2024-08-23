@@ -4,7 +4,7 @@ import Foundation
 ///
 /// - important: All sensitive data should already be included in the `EncryptedVault`.
 /// Any other fields here should not contain senstive data.
-public struct VaultExportPayload {
+public struct VaultExportPayload: Sendable {
     var encryptedVault: EncryptedVault
     var userDescription: String
     var created: Date
