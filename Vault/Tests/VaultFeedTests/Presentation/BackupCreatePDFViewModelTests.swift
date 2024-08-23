@@ -89,7 +89,8 @@ extension BackupCreatePDFViewModelTests {
             ),
             clock: clock,
             backupEventLogger: backupEventLogger,
-            defaults: Defaults(userDefaults: defaults)
+            defaults: Defaults(userDefaults: defaults),
+            fileManager: FileManager()
         )
     }
 }

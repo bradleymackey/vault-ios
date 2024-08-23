@@ -46,7 +46,8 @@ struct BackupView: View {
                         dataModel: dataModel,
                         clock: injector.clock,
                         backupEventLogger: injector.backupEventLogger,
-                        defaults: injector.defaults
+                        defaults: injector.defaults,
+                        fileManager: injector.fileManager
                     ))
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {

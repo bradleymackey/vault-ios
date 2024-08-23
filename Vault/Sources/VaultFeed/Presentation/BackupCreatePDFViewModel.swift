@@ -72,19 +72,22 @@ public final class BackupCreatePDFViewModel {
     private let clock: any EpochClock
     private let backupEventLogger: any BackupEventLogger
     private let defaults: Defaults
+    private let fileManager: FileManager
 
     public init(
         backupPassword: BackupPassword,
         dataModel: VaultDataModel,
         clock: any EpochClock,
         backupEventLogger: any BackupEventLogger,
-        defaults: Defaults
+        defaults: Defaults,
+        fileManager: FileManager
     ) {
         self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
         self.backupEventLogger = backupEventLogger
         self.defaults = defaults
+        self.fileManager = fileManager
 
         size = defaults.get(for: Self.pdfSizeKey) ?? .a4
         userHint = defaults.get(for: Self.userHintKey) ?? Self.defaultUserHint
@@ -95,7 +98,7 @@ public final class BackupCreatePDFViewModel {
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
             createdDocument = try await makeBackupPDFDocument(payload: payload)
-            let url = FileManager().temporaryDirectory.appending(path: "doc.pdf")
+            let url = fileManager.temporaryDirectory.appending(path: "doc.pdf")
             createdDocumentURL = url
             createdDocument?.write(to: url)
             let hash = try Hasher().sha256(value: payload)
