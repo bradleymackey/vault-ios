@@ -54,6 +54,12 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
+    /// Exported PDF document that has been generated.
+    public struct GeneratedPDF: Equatable, Hashable {
+        public let document: PDFDocument
+        public let diskURL: URL
+    }
+
     private static let pdfSizeKey = Key<Size>("vault.pdf.default-size")
     private static let userHintKey = Key<String>("vault.pdf.user-hint")
     private static let defaultUserHint =
@@ -64,8 +70,7 @@ public final class BackupCreatePDFViewModel {
     public var authorName: String = "Vault"
     public var userHint: String = ""
     public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
-    public var createdDocument: PDFDocument?
-    public var createdDocumentURL: URL?
+    public private(set) var generatedPDF: GeneratedPDF?
 
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
@@ -97,15 +102,15 @@ public final class BackupCreatePDFViewModel {
         do {
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
-            createdDocument = try await makeBackupPDFDocument(payload: payload)
-            let url = fileManager.temporaryDirectory.appending(path: "doc.pdf")
-            createdDocumentURL = url
-            createdDocument?.write(to: url)
+            let document = try await makeBackupPDFDocument(payload: payload)
+            let timestamp = clock.iso8601.replacingOccurrences(of: ":", with: "-")
+            let filename = "vault-export-\(timestamp).pdf"
+            let tempURL = fileManager.temporaryDirectory.appending(path: filename)
+            document.write(to: tempURL)
+            generatedPDF = .init(document: document, diskURL: tempURL)
+
+            commitLatestSettings()
             let hash = try Hasher().sha256(value: payload)
-
-            try? defaults.set(size, for: Self.pdfSizeKey)
-            try? defaults.set(userHint, for: Self.userHintKey)
-
             backupEventLogger.exportedToPDF(date: clock.currentDate, hash: hash)
             state = .success
         } catch {
@@ -115,6 +120,11 @@ public final class BackupCreatePDFViewModel {
                 debugDescription: error.localizedDescription
             ))
         }
+    }
+
+    private func commitLatestSettings() {
+        try? defaults.set(size, for: Self.pdfSizeKey)
+        try? defaults.set(userHint, for: Self.userHintKey)
     }
 }
 

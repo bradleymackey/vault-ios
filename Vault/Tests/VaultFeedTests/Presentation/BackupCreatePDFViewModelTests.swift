@@ -36,7 +36,7 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
         await sut.createPDF()
 
         XCTAssertEqual(sut.state, .success)
-        XCTAssertNotNil(sut.createdDocument)
+        XCTAssertNotNil(sut.generatedPDF)
     }
 
     @MainActor
@@ -62,7 +62,7 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
         await sut.createPDF()
 
         XCTAssertTrue(sut.state.isError)
-        XCTAssertNil(sut.createdDocument)
+        XCTAssertNil(sut.generatedPDF)
     }
 }
 
