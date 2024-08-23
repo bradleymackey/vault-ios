@@ -94,7 +94,8 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
         clock: clock,
         intervalTimer: IntervalTimerImpl(),
         backupEventLogger: BackupEventLoggerMock(),
-        vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl()
+        vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
+        defaults: Defaults(userDefaults: .standard)
     )
     let codeRenderer = OTPCodeRendererMock()
     let errorRenderer = OTPCodeRendererMock()

@@ -45,8 +45,18 @@ struct BackupView: View {
                         backupPassword: password,
                         dataModel: dataModel,
                         clock: injector.clock,
-                        backupEventLogger: injector.backupEventLogger
+                        backupEventLogger: injector.backupEventLogger,
+                        defaults: injector.defaults
                     ))
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
                 }
             case .updatePassword:
                 NavigationStack {

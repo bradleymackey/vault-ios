@@ -67,7 +67,8 @@ public struct VaultMainScene: Scene {
             clock: clock,
             intervalTimer: timer,
             backupEventLogger: backupEventLogger,
-            vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl()
+            vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
+            defaults: defaults
         )
 
         _pasteboard = State(wrappedValue: pasteboard)

@@ -6,11 +6,11 @@ import XCTest
 
 final class BackupCreatePDFViewModelTests: XCTestCase {
     @MainActor
-    func test_init_hasNoSideEffects() {
+    func test_init_hasNoSideEffects() throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         let backupPasswordStore = BackupPasswordStoreMock()
-        _ = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
+        _ = try makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
 
         XCTAssertEqual(vaultStore.calledMethods, [])
         XCTAssertEqual(vaultTagStore.calledMethods, [])
@@ -19,19 +19,19 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_init_initialStateIsIdle() {
-        let sut = makeSUT()
+    func test_init_initialStateIsIdle() throws {
+        let sut = try makeSUT()
 
         XCTAssertEqual(sut.state, .idle)
     }
 
     @MainActor
-    func test_createPDF_makesPDFDocument() async {
+    func test_createPDF_makesPDFDocument() async throws {
         let vaultStore = VaultStoreStub()
         vaultStore.exportVaultHandler = { _ in
             .init(userDescription: "Hello", items: [], tags: [])
         }
-        let sut = makeSUT(vaultStore: vaultStore)
+        let sut = try makeSUT(vaultStore: vaultStore)
 
         await sut.createPDF()
 
@@ -40,13 +40,13 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_createPDF_recordsBackupEvent() async {
+    func test_createPDF_recordsBackupEvent() async throws {
         let vaultStore = VaultStoreStub()
         vaultStore.exportVaultHandler = { _ in
             .init(userDescription: "Hello", items: [], tags: [])
         }
         let logger = BackupEventLoggerMock()
-        let sut = makeSUT(vaultStore: vaultStore, backupEventLogger: logger)
+        let sut = try makeSUT(vaultStore: vaultStore, backupEventLogger: logger)
 
         await sut.createPDF()
 
@@ -54,10 +54,10 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_createPDF_errorSetsErrorState() async {
+    func test_createPDF_errorSetsErrorState() async throws {
         let vaultStore = VaultStoreStub()
         vaultStore.exportVaultHandler = { _ in throw TestError() }
-        let sut = makeSUT(vaultStore: vaultStore)
+        let sut = try makeSUT(vaultStore: vaultStore)
 
         await sut.createPDF()
 
@@ -77,8 +77,9 @@ extension BackupCreatePDFViewModelTests {
         backupPassword: BackupPassword = anyBackupPassword(),
         clock: EpochClock = EpochClock(makeCurrentTime: { 100 }),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
-    ) -> BackupCreatePDFViewModel {
-        BackupCreatePDFViewModel(
+    ) throws -> BackupCreatePDFViewModel {
+        let defaults = try testUserDefaults()
+        return BackupCreatePDFViewModel(
             backupPassword: backupPassword,
             dataModel: VaultDataModel(
                 vaultStore: vaultStore,
@@ -87,7 +88,8 @@ extension BackupCreatePDFViewModelTests {
                 backupEventLogger: BackupEventLoggerMock()
             ),
             clock: clock,
-            backupEventLogger: backupEventLogger
+            backupEventLogger: backupEventLogger,
+            defaults: Defaults(userDefaults: defaults)
         )
     }
 }

@@ -23,7 +23,7 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
-    public enum Size: IdentifiableSelf {
+    public enum Size: Equatable, IdentifiableSelf, CaseIterable, Codable {
         case a3
         case a4
         case a5
@@ -54,28 +54,40 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
+    private static let pdfSizeKey = Key<Size>("vault.pdf.default-size")
+    private static let userHintKey = Key<String>("vault.pdf.user-hint")
+    private static let defaultUserHint =
+        "This is my description, which is visible in plain text on the vault backup. You can use the Vault app to import this data if you lose access to this data."
+
     public private(set) var state: State = .idle
-    public private(set) var size: Size = .a4
-    public var authorName: String = "User"
-    public var userHint: String = "This is a backup of my Vault data."
-    public var userDescriptionEncrypted: String = "I should use the Vault app to import this backup."
+    public var size: Size = .a4
+    public var authorName: String = "Vault"
+    public var userHint: String = ""
+    public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
     public var createdDocument: PDFDocument?
+    public var createdDocumentURL: URL?
 
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
     private let clock: EpochClock
     private let backupEventLogger: any BackupEventLogger
+    private let defaults: Defaults
 
     public init(
         backupPassword: BackupPassword,
         dataModel: VaultDataModel,
         clock: EpochClock,
-        backupEventLogger: any BackupEventLogger
+        backupEventLogger: any BackupEventLogger,
+        defaults: Defaults
     ) {
         self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
         self.backupEventLogger = backupEventLogger
+        self.defaults = defaults
+
+        size = defaults.get(for: Self.pdfSizeKey) ?? .a4
+        userHint = defaults.get(for: Self.userHintKey) ?? Self.defaultUserHint
     }
 
     public func createPDF() async {
@@ -83,7 +95,14 @@ public final class BackupCreatePDFViewModel {
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
             createdDocument = try await makeBackupPDFDocument(payload: payload)
+            let url = FileManager().temporaryDirectory.appending(path: "doc.pdf")
+            createdDocumentURL = url
+            createdDocument?.write(to: url)
             let hash = try Hasher().sha256(value: payload)
+
+            try? defaults.set(size, for: Self.pdfSizeKey)
+            try? defaults.set(userHint, for: Self.userHintKey)
+
             backupEventLogger.exportedToPDF(date: clock.currentDate, hash: hash)
             state = .success
         } catch {

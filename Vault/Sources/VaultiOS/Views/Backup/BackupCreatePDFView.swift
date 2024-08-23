@@ -3,8 +3,10 @@ import PDFKit
 import SwiftUI
 import VaultFeed
 
+@MainActor
 struct BackupCreatePDFView: View {
-    @State private var viewModel: BackupCreatePDFViewModel
+    typealias ViewModel = BackupCreatePDFViewModel
+    @State private var viewModel: ViewModel
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
@@ -17,22 +19,8 @@ struct BackupCreatePDFView: View {
 
     var body: some View {
         Form {
-            switch viewModel.state {
-            case .idle:
-                EmptyView()
-            case .loading:
-                ProgressView()
-            case let .error(presentationError):
-                Text(presentationError.debugDescription)
-            case .success:
-                Text("Success")
-            }
-
-            AsyncButton {
-                await viewModel.createPDF()
-            } label: {
-                Text("Make PDF")
-            }
+            optionsSection
+            createSection
         }
         .navigationTitle(Text("Create PDF"))
         .navigationBarTitleDisplayMode(.inline)
@@ -44,7 +32,71 @@ struct BackupCreatePDFView: View {
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
             case let .pdf(document):
-                PDFViewer(document)
+                pdfPreview(document: document)
+            }
+        }
+    }
+
+    private func pdfPreview(document: PDFDocument) -> some View {
+        NavigationStack {
+            PDFViewer(document)
+                .navigationTitle(Text("PDF"))
+                .navigationBarTitleDisplayMode(.inline)
+                .toolbar {
+                    if let url = viewModel.createdDocumentURL {
+                        ToolbarItem(placement: .primaryAction) {
+                            ShareLink(item: url)
+                        }
+                    }
+
+                    ToolbarItem(placement: .cancellationAction) {
+                        Button(role: .cancel) {
+                            modal = nil
+                        } label: {
+                            Text("Close")
+                        }
+                    }
+                }
+        }
+    }
+
+    private var optionsSection: some View {
+        Section {
+            Picker(selection: $viewModel.size) {
+                ForEach(ViewModel.Size.allCases) { format in
+                    Text(format.localizedTitle)
+                        .tag(format)
+                }
+            } label: {
+                FormRow(image: Image(systemName: "newspaper.fill"), color: .accentColor, style: .standard) {
+                    Text("Paper Size")
+                }
+            }
+
+            TextEditor(text: $viewModel.userHint)
+                .font(.callout)
+                .frame(minHeight: 150)
+                .keyboardType(.default)
+                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
+        }
+    }
+
+    private var createSection: some View {
+        Section {
+            AsyncButton {
+                await viewModel.createPDF()
+            } label: {
+                FormRow(image: Image(systemName: "checkmark.circle.fill"), color: .accentColor, style: .standard) {
+                    Text("Make PDF")
+                }
+            }
+        } footer: {
+            if case let .error(presentationError) = viewModel.state {
+                Label(
+                    presentationError.userDescription ?? presentationError.userTitle,
+                    systemImage: "exclamationmark.triangle.fill"
+                )
+                .foregroundStyle(.red)
             }
         }
     }

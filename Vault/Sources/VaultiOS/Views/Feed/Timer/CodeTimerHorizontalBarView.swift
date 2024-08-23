@@ -70,6 +70,7 @@ struct CodeTimerHorizontalBarView: View {
         clock: EpochClock { 40 },
         intervalTimer: IntervalTimerImpl(),
         backupEventLogger: BackupEventLoggerMock(),
-        vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl()
+        vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
+        defaults: Defaults(userDefaults: .standard)
     ))
 }

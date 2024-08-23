@@ -11,16 +11,19 @@ public final class VaultInjector {
     public let intervalTimer: any IntervalTimer
     public let backupEventLogger: any BackupEventLogger
     public let vaultKeyDeriverFactory: any VaultKeyDeriverFactory
+    public let defaults: Defaults
 
     public init(
         clock: EpochClock,
         intervalTimer: any IntervalTimer,
         backupEventLogger: any BackupEventLogger,
-        vaultKeyDeriverFactory: any VaultKeyDeriverFactory
+        vaultKeyDeriverFactory: any VaultKeyDeriverFactory,
+        defaults: Defaults
     ) {
         self.clock = clock
         self.intervalTimer = intervalTimer
         self.backupEventLogger = backupEventLogger
         self.vaultKeyDeriverFactory = vaultKeyDeriverFactory
+        self.defaults = defaults
     }
 }
