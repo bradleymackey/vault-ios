@@ -24,32 +24,38 @@ public final class BackupCreatePDFViewModel {
     }
 
     public enum Size: Equatable, IdentifiableSelf, CaseIterable, Codable, Sendable {
+        case a2
         case a3
         case a4
         case a5
         case usLetter
         case usLegal
         case usTabloid
+        case usLedger
 
         public var localizedTitle: String {
             switch self {
+            case .a2: "A2"
             case .a3: "A3"
             case .a4: "A4"
             case .a5: "A5"
             case .usLetter: "US Letter"
             case .usLegal: "US Legal"
             case .usTabloid: "US Tabloid"
+            case .usLedger: "US Ledger"
             }
         }
 
         fileprivate var documentSize: any PDFDocumentSize {
             switch self {
+            case .a2: A2DocumentSize()
             case .a3: A3DocumentSize()
             case .a4: A4DocumentSize()
             case .a5: A5DocumentSize()
             case .usLetter: USLetterDocumentSize()
             case .usLegal: USLegalDocumentSize()
             case .usTabloid: USTabloidDocumentSize()
+            case .usLedger: USLedgerDocumentSize()
             }
         }
     }

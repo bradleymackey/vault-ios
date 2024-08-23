@@ -45,6 +45,17 @@ extension PDFDocumentSize {
 
 // MARK: - Sizes
 
+public struct A2DocumentSize: PDFDocumentSize {
+    public init() {}
+    public var inchDimensions: (width: Double, height: Double) {
+        (16.54, 23.38)
+    }
+
+    public var inchMargins: Margins {
+        .all(1.38)
+    }
+}
+
 public struct A3DocumentSize: PDFDocumentSize {
     public init() {}
     public var inchDimensions: (width: Double, height: Double) {
@@ -104,6 +115,18 @@ public struct USTabloidDocumentSize: PDFDocumentSize {
     public init() {}
     public var inchDimensions: (width: Double, height: Double) {
         (11, 17)
+    }
+
+    public var inchMargins: Margins {
+        .all(1)
+    }
+}
+
+public struct USLedgerDocumentSize: PDFDocumentSize {
+    public init() {}
+
+    public var inchDimensions: (width: Double, height: Double) {
+        (17, 11)
     }
 
     public var inchMargins: Margins {
