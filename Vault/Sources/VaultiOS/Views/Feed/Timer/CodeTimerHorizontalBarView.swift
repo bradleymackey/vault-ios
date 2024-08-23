@@ -67,7 +67,7 @@ struct CodeTimerHorizontalBarView: View {
         subject.send(OTPCodeTimerState(startTime: 15, endTime: 60))
     }
     .environment(VaultInjector(
-        clock: EpochClock { 40 },
+        clock: EpochClockImpl(),
         intervalTimer: IntervalTimerImpl(),
         backupEventLogger: BackupEventLoggerMock(),
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),

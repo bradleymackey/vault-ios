@@ -89,7 +89,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
 }
 
 #Preview {
-    let clock = EpochClock { 20 }
+    let clock = EpochClockImpl()
     let injector = VaultInjector(
         clock: clock,
         intervalTimer: IntervalTimerImpl(),

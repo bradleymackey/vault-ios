@@ -15,9 +15,9 @@ protocol SystemPasteboard {
 /// The live iOS system pasteboard.
 struct SystemPasteboardImpl: SystemPasteboard {
     private let pasteboard = UIPasteboard.general
-    private let clock: EpochClock
+    private let clock: any EpochClock
 
-    init(clock: EpochClock) {
+    init(clock: any EpochClock) {
         self.clock = clock
     }
 

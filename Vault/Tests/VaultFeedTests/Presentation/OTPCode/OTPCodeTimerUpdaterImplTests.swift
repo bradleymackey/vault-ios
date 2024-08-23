@@ -25,9 +25,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.makeCurrentTime = { 60 }
+            clock.currentTime = 60
             timer.finishTimer()
-            clock.makeCurrentTime = { 90 }
+            clock.currentTime = 90
             timer.finishTimer()
         })
         XCTAssertEqual(values, [
@@ -44,9 +44,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.makeCurrentTime = { 301 }
+            clock.currentTime = 301
             sut.recalculate()
-            clock.makeCurrentTime = { 330 }
+            clock.currentTime = 330
             sut.recalculate()
         })
         XCTAssertEqual(values, [
@@ -81,9 +81,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         period: UInt64,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (EpochClock, IntervalTimerMock, any OTPCodeTimerUpdater) {
+    ) -> (EpochClockMock, IntervalTimerMock, any OTPCodeTimerUpdater) {
         let timer = IntervalTimerMock()
-        let clock = EpochClock(makeCurrentTime: { clockTime })
+        let clock = EpochClockMock(currentTime: clockTime)
         let sut = OTPCodeTimerUpdaterImpl(timer: timer, period: period, clock: clock)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (clock, timer, sut)

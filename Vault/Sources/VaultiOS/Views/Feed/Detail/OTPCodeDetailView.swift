@@ -447,7 +447,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         presentationMode: nil
     )
     .environment(Pasteboard(
-        SystemPasteboardImpl(clock: .init(makeCurrentTime: { 100 })),
+        SystemPasteboardImpl(clock: EpochClockImpl()),
         localSettings: .init(defaults: .init(userDefaults: .standard))
     ))
 }

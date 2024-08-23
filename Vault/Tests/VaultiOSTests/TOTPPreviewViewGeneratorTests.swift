@@ -160,7 +160,7 @@ extension TOTPPreviewViewGeneratorTests {
     private func makeSUT(
         factory: TOTPPreviewViewFactoryMock = makeTOTPPreviewViewFactoryMock(),
         updaterFactory: OTPCodeTimerUpdaterFactoryMock = .defaultMock(),
-        clock: EpochClock = EpochClock { 100 },
+        clock: any EpochClock = .mocked(initialTime: 100),
         timer: IntervalTimerMock = IntervalTimerMock()
     ) -> SUT {
         SUT(viewFactory: factory, updaterFactory: updaterFactory, clock: clock, timer: timer)

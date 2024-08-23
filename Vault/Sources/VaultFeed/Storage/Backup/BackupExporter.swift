@@ -5,10 +5,10 @@ import VaultCore
 
 /// From an application-level vault, create the encrypted vault.
 public final class BackupExporter {
-    private let clock: EpochClock
+    private let clock: any EpochClock
     private let backupPassword: BackupPassword
 
-    public init(clock: EpochClock, backupPassword: BackupPassword) {
+    public init(clock: any EpochClock, backupPassword: BackupPassword) {
         self.clock = clock
         self.backupPassword = backupPassword
     }

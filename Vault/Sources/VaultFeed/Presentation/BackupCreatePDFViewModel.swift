@@ -69,14 +69,14 @@ public final class BackupCreatePDFViewModel {
 
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
-    private let clock: EpochClock
+    private let clock: any EpochClock
     private let backupEventLogger: any BackupEventLogger
     private let defaults: Defaults
 
     public init(
         backupPassword: BackupPassword,
         dataModel: VaultDataModel,
-        clock: EpochClock,
+        clock: any EpochClock,
         backupEventLogger: any BackupEventLogger,
         defaults: Defaults
     ) {

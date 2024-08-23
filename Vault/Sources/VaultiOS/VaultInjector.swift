@@ -7,14 +7,14 @@ import VaultFeed
 /// This is a good place to store and subsequently inject them.
 @Observable
 public final class VaultInjector {
-    public let clock: EpochClock
+    public let clock: any EpochClock
     public let intervalTimer: any IntervalTimer
     public let backupEventLogger: any BackupEventLogger
     public let vaultKeyDeriverFactory: any VaultKeyDeriverFactory
     public let defaults: Defaults
 
     public init(
-        clock: EpochClock,
+        clock: any EpochClock,
         intervalTimer: any IntervalTimer,
         backupEventLogger: any BackupEventLogger,
         vaultKeyDeriverFactory: any VaultKeyDeriverFactory,

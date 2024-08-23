@@ -8,9 +8,9 @@ public protocol OTPCodeTimerUpdaterFactory {
 
 public final class OTPCodeTimerUpdaterFactoryImpl: OTPCodeTimerUpdaterFactory {
     let timer: any IntervalTimer
-    let clock: EpochClock
+    let clock: any EpochClock
 
-    public init(timer: any IntervalTimer, clock: EpochClock) {
+    public init(timer: any IntervalTimer, clock: any EpochClock) {
         self.timer = timer
         self.clock = clock
     }
