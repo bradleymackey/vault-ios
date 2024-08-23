@@ -1,7 +1,7 @@
 import Foundation
 import SwiftData
 
-enum PersistedSchemaV1: VersionedSchema, Sendable {
+enum PersistedSchemaV1: VersionedSchema {
     static let versionIdentifier = Schema.Version(1, 0, 0)
 
     static var models: [any PersistentModel.Type] {
