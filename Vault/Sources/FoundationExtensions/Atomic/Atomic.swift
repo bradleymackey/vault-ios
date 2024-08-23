@@ -16,6 +16,11 @@ public final class Atomic<Value>: @unchecked Sendable {
     @usableFromInline
     let lock = Lock()
 
+    /// Performs the operation in the `block` protected by a lock.
+    ///
+    /// - note: `block` is not, and cannot, be `async`. Swift's concurrency
+    /// model requires that we are able to make forward progress and if this block
+    /// were to suspend this could lead to a deadlock (due to the lock surrounding the block).
     @usableFromInline
     func perform<Result>(block: () throws -> Result) rethrows -> Result {
         lock.lock()
