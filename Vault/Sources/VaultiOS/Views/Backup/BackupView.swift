@@ -29,10 +29,9 @@ struct BackupView: View {
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
-                currentKeySection(existingPassword: nil)
+                keySection(existingPassword: nil)
             case let .fetched(password):
-                currentKeySection(existingPassword: password)
-                overrideKeySection(existingPassword: password)
+                keySection(existingPassword: password)
             }
         }
         .animation(.default, value: dataModel.backupPassword)
@@ -100,26 +99,18 @@ struct BackupView: View {
         .transition(.slide)
     }
 
-    private func currentKeySection(existingPassword: BackupPassword?) -> some View {
+    private func keySection(existingPassword: BackupPassword?) -> some View {
         Section {
             if let existingPassword {
+                updateButton
                 exportButton(password: existingPassword)
             } else {
                 createButton
-                importButton
             }
-        } header: {
-            Text("Encryption Key")
-        }
-        .transition(.slide)
-    }
 
-    private func overrideKeySection(existingPassword _: BackupPassword) -> some View {
-        Section {
-            updateButton
             importButton
         } header: {
-            Text("Override Encryption Key")
+            Text("Encryption Key")
         }
         .transition(.slide)
     }
@@ -146,7 +137,7 @@ struct BackupView: View {
         AsyncButton(progressAlignment: .center) {
             await dataModel.loadBackupPassword()
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .standard) {
                 Text("Authenticate")
             }
         }
@@ -156,7 +147,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .prominent) {
                 Text(viewModel.strings.backupPasswordCreateTitle)
             }
         }
@@ -166,7 +157,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .red, style: .standard) {
+            FormRow(image: Image(systemName: "arrow.triangle.2.circlepath"), color: .accentColor, style: .prominent) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }
@@ -176,7 +167,7 @@ struct BackupView: View {
         Button {
             modal = .exportPassword(password)
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .green, style: .standard) {
+            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .accentColor, style: .prominent) {
                 Text(viewModel.strings.backupPasswordExportTitle)
             }
         }
@@ -186,7 +177,7 @@ struct BackupView: View {
         Button {
             modal = .importPassword
         } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .blue, style: .standard) {
+            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .accentColor, style: .prominent) {
                 Text(viewModel.strings.backupPasswordImportTitle)
             }
         }
