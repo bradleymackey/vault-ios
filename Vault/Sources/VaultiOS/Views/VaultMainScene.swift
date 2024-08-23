@@ -37,7 +37,7 @@ public struct VaultMainScene: Scene {
         let defaults = Defaults(userDefaults: .standard)
         let localSettings = LocalSettings(defaults: defaults)
         let timer = IntervalTimerImpl()
-        let clock = EpochClockImpl(makeCurrentTime: { Date.now.timeIntervalSince1970 })
+        let clock = EpochClockImpl()
         let storeFactory = PersistedLocalVaultStoreFactory(fileManager: .default)
         let store = storeFactory.makeVaultStore()
         let totp = TOTPPreviewViewGenerator(

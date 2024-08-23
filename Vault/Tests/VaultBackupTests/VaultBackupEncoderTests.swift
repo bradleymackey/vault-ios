@@ -101,8 +101,8 @@ extension VaultBackupEncoderTests {
     }
 }
 
-private func anyClock() -> any EpochClock {
-    EpochClockImpl(makeCurrentTime: { 1234 })
+private func anyClock() -> some EpochClock {
+    EpochClockMock(currentTime: 1234)
 }
 
 private func anyKey() -> VaultKey {

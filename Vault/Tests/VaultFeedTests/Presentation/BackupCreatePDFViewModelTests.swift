@@ -75,7 +75,7 @@ extension BackupCreatePDFViewModelTests {
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupPassword: BackupPassword = anyBackupPassword(),
-        clock: EpochClockImpl = EpochClockImpl(makeCurrentTime: { 100 }),
+        clock: some EpochClock = EpochClockMock(currentTime: 100),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
     ) throws -> BackupCreatePDFViewModel {
         let defaults = try testUserDefaults()

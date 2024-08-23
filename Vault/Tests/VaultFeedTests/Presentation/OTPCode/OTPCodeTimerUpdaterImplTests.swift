@@ -25,9 +25,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.currentTimeProvider.modify { $0 = 60 }
+            clock.currentTime = 60
             timer.finishTimer()
-            clock.currentTimeProvider.modify { $0 = 90 }
+            clock.currentTime = 90
             timer.finishTimer()
         })
         XCTAssertEqual(values, [
@@ -44,9 +44,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.currentTimeProvider.modify { $0 = 301 }
+            clock.currentTime = 301
             sut.recalculate()
-            clock.currentTimeProvider.modify { $0 = 330 }
+            clock.currentTime = 330
             sut.recalculate()
         })
         XCTAssertEqual(values, [

@@ -2,6 +2,9 @@ import Combine
 import Foundation
 import FoundationExtensions
 
+/// A clock that reports the current time.
+///
+/// This is a protocol so that we can inject clocks time values where needed.
 public protocol EpochClock: Sendable {
     var currentTime: Double { get }
 }
@@ -12,37 +15,42 @@ extension EpochClock {
     }
 }
 
-/// Mock clock where access to the current time value is protected by a lock.
+/// Mock clock where the current time can be updated.
 ///
-/// This is useful for stubbing out times in a mutable, thread-safe way.
+/// This is a reference type, so can be shared and is useful for injecting.
 public final class EpochClockMock: EpochClock {
     /// Thread-safe storage value for the current time.
-    public let currentTimeProvider: Atomic<Double>
-
-    public var currentTime: Double {
-        currentTimeProvider.get { $0 }
-    }
+    private let currentTimeProvider: Atomic<Double>
 
     public init(currentTime: Double) {
         currentTimeProvider = .init(initialValue: currentTime)
     }
-}
-
-/// Epoch clock that derives the time from the injected time.
-///
-/// The clock has reference semantics, as multiple consumers may want to reference the same clock instance.
-public final class EpochClockImpl: EpochClock {
-    public let makeCurrentTime: @Sendable () -> Double
-
-    public init(makeCurrentTime: @escaping @Sendable () -> Double) {
-        self.makeCurrentTime = makeCurrentTime
-    }
 
     public var currentTime: Double {
-        makeCurrentTime()
+        get {
+            currentTimeProvider.get { $0 }
+        }
+        set {
+            currentTimeProvider.modify { $0 = newValue }
+        }
+    }
+}
+
+extension EpochClock where Self == EpochClockMock {
+    public static func mocked(initialTime: Double) -> EpochClockMock {
+        .init(currentTime: initialTime)
+    }
+}
+
+/// Epoch clock that is equal to the current time, according to the device.
+public struct EpochClockImpl: EpochClock {
+    public init() {}
+
+    public var currentTime: Double {
+        Date.now.timeIntervalSince1970
     }
 
     public var currentDate: Date {
-        Date(timeIntervalSince1970: currentTime)
+        Date.now
     }
 }
