@@ -57,7 +57,7 @@ struct BackupKeyExportView: View {
         AsyncButton {
             await viewModel.createExport()
         } label: {
-            Text("Show Private Key")
+            Label("Show Private Key", systemImage: "eye.trianglebadge.exclamationmark.fill")
         }
     }
 }
