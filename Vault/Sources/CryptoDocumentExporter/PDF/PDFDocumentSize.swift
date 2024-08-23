@@ -7,17 +7,12 @@ public protocol PDFDocumentSize {
     /// The size of the document in inches.
     var inchDimensions: (width: Double, height: Double) { get }
     /// The size of the margins of the document, in inches.
-    var inchMargins: (top: Double, left: Double, bottom: Double, right: Double) { get }
+    var inchMargins: Margins { get }
 }
 
 extension PDFDocumentSize {
     public var pointsPerInch: Double {
         72
-    }
-
-    /// The default margin size is 1 inch.
-    public var inchMargins: (top: Double, left: Double, bottom: Double, right: Double) {
-        (1, 1, 1, 1)
     }
 
     /// The size of the document in points, given the `pointsPerInch`.
@@ -55,12 +50,20 @@ public struct A3DocumentSize: PDFDocumentSize {
     public var inchDimensions: (width: Double, height: Double) {
         (11.69, 16.54)
     }
+
+    public var inchMargins: Margins {
+        .all(1.38)
+    }
 }
 
 public struct A4DocumentSize: PDFDocumentSize {
     public init() {}
     public var inchDimensions: (width: Double, height: Double) {
         (8.27, 11.69)
+    }
+
+    public var inchMargins: Margins {
+        .all(1)
     }
 }
 
@@ -69,12 +72,20 @@ public struct A5DocumentSize: PDFDocumentSize {
     public var inchDimensions: (width: Double, height: Double) {
         (5.83, 8.27)
     }
+
+    public var inchMargins: Margins {
+        .all(0.79)
+    }
 }
 
 public struct USLetterDocumentSize: PDFDocumentSize {
     public init() {}
     public var inchDimensions: (width: Double, height: Double) {
         (8.5, 11)
+    }
+
+    public var inchMargins: Margins {
+        .all(1)
     }
 }
 
@@ -83,11 +94,19 @@ public struct USLegalDocumentSize: PDFDocumentSize {
     public var inchDimensions: (width: Double, height: Double) {
         (8.5, 14)
     }
+
+    public var inchMargins: Margins {
+        .all(1)
+    }
 }
 
 public struct USTabloidDocumentSize: PDFDocumentSize {
     public init() {}
     public var inchDimensions: (width: Double, height: Double) {
         (11, 17)
+    }
+
+    public var inchMargins: Margins {
+        .all(1)
     }
 }

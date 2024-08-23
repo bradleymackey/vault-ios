@@ -371,8 +371,8 @@ private struct NoMarginsDocumentSize: PDFDocumentSize {
         USLegalDocumentSize().inchDimensions
     }
 
-    var inchMargins: (top: Double, left: Double, bottom: Double, right: Double) {
-        (0, 0, 0, 0)
+    var inchMargins: Margins {
+        .all(0)
     }
 }
 
@@ -381,8 +381,8 @@ private struct OffCenterMarginsDocumentSize: PDFDocumentSize {
         USLegalDocumentSize().inchDimensions
     }
 
-    var inchMargins: (top: Double, left: Double, bottom: Double, right: Double) {
-        (0, 0, 2, 2)
+    var inchMargins: Margins {
+        .init(top: 0, left: 0, bottom: 2, right: 2)
     }
 }
 
