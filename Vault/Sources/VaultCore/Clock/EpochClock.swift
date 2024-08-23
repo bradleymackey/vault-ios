@@ -13,6 +13,10 @@ extension EpochClock {
     public var currentDate: Date {
         Date(timeIntervalSince1970: currentTime)
     }
+
+    public var iso8601: String {
+        currentDate.formatted(.iso8601)
+    }
 }
 
 /// Mock clock where the current time can be updated.

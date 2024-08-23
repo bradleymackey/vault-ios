@@ -10,7 +10,7 @@ struct BackupCreatePDFView: View {
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
-        case pdf(PDFDocument)
+        case pdf(ViewModel.GeneratedPDF)
     }
 
     init(viewModel: BackupCreatePDFViewModel) {
@@ -24,29 +24,30 @@ struct BackupCreatePDFView: View {
         }
         .navigationTitle(Text("Create PDF"))
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: viewModel.createdDocument) { _, newValue in
+        .onChange(of: viewModel.generatedPDF) { _, newValue in
             if let newValue {
                 modal = .pdf(newValue)
             }
         }
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
-            case let .pdf(document):
-                pdfPreview(document: document)
+            case let .pdf(generated):
+                pdfPreview(generated: generated)
             }
         }
     }
 
-    private func pdfPreview(document: PDFDocument) -> some View {
+    private func pdfPreview(generated: ViewModel.GeneratedPDF) -> some View {
         NavigationStack {
-            PDFViewer(document)
+            PDFViewer(generated.document)
                 .navigationTitle(Text("PDF"))
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar {
-                    if let url = viewModel.createdDocumentURL {
-                        ToolbarItem(placement: .primaryAction) {
-                            ShareLink(item: url)
-                        }
+                    ToolbarItem(placement: .primaryAction) {
+                        ShareLink(
+                            item: generated.diskURL,
+                            subject: .init("Vault Export")
+                        )
                     }
 
                     ToolbarItem(placement: .cancellationAction) {

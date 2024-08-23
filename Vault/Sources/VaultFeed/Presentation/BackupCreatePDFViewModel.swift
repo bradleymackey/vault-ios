@@ -23,35 +23,47 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
-    public enum Size: Equatable, IdentifiableSelf, CaseIterable, Codable {
+    public enum Size: Equatable, IdentifiableSelf, CaseIterable, Codable, Sendable {
+        case a2
         case a3
         case a4
         case a5
         case usLetter
         case usLegal
         case usTabloid
+        case usLedger
 
         public var localizedTitle: String {
             switch self {
+            case .a2: "A2"
             case .a3: "A3"
             case .a4: "A4"
             case .a5: "A5"
             case .usLetter: "US Letter"
             case .usLegal: "US Legal"
             case .usTabloid: "US Tabloid"
+            case .usLedger: "US Ledger"
             }
         }
 
         fileprivate var documentSize: any PDFDocumentSize {
             switch self {
+            case .a2: A2DocumentSize()
             case .a3: A3DocumentSize()
             case .a4: A4DocumentSize()
             case .a5: A5DocumentSize()
             case .usLetter: USLetterDocumentSize()
             case .usLegal: USLegalDocumentSize()
             case .usTabloid: USTabloidDocumentSize()
+            case .usLedger: USLedgerDocumentSize()
             }
         }
+    }
+
+    /// Exported PDF document that has been generated.
+    public struct GeneratedPDF: Equatable, Hashable {
+        public let document: PDFDocument
+        public let diskURL: URL
     }
 
     private static let pdfSizeKey = Key<Size>("vault.pdf.default-size")
@@ -64,27 +76,29 @@ public final class BackupCreatePDFViewModel {
     public var authorName: String = "Vault"
     public var userHint: String = ""
     public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
-    public var createdDocument: PDFDocument?
-    public var createdDocumentURL: URL?
+    public private(set) var generatedPDF: GeneratedPDF?
 
     private let backupPassword: BackupPassword
     private let dataModel: VaultDataModel
     private let clock: any EpochClock
     private let backupEventLogger: any BackupEventLogger
     private let defaults: Defaults
+    private let fileManager: FileManager
 
     public init(
         backupPassword: BackupPassword,
         dataModel: VaultDataModel,
         clock: any EpochClock,
         backupEventLogger: any BackupEventLogger,
-        defaults: Defaults
+        defaults: Defaults,
+        fileManager: FileManager
     ) {
         self.backupPassword = backupPassword
         self.dataModel = dataModel
         self.clock = clock
         self.backupEventLogger = backupEventLogger
         self.defaults = defaults
+        self.fileManager = fileManager
 
         size = defaults.get(for: Self.pdfSizeKey) ?? .a4
         userHint = defaults.get(for: Self.userHintKey) ?? Self.defaultUserHint
@@ -94,15 +108,15 @@ public final class BackupCreatePDFViewModel {
         do {
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
-            createdDocument = try await makeBackupPDFDocument(payload: payload)
-            let url = FileManager().temporaryDirectory.appending(path: "doc.pdf")
-            createdDocumentURL = url
-            createdDocument?.write(to: url)
+            let document = try await makeBackupPDFDocument(payload: payload)
+            let timestamp = clock.iso8601.replacingOccurrences(of: ":", with: "-")
+            let filename = "vault-export-\(timestamp).pdf"
+            let tempURL = fileManager.temporaryDirectory.appending(path: filename)
+            document.write(to: tempURL)
+            generatedPDF = .init(document: document, diskURL: tempURL)
+
+            commitLatestSettings()
             let hash = try Hasher().sha256(value: payload)
-
-            try? defaults.set(size, for: Self.pdfSizeKey)
-            try? defaults.set(userHint, for: Self.userHintKey)
-
             backupEventLogger.exportedToPDF(date: clock.currentDate, hash: hash)
             state = .success
         } catch {
@@ -114,6 +128,15 @@ public final class BackupCreatePDFViewModel {
         }
     }
 
+    private func commitLatestSettings() {
+        try? defaults.set(size, for: Self.pdfSizeKey)
+        try? defaults.set(userHint, for: Self.userHintKey)
+    }
+}
+
+// MARK: - PDF Generation
+
+extension BackupCreatePDFViewModel {
     /// Exports and encrypts the full vault from storage, rendering to a PDF
     private func makeBackupPDFDocument(payload: VaultApplicationPayload) async throws -> PDFDocument {
         let pdfCreator = VaultBackupPDFGenerator(
@@ -122,13 +145,18 @@ public final class BackupCreatePDFViewModel {
             applicationName: "Vault",
             authorName: authorName
         )
+        let exportPayload = try await makeExportPayload(payload: payload)
+        return try pdfCreator.makePDF(payload: exportPayload)
+    }
+
+    /// Encrypt on background thread.
+    private nonisolated func makeExportPayload(payload: VaultApplicationPayload) async throws -> VaultExportPayload {
         let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
         let encryptedVault = try backupExporter.createEncryptedBackup(payload: payload)
-        let exportPayload = VaultExportPayload(
+        return await VaultExportPayload(
             encryptedVault: encryptedVault,
             userDescription: userHint,
             created: clock.currentDate
         )
-        return try pdfCreator.makePDF(payload: exportPayload)
     }
 }

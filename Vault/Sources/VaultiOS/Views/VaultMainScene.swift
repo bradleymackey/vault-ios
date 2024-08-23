@@ -38,7 +38,8 @@ public struct VaultMainScene: Scene {
         let localSettings = LocalSettings(defaults: defaults)
         let timer = IntervalTimerImpl()
         let clock = EpochClockImpl()
-        let storeFactory = PersistedLocalVaultStoreFactory(fileManager: .default)
+        let fileManager = FileManager.default
+        let storeFactory = PersistedLocalVaultStoreFactory(fileManager: fileManager)
         let store = storeFactory.makeVaultStore()
         let totp = TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
@@ -68,7 +69,8 @@ public struct VaultMainScene: Scene {
             intervalTimer: timer,
             backupEventLogger: backupEventLogger,
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
-            defaults: defaults
+            defaults: defaults,
+            fileManager: fileManager
         )
 
         _pasteboard = State(wrappedValue: pasteboard)
