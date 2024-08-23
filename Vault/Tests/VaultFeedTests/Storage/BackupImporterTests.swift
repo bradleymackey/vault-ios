@@ -51,7 +51,7 @@ extension BackupImporterTests {
         items: [VaultItem] = [],
         tags: [VaultItemTag] = []
     ) throws -> EncryptedVault {
-        let exporter = BackupExporter(clock: .init(makeCurrentTime: { 100 }), backupPassword: password)
+        let exporter = BackupExporter(clock: EpochClockImpl(makeCurrentTime: { 100 }), backupPassword: password)
         let payload = VaultApplicationPayload(userDescription: description, items: items, tags: tags)
         let encryptedBackup = try exporter.createEncryptedBackup(payload: payload)
         return encryptedBackup

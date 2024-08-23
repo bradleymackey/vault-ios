@@ -85,7 +85,7 @@ final class VaultBackupEncoderTests: XCTestCase {
 
 extension VaultBackupEncoderTests {
     private func makeSUT(
-        clock: EpochClock = anyClock(),
+        clock: any EpochClock = anyClock(),
         key: VaultKey,
         keygenSalt: Data = Data(),
         keygenSignature: String = "my-signature",
@@ -101,8 +101,8 @@ extension VaultBackupEncoderTests {
     }
 }
 
-private func anyClock() -> EpochClock {
-    EpochClock(makeCurrentTime: { 1234 })
+private func anyClock() -> any EpochClock {
+    EpochClockImpl(makeCurrentTime: { 1234 })
 }
 
 private func anyKey() -> VaultKey {

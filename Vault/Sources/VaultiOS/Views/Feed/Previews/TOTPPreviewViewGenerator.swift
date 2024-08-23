@@ -12,7 +12,7 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
 
     private let viewFactory: Factory
     private let updaterFactory: any OTPCodeTimerUpdaterFactory
-    private let clock: EpochClock
+    private let clock: any EpochClock
     private let timer: any IntervalTimer
     private var timerUpdaterCache = Cache<UInt64, any OTPCodeTimerUpdater>()
     private var timerPeriodStateCache = Cache<UInt64, OTPCodeTimerPeriodState>()
@@ -21,7 +21,7 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
     init(
         viewFactory: Factory,
         updaterFactory: any OTPCodeTimerUpdaterFactory,
-        clock: EpochClock,
+        clock: any EpochClock,
         timer: any IntervalTimer
     ) {
         self.viewFactory = viewFactory

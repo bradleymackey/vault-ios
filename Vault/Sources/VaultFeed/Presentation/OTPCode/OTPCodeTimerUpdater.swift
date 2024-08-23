@@ -31,9 +31,9 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
     private let period: UInt64
     private var timerPublisher: AnyCancellable?
     private let timer: any IntervalTimer
-    private let clock: EpochClock
+    private let clock: any EpochClock
 
-    public init(timer: any IntervalTimer, period: UInt64, clock: EpochClock) {
+    public init(timer: any IntervalTimer, period: UInt64, clock: any EpochClock) {
         self.period = period
         self.timer = timer
         self.clock = clock

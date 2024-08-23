@@ -5,7 +5,7 @@ import VaultCore
 
 /// Used to create a full, encrypted backup of a vault for export.
 public final class VaultBackupEncoder {
-    private let clock: EpochClock
+    private let clock: any EpochClock
     private let key: VaultKey
     private let keygenSalt: Data
     private let keygenSignature: String
@@ -18,7 +18,7 @@ public final class VaultBackupEncoder {
     }
 
     public init(
-        clock: EpochClock,
+        clock: any EpochClock,
         key: VaultKey,
         keygenSalt: Data,
         keygenSignature: String,

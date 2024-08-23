@@ -25,7 +25,7 @@ final class BackupEventLoggerImplTests: XCTestCase {
 
     func test_lastBackup_getsStoredBackup() throws {
         let defaults = try testUserDefaults()
-        let clock = EpochClock(makeCurrentTime: { 100 })
+        let clock = EpochClockImpl(makeCurrentTime: { 100 })
         let sut = makeSUT(defaults: defaults, clock: clock)
         let date = Date(timeIntervalSince1970: 1234)
         sut.exportedToPDF(date: date, hash: .init(value: Data(hex: "1234")))
@@ -71,7 +71,7 @@ final class BackupEventLoggerImplTests: XCTestCase {
 extension BackupEventLoggerImplTests {
     private func makeSUT(
         defaults: UserDefaults,
-        clock: EpochClock = .init(makeCurrentTime: { 100 })
+        clock: EpochClockImpl = .init(makeCurrentTime: { 100 })
     ) -> BackupEventLoggerImpl {
         BackupEventLoggerImpl(defaults: .init(userDefaults: defaults), clock: clock)
     }
