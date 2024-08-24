@@ -1152,6 +1152,38 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let result = try await sut.retrieveTags()
         XCTAssertEqual(result.map(\.id), insertedIds + [id])
     }
+
+    func test_deleteVault_hasNoEffectOnEmptyStore() async throws {
+        try await sut.deleteVault()
+
+        let tags = try await sut.retrieveTags()
+        XCTAssertTrue(tags.isEmpty)
+        let items = try await sut.retrieve(query: .init())
+        XCTAssertTrue(items.items.isEmpty)
+        XCTAssertTrue(items.errors.isEmpty)
+    }
+
+    func test_deleteVault_removesAllItems() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().makeWritable())
+        let tag2 = try await sut.insertTag(item: anyVaultItemTag().makeWritable())
+        let codes: [VaultItem.Write] = [
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1, tag2]).makeWritable(),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).makeWritable(),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1, tag2]).makeWritable(),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag2]).makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        try await sut.deleteVault()
+
+        let tags = try await sut.retrieveTags()
+        XCTAssertTrue(tags.isEmpty)
+        let items = try await sut.retrieve(query: .init())
+        XCTAssertTrue(items.items.isEmpty)
+        XCTAssertTrue(items.errors.isEmpty)
+    }
 }
 
 // MARK: - Helpers
