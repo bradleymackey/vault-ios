@@ -331,6 +331,7 @@ struct SecureNoteDetailView: View {
         dataModel: .init(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
+            vaultDeleter: VaultStoreDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
@@ -360,6 +361,7 @@ struct SecureNoteDetailView: View {
         dataModel: .init(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
+            vaultDeleter: VaultStoreDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         )

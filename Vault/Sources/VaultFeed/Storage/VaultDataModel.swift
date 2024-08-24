@@ -100,6 +100,7 @@ public final class VaultDataModel: Sendable {
     // MARK: - Init
 
     private let vaultStore: any VaultStore
+    private let vaultDeleter: any VaultStoreDeleter
     private let vaultTagStore: any VaultTagStore
     private let backupPasswordStore: any BackupPasswordStore
     private let backupEventLogger: any BackupEventLogger
@@ -108,12 +109,14 @@ public final class VaultDataModel: Sendable {
     public init(
         vaultStore: any VaultStore,
         vaultTagStore: any VaultTagStore,
+        vaultDeleter: any VaultStoreDeleter,
         backupPasswordStore: any BackupPasswordStore,
         backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = []
     ) {
         self.vaultStore = vaultStore
         self.vaultTagStore = vaultTagStore
+        self.vaultDeleter = vaultDeleter
         self.backupPasswordStore = backupPasswordStore
         self.backupEventLogger = backupEventLogger
         self.itemCaches = itemCaches
@@ -300,5 +303,15 @@ extension VaultDataModel {
     public func makeExport(userDescription: String) async throws -> VaultApplicationPayload {
         // No need to refetch items, this export is pulled directly from the store.
         try await vaultStore.exportVault(userDescription: userDescription)
+    }
+}
+
+// MARK: - Delete
+
+extension VaultDataModel {
+    public func deleteVault() async throws {
+        try await vaultDeleter.deleteVault()
+        await reloadItems()
+        await reloadTags()
     }
 }

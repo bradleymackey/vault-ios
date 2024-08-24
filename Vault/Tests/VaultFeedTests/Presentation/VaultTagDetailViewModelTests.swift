@@ -160,6 +160,7 @@ extension VaultTagDetailViewModelTests {
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
+            vaultDeleter: VaultStoreDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),

@@ -4,8 +4,12 @@ import VaultSettings
 
 @MainActor
 struct VaultSettingsView: View {
+    @Environment(VaultDataModel.self) private var dataModel
+    @Environment(DeviceAuthenticationService.self) private var authenticationService
     @State private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
+
+    @State private var deleteError: PresentationError?
 
     init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
         _viewModel = State(wrappedValue: viewModel)
@@ -17,6 +21,7 @@ struct VaultSettingsView: View {
             viewOptionsSection
             aboutSection
             policySection
+            dangerSection
         }
         .navigationTitle(viewModel.title)
     }
@@ -96,6 +101,43 @@ struct VaultSettingsView: View {
                     Text(viewModel.thirdPartyTitle)
                 }
             }
+        }
+    }
+
+    private var dangerSection: some View {
+        Section {
+            AsyncButton {
+                do {
+                    withAnimation {
+                        deleteError = nil
+                    }
+                    try await authenticationService.validateAuthentication(reason: "Delete Vault")
+                    try await dataModel.deleteVault()
+                    try await Task.sleep(for: .seconds(3)) // might be really fast, make it noticable
+                } catch {
+                    withAnimation {
+                        deleteError = .init(
+                            userTitle: "Can't delete Vault",
+                            userDescription: "Unable to delete Vault data right now. Please try again. \(error.localizedDescription)",
+                            debugDescription: error.localizedDescription
+                        )
+                    }
+                }
+            } label: {
+                let desc = deleteError?.userDescription
+                FormRow(
+                    image: Image(systemName: "xmark.app.fill"),
+                    color: .red,
+                    style: .prominent,
+                    alignment: desc == nil ? .center : .firstTextBaseline
+                ) {
+                    TextAndSubtitle(title: "Delete All Data", subtitle: desc)
+                }
+            }
+            .foregroundStyle(.red)
+        } header: {
+            Label("Danger", systemImage: "exclamationmark.circle.fill")
+                .foregroundStyle(.red)
         }
     }
 }

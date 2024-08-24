@@ -425,6 +425,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         dataModel: VaultDataModel(
             vaultStore: VaultStoreStub(),
             vaultTagStore: VaultTagStoreStub(),
+            vaultDeleter: VaultStoreDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),

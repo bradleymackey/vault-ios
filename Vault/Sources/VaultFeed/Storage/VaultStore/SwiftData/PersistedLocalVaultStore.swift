@@ -330,6 +330,22 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
     }
 }
 
+// MARK: - VaultStoreDeleter
+
+extension PersistedLocalVaultStore: VaultStoreDeleter {
+    public func deleteVault() async throws {
+        do {
+            for model in PersistedSchemaLatestVersion.models {
+                try modelContext.delete(model: model)
+            }
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}
+
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {

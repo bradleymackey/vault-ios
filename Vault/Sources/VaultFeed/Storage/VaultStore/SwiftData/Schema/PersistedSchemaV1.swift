@@ -24,7 +24,7 @@ extension PersistedSchemaV1 {
         var searchPassphrase: String?
         var lockState: String?
         var color: PersistedColor?
-        @Relationship(deleteRule: .nullify)
+        @Relationship(deleteRule: .noAction)
         var tags: [PersistedVaultTag] = []
 
         @Relationship(deleteRule: .cascade)
@@ -127,7 +127,7 @@ extension PersistedSchemaV1 {
         var color: PersistedColor?
         var iconName: String?
 
-        @Relationship(deleteRule: .nullify, inverse: \PersistedVaultItem.tags)
+        @Relationship(deleteRule: .noAction, inverse: \PersistedVaultItem.tags)
         var items: [PersistedVaultItem] = []
 
         init(id: UUID, title: String, color: PersistedColor?, iconName: String?, items: [PersistedVaultItem]) {

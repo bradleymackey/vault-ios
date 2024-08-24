@@ -40,3 +40,11 @@ public protocol VaultStoreReorderable: Sendable {
 public protocol VaultStoreExporter: Sendable {
     func exportVault(userDescription: String) async throws -> VaultApplicationPayload
 }
+
+/// @mockable
+public protocol VaultStoreDeleter: Sendable {
+    /// Deletes the entire vault immediately.
+    ///
+    /// - note: This operation is atomic and will either complete fully or not at all.
+    func deleteVault() async throws
+}
