@@ -7,6 +7,11 @@ protocol DraggableItem: Identifiable {
 
 extension VaultItem: DraggableItem {
     var sharingContent: String {
-        "Hello, world!"
+        switch item {
+        case let .secureNote(note):
+            return note.title
+        case .otpCode:
+            return "OTP"
+        }
     }
 }
