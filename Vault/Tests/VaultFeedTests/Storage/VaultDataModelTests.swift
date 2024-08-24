@@ -472,6 +472,33 @@ final class VaultDataModelTests: XCTestCase {
 
         XCTAssertEqual(sut.backupPassword, .notFetched)
     }
+
+    @MainActor
+    func test_deleteVault_removesAllDataFromVault() async throws {
+        let deleter = VaultStoreDeleterMock()
+        let sut = makeSUT(vaultDeleter: deleter)
+
+        let exp = expectation(description: "Wait for deletion")
+        deleter.deleteVaultHandler = {
+            exp.fulfill()
+        }
+
+        try await sut.deleteVault()
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
+    func test_deleteVault_reloadsData() async throws {
+        let vaultStore = VaultStoreStub()
+        let vaultTagStore = VaultTagStoreStub()
+        let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
+
+        try await sut.deleteVault()
+
+        XCTAssertEqual(vaultStore.calledMethods, [.retrieve])
+        XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
+    }
 }
 
 // MARK: - Helpers
@@ -481,6 +508,7 @@ extension VaultDataModelTests {
     private func makeSUT(
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
+        vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = []
@@ -488,6 +516,7 @@ extension VaultDataModelTests {
         VaultDataModel(
             vaultStore: vaultStore,
             vaultTagStore: vaultTagStore,
+            vaultDeleter: vaultDeleter,
             backupPasswordStore: backupPasswordStore,
             backupEventLogger: backupEventLogger,
             itemCaches: itemCaches

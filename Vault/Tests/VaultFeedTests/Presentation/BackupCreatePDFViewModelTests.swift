@@ -84,6 +84,7 @@ extension BackupCreatePDFViewModelTests {
             dataModel: VaultDataModel(
                 vaultStore: vaultStore,
                 vaultTagStore: vaultTagStore,
+                vaultDeleter: VaultStoreDeleterMock(),
                 backupPasswordStore: backupPasswordStore,
                 backupEventLogger: BackupEventLoggerMock()
             ),

@@ -60,6 +60,7 @@ public struct VaultMainScene: Scene {
         let vaultDataModel = VaultDataModel(
             vaultStore: store,
             vaultTagStore: store,
+            vaultDeleter: store,
             backupPasswordStore: backupStore,
             backupEventLogger: backupEventLogger,
             itemCaches: [totp, hotp]
