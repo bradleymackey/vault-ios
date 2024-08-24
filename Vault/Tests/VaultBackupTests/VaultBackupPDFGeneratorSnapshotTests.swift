@@ -37,14 +37,23 @@ final class VaultBackupPDFGeneratorSnapshotTests: XCTestCase {
 
         assertSnapshot(of: pdf, as: .pdf())
     }
+
+    func test_makeDocument_sizesCorrectlyToOtherSize() throws {
+        let payload = makeTestingPayload(encryptedDataLength: 10000)
+        let sut = makeSUT(size: A5DocumentSize())
+
+        let pdf = try sut.makePDF(payload: payload)
+
+        assertSnapshot(of: pdf, as: .pdf())
+    }
 }
 
 // MARK: - Helpers
 
 extension VaultBackupPDFGeneratorSnapshotTests {
-    private func makeSUT() -> VaultBackupPDFGenerator {
+    private func makeSUT(size: some PDFDocumentSize = A4DocumentSize()) -> VaultBackupPDFGenerator {
         VaultBackupPDFGenerator(
-            size: A4DocumentSize(),
+            size: size,
             documentTitle: "my document",
             applicationName: "my app",
             authorName: "my author"
