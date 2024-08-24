@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct DetailSubtitleView: View {
+struct TextAndSubtitle: View {
     let title: String
     let subtitle: String?
 
@@ -20,8 +20,8 @@ struct DetailSubtitleView: View {
 
 #Preview {
     List {
-        DetailSubtitleView(title: "Test", subtitle: nil)
-        DetailSubtitleView(title: "Test", subtitle: "Hello there")
-        DetailSubtitleView(title: "Test", subtitle: Array(repeating: "Hello", count: 20).joined(separator: " "))
+        TextAndSubtitle(title: "Test", subtitle: nil)
+        TextAndSubtitle(title: "Test", subtitle: "Hello there")
+        TextAndSubtitle(title: "Test", subtitle: Array(repeating: "Hello", count: 20).joined(separator: " "))
     }
 }

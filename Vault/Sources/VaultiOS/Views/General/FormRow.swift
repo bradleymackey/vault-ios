@@ -68,7 +68,7 @@ struct FormRow<Content: View>: View {
             Text("Hello Again")
         }
         FormRow(image: Image(systemName: "checkmark"), color: .accentColor, style: .prominent) {
-            DetailSubtitleView(title: "Hello", subtitle: "world\nwe\ngood")
+            TextAndSubtitle(title: "Hello", subtitle: "world\nwe\ngood")
         }
         FormRow(
             image: Image(systemName: "checkmark"),
@@ -76,7 +76,7 @@ struct FormRow<Content: View>: View {
             style: .prominent,
             alignment: .firstTextBaseline
         ) {
-            DetailSubtitleView(title: "Hello", subtitle: "world\nwe\ngood")
+            TextAndSubtitle(title: "Hello", subtitle: "world\nwe\ngood")
         }
     }
 }
