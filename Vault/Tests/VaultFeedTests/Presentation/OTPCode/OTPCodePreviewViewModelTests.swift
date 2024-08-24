@@ -7,40 +7,40 @@ import XCTest
 final class OTPCodePreviewViewModelTests: XCTestCase {
     @MainActor
     func test_code_updatesWithCodes() async throws {
-        let (renderer, sut) = makeSUT()
+        let (codePublisher, sut) = makeSUT()
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            renderer.subject.send("hello")
+            codePublisher.subject.send("hello")
         }
         XCTAssertEqual(sut.code, .visible("hello"))
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            renderer.subject.send("world")
+            codePublisher.subject.send("world")
         }
         XCTAssertEqual(sut.code, .visible("world"))
     }
 
     @MainActor
     func test_code_goesToNoMoreCodesWhenFinished() async throws {
-        let (renderer, sut) = makeSUT()
+        let (codePublisher, sut) = makeSUT()
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            renderer.subject.send("hi")
+            codePublisher.subject.send("hi")
         }
         XCTAssertEqual(sut.code, .visible("hi"))
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            renderer.subject.send(completion: .finished)
+            codePublisher.subject.send(completion: .finished)
         }
         XCTAssertEqual(sut.code, .finished)
     }
 
     @MainActor
     func test_code_goesToErrorWhenErrors() async throws {
-        let (renderer, sut) = makeSUT()
+        let (codePublisher, sut) = makeSUT()
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            renderer.subject.send(completion: .failure(anyNSError()))
+            codePublisher.subject.send(completion: .failure(anyNSError()))
         }
 
         switch sut.code {
@@ -83,15 +83,15 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         issuer: String = "any",
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (OTPCodeRendererMock, OTPCodePreviewViewModel) {
-        let renderer = OTPCodeRendererMock()
+    ) -> (OTPCodePublisherMock, OTPCodePreviewViewModel) {
+        let codePublisher = OTPCodePublisherMock()
         let viewModel = OTPCodePreviewViewModel(
             accountName: "any",
             issuer: issuer,
             color: .default,
-            renderer: renderer
+            codePublisher: codePublisher
         )
         trackForMemoryLeaks(viewModel, file: file, line: line)
-        return (renderer, viewModel)
+        return (codePublisher, viewModel)
     }
 }

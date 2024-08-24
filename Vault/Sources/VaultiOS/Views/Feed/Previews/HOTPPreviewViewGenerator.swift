@@ -9,7 +9,7 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
     private let viewFactory: Factory
     private let timer: any IntervalTimer
 
-    private var rendererCache = Cache<Identifier<VaultItem>, HOTPCodeRenderer>()
+    private var codePublisherCache = Cache<Identifier<VaultItem>, HOTPCodePublisher>()
     private var previewViewModelCache = Cache<Identifier<VaultItem>, OTPCodePreviewViewModel>()
     private var incrementerViewModelCache = Cache<Identifier<VaultItem>, OTPCodeIncrementerViewModel>()
 
@@ -65,7 +65,7 @@ extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopy
 extension HOTPPreviewViewGenerator: VaultItemCache {
     nonisolated func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) async {
         await MainActor.run {
-            rendererCache.remove(key: id)
+            codePublisherCache.remove(key: id)
             previewViewModelCache.remove(key: id)
             incrementerViewModelCache.remove(key: id)
         }
@@ -76,16 +76,16 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
     }
 
     var cachedRendererCount: Int {
-        rendererCache.count
+        codePublisherCache.count
     }
 
     var cachedIncrementerCount: Int {
         incrementerViewModelCache.count
     }
 
-    private func makeRenderer(id: Identifier<VaultItem>, code: HOTPAuthCode) -> HOTPCodeRenderer {
-        rendererCache.getOrCreateValue(for: id) {
-            HOTPCodeRenderer(hotpGenerator: code.data.hotpGenerator())
+    private func makeCodePublisher(id: Identifier<VaultItem>, code: HOTPAuthCode) -> HOTPCodePublisher {
+        codePublisherCache.getOrCreateValue(for: id) {
+            HOTPCodePublisher(hotpGenerator: code.data.hotpGenerator())
         }
     }
 
@@ -95,7 +95,7 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
     ) -> OTPCodeIncrementerViewModel {
         incrementerViewModelCache.getOrCreateValue(for: id) {
             OTPCodeIncrementerViewModel(
-                hotpRenderer: makeRenderer(id: id, code: code),
+                codePublisher: makeCodePublisher(id: id, code: code),
                 timer: timer,
                 initialCounter: code.counter
             )
@@ -111,7 +111,7 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 color: metadata.color ?? .default,
-                renderer: makeRenderer(id: metadata.id, code: code)
+                codePublisher: makeCodePublisher(id: metadata.id, code: code)
             )
             viewModel.hideCodeUntilNextUpdate()
             return viewModel

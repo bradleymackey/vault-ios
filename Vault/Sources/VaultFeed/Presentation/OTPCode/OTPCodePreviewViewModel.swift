@@ -37,12 +37,12 @@ public final class OTPCodePreviewViewModel {
         accountName: String,
         issuer: String,
         color: VaultItemColor,
-        renderer: some OTPCodeRenderer
+        codePublisher: some OTPCodePublisher
     ) {
         self.accountName = accountName
         self.color = color
         self.issuer = issuer
-        renderer.renderedCodePublisher()
+        codePublisher.renderedCodePublisher()
             .sink { [weak self] completion in
                 guard let self else { return }
                 switch completion {

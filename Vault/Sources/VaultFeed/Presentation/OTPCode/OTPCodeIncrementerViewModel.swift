@@ -8,20 +8,20 @@ public final class OTPCodeIncrementerViewModel {
     public private(set) var isButtonEnabled = true
 
     private let timer: any IntervalTimer
-    private let hotpRenderer: HOTPCodeRenderer
+    private let codePublisher: HOTPCodePublisher
     private var counter: UInt64
     private var timerCancellable: AnyCancellable?
 
-    public init(hotpRenderer: HOTPCodeRenderer, timer: any IntervalTimer, initialCounter: UInt64) {
+    public init(codePublisher: HOTPCodePublisher, timer: any IntervalTimer, initialCounter: UInt64) {
         self.timer = timer
-        self.hotpRenderer = hotpRenderer
+        self.codePublisher = codePublisher
         counter = initialCounter
     }
 
     public func incrementCounter() {
         lockingWithButton {
             counter += 1
-            hotpRenderer.set(counter: counter)
+            codePublisher.set(counter: counter)
         }
     }
 

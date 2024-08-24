@@ -113,7 +113,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
     ) -> OTPCodePreviewViewModel {
         viewModelCache.getOrCreateValue(for: metadata.id) {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
-            let renderer = TOTPCodeRenderer(
+            let codePublisher = TOTPCodePublisher(
                 timer: makeTimerController(period: code.period),
                 totpGenerator: totpGenerator
             )
@@ -121,7 +121,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 color: metadata.color ?? .default,
-                renderer: renderer
+                codePublisher: codePublisher
             )
         }
     }
