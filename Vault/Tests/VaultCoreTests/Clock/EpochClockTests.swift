@@ -16,10 +16,4 @@ final class EpochClockTests: XCTestCase {
 
         XCTAssertEqual(sut.currentTime, 1234)
     }
-
-    func test_iso8601_formatting() {
-        let sut = EpochClockMock(currentTime: 1234)
-
-        XCTAssertEqual(sut.iso8601, "1970-01-01T00:20:34Z")
-    }
 }

@@ -106,10 +106,11 @@ public final class BackupCreatePDFViewModel {
 
     public func createPDF() async {
         do {
+            let currentDate = clock.currentDate
             state = .loading
             let payload = try await dataModel.makeExport(userDescription: userDescriptionEncrypted)
             let document = try await makeBackupPDFDocument(payload: payload)
-            let timestamp = clock.iso8601.replacingOccurrences(of: ":", with: "-")
+            let timestamp = VaultDateFormatter(timezone: .current).formatForFileName(date: currentDate)
             let filename = "vault-export-\(timestamp).pdf"
             let tempURL = fileManager.temporaryDirectory.appending(path: filename)
             document.write(to: tempURL)
@@ -117,7 +118,7 @@ public final class BackupCreatePDFViewModel {
 
             commitLatestSettings()
             let hash = try Hasher().sha256(value: payload)
-            backupEventLogger.exportedToPDF(date: clock.currentDate, hash: hash)
+            backupEventLogger.exportedToPDF(date: currentDate, hash: hash)
             state = .success
         } catch {
             state = .error(.init(
