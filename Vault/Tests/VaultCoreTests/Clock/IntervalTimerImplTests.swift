@@ -27,6 +27,26 @@ final class IntervalTimerImplTests: XCTestCase {
     }
 
     @MainActor
+    func test_wait_negativeCompletesImmediately() async throws {
+        let sut = IntervalTimerImpl()
+
+        let publisher = sut.wait(for: -20).collect(1).first()
+
+        let values: [Void] = try await awaitPublisher(publisher, timeout: 2.0, when: {})
+        XCTAssertEqual(values.count, 1)
+    }
+
+    @MainActor
+    func test_wait_zeroCompletesImmediately() async throws {
+        let sut = IntervalTimerImpl()
+
+        let publisher = sut.wait(for: 0.0).collect(1).first()
+
+        let values: [Void] = try await awaitPublisher(publisher, timeout: 2.0, when: {})
+        XCTAssertEqual(values.count, 1)
+    }
+
+    @MainActor
     func test_wait_publishesAfterWait() async throws {
         let sut = IntervalTimerImpl()
 
