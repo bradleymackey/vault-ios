@@ -30,9 +30,9 @@ public final class OTPCodeIncrementerViewModel {
 
     public func incrementCounter() async throws {
         try await lockingWithButton {
+            try await incrementerStore.incrementCounter(id: id)
             counter += 1
             codePublisher.set(counter: counter)
-            try await incrementerStore.incrementCounter(id: id)
         }
     }
 

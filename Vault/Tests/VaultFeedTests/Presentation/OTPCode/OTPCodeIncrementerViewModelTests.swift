@@ -117,6 +117,25 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         await fulfillment(of: [exp])
     }
 
+    @MainActor
+    func test_incrementCounter_doesNotTriggerPublishIfIncrementFailed() async throws {
+        let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
+        let incrementerStore = VaultStoreHOTPIncrementerMock()
+        let sut = makeSUT(codePublisher: codePublisher, incrementerStore: incrementerStore)
+
+        incrementerStore.incrementCounterHandler = { _ in
+            throw TestError()
+        }
+
+        let publisher = codePublisher.counterIncrementedPublisher()
+            .dropFirst() // the renderer publishes the first value right away, so ignore that
+            .collectFirst(1)
+
+        await awaitNoPublish(publisher: publisher) {
+            try? await sut.incrementCounter()
+        }
+    }
+
     // MARK: - Helpers
 
     @MainActor
