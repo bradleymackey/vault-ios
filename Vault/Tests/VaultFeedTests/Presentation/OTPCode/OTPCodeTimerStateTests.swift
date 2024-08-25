@@ -100,4 +100,22 @@ final class OTPCodeTimerStateTests: XCTestCase {
         let fractionCompleted = sut.fractionCompleted(at: 460)
         XCTAssertEqual(fractionCompleted, 1, accuracy: .ulpOfOne)
     }
+
+    func test_offset_addsTimeToValues() {
+        let sut = OTPCodeTimerState(startTime: 100, endTime: 101)
+
+        let offset = sut.offset(time: 23.2)
+
+        XCTAssertEqual(offset.startTime, 123.2, accuracy: .ulpOfOne)
+        XCTAssertEqual(offset.endTime, 124.2, accuracy: .ulpOfOne)
+    }
+
+    func test_offset_subtractsTimeFromValues() {
+        let sut = OTPCodeTimerState(startTime: 100, endTime: 101)
+
+        let offset = sut.offset(time: -10)
+
+        XCTAssertEqual(offset.startTime, 90, accuracy: .ulpOfOne)
+        XCTAssertEqual(offset.endTime, 91, accuracy: .ulpOfOne)
+    }
 }

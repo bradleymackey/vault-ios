@@ -44,6 +44,13 @@ extension OTPCodeTimerState {
         let fractionCompleted = 1 - remainingFraction
         return fractionCompleted.clamped(to: 0 ... 1)
     }
+
+    public func offset(time offsetTime: Double) -> Self {
+        .init(
+            startTime: startTime + offsetTime,
+            endTime: endTime + offsetTime
+        )
+    }
 }
 
 extension Comparable {

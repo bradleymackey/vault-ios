@@ -40,29 +40,35 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
         let initialState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
         timerStateSubject = .init(initialState)
 
-        scheduleNextClock()
+        scheduleNextUpdate()
     }
 
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
     public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
-        timerStateSubject.eraseToAnyPublisher()
+        timerStateSubject
+            .eraseToAnyPublisher()
     }
 
     /// Forces the timer to recalculate it's current state and republish.
     public func recalculate() {
-        let nextState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
-        timerStateSubject.send(nextState)
+        timerPublisher?.cancel()
+        let currentState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
+        timerStateSubject.send(currentState)
+        scheduleNextUpdate()
     }
 }
 
 extension OTPCodeTimerUpdaterImpl {
-    private func scheduleNextClock() {
-        let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
+    /// Schedules the next display of the timer state.
+    private func scheduleNextUpdate() {
+        let currentState = timerStateSubject.value
+        let targetState = currentState.offset(time: Double(period))
+        let timeUntilTarget = targetState.startTime - clock.currentTime
         timerPublisher?.cancel()
-        timerPublisher = timer.wait(for: remaining)
+        timerPublisher = timer.wait(for: timeUntilTarget + 0.2)
             .sink { [weak self] in
-                self?.recalculate()
-                self?.scheduleNextClock()
+                self?.timerStateSubject.send(targetState)
+                self?.scheduleNextUpdate()
             }
     }
 }
