@@ -12,6 +12,8 @@ struct CodeTimerHorizontalBarView: View {
     @State private var currentFractionCompleted = 1.0
     @Environment(\.scenePhase) private var scenePhase
     @Environment(VaultInjector.self) private var injector
+    @State private var resetTimerBarAnimation: DispatchWorkItem?
+    @State private var timerAnimation: DispatchWorkItem?
 
     var body: some View {
         GeometryReader { proxy in
@@ -41,19 +43,29 @@ struct CodeTimerHorizontalBarView: View {
     }
 
     private func resetAnimation(animateReset: Bool) {
-        let currentTime = injector.clock.currentTime
-        withAnimation(
-            .linear(duration: animateReset ? 0.15 : 0), {
-                currentFractionCompleted = timerState.animationState.initialFraction(currentTime: currentTime)
-            },
-            completion: {
-                if case let .animate(state) = timerState.animationState {
-                    withAnimation(.linear(duration: state.remainingTime(at: currentTime))) {
-                        currentFractionCompleted = 0
+        let clock = injector.clock
+        resetTimerBarAnimation?.cancel()
+        timerAnimation?.cancel()
+        resetTimerBarAnimation = .init(qos: .userInteractive) {
+            withAnimation(
+                .linear(duration: animateReset ? 0.15 : 0),
+                completionCriteria: .removed,
+                {
+                    currentFractionCompleted = timerState.animationState.initialFraction(currentTime: clock.currentTime)
+                },
+                completion: {
+                    if case let .animate(state) = timerState.animationState {
+                        timerAnimation = .init(qos: .userInteractive) {
+                            withAnimation(.linear(duration: state.remainingTime(at: clock.currentTime))) {
+                                currentFractionCompleted = 0
+                            }
+                        }
+                        timerAnimation?.perform()
                     }
                 }
-            }
-        )
+            )
+        }
+        resetTimerBarAnimation?.perform()
     }
 }
 
@@ -65,10 +77,10 @@ struct CodeTimerHorizontalBarView: View {
     .frame(width: 250, height: 20)
     .previewLayout(.fixed(width: 300, height: 300))
     .onAppear {
-        subject.send(OTPCodeTimerState(startTime: 15, endTime: 60))
+        subject.send(OTPCodeTimerState(startTime: 23, endTime: 60))
     }
     .environment(VaultInjector(
-        clock: EpochClockImpl(),
+        clock: EpochClockMock(currentTime: 30),
         intervalTimer: IntervalTimerImpl(),
         backupEventLogger: BackupEventLoggerMock(),
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
