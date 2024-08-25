@@ -5,6 +5,14 @@ import VaultFeed
 struct BackupImportView: View {
     @Environment(VaultDataModel.self) private var dataModel
 
+    @State private var modal: Modal?
+
+    private enum Modal: IdentifiableSelf {
+        case importToCurrentlyEmpty
+        case importAndMerge
+        case importAndOverride
+    }
+
     var body: some View {
         Form {
             if dataModel.hasAnyItems {
@@ -17,12 +25,28 @@ struct BackupImportView: View {
         .task {
             await dataModel.reloadItems()
         }
+        .sheet(item: $modal, onDismiss: nil) { item in
+            switch item {
+            case .importToCurrentlyEmpty:
+                NavigationStack {
+                    Text("Import – Vault Currently Empty")
+                }
+            case .importAndMerge:
+                NavigationStack {
+                    Text("Import – Merge")
+                }
+            case .importAndOverride:
+                NavigationStack {
+                    Text("Import – Override")
+                }
+            }
+        }
     }
 
     private var noExistingCodesSection: some View {
         Section {
             Button {
-//                print("restore existing")
+                modal = .importToCurrentlyEmpty
             } label: {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.fill"),
@@ -41,7 +65,7 @@ struct BackupImportView: View {
     private var hasExistingCodesSection: some View {
         Section {
             Button {
-//                print("merge")
+                modal = .importAndMerge
             } label: {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.on.square.fill"),
@@ -57,7 +81,7 @@ struct BackupImportView: View {
             }
 
             Button {
-//                print("override")
+                modal = .importAndOverride
             } label: {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.fill"),
