@@ -102,12 +102,28 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         }
     }
 
+    @MainActor
+    func test_incrementCounter_incrementsStore() async throws {
+        let incrementerStore = VaultStoreHOTPIncrementerMock()
+        let sut = makeSUT(incrementerStore: incrementerStore)
+
+        let exp = expectation(description: "Wait for increment")
+        incrementerStore.incrementCounterHandler = { _ in
+            exp.fulfill()
+        }
+
+        try await sut.incrementCounter()
+
+        await fulfillment(of: [exp])
+    }
+
     // MARK: - Helpers
 
     @MainActor
     private func makeSUT(
         codePublisher: HOTPCodePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data())),
         timer: IntervalTimerMock = IntervalTimerMock(),
+        incrementerStore: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> OTPCodeIncrementerViewModel {
@@ -116,7 +132,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             codePublisher: codePublisher,
             timer: timer,
             initialCounter: 0,
-            incrementerStore: VaultStoreHOTPIncrementerMock()
+            incrementerStore: incrementerStore
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
