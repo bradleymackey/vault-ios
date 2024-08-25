@@ -10,6 +10,14 @@ public struct OTPCodeTimerState: Equatable, Sendable {
         self.startTime = startTime
         self.endTime = endTime
     }
+
+    /// Create a state based on the current time and the repeating period.
+    public init(currentTime: Double, period: UInt64) {
+        let currentCodeNumber = UInt64(currentTime) / period
+        let nextCodeNumber = currentCodeNumber + 1
+        startTime = Double(currentCodeNumber * period)
+        endTime = Double(nextCodeNumber * period)
+    }
 }
 
 extension OTPCodeTimerState {

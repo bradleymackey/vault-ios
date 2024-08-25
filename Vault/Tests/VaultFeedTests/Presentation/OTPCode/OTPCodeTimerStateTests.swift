@@ -2,7 +2,28 @@ import Foundation
 import VaultFeed
 import XCTest
 
-final class OTPTimerStateTests: XCTestCase {
+final class OTPCodeTimerStateTests: XCTestCase {
+    func test_init_startTimeAndEndTimeIsValues() {
+        let sut = OTPCodeTimerState(startTime: 123, endTime: 456)
+
+        XCTAssertEqual(sut.startTime, 123)
+        XCTAssertEqual(sut.endTime, 456)
+    }
+
+    func test_init_currentTimePeriod_firstRange() {
+        let sut = OTPCodeTimerState(currentTime: 50, period: 30)
+
+        XCTAssertEqual(sut.startTime, 30)
+        XCTAssertEqual(sut.endTime, 60)
+    }
+
+    func test_init_currentTimePeriod_subsequentRange() {
+        let sut = OTPCodeTimerState(currentTime: 91.3, period: 30)
+
+        XCTAssertEqual(sut.startTime, 90)
+        XCTAssertEqual(sut.endTime, 120)
+    }
+
     func test_totalTime_isDurationOfTimeRangePositive() {
         let sut = OTPCodeTimerState(startTime: 150, endTime: 250)
         let totalTime = sut.totalTime

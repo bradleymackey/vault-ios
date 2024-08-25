@@ -37,7 +37,7 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
         self.period = period
         self.timer = timer
         self.clock = clock
-        let initialState = Self.timerState(currentTime: clock.currentTime, period: period)
+        let initialState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
         timerStateSubject = .init(initialState)
 
         scheduleNextClock()
@@ -50,7 +50,7 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
 
     /// Forces the timer to recalculate it's current state and republish.
     public func recalculate() {
-        let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
+        let nextState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(nextState)
     }
 }
@@ -64,13 +64,5 @@ extension OTPCodeTimerUpdaterImpl {
                 self?.recalculate()
                 self?.scheduleNextClock()
             }
-    }
-
-    private static func timerState(currentTime: Double, period: UInt64) -> OTPCodeTimerState {
-        let currentCodeNumber = UInt64(currentTime) / period
-        let nextCodeNumber = currentCodeNumber + 1
-        let codeStart = currentCodeNumber * period
-        let codeEnd = nextCodeNumber * period
-        return OTPCodeTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
     }
 }
