@@ -24,6 +24,12 @@ public final actor PersistedLocalVaultStore {
 // MARK: - VaultStoreReader
 
 extension PersistedLocalVaultStore: VaultStoreReader {
+    public var hasAnyItems: Bool {
+        get async throws {
+            try fetchHasModelsInStorage(model: PersistedVaultItem.self)
+        }
+    }
+
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
@@ -399,6 +405,13 @@ extension PersistedLocalVaultStore {
             throw Error.modelNotFound
         }
         return existing
+    }
+
+    private func fetchHasModelsInStorage<T: PersistentModel>(model _: T.Type) throws -> Bool {
+        var itemDescriptor = FetchDescriptor<T>(predicate: .true)
+        itemDescriptor.fetchLimit = 1
+        let result = try modelContext.fetch(itemDescriptor)
+        return result.isNotEmpty
     }
 }
 

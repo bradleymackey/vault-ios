@@ -15,6 +15,12 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader, VaultTag
         throw error
     }
 
+    public var hasAnyItems: Bool {
+        get async throws {
+            throw error
+        }
+    }
+
     public func insert(item _: VaultItem.Write) async throws -> Identifier<VaultItem> {
         throw error
     }

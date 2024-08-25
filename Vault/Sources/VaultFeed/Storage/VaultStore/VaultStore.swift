@@ -7,6 +7,11 @@ public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStore
 public protocol VaultStoreReader: Sendable {
     /// Retrieve items matching the given query.
     func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem>
+
+    /// Returns a boolean if there is any data in the store at all.
+    ///
+    /// This checks all items, including hidden and locked ones.
+    var hasAnyItems: Bool { get async throws }
 }
 
 public protocol VaultStoreWriter: Sendable {

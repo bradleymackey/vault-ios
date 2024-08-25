@@ -32,6 +32,15 @@ public final class VaultStoreStub: VaultStore {
         return try retrieveHandler(query)
     }
 
+    public private(set) var hasAnyItemsCallCount = 0
+    public var hasAnyItemsHandler: () throws -> Bool = { true }
+    public var hasAnyItems: Bool {
+        get async throws {
+            hasAnyItemsCallCount += 1
+            return try hasAnyItemsHandler()
+        }
+    }
+
     public private(set) var insertCallCount = 0
     public var insertHandler: (VaultItem.Write) throws -> Identifier<VaultItem> = { _ in .new() }
     public func insert(item: VaultItem.Write) async throws -> Identifier<VaultItem> {

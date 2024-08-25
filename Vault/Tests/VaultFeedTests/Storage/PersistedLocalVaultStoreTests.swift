@@ -707,6 +707,30 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_hasAnyItems_isFalseForNoItems() async throws {
+        let value = try await sut.hasAnyItems
+
+        XCTAssertFalse(value)
+    }
+
+    func test_hasAnyItems_returnsTrueForSingleItem() async throws {
+        let code = anyOTPAuthCode().wrapInAnyVaultItem().makeWritable()
+        try await sut.insert(item: code)
+
+        let value = try await sut.hasAnyItems
+
+        XCTAssertTrue(value)
+    }
+
+    func test_hasAnyItems_returnsTrueForSingleLockedItem() async throws {
+        let code = anyOTPAuthCode().wrapInAnyVaultItem(visibility: .onlySearch, searchableLevel: .none).makeWritable()
+        try await sut.insert(item: code)
+
+        let value = try await sut.hasAnyItems
+
+        XCTAssertTrue(value)
+    }
+
     func test_insert_deliversNoErrorOnEmptyStore() async throws {
         try await sut.insert(item: uniqueVaultItem().makeWritable())
     }
