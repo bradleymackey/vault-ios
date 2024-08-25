@@ -55,12 +55,13 @@ func anySecureNote(
 }
 
 func anyOTPAuthCode(
+    type: OTPAuthType = .totp(),
     accountName: String = "",
     issuerName: String = ""
 ) -> OTPAuthCode {
     let randomData = Data.random(count: 50)
     return OTPAuthCode(
-        type: .totp(),
+        type: type,
         data: .init(
             secret: .init(data: randomData, format: .base32),
             accountName: accountName,

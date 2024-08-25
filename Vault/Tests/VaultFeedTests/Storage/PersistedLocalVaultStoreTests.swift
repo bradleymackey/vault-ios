@@ -1184,6 +1184,32 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertTrue(items.items.isEmpty)
         XCTAssertTrue(items.errors.isEmpty)
     }
+
+    func test_incrementCounter_throwsForNonTOTP() async throws {
+        let note = anySecureNote().wrapInAnyVaultItem().makeWritable()
+        let id1 = try await sut.insert(item: note)
+        do {
+            try await sut.incrementCounter(id: id1)
+            XCTFail()
+        } catch {
+            // expected
+        }
+    }
+
+    func test_incrementCounter_incrementsHOTP() async throws {
+        let code = anyOTPAuthCode(type: .hotp(counter: 12)).wrapInAnyVaultItem().makeWritable()
+        let id1 = try await sut.insert(item: code)
+
+        try await sut.incrementCounter(id: id1)
+
+        let all = try await sut.retrieve(query: .init())
+        let item = try XCTUnwrap(all.items.first)
+        switch item.item.otpCode?.type {
+        case let .hotp(counter): XCTAssertEqual(counter, 13)
+        case .totp: XCTFail()
+        case nil: XCTFail()
+        }
+    }
 }
 
 // MARK: - Helpers
