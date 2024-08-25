@@ -1,7 +1,8 @@
 import Combine
 import Foundation
+import FoundationExtensions
 
-public protocol IntervalTimer {
+public protocol IntervalTimer: Sendable {
     /// Set an expectation to publish once after the specified `time`.
     func wait(for time: Double) -> AnyPublisher<Void, Never>
     /// Set an expectation to publish once after the specified `time`, with tolerance.
@@ -11,24 +12,28 @@ public protocol IntervalTimer {
 // MARK: - Mock
 
 public final class IntervalTimerMock: IntervalTimer {
-    private let waitSubject = PassthroughSubject<Void, Never>()
+    private let waitSubject = Atomic<PassthroughSubject<Void, Never>>(initialValue: .init())
     /// Mock: the intervals that were waited for.
-    public var waitArgValues = [Double]()
+    private let waitArgValuesData = Atomic<[Double]>(initialValue: [])
+
+    public var waitArgValues: [Double] {
+        waitArgValuesData.get { $0 }
+    }
 
     public init() {}
 
     public func finishTimer() {
-        waitSubject.send()
+        waitSubject.get { $0 }.send()
     }
 
     public func wait(for time: Double) -> AnyPublisher<Void, Never> {
-        waitArgValues.append(time)
-        return waitSubject.first().eraseToAnyPublisher()
+        waitArgValuesData.modify { $0.append(time) }
+        return waitSubject.get { $0 }.first().eraseToAnyPublisher()
     }
 
     public func wait(for time: Double, tolerance _: Double) -> AnyPublisher<Void, Never> {
-        waitArgValues.append(time)
-        return waitSubject.first().eraseToAnyPublisher()
+        waitArgValuesData.modify { $0.append(time) }
+        return waitSubject.get { $0 }.first().eraseToAnyPublisher()
     }
 }
 
