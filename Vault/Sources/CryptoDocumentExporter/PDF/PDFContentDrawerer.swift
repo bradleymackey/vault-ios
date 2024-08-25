@@ -20,7 +20,10 @@ struct PDFContentDrawerer {
         case contentMissing
     }
 
-    func drawContent() {
+    /// Draws to the current page or next page (if there's not enough room).
+    ///
+    /// Throws an error if unable to draw due to insufficient space, even on a new page.
+    func drawContent() throws {
         let result = draw()
         switch result {
         case .success:
@@ -29,9 +32,13 @@ struct PDFContentDrawerer {
         case .failure(.insufficientSpace):
             makeNewPage()
             // if this fails, we can't draw, even on the next page.
-            // there probably just isn't enough space on the page, so ignore.
-            // FIXME: should this throw? probably
-            _ = draw()
+            // there probably just isn't enough space on the page, so error.
+            switch draw() {
+            case .success:
+                break
+            case let .failure(error):
+                throw error
+            }
         case .failure(.contentMissing):
             // there is no content to draw, just ignore
             break
