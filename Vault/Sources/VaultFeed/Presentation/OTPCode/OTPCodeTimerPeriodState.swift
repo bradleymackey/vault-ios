@@ -5,6 +5,7 @@ import Foundation
 ///
 /// As all timers with the same period share the same state at any given time,
 /// they can refer to this single object for fetching the latest state.
+@MainActor
 @Observable
 public final class OTPCodeTimerPeriodState {
     public private(set) var animationState: OTPCodeTimerAnimationState = .freeze(fraction: 0)
@@ -13,6 +14,7 @@ public final class OTPCodeTimerPeriodState {
 
     public init(statePublisher: AnyPublisher<OTPCodeTimerState, Never>) {
         stateCancellable = statePublisher
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] state in
                 self?.animationState = .countdownFrom(timerState: state)
             }

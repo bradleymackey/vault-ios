@@ -3,6 +3,7 @@ import SwiftUI
 import UniformTypeIdentifiers
 import VaultFeed
 
+@MainActor
 struct CodeTimerHorizontalBarView: View {
     var timerState: OTPCodeTimerPeriodState
     var color: Color = .blue
