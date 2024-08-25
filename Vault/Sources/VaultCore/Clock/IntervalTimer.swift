@@ -46,7 +46,7 @@ public final class IntervalTimerImpl: IntervalTimer {
     }
 
     private func waitPublisher(for time: Double, tolerance: Double?) -> AnyPublisher<Void, Never> {
-        Timer.TimerPublisher(interval: time, tolerance: tolerance, runLoop: .current, mode: .common)
+        Timer.TimerPublisher(interval: time, tolerance: tolerance, runLoop: .main, mode: .common)
             .autoconnect()
             .map { _ in }
             .first() // only publish once
