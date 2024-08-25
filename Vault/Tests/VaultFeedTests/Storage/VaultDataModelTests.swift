@@ -81,6 +81,7 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertEqual(sut.allTagsState, .base)
         XCTAssertEqual(sut.backupPassword, .notFetched)
         XCTAssertNil(sut.allTagsRetrievalError)
+        XCTAssertFalse(sut.hasAnyItems)
     }
 
     @MainActor
@@ -242,6 +243,19 @@ final class VaultDataModelTests: XCTestCase {
         await sut.reloadData()
 
         XCTAssertNil(sut.itemsRetrievalError)
+    }
+
+    @MainActor
+    func test_reloadItems_loadsHasItems() async {
+        let store = VaultStoreStub()
+        let sut = makeSUT(vaultStore: store)
+        for hasItems in [true, false] {
+            store.hasAnyItemsHandler = { hasItems }
+
+            await sut.reloadItems()
+
+            XCTAssertEqual(sut.hasAnyItems, hasItems)
+        }
     }
 
     @MainActor
