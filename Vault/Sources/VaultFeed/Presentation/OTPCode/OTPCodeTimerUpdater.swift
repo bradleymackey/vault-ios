@@ -66,6 +66,7 @@ extension OTPCodeTimerUpdaterImpl {
         let timeUntilTarget = targetState.startTime - clock.currentTime
         timerPublisher?.cancel()
         // Wait with some additional tolerance (it's OK if we're a little late)
+        // This can help system performance
         timerPublisher = timer.wait(for: timeUntilTarget, tolerance: timeUntilTarget / 10)
             .sink { [weak self] in
                 self?.timerStateSubject.send(targetState)
