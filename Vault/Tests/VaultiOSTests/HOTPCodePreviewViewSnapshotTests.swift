@@ -97,7 +97,7 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
             fixedCodeState: state
         )
         return HOTPCodePreviewView(
-            buttonView: OTPCodeButtonIcon(),
+            buttonView: OTPCodeButtonIcon(isError: false),
             previewViewModel: preview,
             behaviour: behaviour
         )

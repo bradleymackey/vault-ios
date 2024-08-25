@@ -6,6 +6,7 @@ import VaultCore
 @Observable
 public final class OTPCodeIncrementerViewModel {
     public private(set) var isButtonEnabled = true
+    public private(set) var incrementError: PresentationError?
 
     private let id: Identifier<VaultItem>
     private let timer: any IntervalTimer
@@ -29,10 +30,19 @@ public final class OTPCodeIncrementerViewModel {
     }
 
     public func incrementCounter() async throws {
-        try await lockingWithButton {
-            try await incrementerStore.incrementCounter(id: id)
-            counter += 1
-            codePublisher.set(counter: counter)
+        do {
+            try await lockingWithButton {
+                try await incrementerStore.incrementCounter(id: id)
+                counter += 1
+                codePublisher.set(counter: counter)
+            }
+            incrementError = nil
+        } catch {
+            incrementError = PresentationError(
+                userTitle: "Error",
+                userDescription: "Unable to update HOTP counter",
+                debugDescription: error.localizedDescription
+            )
         }
     }
 

@@ -11,10 +11,10 @@ struct OTPCodeButtonView: View {
         AsyncButton {
             try await viewModel.incrementCounter()
         } label: {
-            OTPCodeButtonIcon()
+            OTPCodeButtonIcon(isError: viewModel.incrementError != nil)
                 .font(.system(size: 22, weight: isDisabled ? .light : .bold))
         }
-        .foregroundColor(.accentColor)
+        .foregroundStyle(viewModel.incrementError != nil ? .red : .accentColor)
         .disabled(isDisabled)
         .frame(width: 33, height: 33)
     }
