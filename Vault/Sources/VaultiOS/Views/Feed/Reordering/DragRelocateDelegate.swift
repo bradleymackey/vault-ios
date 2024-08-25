@@ -8,7 +8,7 @@ import SwiftUI
 /// To workaround the inability to detect when dragging has ended, we use `currentItemCache`,
 /// which retains the last dragged item so we can restore it across `dropExited` and the other drop
 /// events.
-struct DragRelocateDelegate<Item: DraggableItem>: DropDelegate {
+struct DragRelocateDelegate<Item: VaultDraggableItem>: DropDelegate {
     let item: Item
     var listData: [Item]
     @Binding var current: Item?

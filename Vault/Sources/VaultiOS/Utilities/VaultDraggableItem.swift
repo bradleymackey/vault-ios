@@ -1,11 +1,11 @@
 import Foundation
 import VaultFeed
 
-protocol DraggableItem: Identifiable {
+protocol VaultDraggableItem: Identifiable {
     func sharingContent(clock: any EpochClock) -> String
 }
 
-extension VaultItem: DraggableItem {
+extension VaultItem: VaultDraggableItem {
     func sharingContent(clock: any EpochClock) -> String {
         switch item {
         case let .secureNote(note):
@@ -16,9 +16,8 @@ extension VaultItem: DraggableItem {
                 case let .totp(period):
                     let totp = TOTPAuthCode(period: period, data: code.data)
                     return try totp.renderCode(epochSeconds: UInt64(clock.currentTime))
-                case let .hotp(counter):
-                    let hotp = HOTPAuthCode(counter: counter, data: code.data)
-                    return try hotp.renderCode()
+                case .hotp:
+                    return "" // TODO: support this, need latest counter value
                 }
             } catch {
                 return "ERROR"

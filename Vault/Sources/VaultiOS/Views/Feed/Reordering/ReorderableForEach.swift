@@ -7,7 +7,7 @@ import VaultCore
 ///
 /// https://stackoverflow.com/a/68963988/3261161
 @MainActor
-struct ReorderableForEach<Content: View, PreviewContent: View, Item: DraggableItem>: View {
+struct ReorderableForEach<Content: View, PreviewContent: View, Item: VaultDraggableItem>: View {
     let items: [Item]
     @Binding var isDragging: Bool
     var isEnabled: Bool
