@@ -17,8 +17,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
         let (_, _, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            sut.incrementCounter()
+        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
+            try await sut.incrementCounter()
         }
 
         XCTAssertEqual(sut.isButtonEnabled, false)
@@ -28,13 +28,13 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
         let (_, _, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            sut.incrementCounter()
+        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
+            try await sut.incrementCounter()
         }
 
         // No mutation now!
-        await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            sut.incrementCounter()
+        try await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
+            try await sut.incrementCounter()
         }
     }
 
@@ -42,8 +42,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_enablesAfterTimerCompletion() async throws {
         let (_, timer, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            sut.incrementCounter()
+        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
+            try await sut.incrementCounter()
         }
         XCTAssertEqual(sut.isButtonEnabled, false)
 
@@ -57,8 +57,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_timerCompletingMultipleTimesHasNoEffect() async throws {
         let (_, timer, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            sut.incrementCounter()
+        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
+            try await sut.incrementCounter()
         }
         XCTAssertEqual(sut.isButtonEnabled, false)
 
@@ -79,7 +79,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             .collectFirst(1)
 
         let incrementOperations: [Void] = try await awaitPublisher(publisher) {
-            sut.incrementCounter()
+            try await sut.incrementCounter()
         }
         XCTAssertEqual(incrementOperations.count, 1)
     }
@@ -91,10 +91,10 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             .dropFirst() // the renderer publishes the first value right away, so ignore that
             .collectFirst(1)
 
-        sut.incrementCounter() // disable button
+        try await sut.incrementCounter() // disable button
 
-        await awaitNoPublish(publisher: publisher) {
-            sut.incrementCounter()
+        try await awaitNoPublish(publisher: publisher) {
+            try await sut.incrementCounter()
         }
     }
 
@@ -105,9 +105,11 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let timer = IntervalTimerMock()
         let sut = OTPCodeIncrementerViewModel(
+            id: .new(),
             codePublisher: codePublisher,
             timer: timer,
-            initialCounter: 0
+            initialCounter: 0,
+            incrementerStore: VaultStoreHOTPIncrementerMock()
         )
         return (codePublisher, timer, sut)
     }

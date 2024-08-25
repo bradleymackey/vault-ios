@@ -49,7 +49,8 @@ public struct VaultMainScene: Scene {
         )
         let hotp = HOTPPreviewViewGenerator(
             viewFactory: HOTPPreviewViewFactoryImpl(),
-            timer: timer
+            timer: timer,
+            store: store
         )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)

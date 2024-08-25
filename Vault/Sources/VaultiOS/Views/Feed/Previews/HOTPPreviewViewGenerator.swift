@@ -8,14 +8,16 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
 
     private let viewFactory: Factory
     private let timer: any IntervalTimer
+    private let store: any VaultStoreHOTPIncrementer
 
     private var codePublisherCache = Cache<Identifier<VaultItem>, HOTPCodePublisher>()
     private var previewViewModelCache = Cache<Identifier<VaultItem>, OTPCodePreviewViewModel>()
     private var incrementerViewModelCache = Cache<Identifier<VaultItem>, OTPCodeIncrementerViewModel>()
 
-    init(viewFactory: Factory, timer: any IntervalTimer) {
+    init(viewFactory: Factory, timer: any IntervalTimer, store: any VaultStoreHOTPIncrementer) {
         self.viewFactory = viewFactory
         self.timer = timer
+        self.store = store
     }
 
     func makeVaultPreviewView(
@@ -95,9 +97,11 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
     ) -> OTPCodeIncrementerViewModel {
         incrementerViewModelCache.getOrCreateValue(for: id) {
             OTPCodeIncrementerViewModel(
+                id: id,
                 codePublisher: makeCodePublisher(id: id, code: code),
                 timer: timer,
-                initialCounter: code.counter
+                initialCounter: code.counter,
+                incrementerStore: store
             )
         }
     }

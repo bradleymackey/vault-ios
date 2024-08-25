@@ -8,8 +8,8 @@ struct OTPCodeButtonView: View {
     @Environment(\.isEnabled) private var isEnabled
 
     var body: some View {
-        Button {
-            viewModel.incrementCounter()
+        AsyncButton {
+            try await viewModel.incrementCounter()
         } label: {
             OTPCodeButtonIcon()
                 .font(.system(size: 22, weight: isDisabled ? .light : .bold))

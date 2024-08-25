@@ -117,11 +117,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         return HOTPCodePreviewView(
             buttonView: OTPCodeButtonView(
                 viewModel: .init(
+                    id: .new(),
                     codePublisher: .init(
                         hotpGenerator: .init(secret: Data())
                     ),
                     timer: IntervalTimerImpl(),
-                    initialCounter: 0
+                    initialCounter: 0,
+                    incrementerStore: VaultStoreHOTPIncrementerMock()
                 )
             ),
             previewViewModel: previewViewModel,
