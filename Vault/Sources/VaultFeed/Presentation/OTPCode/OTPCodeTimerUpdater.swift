@@ -69,7 +69,6 @@ extension OTPCodeTimerUpdaterImpl {
         // Wait with some additional tolerance (it's OK if we're a little late)
         // This can help system performance
         timerPublisher = timer.wait(for: timeUntilTarget, tolerance: timeUntilTarget / 10)
-            .receive(on: DispatchQueue.global())
             .sink { [weak self] in
                 self?.timerStateSubject.send(targetState)
                 self?.scheduleNextUpdate()
