@@ -40,6 +40,7 @@ extension OTPCodeTimerState {
         if totalTime == 0 { return 1 }
         let remainingTime = remainingTime(at: epoch)
         let remainingFraction = remainingTime / totalTime
+        if remainingFraction < 0 { return 0 }
         let fractionCompleted = 1 - remainingFraction
         return fractionCompleted.clamped(to: 0 ... 1)
     }
