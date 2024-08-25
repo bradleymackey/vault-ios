@@ -16,9 +16,8 @@ extension VaultItem: VaultDraggableItem {
                 case let .totp(period):
                     let totp = TOTPAuthCode(period: period, data: code.data)
                     return try totp.renderCode(epochSeconds: UInt64(clock.currentTime))
-                case let .hotp(counter):
-                    let hotp = HOTPAuthCode(counter: counter, data: code.data)
-                    return try hotp.renderCode()
+                case .hotp:
+                    return "" // TODO: support this, need latest counter value
                 }
             } catch {
                 return "ERROR"

@@ -32,7 +32,7 @@ final class VaultDraggableItemTests: XCTestCase {
         XCTAssertEqual(sharingItem, "795374")
     }
 
-    func test_sharingContent_hotpCodeIsCode() {
+    func test_sharingContent_hotpCodeIsNotSupportedYet() {
         let item = anyOTPVaultItem(
             type: .hotp(counter: 30),
             secret: .empty(),
@@ -43,6 +43,6 @@ final class VaultDraggableItemTests: XCTestCase {
 
         let sharingItem = item.sharingContent(clock: clock)
 
-        XCTAssertEqual(sharingItem, "531626")
+        XCTAssertEqual(sharingItem, "")
     }
 }
