@@ -4,7 +4,7 @@ import VaultFeed
 import XCTest
 @testable import VaultiOS
 
-final class DraggableItemTests: XCTestCase {
+final class VaultDraggableItemTests: XCTestCase {
     func test_sharingContent_secureNoteIsTitle() {
         let item = anySecureNote(title: "my title")
         let clock = EpochClockMock(currentTime: 1234)

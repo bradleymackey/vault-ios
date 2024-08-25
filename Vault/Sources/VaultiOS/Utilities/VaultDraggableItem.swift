@@ -1,11 +1,11 @@
 import Foundation
 import VaultFeed
 
-protocol DraggableItem: Identifiable {
+protocol VaultDraggableItem: Identifiable {
     func sharingContent(clock: any EpochClock) -> String
 }
 
-extension VaultItem: DraggableItem {
+extension VaultItem: VaultDraggableItem {
     func sharingContent(clock: any EpochClock) -> String {
         switch item {
         case let .secureNote(note):
