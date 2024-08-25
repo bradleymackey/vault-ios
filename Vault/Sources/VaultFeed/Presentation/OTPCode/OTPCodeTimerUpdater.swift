@@ -58,6 +58,7 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
 extension OTPCodeTimerUpdaterImpl {
     private func scheduleNextClock() {
         let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
+        timerPublisher?.cancel()
         timerPublisher = timer.wait(for: remaining)
             .sink { [weak self] in
                 self?.recalculate()
