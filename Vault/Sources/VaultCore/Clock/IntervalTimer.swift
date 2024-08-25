@@ -38,14 +38,14 @@ public final class IntervalTimerMock: IntervalTimer {
 public final class IntervalTimerImpl: IntervalTimer {
     public init() {}
     public func wait(for time: Double) -> AnyPublisher<Void, Never> {
-        Timer.TimerPublisher(interval: time, runLoop: .current, mode: .common)
-            .autoconnect()
-            .map { _ in }
-            .first() // only publish once
-            .eraseToAnyPublisher()
+        waitPublisher(for: time, tolerance: nil)
     }
 
     public func wait(for time: Double, tolerance: Double) -> AnyPublisher<Void, Never> {
+        waitPublisher(for: time, tolerance: tolerance)
+    }
+
+    private func waitPublisher(for time: Double, tolerance: Double?) -> AnyPublisher<Void, Never> {
         Timer.TimerPublisher(interval: time, tolerance: tolerance, runLoop: .current, mode: .common)
             .autoconnect()
             .map { _ in }
