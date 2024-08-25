@@ -43,6 +43,7 @@ public final class OTPCodePreviewViewModel {
         self.color = color
         self.issuer = issuer
         codePublisher.renderedCodePublisher()
+            .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
                 guard let self else { return }
                 switch completion {

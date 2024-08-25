@@ -37,39 +37,42 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
         self.period = period
         self.timer = timer
         self.clock = clock
-        let initialState = Self.timerState(currentTime: clock.currentTime, period: period)
+        let initialState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
         timerStateSubject = .init(initialState)
 
-        scheduleNextClock()
+        scheduleNextUpdate()
     }
 
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
     public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
-        timerStateSubject.eraseToAnyPublisher()
+        timerStateSubject
+            .eraseToAnyPublisher()
     }
 
     /// Forces the timer to recalculate it's current state and republish.
     public func recalculate() {
-        let nextState = Self.timerState(currentTime: clock.currentTime, period: period)
-        timerStateSubject.send(nextState)
+        timerPublisher?.cancel()
+        let currentState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
+        timerStateSubject.send(currentState)
+        scheduleNextUpdate()
     }
 }
 
 extension OTPCodeTimerUpdaterImpl {
-    private func scheduleNextClock() {
-        let remaining = timerStateSubject.value.remainingTime(at: clock.currentTime)
-        timerPublisher = timer.wait(for: remaining)
+    /// Schedules the next display of the timer state.
+    private func scheduleNextUpdate() {
+        timerPublisher?.cancel()
+        let currentState = timerStateSubject.value
+        let targetState = currentState.offset(time: Double(period))
+        // Add some additional tolerance
+        let timeUntilTarget = targetState.startTime - clock.currentTime + 0.1
+        // Wait with some additional tolerance (it's OK if we're a little late)
+        // This can help system performance
+        timerPublisher = timer.wait(for: timeUntilTarget, tolerance: timeUntilTarget / 10)
+            .receive(on: DispatchQueue.global())
             .sink { [weak self] in
-                self?.recalculate()
-                self?.scheduleNextClock()
+                self?.timerStateSubject.send(targetState)
+                self?.scheduleNextUpdate()
             }
-    }
-
-    private static func timerState(currentTime: Double, period: UInt64) -> OTPCodeTimerState {
-        let currentCodeNumber = UInt64(currentTime) / period
-        let nextCodeNumber = currentCodeNumber + 1
-        let codeStart = currentCodeNumber * period
-        let codeEnd = nextCodeNumber * period
-        return OTPCodeTimerState(startTime: Double(codeStart), endTime: Double(codeEnd))
     }
 }

@@ -2,13 +2,21 @@ import Foundation
 
 public struct OTPCodeTimerState: Equatable, Sendable {
     /// The number of epoch seconds when the timer started.
-    public var startTime: Double
+    public let startTime: Double
     /// The number of epoch seconds when the timer will end.
-    public var endTime: Double
+    public let endTime: Double
 
     public init(startTime: Double, endTime: Double) {
         self.startTime = startTime
         self.endTime = endTime
+    }
+
+    /// Create a state based on the current time and the repeating period.
+    public init(currentTime: Double, period: UInt64) {
+        let currentCodeNumber = UInt64(currentTime) / period
+        let nextCodeNumber = currentCodeNumber + 1
+        startTime = Double(currentCodeNumber * period)
+        endTime = Double(nextCodeNumber * period)
     }
 }
 
@@ -32,8 +40,16 @@ extension OTPCodeTimerState {
         if totalTime == 0 { return 1 }
         let remainingTime = remainingTime(at: epoch)
         let remainingFraction = remainingTime / totalTime
+        if remainingFraction < 0 { return 0 }
         let fractionCompleted = 1 - remainingFraction
         return fractionCompleted.clamped(to: 0 ... 1)
+    }
+
+    public func offset(time offsetTime: Double) -> Self {
+        .init(
+            startTime: startTime + offsetTime,
+            endTime: endTime + offsetTime
+        )
     }
 }
 

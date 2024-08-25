@@ -28,6 +28,7 @@ final class OTPCodeTimerPeriodStateTests: XCTestCase {
 
     // MARK: - Helpers
 
+    @MainActor
     private func makeSUT(pub: AnyPublisher<OTPCodeTimerState, Never>) -> OTPCodeTimerPeriodState {
         OTPCodeTimerPeriodState(statePublisher: pub)
     }

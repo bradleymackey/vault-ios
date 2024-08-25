@@ -8,7 +8,8 @@ import XCTest
 final class OTPCodeTimerUpdaterImplTests: XCTestCase {
     @MainActor
     func test_timerUpdatedPublisher_publishesInitialValueImmediately() async throws {
-        let (_, _, sut) = makeSUT(clock: 62, period: 30)
+        let clock = EpochClockMock(currentTime: 62)
+        let sut = makeSUT(clock: clock, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(1)
 
@@ -20,7 +21,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
 
     @MainActor
     func test_timerUpdatedPublisher_publishesStateForCurrentTimeOnTimerFinish() async throws {
-        let (clock, timer, sut) = makeSUT(clock: 32, period: 30)
+        let clock = EpochClockMock(currentTime: 32)
+        let timer = IntervalTimerMock()
+        let sut = makeSUT(clock: clock, timer: timer, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
@@ -39,7 +42,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
 
     @MainActor
     func test_recalculate_forcesPublishOfCurrentTimerState() async throws {
-        let (clock, _, sut) = makeSUT(clock: 32, period: 30)
+        let clock = EpochClockMock(currentTime: 32)
+        let timer = IntervalTimerMock()
+        let sut = makeSUT(clock: clock, timer: timer, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
@@ -58,7 +63,8 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
 
     @MainActor
     func test_recalculate_publishesDuplicateStatesIfRecalculatingInSamePeriod() async throws {
-        let (_, _, sut) = makeSUT(clock: 32, period: 30)
+        let clock = EpochClockMock(currentTime: 32)
+        let sut = makeSUT(clock: clock, period: 30)
 
         let publisher = sut.timerUpdatedPublisher().collectFirst(3)
 
@@ -77,15 +83,16 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
 
     @MainActor
     private func makeSUT(
-        clock clockTime: Double,
+        clock: EpochClockMock,
+        timer: IntervalTimerMock = IntervalTimerMock(),
         period: UInt64,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (EpochClockMock, IntervalTimerMock, any OTPCodeTimerUpdater) {
-        let timer = IntervalTimerMock()
-        let clock = EpochClockMock(currentTime: clockTime)
+    ) -> OTPCodeTimerUpdaterImpl {
         let sut = OTPCodeTimerUpdaterImpl(timer: timer, period: period, clock: clock)
         trackForMemoryLeaks(sut, file: file, line: line)
-        return (clock, timer, sut)
+        trackForMemoryLeaks(clock, file: file, line: line)
+        trackForMemoryLeaks(timer, file: file, line: line)
+        return sut
     }
 }
