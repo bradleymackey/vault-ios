@@ -23,6 +23,6 @@ public struct HOTPAuthCode: Sendable {
         let renderer = OTPCodeRenderer()
         let generator = data.hotpGenerator()
         let code = try generator.code(counter: counter)
-        return try renderer.render(code: code, digits: data.digits.value)
+        return renderer.render(code: code, digits: data.digits.value)
     }
 }

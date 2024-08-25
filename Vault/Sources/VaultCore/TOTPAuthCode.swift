@@ -24,6 +24,6 @@ public struct TOTPAuthCode: Sendable {
         let renderer = OTPCodeRenderer()
         let generator = TOTPGenerator(generator: data.hotpGenerator())
         let code = try generator.code(epochSeconds: epochSeconds)
-        return try renderer.render(code: code, digits: data.digits.value)
+        return renderer.render(code: code, digits: data.digits.value)
     }
 }

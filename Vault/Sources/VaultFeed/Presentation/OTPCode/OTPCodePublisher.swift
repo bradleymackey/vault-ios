@@ -78,9 +78,9 @@ public final class HOTPCodePublisher: OTPCodePublisher {
 // MARK: - Helpers
 
 extension Publisher where Output == BigUInt {
-    func digitsRenderer(digits: UInt16) -> AnyPublisher<String, any Error> {
-        tryMap { code in
-            try OTPCodeRenderer().render(code: code, digits: digits)
+    func digitsRenderer(digits: UInt16) -> AnyPublisher<String, Failure> {
+        map { code in
+            OTPCodeRenderer().render(code: code, digits: digits)
         }
         .eraseToAnyPublisher()
     }
