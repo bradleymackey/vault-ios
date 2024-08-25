@@ -28,6 +28,11 @@ public protocol VaultStoreWriter: Sendable {
 }
 
 /// @mockable
+public protocol VaultStoreHOTPIncrementer: Sendable {
+    func incrementCounter(id: Identifier<VaultItem>) async throws
+}
+
+/// @mockable
 public protocol VaultStoreReorderable: Sendable {
     /// Reorder the item with the given `id` to the given position and current view.
     func reorder(

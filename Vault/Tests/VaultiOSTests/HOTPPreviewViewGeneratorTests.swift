@@ -174,7 +174,7 @@ extension HOTPPreviewViewGeneratorTests {
         let factory = HOTPPreviewViewFactoryMock()
         factory.makeHOTPViewHandler = { _, _, _ in AnyView(Color.green) }
         let timer = IntervalTimerMock()
-        let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer)
+        let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer, store: VaultStoreHOTPIncrementerMock())
         return (sut, timer, factory)
     }
 

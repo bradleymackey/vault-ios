@@ -10,6 +10,7 @@ public final actor PersistedLocalVaultStore {
     public enum Error: Swift.Error {
         case modelNotFound
         case relativeItemNotFound
+        case invalidItem
     }
 
     /// The sort order used by this store.
@@ -197,6 +198,33 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         } catch {
             modelContext.rollback()
             throw error
+        }
+    }
+}
+
+// MARK: - VaultStoreHOTPIncrementer
+
+extension PersistedLocalVaultStore: VaultStoreHOTPIncrementer {
+    public func incrementCounter(id: Identifier<VaultItem>) async throws {
+        do {
+            let existing = try fetchVaultItem(id: id)
+            guard let otpDetails = existing.otpDetails else { throw Error.invalidItem }
+            otpDetails.counter.safeIncrement()
+            modelContext.insert(otpDetails)
+
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}
+
+extension Int64? {
+    fileprivate mutating func safeIncrement() {
+        switch self {
+        case nil: break
+        case let .some(val): self = val + 1
         }
     }
 }
