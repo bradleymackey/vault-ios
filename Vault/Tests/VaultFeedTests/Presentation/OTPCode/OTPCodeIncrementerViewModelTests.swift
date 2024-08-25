@@ -8,14 +8,14 @@ import XCTest
 final class OTPCodeIncrementerViewModelTests: XCTestCase {
     @MainActor
     func test_isButtonEnabled_isInitiallyTrue() {
-        let (_, _, sut) = makeSUT()
+        let sut = makeSUT()
 
         XCTAssertTrue(sut.isButtonEnabled)
     }
 
     @MainActor
     func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
-        let (_, _, sut) = makeSUT()
+        let sut = makeSUT()
 
         try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             try await sut.incrementCounter()
@@ -26,7 +26,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
-        let (_, _, sut) = makeSUT()
+        let sut = makeSUT()
 
         try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             try await sut.incrementCounter()
@@ -40,7 +40,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_isButtonEnabled_enablesAfterTimerCompletion() async throws {
-        let (_, timer, sut) = makeSUT()
+        let timer = IntervalTimerMock()
+        let sut = makeSUT(timer: timer)
 
         try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             try await sut.incrementCounter()
@@ -55,7 +56,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_isButtonEnabled_timerCompletingMultipleTimesHasNoEffect() async throws {
-        let (_, timer, sut) = makeSUT()
+        let timer = IntervalTimerMock()
+        let sut = makeSUT(timer: timer)
 
         try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
             try await sut.incrementCounter()
@@ -74,7 +76,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
-        let (codePublisher, _, sut) = makeSUT()
+        let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
+        let sut = makeSUT(codePublisher: codePublisher)
         let publisher = codePublisher.counterIncrementedPublisher()
             .collectFirst(1)
 
@@ -86,7 +89,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
-        let (codePublisher, _, sut) = makeSUT()
+        let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
+        let sut = makeSUT(codePublisher: codePublisher)
         let publisher = codePublisher.counterIncrementedPublisher()
             .dropFirst() // the renderer publishes the first value right away, so ignore that
             .collectFirst(1)
@@ -101,9 +105,12 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeSUT() -> (HOTPCodePublisher, IntervalTimerMock, OTPCodeIncrementerViewModel) {
-        let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
-        let timer = IntervalTimerMock()
+    private func makeSUT(
+        codePublisher: HOTPCodePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data())),
+        timer: IntervalTimerMock = IntervalTimerMock(),
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) -> OTPCodeIncrementerViewModel {
         let sut = OTPCodeIncrementerViewModel(
             id: .new(),
             codePublisher: codePublisher,
@@ -111,7 +118,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             initialCounter: 0,
             incrementerStore: VaultStoreHOTPIncrementerMock()
         )
-        return (codePublisher, timer, sut)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return sut
     }
 }
 
