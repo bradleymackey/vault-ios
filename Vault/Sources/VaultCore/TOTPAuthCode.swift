@@ -20,7 +20,7 @@ public struct TOTPAuthCode: Sendable {
         )
     }
 
-    public func render(epochSeconds: UInt64) throws -> String {
+    public func renderCode(epochSeconds: UInt64) throws -> String {
         let renderer = OTPCodeRenderer()
         let generator = TOTPGenerator(generator: data.hotpGenerator())
         let code = try generator.code(epochSeconds: epochSeconds)

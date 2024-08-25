@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import UniformTypeIdentifiers
+import VaultCore
 
 /// `ForEach` that supports reordering from a given source.
 ///
@@ -10,6 +11,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: DraggableIt
     let items: [Item]
     @Binding var isDragging: Bool
     var isEnabled: Bool
+    var clock: any EpochClock
     let content: (Item) -> Content
     let previewContent: (Item) -> PreviewContent
     let moveAction: (IndexSet, Int) -> Void
@@ -18,6 +20,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: DraggableIt
         items: [Item],
         isDragging: Binding<Bool>,
         isEnabled: Bool,
+        clock: any EpochClock,
         @ViewBuilder content: @escaping (Item) -> Content,
         @ViewBuilder previewContent: @escaping (Item) -> PreviewContent,
         moveAction: @escaping (IndexSet, Int) -> Void
@@ -25,6 +28,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: DraggableIt
         self.items = items
         _isDragging = isDragging
         self.isEnabled = isEnabled
+        self.clock = clock
         self.content = content
         self.previewContent = previewContent
         self.moveAction = moveAction
@@ -46,7 +50,8 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: DraggableIt
                     // Clears the drag cache if not enabled!
                     draggingItem = isEnabled ? item : nil
                     draggingItemCache = isEnabled ? item : nil
-                    return NSItemProvider(object: item.sharingContent as NSString)
+                    let string = item.sharingContent(clock: clock)
+                    return NSItemProvider(object: string as NSString)
                 } preview: {
                     previewContent(item)
                 }

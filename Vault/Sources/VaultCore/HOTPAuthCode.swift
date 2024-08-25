@@ -19,7 +19,7 @@ public struct HOTPAuthCode: Sendable {
         )
     }
 
-    public func render() throws -> String {
+    public func renderCode() throws -> String {
         let renderer = OTPCodeRenderer()
         let generator = data.hotpGenerator()
         let code = try generator.code(counter: counter)

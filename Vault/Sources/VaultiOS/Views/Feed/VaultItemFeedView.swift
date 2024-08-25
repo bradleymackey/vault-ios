@@ -14,6 +14,7 @@ struct VaultItemFeedView<
     @Binding var isEditing: Bool
     var gridSpacing: Double
 
+    @Environment(VaultInjector.self) private var injector
     @Environment(VaultDataModel.self) private var dataModel
     @State private var isReordering = false
 
@@ -141,7 +142,8 @@ struct VaultItemFeedView<
         ReorderableForEach(
             items: dataModel.items,
             isDragging: $isReordering,
-            isEnabled: isEditing
+            isEnabled: isEditing,
+            clock: injector.clock
         ) { storedItem in
             GeometryReader { geo in
                 viewGenerator.makeVaultPreviewView(
