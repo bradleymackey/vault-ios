@@ -1,7 +1,7 @@
 import Foundation
 import SwiftUI
 
-struct RestoreBackupView: View {
+struct BackupImportView: View {
     @State private var hasAnyExistingCodes = true
 
     var body: some View {

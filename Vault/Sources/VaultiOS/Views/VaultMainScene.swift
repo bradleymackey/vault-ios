@@ -144,7 +144,7 @@ public struct VaultMainScene: Scene {
                     .navigationBarTitleDisplayMode(.inline)
                 case .restoreBackup:
                     NavigationStack {
-                        RestoreBackupView()
+                        BackupImportView()
                     }
                     .navigationBarTitleDisplayMode(.inline)
                 case .none:
