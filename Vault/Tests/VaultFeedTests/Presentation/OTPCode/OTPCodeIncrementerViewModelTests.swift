@@ -74,8 +74,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
-        let (renderer, _, sut) = makeSUT()
-        let publisher = renderer.counterIncrementedPublisher()
+        let (codePublisher, _, sut) = makeSUT()
+        let publisher = codePublisher.counterIncrementedPublisher()
             .collectFirst(1)
 
         let incrementOperations: [Void] = try await awaitPublisher(publisher) {
@@ -86,8 +86,8 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
     @MainActor
     func test_incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
-        let (renderer, _, sut) = makeSUT()
-        let publisher = renderer.counterIncrementedPublisher()
+        let (codePublisher, _, sut) = makeSUT()
+        let publisher = codePublisher.counterIncrementedPublisher()
             .dropFirst() // the renderer publishes the first value right away, so ignore that
             .collectFirst(1)
 
@@ -101,19 +101,19 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     // MARK: - Helpers
 
     @MainActor
-    private func makeSUT() -> (HOTPCodeRenderer, IntervalTimerMock, OTPCodeIncrementerViewModel) {
-        let renderer = HOTPCodeRenderer(hotpGenerator: .init(secret: Data()))
+    private func makeSUT() -> (HOTPCodePublisher, IntervalTimerMock, OTPCodeIncrementerViewModel) {
+        let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let timer = IntervalTimerMock()
         let sut = OTPCodeIncrementerViewModel(
-            hotpRenderer: renderer,
+            codePublisher: codePublisher,
             timer: timer,
             initialCounter: 0
         )
-        return (renderer, timer, sut)
+        return (codePublisher, timer, sut)
     }
 }
 
-extension HOTPCodeRenderer {
+extension HOTPCodePublisher {
     func counterIncrementedPublisher() -> AnyPublisher<Void, any Error> {
         renderedCodePublisher().map { _ in }.eraseToAnyPublisher()
     }

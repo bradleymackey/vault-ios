@@ -5,7 +5,8 @@ import UniformTypeIdentifiers
 /// `ForEach` that supports reordering from a given source.
 ///
 /// https://stackoverflow.com/a/68963988/3261161
-struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiable & Equatable>: View {
+@MainActor
+struct ReorderableForEach<Content: View, PreviewContent: View, Item: DraggableItem>: View {
     let items: [Item]
     @Binding var isDragging: Bool
     var isEnabled: Bool
@@ -37,15 +38,15 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
             content(item)
                 .overlay(
                     Color.white
-                        .opacity(draggingItem == item ? 0.8 : 0)
+                        .opacity(draggingItem?.id == item.id ? 0.8 : 0)
                         .clipShape(RoundedRectangle(cornerRadius: 8))
-                        .animation(.easeOut, value: draggingItem)
+                        .animation(.easeOut, value: draggingItem?.id)
                 )
                 .onDrag {
                     // Clears the drag cache if not enabled!
                     draggingItem = isEnabled ? item : nil
                     draggingItemCache = isEnabled ? item : nil
-                    return NSItemProvider(object: "\(item.id)" as NSString)
+                    return NSItemProvider(object: item.sharingContent as NSString)
                 } preview: {
                     previewContent(item)
                 }
@@ -62,7 +63,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: Identifiabl
                         }
                     }
                 )
-                .onChange(of: draggingItem) { _, newValue in
+                .onChange(of: draggingItem?.id) { _, newValue in
                     isDragging = newValue != nil
                 }
         }

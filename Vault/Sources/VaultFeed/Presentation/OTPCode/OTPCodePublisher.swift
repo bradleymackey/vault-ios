@@ -4,13 +4,13 @@ import Foundation
 import VaultCore
 
 /// Renders the code to a visible state for the given `code`.
-public protocol OTPCodeRenderer {
+public protocol OTPCodePublisher {
     func renderedCodePublisher() -> AnyPublisher<String, any Error>
 }
 
 // MARK: - Mock
 
-public final class OTPCodeRendererMock: OTPCodeRenderer {
+public final class OTPCodePublisherMock: OTPCodePublisher {
     public init() {}
     public let subject = PassthroughSubject<String, any Error>()
     public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
@@ -20,7 +20,7 @@ public final class OTPCodeRendererMock: OTPCodeRenderer {
 
 // MARK: - Impl
 
-public final class TOTPCodeRenderer: OTPCodeRenderer {
+public final class TOTPCodePublisher: OTPCodePublisher {
     private let timer: any OTPCodeTimerUpdater
     private let totpGenerator: TOTPGenerator
 
@@ -45,7 +45,7 @@ public final class TOTPCodeRenderer: OTPCodeRenderer {
     }
 }
 
-public final class HOTPCodeRenderer: OTPCodeRenderer {
+public final class HOTPCodePublisher: OTPCodePublisher {
     private let hotpGenerator: HOTPGenerator
     private let counterSubject: PassthroughSubject<UInt64, Never>
 

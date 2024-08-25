@@ -8,7 +8,7 @@ import SwiftUI
 /// To workaround the inability to detect when dragging has ended, we use `currentItemCache`,
 /// which retains the last dragged item so we can restore it across `dropExited` and the other drop
 /// events.
-struct DragRelocateDelegate<Item: Equatable>: DropDelegate {
+struct DragRelocateDelegate<Item: DraggableItem>: DropDelegate {
     let item: Item
     var listData: [Item]
     @Binding var current: Item?
@@ -16,13 +16,14 @@ struct DragRelocateDelegate<Item: Equatable>: DropDelegate {
     var moveAction: (IndexSet, Int) -> Void
 
     func dropEntered(info _: DropInfo) {
-        if current != currentItemCache {
+        if current?.id != currentItemCache?.id {
             current = currentItemCache
         }
-        guard item != current, let current else { return }
-        guard let from = listData.firstIndex(of: current), let to = listData.firstIndex(of: item) else { return }
+        guard item.id != current?.id, let current else { return }
+        guard let from = listData.firstIndex(where: { $0.id == current.id }),
+              let to = listData.firstIndex(where: { $0.id == item.id }) else { return }
 
-        if listData[to] != current {
+        if listData[to].id != current.id {
             moveAction(IndexSet(integer: from), to > from ? to + 1 : to)
         }
     }
@@ -32,7 +33,7 @@ struct DragRelocateDelegate<Item: Equatable>: DropDelegate {
     }
 
     func dropUpdated(info _: DropInfo) -> DropProposal? {
-        if current != currentItemCache {
+        if current?.id != currentItemCache?.id {
             current = currentItemCache
         }
         return DropProposal(operation: .move)

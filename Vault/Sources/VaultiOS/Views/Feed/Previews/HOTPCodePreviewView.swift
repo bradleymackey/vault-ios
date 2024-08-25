@@ -98,26 +98,26 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
 }
 
 #Preview {
-    let codeRenderer = OTPCodeRendererMock()
-    let finishedRenderer = OTPCodeRendererMock()
-    let errorRenderer = OTPCodeRendererMock()
+    let codePublisher = OTPCodePublisherMock()
+    let finishedPublisher = OTPCodePublisherMock()
+    let errorPublisher = OTPCodePublisherMock()
 
     @MainActor
     func makePreviewView(
         accountName: String,
-        renderer: OTPCodeRendererMock,
+        codePublisher: OTPCodePublisherMock,
         behaviour: VaultItemViewBehaviour = .normal
     ) -> some View {
         let previewViewModel = OTPCodePreviewViewModel(
             accountName: accountName,
             issuer: "Authority",
             color: .default,
-            renderer: renderer
+            codePublisher: codePublisher
         )
         return HOTPCodePreviewView(
             buttonView: OTPCodeButtonView(
                 viewModel: .init(
-                    hotpRenderer: .init(
+                    codePublisher: .init(
                         hotpGenerator: .init(secret: Data())
                     ),
                     timer: IntervalTimerImpl(),
@@ -130,30 +130,30 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     return ScrollView(.vertical) {
-        makePreviewView(accountName: "Normal", renderer: codeRenderer)
+        makePreviewView(accountName: "Normal", codePublisher: codePublisher)
             .onAppear {
-                codeRenderer.subject.send("123456")
+                codePublisher.subject.send("123456")
             }
 
-        makePreviewView(accountName: "Finished", renderer: finishedRenderer)
+        makePreviewView(accountName: "Finished", codePublisher: finishedPublisher)
             .onAppear {
-                finishedRenderer.subject.send(completion: .finished)
+                finishedPublisher.subject.send(completion: .finished)
             }
 
-        makePreviewView(accountName: "Error", renderer: errorRenderer)
+        makePreviewView(accountName: "Error", codePublisher: errorPublisher)
             .onAppear {
-                errorRenderer.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
+                errorPublisher.subject.send(completion: .failure(NSError(domain: "any", code: 100)))
             }
 
         makePreviewView(
             accountName: "Obfuscate",
-            renderer: codeRenderer,
+            codePublisher: codePublisher,
             behaviour: .editingState(message: "editing")
         )
 
         makePreviewView(
             accountName: "Obfuscate (no msg)",
-            renderer: codeRenderer,
+            codePublisher: codePublisher,
             behaviour: .editingState(message: nil)
         )
     }

@@ -4,7 +4,7 @@ import Foundation
 import XCTest
 @testable import VaultFeed
 
-final class HOTPCodeRendererTests: XCTestCase {
+final class HOTPCodePublisherTests: XCTestCase {
     @MainActor
     func test_renderedCodePublisher_doesNotPublishesInitialCodeImmediately() async throws {
         let sut = makeSUT(digits: 8)
@@ -61,8 +61,8 @@ final class HOTPCodeRendererTests: XCTestCase {
         digits: UInt16,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> HOTPCodeRenderer {
-        let sut = HOTPCodeRenderer(hotpGenerator: fixedGenerator(digits: digits))
+    ) -> HOTPCodePublisher {
+        let sut = HOTPCodePublisher(hotpGenerator: fixedGenerator(digits: digits))
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }

@@ -6,7 +6,7 @@ import VaultCore
 import XCTest
 @testable import VaultFeed
 
-final class TOTPCodeRendererTests: XCTestCase {
+final class TOTPCodePublisherTests: XCTestCase {
     @MainActor
     func test_renderedCodePublisher_publishesCodesOnEpochSecondsTick() async throws {
         let (timer, sut) = makeSUT(digits: 8)
@@ -64,9 +64,9 @@ final class TOTPCodeRendererTests: XCTestCase {
         digits: UInt16,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> (OTPCodeTimerUpdaterMock, some OTPCodeRenderer) {
+    ) -> (OTPCodeTimerUpdaterMock, some OTPCodePublisher) {
         let timer = OTPCodeTimerUpdaterMock()
-        let sut = TOTPCodeRenderer(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30, digits: digits))
+        let sut = TOTPCodePublisher(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30, digits: digits))
         trackForMemoryLeaks(sut, file: file, line: line)
         return (timer, sut)
     }
