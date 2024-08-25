@@ -32,6 +32,61 @@ func anyVaultItemTag(
     VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
 }
 
+func anySecureNote(title: String = "any") -> SecureNote {
+    .init(title: title, contents: "This is my note", format: .markdown)
+}
+
+func anyVaultItemMetadata() -> VaultItem.Metadata {
+    .init(
+        id: Identifier<VaultItem>(),
+        created: Date(),
+        updated: Date(),
+        relativeOrder: .min,
+        userDescription: "any",
+        tags: [],
+        visibility: .always,
+        searchableLevel: .full,
+        searchPassphrase: "",
+        lockState: .notLocked,
+        color: .black
+    )
+}
+
+func anyOTPVaultItem(
+    type: OTPAuthType,
+    secret: OTPAuthSecret = .empty(),
+    algorithm: OTPAuthAlgorithm = .sha256,
+    digits: OTPAuthDigits = .init(value: 6),
+    color: VaultItemColor? = nil
+) -> VaultItem {
+    let code = OTPAuthCode(
+        type: type,
+        data: .init(
+            secret: secret,
+            algorithm: algorithm,
+            digits: digits,
+            accountName: "my account name",
+            issuer: "my issuer"
+        )
+    )
+    return VaultItem(
+        metadata: .init(
+            id: Identifier<VaultItem>(),
+            created: Date(),
+            updated: Date(),
+            relativeOrder: .min,
+            userDescription: "any",
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "",
+            lockState: .notLocked,
+            color: color
+        ),
+        item: .otpCode(code)
+    )
+}
+
 extension VaultItemPreviewViewGeneratorMock {
     static func defaultMock() -> VaultItemPreviewViewGeneratorMock {
         mockGenerating {

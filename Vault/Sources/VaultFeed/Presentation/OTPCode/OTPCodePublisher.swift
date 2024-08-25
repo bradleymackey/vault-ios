@@ -31,7 +31,7 @@ public final class TOTPCodePublisher: OTPCodePublisher {
 
     public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
         codeValuePublisher()
-            .digitsRenderer(digits: Int(totpGenerator.digits))
+            .digitsRenderer(digits: totpGenerator.digits)
     }
 
     private func codeValuePublisher() -> AnyPublisher<BigUInt, any Error> {
@@ -61,7 +61,7 @@ public final class HOTPCodePublisher: OTPCodePublisher {
 
     public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
         codeValuePublisher()
-            .digitsRenderer(digits: Int(hotpGenerator.digits))
+            .digitsRenderer(digits: hotpGenerator.digits)
     }
 
     private func codeValuePublisher() -> AnyPublisher<BigUInt, any Error> {
@@ -78,21 +78,10 @@ public final class HOTPCodePublisher: OTPCodePublisher {
 // MARK: - Helpers
 
 extension Publisher where Output == BigUInt {
-    func digitsRenderer(digits: Int) -> AnyPublisher<String, Failure> {
-        map { codeNumber in
-            String(codeNumber).leftPadding(toLength: digits, withPad: "0")
+    func digitsRenderer(digits: UInt16) -> AnyPublisher<String, Failure> {
+        map { code in
+            OTPCodeRenderer().render(code: code, digits: digits)
         }
         .eraseToAnyPublisher()
-    }
-}
-
-extension String {
-    fileprivate func leftPadding(toLength newLength: Int, withPad character: Character) -> String {
-        let stringLength = count
-        if stringLength < newLength {
-            return String(repeatElement(character, count: newLength - stringLength)) + self
-        } else {
-            return String(suffix(newLength))
-        }
     }
 }

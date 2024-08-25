@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 
 public struct TOTPAuthCode: Sendable {
@@ -17,5 +18,12 @@ public struct TOTPAuthCode: Sendable {
             type: .totp(period: period),
             data: data
         )
+    }
+
+    public func renderCode(epochSeconds: UInt64) throws -> String {
+        let renderer = OTPCodeRenderer()
+        let generator = TOTPGenerator(generator: data.hotpGenerator())
+        let code = try generator.code(epochSeconds: epochSeconds)
+        return renderer.render(code: code, digits: data.digits.value)
     }
 }

@@ -119,5 +119,13 @@ extension VaultItemFeedViewSnapshotTests {
             isEditing: .constant(false)
         )
         .environment(dataModel)
+        .environment(VaultInjector(
+            clock: EpochClockMock(currentTime: 30),
+            intervalTimer: IntervalTimerMock(),
+            backupEventLogger: BackupEventLoggerMock(),
+            vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
+            defaults: Defaults(userDefaults: .standard),
+            fileManager: FileManager()
+        ))
     }
 }
