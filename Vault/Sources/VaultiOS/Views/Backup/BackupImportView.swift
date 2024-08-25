@@ -1,16 +1,21 @@
 import Foundation
 import SwiftUI
+import VaultFeed
 
 struct BackupImportView: View {
-    @State private var hasAnyExistingCodes = true
+    @Environment(VaultDataModel.self) private var dataModel
 
     var body: some View {
         Form {
-            if hasAnyExistingCodes {
+            if dataModel.hasAnyItems {
                 hasExistingCodesSection
             } else {
                 noExistingCodesSection
             }
+        }
+        .navigationTitle(Text("Restore Backup"))
+        .task {
+            await dataModel.reloadItems()
         }
     }
 
@@ -19,8 +24,15 @@ struct BackupImportView: View {
             Button {
 //                print("restore existing")
             } label: {
-                VStack(alignment: .leading, spacing: 2) {
-                    Text("Restore Existing Codes")
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.fill"),
+                    color: .accentColor,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Import Backup",
+                        subtitle: "Use a backup file to populate your Vault"
+                    )
                 }
             }
         }
@@ -31,32 +43,35 @@ struct BackupImportView: View {
             Button {
 //                print("merge")
             } label: {
-                FormRow(image: Image(systemName: "doc.on.doc.fill"), color: .green) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Merge with existing codes")
-                        Text("Recommended")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.on.square.fill"),
+                    color: .accentColor,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Merge Backup",
+                        subtitle: "Import a backup file and merge with your existing data. If any items conflict, the most recent version will be used."
+                    )
                 }
-                .padding(.vertical, 2)
             }
 
             Button {
 //                print("override")
             } label: {
-                FormRow(image: Image(systemName: "doc.fill"), color: .red) {
-                    VStack(alignment: .leading, spacing: 2) {
-                        Text("Override existing codes")
-                        Text("Danger")
-                            .font(.footnote.bold())
-                            .foregroundStyle(.red)
-                    }
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.fill"),
+                    color: .red,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Override Backup",
+                        subtitle: "Import a backup file and override any existing data. Any existing data in your vault will be deleted. Warning!"
+                    )
                 }
-                .padding(.vertical, 2)
+                .foregroundStyle(.red)
             }
-        } footer: {
-            Text("You have some existing codes. What would you like to do?")
         }
     }
 }
