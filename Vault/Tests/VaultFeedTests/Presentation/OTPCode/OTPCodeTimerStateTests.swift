@@ -48,6 +48,12 @@ final class OTPCodeTimerStateTests: XCTestCase {
         XCTAssertEqual(timeRemaining, 0, accuracy: .ulpOfOne)
     }
 
+    func test_fractionCompleted_emptyTimeRangeIsCompleted() {
+        let sut = OTPCodeTimerState(startTime: 100, endTime: 100)
+
+        XCTAssertEqual(sut.fractionCompleted(at: 100), 1)
+    }
+
     func test_fractionCompleted_isFractionOfRangeCompleted() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let fractionCompleted = sut.fractionCompleted(at: 360)
