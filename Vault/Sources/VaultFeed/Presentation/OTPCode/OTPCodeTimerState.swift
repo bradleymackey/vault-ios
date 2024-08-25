@@ -2,9 +2,9 @@ import Foundation
 
 public struct OTPCodeTimerState: Equatable, Sendable {
     /// The number of epoch seconds when the timer started.
-    public var startTime: Double
+    public let startTime: Double
     /// The number of epoch seconds when the timer will end.
-    public var endTime: Double
+    public let endTime: Double
 
     public init(startTime: Double, endTime: Double) {
         self.startTime = startTime
