@@ -29,15 +29,15 @@ struct BackupImportView: View {
             switch item {
             case .importToCurrentlyEmpty:
                 NavigationStack {
-                    Text("Import – Vault Currently Empty")
+                    BackupImportFlowView(viewModel: .init(importContext: .toEmptyVault))
                 }
             case .importAndMerge:
                 NavigationStack {
-                    Text("Import – Merge")
+                    BackupImportFlowView(viewModel: .init(importContext: .merge))
                 }
             case .importAndOverride:
                 NavigationStack {
-                    Text("Import – Override")
+                    BackupImportFlowView(viewModel: .init(importContext: .override))
                 }
             }
         }
