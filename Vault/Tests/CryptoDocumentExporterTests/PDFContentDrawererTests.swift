@@ -4,7 +4,7 @@ import XCTest
 @testable import CryptoDocumentExporter
 
 final class PDFContentDrawererTests: XCTestCase {
-    func test_drawContent_drawsOnceIfSuccess() {
+    func test_drawContent_drawsOnceIfSuccess() throws {
         var executions = 0
         let sut = PDFContentDrawerer {
             executions += 1
@@ -13,26 +13,40 @@ final class PDFContentDrawererTests: XCTestCase {
             // noop
         }
 
-        sut.drawContent()
+        try sut.drawContent()
 
         XCTAssertEqual(executions, 1)
     }
 
-    func test_drawContent_drawsTwiceIfInsufficientSpace() {
+    func test_drawContent_drawsTwiceIfInsufficientSpaceOnFirstCall() throws {
         var executions = 0
         let sut = PDFContentDrawerer {
-            executions += 1
-            return .failure(.insufficientSpace)
+            defer { executions += 1 }
+            if executions == 0 {
+                return .failure(.insufficientSpace)
+            } else {
+                return .success(.didDrawToDocument)
+            }
         } makeNewPage: {
             // noop
         }
 
-        sut.drawContent()
+        try sut.drawContent()
 
         XCTAssertEqual(executions, 2)
     }
 
-    func test_drawContent_doesNotDrawTwiceIfContentMissing() {
+    func test_drawContent_throwsErrorIfInsufficientSpaceMoreThanOnce() throws {
+        let sut = PDFContentDrawerer {
+            .failure(.insufficientSpace)
+        } makeNewPage: {
+            // noop
+        }
+
+        XCTAssertThrowsError(try sut.drawContent())
+    }
+
+    func test_drawContent_doesNotDrawTwiceIfContentMissing() throws {
         var executions = 0
         let sut = PDFContentDrawerer {
             executions += 1
@@ -41,12 +55,12 @@ final class PDFContentDrawererTests: XCTestCase {
             // noop
         }
 
-        sut.drawContent()
+        try sut.drawContent()
 
         XCTAssertEqual(executions, 1)
     }
 
-    func test_drawContent_doesNotMakeNewPageOnSuccess() {
+    func test_drawContent_doesNotMakeNewPageOnSuccess() throws {
         var executions = 0
         let sut = PDFContentDrawerer {
             .success(.didDrawToDocument)
@@ -54,25 +68,31 @@ final class PDFContentDrawererTests: XCTestCase {
             executions += 1
         }
 
-        sut.drawContent()
+        try sut.drawContent()
 
         XCTAssertEqual(executions, 0)
     }
 
-    func test_drawContent_makesNewPageOnInsufficientSpace() {
+    func test_drawContent_makesNewPageOnInsufficientSpace() throws {
         var executions = 0
+        var drawExecutions = 0
         let sut = PDFContentDrawerer {
-            .failure(.insufficientSpace)
+            defer { drawExecutions += 1 }
+            if drawExecutions == 0 {
+                return .failure(.insufficientSpace)
+            } else {
+                return .success(.didDrawToDocument)
+            }
         } makeNewPage: {
             executions += 1
         }
 
-        sut.drawContent()
+        try sut.drawContent()
 
         XCTAssertEqual(executions, 1)
     }
 
-    func test_drawContent_doesNotMakeNewPageOnContentMissing() {
+    func test_drawContent_doesNotMakeNewPageOnContentMissing() throws {
         var executions = 0
         let sut = PDFContentDrawerer {
             .failure(.contentMissing)
@@ -80,7 +100,7 @@ final class PDFContentDrawererTests: XCTestCase {
             executions += 1
         }
 
-        sut.drawContent()
+        try sut.drawContent()
 
         XCTAssertEqual(executions, 0)
     }

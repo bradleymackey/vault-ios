@@ -28,6 +28,7 @@ public struct PDFDataBlockDocumentRenderer<
 
     public func render(document: DataBlockDocument) throws -> PDFDocument {
         let renderer = rendererFactory.makeRenderer()
+        var renderingError: (any Error)?
         let data = renderer.pdfData { context in
             let drawer = PDFDocumentDrawerHelper(
                 context: context,
@@ -37,20 +38,26 @@ public struct PDFDataBlockDocumentRenderer<
                 pageLayout: blockLayout
             )
             drawer.startNextPage()
-            for content in document.content {
-                switch content {
-                case let .title(label):
-                    drawer.draw(label: label)
-                case let .dataBlock(imageData):
-                    drawer.draw(
-                        images: imageData,
-                        imageRenderer: imageRenderer,
-                        rectSeriesLayout: blockLayout
-                    )
+            do {
+                for content in document.content {
+                    switch content {
+                    case let .title(label):
+                        try drawer.draw(label: label)
+                    case let .dataBlock(imageData):
+                        try drawer.draw(
+                            images: imageData,
+                            imageRenderer: imageRenderer,
+                            rectSeriesLayout: blockLayout
+                        )
+                    }
                 }
+            } catch {
+                renderingError = error
             }
         }
-        if let document = PDFDocument(data: data) {
+        if let renderingError {
+            throw renderingError
+        } else if let document = PDFDocument(data: data) {
             return document
         } else {
             throw PDFRenderingError.invalidData
@@ -83,7 +90,8 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         self.pageLayout = pageLayout
     }
 
-    func draw(label: DataBlockLabel) {
+    /// Throws if unable to draw.
+    func draw(label: DataBlockLabel) throws {
         let drawerer = PDFContentDrawerer { [self] in
             let currentLayoutEngine = pageLayout(contentArea.currentBounds)
             let attributedString = labelRenderer.makeAttributedTextForLabel(label)
@@ -110,14 +118,15 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             startNextPage()
         }
 
-        drawerer.drawContent()
+        try drawerer.drawContent()
     }
 
+    /// Throws if unable to draw.
     func draw(
         images: [Data],
         imageRenderer: some ImageDataRenderer,
         rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout
-    ) {
+    ) throws {
         var currentImageNumberOnPage: UInt = 0
         var currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
 
@@ -140,7 +149,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
                 currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
             }
 
-            drawerer.drawContent()
+            try drawerer.drawContent()
         }
     }
 
