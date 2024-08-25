@@ -24,6 +24,13 @@ final class OTPCodeTimerStateTests: XCTestCase {
         XCTAssertEqual(sut.endTime, 120)
     }
 
+    func test_init_currentTimePeriod_isExactRangeBoundary() {
+        let sut = OTPCodeTimerState(currentTime: 90, period: 30)
+
+        XCTAssertEqual(sut.startTime, 90)
+        XCTAssertEqual(sut.endTime, 120)
+    }
+
     func test_totalTime_isDurationOfTimeRangePositive() {
         let sut = OTPCodeTimerState(startTime: 150, endTime: 250)
         let totalTime = sut.totalTime
