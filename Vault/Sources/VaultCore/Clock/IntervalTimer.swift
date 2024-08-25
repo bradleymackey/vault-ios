@@ -4,6 +4,8 @@ import Foundation
 public protocol IntervalTimer {
     /// Set an expectation to publish once after the specified `time`.
     func wait(for time: Double) -> AnyPublisher<Void, Never>
+    /// Set an expectation to publish once after the specified `time`, with tolerance.
+    func wait(for time: Double, tolerance: Double) -> AnyPublisher<Void, Never>
 }
 
 // MARK: - Mock
@@ -23,6 +25,11 @@ public final class IntervalTimerMock: IntervalTimer {
         waitArgValues.append(time)
         return waitSubject.first().eraseToAnyPublisher()
     }
+
+    public func wait(for time: Double, tolerance _: Double) -> AnyPublisher<Void, Never> {
+        waitArgValues.append(time)
+        return waitSubject.first().eraseToAnyPublisher()
+    }
 }
 
 // MARK: - Impl
@@ -32,6 +39,14 @@ public final class IntervalTimerImpl: IntervalTimer {
     public init() {}
     public func wait(for time: Double) -> AnyPublisher<Void, Never> {
         Timer.TimerPublisher(interval: time, runLoop: .current, mode: .common)
+            .autoconnect()
+            .map { _ in }
+            .first() // only publish once
+            .eraseToAnyPublisher()
+    }
+
+    public func wait(for time: Double, tolerance: Double) -> AnyPublisher<Void, Never> {
+        Timer.TimerPublisher(interval: time, tolerance: tolerance, runLoop: .current, mode: .common)
             .autoconnect()
             .map { _ in }
             .first() // only publish once

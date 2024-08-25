@@ -22,4 +22,23 @@ final class IntervalTimerImplTests: XCTestCase {
         // We're waiting for 5 seconds, but check after 1 second for tolerance.
         await awaitNoPublish(publisher: publisher, timeout: 1, when: {})
     }
+
+    @MainActor
+    func test_waitWithTolerance_publishesAfterWait() async throws {
+        let sut = IntervalTimerImpl()
+
+        let publisher = sut.wait(for: 0.5, tolerance: 0.1).collect(1).first()
+
+        let values: [Void] = try await awaitPublisher(publisher, timeout: 2.0, when: {})
+        XCTAssertEqual(values.count, 1)
+    }
+
+    @MainActor
+    func test_waitWithTolerance_doesNotPublishBeforeWait() async throws {
+        let sut = IntervalTimerImpl()
+        let publisher = sut.wait(for: 5, tolerance: 0.1).collect(1).first()
+
+        // We're waiting for 5 seconds, but check after 1 second for tolerance.
+        await awaitNoPublish(publisher: publisher, timeout: 1, when: {})
+    }
 }
