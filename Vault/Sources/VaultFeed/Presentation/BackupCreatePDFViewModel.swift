@@ -66,8 +66,8 @@ public final class BackupCreatePDFViewModel {
         public let diskURL: URL
     }
 
-    private static let pdfSizeKey = Key<Size>("vault.pdf.default-size")
-    private static let userHintKey = Key<String>("vault.pdf.user-hint")
+    private static let pdfSizeKey = Key<Size>(VaultIdentifiers.Preferences.PDF.defaultSize)
+    private static let userHintKey = Key<String>(VaultIdentifiers.Preferences.PDF.userHint)
     private static let defaultUserHint =
         "This is my description, which is visible in plain text on the vault backup. You can use the Vault app to import this data if you lose access to this data."
 

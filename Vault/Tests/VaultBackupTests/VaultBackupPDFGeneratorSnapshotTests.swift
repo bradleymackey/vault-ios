@@ -17,15 +17,21 @@ final class VaultBackupPDFGeneratorSnapshotTests: XCTestCase {
         XCTAssertEqual(attributes?["Title"] as? String, "my document")
     }
 
-    func test_makeDocument_attachesEncryptedPayloadAsDocumentAttribute() throws {
+    func test_makeDocument_attachesEncryptedPayloadAsAnnotationOnFirstPage() throws {
         let payload = makeTestingPayload(encryptedDataLength: 100)
 
         let sut = makeSUT()
         let pdf = try sut.makePDF(payload: payload)
 
+        let pageOne = try XCTUnwrap(pdf.page(at: 0))
+        let annotations = pageOne.annotations
+        XCTAssertEqual(annotations.count, 1)
+
+        let targetAnnotation = try XCTUnwrap(annotations.first)
+
         let expected =
-            "eyJFTkNSWVBUSU9OX0FVVEhfVEFHIjoiSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNPSIsIkVOQ1JZUFRJT05fREFUQSI6IlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJRPT0iLCJFTkNSWVBUSU9OX0lWIjoicjYrdnI2K3ZyNit2cjYrdnI2K3ZyNit2cjYrdnI2K3ZyNit2cjYrdiIsIkVOQ1JZUFRJT05fVkVSU0lPTiI6IjEuMC4wIiwiS0VZR0VOX1NBTFQiOiJJaUlpSWlJaUlpSWlJZz09IiwiS0VZR0VOX1NJR05BVFVSRSI6InNpZ25hdHVyZSJ9"
-        let retrieved = pdf.documentAttributes?["vault.backup.encrypted-vault"] as? String
+            "vault.backup.encrypted-vault:ewogICJFTkNSWVBUSU9OX0FVVEhfVEFHIiA6ICJJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU09IiwKICAiRU5DUllQVElPTl9EQVRBIiA6ICJSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSUT09IiwKICAiRU5DUllQVElPTl9JViIgOiAicjYrdnI2K3ZyNit2cjYrdnI2K3ZyNit2cjYrdnI2K3ZyNit2cjYrdiIsCiAgIkVOQ1JZUFRJT05fVkVSU0lPTiIgOiAiMS4wLjAiLAogICJLRVlHRU5fU0FMVCIgOiAiSWlJaUlpSWlJaUlpSWc9PSIsCiAgIktFWUdFTl9TSUdOQVRVUkUiIDogInNpZ25hdHVyZSIKfQ=="
+        let retrieved = targetAnnotation.contents
         XCTAssertEqual(retrieved, expected)
     }
 

@@ -19,7 +19,7 @@ public protocol BackupEventLogger {
 public final class BackupEventLoggerImpl: BackupEventLogger {
     private let defaults: Defaults
     private let clock: any EpochClock
-    private let backupEventKey = Key<VaultBackupEvent>("vault.backup.last-event")
+    private let backupEventKey = Key<VaultBackupEvent>(VaultIdentifiers.Backup.lastBackupEvent)
     private let loggedEventSubject = PassthroughSubject<VaultBackupEvent, Never>()
 
     public init(defaults: Defaults, clock: any EpochClock) {

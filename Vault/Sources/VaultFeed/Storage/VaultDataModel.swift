@@ -43,6 +43,7 @@ public final class VaultDataModel: Sendable {
     // MARK: Items
 
     public var items = [VaultItem]()
+    public private(set) var hasAnyItems = false
     public private(set) var itemErrors = [VaultRetrievalResult<VaultItem>.Error]()
     public private(set) var itemsState: State = .base
     public private(set) var itemsRetrievalError: PresentationError?
@@ -224,6 +225,7 @@ extension VaultDataModel {
             items = result.items
             itemErrors = result.errors
             itemsRetrievalError = nil
+            hasAnyItems = try await vaultStore.hasAnyItems
         } catch {
             itemsRetrievalError = PresentationError(
                 userTitle: "Error Loading",

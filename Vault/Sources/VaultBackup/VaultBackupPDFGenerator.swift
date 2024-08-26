@@ -2,6 +2,7 @@ import CryptoDocumentExporter
 import Foundation
 import ImageTools
 import PDFKit
+import VaultCore
 
 public struct VaultBackupPDFGenerator {
     public var size: any PDFDocumentSize
@@ -38,23 +39,7 @@ public struct VaultBackupPDFGenerator {
             renderer: blockDocumentRenderer,
             dataShardBuilder: dataShardBuilder
         )
-        let renderedDocument = try documentRenderer.render(document: payload)
-        if renderedDocument.documentAttributes == nil {
-            renderedDocument.documentAttributes = [:]
-        }
-        renderedDocument
-            .documentAttributes?["vault.backup.encrypted-vault"] = try encryptedVaultBase64(encryptedVault: payload
-                .encryptedVault)
-        return renderedDocument
-    }
-
-    private func encryptedVaultBase64(encryptedVault: EncryptedVault) throws -> String {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .millisecondsSince1970
-        encoder.dataEncodingStrategy = .base64
-        encoder.outputFormatting = [.sortedKeys] // predictable output
-        let encoded = try encoder.encode(encryptedVault)
-        return encoded.base64EncodedString()
+        return try documentRenderer.render(document: payload)
     }
 
     private var dataShardBuilder: DataShardBuilder {

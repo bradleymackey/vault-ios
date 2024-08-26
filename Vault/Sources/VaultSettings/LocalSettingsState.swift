@@ -1,5 +1,6 @@
 import Foundation
 import FoundationExtensions
+import VaultCore
 
 /// Local settings for the codes.
 public struct LocalSettingsState {
@@ -8,7 +9,7 @@ public struct LocalSettingsState {
     init(defaults: Defaults) {
         _pasteTimeToLive = DefaultsStored(
             defaults: defaults,
-            defaultsKey: .init("setting_paste_ttl"),
+            defaultsKey: .init(VaultIdentifiers.Preferences.General.settingsPasteTTL),
             defaultValue: .default
         )
     }
