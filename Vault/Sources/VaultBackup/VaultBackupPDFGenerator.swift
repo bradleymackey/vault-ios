@@ -2,6 +2,7 @@ import CryptoDocumentExporter
 import Foundation
 import ImageTools
 import PDFKit
+import VaultCore
 
 public struct VaultBackupPDFGenerator {
     public var size: any PDFDocumentSize
@@ -43,8 +44,11 @@ public struct VaultBackupPDFGenerator {
             renderedDocument.documentAttributes = [:]
         }
         renderedDocument
-            .documentAttributes?["vault.backup.encrypted-vault"] = try encryptedVaultBase64(encryptedVault: payload
-                .encryptedVault)
+            .documentAttributes?[VaultIdentifiers.Backup.encryptedVaultData] =
+            try encryptedVaultBase64(
+                encryptedVault: payload
+                    .encryptedVault
+            )
         return renderedDocument
     }
 
