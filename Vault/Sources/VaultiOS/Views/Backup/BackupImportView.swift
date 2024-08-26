@@ -2,15 +2,16 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
+@MainActor
 struct BackupImportView: View {
     @Environment(VaultDataModel.self) private var dataModel
 
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
-        case importToCurrentlyEmpty
-        case importAndMerge
-        case importAndOverride
+        case importToCurrentlyEmpty(BackupPassword?)
+        case importAndMerge(BackupPassword?)
+        case importAndOverride(BackupPassword?)
     }
 
     var body: some View {
@@ -27,17 +28,26 @@ struct BackupImportView: View {
         }
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
-            case .importToCurrentlyEmpty:
+            case let .importToCurrentlyEmpty(backupPassword):
                 NavigationStack {
-                    BackupImportFlowView(viewModel: .init(importContext: .toEmptyVault))
+                    BackupImportFlowView(viewModel: .init(
+                        importContext: .toEmptyVault,
+                        existingBackupPassword: backupPassword
+                    ))
                 }
-            case .importAndMerge:
+            case let .importAndMerge(backupPassword):
                 NavigationStack {
-                    BackupImportFlowView(viewModel: .init(importContext: .merge))
+                    BackupImportFlowView(viewModel: .init(
+                        importContext: .merge,
+                        existingBackupPassword: backupPassword
+                    ))
                 }
-            case .importAndOverride:
+            case let .importAndOverride(backupPassword):
                 NavigationStack {
-                    BackupImportFlowView(viewModel: .init(importContext: .override))
+                    BackupImportFlowView(viewModel: .init(
+                        importContext: .override,
+                        existingBackupPassword: backupPassword
+                    ))
                 }
             }
         }
@@ -45,8 +55,9 @@ struct BackupImportView: View {
 
     private var noExistingCodesSection: some View {
         Section {
-            Button {
-                modal = .importToCurrentlyEmpty
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importToCurrentlyEmpty(dataModel.backupPassword.fetchedPassword)
             } label: {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.fill"),
@@ -64,8 +75,9 @@ struct BackupImportView: View {
 
     private var hasExistingCodesSection: some View {
         Section {
-            Button {
-                modal = .importAndMerge
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importAndMerge(dataModel.backupPassword.fetchedPassword)
             } label: {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.on.square.fill"),
@@ -80,8 +92,9 @@ struct BackupImportView: View {
                 }
             }
 
-            Button {
-                modal = .importAndOverride
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importAndOverride(dataModel.backupPassword.fetchedPassword)
             } label: {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.fill"),

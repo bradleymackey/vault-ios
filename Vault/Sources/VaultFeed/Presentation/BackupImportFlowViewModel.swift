@@ -20,9 +20,13 @@ public final class BackupImportFlowViewModel {
 
     public private(set) var state: ImportState = .idle
     public let importContext: ImportContext
+    /// The backup password the user already has on their device.
+    /// If the imported backup was encrypted with this same password, we don't need to prompt the user.
+    private let existingBackupPassword: BackupPassword?
 
-    public init(importContext: ImportContext) {
+    public init(importContext: ImportContext, existingBackupPassword: BackupPassword?) {
         self.importContext = importContext
+        self.existingBackupPassword = existingBackupPassword
     }
 
     public func handleImport(result: Result<URL, any Error>) {
