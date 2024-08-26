@@ -14,6 +14,24 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
         XCTAssertEqual(renderer.renderCallCount, 0)
     }
 
+    func test_render_noPagesGeneratesError() throws {
+        let exportPayload = VaultExportPayload(
+            encryptedVault: EncryptedVault(
+                data: Data(),
+                authentication: Data(),
+                encryptionIV: Data(),
+                keygenSalt: Data(),
+                keygenSignature: "my-signature"
+            ),
+            userDescription: "my vault",
+            created: Date(timeIntervalSince1970: 2000)
+        )
+        let renderer = makeRendererMock(pdfDocument: .noPages)
+        let sut = makeSUT(documentRenderer: renderer)
+
+        XCTAssertThrowsError(try sut.render(document: exportPayload))
+    }
+
     func test_render_rendersVaultParsedToDocument() throws {
         let exportPayload = VaultExportPayload(
             encryptedVault: EncryptedVault(
@@ -26,7 +44,7 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
             userDescription: "my vault",
             created: Date(timeIntervalSince1970: 2000)
         )
-        let pdfDocument = PDFDocument()
+        let pdfDocument = PDFDocument.onePage
         let renderer = makeRendererMock(pdfDocument: pdfDocument)
         let sut = makeSUT(documentRenderer: renderer)
 
@@ -59,4 +77,18 @@ private func makeRendererMock(pdfDocument: PDFDocument = PDFDocument()) -> PDFDo
     let renderer = PDFDocumentRendererMock()
     renderer.renderHandler = { _ in pdfDocument }
     return renderer
+}
+
+extension PDFDocument {
+    fileprivate static var noPages: PDFDocument {
+        PDFDocument()
+    }
+
+    fileprivate static var onePage: PDFDocument {
+        let renderer = UIGraphicsPDFRenderer()
+        let data = renderer.pdfData { context in
+            context.beginPage()
+        }
+        return PDFDocument(data: data)!
+    }
 }

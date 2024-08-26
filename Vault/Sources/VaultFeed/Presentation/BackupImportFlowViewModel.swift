@@ -58,6 +58,8 @@ extension BackupImportFlowViewModel {
     private enum ExtractionError: Error {
         case unableToLoad(URL)
         case missingData
+        case noPages
+        case noAnnotations
         case malformedBase64Data
 
         var presentationError: PresentationError {
@@ -68,11 +70,11 @@ extension BackupImportFlowViewModel {
                     userDescription: "There was an error with the this PDF document. Please check the PDF, your internet, and try again.",
                     debugDescription: "PDF unable to be created from url \(url). Likely malformed or no connection."
                 )
-            case .missingData:
+            case .missingData, .noPages, .noAnnotations:
                 PresentationError(
                     userTitle: "Not a Vault Export",
                     userDescription: "This is not a vault export or the data has been modified. Please scan the QR codes manually.",
-                    debugDescription: "Missing data in document attribute."
+                    debugDescription: "Missing data in document needed for extraction."
                 )
             case .malformedBase64Data:
                 PresentationError(
@@ -89,11 +91,21 @@ extension BackupImportFlowViewModel {
         guard let pdf = PDFDocument(url: pdfURL) else {
             throw ExtractionError.unableToLoad(pdfURL)
         }
-        let encryptedDataID = VaultIdentifiers.Backup.encryptedVaultData
-        guard let encryptedVault = pdf.documentAttributes?[encryptedDataID] as? String else {
+        guard let firstPage = pdf.page(at: 0) else {
+            throw ExtractionError.noPages
+        }
+        guard let annotation = firstPage.annotations
+            .first(where: { $0.contents?.starts(with: VaultIdentifiers.Backup.encryptedVaultData) == true })
+        else {
+            throw ExtractionError.noAnnotations
+        }
+        guard let contents = annotation.contents else {
+            throw ExtractionError.noAnnotations
+        }
+        guard let encodedString = contents.split(separator: ":")[safeIndex: 1] else {
             throw ExtractionError.missingData
         }
-        guard let data = Data(base64Encoded: encryptedVault) else {
+        guard let data = Data(base64Encoded: String(encodedString)) else {
             throw ExtractionError.malformedBase64Data
         }
         return try EncryptedVaultCoder().decode(vaultData: data)
