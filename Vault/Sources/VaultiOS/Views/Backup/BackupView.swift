@@ -12,8 +12,6 @@ struct BackupView: View {
 
     enum Modal: IdentifiableSelf {
         case updatePassword
-        case exportPassword(BackupPassword)
-        case importPassword
         case pdfBackup(BackupPassword)
     }
 
@@ -66,17 +64,6 @@ struct BackupView: View {
                         deriverFactory: injector.vaultKeyDeriverFactory
                     ))
                 }
-            case let .exportPassword(password):
-                NavigationStack {
-                    BackupKeyExportView(viewModel: .init(
-                        exporter: .init(backupPassword: password),
-                        authenticationService: authenticationService
-                    ))
-                }
-            case .importPassword:
-                NavigationStack {
-                    BackupKeyImportView(viewModel: .init(dataModel: dataModel), intervalTimer: injector.intervalTimer)
-                }
             }
         }
     }
@@ -101,14 +88,11 @@ struct BackupView: View {
 
     private func keySection(existingPassword: BackupPassword?) -> some View {
         Section {
-            if let existingPassword {
+            if existingPassword != nil {
                 updateButton
-                exportButton(password: existingPassword)
             } else {
                 createButton
             }
-
-            importButton
         } header: {
             Text("Encryption Key")
         }
@@ -159,26 +143,6 @@ struct BackupView: View {
         } label: {
             FormRow(image: Image(systemName: "arrow.triangle.2.circlepath"), color: .accentColor, style: .prominent) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
-            }
-        }
-    }
-
-    private func exportButton(password: BackupPassword) -> some View {
-        Button {
-            modal = .exportPassword(password)
-        } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .accentColor, style: .prominent) {
-                Text(viewModel.strings.backupPasswordExportTitle)
-            }
-        }
-    }
-
-    private var importButton: some View {
-        Button {
-            modal = .importPassword
-        } label: {
-            FormRow(image: Image(systemName: "square.and.arrow.down.fill"), color: .accentColor, style: .prominent) {
-                Text(viewModel.strings.backupPasswordImportTitle)
             }
         }
     }
