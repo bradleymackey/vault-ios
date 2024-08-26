@@ -5,6 +5,7 @@ import VaultFeed
 @MainActor
 struct BackupImportFlowView: View {
     @State private var viewModel: BackupImportFlowViewModel
+    @State private var isImporting = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -14,7 +15,16 @@ struct BackupImportFlowView: View {
 
     var body: some View {
         Form {
-            Text("\(viewModel.importContext)")
+            Button {
+                isImporting = true
+            } label: {
+                Text("Pick File")
+            }
+            .fileImporter(isPresented: $isImporting, allowedContentTypes: [.pdf]) { result in
+                viewModel.handleImport(result: result)
+            }
+
+            Text("\(viewModel.state)")
         }
         .navigationTitle(Text("Import"))
         .navigationBarTitleDisplayMode(.inline)
