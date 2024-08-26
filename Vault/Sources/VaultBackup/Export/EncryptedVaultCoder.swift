@@ -1,7 +1,10 @@
 import Foundation
 
-struct EncryptedVaultCoder {
-    func encode(vault: EncryptedVault) throws -> Data {
+/// Converts an encrypted vault to a pure Data format, and back.
+public struct EncryptedVaultCoder {
+    public init() {}
+
+    public func encode(vault: EncryptedVault) throws -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .millisecondsSince1970
         encoder.dataEncodingStrategy = .base64
@@ -9,7 +12,7 @@ struct EncryptedVaultCoder {
         return try encoder.encode(vault)
     }
 
-    func decode(vaultData: Data) throws -> EncryptedVault {
+    public func decode(vaultData: Data) throws -> EncryptedVault {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .millisecondsSince1970
         decoder.dataDecodingStrategy = .base64

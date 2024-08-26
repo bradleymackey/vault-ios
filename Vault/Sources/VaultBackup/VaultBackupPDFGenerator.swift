@@ -40,25 +40,15 @@ public struct VaultBackupPDFGenerator {
             dataShardBuilder: dataShardBuilder
         )
         let renderedDocument = try documentRenderer.render(document: payload)
+        let coder = EncryptedVaultCoder()
+        let encodedVault = try coder.encode(vault: payload.encryptedVault)
         if renderedDocument.documentAttributes == nil {
             renderedDocument.documentAttributes = [:]
         }
         renderedDocument
             .documentAttributes?[VaultIdentifiers.Backup.encryptedVaultData] =
-            try encryptedVaultBase64(
-                encryptedVault: payload
-                    .encryptedVault
-            )
+            encodedVault.base64EncodedString()
         return renderedDocument
-    }
-
-    private func encryptedVaultBase64(encryptedVault: EncryptedVault) throws -> String {
-        let encoder = JSONEncoder()
-        encoder.dateEncodingStrategy = .millisecondsSince1970
-        encoder.dataEncodingStrategy = .base64
-        encoder.outputFormatting = [.sortedKeys] // predictable output
-        let encoded = try encoder.encode(encryptedVault)
-        return encoded.base64EncodedString()
     }
 
     private var dataShardBuilder: DataShardBuilder {
