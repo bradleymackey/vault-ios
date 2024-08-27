@@ -32,6 +32,10 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
     public func makeWritable() -> VaultItemTag.Write {
         .init(name: name, color: color, iconName: iconName)
     }
+
+    public func makeImportingContext() -> VaultItemTag.ImportingContext {
+        .init(id: id)
+    }
 }
 
 extension VaultItemTag: Digestable {
@@ -57,6 +61,15 @@ extension VaultItemTag {
             self.name = name
             self.color = color
             self.iconName = iconName
+        }
+    }
+
+    /// Writable data used when importing only.
+    public struct ImportingContext: Sendable {
+        public var id: Identifier<VaultItemTag>
+
+        public init(id: Identifier<VaultItemTag>) {
+            self.id = id
         }
     }
 }

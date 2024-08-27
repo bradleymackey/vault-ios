@@ -44,6 +44,10 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
         )
     }
 
+    public func makeImportingContext() -> VaultItem.ImportingContext {
+        .init(id: id, created: metadata.created, updated: metadata.updated)
+    }
+
     /// Checks if all deterministic content in a given vault item is equal to an `other` item.
     ///
     /// This ignores data that is not user-determined.
@@ -166,6 +170,19 @@ extension VaultItem {
             self.searchableLevel = searchableLevel
             self.searchPassphase = searchPassphase
             self.lockState = lockState
+        }
+    }
+
+    /// Writable data used when importing only.
+    public struct ImportingContext: Sendable {
+        public var id: Identifier<VaultItem>
+        public var created: Date
+        public var updated: Date
+
+        public init(id: Identifier<VaultItem>, created: Date, updated: Date) {
+            self.id = id
+            self.created = created
+            self.updated = updated
         }
     }
 }
