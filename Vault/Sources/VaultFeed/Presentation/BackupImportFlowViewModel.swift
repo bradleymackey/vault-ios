@@ -59,7 +59,8 @@ public final class BackupImportFlowViewModel {
 
     private func importPDF(fromURL url: URL) {
         do {
-            guard let pdf = PDFDocument(url: url) else {
+            let data = try Data(contentsOf: url)
+            guard let pdf = PDFDocument(data: data) else {
                 throw InvalidURLError()
             }
             let encryptedVault = try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
@@ -71,7 +72,7 @@ public final class BackupImportFlowViewModel {
             state = .error(PresentationError(
                 userTitle: "PDF Error",
                 userDescription: "There was an error with the this PDF document. Please check the PDF, your internet, and try again.",
-                debugDescription: "PDF unable to be created from url \(url). Likely malformed or no connection."
+                debugDescription: error.localizedDescription + "\(url)"
             ))
         }
     }
