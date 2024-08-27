@@ -24,16 +24,16 @@ final class BackupImportFlowViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_handleImport_urlWithNoDataFails() {
+    func test_handleImport_noDataFails() {
         let sut = makeSUT()
 
-        sut.handleImport(result: .success(randomTmpPath()))
+        sut.handleImport(result: .success(Data()))
 
         XCTAssertTrue(sut.state.isError)
     }
 
     @MainActor
-    func test_handleImport_validExtractionGivesSuccess() {
+    func test_handleImport_validExtractionGivesSuccess() throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let sut = makeSUT(backupPDFDetatcher: backupPDFDetatcher)
         backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
@@ -44,7 +44,9 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         let pdf = PDFDocument()
         pdf.write(to: path)
 
-        sut.handleImport(result: .success(path))
+        let data = try Data(contentsOf: path)
+
+        sut.handleImport(result: .success(data))
 
         XCTAssertEqual(sut.state, .success)
     }

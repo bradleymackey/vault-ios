@@ -42,10 +42,10 @@ public final class BackupImportFlowViewModel {
         self.backupPDFDetatcher = backupPDFDetatcher
     }
 
-    public func handleImport(result: Result<URL, any Error>) {
+    public func handleImport(result: Result<Data, any Error>) {
         switch result {
-        case let .success(url):
-            importPDF(fromURL: url)
+        case let .success(data):
+            importPDF(data: data)
         case let .failure(error):
             state = .error(PresentationError(
                 userTitle: "File Error",
@@ -57,9 +57,8 @@ public final class BackupImportFlowViewModel {
 
     struct InvalidURLError: Error {}
 
-    private func importPDF(fromURL url: URL) {
+    private func importPDF(data: Data) {
         do {
-            let data = try Data(contentsOf: url)
             guard let pdf = PDFDocument(data: data) else {
                 throw InvalidURLError()
             }
@@ -72,7 +71,7 @@ public final class BackupImportFlowViewModel {
             state = .error(PresentationError(
                 userTitle: "PDF Error",
                 userDescription: "There was an error with the this PDF document. Please check the PDF, your internet, and try again.",
-                debugDescription: error.localizedDescription + "\(url)"
+                debugDescription: error.localizedDescription
             ))
         }
     }
