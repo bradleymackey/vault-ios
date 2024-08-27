@@ -10,6 +10,7 @@ import VaultSettings
 func anyVaultDataModel(
     vaultStore: any VaultStore = VaultStoreStub(),
     vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
+    vaultImporter: any VaultStoreImporter = VaultStoreImporterMock(),
     vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
     backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
     backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
@@ -17,6 +18,7 @@ func anyVaultDataModel(
     VaultDataModel(
         vaultStore: vaultStore,
         vaultTagStore: vaultTagStore,
+        vaultImporter: vaultImporter,
         vaultDeleter: vaultDeleter,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger

@@ -513,6 +513,66 @@ final class VaultDataModelTests: XCTestCase {
         XCTAssertEqual(vaultStore.calledMethods, [.retrieve])
         XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
     }
+
+    @MainActor
+    func test_importMerge_mergesDataFromImporter() async throws {
+        let importer = VaultStoreImporterMock()
+        let sut = makeSUT(vaultImporter: importer)
+
+        let exp = expectation(description: "Wait for import")
+        importer.importAndMergeVaultHandler = { _ in
+            exp.fulfill()
+        }
+
+        try await sut.importMerge(payload: anyApplicationPayload())
+
+        await fulfillment(of: [exp])
+
+        XCTAssertEqual(importer.importAndMergeVaultCallCount, 1)
+        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 0)
+    }
+
+    @MainActor
+    func test_importMerge_reloadsStores() async throws {
+        let vaultStore = VaultStoreStub()
+        let vaultTagStore = VaultTagStoreStub()
+        let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
+
+        try await sut.importMerge(payload: anyApplicationPayload())
+
+        XCTAssertEqual(vaultStore.calledMethods, [.retrieve, .export])
+        XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
+    }
+
+    @MainActor
+    func test_importOverride_mergesDataFromImporter() async throws {
+        let importer = VaultStoreImporterMock()
+        let sut = makeSUT(vaultImporter: importer)
+
+        let exp = expectation(description: "Wait for import")
+        importer.importAndOverrideVaultHandler = { _ in
+            exp.fulfill()
+        }
+
+        try await sut.importOverride(payload: anyApplicationPayload())
+
+        await fulfillment(of: [exp])
+
+        XCTAssertEqual(importer.importAndMergeVaultCallCount, 0)
+        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 1)
+    }
+
+    @MainActor
+    func test_importOverride_reloadsStores() async throws {
+        let vaultStore = VaultStoreStub()
+        let vaultTagStore = VaultTagStoreStub()
+        let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
+
+        try await sut.importOverride(payload: anyApplicationPayload())
+
+        XCTAssertEqual(vaultStore.calledMethods, [.retrieve, .export])
+        XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
+    }
 }
 
 // MARK: - Helpers
@@ -522,6 +582,7 @@ extension VaultDataModelTests {
     private func makeSUT(
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
+        vaultImporter: any VaultStoreImporter = VaultStoreImporterMock(),
         vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
@@ -530,10 +591,15 @@ extension VaultDataModelTests {
         VaultDataModel(
             vaultStore: vaultStore,
             vaultTagStore: vaultTagStore,
+            vaultImporter: vaultImporter,
             vaultDeleter: vaultDeleter,
             backupPasswordStore: backupPasswordStore,
             backupEventLogger: backupEventLogger,
             itemCaches: itemCaches
         )
+    }
+
+    private func anyApplicationPayload() -> VaultApplicationPayload {
+        VaultApplicationPayload(userDescription: "any", items: [], tags: [])
     }
 }
