@@ -37,7 +37,8 @@ public struct VaultBackupPDFGenerator {
         )
         let documentRenderer = VaultExportPDFDocumentRenderer(
             renderer: blockDocumentRenderer,
-            dataShardBuilder: dataShardBuilder
+            dataShardBuilder: dataShardBuilder,
+            attacher: VaultBackupPDFAttacherImpl()
         )
         return try documentRenderer.render(document: payload)
     }

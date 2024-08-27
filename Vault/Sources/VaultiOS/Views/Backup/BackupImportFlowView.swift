@@ -21,7 +21,11 @@ struct BackupImportFlowView: View {
                 Text("Pick File")
             }
             .fileImporter(isPresented: $isImporting, allowedContentTypes: [.pdf]) { result in
-                viewModel.handleImport(result: result)
+                viewModel.handleImport(result: result.tryMap { url in
+                    _ = url.startAccessingSecurityScopedResource()
+                    defer { url.stopAccessingSecurityScopedResource() }
+                    return try Data(contentsOf: url)
+                })
             }
 
             Text("\(viewModel.state)")

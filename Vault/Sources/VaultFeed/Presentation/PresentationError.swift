@@ -11,4 +11,10 @@ public struct PresentationError: Error, Equatable {
         self.userDescription = userDescription
         self.debugDescription = debugDescription
     }
+
+    public init(localizedError: any LocalizedError) {
+        userTitle = localizedError.errorDescription ?? "Error"
+        userDescription = localizedError.failureReason
+        debugDescription = localizedError.localizedDescription
+    }
 }
