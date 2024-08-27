@@ -172,6 +172,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         do {
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             let encoded = try encoder.encode(item: item)
+            modelContext.insert(encoded)
 
             try modelContext.save()
             return Identifier(id: encoded.id)
@@ -318,6 +319,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
         do {
             let encoder = PersistedVaultTagEncoder(context: modelContext)
             let newTag = encoder.encode(tag: item)
+            modelContext.insert(newTag)
 
             try modelContext.save()
             return Identifier<VaultItemTag>(id: newTag.id)

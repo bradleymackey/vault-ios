@@ -11,16 +11,17 @@ struct PersistedVaultItemEncoder {
         self.currentDate = currentDate
     }
 
+    func encode(item: VaultItem.Write, importingContext: VaultItem.ImportingContext) throws -> PersistedVaultItem {
+        try encode(newData: item, importingContext: importingContext)
+    }
+
     /// Encodes the given item, inserting it in the encoder's `context`.
     func encode(item: VaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
         let model = if let existing {
             try encode(existingItem: existing, newData: item)
         } else {
-            try encode(newData: item)
+            try encode(newData: item, importingContext: nil)
         }
-        // We need to insert the model into the context at this point or the backing data
-        // for the SwiftData model is not valid.
-        context.insert(model)
         return model
     }
 }
@@ -34,7 +35,10 @@ extension PersistedVaultItemEncoder {
         return try context.fetch(.init(predicate: itemTagsPredicate))
     }
 
-    private func encode(newData: VaultItem.Write) throws -> PersistedVaultItem {
+    private func encode(
+        newData: VaultItem.Write,
+        importingContext: VaultItem.ImportingContext?
+    ) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
         case let .secureNote(note): encodeSecureNoteDetails(newData: note)
@@ -45,10 +49,10 @@ extension PersistedVaultItemEncoder {
         case .secureNote: nil
         }
         return try PersistedVaultItem(
-            id: UUID(),
+            id: importingContext?.id.id ?? UUID(),
             relativeOrder: newData.relativeOrder,
-            createdDate: now,
-            updatedDate: now,
+            createdDate: importingContext?.created ?? now,
+            updatedDate: importingContext?.updated ?? now,
             userDescription: newData.userDescription,
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),

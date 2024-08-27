@@ -8,15 +8,22 @@ struct PersistedVaultTagEncoder {
         self.context = context
     }
 
+    func encode(tag: VaultItemTag.Write, importingContext: VaultItemTag.ImportingContext) -> PersistedVaultTag {
+        PersistedVaultTag(
+            id: importingContext.id.id,
+            title: tag.name,
+            color: encodeColor(tag.color),
+            iconName: tag.iconName,
+            items: []
+        )
+    }
+
     func encode(tag: VaultItemTag.Write, existing: PersistedVaultTag? = nil) -> PersistedVaultTag {
         let tagItem = if let existing {
             encode(existingTag: existing, newData: tag)
         } else {
             encode(newTag: tag)
         }
-        // We need to insert the new tag into the context or the backing store
-        // for the model is not valid.
-        context.insert(tagItem)
         return tagItem
     }
 }
