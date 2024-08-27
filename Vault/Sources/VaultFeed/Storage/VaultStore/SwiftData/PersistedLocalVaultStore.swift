@@ -317,7 +317,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
     @discardableResult
     public func insertTag(item: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
         do {
-            let encoder = PersistedVaultTagEncoder(context: modelContext)
+            let encoder = PersistedVaultTagEncoder()
             let newTag = encoder.encode(tag: item)
             modelContext.insert(newTag)
 
@@ -332,7 +332,7 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
     public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
         do {
             let existing = try fetchVaultItemTag(id: id)
-            let encoder = PersistedVaultTagEncoder(context: modelContext)
+            let encoder = PersistedVaultTagEncoder()
             let item = encoder.encode(tag: item, existing: existing)
             modelContext.insert(item)
 

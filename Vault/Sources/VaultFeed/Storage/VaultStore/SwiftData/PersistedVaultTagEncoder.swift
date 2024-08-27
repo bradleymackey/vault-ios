@@ -2,11 +2,7 @@ import Foundation
 import SwiftData
 
 struct PersistedVaultTagEncoder {
-    let context: ModelContext
-
-    init(context: ModelContext) {
-        self.context = context
-    }
+    init() {}
 
     func encode(tag: VaultItemTag.Write, importingContext: VaultItemTag.ImportingContext) -> PersistedVaultTag {
         PersistedVaultTag(

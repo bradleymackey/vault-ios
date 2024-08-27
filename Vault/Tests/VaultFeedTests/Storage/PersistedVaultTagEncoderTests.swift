@@ -75,7 +75,7 @@ extension PersistedVaultTagEncoderTests {
 
 extension PersistedVaultTagEncoderTests {
     private func makeSUT() -> PersistedVaultTagEncoder {
-        PersistedVaultTagEncoder(context: context)
+        PersistedVaultTagEncoder()
     }
 
     private func encode(
