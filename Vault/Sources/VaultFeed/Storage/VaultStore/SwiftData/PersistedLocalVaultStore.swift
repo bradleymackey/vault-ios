@@ -185,7 +185,8 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         do {
             let existing = try fetchVaultItem(id: id)
             let encoder = PersistedVaultItemEncoder(context: modelContext)
-            _ = try encoder.encode(item: item, existing: existing)
+            let item = try encoder.encode(item: item, existing: existing)
+            modelContext.insert(item)
 
             try modelContext.save()
         } catch {
@@ -330,7 +331,8 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
         do {
             let existing = try fetchVaultItemTag(id: id)
             let encoder = PersistedVaultTagEncoder(context: modelContext)
-            _ = encoder.encode(tag: item, existing: existing)
+            let item = encoder.encode(tag: item, existing: existing)
+            modelContext.insert(item)
 
             try modelContext.save()
         } catch {
