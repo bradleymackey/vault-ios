@@ -1,6 +1,9 @@
 import CryptoEngine
 import Foundation
 
+/// A complete manifest of the users data.
+///
+/// This is the data model used at the application-level for importing and exporting the vault.
 public struct VaultApplicationPayload: Sendable, Equatable {
     public var userDescription: String
     public var items: [VaultItem]

@@ -2,10 +2,16 @@ import Foundation
 import SwiftData
 
 struct PersistedVaultTagEncoder {
-    let context: ModelContext
+    init() {}
 
-    init(context: ModelContext) {
-        self.context = context
+    func encode(tag: VaultItemTag.Write, writeUpdateContext: VaultItemTag.WriteUpdateContext) -> PersistedVaultTag {
+        PersistedVaultTag(
+            id: writeUpdateContext.id.id,
+            title: tag.name,
+            color: encodeColor(tag.color),
+            iconName: tag.iconName,
+            items: []
+        )
     }
 
     func encode(tag: VaultItemTag.Write, existing: PersistedVaultTag? = nil) -> PersistedVaultTag {
@@ -14,9 +20,6 @@ struct PersistedVaultTagEncoder {
         } else {
             encode(newTag: tag)
         }
-        // We need to insert the new tag into the context or the backing store
-        // for the model is not valid.
-        context.insert(tagItem)
         return tagItem
     }
 }

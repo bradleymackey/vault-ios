@@ -32,7 +32,7 @@ extension PersistedVaultTagEncoderTests {
         var seenIds = Set<UUID>()
         for _ in 1 ... 100 {
             let item = makeWritableVaultItemTag()
-            let encoded = sut.encode(tag: item)
+            let encoded = encode(sut: sut, tag: item)
             seenIds.insert(encoded.id)
         }
         XCTAssertEqual(seenIds.count, 100)
@@ -43,7 +43,7 @@ extension PersistedVaultTagEncoderTests {
         let sut = makeSUT()
         let item = makeWritableVaultItemTag(name: name)
 
-        let encoded = sut.encode(tag: item)
+        let encoded = encode(sut: sut, tag: item)
 
         XCTAssertEqual(encoded.title, name)
     }
@@ -53,7 +53,7 @@ extension PersistedVaultTagEncoderTests {
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
         let item = makeWritableVaultItemTag(color: color)
 
-        let encoded = sut.encode(tag: item)
+        let encoded = encode(sut: sut, tag: item)
 
         XCTAssertEqual(encoded.color?.red, 0.5)
         XCTAssertEqual(encoded.color?.green, 0.6)
@@ -65,7 +65,7 @@ extension PersistedVaultTagEncoderTests {
         let sut = makeSUT()
         let item = makeWritableVaultItemTag(iconName: name)
 
-        let encoded = sut.encode(tag: item)
+        let encoded = encode(sut: sut, tag: item)
 
         XCTAssertEqual(encoded.iconName, name)
     }
@@ -75,7 +75,17 @@ extension PersistedVaultTagEncoderTests {
 
 extension PersistedVaultTagEncoderTests {
     private func makeSUT() -> PersistedVaultTagEncoder {
-        PersistedVaultTagEncoder(context: context)
+        PersistedVaultTagEncoder()
+    }
+
+    private func encode(
+        sut: PersistedVaultTagEncoder,
+        tag: VaultItemTag.Write,
+        existing: PersistedVaultTag? = nil
+    ) -> PersistedVaultTag {
+        let tag = sut.encode(tag: tag, existing: existing)
+        context.insert(tag)
+        return tag
     }
 
     private func makeWritableVaultItemTag(

@@ -172,6 +172,7 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         do {
             let encoder = PersistedVaultItemEncoder(context: modelContext)
             let encoded = try encoder.encode(item: item)
+            modelContext.insert(encoded)
 
             try modelContext.save()
             return Identifier(id: encoded.id)
@@ -185,7 +186,8 @@ extension PersistedLocalVaultStore: VaultStoreWriter {
         do {
             let existing = try fetchVaultItem(id: id)
             let encoder = PersistedVaultItemEncoder(context: modelContext)
-            _ = try encoder.encode(item: item, existing: existing)
+            let item = try encoder.encode(item: item, existing: existing)
+            modelContext.insert(item)
 
             try modelContext.save()
         } catch {
@@ -315,8 +317,9 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
     @discardableResult
     public func insertTag(item: VaultItemTag.Write) async throws -> Identifier<VaultItemTag> {
         do {
-            let encoder = PersistedVaultTagEncoder(context: modelContext)
+            let encoder = PersistedVaultTagEncoder()
             let newTag = encoder.encode(tag: item)
+            modelContext.insert(newTag)
 
             try modelContext.save()
             return Identifier<VaultItemTag>(id: newTag.id)
@@ -329,8 +332,9 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
     public func updateTag(id: Identifier<VaultItemTag>, item: VaultItemTag.Write) async throws {
         do {
             let existing = try fetchVaultItemTag(id: id)
-            let encoder = PersistedVaultTagEncoder(context: modelContext)
-            _ = encoder.encode(tag: item, existing: existing)
+            let encoder = PersistedVaultTagEncoder()
+            let item = encoder.encode(tag: item, existing: existing)
+            modelContext.insert(item)
 
             try modelContext.save()
         } catch {
@@ -356,6 +360,68 @@ extension PersistedLocalVaultStore: VaultTagStoreWriter {
             try modelContext.delete(model: PersistedVaultTag.self, where: #Predicate {
                 $0.id == uuid
             })
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}
+
+// MARK: - VaultStoreImporter
+
+extension PersistedLocalVaultStore: VaultStoreImporter {
+    public func importAndMergeVault(payload: VaultApplicationPayload) async throws {
+        do {
+            let exported = try await exportVault(userDescription: "")
+            let itemUpdatedDates = exported.items
+                .reduce(into: [Identifier<VaultItem>: Date]()) { partialResult, nextItem in
+                    partialResult[nextItem.id] = nextItem.metadata.updated
+                }
+            let itemsToImport = payload.items.filter {
+                // Only import item if it was updated more recently.
+                $0.metadata.updated > itemUpdatedDates[$0.id, default: .distantPast]
+            }
+
+            let tagEncoder = PersistedVaultTagEncoder()
+            for tag in payload.tags {
+                let encoded = tagEncoder.encode(tag: tag.makeWritable(), writeUpdateContext: tag.makeImportingContext())
+                modelContext.insert(encoded)
+            }
+
+            let itemEncoder = PersistedVaultItemEncoder(context: modelContext)
+            for item in itemsToImport {
+                let encoded = try itemEncoder.encode(
+                    item: item.makeWritable(),
+                    writeUpdateContext: item.makeImportingContext()
+                )
+                modelContext.insert(encoded)
+            }
+
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+
+    public func importAndOverrideVault(payload: VaultApplicationPayload) async throws {
+        do {
+            try await deleteVault()
+            let tagEncoder = PersistedVaultTagEncoder()
+            for tag in payload.tags {
+                let encoded = tagEncoder.encode(tag: tag.makeWritable(), writeUpdateContext: tag.makeImportingContext())
+                modelContext.insert(encoded)
+            }
+            let itemEncoder = PersistedVaultItemEncoder(context: modelContext)
+            for item in payload.items {
+                let encoded = try itemEncoder.encode(
+                    item: item.makeWritable(),
+                    writeUpdateContext: item.makeImportingContext()
+                )
+                modelContext.insert(encoded)
+            }
+
             try modelContext.save()
         } catch {
             modelContext.rollback()

@@ -987,13 +987,19 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
             let id = try await sut.insert(item: code.makeWritable())
             insertedIDs.append(id)
         }
+        let tags = [anyVaultItemTag(), anyVaultItemTag()]
+        var insertedTagIDs = [Identifier<VaultItemTag>]()
+        for tag in tags {
+            let id = try await sut.insertTag(item: tag.makeWritable())
+            insertedTagIDs.append(id)
+        }
 
         let export = try await sut.exportVault(userDescription: "my description")
 
         XCTAssertEqual(export.userDescription, "my description")
         XCTAssertEqual(export.items.map { $0.makeWritable() }, items.map { $0.makeWritable() })
         XCTAssertEqual(export.items.map(\.id), insertedIDs)
-        XCTAssertEqual(export.tags, [])
+        XCTAssertEqual(export.tags.map(\.id), insertedTagIDs)
     }
 
     func test_retrieveTags_returnsNoTagsIfThereAreNone() async throws {
@@ -1180,11 +1186,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
     func test_deleteVault_hasNoEffectOnEmptyStore() async throws {
         try await sut.deleteVault()
 
-        let tags = try await sut.retrieveTags()
-        XCTAssertTrue(tags.isEmpty)
-        let items = try await sut.retrieve(query: .init())
-        XCTAssertTrue(items.items.isEmpty)
-        XCTAssertTrue(items.errors.isEmpty)
+        try await assertStoreEmpty()
     }
 
     func test_deleteVault_removesAllItems() async throws {
@@ -1202,11 +1204,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         try await sut.deleteVault()
 
-        let tags = try await sut.retrieveTags()
-        XCTAssertTrue(tags.isEmpty)
-        let items = try await sut.retrieve(query: .init())
-        XCTAssertTrue(items.items.isEmpty)
-        XCTAssertTrue(items.errors.isEmpty)
+        try await assertStoreEmpty()
     }
 
     func test_incrementCounter_throwsForNonTOTP() async throws {
@@ -1234,11 +1232,318 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         case nil: XCTFail()
         }
     }
+
+    func test_importAndMergeVault_importsEmptyToEmptyVault() async throws {
+        let payload = VaultApplicationPayload(userDescription: "", items: [], tags: [])
+
+        try await sut.importAndMergeVault(payload: payload)
+
+        try await assertStoreEmpty()
+    }
+
+    func test_importAndMergeVault_emptyToNonEmptyVault() async throws {
+        let item1 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item2 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item3 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items = [item1, item2, item3]
+        let tag1 = anyVaultItemTag(name: "A")
+        let tag2 = anyVaultItemTag(name: "B")
+        let tags = [tag1, tag2]
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: tags
+        )
+
+        try await sut.importAndMergeVault(payload: payload1)
+
+        let payload2 = VaultApplicationPayload(userDescription: "", items: [], tags: [])
+        try await sut.importAndMergeVault(payload: payload2)
+
+        try await assertStoreContains(exactlyItems: items)
+        try await assertStoreContains(exactlyTags: tags)
+    }
+
+    func test_importAndMergeVault_importsNonEmptyToEmptyVault() async throws {
+        let item1 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item2 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item3 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items = [item1, item2, item3]
+        let tag1 = anyVaultItemTag(name: "A")
+        let tag2 = anyVaultItemTag(name: "B")
+        let tags = [tag1, tag2]
+        let payload = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: tags
+        )
+
+        try await sut.importAndMergeVault(payload: payload)
+
+        try await assertStoreContains(exactlyItems: items)
+        try await assertStoreContains(exactlyTags: tags)
+    }
+
+    func test_importAndMergeVault_importsNonEmptyToNonEmptyVault() async throws {
+        let item1 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item2 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item3 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items1 = [item1, item2, item3]
+        let tag1 = anyVaultItemTag(name: "A")
+        let tag2 = anyVaultItemTag(name: "B")
+        let tags1 = [tag1, tag2]
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items1,
+            tags: tags1
+        )
+
+        try await sut.importAndMergeVault(payload: payload1)
+
+        let item_a = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 400))
+        let item_b = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 500))
+        let item_c = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 600))
+        let items2 = [item_a, item_b, item_c]
+        let tag_c = anyVaultItemTag(name: "C")
+        let tag_d = anyVaultItemTag(name: "D")
+        let tags2 = [tag_c, tag_d]
+        let payload2 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items2,
+            tags: tags2
+        )
+
+        try await sut.importAndMergeVault(payload: payload2)
+
+        try await assertStoreContains(exactlyItems: items1 + items2)
+        try await assertStoreContains(exactlyTags: tags1 + tags2)
+    }
+
+    func test_importAndMergeVault_overridesItemWithSameIDAndLaterDate() async throws {
+        let id1 = Identifier<VaultItem>.new()
+        let item1 = uniqueVaultItem(id: id1, updatedDate: Date(timeIntervalSince1970: 50), userDescription: "ABC")
+        let itemX = uniqueVaultItem()
+        let id2 = UUID()
+        let tag1 = anyVaultItemTag(id: id2, name: "A")
+        let tagX = anyVaultItemTag(name: "N")
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: [item1, itemX],
+            tags: [tag1, tagX]
+        )
+
+        try await sut.importAndMergeVault(payload: payload1)
+
+        let item2 = uniqueVaultItem(id: id1, updatedDate: Date(timeIntervalSince1970: 60), userDescription: "DEF")
+        let tag2 = anyVaultItemTag(id: id2, name: "B")
+        let payload2 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: [item2],
+            tags: [tag2]
+        )
+
+        try await sut.importAndMergeVault(payload: payload2)
+
+        try await assertStoreContains(exactlyItems: [item2, itemX])
+        try await assertStoreContains(exactlyTags: [tag2, tagX])
+    }
+
+    func test_importAndMergeVault_retainsExistingItemWithLaterUpdatedDate() async throws {
+        let id1 = Identifier<VaultItem>.new()
+        let item1 = uniqueVaultItem(id: id1, updatedDate: Date(timeIntervalSince1970: 60), userDescription: "ABC")
+        let itemX = uniqueVaultItem()
+        let id2 = UUID()
+        let tag1 = anyVaultItemTag(id: id2, name: "A")
+        let tagX = anyVaultItemTag(name: "N")
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: [item1, itemX],
+            tags: [tag1, tagX]
+        )
+
+        try await sut.importAndMergeVault(payload: payload1)
+
+        let item2 = uniqueVaultItem(id: id1, updatedDate: Date(timeIntervalSince1970: 50), userDescription: "DEF")
+        let tag2 = anyVaultItemTag(id: id2, name: "B")
+        let payload2 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: [item2],
+            tags: [tag2]
+        )
+
+        try await sut.importAndMergeVault(payload: payload2)
+
+        try await assertStoreContains(exactlyItems: [item1, itemX])
+        try await assertStoreContains(
+            exactlyTags: [tag2, tagX],
+            message: "Tag is always updated, there is no date there."
+        )
+    }
+
+    func test_importAndOverrideVault_importsEmptyToEmptyVault() async throws {
+        let payload = VaultApplicationPayload(userDescription: "", items: [], tags: [])
+
+        try await sut.importAndOverrideVault(payload: payload)
+
+        try await assertStoreEmpty()
+    }
+
+    func test_importAndOverrideVault_importsEmptyToNonEmptyVault() async throws {
+        let item1 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item2 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item3 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items = [item1, item2, item3]
+        let tag1 = anyVaultItemTag(name: "A")
+        let tag2 = anyVaultItemTag(name: "B")
+        let tags = [tag1, tag2]
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: tags
+        )
+
+        try await sut.importAndMergeVault(payload: payload1)
+
+        let payload2 = VaultApplicationPayload(userDescription: "", items: [], tags: [])
+
+        try await sut.importAndOverrideVault(payload: payload2)
+
+        try await assertStoreEmpty()
+    }
+
+    func test_importAndOverrideVault_importsNonEmptyToEmptyVault() async throws {
+        let item1 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item2 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item3 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items = [item1, item2, item3]
+        let tag1 = anyVaultItemTag(name: "A")
+        let tag2 = anyVaultItemTag(name: "B")
+        let tags = [tag1, tag2]
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: tags
+        )
+
+        try await sut.importAndOverrideVault(payload: payload1)
+
+        try await assertStoreContains(exactlyItems: items)
+        try await assertStoreContains(exactlyTags: tags)
+    }
+
+    func test_importAndOverrideVault_overridesExistingDataWithNew() async throws {
+        let item1 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item2 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item3 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items = [item1, item2, item3]
+        let tag1 = anyVaultItemTag(name: "A")
+        let tag2 = anyVaultItemTag(name: "B")
+        let tags = [tag1, tag2]
+        let payload1 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: tags
+        )
+
+        try await sut.importAndOverrideVault(payload: payload1)
+
+        let item4 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 50))
+        let item5 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 100))
+        let item6 = uniqueVaultItem(updatedDate: Date(timeIntervalSince1970: 200))
+        let items2 = [item4, item5, item6]
+        let tag4 = anyVaultItemTag(name: "C")
+        let tag5 = anyVaultItemTag(name: "D")
+        let tags2 = [tag4, tag5]
+        let payload2 = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items2,
+            tags: tags2
+        )
+
+        try await sut.importAndOverrideVault(payload: payload2)
+
+        try await assertStoreContains(exactlyItems: items2)
+        try await assertStoreContains(exactlyTags: tags2)
+    }
 }
 
 // MARK: - Helpers
 
+extension PersistedLocalVaultStoreTests {
+    private func assertStoreContains(item: VaultItem, file: StaticString = #filePath, line: UInt = #line) async throws {
+        let allItems = try await sut.allVaultItems()
+        let found = try XCTUnwrap(allItems.first(where: { $0.id == item.id }), "Item not in store")
+        XCTAssertEqual(found, item, file: file, line: line)
+    }
+
+    private func assertStoreContains(
+        exactlyItems: [VaultItem],
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let allItems = try await sut.allVaultItems()
+        XCTAssertEqual(
+            allItems.sorted(by: { $0.metadata.updated < $1.metadata.updated }),
+            exactlyItems.sorted(by: { $0.metadata.updated < $1.metadata.updated }),
+            "Store does not contain exactly the specified items.",
+            file: file,
+            line: line
+        )
+    }
+
+    private func assertStoreContains(
+        exactlyTags: [VaultItemTag],
+        message: String? = nil,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let allItems = try await sut.allVaultTags()
+        XCTAssertEqual(
+            allItems.sorted(by: { $0.name < $1.name }),
+            exactlyTags.sorted(by: { $0.name < $1.name }),
+            message ?? "Tags not equal",
+            file: file,
+            line: line
+        )
+    }
+
+    private func assertStoreContains(
+        tag: VaultItemTag,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let allItems = try await sut.allVaultTags()
+        let found = try XCTUnwrap(allItems.first(where: { $0.id == tag.id }), "Tag not in store")
+        XCTAssertEqual(found, tag, file: file, line: line)
+    }
+
+    private func assertStoreEmpty(file: StaticString = #filePath, line: UInt = #line) async throws {
+        let allItems = try await sut.allVaultItems()
+        let allTags = try await sut.allVaultTags()
+        XCTAssertEqual(allItems, [], "Store is not empty!", file: file, line: line)
+        XCTAssertEqual(allTags, [], "Store is not empty!", file: file, line: line)
+    }
+}
+
 extension PersistedLocalVaultStore {
+    fileprivate func allVaultItems() async throws -> [VaultItem] {
+        let descriptor = FetchDescriptor<PersistedVaultItem>(predicate: .true)
+        let result = try modelContext.fetch(descriptor)
+        let decoder = PersistedVaultItemDecoder()
+        return try result.map {
+            try decoder.decode(item: $0)
+        }
+    }
+
+    fileprivate func allVaultTags() async throws -> [VaultItemTag] {
+        let descriptor = FetchDescriptor<PersistedVaultTag>(predicate: .true)
+        let result = try modelContext.fetch(descriptor)
+        let decoder = PersistedVaultTagDecoder()
+        return try result.map {
+            try decoder.decode(item: $0)
+        }
+    }
+
     fileprivate func corruptItemAlgorithm(id: Identifier<VaultItem>) async throws {
         let uuid = id.rawValue
         var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in

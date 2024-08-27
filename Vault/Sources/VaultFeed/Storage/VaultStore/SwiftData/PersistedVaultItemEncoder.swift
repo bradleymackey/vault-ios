@@ -11,17 +11,22 @@ struct PersistedVaultItemEncoder {
         self.currentDate = currentDate
     }
 
+    func encode(item: VaultItem.Write, writeUpdateContext: VaultItem.WriteUpdateContext) throws -> PersistedVaultItem {
+        try encode(newData: item, writeUpdateContext: writeUpdateContext)
+    }
+
     /// Encodes the given item, inserting it in the encoder's `context`.
     func encode(item: VaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
-        let model = if let existing {
-            try encode(existingItem: existing, newData: item)
+        if let existing {
+            let writeUpdateContext = VaultItem.WriteUpdateContext(
+                id: .init(id: existing.id),
+                created: existing.createdDate,
+                updated: .updateUpdatedDate
+            )
+            return try encode(newData: item, writeUpdateContext: writeUpdateContext)
         } else {
-            try encode(newData: item)
+            return try encode(newData: item, writeUpdateContext: nil)
         }
-        // We need to insert the model into the context at this point or the backing data
-        // for the SwiftData model is not valid.
-        context.insert(model)
-        return model
     }
 }
 
@@ -34,7 +39,10 @@ extension PersistedVaultItemEncoder {
         return try context.fetch(.init(predicate: itemTagsPredicate))
     }
 
-    private func encode(newData: VaultItem.Write) throws -> PersistedVaultItem {
+    private func encode(
+        newData: VaultItem.Write,
+        writeUpdateContext: VaultItem.WriteUpdateContext?
+    ) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
         case let .secureNote(note): encodeSecureNoteDetails(newData: note)
@@ -44,11 +52,16 @@ extension PersistedVaultItemEncoder {
         case let .otpCode(code): encodeOtpDetails(newData: code)
         case .secureNote: nil
         }
+        let updatedDate = switch writeUpdateContext?.updated {
+        case .updateUpdatedDate: now
+        case let .retainUpdatedDate(date): date
+        case nil: now
+        }
         return try PersistedVaultItem(
-            id: UUID(),
+            id: writeUpdateContext?.id.id ?? UUID(),
             relativeOrder: newData.relativeOrder,
-            createdDate: now,
-            updatedDate: now,
+            createdDate: writeUpdateContext?.created ?? now,
+            updatedDate: updatedDate,
             userDescription: newData.userDescription,
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
@@ -61,31 +74,6 @@ extension PersistedVaultItemEncoder {
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )
-    }
-
-    private func encode(
-        existingItem: PersistedVaultItem,
-        newData: VaultItem.Write
-    ) throws -> PersistedVaultItem {
-        let now = currentDate()
-        existingItem.updatedDate = now
-        existingItem.relativeOrder = newData.relativeOrder
-        existingItem.userDescription = newData.userDescription
-        existingItem.visibility = encodeVisibilityLevel(level: newData.visibility)
-        existingItem.searchableLevel = encodeSearchableLevel(level: newData.searchableLevel)
-        existingItem.searchPassphrase = newData.searchPassphase
-        existingItem.tags = try fetchTagsForItem(newData: newData)
-        existingItem.lockState = encodeLockState(state: newData.lockState)
-        existingItem.color = newData.color.flatMap { color in
-            .init(red: color.red, green: color.green, blue: color.blue)
-        }
-        switch newData.item {
-        case let .otpCode(codeDetails):
-            existingItem.otpDetails = encodeOtpDetails(newData: codeDetails)
-        case let .secureNote(noteDetails):
-            existingItem.noteDetails = encodeSecureNoteDetails(newData: noteDetails)
-        }
-        return existingItem
     }
 
     private func encodeSearchableLevel(level: VaultItemSearchableLevel) -> String {
