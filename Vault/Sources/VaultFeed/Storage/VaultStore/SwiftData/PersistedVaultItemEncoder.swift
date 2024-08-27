@@ -17,12 +17,16 @@ struct PersistedVaultItemEncoder {
 
     /// Encodes the given item, inserting it in the encoder's `context`.
     func encode(item: VaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
-        let model = if let existing {
-            try encode(existingItem: existing, newData: item)
+        if let existing {
+            let importingContext = VaultItem.ImportingContext(
+                id: .init(id: existing.id),
+                created: existing.createdDate,
+                updated: .updateUpdatedDate
+            )
+            return try encode(newData: item, importingContext: importingContext)
         } else {
-            try encode(newData: item, importingContext: nil)
+            return try encode(newData: item, importingContext: nil)
         }
-        return model
     }
 }
 
@@ -48,11 +52,16 @@ extension PersistedVaultItemEncoder {
         case let .otpCode(code): encodeOtpDetails(newData: code)
         case .secureNote: nil
         }
+        let updatedDate = switch importingContext?.updated {
+        case .updateUpdatedDate: now
+        case let .retainUpdatedDate(date): date
+        case nil: now
+        }
         return try PersistedVaultItem(
             id: importingContext?.id.id ?? UUID(),
             relativeOrder: newData.relativeOrder,
             createdDate: importingContext?.created ?? now,
-            updatedDate: importingContext?.updated ?? now,
+            updatedDate: updatedDate,
             userDescription: newData.userDescription,
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
@@ -65,31 +74,6 @@ extension PersistedVaultItemEncoder {
             noteDetails: noteDetails,
             otpDetails: otpDetails
         )
-    }
-
-    private func encode(
-        existingItem: PersistedVaultItem,
-        newData: VaultItem.Write
-    ) throws -> PersistedVaultItem {
-        let now = currentDate()
-        existingItem.updatedDate = now
-        existingItem.relativeOrder = newData.relativeOrder
-        existingItem.userDescription = newData.userDescription
-        existingItem.visibility = encodeVisibilityLevel(level: newData.visibility)
-        existingItem.searchableLevel = encodeSearchableLevel(level: newData.searchableLevel)
-        existingItem.searchPassphrase = newData.searchPassphase
-        existingItem.tags = try fetchTagsForItem(newData: newData)
-        existingItem.lockState = encodeLockState(state: newData.lockState)
-        existingItem.color = newData.color.flatMap { color in
-            .init(red: color.red, green: color.green, blue: color.blue)
-        }
-        switch newData.item {
-        case let .otpCode(codeDetails):
-            existingItem.otpDetails = encodeOtpDetails(newData: codeDetails)
-        case let .secureNote(noteDetails):
-            existingItem.noteDetails = encodeSecureNoteDetails(newData: noteDetails)
-        }
-        return existingItem
     }
 
     private func encodeSearchableLevel(level: VaultItemSearchableLevel) -> String {

@@ -45,7 +45,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     }
 
     public func makeImportingContext() -> VaultItem.ImportingContext {
-        .init(id: id, created: metadata.created, updated: metadata.updated)
+        .init(id: id, created: metadata.created, updated: .retainUpdatedDate(metadata.updated))
     }
 
     /// Checks if all deterministic content in a given vault item is equal to an `other` item.
@@ -177,9 +177,9 @@ extension VaultItem {
     public struct ImportingContext: Sendable {
         public var id: Identifier<VaultItem>
         public var created: Date
-        public var updated: Date
+        public var updated: UpdateContext
 
-        public init(id: Identifier<VaultItem>, created: Date, updated: Date) {
+        public init(id: Identifier<VaultItem>, created: Date, updated: UpdateContext) {
             self.id = id
             self.created = created
             self.updated = updated

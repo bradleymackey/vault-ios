@@ -68,7 +68,7 @@ extension PersistedVaultItemEncoderTests {
 
         let sut2 = makeSUT(currentDate: { Date(timeIntervalSince1970: 200) })
         let newCode = try encode(sut: sut2, item: uniqueVaultItem().makeWritable(), existing: existing)
-        XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should not change for update")
+        XCTAssertEqual(newCode.updatedDate, Date(timeIntervalSince1970: 200), "Date should update for update")
     }
 
     func test_encodeMetadata_newItemGeneratesRandomUUID() throws {
