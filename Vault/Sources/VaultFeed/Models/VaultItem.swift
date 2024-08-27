@@ -44,7 +44,8 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
         )
     }
 
-    public func makeImportingContext() -> VaultItem.ImportingContext {
+    /// Create a context when importing this data.
+    public func makeImportingContext() -> VaultItem.WriteUpdateContext {
         .init(id: id, created: metadata.created, updated: .retainUpdatedDate(metadata.updated))
     }
 
@@ -173,8 +174,9 @@ extension VaultItem {
         }
     }
 
-    /// Writable data used when importing only.
-    public struct ImportingContext: Sendable {
+    /// Writable data used when importing or updating, we we have known values for these
+    /// existing fields.
+    public struct WriteUpdateContext: Sendable {
         public var id: Identifier<VaultItem>
         public var created: Date
         public var updated: UpdateContext

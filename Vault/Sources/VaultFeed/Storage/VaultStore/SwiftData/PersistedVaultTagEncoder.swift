@@ -4,9 +4,9 @@ import SwiftData
 struct PersistedVaultTagEncoder {
     init() {}
 
-    func encode(tag: VaultItemTag.Write, importingContext: VaultItemTag.ImportingContext) -> PersistedVaultTag {
+    func encode(tag: VaultItemTag.Write, writeUpdateContext: VaultItemTag.WriteUpdateContext) -> PersistedVaultTag {
         PersistedVaultTag(
-            id: importingContext.id.id,
+            id: writeUpdateContext.id.id,
             title: tag.name,
             color: encodeColor(tag.color),
             iconName: tag.iconName,

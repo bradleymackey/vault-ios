@@ -11,21 +11,21 @@ struct PersistedVaultItemEncoder {
         self.currentDate = currentDate
     }
 
-    func encode(item: VaultItem.Write, importingContext: VaultItem.ImportingContext) throws -> PersistedVaultItem {
-        try encode(newData: item, importingContext: importingContext)
+    func encode(item: VaultItem.Write, writeUpdateContext: VaultItem.WriteUpdateContext) throws -> PersistedVaultItem {
+        try encode(newData: item, writeUpdateContext: writeUpdateContext)
     }
 
     /// Encodes the given item, inserting it in the encoder's `context`.
     func encode(item: VaultItem.Write, existing: PersistedVaultItem? = nil) throws -> PersistedVaultItem {
         if let existing {
-            let importingContext = VaultItem.ImportingContext(
+            let writeUpdateContext = VaultItem.WriteUpdateContext(
                 id: .init(id: existing.id),
                 created: existing.createdDate,
                 updated: .updateUpdatedDate
             )
-            return try encode(newData: item, importingContext: importingContext)
+            return try encode(newData: item, writeUpdateContext: writeUpdateContext)
         } else {
-            return try encode(newData: item, importingContext: nil)
+            return try encode(newData: item, writeUpdateContext: nil)
         }
     }
 }
@@ -41,7 +41,7 @@ extension PersistedVaultItemEncoder {
 
     private func encode(
         newData: VaultItem.Write,
-        importingContext: VaultItem.ImportingContext?
+        writeUpdateContext: VaultItem.WriteUpdateContext?
     ) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
@@ -52,15 +52,15 @@ extension PersistedVaultItemEncoder {
         case let .otpCode(code): encodeOtpDetails(newData: code)
         case .secureNote: nil
         }
-        let updatedDate = switch importingContext?.updated {
+        let updatedDate = switch writeUpdateContext?.updated {
         case .updateUpdatedDate: now
         case let .retainUpdatedDate(date): date
         case nil: now
         }
         return try PersistedVaultItem(
-            id: importingContext?.id.id ?? UUID(),
+            id: writeUpdateContext?.id.id ?? UUID(),
             relativeOrder: newData.relativeOrder,
-            createdDate: importingContext?.created ?? now,
+            createdDate: writeUpdateContext?.created ?? now,
             updatedDate: updatedDate,
             userDescription: newData.userDescription,
             visibility: encodeVisibilityLevel(level: newData.visibility),
