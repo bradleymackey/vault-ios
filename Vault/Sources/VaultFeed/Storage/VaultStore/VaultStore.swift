@@ -52,6 +52,17 @@ public protocol VaultStoreExporter: Sendable {
 }
 
 /// @mockable
+public protocol VaultStoreImporter: Sendable {
+    /// Imports the data in the payload without affecting existing data.
+    ///
+    ///  - note: If there are duplicate items, the most recently edited one will be retained.
+    func importAndMergeVault(payload: VaultApplicationPayload) async throws
+
+    /// Imports the data in the payload, deleting existing vault data.
+    func importAndOverrideVault(payload: VaultApplicationPayload) async throws
+}
+
+/// @mockable
 public protocol VaultStoreDeleter: Sendable {
     /// Deletes the entire vault immediately.
     ///
