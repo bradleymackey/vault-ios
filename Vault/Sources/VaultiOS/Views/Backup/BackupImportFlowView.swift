@@ -6,6 +6,7 @@ import VaultFeed
 struct BackupImportFlowView: View {
     @State private var viewModel: BackupImportFlowViewModel
     @State private var isImporting = false
+    @State private var importTask: Task<Void, any Error>?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -21,11 +22,13 @@ struct BackupImportFlowView: View {
                 Text("Pick File")
             }
             .fileImporter(isPresented: $isImporting, allowedContentTypes: [.pdf]) { result in
-                viewModel.handleImport(result: result.tryMap { url in
-                    _ = url.startAccessingSecurityScopedResource()
-                    defer { url.stopAccessingSecurityScopedResource() }
-                    return try Data(contentsOf: url)
-                })
+                importTask = Task {
+                    await viewModel.handleImport(result: result.tryMap { url in
+                        _ = url.startAccessingSecurityScopedResource()
+                        defer { url.stopAccessingSecurityScopedResource() }
+                        return try Data(contentsOf: url)
+                    })
+                }
             }
 
             Text("\(viewModel.state)")

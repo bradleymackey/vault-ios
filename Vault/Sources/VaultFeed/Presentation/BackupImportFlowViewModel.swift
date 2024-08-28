@@ -48,15 +48,10 @@ public final class BackupImportFlowViewModel {
         self.backupPDFDetatcher = backupPDFDetatcher
     }
 
-    public func handleImport(result: Result<Data, any Error>) {
+    public func handleImport(result: Result<Data, any Error>) async {
         switch result {
         case let .success(data):
-            isImporting = true
-            importPDFTask?.cancel()
-            importPDFTask = Task {
-                await importPDF(data: data)
-                isImporting = false
-            }
+            await importPDF(data: data)
         case let .failure(error):
             state = .error(PresentationError(
                 userTitle: "File Error",
@@ -79,6 +74,8 @@ public final class BackupImportFlowViewModel {
 
     private func importPDF(data: Data) async {
         do {
+            isImporting = true
+            defer { isImporting = false }
             guard let pdf = PDFDocument(data: data) else {
                 throw InvalidURLError()
             }
