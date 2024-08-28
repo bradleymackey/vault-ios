@@ -83,10 +83,8 @@ public final class BackupImportFlowViewModel {
             // TODO: handle case where imported vault was encrypted with different password, should prompt user for it
             guard let existingBackupPassword else { throw PasswordError.noPassword }
             let encryptedVault = try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
-            let applicationPayload = try await extractPayload(
-                password: existingBackupPassword,
-                encryptedVault: encryptedVault
-            )
+            let backupImporter = BackupImporter(backupPassword: existingBackupPassword)
+            let applicationPayload = try backupImporter.importEncryptedBackup(encryptedVault: encryptedVault)
 
             switch importContext {
             case .merge, .toEmptyVault:
@@ -105,17 +103,5 @@ public final class BackupImportFlowViewModel {
                 debugDescription: error.localizedDescription
             ))
         }
-    }
-}
-
-// MARK: - Importing Vault
-
-extension BackupImportFlowViewModel {
-    private nonisolated func extractPayload(
-        password: BackupPassword,
-        encryptedVault: EncryptedVault
-    ) async throws -> VaultApplicationPayload {
-        let backupImporter = BackupImporter(backupPassword: password)
-        return try backupImporter.importEncryptedBackup(encryptedVault: encryptedVault)
     }
 }
