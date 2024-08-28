@@ -32,6 +32,7 @@ struct BackupImportView: View {
                 NavigationStack {
                     BackupImportFlowView(viewModel: .init(
                         importContext: .toEmptyVault,
+                        dataModel: dataModel,
                         existingBackupPassword: backupPassword
                     ))
                 }
@@ -39,6 +40,7 @@ struct BackupImportView: View {
                 NavigationStack {
                     BackupImportFlowView(viewModel: .init(
                         importContext: .merge,
+                        dataModel: dataModel,
                         existingBackupPassword: backupPassword
                     ))
                 }
@@ -46,6 +48,7 @@ struct BackupImportView: View {
                 NavigationStack {
                     BackupImportFlowView(viewModel: .init(
                         importContext: .override,
+                        dataModel: dataModel,
                         existingBackupPassword: backupPassword
                     ))
                 }
