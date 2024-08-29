@@ -19,15 +19,9 @@ public final class BackupImportFlowViewModel {
         }
     }
 
-    public enum ImportContext: Equatable {
-        case toEmptyVault
-        case merge
-        case override
-    }
-
     public private(set) var state: ImportState = .idle
     public private(set) var isImporting: Bool = false
-    public let importContext: ImportContext
+    public let importContext: BackupImportContext
 
     private let dataModel: VaultDataModel
     /// The backup password the user already has on their device.
@@ -37,7 +31,7 @@ public final class BackupImportFlowViewModel {
     private var importPDFTask: Task<Void, any Error>?
 
     public init(
-        importContext: ImportContext,
+        importContext: BackupImportContext,
         dataModel: VaultDataModel,
         existingBackupPassword: BackupPassword?,
         backupPDFDetatcher: any VaultBackupPDFDetatcher = VaultBackupPDFDetatcherImpl()
@@ -83,13 +77,17 @@ public final class BackupImportFlowViewModel {
             // TODO: handle case where imported vault was encrypted with different password, should prompt user for it
             guard let existingBackupPassword else { throw PasswordError.noPassword }
             let encryptedVault = try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
-            let backupImporter = BackupImporter(backupPassword: existingBackupPassword)
-            let applicationPayload = try backupImporter.importEncryptedBackup(encryptedVault: encryptedVault)
-
-            switch importContext {
-            case .merge, .toEmptyVault:
+            let flowState = BackupImportFlowState(importContext: importContext, encryptedVault: encryptedVault)
+            let action = flowState.passwordProvided(password: existingBackupPassword)
+            switch action {
+            case .promptForDifferentPassword:
+                // TODO: prompt for different password
+                break
+            case let .backupDataError(error):
+                throw error
+            case let .importAndMerge(applicationPayload):
                 try await dataModel.importMerge(payload: applicationPayload)
-            case .override:
+            case let .importAndOverride(applicationPayload):
                 try await dataModel.importOverride(payload: applicationPayload)
             }
 

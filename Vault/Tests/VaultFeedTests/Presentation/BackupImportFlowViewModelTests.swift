@@ -57,7 +57,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 extension BackupImportFlowViewModelTests {
     @MainActor
     private func makeSUT(
-        importContext: BackupImportFlowViewModel.ImportContext = .toEmptyVault,
+        importContext: BackupImportContext = .toEmptyVault,
         existingBackupPassword: BackupPassword? = nil,
         backupPDFDetatcher: VaultBackupPDFDetatcherMock = VaultBackupPDFDetatcherMock()
     ) -> BackupImportFlowViewModel {
