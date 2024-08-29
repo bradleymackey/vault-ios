@@ -6,12 +6,12 @@ import VaultCore
 import XCTest
 @testable import VaultBackup
 
-final class VaultBackupEncoderTests: XCTestCase {
-    func test_createExportPayload_encryptedVaultDataIsExpectedVault() throws {
+final class VaultBackupEncryptorTests: XCTestCase {
+    func test_encryptBackupPayload_encryptedVaultDataIsExpectedVault() throws {
         let key = VaultKey(key: .repeating(byte: 0xAA), iv: .repeating(byte: 0xAB))
         let sut = makeSUT(key: key)
 
-        let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
+        let encryptedVault = try sut.encryptBackupPayload(items: [], tags: [], userDescription: "hello world")
 
         // This is the encoded payload created by this test case, which is compressed using lzma:
 //        {
@@ -38,12 +38,12 @@ final class VaultBackupEncoderTests: XCTestCase {
         """)
     }
 
-    func test_createExportPayload_encryptedVaultDataIsExpectedVaultWithFixedPadding() throws {
+    func test_encryptBackupPayload_encryptedVaultDataIsExpectedVaultWithFixedPadding() throws {
         let key = VaultKey(key: .repeating(byte: 0xAA), iv: .repeating(byte: 0xAB))
-        let padding = VaultBackupEncoder.PaddingMode.fixed(data: Data(repeating: 0xF1, count: 45))
+        let padding = VaultBackupEncryptor.PaddingMode.fixed(data: Data(repeating: 0xF1, count: 45))
         let sut = makeSUT(key: key, paddingMode: padding)
 
-        let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
+        let encryptedVault = try sut.encryptBackupPayload(items: [], tags: [], userDescription: "hello world")
 
         // This is the encoded payload created by this test case:
 
@@ -71,11 +71,11 @@ final class VaultBackupEncoderTests: XCTestCase {
         """)
     }
 
-    func test_createExportPayload_includesKeySaltUnmodifiedInPayload() throws {
+    func test_encryptBackupPayload_includesKeySaltUnmodifiedInPayload() throws {
         let salt = Data.random(count: 34)
         let sut = makeSUT(key: anyKey(), keygenSalt: salt)
 
-        let encryptedVault = try sut.createExportPayload(items: [], tags: [], userDescription: "hello world")
+        let encryptedVault = try sut.encryptBackupPayload(items: [], tags: [], userDescription: "hello world")
 
         XCTAssertEqual(encryptedVault.keygenSalt, salt)
     }
@@ -83,15 +83,15 @@ final class VaultBackupEncoderTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension VaultBackupEncoderTests {
+extension VaultBackupEncryptorTests {
     private func makeSUT(
         clock: any EpochClock = anyClock(),
         key: VaultKey,
         keygenSalt: Data = Data(),
         keygenSignature: String = "my-signature",
-        paddingMode: VaultBackupEncoder.PaddingMode = .none
-    ) -> VaultBackupEncoder {
-        VaultBackupEncoder(
+        paddingMode: VaultBackupEncryptor.PaddingMode = .none
+    ) -> VaultBackupEncryptor {
+        VaultBackupEncryptor(
             clock: clock,
             key: key,
             keygenSalt: keygenSalt,

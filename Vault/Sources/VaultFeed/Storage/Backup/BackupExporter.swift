@@ -15,7 +15,7 @@ public final class BackupExporter {
 
     public func createEncryptedBackup(payload: VaultApplicationPayload) throws -> EncryptedVault {
         let encryptionKey = try backupPassword.newVaultKeyWithRandomIV()
-        let backupEncoder = VaultBackupEncoder(
+        let backupEncoder = VaultBackupEncryptor(
             clock: clock,
             key: encryptionKey,
             keygenSalt: backupPassword.salt,
@@ -24,7 +24,7 @@ public final class BackupExporter {
         )
         let itemEncoder = VaultBackupItemEncoder()
         let tagEncoder = VaultBackupTagEncoder()
-        return try backupEncoder.createExportPayload(
+        return try backupEncoder.encryptBackupPayload(
             items: payload.items.map {
                 itemEncoder.encode(storedItem: $0)
             },

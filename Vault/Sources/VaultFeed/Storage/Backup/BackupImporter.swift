@@ -13,8 +13,8 @@ final class BackupImporter {
 
     func importEncryptedBackup(encryptedVault: EncryptedVault) throws -> VaultApplicationPayload {
         do {
-            let backupDecoder = VaultBackupDecoder(key: backupPassword.key)
-            let payload = try backupDecoder.extractBackupPayload(from: encryptedVault)
+            let backupDecoder = VaultBackupDecryptor(key: backupPassword.key)
+            let payload = try backupDecoder.decryptBackupPayload(from: encryptedVault)
             let itemDecoder = VaultBackupItemDecoder()
             let tagDecoder = VaultBackupTagDecoder()
             return try .init(
@@ -26,7 +26,7 @@ final class BackupImporter {
                     try tagDecoder.decode(tag: $0)
                 }
             )
-        } catch let decodingError as VaultBackupDecoder.DecodingError {
+        } catch let decodingError as VaultBackupDecryptor.Error {
             switch decodingError {
             case .incompatibleVersion:
                 throw ImportError.incompatibleVersion
