@@ -7,6 +7,9 @@ import VaultBackup
 struct BackupImportFlowState {
     /// Actions that should be taken given the current state.
     enum Action {
+        /// Decryption was successful, but the data is corrupt.
+        ///
+        /// More details on the attached error.
         case backupDataError(any Error)
         /// Decryption password was invalid, the user should try again with a different
         /// password.
