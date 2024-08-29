@@ -96,14 +96,9 @@ public final class BackupKeyChangeViewModel {
 
     private nonisolated func computeNewKey(password: String) async throws -> BackupPassword {
         let deriver = encryptionKeyDeriver
-        let generatedPassword = try await withCheckedThrowingContinuation { cont in
-            DispatchQueue.global(qos: .utility).async {
-                cont.resume(with: Result {
-                    try BackupPassword.createEncryptionKey(deriver: deriver, password: password)
-                })
-            }
+        let generatedPassword = try await Task.continuation(priority: .background) {
+            try BackupPassword.createEncryptionKey(deriver: deriver, password: password)
         }
-        try Task.checkCancellation()
         return generatedPassword
     }
 }
