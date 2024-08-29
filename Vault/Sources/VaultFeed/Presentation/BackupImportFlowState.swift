@@ -29,14 +29,14 @@ struct BackupImportFlowState {
     /// There was a password provided, handle the state.
     func passwordProvided(password: BackupPassword) -> Action {
         do {
-            let backupImporter = BackupImporter(backupPassword: password)
-            let applicationPayload = try backupImporter.importEncryptedBackup(encryptedVault: encryptedVault)
+            let decoder = EncryptedVaultDecoder(backupPassword: password)
+            let applicationPayload = try decoder.decryptAndDecode(encryptedVault: encryptedVault)
             switch importContext {
             case .toEmptyVault: return .importAndMerge(applicationPayload)
             case .merge: return .importAndMerge(applicationPayload)
             case .override: return .importAndOverride(applicationPayload)
             }
-        } catch BackupImporter.ImportError.decryption {
+        } catch EncryptedVaultDecoder.ImportError.decryption {
             return .promptForDifferentPassword
         } catch {
             return .backupDataError(error)

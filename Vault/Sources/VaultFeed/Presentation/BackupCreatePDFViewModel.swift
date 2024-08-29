@@ -152,8 +152,8 @@ extension BackupCreatePDFViewModel {
 
     /// Encrypt on background thread.
     private nonisolated func makeExportPayload(payload: VaultApplicationPayload) async throws -> VaultExportPayload {
-        let backupExporter = BackupExporter(clock: clock, backupPassword: backupPassword)
-        let encryptedVault = try backupExporter.createEncryptedBackup(payload: payload)
+        let backupExporter = EncryptedVaultEncoder(clock: clock, backupPassword: backupPassword)
+        let encryptedVault = try backupExporter.encryptAndEncode(payload: payload)
         return await VaultExportPayload(
             encryptedVault: encryptedVault,
             userDescription: userHint,

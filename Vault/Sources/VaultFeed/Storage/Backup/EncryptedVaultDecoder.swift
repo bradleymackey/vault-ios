@@ -4,14 +4,14 @@ import VaultBackup
 import VaultCore
 
 /// From an encrypted vault, deconstruct to application-level items.
-final class BackupImporter {
+final class EncryptedVaultDecoder {
     private let backupPassword: BackupPassword
 
     init(backupPassword: BackupPassword) {
         self.backupPassword = backupPassword
     }
 
-    func importEncryptedBackup(encryptedVault: EncryptedVault) throws -> VaultApplicationPayload {
+    func decryptAndDecode(encryptedVault: EncryptedVault) throws -> VaultApplicationPayload {
         do {
             let backupDecoder = VaultBackupDecryptor(key: backupPassword.key)
             let payload = try backupDecoder.decryptBackupPayload(from: encryptedVault)
@@ -41,7 +41,7 @@ final class BackupImporter {
 
 // MARK: - Error
 
-extension BackupImporter {
+extension EncryptedVaultDecoder {
     enum ImportError: Error, LocalizedError {
         case incompatibleVersion
         case decryption

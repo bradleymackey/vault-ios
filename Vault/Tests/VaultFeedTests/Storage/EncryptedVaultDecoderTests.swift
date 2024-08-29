@@ -4,20 +4,20 @@ import VaultBackup
 import XCTest
 @testable import VaultFeed
 
-final class BackupImporterTests: XCTestCase {
-    func test_importEncryptedBackup_decodesWithNoItems() throws {
+final class EncryptedVaultDecoderTests: XCTestCase {
+    func test_decryptAndDecode_decodesWithNoItems() throws {
         let password = BackupPassword(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT(password: password)
 
-        let decoded = try sut.importEncryptedBackup(encryptedVault: encryptedBackup)
+        let decoded = try sut.decryptAndDecode(encryptedVault: encryptedBackup)
 
         XCTAssertEqual(decoded.items, [])
         XCTAssertEqual(decoded.tags, [])
         XCTAssertEqual(decoded.userDescription, "my backup")
     }
 
-    func test_importEncryptedBackup_decodesWithItems() throws {
+    func test_decryptAndDecode_decodesWithItems() throws {
         let item1 = uniqueVaultItem()
         let tag1 = VaultItemTag(id: .init(id: UUID()), name: "tag1")
         let tag2 = VaultItemTag(id: .init(id: UUID()), name: "tag2")
@@ -30,7 +30,7 @@ final class BackupImporterTests: XCTestCase {
         )
         let sut = makeSUT(password: password)
 
-        let decoded = try sut.importEncryptedBackup(encryptedVault: encryptedBackup)
+        let decoded = try sut.decryptAndDecode(encryptedVault: encryptedBackup)
 
         XCTAssertEqual(decoded.items.map(\.id), [item1].map(\.id))
         XCTAssertEqual(decoded.tags, [tag1, tag2])
@@ -40,9 +40,9 @@ final class BackupImporterTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension BackupImporterTests {
-    private func makeSUT(password: BackupPassword) -> BackupImporter {
-        BackupImporter(backupPassword: password)
+extension EncryptedVaultDecoderTests {
+    private func makeSUT(password: BackupPassword) -> EncryptedVaultDecoder {
+        EncryptedVaultDecoder(backupPassword: password)
     }
 
     private func makeEncryptedVault(
@@ -51,9 +51,8 @@ extension BackupImporterTests {
         items: [VaultItem] = [],
         tags: [VaultItemTag] = []
     ) throws -> EncryptedVault {
-        let exporter = BackupExporter(clock: EpochClockMock(currentTime: 100), backupPassword: password)
+        let encoder = EncryptedVaultEncoder(clock: EpochClockMock(currentTime: 100), backupPassword: password)
         let payload = VaultApplicationPayload(userDescription: description, items: items, tags: tags)
-        let encryptedBackup = try exporter.createEncryptedBackup(payload: payload)
-        return encryptedBackup
+        return try encoder.encryptAndEncode(payload: payload)
     }
 }
