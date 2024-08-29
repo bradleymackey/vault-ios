@@ -4,7 +4,7 @@ import FoundationExtensions
 import VaultCore
 
 /// Used to create a full, encrypted backup of a vault for export.
-public final class VaultBackupEncoder {
+public final class VaultBackupEncryptor {
     private let clock: any EpochClock
     private let key: VaultKey
     private let keygenSalt: Data
@@ -32,7 +32,7 @@ public final class VaultBackupEncoder {
     }
 
     /// Encodes and encrypts a vault providing a payload.
-    public func createExportPayload(
+    public func encryptBackupPayload(
         items: [VaultBackupItem],
         tags: [VaultBackupTag],
         userDescription: String

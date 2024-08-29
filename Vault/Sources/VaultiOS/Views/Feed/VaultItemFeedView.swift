@@ -189,6 +189,7 @@ struct VaultItemFeedView<
     let dataModel = VaultDataModel(
         vaultStore: store,
         vaultTagStore: VaultTagStoreStub(),
+        vaultImporter: VaultStoreImporterMock(),
         vaultDeleter: VaultStoreDeleterMock(),
         backupPasswordStore: BackupPasswordStoreMock(),
         backupEventLogger: BackupEventLoggerMock()

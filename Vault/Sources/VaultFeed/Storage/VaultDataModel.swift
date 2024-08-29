@@ -101,8 +101,9 @@ public final class VaultDataModel: Sendable {
     // MARK: - Init
 
     private let vaultStore: any VaultStore
-    private let vaultDeleter: any VaultStoreDeleter
     private let vaultTagStore: any VaultTagStore
+    private let vaultImporter: any VaultStoreImporter
+    private let vaultDeleter: any VaultStoreDeleter
     private let backupPasswordStore: any BackupPasswordStore
     private let backupEventLogger: any BackupEventLogger
     private var observationBag = Set<AnyCancellable>()
@@ -110,6 +111,7 @@ public final class VaultDataModel: Sendable {
     public init(
         vaultStore: any VaultStore,
         vaultTagStore: any VaultTagStore,
+        vaultImporter: any VaultStoreImporter,
         vaultDeleter: any VaultStoreDeleter,
         backupPasswordStore: any BackupPasswordStore,
         backupEventLogger: any BackupEventLogger,
@@ -117,6 +119,7 @@ public final class VaultDataModel: Sendable {
     ) {
         self.vaultStore = vaultStore
         self.vaultTagStore = vaultTagStore
+        self.vaultImporter = vaultImporter
         self.vaultDeleter = vaultDeleter
         self.backupPasswordStore = backupPasswordStore
         self.backupEventLogger = backupEventLogger
@@ -295,6 +298,24 @@ extension VaultDataModel {
         await reloadTags()
         itemsFilteringByTags.remove(tagID)
         await reloadItems()
+        await updateCurrentPayloadHash()
+    }
+}
+
+// MARK: - Import
+
+extension VaultDataModel {
+    public func importMerge(payload: VaultApplicationPayload) async throws {
+        try await vaultImporter.importAndMergeVault(payload: payload)
+        await reloadItems()
+        await reloadTags()
+        await updateCurrentPayloadHash()
+    }
+
+    public func importOverride(payload: VaultApplicationPayload) async throws {
+        try await vaultImporter.importAndOverrideVault(payload: payload)
+        await reloadItems()
+        await reloadTags()
         await updateCurrentPayloadHash()
     }
 }

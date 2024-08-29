@@ -5,8 +5,8 @@ import VaultCore
 import XCTest
 @testable import VaultBackup
 
-final class VaultBackupDecoderTests: XCTestCase {
-    func test_extractBackupPayload_throwsForIncompatibleVersion() throws {
+final class VaultBackupDecryptorTests: XCTestCase {
+    func test_decryptBackupPayload_throwsForIncompatibleVersion() throws {
         let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
@@ -19,10 +19,10 @@ final class VaultBackupDecoderTests: XCTestCase {
         )
         encryptedVault.version = "2.0.0"
 
-        XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
+        XCTAssertThrowsError(try sut.decryptBackupPayload(from: encryptedVault))
     }
 
-    func test_extractBackupPayload_decryptsVaultWithCorrectKey() throws {
+    func test_decryptBackupPayload_decryptsVaultWithCorrectKey() throws {
         let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
@@ -40,7 +40,7 @@ final class VaultBackupDecoderTests: XCTestCase {
             keygenSignature: "my-signature"
         )
 
-        let backup = try sut.extractBackupPayload(from: encryptedVault)
+        let backup = try sut.decryptBackupPayload(from: encryptedVault)
 
         XCTAssertEqual(backup.items, [])
         XCTAssertEqual(backup.obfuscationPadding, Data())
@@ -48,7 +48,7 @@ final class VaultBackupDecoderTests: XCTestCase {
         XCTAssertEqual(backup.created, .init(timeIntervalSince1970: 1234))
     }
 
-    func test_extractBackupPayload_failsToDecryptGoodPayloadForInvalidKey() throws {
+    func test_decryptBackupPayload_failsToDecryptGoodPayloadForInvalidKey() throws {
         let key = KeyData<Bits256>.repeating(byte: 0xBB)
         let sut = makeSUT(key: key)
 
@@ -66,10 +66,10 @@ final class VaultBackupDecoderTests: XCTestCase {
             keygenSignature: "my-signature"
         )
 
-        XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
+        XCTAssertThrowsError(try sut.decryptBackupPayload(from: encryptedVault))
     }
 
-    func test_extractBackupPayload_failsToDecryptMalformedAuthentication() throws {
+    func test_decryptBackupPayload_failsToDecryptMalformedAuthentication() throws {
         let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
@@ -88,14 +88,14 @@ final class VaultBackupDecoderTests: XCTestCase {
             keygenSignature: "my-signature"
         )
 
-        XCTAssertThrowsError(try sut.extractBackupPayload(from: encryptedVault))
+        XCTAssertThrowsError(try sut.decryptBackupPayload(from: encryptedVault))
     }
 }
 
 // MARK: - Helpers
 
-extension VaultBackupDecoderTests {
-    private func makeSUT(key: KeyData<Bits256>) -> VaultBackupDecoder {
-        VaultBackupDecoder(key: key)
+extension VaultBackupDecryptorTests {
+    private func makeSUT(key: KeyData<Bits256>) -> VaultBackupDecryptor {
+        VaultBackupDecryptor(key: key)
     }
 }

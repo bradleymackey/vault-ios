@@ -18,6 +18,7 @@ func uniqueCode() -> OTPAuthCode {
 func anyVaultDataModel(
     vaultStore: some VaultStore = VaultStoreStub(),
     vaultTagStore: some VaultTagStore = VaultTagStoreStub(),
+    vaultImporter: some VaultStoreImporter = VaultStoreImporterMock(),
     vaultDeleter: some VaultStoreDeleter = VaultStoreDeleterMock(),
     backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock(),
     backupEventLogger: some BackupEventLogger = BackupEventLoggerMock()
@@ -25,6 +26,7 @@ func anyVaultDataModel(
     VaultDataModel(
         vaultStore: vaultStore,
         vaultTagStore: vaultTagStore,
+        vaultImporter: vaultImporter,
         vaultDeleter: vaultDeleter,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger
