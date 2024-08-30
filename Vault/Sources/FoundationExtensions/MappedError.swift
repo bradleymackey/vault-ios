@@ -19,3 +19,14 @@ public func withCatchingError<T>(body: () throws -> T) -> (any Error)? {
         return error
     }
 }
+
+/// Catches an error and returns the error type.
+@inlinable
+public func withCatchingAsyncError<T>(body: () async throws -> T) async -> (any Error)? {
+    do {
+        _ = try await body()
+        return nil
+    } catch {
+        return error
+    }
+}

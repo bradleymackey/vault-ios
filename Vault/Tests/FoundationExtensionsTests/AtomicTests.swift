@@ -24,6 +24,22 @@ final class AtomicTests: XCTestCase {
         }
     }
 
+    func test_value_getsValue() async {
+        let a = Atomic(initialValue: 100)
+
+        XCTAssertEqual(a.value, 100)
+    }
+
+    func test_modify_modifiesExistingValue() async {
+        let a = Atomic(initialValue: 100)
+
+        a.modify { value in
+            value += 2
+        }
+
+        XCTAssertEqual(a.get { $0 }, 102)
+    }
+
     func test_modify_modifiesValueSafely() async {
         let a = Atomic(initialValue: 100)
 
