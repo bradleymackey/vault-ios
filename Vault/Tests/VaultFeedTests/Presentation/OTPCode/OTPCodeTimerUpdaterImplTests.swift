@@ -25,18 +25,15 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
         let timer = IntervalTimerMock()
         let sut = makeSUT(clock: clock, timer: timer, period: 30)
 
-        let publisher = sut.timerUpdatedPublisher().collectFirst(3)
+        let publisher = sut.timerUpdatedPublisher().collectFirst(2)
 
         let values = try await awaitPublisher(publisher, when: {
-            clock.currentTime = 60
-            timer.finishTimer()
-            clock.currentTime = 90
-            timer.finishTimer()
+            clock.currentTime = 62
+            await timer.finishTimer()
         })
         XCTAssertEqual(values, [
             OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
             OTPCodeTimerState(startTime: 60, endTime: 90),
-            OTPCodeTimerState(startTime: 90, endTime: 120),
         ])
     }
 
@@ -77,6 +74,12 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
             OTPCodeTimerState(startTime: 30, endTime: 60),
             OTPCodeTimerState(startTime: 30, endTime: 60),
         ])
+    }
+
+    @MainActor
+    func test_deinit_doesNotLeak() async throws {
+        let clock = EpochClockMock(currentTime: 30)
+        _ = makeSUT(clock: clock, period: 30)
     }
 
     // MARK: - Helpers

@@ -13,7 +13,7 @@ public final class OTPCodeIncrementerViewModel {
     private let codePublisher: HOTPCodePublisher
     private var counter: UInt64
     private let incrementerStore: any VaultStoreHOTPIncrementer
-    private var timerCancellable: AnyCancellable?
+    private var timerTask: Task<Void, any Error>?
 
     public init(
         id: Identifier<VaultItem>,
@@ -52,10 +52,8 @@ public final class OTPCodeIncrementerViewModel {
 
         try await operation()
 
-        timerCancellable = timer.wait(for: 4)
-            .receive(on: DispatchQueue.main)
-            .sink { [weak self] in
-                self?.isButtonEnabled = true
-            }
+        timerTask = timer.schedule(wait: 4) { @MainActor [weak self] in
+            self?.isButtonEnabled = true
+        }
     }
 }

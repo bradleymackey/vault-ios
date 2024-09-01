@@ -49,7 +49,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         XCTAssertEqual(sut.isButtonEnabled, false)
 
         await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            timer.finishTimer()
+            await timer.finishTimer()
         }
         XCTAssertEqual(sut.isButtonEnabled, true)
     }
@@ -65,12 +65,12 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         XCTAssertEqual(sut.isButtonEnabled, false)
 
         await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            timer.finishTimer()
+            await timer.finishTimer()
         }
         XCTAssertEqual(sut.isButtonEnabled, true)
 
         await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            timer.finishTimer()
+            await timer.finishTimer()
         }
     }
 
