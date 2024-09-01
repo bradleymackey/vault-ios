@@ -37,39 +37,50 @@ struct VaultListView<
             gridSpacing: 12
         )
         .toolbar {
-            if dataModel.items.isNotEmpty {
+            if isEditing {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isShowingEditSheet.toggle()
+                        isEditing = false
                     } label: {
-                        Label("Edit", systemImage: "ellipsis.circle")
+                        Label("Done", systemImage: "checkmark")
                     }
                 }
-            }
 
-            ToolbarItem(placement: .topBarTrailing) {
-                Menu {
-                    Button {
-                        modal = .creatingItem(.otpCode)
-                    } label: {
-                        LabeledContent {
-                            Text("Code")
+            } else {
+                if dataModel.items.isNotEmpty {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button {
+                            isShowingEditSheet.toggle()
                         } label: {
-                            Image(systemName: "qrcode")
+                            Label("Edit", systemImage: "ellipsis.circle")
                         }
                     }
+                }
 
-                    Button {
-                        modal = .creatingItem(.secureNote)
-                    } label: {
-                        LabeledContent {
-                            Text("Note")
+                ToolbarItem(placement: .topBarTrailing) {
+                    Menu {
+                        Button {
+                            modal = .creatingItem(.otpCode)
                         } label: {
-                            Image(systemName: "text.alignleft")
+                            LabeledContent {
+                                Text("Code")
+                            } label: {
+                                Image(systemName: "qrcode")
+                            }
                         }
+
+                        Button {
+                            modal = .creatingItem(.secureNote)
+                        } label: {
+                            LabeledContent {
+                                Text("Note")
+                            } label: {
+                                Image(systemName: "text.alignleft")
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "plus")
                     }
-                } label: {
-                    Image(systemName: "plus")
                 }
             }
         }
