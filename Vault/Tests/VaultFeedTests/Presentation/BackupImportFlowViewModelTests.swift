@@ -55,7 +55,12 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(result: .success(pdfData))
 
-        XCTAssertEqual(sut.payloadState, .ready(payload))
+        switch sut.payloadState {
+        case let .ready(readyPayload, _):
+            XCTAssertEqual(readyPayload, payload)
+        default:
+            XCTFail("Invalid state")
+        }
         XCTAssertEqual(sut.importState, .notStarted)
     }
 

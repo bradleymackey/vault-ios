@@ -9,7 +9,8 @@ public final class BackupImportFlowViewModel {
     public enum PayloadState: Equatable {
         case none
         case error(PresentationError)
-        case ready(VaultApplicationPayload)
+        /// We need the UUID so each `ready` state is unique in terms of equality.
+        case ready(VaultApplicationPayload, UUID)
 
         var isError: Bool {
             switch self {
@@ -108,7 +109,7 @@ public final class BackupImportFlowViewModel {
             case let .backupDataError(error):
                 throw error
             case let .readyToImport(applicationPayload):
-                payloadState = .ready(applicationPayload)
+                payloadState = .ready(applicationPayload, UUID())
             }
         } catch let error as LocalizedError {
             payloadState = .error(.init(localizedError: error))

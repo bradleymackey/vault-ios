@@ -7,6 +7,7 @@ struct BackupImportFlowView: View {
     @State private var viewModel: BackupImportFlowViewModel
     @State private var isImporting = false
     @State private var importTask: Task<Void, any Error>?
+    @State private var navPath = NavigationPath()
 
     @Environment(\.dismiss) private var dismiss
 
@@ -15,54 +16,60 @@ struct BackupImportFlowView: View {
     }
 
     var body: some View {
-        Form {
-            switch viewModel.payloadState {
-            case .none:
-                filePickerSection(isSelected: false)
-            case let .error(presentationError):
-                filePickerSection(isSelected: true)
-                PlaceholderView(
-                    systemIcon: "square.and.arrow.down.fill",
-                    title: presentationError.userTitle,
-                    subtitle: presentationError.userDescription
-                )
-                .padding()
-                .containerRelativeFrame(.horizontal)
-                .foregroundStyle(.red)
-            case let .ready(vaultApplicationPayload):
-                filePickerSection(isSelected: true)
-                readyToImportSection(vaultApplicationPayload: vaultApplicationPayload)
-            }
+        NavigationStack(path: $navPath) {
+            rootForm
         }
-        .navigationTitle(Text("Import"))
-        .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(!viewModel.importState.isFinished)
-        .animation(.easeOut, value: viewModel.importState)
-        .animation(.easeOut, value: viewModel.payloadState)
-        .toolbar {
-            switch viewModel.importState {
-            case .notStarted, .error:
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                    }
-                    .foregroundStyle(.red)
-                }
-            case .success:
-                ToolbarItem(placement: .primaryAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Done")
-                    }
-                }
+        .onChange(of: viewModel.payloadState) { _, newValue in
+            switch newValue {
+            case let .ready(payload, _):
+                navPath.append(payload)
+            case .none, .error:
+                break
             }
         }
     }
 
-    private func filePickerSection(isSelected: Bool) -> some View {
+    private var rootForm: some View {
+        Form {
+            switch viewModel.payloadState {
+            case .none, .ready:
+                filePickerSection()
+            case let .error(presentationError):
+                Section {
+                    PlaceholderView(
+                        systemIcon: "exclamationmark.triangle.fill",
+                        title: presentationError.userTitle,
+                        subtitle: presentationError.userDescription
+                    )
+                    .padding()
+                    .containerRelativeFrame(.horizontal)
+                    .foregroundStyle(.red)
+                }
+
+                filePickerSection()
+            }
+        }
+        .toolbar {
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                }
+                .foregroundStyle(.red)
+            }
+        }
+        .animation(.easeOut, value: viewModel.importState)
+        .animation(.easeOut, value: viewModel.payloadState)
+        .navigationTitle(Text("Import"))
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(for: VaultApplicationPayload.self) { payload in
+            readyToImportForm(vaultApplicationPayload: payload)
+        }
+    }
+
+    private func filePickerSection() -> some View {
         Section {
             Button {
                 isImporting = true
@@ -106,13 +113,12 @@ struct BackupImportFlowView: View {
                 }
             }
         } header: {
-            Text(isSelected ? "Select Another Import Option" : "Import Options")
+            Text("Import Options")
         }
-        .transition(.slide)
     }
 
-    private func readyToImportSection(vaultApplicationPayload: VaultApplicationPayload) -> some View {
-        Section {
+    private func readyToImportForm(vaultApplicationPayload: VaultApplicationPayload) -> some View {
+        Form {
             switch viewModel.importState {
             case .notStarted:
                 PlaceholderView(
@@ -146,7 +152,19 @@ struct BackupImportFlowView: View {
                 .containerRelativeFrame(.horizontal)
             }
         }
-        .transition(.slide)
+        .animation(.easeOut, value: viewModel.importState)
+        .animation(.easeOut, value: viewModel.payloadState)
+        .toolbar {
+            if viewModel.importState.isFinished {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Done")
+                    }
+                }
+            }
+        }
     }
 
     private func importButton(vault: VaultApplicationPayload) -> some View {

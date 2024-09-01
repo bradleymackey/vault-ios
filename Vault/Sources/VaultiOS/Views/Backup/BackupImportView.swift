@@ -30,32 +30,26 @@ struct BackupImportView: View {
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
             case let .importToCurrentlyEmpty(backupPassword):
-                NavigationStack {
-                    BackupImportFlowView(viewModel: .init(
-                        importContext: .toEmptyVault,
-                        dataModel: dataModel,
-                        existingBackupPassword: backupPassword,
-                        encryptedVaultDecoder: injector.encryptedVaultDecoder
-                    ))
-                }
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .toEmptyVault,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
             case let .importAndMerge(backupPassword):
-                NavigationStack {
-                    BackupImportFlowView(viewModel: .init(
-                        importContext: .merge,
-                        dataModel: dataModel,
-                        existingBackupPassword: backupPassword,
-                        encryptedVaultDecoder: injector.encryptedVaultDecoder
-                    ))
-                }
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .merge,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
             case let .importAndOverride(backupPassword):
-                NavigationStack {
-                    BackupImportFlowView(viewModel: .init(
-                        importContext: .override,
-                        dataModel: dataModel,
-                        existingBackupPassword: backupPassword,
-                        encryptedVaultDecoder: injector.encryptedVaultDecoder
-                    ))
-                }
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .override,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
             }
         }
     }
