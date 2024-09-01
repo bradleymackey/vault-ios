@@ -39,14 +39,14 @@ public final class SingleCodeScanner<Model> {
         do {
             let decoded = try mapper(string)
             scanningState = .success
-            intervalTimer.wait(for: 0.5).sink { [scannedCodeSubject] in
+            intervalTimer.schedule(wait: 0.5, tolerance: 0.5) { @MainActor [scannedCodeSubject] in
                 scannedCodeSubject.send(decoded)
-            }.store(in: &timerBag)
+            }
         } catch {
             scanningState = .invalidCodeScanned
-            intervalTimer.wait(for: 1).sink { [weak self] in
+            intervalTimer.schedule(wait: 1, tolerance: 0.5) { @MainActor [weak self] in
                 self?.scanningState = .scanning
-            }.store(in: &timerBag)
+            }
         }
     }
 }

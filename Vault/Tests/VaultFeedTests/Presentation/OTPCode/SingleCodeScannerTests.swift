@@ -51,7 +51,9 @@ final class SingleCodeScannerTests: XCTestCase {
         })
 
         sut.scan(text: "invalid")
-        await timer.finishTimer()
+        await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
+            await timer.finishTimer()
+        }
 
         XCTAssertEqual(sut.scanningState, .scanning)
     }

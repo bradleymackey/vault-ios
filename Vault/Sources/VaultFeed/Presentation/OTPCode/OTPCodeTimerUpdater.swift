@@ -1,4 +1,4 @@
-import Combine
+@preconcurrency import Combine
 import Foundation
 import VaultCore
 
@@ -26,10 +26,10 @@ public final class OTPCodeTimerUpdaterMock: OTPCodeTimerUpdater {
 // MARK: - Impl
 
 /// Controller for producing timers for a given code, according to a clock.
-public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
+public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
     private let period: UInt64
-    private var timerPublisher: AnyCancellable?
+    private let timerTask = Atomic<Task<Void, any Error>?>(initialValue: nil)
     private let timer: any IntervalTimer
     private let clock: any EpochClock
 
@@ -43,6 +43,10 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
         scheduleNextUpdate()
     }
 
+    deinit {
+        cancel()
+    }
+
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
     public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
         timerStateSubject
@@ -51,27 +55,35 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
 
     /// Forces the timer to recalculate it's current state and republish.
     public func recalculate() {
-        timerPublisher?.cancel()
+        timerTask.value?.cancel()
         let currentState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
         timerStateSubject.send(currentState)
         scheduleNextUpdate()
+    }
+
+    public func cancel() {
+        timerTask.modify {
+            $0?.cancel()
+            $0 = nil
+        }
     }
 }
 
 extension OTPCodeTimerUpdaterImpl {
     /// Schedules the next display of the timer state.
     private func scheduleNextUpdate() {
-        timerPublisher?.cancel()
+        timerTask.value?.cancel()
         let currentState = timerStateSubject.value
         let targetState = currentState.offset(time: Double(period))
         // Add some additional tolerance
         let timeUntilTarget = targetState.startTime - clock.currentTime + 0.1
         // Wait with some additional tolerance (it's OK if we're a little late)
         // This can help system performance
-        timerPublisher = timer.wait(for: timeUntilTarget, tolerance: timeUntilTarget / 10)
-            .sink { [weak self] in
+        timerTask.modify {
+            $0 = timer.schedule(wait: timeUntilTarget, tolerance: timeUntilTarget / 10) { [weak self] in
                 self?.timerStateSubject.send(targetState)
                 self?.scheduleNextUpdate()
             }
+        }
     }
 }
