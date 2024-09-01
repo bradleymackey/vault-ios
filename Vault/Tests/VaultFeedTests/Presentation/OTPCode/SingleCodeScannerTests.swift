@@ -44,14 +44,14 @@ final class SingleCodeScannerTests: XCTestCase {
     }
 
     @MainActor
-    func test_scan_returnsToScanningAfterInvalidCodeFailure() {
+    func test_scan_returnsToScanningAfterInvalidCodeFailure() async {
         let timer = IntervalTimerMock()
         let sut = makeSUT(intervalTimer: timer, mapper: { _ in
             throw anyNSError()
         })
 
         sut.scan(text: "invalid")
-        timer.finishTimer()
+        await timer.finishTimer()
 
         XCTAssertEqual(sut.scanningState, .scanning)
     }
@@ -78,7 +78,7 @@ final class SingleCodeScannerTests: XCTestCase {
             exp.fulfill()
         }
 
-        timer.finishTimer()
+        await timer.finishTimer()
 
         await fulfillment(of: [exp], timeout: 1.0)
         results.cancel()

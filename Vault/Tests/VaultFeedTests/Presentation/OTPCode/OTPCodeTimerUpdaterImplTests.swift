@@ -29,9 +29,9 @@ final class OTPCodeTimerUpdaterImplTests: XCTestCase {
 
         let values = try await awaitPublisher(publisher, when: {
             clock.currentTime = 60
-            timer.finishTimer()
+            await timer.finishTimer()
             clock.currentTime = 90
-            timer.finishTimer()
+            await timer.finishTimer()
         })
         XCTAssertEqual(values, [
             OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
