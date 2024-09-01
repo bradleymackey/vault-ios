@@ -52,6 +52,7 @@ struct VaultItemFeedView<
 
     private var noCodesFoundView: some View {
         PlaceholderView(systemIcon: "key.viewfinder", title: localized(key: "codeFeed.noCodes.title"))
+            .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
             .modifier(VaultCardModifier())

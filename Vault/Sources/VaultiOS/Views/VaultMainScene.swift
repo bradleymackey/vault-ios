@@ -58,6 +58,7 @@ public struct VaultMainScene: Scene {
             secureStorage: SecureStorageImpl(keychain: .default)
         )
         let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
+        let encryptedVaultDecoder = EncryptedVaultDecoderImpl()
         let vaultDataModel = VaultDataModel(
             vaultStore: store,
             vaultTagStore: store,
@@ -72,6 +73,7 @@ public struct VaultMainScene: Scene {
             intervalTimer: timer,
             backupEventLogger: backupEventLogger,
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
+            encryptedVaultDecoder: encryptedVaultDecoder,
             defaults: defaults,
             fileManager: fileManager
         )

@@ -18,3 +18,8 @@ public struct PresentationError: Error, Equatable {
         debugDescription = localizedError.localizedDescription
     }
 }
+
+extension PresentationError: LocalizedError {
+    public var errorDescription: String? { userTitle }
+    public var failureReason: String? { userDescription }
+}

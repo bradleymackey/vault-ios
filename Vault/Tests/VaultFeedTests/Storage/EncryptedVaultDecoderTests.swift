@@ -8,9 +8,9 @@ final class EncryptedVaultDecoderTests: XCTestCase {
     func test_decryptAndDecode_decodesWithNoItems() throws {
         let password = BackupPassword(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
-        let sut = makeSUT(password: password)
+        let sut = makeSUT()
 
-        let decoded = try sut.decryptAndDecode(encryptedVault: encryptedBackup)
+        let decoded = try sut.decryptAndDecode(backupPassword: password, encryptedVault: encryptedBackup)
 
         XCTAssertEqual(decoded.items, [])
         XCTAssertEqual(decoded.tags, [])
@@ -28,9 +28,9 @@ final class EncryptedVaultDecoderTests: XCTestCase {
             items: [item1],
             tags: [tag1, tag2]
         )
-        let sut = makeSUT(password: password)
+        let sut = makeSUT()
 
-        let decoded = try sut.decryptAndDecode(encryptedVault: encryptedBackup)
+        let decoded = try sut.decryptAndDecode(backupPassword: password, encryptedVault: encryptedBackup)
 
         XCTAssertEqual(decoded.items.map(\.id), [item1].map(\.id))
         XCTAssertEqual(decoded.tags, [tag1, tag2])
@@ -41,8 +41,8 @@ final class EncryptedVaultDecoderTests: XCTestCase {
 // MARK: - Helpers
 
 extension EncryptedVaultDecoderTests {
-    private func makeSUT(password: BackupPassword) -> EncryptedVaultDecoder {
-        EncryptedVaultDecoder(backupPassword: password)
+    private func makeSUT() -> EncryptedVaultDecoderImpl {
+        EncryptedVaultDecoderImpl()
     }
 
     private func makeEncryptedVault(

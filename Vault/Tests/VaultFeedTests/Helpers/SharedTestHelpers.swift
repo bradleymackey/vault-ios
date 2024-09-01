@@ -1,5 +1,7 @@
 import Foundation
 import FoundationExtensions
+import PDFKit
+import VaultBackup
 import VaultCore
 import VaultFeed
 
@@ -30,6 +32,31 @@ func anyVaultDataModel(
         vaultDeleter: vaultDeleter,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger
+    )
+}
+
+func anyPDFData() throws -> Data {
+    let path = randomTmpPath()
+    let pdf = PDFDocument()
+    pdf.write(to: path)
+    return try Data(contentsOf: path)
+}
+
+func anyVaultApplicationPayload() -> VaultApplicationPayload {
+    .init(userDescription: "", items: [], tags: [])
+}
+
+func randomTmpPath() -> URL {
+    FileManager().temporaryDirectory.appending(path: UUID().uuidString)
+}
+
+func anyEncryptedVault() -> EncryptedVault {
+    EncryptedVault(
+        data: Data(),
+        authentication: Data(),
+        encryptionIV: Data(),
+        keygenSalt: Data(),
+        keygenSignature: "my-signature"
     )
 }
 

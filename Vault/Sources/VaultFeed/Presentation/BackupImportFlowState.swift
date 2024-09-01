@@ -14,29 +14,26 @@ struct BackupImportFlowState {
         /// Decryption password was invalid, the user should try again with a different
         /// password.
         case promptForDifferentPassword
-        case importAndMerge(VaultApplicationPayload)
-        case importAndOverride(VaultApplicationPayload)
+        case readyToImport(VaultApplicationPayload)
     }
 
-    let importContext: BackupImportContext
     let encryptedVault: EncryptedVault
+    let encryptedVaultDecoder: any EncryptedVaultDecoder
 
-    init(importContext: BackupImportContext, encryptedVault: EncryptedVault) {
-        self.importContext = importContext
+    init(encryptedVault: EncryptedVault, encryptedVaultDecoder: any EncryptedVaultDecoder) {
         self.encryptedVault = encryptedVault
+        self.encryptedVaultDecoder = encryptedVaultDecoder
     }
 
     /// There was a password provided, handle the state.
     func passwordProvided(password: BackupPassword) -> Action {
         do {
-            let decoder = EncryptedVaultDecoder(backupPassword: password)
-            let applicationPayload = try decoder.decryptAndDecode(encryptedVault: encryptedVault)
-            switch importContext {
-            case .toEmptyVault: return .importAndMerge(applicationPayload)
-            case .merge: return .importAndMerge(applicationPayload)
-            case .override: return .importAndOverride(applicationPayload)
-            }
-        } catch EncryptedVaultDecoder.ImportError.decryption {
+            let applicationPayload = try encryptedVaultDecoder.decryptAndDecode(
+                backupPassword: password,
+                encryptedVault: encryptedVault
+            )
+            return .readyToImport(applicationPayload)
+        } catch EncryptedVaultDecoderError.decryption {
             return .promptForDifferentPassword
         } catch {
             return .backupDataError(error)

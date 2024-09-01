@@ -107,6 +107,7 @@ struct SecureNoteDetailView: View {
                 )
                 .containerRelativeFrame(.horizontal)
                 .padding()
+                .foregroundStyle(.secondary)
             }
 
             ForEach(viewModel.tagsThatAreSelected) { tag in
