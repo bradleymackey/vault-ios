@@ -11,6 +11,7 @@ public final class VaultInjector {
     public let intervalTimer: any IntervalTimer
     public let backupEventLogger: any BackupEventLogger
     public let vaultKeyDeriverFactory: any VaultKeyDeriverFactory
+    public let encryptedVaultDecoder: any EncryptedVaultDecoder
     public let defaults: Defaults
     public let fileManager: FileManager
 
@@ -19,6 +20,7 @@ public final class VaultInjector {
         intervalTimer: any IntervalTimer,
         backupEventLogger: any BackupEventLogger,
         vaultKeyDeriverFactory: any VaultKeyDeriverFactory,
+        encryptedVaultDecoder: any EncryptedVaultDecoder,
         defaults: Defaults,
         fileManager: FileManager
     ) {
@@ -26,6 +28,7 @@ public final class VaultInjector {
         self.intervalTimer = intervalTimer
         self.backupEventLogger = backupEventLogger
         self.vaultKeyDeriverFactory = vaultKeyDeriverFactory
+        self.encryptedVaultDecoder = encryptedVaultDecoder
         self.defaults = defaults
         self.fileManager = fileManager
     }

@@ -6,20 +6,35 @@ import VaultCore
 @MainActor
 @Observable
 public final class BackupImportFlowViewModel {
-    public enum ImportState: Equatable {
-        case idle
+    public enum PayloadState: Equatable {
+        case none
         case error(PresentationError)
-        case success
+        case ready(VaultApplicationPayload)
 
         var isError: Bool {
             switch self {
             case .error: true
-            case .idle, .success: false
+            case .none, .ready: false
             }
         }
     }
 
-    public private(set) var state: ImportState = .idle
+    public enum ImportState: Equatable {
+        case notStarted
+        case error(PresentationError)
+        case success
+
+        public var isFinished: Bool {
+            switch self {
+            case .success: true
+            default: false
+            }
+        }
+    }
+
+    public private(set) var importState: ImportState = .notStarted
+
+    public private(set) var payloadState: PayloadState = .none
     public private(set) var isImporting: Bool = false
     public let importContext: BackupImportContext
 
@@ -27,6 +42,7 @@ public final class BackupImportFlowViewModel {
     /// The backup password the user already has on their device.
     /// If the imported backup was encrypted with this same password, we don't need to prompt the user.
     private let existingBackupPassword: BackupPassword?
+    private let encryptedVaultDecoder: any EncryptedVaultDecoder
     private let backupPDFDetatcher: any VaultBackupPDFDetatcher
     private var importPDFTask: Task<Void, any Error>?
 
@@ -34,20 +50,23 @@ public final class BackupImportFlowViewModel {
         importContext: BackupImportContext,
         dataModel: VaultDataModel,
         existingBackupPassword: BackupPassword?,
+        encryptedVaultDecoder: any EncryptedVaultDecoder,
         backupPDFDetatcher: any VaultBackupPDFDetatcher = VaultBackupPDFDetatcherImpl()
     ) {
         self.importContext = importContext
         self.dataModel = dataModel
         self.existingBackupPassword = existingBackupPassword
+        self.encryptedVaultDecoder = encryptedVaultDecoder
         self.backupPDFDetatcher = backupPDFDetatcher
     }
 
     public func handleImport(result: Result<Data, any Error>) async {
+        importState = .notStarted
         switch result {
         case let .success(data):
             await importPDF(data: data)
         case let .failure(error):
-            state = .error(PresentationError(
+            payloadState = .error(PresentationError(
                 userTitle: "File Error",
                 userDescription: "There was an error with the file you selected. Please try again.",
                 debugDescription: error.localizedDescription
@@ -77,7 +96,10 @@ public final class BackupImportFlowViewModel {
             // TODO: handle case where imported vault was encrypted with different password, should prompt user for it
             guard let existingBackupPassword else { throw PasswordError.noPassword }
             let encryptedVault = try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
-            let flowState = BackupImportFlowState(importContext: importContext, encryptedVault: encryptedVault)
+            let flowState = BackupImportFlowState(
+                encryptedVault: encryptedVault,
+                encryptedVaultDecoder: encryptedVaultDecoder
+            )
             let action = flowState.passwordProvided(password: existingBackupPassword)
             switch action {
             case .promptForDifferentPassword:
@@ -85,19 +107,35 @@ public final class BackupImportFlowViewModel {
                 break
             case let .backupDataError(error):
                 throw error
-            case let .importAndMerge(applicationPayload):
-                try await dataModel.importMerge(payload: applicationPayload)
-            case let .importAndOverride(applicationPayload):
-                try await dataModel.importOverride(payload: applicationPayload)
+            case let .readyToImport(applicationPayload):
+                payloadState = .ready(applicationPayload)
             }
-
-            state = .success
         } catch let error as LocalizedError {
-            state = .error(.init(localizedError: error))
+            payloadState = .error(.init(localizedError: error))
         } catch {
-            state = .error(PresentationError(
+            payloadState = .error(PresentationError(
                 userTitle: "PDF Error",
                 userDescription: "There was an error with the this PDF document. Please check the PDF, your internet, and try again.",
+                debugDescription: error.localizedDescription
+            ))
+        }
+    }
+
+    public func importPayload(payload: VaultApplicationPayload) async {
+        do {
+            switch importContext {
+            case .toEmptyVault, .merge:
+                try await dataModel.importMerge(payload: payload)
+            case .override:
+                try await dataModel.importOverride(payload: payload)
+            }
+            importState = .success
+        } catch let error as LocalizedError {
+            importState = .error(.init(localizedError: error))
+        } catch {
+            importState = .error(PresentationError(
+                userTitle: "Import Error",
+                userDescription: "There was an error importing the data to your vault. Please try again.",
                 debugDescription: error.localizedDescription
             ))
         }

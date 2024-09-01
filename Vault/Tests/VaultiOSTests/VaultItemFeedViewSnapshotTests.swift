@@ -124,6 +124,7 @@ extension VaultItemFeedViewSnapshotTests {
             intervalTimer: IntervalTimerMock(),
             backupEventLogger: BackupEventLoggerMock(),
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
+            encryptedVaultDecoder: EncryptedVaultDecoderMock(),
             defaults: Defaults(userDefaults: .standard),
             fileManager: FileManager()
         ))

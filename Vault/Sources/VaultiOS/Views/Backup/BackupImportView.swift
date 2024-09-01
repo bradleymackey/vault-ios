@@ -5,6 +5,7 @@ import VaultFeed
 @MainActor
 struct BackupImportView: View {
     @Environment(VaultDataModel.self) private var dataModel
+    @Environment(VaultInjector.self) private var injector
 
     @State private var modal: Modal?
 
@@ -33,7 +34,8 @@ struct BackupImportView: View {
                     BackupImportFlowView(viewModel: .init(
                         importContext: .toEmptyVault,
                         dataModel: dataModel,
-                        existingBackupPassword: backupPassword
+                        existingBackupPassword: backupPassword,
+                        encryptedVaultDecoder: injector.encryptedVaultDecoder
                     ))
                 }
             case let .importAndMerge(backupPassword):
@@ -41,7 +43,8 @@ struct BackupImportView: View {
                     BackupImportFlowView(viewModel: .init(
                         importContext: .merge,
                         dataModel: dataModel,
-                        existingBackupPassword: backupPassword
+                        existingBackupPassword: backupPassword,
+                        encryptedVaultDecoder: injector.encryptedVaultDecoder
                     ))
                 }
             case let .importAndOverride(backupPassword):
@@ -49,7 +52,8 @@ struct BackupImportView: View {
                     BackupImportFlowView(viewModel: .init(
                         importContext: .override,
                         dataModel: dataModel,
-                        existingBackupPassword: backupPassword
+                        existingBackupPassword: backupPassword,
+                        encryptedVaultDecoder: injector.encryptedVaultDecoder
                     ))
                 }
             }
