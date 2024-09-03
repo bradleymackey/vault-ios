@@ -44,4 +44,49 @@ final class VaultKeyDeriverTests: XCTestCase {
             XCTAssertEqual(result.signature, signature)
         }
     }
+
+    func test_createEncryptionKey_usesRandomSalt() throws {
+        let sut = VaultKeyDeriver.testing
+
+        var seenKeys = Set<KeyData<Bits256>>()
+        var seenSalt = Set<Data>()
+        var seenKeyDeriver = Set<VaultKeyDeriver.Signature>()
+        for _ in 0 ..< 100 {
+            let key = try sut.createEncryptionKey(password: "password")
+            seenKeys.insert(key.key)
+            seenSalt.insert(key.salt)
+            seenKeyDeriver.insert(key.keyDervier)
+        }
+
+        XCTAssertEqual(seenKeys.count, 100)
+        XCTAssertEqual(seenSalt.count, 100)
+        XCTAssertEqual(seenKeyDeriver.count, 1)
+        XCTAssertEqual(seenKeyDeriver.first, .testing)
+    }
+
+    func test_recreateEncryptionKey_usesTheSameSalt() throws {
+        let salt = Data(hex: "aabbccddeeff")
+        let sut = VaultKeyDeriver.testing
+
+        var seenKeys = Set<KeyData<Bits256>>()
+        var seenSalt = Set<Data>()
+        var seenKeyDeriver = Set<VaultKeyDeriver.Signature>()
+
+        for _ in 0 ..< 100 {
+            let key = try sut.recreateEncryptionKey(password: "password", salt: salt)
+            seenKeys.insert(key.key)
+            seenSalt.insert(key.salt)
+            seenKeyDeriver.insert(key.keyDervier)
+        }
+
+        XCTAssertEqual(seenKeys.count, 1)
+        XCTAssertEqual(seenSalt.count, 1)
+        XCTAssertEqual(seenKeyDeriver.count, 1)
+        XCTAssertEqual(
+            seenKeys.first?.data.toHexString(),
+            "b8ab51d4c385654810dbcc8e860426143a7b61a4273805ba9596b1f9c00530c6"
+        )
+        XCTAssertEqual(seenSalt.first?.toHexString(), "aabbccddeeff")
+        XCTAssertEqual(seenKeyDeriver.first, .testing)
+    }
 }

@@ -22,16 +22,6 @@ public struct DerivedEncryptionKey: Equatable, Hashable, Sendable {
 // MARK: - Keygen
 
 extension DerivedEncryptionKey {
-    /// Creates a new encryption key.
-    public static func createEncryptionKey(
-        deriver: VaultKeyDeriver,
-        password: String
-    ) throws -> DerivedEncryptionKey {
-        let salt = Data.random(count: 48)
-        let key = try deriver.key(password: Data(password.utf8), salt: salt)
-        return DerivedEncryptionKey(key: key, salt: salt, keyDervier: deriver.signature)
-    }
-
     public func newVaultKeyWithRandomIV() throws -> VaultKey {
         .init(key: key, iv: .random())
     }
