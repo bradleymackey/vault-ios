@@ -6,9 +6,9 @@ import VaultCore
 /// From an application-level vault, create the encrypted vault.
 public final class EncryptedVaultEncoder {
     private let clock: any EpochClock
-    private let backupPassword: BackupPassword
+    private let backupPassword: DerivedEncryptionKey
 
-    public init(clock: any EpochClock, backupPassword: BackupPassword) {
+    public init(clock: any EpochClock, backupPassword: DerivedEncryptionKey) {
         self.clock = clock
         self.backupPassword = backupPassword
     }

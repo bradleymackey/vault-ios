@@ -10,9 +10,9 @@ struct BackupImportView: View {
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
-        case importToCurrentlyEmpty(BackupPassword?)
-        case importAndMerge(BackupPassword?)
-        case importAndOverride(BackupPassword?)
+        case importToCurrentlyEmpty(DerivedEncryptionKey?)
+        case importAndMerge(DerivedEncryptionKey?)
+        case importAndOverride(DerivedEncryptionKey?)
     }
 
     var body: some View {

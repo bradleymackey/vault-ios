@@ -60,7 +60,7 @@ func anyEncryptedVault() -> EncryptedVault {
     )
 }
 
-func anyBackupPassword() -> BackupPassword {
+func anyBackupPassword() -> DerivedEncryptionKey {
     .init(key: .random(), salt: .random(count: 32), keyDervier: .testing)
 }
 

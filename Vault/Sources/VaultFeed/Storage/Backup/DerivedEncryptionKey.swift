@@ -3,7 +3,7 @@ import Foundation
 import FoundationExtensions
 import VaultBackup
 
-public struct BackupPassword: Equatable, Hashable, Sendable {
+public struct DerivedEncryptionKey: Equatable, Hashable, Sendable {
     /// The derived key (via keygen) from the user's password.
     /// (We don't store the password, only the derived key).
     public var key: KeyData<Bits256>
@@ -21,15 +21,15 @@ public struct BackupPassword: Equatable, Hashable, Sendable {
 
 // MARK: - Keygen
 
-extension BackupPassword {
+extension DerivedEncryptionKey {
     /// Creates a new encryption key.
     public static func createEncryptionKey(
         deriver: VaultKeyDeriver,
         password: String
-    ) throws -> BackupPassword {
+    ) throws -> DerivedEncryptionKey {
         let salt = Data.random(count: 48)
         let key = try deriver.key(password: Data(password.utf8), salt: salt)
-        return BackupPassword(key: key, salt: salt, keyDervier: deriver.signature)
+        return DerivedEncryptionKey(key: key, salt: salt, keyDervier: deriver.signature)
     }
 
     public func newVaultKeyWithRandomIV() throws -> VaultKey {

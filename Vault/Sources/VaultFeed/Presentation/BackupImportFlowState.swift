@@ -26,7 +26,7 @@ struct BackupImportFlowState {
     }
 
     /// There was a password provided, handle the state.
-    func passwordProvided(password: BackupPassword) -> Action {
+    func passwordProvided(password: DerivedEncryptionKey) -> Action {
         do {
             let applicationPayload = try encryptedVaultDecoder.decryptAndDecode(
                 backupPassword: password,

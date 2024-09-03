@@ -7,7 +7,7 @@ final class BackupPasswordExporterTests: XCTestCase {
     @MainActor
     func test_makeExport_encodesFromStore() async throws {
         let saltData = Data(repeating: 0x69, count: 20)
-        let examplePassword = BackupPassword(key: .repeating(byte: 0x68), salt: saltData, keyDervier: .testing)
+        let examplePassword = DerivedEncryptionKey(key: .repeating(byte: 0x68), salt: saltData, keyDervier: .testing)
         let sut = makeSUT(backupPassword: examplePassword)
 
         let export = try await sut.makeExport()
@@ -30,7 +30,7 @@ final class BackupPasswordExporterTests: XCTestCase {
 extension BackupPasswordExporterTests {
     @MainActor
     private func makeSUT(
-        backupPassword: BackupPassword
+        backupPassword: DerivedEncryptionKey
     ) -> BackupPasswordExporter {
         BackupPasswordExporter(backupPassword: backupPassword)
     }

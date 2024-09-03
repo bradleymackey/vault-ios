@@ -78,7 +78,7 @@ public final class BackupCreatePDFViewModel {
     public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
     public private(set) var generatedPDF: GeneratedPDF?
 
-    private let backupPassword: BackupPassword
+    private let backupPassword: DerivedEncryptionKey
     private let dataModel: VaultDataModel
     private let clock: any EpochClock
     private let backupEventLogger: any BackupEventLogger
@@ -86,7 +86,7 @@ public final class BackupCreatePDFViewModel {
     private let fileManager: FileManager
 
     public init(
-        backupPassword: BackupPassword,
+        backupPassword: DerivedEncryptionKey,
         dataModel: VaultDataModel,
         clock: any EpochClock,
         backupEventLogger: any BackupEventLogger,

@@ -134,12 +134,12 @@ extension BackupKeyChangeViewModelTests {
         )
     }
 
-    private func anyBackupPassword() -> BackupPassword {
-        BackupPassword(key: .repeating(byte: 0x45), salt: Data(), keyDervier: .testing)
+    private func anyBackupPassword() -> DerivedEncryptionKey {
+        DerivedEncryptionKey(key: .repeating(byte: 0x45), salt: Data(), keyDervier: .testing)
     }
 
-    private func randomBackupPassword() -> BackupPassword {
-        BackupPassword(key: .random(), salt: Data(), keyDervier: .testing)
+    private func randomBackupPassword() -> DerivedEncryptionKey {
+        DerivedEncryptionKey(key: .random(), salt: Data(), keyDervier: .testing)
     }
 
     private struct KeyDeriverErroring: KeyDeriver {

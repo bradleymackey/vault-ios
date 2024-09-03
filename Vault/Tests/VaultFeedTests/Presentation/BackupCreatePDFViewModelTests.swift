@@ -74,7 +74,7 @@ extension BackupCreatePDFViewModelTests {
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
-        backupPassword: BackupPassword = anyBackupPassword(),
+        backupPassword: DerivedEncryptionKey = anyBackupPassword(),
         clock: some EpochClock = EpochClockMock(currentTime: 100),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
     ) throws -> BackupCreatePDFViewModel {
