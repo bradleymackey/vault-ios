@@ -1,7 +1,7 @@
 import Foundation
 
 /// An error occurred at the presentation layer, we should inform the user with a message.
-public struct PresentationError: Error, Equatable {
+public struct PresentationError: Error, Equatable, Hashable {
     public var userTitle: String
     public var userDescription: String?
     public var debugDescription: String

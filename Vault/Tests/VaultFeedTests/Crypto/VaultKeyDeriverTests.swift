@@ -35,4 +35,13 @@ final class VaultKeyDeriverTests: XCTestCase {
         >
         """)
     }
+
+    func test_lookupSignature_looksUpCorrect() {
+        let signatures = VaultKeyDeriver.Signature.allCases
+        for signature in signatures {
+            let result = VaultKeyDeriver.lookup(signature: signature)
+
+            XCTAssertEqual(result.signature, signature)
+        }
+    }
 }
