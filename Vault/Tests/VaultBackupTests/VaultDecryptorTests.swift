@@ -39,7 +39,7 @@ final class VaultDecryptorTests: XCTestCase {
     func test_decrypt_expectedDataIsDecrypted() throws {
         let iv = Data(repeating: 0x32, count: 32)
         let key = Data(repeating: 0x31, count: 32)
-        let sut = makeSUT(key: key)
+        let sut = try makeSUT(key: key)
         let encryptedData = Data(hex: "0x4126987aceb598")
         let authentication = Data(hex: "0x4343890cb716dfb9915f8f7c050829ca")
         let vault = EncryptedVault(
@@ -61,8 +61,8 @@ final class VaultDecryptorTests: XCTestCase {
 
 extension VaultDecryptorTests {
     @MainActor
-    private func makeSUT(key: Data) -> VaultDecryptor {
-        let sut = VaultDecryptor(key: key)
+    private func makeSUT(key: Data) throws -> VaultDecryptor {
+        let sut = try VaultDecryptor(key: .init(data: key))
         trackForMemoryLeaks(sut)
         return sut
     }
