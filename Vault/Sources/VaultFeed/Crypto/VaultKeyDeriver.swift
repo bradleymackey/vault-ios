@@ -38,6 +38,7 @@ extension VaultKeyDeriver {
     /// so a given key can be recreated.
     public enum Signature: String, Equatable, Codable, Identifiable, CaseIterable, Sendable {
         case testing = "vault.keygen.default.testing"
+        case failing = "vault.keygen.default.testing-failing"
         case fastV1 = "vault.keygen.default.fast-v1"
         case secureV1 = "vault.keygen.default.secure-v1"
 
@@ -47,7 +48,8 @@ extension VaultKeyDeriver {
 
         public var userVisibleDescription: String {
             switch self {
-            case .testing: "Vault Default • Testing"
+            case .testing: "Vault Testing"
+            case .failing: "Vault Failing"
             case .fastV1: "Vault Default – FAST v1"
             case .secureV1: "Vault Default – SECURE v1"
             }
@@ -61,6 +63,7 @@ extension VaultKeyDeriver {
     public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
         switch signature {
         case .testing: .testing
+        case .failing: .failing
         case .fastV1: .V1.fast
         case .secureV1: .V1.secure
         }
@@ -74,6 +77,10 @@ extension VaultKeyDeriver {
             signature: .testing
         )
     }()
+
+    public static let failing: VaultKeyDeriver = .init(
+        deriver: FailingKeyDeriver(), signature: .failing
+    )
 
     public enum V1 {
         /// V1 fast key deriver.
@@ -121,32 +128,42 @@ extension VaultKeyDeriver {
 // MARK: - Atoms
 
 extension VaultKeyDeriver.V1 {
-    private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(parameters: .init(
-        iterations: 2000,
-        variant: .sha384
-    ))
+    private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(
+        parameters: .init(
+            iterations: 2000,
+            variant: .sha384
+        )
+    )
 
-    private static let scrypt_fast = ScryptKeyDeriver<Bits256>(parameters: .init(
-        costFactor: 1 << 6,
-        blockSizeFactor: 4,
-        parallelizationFactor: 1
-    ))
+    private static let scrypt_fast = ScryptKeyDeriver<Bits256>(
+        parameters: .init(
+            costFactor: 1 << 6,
+            blockSizeFactor: 4,
+            parallelizationFactor: 1
+        )
+    )
 
     /// A single round of HKDF, using SHA3's SHA512.
-    private static let HKDF_sha3_512_single = HKDFKeyDeriver<Bits256>(parameters: .init(variant: .sha3_sha512))
+    private static let HKDF_sha3_512_single = HKDFKeyDeriver<Bits256>(
+        parameters: .init(variant: .sha3_sha512)
+    )
 
     /// Uses a large, non-standard number of iterations with a variant that is not susceptible to
     /// length-extension attacks.
-    private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(parameters: .init(
-        iterations: 5_452_351,
-        variant: .sha384
-    ))
+    private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(
+        parameters: .init(
+            iterations: 5_452_351,
+            variant: .sha384
+        )
+    )
 
     /// Requires ~250MB of memory at peak with these current parameters.
     /// This should be fine for most iOS devices to perform locally.
-    private static let scrypt_secure = ScryptKeyDeriver<Bits256>(parameters: .init(
-        costFactor: 1 << 18,
-        blockSizeFactor: 8,
-        parallelizationFactor: 1
-    ))
+    private static let scrypt_secure = ScryptKeyDeriver<Bits256>(
+        parameters: .init(
+            costFactor: 1 << 18,
+            blockSizeFactor: 8,
+            parallelizationFactor: 1
+        )
+    )
 }
