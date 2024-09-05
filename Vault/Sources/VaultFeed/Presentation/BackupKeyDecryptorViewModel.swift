@@ -5,7 +5,7 @@ import VaultBackup
 
 @MainActor
 @Observable
-public final class BackupKeyGeneratorViewModel {
+public final class BackupKeyDecryptorViewModel {
     public enum GenerationState: Equatable, Hashable {
         case none
         case error(PresentationError)

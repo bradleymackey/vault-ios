@@ -3,7 +3,7 @@ import TestHelpers
 import XCTest
 @testable import VaultFeed
 
-final class BackupKeyGeneratorViewModelTests: XCTestCase {
+final class BackupKeyDecryptorViewModelTests: XCTestCase {
     @MainActor
     func test_init_setsInitialState() {
         let sut = makeSUT()
@@ -49,9 +49,9 @@ final class BackupKeyGeneratorViewModelTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension BackupKeyGeneratorViewModelTests {
+extension BackupKeyDecryptorViewModelTests {
     @MainActor
-    private func makeSUT(keyDeriver: VaultKeyDeriver = .testing) -> BackupKeyGeneratorViewModel {
-        BackupKeyGeneratorViewModel(keyDeriver: keyDeriver)
+    private func makeSUT(keyDeriver: VaultKeyDeriver = .testing) -> BackupKeyDecryptorViewModel {
+        BackupKeyDecryptorViewModel(keyDeriver: keyDeriver)
     }
 }
