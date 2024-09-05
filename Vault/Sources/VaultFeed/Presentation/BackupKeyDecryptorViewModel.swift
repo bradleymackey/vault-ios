@@ -37,11 +37,14 @@ public final class BackupKeyDecryptorViewModel {
     public private(set) var generated: GenerationState = .none
 
     private let keyDeriver: VaultKeyDeriver
+    private let encryptedVaultDecoder: any EncryptedVaultDecoder
 
     public init(
-        keyDeriver: VaultKeyDeriver
+        keyDeriver: VaultKeyDeriver,
+        encryptedVaultDecoder: any EncryptedVaultDecoder
     ) {
         self.keyDeriver = keyDeriver
+        self.encryptedVaultDecoder = encryptedVaultDecoder
     }
 
     private struct MissingPasswordError: Error, LocalizedError {
@@ -49,11 +52,12 @@ public final class BackupKeyDecryptorViewModel {
         var failureReason: String? { "The password cannot be empty" }
     }
 
-    public func generateKey(salt: Data) async {
+    public func attemptDecryption(encryptedVault: EncryptedVault) async {
         do {
             guard enteredPassword.isNotEmpty else { throw MissingPasswordError() }
-            let key = try await computeKey(password: enteredPassword, salt: salt)
-            generated = .generated(key)
+            let generatedKey = try await computeKey(password: enteredPassword, salt: encryptedVault.keygenSalt)
+            try encryptedVaultDecoder.verifyCanDecrypt(key: generatedKey.key, encryptedVault: encryptedVault)
+            generated = .generated(generatedKey)
         } catch let error as LocalizedError {
             generated = .error(.init(localizedError: error))
         } catch {

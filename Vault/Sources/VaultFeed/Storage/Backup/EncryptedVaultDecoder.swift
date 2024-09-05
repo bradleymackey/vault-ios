@@ -1,24 +1,31 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 import VaultBackup
 import VaultCore
 
 /// @mockable
-public protocol EncryptedVaultDecoder {
-    func decryptAndDecode(backupPassword: DerivedEncryptionKey, encryptedVault: EncryptedVault) throws
+public protocol EncryptedVaultDecoder: Sendable {
+    func decryptAndDecode(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws
         -> VaultApplicationPayload
+    /// Throws if the given `key` cannot decrypt this vault.
+    func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws
 }
 
 /// From an encrypted vault, deconstruct to application-level items.
-public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder {
+public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
     public init() {}
 
+    public func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws {
+        try VaultBackupDecryptor(key: key).verifyCanDecrypt(encryptedVault: encryptedVault)
+    }
+
     public func decryptAndDecode(
-        backupPassword: DerivedEncryptionKey,
+        key: KeyData<Bits256>,
         encryptedVault: EncryptedVault
     ) throws -> VaultApplicationPayload {
         do {
-            let backupDecoder = VaultBackupDecryptor(key: backupPassword.key)
+            let backupDecoder = VaultBackupDecryptor(key: key)
             let payload = try backupDecoder.decryptBackupPayload(from: encryptedVault)
             let itemDecoder = VaultBackupItemDecoder()
             let tagDecoder = VaultBackupTagDecoder()

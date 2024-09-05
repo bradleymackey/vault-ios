@@ -29,7 +29,7 @@ struct BackupImportFlowState {
     func passwordProvided(password: DerivedEncryptionKey) -> Action {
         do {
             let applicationPayload = try encryptedVaultDecoder.decryptAndDecode(
-                backupPassword: password,
+                key: password.key,
                 encryptedVault: encryptedVault
             )
             return .readyToImport(applicationPayload)
