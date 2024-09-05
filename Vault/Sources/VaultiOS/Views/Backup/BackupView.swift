@@ -12,7 +12,7 @@ struct BackupView: View {
 
     enum Modal: IdentifiableSelf {
         case updatePassword
-        case pdfBackup(BackupPassword)
+        case pdfBackup(DerivedEncryptionKey)
     }
 
     var body: some View {
@@ -68,7 +68,7 @@ struct BackupView: View {
         }
     }
 
-    private func currentBackupsSection(password: BackupPassword) -> some View {
+    private func currentBackupsSection(password: DerivedEncryptionKey) -> some View {
         Section {
             LastBackupSummaryView(
                 lastBackup: dataModel.lastBackupEvent,
@@ -86,7 +86,7 @@ struct BackupView: View {
         .transition(.slide)
     }
 
-    private func keySection(existingPassword: BackupPassword?) -> some View {
+    private func keySection(existingPassword: DerivedEncryptionKey?) -> some View {
         Section {
             if existingPassword != nil {
                 updateButton

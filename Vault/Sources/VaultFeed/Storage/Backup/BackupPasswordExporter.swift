@@ -2,9 +2,9 @@ import CryptoDocumentExporter
 import Foundation
 
 public actor BackupPasswordExporter {
-    private let backupPassword: BackupPassword
+    private let backupPassword: DerivedEncryptionKey
 
-    public init(backupPassword: BackupPassword) {
+    public init(backupPassword: DerivedEncryptionKey) {
         self.backupPassword = backupPassword
     }
 

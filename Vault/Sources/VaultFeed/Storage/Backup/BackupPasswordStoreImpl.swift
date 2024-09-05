@@ -9,7 +9,7 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
         self.secureStorage = secureStorage
     }
 
-    public func fetchPassword() async throws -> BackupPassword? {
+    public func fetchPassword() async throws -> DerivedEncryptionKey? {
         struct NotFoundInKeychain: Error {}
 
         func fetchDataFromKeychainIfPresent(key: String) async throws -> Data {
@@ -29,7 +29,7 @@ public final class BackupPasswordStoreImpl: BackupPasswordStore {
         }
     }
 
-    public func set(password: BackupPassword) async throws {
+    public func set(password: DerivedEncryptionKey) async throws {
         let container = BackupPasswordContainer(password: password)
         let encodedPassword = try backupPasswordEncoder().encode(container)
         try await secureStorage.store(data: encodedPassword, forKey: KeychainKey.backupPassword)
@@ -45,14 +45,14 @@ extension BackupPasswordStoreImpl {
         var salt: Data
         var keyDervier: VaultKeyDeriver.Signature
 
-        init(password: BackupPassword) {
+        init(password: DerivedEncryptionKey) {
             key = password.key
             salt = password.salt
             keyDervier = password.keyDervier
         }
 
-        var password: BackupPassword {
-            BackupPassword(key: key, salt: salt, keyDervier: keyDervier)
+        var password: DerivedEncryptionKey {
+            DerivedEncryptionKey(key: key, salt: salt, keyDervier: keyDervier)
         }
     }
 

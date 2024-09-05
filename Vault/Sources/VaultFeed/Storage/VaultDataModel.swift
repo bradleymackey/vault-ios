@@ -60,10 +60,10 @@ public final class VaultDataModel: Sendable {
     public enum BackupPasswordState: Sendable, Equatable {
         case notFetched
         case notCreated
-        case fetched(BackupPassword)
+        case fetched(DerivedEncryptionKey)
         case error(PresentationError)
 
-        public var fetchedPassword: BackupPassword? {
+        public var fetchedPassword: DerivedEncryptionKey? {
             switch self {
             case let .fetched(password): password
             default: nil
@@ -202,7 +202,7 @@ extension VaultDataModel {
         }
     }
 
-    public func store(backupPassword: BackupPassword) async throws {
+    public func store(backupPassword: DerivedEncryptionKey) async throws {
         try await backupPasswordStore.set(password: backupPassword)
         self.backupPassword = .fetched(backupPassword)
     }

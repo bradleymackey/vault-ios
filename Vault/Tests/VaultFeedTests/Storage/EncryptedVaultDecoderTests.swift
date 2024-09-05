@@ -6,7 +6,7 @@ import XCTest
 
 final class EncryptedVaultDecoderTests: XCTestCase {
     func test_decryptAndDecode_decodesWithNoItems() throws {
-        let password = BackupPassword(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT()
 
@@ -21,7 +21,7 @@ final class EncryptedVaultDecoderTests: XCTestCase {
         let item1 = uniqueVaultItem()
         let tag1 = VaultItemTag(id: .init(id: UUID()), name: "tag1")
         let tag2 = VaultItemTag(id: .init(id: UUID()), name: "tag2")
-        let password = BackupPassword(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(
             password: password,
             description: "my backup description",
@@ -46,7 +46,7 @@ extension EncryptedVaultDecoderTests {
     }
 
     private func makeEncryptedVault(
-        password: BackupPassword,
+        password: DerivedEncryptionKey,
         description: String = "any",
         items: [VaultItem] = [],
         tags: [VaultItemTag] = []

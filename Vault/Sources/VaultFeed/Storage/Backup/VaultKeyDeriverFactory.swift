@@ -5,6 +5,7 @@ import FoundationExtensions
 /// @mockable
 public protocol VaultKeyDeriverFactory {
     func makeVaultKeyDeriver() -> VaultKeyDeriver
+    func lookupVaultKeyDeriver(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver
 }
 
 public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
@@ -17,5 +18,9 @@ public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
         // This is very slow to run in DEBUG, due to lack of optimizations.
         return VaultKeyDeriver.V1.secure
         #endif
+    }
+
+    public func lookupVaultKeyDeriver(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
+        VaultKeyDeriver.lookup(signature: signature)
     }
 }

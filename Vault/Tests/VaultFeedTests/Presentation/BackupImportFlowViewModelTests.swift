@@ -141,7 +141,7 @@ extension BackupImportFlowViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
-        existingBackupPassword: BackupPassword? = nil,
+        existingBackupPassword: DerivedEncryptionKey? = nil,
         encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock(),
         backupPDFDetatcher: VaultBackupPDFDetatcherMock = VaultBackupPDFDetatcherMock()
     ) -> BackupImportFlowViewModel {

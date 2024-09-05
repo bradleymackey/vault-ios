@@ -94,11 +94,9 @@ public final class BackupKeyChangeViewModel {
         await dataModel.loadBackupPassword()
     }
 
-    private nonisolated func computeNewKey(password: String) async throws -> BackupPassword {
-        let deriver = encryptionKeyDeriver
-        let generatedPassword = try await Task.continuation(priority: .background) {
-            try BackupPassword.createEncryptionKey(deriver: deriver, password: password)
+    private nonisolated func computeNewKey(password: String) async throws -> DerivedEncryptionKey {
+        try await Task.continuation(priority: .background) {
+            try self.encryptionKeyDeriver.createEncryptionKey(password: password)
         }
-        return generatedPassword
     }
 }

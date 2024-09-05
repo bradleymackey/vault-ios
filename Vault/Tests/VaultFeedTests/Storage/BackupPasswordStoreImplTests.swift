@@ -49,7 +49,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
     func test_setPassword_setsDataEncodedCorrectly() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
-        let newPassword = BackupPassword(
+        let newPassword = DerivedEncryptionKey(
             key: .random(),
             salt: Data.random(count: 45),
             keyDervier: .fastV1
@@ -74,7 +74,7 @@ extension BackupPasswordStoreImplTests {
         BackupPasswordStoreImpl(secureStorage: secureStorage)
     }
 
-    private func anyBackupPassword() -> BackupPassword {
-        BackupPassword(key: .zero(), salt: Data(), keyDervier: .testing)
+    private func anyBackupPassword() -> DerivedEncryptionKey {
+        DerivedEncryptionKey(key: .zero(), salt: Data(), keyDervier: .testing)
     }
 }

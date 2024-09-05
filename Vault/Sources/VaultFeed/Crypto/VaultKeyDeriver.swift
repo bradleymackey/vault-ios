@@ -36,7 +36,7 @@ public struct VaultKeyDeriver: KeyDeriver {
 extension VaultKeyDeriver {
     /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
     /// so a given key can be recreated.
-    public enum Signature: String, Equatable, Codable, Identifiable, Sendable {
+    public enum Signature: String, Equatable, Codable, Identifiable, CaseIterable, Sendable {
         case testing = "vault.keygen.default.testing"
         case fastV1 = "vault.keygen.default.fast-v1"
         case secureV1 = "vault.keygen.default.secure-v1"
@@ -58,12 +58,20 @@ extension VaultKeyDeriver {
 // MARK: - Derviers
 
 extension VaultKeyDeriver {
+    public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
+        switch signature {
+        case .testing: return .testing
+        case .fastV1: return .V1.fast
+        case .secureV1: return .V1.secure
+        }
+    }
+
     /// A key deriver that's really fast, just for testing.
     public static let testing: VaultKeyDeriver = {
         let deriver = HKDFKeyDeriver<Bits256>(parameters: .init(variant: .sha3_sha512))
         return VaultKeyDeriver(
             deriver: deriver,
-            signature: .fastV1
+            signature: .testing
         )
     }()
 

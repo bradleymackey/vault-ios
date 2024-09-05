@@ -4,6 +4,6 @@ import Foundation
 ///
 /// @mockable
 public protocol BackupPasswordStore: Observable, Sendable {
-    func fetchPassword() async throws -> BackupPassword?
-    func set(password: BackupPassword) async throws
+    func fetchPassword() async throws -> DerivedEncryptionKey?
+    func set(password: DerivedEncryptionKey) async throws
 }

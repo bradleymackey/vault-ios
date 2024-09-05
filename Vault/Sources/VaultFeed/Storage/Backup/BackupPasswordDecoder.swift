@@ -1,6 +1,6 @@
 import Foundation
 
-/// Decodes `Data` or a `String` from a QR code into a `BackupPassword`.
+/// Decodes `Data` or a `String` from a QR code into a `DerivedEncryptionKey`.
 public final class BackupPasswordDecoder {
     public init() {}
     public enum ImportError: Error {
@@ -8,17 +8,17 @@ public final class BackupPasswordDecoder {
         case badStringEncoding
     }
 
-    public func decode(qrCode: String) throws -> BackupPassword {
+    public func decode(qrCode: String) throws -> DerivedEncryptionKey {
         guard let data = qrCode.data(using: .utf8) else { throw ImportError.badStringEncoding }
         return try decode(data: data)
     }
 
-    public func decode(data: Data) throws -> BackupPassword {
+    public func decode(data: Data) throws -> DerivedEncryptionKey {
         let export = try makeImportDecoder().decode(BackupPasswordExport.self, from: data)
         guard export.version.isCompatible(with: "1.0.0") else {
             throw ImportError.incompatibleVersion
         }
-        return BackupPassword(key: export.key, salt: export.salt, keyDervier: export.keyDeriver)
+        return DerivedEncryptionKey(key: export.key, salt: export.salt, keyDervier: export.keyDeriver)
     }
 
     private func makeImportDecoder() -> JSONDecoder {

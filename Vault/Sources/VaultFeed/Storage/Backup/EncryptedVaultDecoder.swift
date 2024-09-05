@@ -5,7 +5,7 @@ import VaultCore
 
 /// @mockable
 public protocol EncryptedVaultDecoder {
-    func decryptAndDecode(backupPassword: BackupPassword, encryptedVault: EncryptedVault) throws
+    func decryptAndDecode(backupPassword: DerivedEncryptionKey, encryptedVault: EncryptedVault) throws
         -> VaultApplicationPayload
 }
 
@@ -14,7 +14,7 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder {
     public init() {}
 
     public func decryptAndDecode(
-        backupPassword: BackupPassword,
+        backupPassword: DerivedEncryptionKey,
         encryptedVault: EncryptedVault
     ) throws -> VaultApplicationPayload {
         do {

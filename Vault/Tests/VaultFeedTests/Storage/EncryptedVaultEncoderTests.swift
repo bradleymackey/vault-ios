@@ -6,7 +6,7 @@ import XCTest
 
 final class EncryptedVaultEncoderTests: XCTestCase {
     func test_encryptAndEncode_usesDifferentIVEachIteration() throws {
-        let password = BackupPassword(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let sut = EncryptedVaultEncoder(clock: EpochClockMock(currentTime: 100), backupPassword: password)
 
         var seenData = Set<Data>()
@@ -24,7 +24,7 @@ final class EncryptedVaultEncoderTests: XCTestCase {
 
     func test_encryptAndEncode_createsBackupWithNoItems() throws {
         let salt = Data.random(count: 32)
-        let password = BackupPassword(key: .random(), salt: salt, keyDervier: .testing)
+        let password = DerivedEncryptionKey(key: .random(), salt: salt, keyDervier: .testing)
         let sut = EncryptedVaultEncoder(clock: EpochClockMock(currentTime: 100), backupPassword: password)
 
         let payload = VaultApplicationPayload(userDescription: "my backup", items: [], tags: [])
@@ -38,7 +38,7 @@ final class EncryptedVaultEncoderTests: XCTestCase {
 
     func test_encryptAndEncode_createsBackupWithSomeItems() throws {
         let salt = Data.random(count: 32)
-        let password = BackupPassword(key: .random(), salt: salt, keyDervier: .testing)
+        let password = DerivedEncryptionKey(key: .random(), salt: salt, keyDervier: .testing)
         let sut = EncryptedVaultEncoder(clock: EpochClockMock(currentTime: 100), backupPassword: password)
 
         let payload = VaultApplicationPayload(
