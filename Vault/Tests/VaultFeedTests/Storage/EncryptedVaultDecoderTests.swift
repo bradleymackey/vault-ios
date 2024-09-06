@@ -18,7 +18,10 @@ final class EncryptedVaultDecoderTests: XCTestCase {
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.verifyCanDecrypt(key: .random(), encryptedVault: encryptedBackup))
+        let error: EncryptedVaultDecoderError? = try withCatchingSomeError {
+            try sut.verifyCanDecrypt(key: .random(), encryptedVault: encryptedBackup)
+        }
+        XCTAssertEqual(error, .decryption)
     }
 
     func test_decryptAndDecode_decodesWithNoItems() throws {
@@ -51,6 +54,17 @@ final class EncryptedVaultDecoderTests: XCTestCase {
         XCTAssertEqual(decoded.items.map(\.id), [item1].map(\.id))
         XCTAssertEqual(decoded.tags, [tag1, tag2])
         XCTAssertEqual(decoded.userDescription, "my backup description")
+    }
+
+    func test_decryptAndDecode_throwsDecryptionErrorIfFailed() throws {
+        let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
+        let sut = makeSUT()
+
+        let error: EncryptedVaultDecoderError? = try withCatchingSomeError {
+            _ = try sut.decryptAndDecode(key: .random(), encryptedVault: encryptedBackup)
+        }
+        XCTAssertEqual(error, .decryption)
     }
 }
 

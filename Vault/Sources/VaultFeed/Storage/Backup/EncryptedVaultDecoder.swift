@@ -17,14 +17,16 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
     public init() {}
 
     public func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws {
-        try VaultBackupDecryptor(key: key).verifyCanDecrypt(encryptedVault: encryptedVault)
+        try rethrowing {
+            try VaultBackupDecryptor(key: key).verifyCanDecrypt(encryptedVault: encryptedVault)
+        }
     }
 
     public func decryptAndDecode(
         key: KeyData<Bits256>,
         encryptedVault: EncryptedVault
     ) throws -> VaultApplicationPayload {
-        do {
+        try rethrowing {
             let backupDecoder = VaultBackupDecryptor(key: key)
             let payload = try backupDecoder.decryptBackupPayload(from: encryptedVault)
             let itemDecoder = VaultBackupItemDecoder()
@@ -38,6 +40,12 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
                     try tagDecoder.decode(tag: $0)
                 }
             )
+        }
+    }
+
+    private func rethrowing<T>(from body: () throws -> T) throws -> T {
+        do {
+            return try body()
         } catch let decodingError as VaultBackupDecryptor.Error {
             switch decodingError {
             case .incompatibleVersion:
@@ -53,7 +61,7 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
 
 // MARK: - Error
 
-enum EncryptedVaultDecoderError: Error, LocalizedError {
+enum EncryptedVaultDecoderError: Equatable, Hashable, Error, LocalizedError {
     case incompatibleVersion
     case decryption
     case decoding
