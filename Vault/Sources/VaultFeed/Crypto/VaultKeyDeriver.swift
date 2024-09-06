@@ -33,6 +33,16 @@ public struct VaultKeyDeriver: KeyDeriver {
     }
 }
 
+extension VaultKeyDeriver: Equatable, Hashable {
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        lhs.signature == rhs.signature
+    }
+
+    public func hash(into hasher: inout Swift.Hasher) {
+        hasher.combine(signature)
+    }
+}
+
 extension VaultKeyDeriver {
     /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
     /// so a given key can be recreated.
