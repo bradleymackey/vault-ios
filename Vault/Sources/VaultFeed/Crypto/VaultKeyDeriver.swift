@@ -64,13 +64,26 @@ extension VaultKeyDeriver {
             case .secureV1: "Vault Default – SECURE v1"
             }
         }
+
+        public init(tryFromString string: String) throws {
+            if let value = Self(rawValue: string) {
+                self = value
+            } else {
+                throw MissingKeyDervierError()
+            }
+        }
     }
 }
 
 // MARK: - Derviers
 
 extension VaultKeyDeriver {
-    public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
+    private struct MissingKeyDervierError: Error, LocalizedError {
+        var errorDescription: String? { "Missing Key Deriver" }
+        var failureReason: String? { "The key deriver used to generate this key is invaluid" }
+    }
+
+    static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
         switch signature {
         case .testing: .testing
         case .failing: .failing
