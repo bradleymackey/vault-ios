@@ -90,7 +90,7 @@ struct BackupImportFlowView: View {
             filePickerSection()
         }
         .toolbar {
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: .cancellationAction) {
                 Button {
                     dismiss()
                 } label: {
