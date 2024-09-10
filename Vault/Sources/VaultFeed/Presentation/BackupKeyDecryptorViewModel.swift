@@ -6,21 +6,21 @@ import VaultBackup
 @MainActor
 @Observable
 public final class BackupKeyDecryptorViewModel {
-    public enum GenerationState: Equatable, Hashable {
+    public enum DecryptionKeyState: Equatable, Hashable {
         case none
         case error(PresentationError)
-        case generated(DerivedEncryptionKey)
+        case validDecryptionKey(DerivedEncryptionKey)
 
         public var generatedKey: DerivedEncryptionKey? {
             switch self {
-            case let .generated(key): key
+            case let .validDecryptionKey(key): key
             default: nil
             }
         }
 
         public var isSuccess: Bool {
             switch self {
-            case .generated: true
+            case .validDecryptionKey: true
             case .none, .error: false
             }
         }
@@ -28,13 +28,13 @@ public final class BackupKeyDecryptorViewModel {
         public var isError: Bool {
             switch self {
             case .error: true
-            case .none, .generated: false
+            case .none, .validDecryptionKey: false
             }
         }
 
         public var title: String {
             switch self {
-            case .generated: "Decrypted"
+            case .validDecryptionKey: "Decrypted"
             case let .error(error): error.userTitle
             case .none: "Encrypted"
             }
@@ -42,7 +42,7 @@ public final class BackupKeyDecryptorViewModel {
 
         public var description: String? {
             switch self {
-            case .generated: nil
+            case .validDecryptionKey: nil
             case let .error(error): error.userDescription
             case .none: "Your password is needed to decrypt the encrypted vault"
             }
@@ -50,7 +50,7 @@ public final class BackupKeyDecryptorViewModel {
     }
 
     public var enteredPassword = ""
-    public private(set) var generated: GenerationState = .none
+    public private(set) var decryptionKeyState: DecryptionKeyState = .none
     public private(set) var isDecrypting = false
 
     private let encryptedVault: EncryptedVault
@@ -89,11 +89,11 @@ public final class BackupKeyDecryptorViewModel {
                 try keyDeriver.recreateEncryptionKey(password: password, salt: salt)
             }
             try encryptedVaultDecoder.verifyCanDecrypt(key: generatedKey.key, encryptedVault: encryptedVault)
-            generated = .generated(generatedKey)
+            decryptionKeyState = .validDecryptionKey(generatedKey)
         } catch let error as LocalizedError {
-            generated = .error(.init(localizedError: error))
+            decryptionKeyState = .error(.init(localizedError: error))
         } catch {
-            generated = .error(PresentationError(
+            decryptionKeyState = .error(PresentationError(
                 userTitle: "Password Generation Error",
                 userDescription: "Please try again.",
                 debugDescription: error.localizedDescription

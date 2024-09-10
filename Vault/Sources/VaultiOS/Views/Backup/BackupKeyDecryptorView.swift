@@ -22,13 +22,13 @@ struct BackupKeyDecryptorView: View {
     private var informationSection: some View {
         Section {
             PlaceholderView(
-                systemIcon: viewModel.generated.isSuccess ? "lock.open.fill" : "lock.fill",
-                title: viewModel.generated.title,
-                subtitle: viewModel.generated.description
+                systemIcon: viewModel.decryptionKeyState.isSuccess ? "lock.open.fill" : "lock.fill",
+                title: viewModel.decryptionKeyState.title,
+                subtitle: viewModel.decryptionKeyState.description
             )
             .padding()
             .containerRelativeFrame(.horizontal)
-            .foregroundStyle(viewModel.generated.isError ? .red : .primary)
+            .foregroundStyle(viewModel.decryptionKeyState.isError ? .red : .primary)
         }
     }
 

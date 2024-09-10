@@ -10,7 +10,7 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
         let sut = makeSUT()
 
         XCTAssertEqual(sut.enteredPassword, "")
-        XCTAssertEqual(sut.generated, .none)
+        XCTAssertEqual(sut.decryptionKeyState, .none)
     }
 
     @MainActor
@@ -47,7 +47,7 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
             salt: salt,
             keyDervier: .testing
         )
-        XCTAssertEqual(sut.generated.generatedKey, expected)
+        XCTAssertEqual(sut.decryptionKeyState.generatedKey, expected)
     }
 
     @MainActor
@@ -59,7 +59,7 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
 
         await sut.attemptDecryption()
 
-        XCTAssertTrue(sut.generated.isError)
+        XCTAssertTrue(sut.decryptionKeyState.isError)
     }
 
     @MainActor
@@ -69,7 +69,7 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
 
         await sut.attemptDecryption()
 
-        XCTAssertTrue(sut.generated.isError)
+        XCTAssertTrue(sut.decryptionKeyState.isError)
     }
 }
 
