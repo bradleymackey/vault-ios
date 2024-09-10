@@ -14,6 +14,22 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_canAttemptDecryption_falseIfPasswordEmpty() async throws {
+        let sut = makeSUT()
+        sut.enteredPassword = ""
+
+        XCTAssertFalse(sut.canAttemptDecryption)
+    }
+
+    @MainActor
+    func test_canAttemptDecryption_trueIfPasswordNotEmpty() async throws {
+        let sut = makeSUT()
+        sut.enteredPassword = "a"
+
+        XCTAssertTrue(sut.canAttemptDecryption)
+    }
+
+    @MainActor
     func test_attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
         let decoder = EncryptedVaultDecoderMock()
         decoder.verifyCanDecryptHandler = { _, _ in }

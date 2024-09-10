@@ -46,7 +46,7 @@ struct BackupKeyDecryptorView: View {
                     Text("Decrypt")
                 }
             }
-            .disabled(v)
+            .disabled(!viewModel.canAttemptDecryption)
         }
     }
 }

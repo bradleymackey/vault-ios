@@ -72,6 +72,10 @@ public final class BackupKeyDecryptorViewModel {
         var failureReason: String? { "The password cannot be empty" }
     }
 
+    public var canAttemptDecryption: Bool {
+        enteredPassword.isNotEmpty
+    }
+
     public func attemptDecryption() async {
         do {
             guard enteredPassword.isNotEmpty else { throw MissingPasswordError() }
