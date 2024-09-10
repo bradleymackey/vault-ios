@@ -1,13 +1,17 @@
 import Foundation
+import FoundationExtensions
 import SwiftUI
+import VaultBackup
 import VaultFeed
 
 @MainActor
 struct BackupImportFlowView: View {
+    @Environment(VaultInjector.self) private var injector
     @State private var viewModel: BackupImportFlowViewModel
     @State private var isImporting = false
     @State private var importTask: Task<Void, any Error>?
     @State private var navPath = NavigationPath()
+    @State private var modal: Modal?
 
     @Environment(\.dismiss) private var dismiss
 
@@ -15,16 +19,33 @@ struct BackupImportFlowView: View {
         self.viewModel = viewModel
     }
 
+    private enum Modal: IdentifiableSelf {
+        case generateDecryptionKey(EncryptedVault)
+    }
+
     var body: some View {
         NavigationStack(path: $navPath) {
             rootForm
         }
         .interactiveDismissDisabled(!viewModel.importState.isFinished)
+        .sheet(item: $modal, onDismiss: nil) { item in
+            switch item {
+            case let .generateDecryptionKey(encryptedVault):
+                NavigationStack {
+                    BackupKeyDecryptorView(viewModel: .init(
+                        encryptedVault: encryptedVault,
+                        keyDeriverFactory: injector.vaultKeyDeriverFactory,
+                        encryptedVaultDecoder: injector.encryptedVaultDecoder
+                    ))
+                    .navigationBarTitleDisplayMode(.inline)
+                }
+            }
+        }
         .onChange(of: viewModel.payloadState) { _, newValue in
             switch newValue {
             case let .ready(payload, _):
                 navPath.append(payload)
-            case .none, .error:
+            case .none, .error, .needsPasswordEntry:
                 break
             }
         }
@@ -34,7 +55,25 @@ struct BackupImportFlowView: View {
         Form {
             switch viewModel.payloadState {
             case .none, .ready:
-                filePickerSection()
+                EmptyView()
+            case let .needsPasswordEntry(vault):
+                Section {
+                    PlaceholderView(
+                        systemIcon: "lock.badge.clock.fill",
+                        title: "Decryption Password Needed",
+                        subtitle: "You need to enter the password that was used to encrypt this export."
+                    )
+                    .padding()
+                    .containerRelativeFrame(.horizontal)
+
+                    Button {
+                        modal = .generateDecryptionKey(vault)
+                    } label: {
+                        FormRow(image: Image(systemName: "square.and.pencil"), color: .accentColor, style: .standard) {
+                            Text("Enter Password")
+                        }
+                    }
+                }
             case let .error(presentationError):
                 Section {
                     PlaceholderView(
@@ -46,9 +85,9 @@ struct BackupImportFlowView: View {
                     .containerRelativeFrame(.horizontal)
                     .foregroundStyle(.red)
                 }
-
-                filePickerSection()
             }
+
+            filePickerSection()
         }
         .toolbar {
             ToolbarItem(placement: .primaryAction) {

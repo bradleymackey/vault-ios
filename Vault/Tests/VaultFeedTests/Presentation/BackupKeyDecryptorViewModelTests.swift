@@ -17,17 +17,18 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
     func test_attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
         let decoder = EncryptedVaultDecoderMock()
         decoder.verifyCanDecryptHandler = { _, _ in }
-        let sut = makeSUT(keyDeriver: .testing, encryptedVaultDecoder: decoder)
+        let salt = Data(hex: "1234567890")
+        let vault = anyEncryptedVault(salt: salt)
+        let sut = makeSUT(encryptedVault: vault, keyDeriverFactory: .testing, encryptedVaultDecoder: decoder)
         sut.enteredPassword = "hello"
-        let vault = anyEncryptedVault()
 
-        await sut.attemptDecryption(encryptedVault: vault)
+        await sut.attemptDecryption()
 
         // Some consistent key for the given dummy data above.
         let expectedKey = Data(hex: "b79f4462edd8d360b23fd70c1b0e39b0849e89fc51fb176742df837452e18518")
         let expected = try DerivedEncryptionKey(
             key: .init(data: expectedKey),
-            salt: vault.keygenSalt,
+            salt: salt,
             keyDervier: .testing
         )
         XCTAssertEqual(sut.generated.generatedKey, expected)
@@ -40,17 +41,17 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
         let sut = makeSUT(encryptedVaultDecoder: decoder)
         sut.enteredPassword = ""
 
-        await sut.attemptDecryption(encryptedVault: anyEncryptedVault())
+        await sut.attemptDecryption()
 
         XCTAssertTrue(sut.generated.isError)
     }
 
     @MainActor
     func test_generateKey_keyDeriverErrorGeneratesError() async {
-        let sut = makeSUT(keyDeriver: .failing)
+        let sut = makeSUT(keyDeriverFactory: .failing)
         sut.enteredPassword = "hello"
 
-        await sut.attemptDecryption(encryptedVault: anyEncryptedVault())
+        await sut.attemptDecryption()
 
         XCTAssertTrue(sut.generated.isError)
     }
@@ -61,19 +62,14 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
 extension BackupKeyDecryptorViewModelTests {
     @MainActor
     private func makeSUT(
-        keyDeriver: VaultKeyDeriver = .testing,
+        encryptedVault: EncryptedVault = anyEncryptedVault(),
+        keyDeriverFactory: any VaultKeyDeriverFactory = VaultKeyDeriverFactoryTesting(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock()
     ) -> BackupKeyDecryptorViewModel {
-        BackupKeyDecryptorViewModel(keyDeriver: keyDeriver, encryptedVaultDecoder: encryptedVaultDecoder)
-    }
-
-    private func anyEncryptedVault() -> EncryptedVault {
-        EncryptedVault(
-            data: Data(),
-            authentication: Data(),
-            encryptionIV: Data(),
-            keygenSalt: Data(hex: "1234567890"),
-            keygenSignature: ""
+        BackupKeyDecryptorViewModel(
+            encryptedVault: encryptedVault,
+            keyDeriverFactory: keyDeriverFactory,
+            encryptedVaultDecoder: encryptedVaultDecoder
         )
     }
 }

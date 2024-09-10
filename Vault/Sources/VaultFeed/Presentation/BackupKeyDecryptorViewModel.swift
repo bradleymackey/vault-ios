@@ -31,19 +31,39 @@ public final class BackupKeyDecryptorViewModel {
             case .none, .generated: false
             }
         }
+
+        public var title: String {
+            switch self {
+            case .generated: "Decrypted"
+            case let .error(error): error.userTitle
+            case .none: "Encrypted"
+            }
+        }
+
+        public var description: String? {
+            switch self {
+            case .generated: nil
+            case let .error(error): error.userDescription
+            case .none: "Your password is needed to decrypt the encrypted vault"
+            }
+        }
     }
 
     public var enteredPassword = ""
     public private(set) var generated: GenerationState = .none
+    public private(set) var isDecrypting = false
 
-    private let keyDeriver: VaultKeyDeriver
+    private let encryptedVault: EncryptedVault
+    private let keyDeriverFactory: any VaultKeyDeriverFactory
     private let encryptedVaultDecoder: any EncryptedVaultDecoder
 
     public init(
-        keyDeriver: VaultKeyDeriver,
+        encryptedVault: EncryptedVault,
+        keyDeriverFactory: any VaultKeyDeriverFactory,
         encryptedVaultDecoder: any EncryptedVaultDecoder
     ) {
-        self.keyDeriver = keyDeriver
+        self.encryptedVault = encryptedVault
+        self.keyDeriverFactory = keyDeriverFactory
         self.encryptedVaultDecoder = encryptedVaultDecoder
     }
 
@@ -52,10 +72,18 @@ public final class BackupKeyDecryptorViewModel {
         var failureReason: String? { "The password cannot be empty" }
     }
 
-    public func attemptDecryption(encryptedVault: EncryptedVault) async {
+    public func attemptDecryption() async {
         do {
             guard enteredPassword.isNotEmpty else { throw MissingPasswordError() }
-            let generatedKey = try await computeKey(password: enteredPassword, salt: encryptedVault.keygenSalt)
+            isDecrypting = true
+            defer { isDecrypting = false }
+            let signature = try VaultKeyDeriver.Signature(tryFromString: encryptedVault.keygenSignature)
+            let keyDeriver = keyDeriverFactory.lookupVaultKeyDeriver(signature: signature)
+            let password = enteredPassword
+            let salt = encryptedVault.keygenSalt
+            let generatedKey = try await Task.continuation {
+                try keyDeriver.recreateEncryptionKey(password: password, salt: salt)
+            }
             try encryptedVaultDecoder.verifyCanDecrypt(key: generatedKey.key, encryptedVault: encryptedVault)
             generated = .generated(generatedKey)
         } catch let error as LocalizedError {
@@ -66,13 +94,6 @@ public final class BackupKeyDecryptorViewModel {
                 userDescription: "Please try again.",
                 debugDescription: error.localizedDescription
             ))
-        }
-    }
-
-    private nonisolated func computeKey(password: String, salt: Data) async throws -> DerivedEncryptionKey {
-        let deriver = keyDeriver
-        return try await Task.continuation {
-            try deriver.recreateEncryptionKey(password: password, salt: salt)
         }
     }
 }

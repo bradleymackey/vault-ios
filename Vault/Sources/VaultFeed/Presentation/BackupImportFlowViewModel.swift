@@ -8,6 +8,7 @@ import VaultCore
 public final class BackupImportFlowViewModel {
     public enum PayloadState: Equatable {
         case none
+        case needsPasswordEntry(EncryptedVault)
         case error(PresentationError)
         /// We need the UUID so each `ready` state is unique in terms of equality.
         case ready(VaultApplicationPayload, UUID)
@@ -15,7 +16,7 @@ public final class BackupImportFlowViewModel {
         var isError: Bool {
             switch self {
             case .error: true
-            case .none, .ready: false
+            case .none, .ready, .needsPasswordEntry: false
             }
         }
     }
@@ -104,8 +105,7 @@ public final class BackupImportFlowViewModel {
             let action = flowState.passwordProvided(password: existingBackupPassword)
             switch action {
             case .promptForDifferentPassword:
-                // TODO: prompt for different password
-                break
+                payloadState = .needsPasswordEntry(encryptedVault)
             case let .backupDataError(error):
                 throw error
             case let .readyToImport(applicationPayload):
