@@ -6,6 +6,7 @@ import VaultFeed
 @MainActor
 struct BackupKeyDecryptorView: View {
     @State private var viewModel: BackupKeyDecryptorViewModel
+    @Environment(\.dismiss) private var dismiss
 
     init(viewModel: BackupKeyDecryptorViewModel) {
         self.viewModel = viewModel
@@ -17,6 +18,19 @@ struct BackupKeyDecryptorView: View {
             entrySection
         }
         .navigationTitle(Text("Decrypt"))
+        .toolbar {
+            if !viewModel.decryptionKeyState.isSuccess {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button {
+                        dismiss()
+                    } label: {
+                        Text("Cancel")
+                    }
+                    .tint(.red)
+                    .disabled(viewModel.isDecrypting)
+                }
+            }
+        }
     }
 
     private var informationSection: some View {
