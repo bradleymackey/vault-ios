@@ -42,7 +42,7 @@ public final class BackupKeyDecryptorViewModel {
 
         public var description: String? {
             switch self {
-            case .validDecryptionKey: nil
+            case .validDecryptionKey: "Your vault has been decrypted"
             case let .error(error): error.userDescription
             case .none: "Your password is needed to decrypt the encrypted vault"
             }

@@ -48,19 +48,32 @@ struct BackupKeyDecryptorView: View {
 
     private var entrySection: some View {
         Section {
-            FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
-                SecureField("Decryption Password", text: $viewModel.enteredPassword)
-            }
-            .disabled(viewModel.isDecrypting)
+            if viewModel.decryptionKeyState.isSuccess {
+                Button {
+                    dismiss()
+                } label: {
+                    FormRow(image: Image(systemName: "play"), color: .accentColor, style: .standard) {
+                        Text("Continue")
+                    }
+                }
+            } else {
+                FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
+                    SecureField("Decryption Password", text: $viewModel.enteredPassword)
+                }
+                .disabled(viewModel.isDecrypting)
 
-            AsyncButton {
-                await viewModel.attemptDecryption()
-            } label: {
-                FormRow(image: Image(systemName: "checkmark.circle.fill"), color: .accentColor, style: .standard) {
-                    Text("Decrypt")
+                if viewModel.canAttemptDecryption {
+                    AsyncButton {
+                        await viewModel.attemptDecryption()
+                    } label: {
+                        FormRow(image: Image(systemName: "checkmark"), color: .accentColor, style: .standard) {
+                            Text("Decrypt")
+                        }
+                    }
+                    .transition(.opacity)
                 }
             }
-            .disabled(!viewModel.canAttemptDecryption)
         }
+        .animation(.easeOut, value: viewModel.canAttemptDecryption)
     }
 }
