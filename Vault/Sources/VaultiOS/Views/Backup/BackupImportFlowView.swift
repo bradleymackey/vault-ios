@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import FoundationExtensions
 import SwiftUI
@@ -12,6 +13,7 @@ struct BackupImportFlowView: View {
     @State private var importTask: Task<Void, any Error>?
     @State private var navPath = NavigationPath()
     @State private var modal: Modal?
+    @State private var decryptedVaultSubject = PassthroughSubject<VaultApplicationPayload, Never>()
 
     @Environment(\.dismiss) private var dismiss
 
@@ -35,11 +37,15 @@ struct BackupImportFlowView: View {
                     BackupKeyDecryptorView(viewModel: .init(
                         encryptedVault: encryptedVault,
                         keyDeriverFactory: injector.vaultKeyDeriverFactory,
-                        encryptedVaultDecoder: injector.encryptedVaultDecoder
+                        encryptedVaultDecoder: injector.encryptedVaultDecoder,
+                        decryptedVaultSubject: decryptedVaultSubject
                     ))
                     .navigationBarTitleDisplayMode(.inline)
                 }
             }
+        }
+        .onReceive(decryptedVaultSubject) { @MainActor vaultApplicationPayload in
+            viewModel.handleVaultDecoded(payload: vaultApplicationPayload)
         }
         .onChange(of: viewModel.payloadState) { _, newValue in
             switch newValue {

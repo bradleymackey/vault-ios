@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import TestHelpers
 import VaultBackup
@@ -31,14 +32,29 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
 
     @MainActor
     func test_attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
+        let vaultApplicationPayload = VaultApplicationPayload(userDescription: "my stuff", items: [], tags: [])
         let decoder = EncryptedVaultDecoderMock()
-        decoder.verifyCanDecryptHandler = { _, _ in }
+        decoder.decryptAndDecodeHandler = { _, _ in vaultApplicationPayload }
         let salt = Data(hex: "1234567890")
         let vault = anyEncryptedVault(salt: salt)
-        let sut = makeSUT(encryptedVault: vault, keyDeriverFactory: .testing, encryptedVaultDecoder: decoder)
+        let subject = PassthroughSubject<VaultApplicationPayload, Never>()
+        let sut = makeSUT(
+            encryptedVault: vault,
+            keyDeriverFactory: .testing,
+            encryptedVaultDecoder: decoder,
+            decryptedVaultSubject: subject
+        )
         sut.enteredPassword = "hello"
 
+        let exp = expectation(description: "Wait for application payload")
+        let cancel = subject.sink { payload in
+            XCTAssertEqual(payload, vaultApplicationPayload)
+            exp.fulfill()
+        }
+
         await sut.attemptDecryption()
+
+        await fulfillment(of: [exp], timeout: 1)
 
         // Some consistent key for the given dummy data above.
         let expectedKey = Data(hex: "b79f4462edd8d360b23fd70c1b0e39b0849e89fc51fb176742df837452e18518")
@@ -47,7 +63,9 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
             salt: salt,
             keyDervier: .testing
         )
-        XCTAssertEqual(sut.decryptionKeyState.generatedKey, expected)
+        XCTAssertEqual(sut.decryptionKeyState, .validDecryptionKey)
+
+        cancel.cancel()
     }
 
     @MainActor
@@ -80,12 +98,14 @@ extension BackupKeyDecryptorViewModelTests {
     private func makeSUT(
         encryptedVault: EncryptedVault = anyEncryptedVault(),
         keyDeriverFactory: any VaultKeyDeriverFactory = VaultKeyDeriverFactoryTesting(),
-        encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock()
+        encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock(),
+        decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never> = .init()
     ) -> BackupKeyDecryptorViewModel {
         BackupKeyDecryptorViewModel(
             encryptedVault: encryptedVault,
             keyDeriverFactory: keyDeriverFactory,
-            encryptedVaultDecoder: encryptedVaultDecoder
+            encryptedVaultDecoder: encryptedVaultDecoder,
+            decryptedVaultSubject: decryptedVaultSubject
         )
     }
 }

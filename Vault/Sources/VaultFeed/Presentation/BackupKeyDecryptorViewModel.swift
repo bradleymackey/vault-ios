@@ -1,3 +1,4 @@
+import Combine
 import CryptoEngine
 import Foundation
 import FoundationExtensions
@@ -9,14 +10,7 @@ public final class BackupKeyDecryptorViewModel {
     public enum DecryptionKeyState: Equatable, Hashable {
         case none
         case error(PresentationError)
-        case validDecryptionKey(DerivedEncryptionKey)
-
-        public var generatedKey: DerivedEncryptionKey? {
-            switch self {
-            case let .validDecryptionKey(key): key
-            default: nil
-            }
-        }
+        case validDecryptionKey
 
         public var isSuccess: Bool {
             switch self {
@@ -52,6 +46,7 @@ public final class BackupKeyDecryptorViewModel {
     public var enteredPassword = ""
     public private(set) var decryptionKeyState: DecryptionKeyState = .none
     public private(set) var isDecrypting = false
+    private let decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never>
 
     private let encryptedVault: EncryptedVault
     private let keyDeriverFactory: any VaultKeyDeriverFactory
@@ -60,11 +55,13 @@ public final class BackupKeyDecryptorViewModel {
     public init(
         encryptedVault: EncryptedVault,
         keyDeriverFactory: any VaultKeyDeriverFactory,
-        encryptedVaultDecoder: any EncryptedVaultDecoder
+        encryptedVaultDecoder: any EncryptedVaultDecoder,
+        decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never>
     ) {
         self.encryptedVault = encryptedVault
         self.keyDeriverFactory = keyDeriverFactory
         self.encryptedVaultDecoder = encryptedVaultDecoder
+        self.decryptedVaultSubject = decryptedVaultSubject
     }
 
     private struct MissingPasswordError: Error, LocalizedError {
@@ -88,8 +85,12 @@ public final class BackupKeyDecryptorViewModel {
             let generatedKey = try await Task.continuation {
                 try keyDeriver.recreateEncryptionKey(password: password, salt: salt)
             }
-            try encryptedVaultDecoder.verifyCanDecrypt(key: generatedKey.key, encryptedVault: encryptedVault)
-            decryptionKeyState = .validDecryptionKey(generatedKey)
+            let vaultApplicationPayload = try encryptedVaultDecoder.decryptAndDecode(
+                key: generatedKey.key,
+                encryptedVault: encryptedVault
+            )
+            decryptionKeyState = .validDecryptionKey
+            decryptedVaultSubject.send(vaultApplicationPayload)
         } catch let error as LocalizedError {
             decryptionKeyState = .error(.init(localizedError: error))
         } catch {

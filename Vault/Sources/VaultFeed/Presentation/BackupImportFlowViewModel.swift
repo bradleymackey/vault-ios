@@ -95,8 +95,6 @@ public final class BackupImportFlowViewModel {
                 throw InvalidURLError()
             }
 
-            // TODO: handle case where imported vault was encrypted with different password, should prompt user for it
-            guard let existingBackupPassword else { throw PasswordError.noPassword }
             let encryptedVault = try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
             let flowState = BackupImportFlowState(
                 encryptedVault: encryptedVault,
@@ -120,6 +118,10 @@ public final class BackupImportFlowViewModel {
                 debugDescription: error.localizedDescription
             ))
         }
+    }
+
+    public func handleVaultDecoded(payload: VaultApplicationPayload) {
+        payloadState = .ready(payload, UUID())
     }
 
     public func importPayload(payload: VaultApplicationPayload) async {
