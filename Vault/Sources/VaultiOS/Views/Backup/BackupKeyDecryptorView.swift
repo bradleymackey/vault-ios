@@ -18,6 +18,7 @@ struct BackupKeyDecryptorView: View {
             entrySection
         }
         .navigationTitle(Text("Decrypt"))
+        .interactiveDismissDisabled(viewModel.isDecrypting)
         .toolbar {
             if !viewModel.decryptionKeyState.isSuccess {
                 ToolbarItem(placement: .cancellationAction) {
