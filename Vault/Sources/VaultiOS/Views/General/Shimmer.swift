@@ -135,7 +135,7 @@ extension View {
     }
 }
 
-#Preview {
+#Preview("Scenarios", traits: .sizeThatFitsLayout) {
     Group {
         Text("SwiftUI Shimmer").preferredColorScheme(.light)
         Text("SwiftUI Shimmer").preferredColorScheme(.dark)
@@ -147,7 +147,6 @@ extension View {
     }
     .padding()
     .shimmering()
-    .previewLayout(.sizeThatFits)
 }
 
 #Preview("Right-to-Left") {
