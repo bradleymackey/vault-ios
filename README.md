@@ -98,7 +98,7 @@ There's a few things to be aware of when developing and some helpful commands to
 <table>
   <tr>
 	<td>Simulator for snapshot tests</td>
-	<td><b>iPhone 15 on iOS 17.5</b></td>
+	<td><b>iPhone 16 on iOS 18.0</b></td>
   </tr>
 </table>
 
