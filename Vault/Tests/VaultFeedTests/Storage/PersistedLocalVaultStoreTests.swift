@@ -894,7 +894,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let code = uniqueVaultItem().makeWritable()
         let id = try await sut.insert(item: code)
 
-        let sut = try XCTUnwrap(self.sut)
+        let sut = try XCTUnwrap(sut)
         await XCTAssertThrowsError(try await sut.reorder(
             items: [id],
             to: .after(.init(id: UUID()))

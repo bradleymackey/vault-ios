@@ -62,18 +62,18 @@ enum EncryptedVaultDecoderError: Error, LocalizedError {
     var failureReason: String? {
         switch self {
         case .incompatibleVersion:
-            return """
+            """
             This backup was exported with a different version of the Vault app which is \
             incompatible with this version. You might need to install an older version of the app.
             """
         case .decoding:
-            return """
+            """
             The data within this backup was able to be decrypted, but it is malformed. \
             This might have been due to an export error or other data tampering. \
             You will need to foresically analyse the export to resolve this.
             """
         case .decryption:
-            return """
+            """
             Unable to decrypt this Vault. Please check that the decryption password is correct.
             """
         }

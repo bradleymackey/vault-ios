@@ -81,7 +81,9 @@ extension OTPCodeTimerUpdaterImpl {
         // This can help system performance
         timerTask.modify {
             $0 = timer.schedule(wait: timeUntilTarget, tolerance: timeUntilTarget / 10) { [weak self] in
-                self?.timerStateSubject.send(targetState)
+                DispatchQueue.main.async {
+                    self?.timerStateSubject.send(targetState)
+                }
                 self?.scheduleNextUpdate()
             }
         }

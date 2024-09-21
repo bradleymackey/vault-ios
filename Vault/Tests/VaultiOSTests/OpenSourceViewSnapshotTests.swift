@@ -4,6 +4,7 @@ import XCTest
 @testable import VaultiOS
 
 final class OpenSourceViewSnapshotTests: XCTestCase {
+    @MainActor
     func test_deviceSize() {
         let view = OpenSourceView()
             .framedToTestDeviceSize()

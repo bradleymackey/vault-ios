@@ -1,7 +1,7 @@
 import Foundation
 
 @inlinable
-public func withMappedError<T, E: Error>(body: () throws -> T, error: (any Error) -> E) throws -> T {
+public func withMappedError<T>(body: () throws -> T, error: (any Error) -> some Error) throws -> T {
     try Result {
         try body()
     }.mapError {
@@ -11,7 +11,7 @@ public func withMappedError<T, E: Error>(body: () throws -> T, error: (any Error
 
 /// Catches an error and returns the error type.
 @inlinable
-public func withCatchingError<T>(body: () throws -> T) -> (any Error)? {
+public func withCatchingError(body: () throws -> some Any) -> (any Error)? {
     do {
         _ = try body()
         return nil
@@ -22,7 +22,7 @@ public func withCatchingError<T>(body: () throws -> T) -> (any Error)? {
 
 /// Catches an error and returns the error type.
 @inlinable
-public func withCatchingAsyncError<T>(body: () async throws -> T) async -> (any Error)? {
+public func withCatchingAsyncError(body: () async throws -> some Any) async -> (any Error)? {
     do {
         _ = try await body()
         return nil

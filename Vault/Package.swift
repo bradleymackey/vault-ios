@@ -1,20 +1,9 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 
 import PackageDescription
 
 let swiftSettings: [SwiftSetting] = [
-    .enableUpcomingFeature("ForwardTrailingClosures"),
-    .enableUpcomingFeature("BareSlashRegexLiterals"),
-    .enableUpcomingFeature("ConciseMagicFile"),
     .enableUpcomingFeature("ExistentialAny"),
-    .enableUpcomingFeature("GlobalConcurrency"),
-    .enableUpcomingFeature("IsolatedDefaultValues"),
-    .enableUpcomingFeature("DisableOutwardActorInference"),
-    .enableUpcomingFeature("ImportObjcForwardDeclarations"),
-    .enableUpcomingFeature("DeprecateApplicationMain"),
-    .enableUpcomingFeature("ImplicitOpenExistentials"),
-    .enableUpcomingFeature("StrictConcurrency"), // For Swift 6
-    .enableExperimentalFeature("StrictConcurrency"), // For Swift 5.10
     .enableExperimentalFeature("AccessLevelOnImport"),
 ]
 
@@ -250,7 +239,9 @@ let package = Package(
             resources: [
                 .process("default.swiftformat"),
                 .process("swiftlint.yml"),
-            ]
+            ],
+            // Not quite ready yet.
+            swiftSettings: [.swiftLanguageMode(.v5)]
         ),
 
         .binaryTarget(

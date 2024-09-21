@@ -29,7 +29,7 @@ final class DetailEditStateTests: XCTestCase {
         let exp = expectation(description: "Wait for performUpdate")
         let pendingCall = PendingValue<Void>()
         // Save changes in a different task, so we don't suspend the current (test) task
-        Task.detached(priority: .background) { @MainActor in
+        Task.detached(priority: .background) {
             try await sut.saveChanges {
                 exp.fulfill()
                 try? await pendingCall.awaitValue()
@@ -54,7 +54,7 @@ final class DetailEditStateTests: XCTestCase {
             await withTaskGroup(of: Void.self) { group in
                 for _ in 0 ..< 3 {
                     // Multiple calls being made, concurrently.
-                    group.addTask { @MainActor in
+                    group.addTask {
                         try? await sut.saveChanges {
                             exp.fulfill()
                             try? await pendingCall.awaitValue()
@@ -105,7 +105,7 @@ final class DetailEditStateTests: XCTestCase {
         let exp = expectation(description: "Wait for performDeletion")
         let pendingCall = PendingValue<Void>()
         // Save changes in a different task, so we don't suspend the current (test) task
-        Task.detached(priority: .background) { @MainActor in
+        Task.detached(priority: .background) {
             try await sut.deleteItem {
                 exp.fulfill()
                 try? await pendingCall.awaitValue()
@@ -131,7 +131,7 @@ final class DetailEditStateTests: XCTestCase {
             await withTaskGroup(of: Void.self) { group in
                 for _ in 0 ..< 3 {
                     // Multiple calls being made, concurrently.
-                    group.addTask { @MainActor in
+                    group.addTask {
                         try? await sut.deleteItem {
                             exp.fulfill()
                             try? await pendingCall.awaitValue()
