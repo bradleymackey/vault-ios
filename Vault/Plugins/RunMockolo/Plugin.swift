@@ -3,20 +3,20 @@ import PackagePlugin
 @main
 struct MockoloPlugin: BuildToolPlugin {
     func createBuildCommands(context: PluginContext, target: Target) async throws -> [Command] {
-        let generatedSourcePath = context.pluginWorkDirectory.appending("GeneratedMocks.swift")
-        let packageRoot = context.package.directory
+        let generatedSource = context.pluginWorkDirectoryURL.appending(path: "GeneratedMocks.swift")
+        let packageRoot = context.package.directoryURL
 
         return try [
             .prebuildCommand(
                 displayName: "Run mockolo",
-                executable: context.tool(named: "mockolo").path,
+                executable: context.tool(named: "mockolo").url,
                 arguments: [
-                    "-s", packageRoot.appending("Sources", target.name).string,
-                    "-d", generatedSourcePath,
+                    "-s", packageRoot.appending(path: "Sources").appending(path: target.name).path(),
+                    "-d", generatedSource.path(),
                     "--mock-final",
                     "--enable-args-history",
                 ],
-                outputFilesDirectory: context.pluginWorkDirectory
+                outputFilesDirectory: context.pluginWorkDirectoryURL
             ),
         ]
     }

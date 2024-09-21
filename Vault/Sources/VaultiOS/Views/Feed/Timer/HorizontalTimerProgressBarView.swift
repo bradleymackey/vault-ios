@@ -28,36 +28,44 @@ struct HorizontalTimerProgressBarView: View {
     }
 }
 
-#Preview {
+#Preview("Example Views", traits: .sizeThatFitsLayout) {
     VStack {
+        HorizontalTimerProgressBarView(
+            fractionCompleted: 0.0,
+            color: .blue
+        )
+        .frame(width: 250, height: 20)
+
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.4,
             color: .blue
         )
         .frame(width: 250, height: 20)
         .redacted(reason: .placeholder)
-        .previewLayout(.fixed(width: 300, height: 300))
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.4,
             color: .blue
         )
         .frame(width: 250, height: 20)
-        .previewLayout(.fixed(width: 300, height: 300))
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.6,
             color: .red
         )
         .frame(width: 250, height: 20)
-        .previewLayout(.fixed(width: 300, height: 300))
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.75,
-            color: .red,
+            color: .yellow,
             backgroundColor: .yellow
         )
         .frame(width: 250, height: 20)
-        .previewLayout(.fixed(width: 300, height: 300))
+
+        HorizontalTimerProgressBarView(
+            fractionCompleted: 1.0,
+            color: .blue
+        )
+        .frame(width: 250, height: 20)
     }
 }
