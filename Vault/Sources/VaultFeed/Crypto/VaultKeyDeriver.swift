@@ -60,9 +60,9 @@ extension VaultKeyDeriver {
 extension VaultKeyDeriver {
     public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
         switch signature {
-        case .testing: return .testing
-        case .fastV1: return .V1.fast
-        case .secureV1: return .V1.secure
+        case .testing: .testing
+        case .fastV1: .V1.fast
+        case .secureV1: .V1.secure
         }
     }
 
