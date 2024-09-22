@@ -34,6 +34,7 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
     func test_attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
         let vaultApplicationPayload = VaultApplicationPayload(userDescription: "my stuff", items: [], tags: [])
         let decoder = EncryptedVaultDecoderMock()
+        // returned payload implies successful decryption
         decoder.decryptAndDecodeHandler = { _, _ in vaultApplicationPayload }
         let salt = Data(hex: "1234567890")
         let vault = anyEncryptedVault(salt: salt)
@@ -56,13 +57,6 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
 
         await fulfillment(of: [exp], timeout: 1)
 
-        // Some consistent key for the given dummy data above.
-        let expectedKey = Data(hex: "b79f4462edd8d360b23fd70c1b0e39b0849e89fc51fb176742df837452e18518")
-        let expected = try DerivedEncryptionKey(
-            key: .init(data: expectedKey),
-            salt: salt,
-            keyDervier: .testing
-        )
         XCTAssertEqual(sut.decryptionKeyState, .validDecryptionKey)
 
         cancel.cancel()
