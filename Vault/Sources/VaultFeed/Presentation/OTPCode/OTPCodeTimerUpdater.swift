@@ -80,11 +80,11 @@ extension OTPCodeTimerUpdaterImpl {
         // Wait with some additional tolerance (it's OK if we're a little late)
         // This can help system performance
         timerTask.modify {
-            $0 = timer.schedule(wait: timeUntilTarget, tolerance: timeUntilTarget / 10) { [weak self] in
+            $0 = timer.schedule(wait: timeUntilTarget, tolerance: 0.2) { [weak self] in
+                self?.scheduleNextUpdate()
                 DispatchQueue.main.async {
                     self?.timerStateSubject.send(targetState)
                 }
-                self?.scheduleNextUpdate()
             }
         }
     }
