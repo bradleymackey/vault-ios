@@ -10,7 +10,11 @@ struct FormatLintPlugin: CommandPlugin {
         let swiftformat = try context.tool(named: "swiftformat")
 
         var argumentExtractor = ArgumentExtractor(arguments)
-        let shouldLint = argumentExtractor.extractFlag(named: "lint") > 0
+        let action: Action = if argumentExtractor.extractFlag(named: "lint") > 0 {
+            .lint
+        } else {
+            .format
+        }
         guard let swiftSources = argumentExtractor.extractOption(named: "sources").first else {
             fatalError("Missing parameter: --sources")
         }
@@ -18,7 +22,7 @@ struct FormatLintPlugin: CommandPlugin {
         var swiftFormatArguments = [String]()
         swiftFormatArguments += ["--cache", context.pluginWorkDirectoryURL.appending(path: "swiftformat.cache").path()]
         swiftFormatArguments += ["--quiet"]
-        if shouldLint {
+        if action == .lint {
             swiftFormatArguments += ["--lint"]
         }
         swiftFormatArguments += [swiftSources]
@@ -26,17 +30,18 @@ struct FormatLintPlugin: CommandPlugin {
         var swiftLintArguments = [String]()
         swiftLintArguments += ["--cache-path", context.pluginWorkDirectoryURL.appending(path: "swiftlint.cache").path()]
         swiftLintArguments += ["--quiet"]
-        if shouldLint {
-            swiftLintArguments += ["--strict"]
-        } else {
+        switch action {
+        case .format:
             swiftLintArguments += ["--fix"]
+        case .lint:
+            swiftLintArguments += ["--strict"]
         }
         swiftLintArguments += [swiftSources]
 
         let start = Date()
-        print("🖌️ Formatting with swiftformat")
+        print("🖌️ swiftformat: \(action.swiftFormatVerb.lowercased())")
         try runProcess(url: swiftformat.url, arguments: swiftFormatArguments)
-        print("🔍 Linting with swiftlint")
+        print("🔍 swiftlint: \(action.swiftLintVerb.lowercased())")
         try runProcess(url: swiftlint.url, arguments: swiftLintArguments)
 
         let end = Date()
@@ -59,6 +64,25 @@ struct FormatLintPlugin: CommandPlugin {
         default:
             print("💀 Other failure")
             throw CommandError.unknownError(exitCode: process.terminationStatus)
+        }
+    }
+}
+
+enum Action {
+    case format
+    case lint
+
+    var swiftFormatVerb: String {
+        switch self {
+        case .format: "Formatting"
+        case .lint: "Checking"
+        }
+    }
+
+    var swiftLintVerb: String {
+        switch self {
+        case .format: "Fixing"
+        case .lint: "Linting"
         }
     }
 }
