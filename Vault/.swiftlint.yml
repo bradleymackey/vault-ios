@@ -19,6 +19,12 @@ only_rules:
   - void_return
   - unowned_variable_capture
   - custom_rules
+  - no_coreData
+  - no_objcMembers
+  - no_nsLocalizedString
+  - no_NSRegularExpression
+  - no_direct_standard_out_logs
+  - no_unchecked_sendable
 
 colon:
   apply_to_dictionaries: false
