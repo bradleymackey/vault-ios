@@ -2,9 +2,23 @@
 
 import PackageDescription
 
+let swiftLintVersion: Version = "0.56.1"
+let swiftLintChecksum: String = "146ef723e83d301b9f1ef647dc924a55dae293887e633618e76f8cb526292f0c"
+let swiftFormatVersion: Version = "0.54.3"
+let swiftFormatChecksum: String = "b9d4e1a76449ab0c3beb3eb34fb3dcf396589afb1ee75764767a6ef541c63d67"
+
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
     .enableExperimentalFeature("AccessLevelOnImport"),
+]
+
+let targetPlugins: [Target.PluginUsage] = [
+    .plugin(name: "RunMockolo"),
+    .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+]
+
+let testTargetPlugins: [Target.PluginUsage] = [
+    .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
 ]
 
 let package = Package(
@@ -16,11 +30,11 @@ let package = Package(
             name: "VaultiOS",
             targets: ["VaultiOS"]
         ),
-        .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
         .executable(
             name: "KeygenSpeedtest",
             targets: ["KeygenSpeedtest"]
         ),
+        .plugin(name: "FormatLint", targets: ["FormatLint"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.4"),
@@ -31,6 +45,7 @@ let package = Package(
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.0"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: swiftLintVersion),
     ],
     targets: [
         .target(
@@ -47,7 +62,7 @@ let package = Package(
                 .process("Resources/Feed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultiOSTests",
@@ -56,37 +71,41 @@ let package = Package(
                 "TestHelpers",
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "VaultBackup",
             dependencies: ["VaultCore", "CryptoDocumentExporter", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultBackupTests",
             dependencies: ["VaultBackup", "TestHelpers", "CryptoEngine"],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "TestHelpers",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins
         ),
         .target(
             name: "VaultCore",
             dependencies: ["CryptoEngine", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultCoreTests",
             dependencies: ["VaultCore", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "CryptoDocumentExporter",
@@ -96,7 +115,7 @@ let package = Package(
                 "ImageTools",
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "CryptoDocumentExporterTests",
@@ -105,7 +124,8 @@ let package = Package(
                 "ImageTools",
                 "TestHelpers",
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .testTarget(
             name: "CryptoDocumentExporterSnapshotTests",
@@ -119,7 +139,8 @@ let package = Package(
                 ),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "ImageTools",
@@ -127,7 +148,7 @@ let package = Package(
                 "FoundationExtensions",
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "ImageToolsTests",
@@ -140,18 +161,20 @@ let package = Package(
                 ),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "CryptoEngine",
             dependencies: ["FoundationExtensions", "CryptoSwift", "BigInt"],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "CryptoEngineTests",
             dependencies: ["CryptoEngine", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "VaultSettings",
@@ -163,12 +186,13 @@ let package = Package(
                 .process("Resources/Settings.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "VaultFeed",
@@ -183,22 +207,24 @@ let package = Package(
                 .process("Resources/VaultFeed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultFeedTests",
             dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "FoundationExtensions",
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
 
         // MARK: - TOOLING
@@ -215,45 +241,26 @@ let package = Package(
         ),
 
         .plugin(
-            name: "FormatSwift",
+            name: "FormatLint",
             capability: .command(
                 intent: .custom(
                     verb: "format",
                     description: "Formats Swift source files using swiftformat and swiftlint"
                 ),
-                permissions: [
-                    .writeToPackageDirectory(reason: "Format Swift source files"),
-                ]
-            ),
-            dependencies: [
-                "SwiftFormatTool",
-                "swiftformat",
-                "swiftlint",
-            ]
+                permissions: [.writeToPackageDirectory(reason: "Format source code")]
+            )
         ),
-        .executableTarget(
-            name: "SwiftFormatTool",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            resources: [
-                .process("default.swiftformat"),
-                .process("swiftlint.yml"),
-            ],
-            // Not quite ready yet.
-            swiftSettings: [.swiftLanguageMode(.v5)]
-        ),
-
         .binaryTarget(
             name: "swiftformat",
-            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.54.3/swiftformat.artifactbundle.zip",
-            checksum: "b9d4e1a76449ab0c3beb3eb34fb3dcf396589afb1ee75764767a6ef541c63d67"
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/\(swiftFormatVersion)/swiftformat.artifactbundle.zip",
+            checksum: swiftFormatChecksum
         ),
         .binaryTarget(
             name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.56.1/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "146ef723e83d301b9f1ef647dc924a55dae293887e633618e76f8cb526292f0c"
+            url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: swiftLintChecksum
         ),
+
         .executableTarget(
             name: "KeygenSpeedtest",
             dependencies: [
