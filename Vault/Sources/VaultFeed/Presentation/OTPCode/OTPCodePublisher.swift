@@ -5,7 +5,7 @@ import VaultCore
 
 /// Renders the code to a visible state for the given `code`.
 public protocol OTPCodePublisher {
-    func renderedCodePublisher() -> AnyPublisher<String, any Error>
+    @MainActor func renderedCodePublisher() -> AnyPublisher<String, any Error>
 }
 
 // MARK: - Mock
@@ -29,11 +29,13 @@ public final class TOTPCodePublisher: OTPCodePublisher {
         self.totpGenerator = totpGenerator
     }
 
+    @MainActor
     public func renderedCodePublisher() -> AnyPublisher<String, any Error> {
         codeValuePublisher()
             .digitsRenderer(digits: totpGenerator.digits)
     }
 
+    @MainActor
     private func codeValuePublisher() -> AnyPublisher<BigUInt, any Error> {
         let generator = totpGenerator
         return timer.timerUpdatedPublisher()
