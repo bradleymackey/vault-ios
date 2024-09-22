@@ -2,6 +2,7 @@ import CryptoEngine
 import Foundation
 import FoundationExtensions
 import VaultCore
+import VaultKeygen
 
 /// Used to create a full, encrypted backup of a vault for export.
 public final class VaultBackupEncryptor {

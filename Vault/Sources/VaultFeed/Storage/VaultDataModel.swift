@@ -1,7 +1,7 @@
 import Combine
-import CryptoEngine
 import Foundation
 import FoundationExtensions
+import VaultKeygen
 
 /// Provides access to the vault data layer for the UI layer.
 ///

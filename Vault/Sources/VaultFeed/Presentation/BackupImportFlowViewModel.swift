@@ -2,6 +2,7 @@ import Foundation
 import PDFKit
 import VaultBackup
 import VaultCore
+import VaultKeygen
 
 @MainActor
 @Observable

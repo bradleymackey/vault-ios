@@ -1,7 +1,7 @@
-import CryptoEngine
 import Foundation
 import VaultBackup
 import VaultCore
+import VaultKeygen
 
 /// From an application-level vault, create the encrypted vault.
 public final class EncryptedVaultEncoder {

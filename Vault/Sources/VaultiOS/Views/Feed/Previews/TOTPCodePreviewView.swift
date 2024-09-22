@@ -1,6 +1,7 @@
 import Combine
 import SwiftUI
 import VaultFeed
+import VaultKeygen
 
 @MainActor
 struct TOTPCodePreviewView<TimerBar: View>: View {

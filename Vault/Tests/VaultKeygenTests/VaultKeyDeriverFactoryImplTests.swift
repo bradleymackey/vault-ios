@@ -1,7 +1,7 @@
 import Foundation
 import TestHelpers
 import XCTest
-@testable import VaultFeed
+@testable import VaultKeygen
 
 final class VaultKeyDeriverFactoryImplTests: XCTestCase {
     // Assumption: tests are run in DEBUG configuration

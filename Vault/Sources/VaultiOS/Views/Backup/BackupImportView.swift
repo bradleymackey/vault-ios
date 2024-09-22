@@ -1,6 +1,7 @@
 import Foundation
 import SwiftUI
 import VaultFeed
+import VaultKeygen
 
 @MainActor
 struct BackupImportView: View {

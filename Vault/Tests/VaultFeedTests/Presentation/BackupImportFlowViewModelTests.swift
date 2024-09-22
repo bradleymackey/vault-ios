@@ -2,6 +2,7 @@ import Foundation
 import PDFKit
 import TestHelpers
 import VaultBackup
+import VaultKeygen
 import XCTest
 @testable import VaultFeed
 

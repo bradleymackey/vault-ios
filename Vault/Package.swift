@@ -31,8 +31,8 @@ let package = Package(
             targets: ["VaultiOS"]
         ),
         .executable(
-            name: "KeygenSpeedtest",
-            targets: ["KeygenSpeedtest"]
+            name: "keygen-speedtest",
+            targets: ["VaultKeygenSpeedtest"]
         ),
         .plugin(name: "FormatLint", targets: ["FormatLint"]),
     ],
@@ -76,7 +76,7 @@ let package = Package(
         ),
         .target(
             name: "VaultBackup",
-            dependencies: ["VaultCore", "CryptoDocumentExporter", "FoundationExtensions"],
+            dependencies: ["VaultCore", "VaultKeygen", "CryptoDocumentExporter", "FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: targetPlugins
         ),
@@ -226,6 +226,32 @@ let package = Package(
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins
         ),
+        .target(
+            name: "VaultKeygen",
+            dependencies: ["CryptoEngine", "FoundationExtensions"],
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins
+        ),
+        .testTarget(
+            name: "VaultKeygenTests",
+            dependencies: ["VaultKeygen", "TestHelpers"],
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
+        ),
+        .executableTarget(
+            name: "VaultKeygenSpeedtest",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "CryptoEngine",
+                "VaultKeygen",
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "VaultKeygenSpeedtestCompileTests",
+            dependencies: ["VaultKeygenSpeedtest"],
+            swiftSettings: swiftSettings
+        ),
 
         // MARK: - TOOLING
 
@@ -259,15 +285,6 @@ let package = Package(
             name: "swiftlint",
             url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
             checksum: swiftLintChecksum
-        ),
-
-        .executableTarget(
-            name: "KeygenSpeedtest",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                "CryptoEngine",
-            ],
-            swiftSettings: swiftSettings
         ),
     ]
 )

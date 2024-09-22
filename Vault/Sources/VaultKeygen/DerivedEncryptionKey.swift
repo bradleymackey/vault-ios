@@ -1,7 +1,6 @@
 import CryptoEngine
 import Foundation
 import FoundationExtensions
-import VaultBackup
 
 public struct DerivedEncryptionKey: Equatable, Hashable, Sendable {
     /// The derived key (via keygen) from the user's password.

@@ -4,6 +4,7 @@ import PDFKit
 import VaultBackup
 import VaultCore
 import VaultFeed
+import VaultKeygen
 
 func uniqueCode() -> OTPAuthCode {
     let randomData = Data.random(count: 50)
