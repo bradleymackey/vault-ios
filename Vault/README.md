@@ -31,6 +31,34 @@ This gives us a common format and source of truth for fields that should be pres
 └─────────────────────────┘                             └────────────────────┘
 ```
 
+## Key Derivation
+
+Once defined, a key deriver's composition can never be changed for backwards compatibility.
+Vault defines some standard key derivers that are used by default to create encryption keys for encrypting vault backups.
+
+In the case of a composition key deriver: the output at each step is directed as an input to the next step.
+
+| Key Deriver | Signature                        | Purpose                                    |
+| ----------- | -------------------------------- | ------------------------------------------ |
+| Fast V1     | `vault.keygen.default.fast-v1`   | Derivation for `DEBUG` builds              |
+| Secure V1   | `vault.keygen.default.secure-v1` | Derivation for production `RELEASE` builds |
+
+### Fast V1
+
+A composition key deriver, using the same salt at each step, in this order:
+
+1. PBKDF2, 256 bit key length, SHA2 (SHA384), 2000 iterations
+2. HKDF, 256 bit key length, SHA3 (SHA512)
+3. scrypt, 256 bit key length, N = 1 << 6, r = 4, p = 1
+
+### Secure V1
+
+A composition key deriver, using the same salt at each step, in this order:
+
+1. PBKDF2, 256 bit key length, SHA2 (SHA384), 5452351 iterations
+2. HKDF, 256 bit key length, SHA3 (SHA512)
+3. scrypt, 256 bit key length, N = 1 << 18, r = 8, p = 1
+
 ## Testing Configuration
 
 <table>
