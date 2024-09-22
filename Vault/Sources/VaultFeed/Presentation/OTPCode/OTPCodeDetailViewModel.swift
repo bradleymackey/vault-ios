@@ -78,7 +78,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     public var showsKeyEditingFields: Bool {
         switch mode {
         case .creating(.none): true
-        case .creating(.some(_)): false
+        case .creating(.some): false
         case .editing: false
         }
     }

@@ -3,7 +3,6 @@ import SwiftUI
 
 /// Makes a button prominent with a standard background color and border.
 struct ProminentButtonModifier: ViewModifier {
-    init() {}
     func body(content: Content) -> some View {
         content
             .font(.callout)

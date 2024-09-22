@@ -2,8 +2,6 @@ import Foundation
 import SwiftData
 
 struct PersistedVaultTagEncoder {
-    init() {}
-
     func encode(tag: VaultItemTag.Write, writeUpdateContext: VaultItemTag.WriteUpdateContext) -> PersistedVaultTag {
         PersistedVaultTag(
             id: writeUpdateContext.id.id,

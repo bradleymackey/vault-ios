@@ -3,22 +3,11 @@ indentation: 4
 excluded:
   - .build
 
-only_rules:
-  - colon
+opt_in_rules:
   - fatal_error_message
   - implicitly_unwrapped_optional
-  - legacy_cggeometry_functions
-  - legacy_constant
-  - legacy_constructor
-  - legacy_nsgeometry_functions
   - operator_usage_whitespace
-  - return_arrow_whitespace
-  - trailing_newline
-  - unused_optional_binding
-  - vertical_whitespace
-  - void_return
   - unowned_variable_capture
-  - custom_rules
   - no_coreData
   - no_objcMembers
   - no_nsLocalizedString
@@ -26,6 +15,25 @@ only_rules:
   - no_direct_standard_out_logs
   - no_unchecked_sendable
   - no_preconcurrency
+
+# Some are dumb, some are broken.
+# Broken ones are commented.
+disabled_rules:
+  - identifier_name
+  - nesting
+  - trailing_comma
+  - line_length
+  - large_tuple
+  - type_name
+  - type_body_length
+  - file_length
+  - todo
+  - function_body_length
+  - cyclomatic_complexity
+  - blanket_disable_command
+  - opening_brace # incompat with swiftformat
+  - closure_parameter_position # incompat with swiftformat
+  - void_function_in_ternary # broken, sees inits as void functions
 
 colon:
   apply_to_dictionaries: false

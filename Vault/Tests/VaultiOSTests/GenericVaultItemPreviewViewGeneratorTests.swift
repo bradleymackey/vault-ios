@@ -257,13 +257,13 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
         calledMethods.append(#function)
     }
 
-    var previewActionForVaultItemValue: VaultItemPreviewAction? = nil
+    var previewActionForVaultItemValue: VaultItemPreviewAction?
     func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         calledMethods.append(#function)
         return previewActionForVaultItemValue
     }
 
-    var textToCopyForVaultItemValue: String? = nil
+    var textToCopyForVaultItemValue: String?
     func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
@@ -295,13 +295,13 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
         calledMethods.append(#function)
     }
 
-    var previewActionForVaultItemValue: VaultItemPreviewAction? = nil
+    var previewActionForVaultItemValue: VaultItemPreviewAction?
     func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         calledMethods.append(#function)
         return previewActionForVaultItemValue
     }
 
-    var textToCopyForVaultItemValue: String? = nil
+    var textToCopyForVaultItemValue: String?
     func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
@@ -333,13 +333,13 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemP
         calledMethods.append(#function)
     }
 
-    var previewActionForVaultItemValue: VaultItemPreviewAction? = nil
+    var previewActionForVaultItemValue: VaultItemPreviewAction?
     func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         calledMethods.append(#function)
         return previewActionForVaultItemValue
     }
 
-    var textToCopyForVaultItemValue: String? = nil
+    var textToCopyForVaultItemValue: String?
     func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
