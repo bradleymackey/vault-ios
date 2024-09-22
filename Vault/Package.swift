@@ -238,6 +238,20 @@ let package = Package(
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins
         ),
+        .executableTarget(
+            name: "VaultKeygenSpeedtest",
+            dependencies: [
+                .product(name: "ArgumentParser", package: "swift-argument-parser"),
+                "CryptoEngine",
+                "VaultKeygen",
+            ],
+            swiftSettings: swiftSettings
+        ),
+        .testTarget(
+            name: "VaultKeygenSpeedtestCompileTests",
+            dependencies: ["VaultKeygenSpeedtest"],
+            swiftSettings: swiftSettings
+        ),
 
         // MARK: - TOOLING
 
@@ -271,16 +285,6 @@ let package = Package(
             name: "swiftlint",
             url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
             checksum: swiftLintChecksum
-        ),
-
-        .executableTarget(
-            name: "VaultKeygenSpeedtest",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-                "CryptoEngine",
-                "VaultKeygen",
-            ],
-            swiftSettings: swiftSettings
         ),
     ]
 )

@@ -39,43 +39,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "FoundationExtensionsTests",
-        "name" : "FoundationExtensionsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "VaultSettingsTests",
-        "name" : "VaultSettingsTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "VaultCoreTests",
         "name" : "VaultCoreTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "CryptoEngineTests",
-        "name" : "CryptoEngineTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "VaultBackupTests",
-        "name" : "VaultBackupTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
-        "identifier" : "VaultKeygenTests",
-        "name" : "VaultKeygenTests"
       }
     },
     {
@@ -88,8 +53,43 @@
     {
       "target" : {
         "containerPath" : "container:",
+        "identifier" : "VaultiOSTests",
+        "name" : "VaultiOSTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
         "identifier" : "ImageToolsTests",
         "name" : "ImageToolsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultKeygenTests",
+        "name" : "VaultKeygenTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FoundationExtensionsTests",
+        "name" : "FoundationExtensionsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CryptoDocumentExporterSnapshotTests",
+        "name" : "CryptoDocumentExporterSnapshotTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CryptoEngineTests",
+        "name" : "CryptoEngineTests"
       }
     },
     {
@@ -102,15 +102,22 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "VaultiOSTests",
-        "name" : "VaultiOSTests"
+        "identifier" : "VaultSettingsTests",
+        "name" : "VaultSettingsTests"
       }
     },
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "CryptoDocumentExporterSnapshotTests",
-        "name" : "CryptoDocumentExporterSnapshotTests"
+        "identifier" : "VaultKeygenSpeedtestCompileTests",
+        "name" : "VaultKeygenSpeedtestCompileTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultBackupTests",
+        "name" : "VaultBackupTests"
       }
     }
   ],
