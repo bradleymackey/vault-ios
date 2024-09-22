@@ -7,6 +7,15 @@ let swiftSettings: [SwiftSetting] = [
     .enableExperimentalFeature("AccessLevelOnImport"),
 ]
 
+let targetPlugins: [Target.PluginUsage] = [
+    .plugin(name: "RunMockolo"),
+    .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+]
+
+let testTargetPlugins: [Target.PluginUsage] = [
+    .plugin(name: "SwiftLintBuildToolPlugin", package: "SwiftLintPlugins"),
+]
+
 let package = Package(
     name: "Vault",
     defaultLocalization: "en",
@@ -48,7 +57,7 @@ let package = Package(
                 .process("Resources/Feed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultiOSTests",
@@ -57,37 +66,41 @@ let package = Package(
                 "TestHelpers",
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "VaultBackup",
             dependencies: ["VaultCore", "CryptoDocumentExporter", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultBackupTests",
             dependencies: ["VaultBackup", "TestHelpers", "CryptoEngine"],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "TestHelpers",
             dependencies: [
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins
         ),
         .target(
             name: "VaultCore",
             dependencies: ["CryptoEngine", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultCoreTests",
             dependencies: ["VaultCore", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "CryptoDocumentExporter",
@@ -97,7 +110,7 @@ let package = Package(
                 "ImageTools",
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "CryptoDocumentExporterTests",
@@ -106,7 +119,8 @@ let package = Package(
                 "ImageTools",
                 "TestHelpers",
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .testTarget(
             name: "CryptoDocumentExporterSnapshotTests",
@@ -120,7 +134,8 @@ let package = Package(
                 ),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "ImageTools",
@@ -128,7 +143,7 @@ let package = Package(
                 "FoundationExtensions",
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "ImageToolsTests",
@@ -141,18 +156,20 @@ let package = Package(
                 ),
             ],
             exclude: ["__Snapshots__"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "CryptoEngine",
             dependencies: ["FoundationExtensions", "CryptoSwift", "BigInt"],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "CryptoEngineTests",
             dependencies: ["CryptoEngine", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "VaultSettings",
@@ -164,12 +181,13 @@ let package = Package(
                 .process("Resources/Settings.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "VaultFeed",
@@ -184,22 +202,24 @@ let package = Package(
                 .process("Resources/VaultFeed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "VaultFeedTests",
             dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
         .target(
             name: "FoundationExtensions",
             swiftSettings: swiftSettings,
-            plugins: [.plugin(name: "RunMockolo")]
+            plugins: targetPlugins
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions", "TestHelpers"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
 
         // MARK: - TOOLING
