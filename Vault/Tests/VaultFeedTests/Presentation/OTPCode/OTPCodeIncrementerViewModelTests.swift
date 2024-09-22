@@ -159,6 +159,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 }
 
 extension HOTPCodePublisher {
+    @MainActor
     func counterIncrementedPublisher() -> AnyPublisher<Void, any Error> {
         renderedCodePublisher().map { _ in }.eraseToAnyPublisher()
     }
