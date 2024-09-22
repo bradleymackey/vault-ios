@@ -24,7 +24,7 @@ public func withCatchingError(body: () throws -> some Any) -> (any Error)? {
 ///
 /// Throws if there was another error that we can't catch.
 @inlinable
-public func withCatchingSomeError<T, E>(body: () throws -> T) throws -> (E)? {
+public func withCatchingSomeError<E>(body: () throws -> some Any) throws -> (E)? {
     do {
         _ = try body()
         return nil
