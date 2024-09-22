@@ -5,7 +5,7 @@ import Foundation
 import VaultKeygen
 
 // To test this, run:
-// `swift run -c release KeygenSpeedtest`
+// `swift run -c release keygen-speedtest`
 
 // Latest results (M1 Pro MacBook Pro - Firestorm Core):
 // - RELEASE

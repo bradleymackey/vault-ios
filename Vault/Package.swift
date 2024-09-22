@@ -31,8 +31,8 @@ let package = Package(
             targets: ["VaultiOS"]
         ),
         .executable(
-            name: "KeygenSpeedtest",
-            targets: ["KeygenSpeedtest"]
+            name: "keygen-speedtest",
+            targets: ["VaultKeygenSpeedtest"]
         ),
         .plugin(name: "FormatLint", targets: ["FormatLint"]),
     ],
@@ -274,7 +274,7 @@ let package = Package(
         ),
 
         .executableTarget(
-            name: "KeygenSpeedtest",
+            name: "VaultKeygenSpeedtest",
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 "CryptoEngine",
