@@ -19,6 +19,12 @@ public struct DerivedEncryptionKey: Equatable, Hashable, Sendable {
     }
 }
 
+extension DerivedEncryptionKey: CustomDebugStringConvertible {
+    public var debugDescription: String {
+        "DerviedEncryptionKey(data: \(key.data.toHexString()), salt: \(salt.toHexString()), keyDeriver: \(keyDervier.rawValue))"
+    }
+}
+
 // MARK: - Keygen
 
 extension DerivedEncryptionKey {

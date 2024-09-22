@@ -88,6 +88,69 @@ final class BackupImportFlowViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_handleImport_noExistingPasswordPromptsForDifferentPassword() async throws {
+        let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
+        let encryptedVaultDecoder = EncryptedVaultDecoderMock()
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
+            anyVaultApplicationPayload()
+        }
+        let sut = makeSUT(
+            existingBackupPassword: nil,
+            encryptedVaultDecoder: encryptedVaultDecoder,
+            backupPDFDetatcher: backupPDFDetatcher
+        )
+        let encryptedVault = anyEncryptedVault()
+        backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
+            encryptedVault
+        }
+        let pdfData = try anyPDFData()
+
+        await sut.handleImport(result: .success(pdfData))
+
+        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
+        XCTAssertEqual(sut.importState, .notStarted)
+    }
+
+    @MainActor
+    func test_handleImport_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
+        let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
+        let encryptedVaultDecoder = EncryptedVaultDecoderMock()
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
+            throw EncryptedVaultDecoderError.decryption
+        }
+        let sut = makeSUT(
+            existingBackupPassword: anyBackupPassword(),
+            encryptedVaultDecoder: encryptedVaultDecoder,
+            backupPDFDetatcher: backupPDFDetatcher
+        )
+        let encryptedVault = anyEncryptedVault()
+        backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
+            encryptedVault
+        }
+        let pdfData = try anyPDFData()
+
+        await sut.handleImport(result: .success(pdfData))
+
+        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
+        XCTAssertEqual(sut.importState, .notStarted)
+    }
+
+    @MainActor
+    func test_handleVaultDecoded_updatesPayloadStateToReady() {
+        let sut = makeSUT()
+
+        let initialPayload = anyVaultApplicationPayload()
+        sut.handleVaultDecoded(payload: initialPayload)
+
+        switch sut.payloadState {
+        case let .ready(payload, _):
+            XCTAssertEqual(payload, initialPayload)
+        default:
+            XCTFail("Invalid")
+        }
+    }
+
+    @MainActor
     func test_importPayload_toEmptyVault() async throws {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)

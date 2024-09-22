@@ -50,13 +50,16 @@ func randomTmpPath() -> URL {
     FileManager().temporaryDirectory.appending(path: UUID().uuidString)
 }
 
-func anyEncryptedVault() -> EncryptedVault {
+func anyEncryptedVault(
+    data: Data = .random(count: 50),
+    salt: Data = .random(count: 32)
+) -> EncryptedVault {
     EncryptedVault(
-        data: Data(),
+        data: data,
         authentication: Data(),
         encryptionIV: Data(),
-        keygenSalt: Data(),
-        keygenSignature: "my-signature"
+        keygenSalt: salt,
+        keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
     )
 }
 

@@ -11,3 +11,18 @@ public protocol KeyDeriver<Length>: Sendable {
     func key(password: Data, salt: Data) throws -> KeyData<Length>
     var uniqueAlgorithmIdentifier: String { get }
 }
+
+// MARK: - Helpers
+
+public struct FailingKeyDeriver<Length: KeyLength>: KeyDeriver {
+    public init() {}
+
+    struct KeyDeriverError: Error {}
+    public func key(password _: Data, salt _: Data) throws -> KeyData<Length> {
+        throw KeyDeriverError()
+    }
+
+    public var uniqueAlgorithmIdentifier: String {
+        "failing"
+    }
+}

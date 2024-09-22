@@ -1,10 +1,11 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 
 final class VaultDecryptor {
     private let decryptor: AESGCMDecryptor
-    init(key: Data) {
-        decryptor = AESGCMDecryptor(key: key)
+    init(key: KeyData<Bits256>) {
+        decryptor = AESGCMDecryptor(key: key.data)
     }
 
     func decrypt(encryptedVault: EncryptedVault) throws -> IntermediateEncodedVault {

@@ -125,7 +125,7 @@ extension BackupKeyChangeViewModelTests {
         ),
         authenticationService: DeviceAuthenticationService =
             DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-        deriverFactory: any VaultKeyDeriverFactory = TestVaultKeyDeriverFactory()
+        deriverFactory: any VaultKeyDeriverFactory = .testing
     ) -> BackupKeyChangeViewModel {
         BackupKeyChangeViewModel(
             dataModel: dataModel,
