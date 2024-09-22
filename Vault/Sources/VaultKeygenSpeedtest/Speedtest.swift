@@ -36,9 +36,7 @@ func benchmark(keyDeriver: some KeyDeriver, description: String) throws {
 func buildConfigString() -> String {
     #if DEBUG
     return "⚠️ DEBUG"
-    #elseif RELEASE
-    return "✅ RELEASE"
     #else
-    #error("💀 Unknown or unsupported build configuration.")
+    return "✅ RELEASE"
     #endif
 }
