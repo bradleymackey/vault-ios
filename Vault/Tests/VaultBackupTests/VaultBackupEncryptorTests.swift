@@ -3,6 +3,7 @@ import Foundation
 import FoundationExtensions
 import TestHelpers
 import VaultCore
+import VaultKeygen
 import XCTest
 @testable import VaultBackup
 

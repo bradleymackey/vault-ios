@@ -83,7 +83,7 @@ extension VaultKeyDeriver {
         var failureReason: String? { "The key deriver used to generate this key is invalid" }
     }
 
-    static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
+    public static func lookup(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
         switch signature {
         case .testing: .testing
         case .failing: .failing

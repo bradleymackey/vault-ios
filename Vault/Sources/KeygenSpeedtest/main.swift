@@ -2,6 +2,7 @@
 
 import CryptoEngine
 import Foundation
+import VaultKeygen
 
 // To test this, run:
 // `swift run -c release KeygenSpeedtest`
@@ -25,12 +26,12 @@ func buildConfigString() -> String {
 print("Running derivation test!")
 print("Build configuration:", buildConfigString())
 
-func benchmark(keyDeriver: any KeyDeriver, description: String) throws {
+func benchmark(keyDeriver: some KeyDeriver, description: String) throws {
     let start = Date()
     let key = try keyDeriver.key(password: Data("hello world".utf8), salt: Data("salt".utf8))
     let time = Date().timeIntervalSince(start)
-    print("Derived '\(description)' key \(key.toHexString()) in \(time)")
+    print("Derived '\(description)' key \(key.data.toHexString()) in \(time)")
 }
 
-try benchmark(keyDeriver: VaultAppKeyDerivers.V1.fast, description: "Fast")
-try benchmark(keyDeriver: VaultAppKeyDerivers.V1.secure, description: "Secure")
+try benchmark(keyDeriver: VaultKeyDeriver.V1.fast, description: "Fast")
+try benchmark(keyDeriver: VaultKeyDeriver.V1.secure, description: "Secure")

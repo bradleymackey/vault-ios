@@ -2,6 +2,7 @@ import Foundation
 import FoundationExtensions
 import PDFKit
 import VaultBackup
+import VaultKeygen
 
 /// Controls the state and flow of logic during import operations.
 struct BackupImportFlowState {

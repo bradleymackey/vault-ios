@@ -143,8 +143,8 @@ extension PersistedSchemaV1 {
     }
 }
 
-extension PersistedVaultTag: Hashable {
-    func hash(into hasher: inout Hasher) {
+extension PersistedVaultTag: Swift.Hashable {
+    func hash(into hasher: inout Swift.Hasher) {
         hasher.combine(id)
     }
 }

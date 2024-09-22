@@ -76,7 +76,7 @@ let package = Package(
         ),
         .target(
             name: "VaultBackup",
-            dependencies: ["VaultCore", "CryptoDocumentExporter", "FoundationExtensions"],
+            dependencies: ["VaultCore", "VaultKeygen", "CryptoDocumentExporter", "FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: targetPlugins
         ),
@@ -226,6 +226,18 @@ let package = Package(
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins
         ),
+        .target(
+            name: "VaultKeygen",
+            dependencies: ["CryptoEngine", "FoundationExtensions"],
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins
+        ),
+        .testTarget(
+            name: "VaultKeygenTests",
+            dependencies: ["VaultKeygen", "TestHelpers"],
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
+        ),
 
         // MARK: - TOOLING
 
@@ -266,6 +278,7 @@ let package = Package(
             dependencies: [
                 .product(name: "ArgumentParser", package: "swift-argument-parser"),
                 "CryptoEngine",
+                "VaultKeygen",
             ],
             swiftSettings: swiftSettings
         ),

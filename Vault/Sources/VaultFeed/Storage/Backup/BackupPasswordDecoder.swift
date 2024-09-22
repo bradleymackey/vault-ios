@@ -1,4 +1,5 @@
 import Foundation
+import VaultKeygen
 
 /// Decodes `Data` or a `String` from a QR code into a `DerivedEncryptionKey`.
 public final class BackupPasswordDecoder {

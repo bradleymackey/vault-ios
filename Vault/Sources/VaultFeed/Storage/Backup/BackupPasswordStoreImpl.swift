@@ -1,6 +1,6 @@
-import CryptoEngine
 import Foundation
 import FoundationExtensions
+import VaultKeygen
 
 public final class BackupPasswordStoreImpl: BackupPasswordStore {
     private let secureStorage: any SecureStorage

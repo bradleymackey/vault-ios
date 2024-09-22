@@ -1,5 +1,6 @@
 import Foundation
 import TestHelpers
+import VaultKeygen
 import XCTest
 @testable import VaultFeed
 

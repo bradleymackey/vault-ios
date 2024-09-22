@@ -1,4 +1,5 @@
 import Foundation
+import VaultKeygen
 
 /// Storage for the password used to encrypt backups.
 ///

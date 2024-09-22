@@ -1,5 +1,6 @@
 import CryptoDocumentExporter
 import Foundation
+import VaultKeygen
 
 public actor BackupPasswordExporter {
     private let backupPassword: DerivedEncryptionKey

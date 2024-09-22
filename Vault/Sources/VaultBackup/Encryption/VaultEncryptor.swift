@@ -1,6 +1,7 @@
 import CryptoEngine
 import Foundation
 import FoundationExtensions
+import VaultKeygen
 
 final class VaultEncryptor {
     private let encryptor: AESGCMEncryptor
