@@ -10,11 +10,11 @@ benchmark-debug:
 
 .PHONY: format
 format:
-	swift package --package-path Vault --allow-writing-to-package-directory format
+	swift package --package-path Vault plugin --allow-writing-to-package-directory swiftformat --quiet
 
 .PHONY: lint
 lint:
-	swift package --package-path Vault --allow-writing-to-package-directory format --lint
+	swift package --package-path Vault plugin --allow-writing-to-package-directory swiftformat --lint --quiet && swift package --package-path Vault plugin swiftlint --quiet
 
 .PHONY: clean
 clean:

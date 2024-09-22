@@ -16,7 +16,6 @@ let package = Package(
             name: "VaultiOS",
             targets: ["VaultiOS"]
         ),
-        .plugin(name: "FormatSwift", targets: ["FormatSwift"]),
         .executable(
             name: "KeygenSpeedtest",
             targets: ["KeygenSpeedtest"]
@@ -31,6 +30,8 @@ let package = Package(
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.0"),
+        .package(url: "https://github.com/nicklockwood/SwiftFormat", exact: "0.54.3"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1"),
     ],
     targets: [
         .target(
@@ -214,46 +215,6 @@ let package = Package(
             checksum: "e3aa6e3aacec6b75ee971d7ba1ed326ff22372a8dc60a581cec742441cdbd9db"
         ),
 
-        .plugin(
-            name: "FormatSwift",
-            capability: .command(
-                intent: .custom(
-                    verb: "format",
-                    description: "Formats Swift source files using swiftformat and swiftlint"
-                ),
-                permissions: [
-                    .writeToPackageDirectory(reason: "Format Swift source files"),
-                ]
-            ),
-            dependencies: [
-                "SwiftFormatTool",
-                "swiftformat",
-                "swiftlint",
-            ]
-        ),
-        .executableTarget(
-            name: "SwiftFormatTool",
-            dependencies: [
-                .product(name: "ArgumentParser", package: "swift-argument-parser"),
-            ],
-            resources: [
-                .process("default.swiftformat"),
-                .process("swiftlint.yml"),
-            ],
-            // Not quite ready yet.
-            swiftSettings: [.swiftLanguageMode(.v5)]
-        ),
-
-        .binaryTarget(
-            name: "swiftformat",
-            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/0.54.3/swiftformat.artifactbundle.zip",
-            checksum: "b9d4e1a76449ab0c3beb3eb34fb3dcf396589afb1ee75764767a6ef541c63d67"
-        ),
-        .binaryTarget(
-            name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/0.56.1/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: "146ef723e83d301b9f1ef647dc924a55dae293887e633618e76f8cb526292f0c"
-        ),
         .executableTarget(
             name: "KeygenSpeedtest",
             dependencies: [
