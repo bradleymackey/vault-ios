@@ -10,11 +10,11 @@ benchmark-debug:
 
 .PHONY: format
 format:
-	swift package --allow-writing-to-package-directory format --swiftlint-config=.swiftlint.yml --swiftformat-config=.swiftformat --sources=./
+	swift package --allow-writing-to-package-directory format --sources=./
 
 .PHONY: lint
 lint:
-	swift package --allow-writing-to-package-directory format --lint --swiftlint-config=.swiftlint.yml --swiftformat-config=.swiftformat --sources=./
+	swift package --allow-writing-to-package-directory format --lint --sources=./
 
 .PHONY: clean
 clean:

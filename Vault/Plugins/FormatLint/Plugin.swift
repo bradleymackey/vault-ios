@@ -9,51 +9,39 @@ struct FormatLintPlugin: CommandPlugin {
 
         var argumentExtractor = ArgumentExtractor(arguments)
         let shouldLint = argumentExtractor.extractFlag(named: "lint") > 0
-        guard let lintConfig = argumentExtractor.extractOption(named: "swiftlint-config").first else {
-            fatalError("Missing parameter: --swiftlint-config")
-        }
-        guard let formatConfig = argumentExtractor.extractOption(named: "swiftformat-config").first else {
-            fatalError("Missing parameter: --swiftformat-config")
-        }
         guard let swiftSources = argumentExtractor.extractOption(named: "sources").first else {
             fatalError("Missing parameter: --sources")
         }
 
         var swiftFormatArguments = [String]()
-        swiftFormatArguments += [swiftSources]
+        swiftFormatArguments += ["--quiet"]
         if shouldLint {
             swiftFormatArguments += ["--lint"]
         }
-        swiftFormatArguments += ["--quiet"]
-
-        let formatProcess = Process()
-        formatProcess.executableURL = swiftformat.url
-        formatProcess.arguments = swiftFormatArguments
-        try formatProcess.run()
-        formatProcess.waitUntilExit()
-
-        switch formatProcess.terminationStatus {
-        case 0: break
-        case 1: throw CommandError.commandFailure
-        default: throw CommandError.unknownError(exitCode: formatProcess.terminationStatus)
-        }
+        swiftFormatArguments += [swiftSources]
 
         var swiftLintArguments = [String]()
         swiftLintArguments += ["--quiet"]
         if !shouldLint {
             swiftLintArguments += ["--fix"]
         }
+        swiftLintArguments += [swiftSources]
 
-        let lintProcess = Process()
-        lintProcess.executableURL = swiftlint.url
-        lintProcess.arguments = swiftLintArguments
-        try lintProcess.run()
-        lintProcess.waitUntilExit()
+        try runProcess(url: swiftformat.url, arguments: swiftFormatArguments)
+        try runProcess(url: swiftlint.url, arguments: swiftLintArguments)
+    }
 
-        switch formatProcess.terminationStatus {
+    private func runProcess(url: URL, arguments: [String]) throws {
+        let process = Process()
+        process.executableURL = url
+        process.arguments = arguments
+        try process.run()
+        process.waitUntilExit()
+
+        switch process.terminationStatus {
         case 0: break
         case 1: throw CommandError.commandFailure
-        default: throw CommandError.unknownError(exitCode: lintProcess.terminationStatus)
+        default: throw CommandError.unknownError(exitCode: process.terminationStatus)
         }
     }
 }
