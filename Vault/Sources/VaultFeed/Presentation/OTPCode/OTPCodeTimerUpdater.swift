@@ -1,3 +1,6 @@
+// `CurrentValueSubject` is not Sendable. This is worked around by ensuring that we only send values via this subject
+// on the main thread.
+// swiftlint:disable:next no_preconcurrency
 @preconcurrency import Combine
 import Foundation
 import VaultCore

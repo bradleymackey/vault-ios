@@ -1,4 +1,7 @@
 import Foundation
+
+// `Schema.Version` in the schema does not seem to be Sendable at this time.
+// swiftlint:disable:next no_preconcurrency
 @preconcurrency import SwiftData
 
 enum PersistedSchemaV1: VersionedSchema {
