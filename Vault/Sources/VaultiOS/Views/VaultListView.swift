@@ -52,7 +52,7 @@ struct VaultListView<
                         Button {
                             isShowingEditSheet.toggle()
                         } label: {
-                            Label("Edit", systemImage: "ellipsis.circle")
+                            Label("Edit", systemImage: "ellipsis")
                         }
                     }
                 }
