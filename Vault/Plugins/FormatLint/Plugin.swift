@@ -14,6 +14,7 @@ struct FormatLintPlugin: CommandPlugin {
         }
 
         var swiftFormatArguments = [String]()
+        swiftFormatArguments += ["--cache", context.pluginWorkDirectoryURL.appending(path: "swiftformat.cache").path()]
         swiftFormatArguments += ["--quiet"]
         if shouldLint {
             swiftFormatArguments += ["--lint"]
@@ -21,6 +22,7 @@ struct FormatLintPlugin: CommandPlugin {
         swiftFormatArguments += [swiftSources]
 
         var swiftLintArguments = [String]()
+        swiftLintArguments += ["--cache-path", context.pluginWorkDirectoryURL.appending(path: "swiftlint.cache").path()]
         swiftLintArguments += ["--quiet"]
         if !shouldLint {
             swiftLintArguments += ["--fix"]
