@@ -2,10 +2,10 @@
 
 import PackageDescription
 
-let swiftLintVersion: Version = "0.56.1"
-let swiftLintChecksum: String = "146ef723e83d301b9f1ef647dc924a55dae293887e633618e76f8cb526292f0c"
-let swiftFormatVersion: Version = "0.54.3"
-let swiftFormatChecksum: String = "b9d4e1a76449ab0c3beb3eb34fb3dcf396589afb1ee75764767a6ef541c63d67"
+let swiftLintVersion: Version = "0.57.0"
+let swiftLintChecksum: String = "a1bbafe57538077f3abe4cfb004b0464dcd87e8c23611a2153c675574b858b3a"
+let swiftFormatVersion: Version = "0.54.5"
+let swiftFormatChecksum: String = "39b4530054003cf9c668b0f9391b977fc13215925aaaaa3038d6379099b8486d"
 
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),

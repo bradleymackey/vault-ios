@@ -1,6 +1,8 @@
 import Foundation
 import PackagePlugin
 
+// swiftlint:disable no_direct_standard_out_logs
+
 @main
 struct FormatLintPlugin: CommandPlugin {
     func performCommand(context: PluginContext, arguments: [String]) async throws {
@@ -24,13 +26,22 @@ struct FormatLintPlugin: CommandPlugin {
         var swiftLintArguments = [String]()
         swiftLintArguments += ["--cache-path", context.pluginWorkDirectoryURL.appending(path: "swiftlint.cache").path()]
         swiftLintArguments += ["--quiet"]
-        if !shouldLint {
+        if shouldLint {
+            swiftLintArguments += ["--strict"]
+        } else {
             swiftLintArguments += ["--fix"]
         }
         swiftLintArguments += [swiftSources]
 
+        let start = Date()
+        print("🖌️ Formatting with swiftformat")
         try runProcess(url: swiftformat.url, arguments: swiftFormatArguments)
+        print("🔍 Linting with swiftlint")
         try runProcess(url: swiftlint.url, arguments: swiftLintArguments)
+
+        let end = Date()
+        let elapsed = end.timeIntervalSince(start)
+        print("✅ in \(String(format: "%.2f", elapsed)) seconds")
     }
 
     private func runProcess(url: URL, arguments: [String]) throws {
@@ -42,8 +53,12 @@ struct FormatLintPlugin: CommandPlugin {
 
         switch process.terminationStatus {
         case 0: break
-        case 1: throw CommandError.commandFailure
-        default: throw CommandError.unknownError(exitCode: process.terminationStatus)
+        case 1:
+            print("💀 Command failure")
+            throw CommandError.commandFailure
+        default:
+            print("💀 Other failure")
+            throw CommandError.unknownError(exitCode: process.terminationStatus)
         }
     }
 }

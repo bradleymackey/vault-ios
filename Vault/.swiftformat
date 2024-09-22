@@ -1,6 +1,6 @@
 # format options
 
---swiftversion 5.10
+--swiftversion 6.0
 --allman false
 --binarygrouping 4,8
 --commas always
