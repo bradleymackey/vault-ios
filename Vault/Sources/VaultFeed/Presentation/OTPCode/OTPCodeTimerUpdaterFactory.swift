@@ -3,7 +3,7 @@ import VaultCore
 
 /// @mockable
 public protocol OTPCodeTimerUpdaterFactory {
-    func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater
+    @MainActor func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater
 }
 
 public final class OTPCodeTimerUpdaterFactoryImpl: OTPCodeTimerUpdaterFactory {
@@ -15,6 +15,7 @@ public final class OTPCodeTimerUpdaterFactoryImpl: OTPCodeTimerUpdaterFactory {
         self.clock = clock
     }
 
+    @MainActor
     public func makeUpdater(period: UInt64) -> any OTPCodeTimerUpdater {
         OTPCodeTimerUpdaterImpl(timer: timer, period: period, clock: clock)
     }
