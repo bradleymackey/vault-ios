@@ -59,10 +59,10 @@ struct FormatLintPlugin: CommandPlugin {
         switch process.terminationStatus {
         case 0: break
         case 1:
-            print("💀 Command failure")
+            print("🚨 Issues found")
             throw CommandError.commandFailure
         default:
-            print("💀 Other failure")
+            print("💀 Command failure")
             throw CommandError.unknownError(exitCode: process.terminationStatus)
         }
     }
