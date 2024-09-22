@@ -1,8 +1,6 @@
 import Foundation
 import os
 
-// swiftlint:disable no_unchecked_sendable
-
 /// An atomic wrapper for any type, including primitive value types.
 /// use this to ensure accesses and modifications are thread safe.
 ///

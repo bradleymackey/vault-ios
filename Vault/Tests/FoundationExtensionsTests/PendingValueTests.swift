@@ -154,7 +154,7 @@ final class PendingValueTests: XCTestCase {
 
         do {
             _ = try await sut.awaitValue()
-            XCTFail()
+            XCTFail("Expected error to be thrown")
         } catch TestError.testCase2 {
             XCTAssert(true)
         } catch {

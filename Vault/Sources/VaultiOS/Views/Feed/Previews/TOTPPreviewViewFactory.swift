@@ -16,7 +16,6 @@ protocol TOTPPreviewViewFactory {
 }
 
 struct TOTPPreviewViewFactoryImpl: TOTPPreviewViewFactory {
-    init() {}
     func makeTOTPView(
         viewModel: OTPCodePreviewViewModel,
         periodState: OTPCodeTimerPeriodState,

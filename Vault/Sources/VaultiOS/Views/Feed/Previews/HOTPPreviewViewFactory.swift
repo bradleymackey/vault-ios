@@ -15,7 +15,6 @@ protocol HOTPPreviewViewFactory {
 }
 
 struct HOTPPreviewViewFactoryImpl: HOTPPreviewViewFactory {
-    init() {}
     func makeHOTPView(
         viewModel: OTPCodePreviewViewModel,
         incrementer: OTPCodeIncrementerViewModel,

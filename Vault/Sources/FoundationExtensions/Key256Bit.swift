@@ -34,11 +34,13 @@ extension KeyData {
 
     public static func random() -> Self {
         // Force try: This is of the same length as the key, so it will not throw.
+        // swiftlint:disable:next force_try
         try! .init(data: .random(count: length))
     }
 
     public static func repeating(byte: UInt8) -> Self {
         // Force try: This is of the same length as the key, so it will not throw.
+        // swiftlint:disable:next force_try
         try! .init(data: Data(repeating: byte, count: length))
     }
 }

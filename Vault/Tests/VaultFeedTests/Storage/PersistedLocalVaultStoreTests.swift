@@ -1212,7 +1212,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let id1 = try await sut.insert(item: note)
         do {
             try await sut.incrementCounter(id: id1)
-            XCTFail()
+            XCTFail("Expected error")
         } catch {
             // expected
         }
@@ -1228,8 +1228,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let item = try XCTUnwrap(all.items.first)
         switch item.item.otpCode?.type {
         case let .hotp(counter): XCTAssertEqual(counter, 13)
-        case .totp: XCTFail()
-        case nil: XCTFail()
+        default: XCTFail("Expected hotp")
         }
     }
 

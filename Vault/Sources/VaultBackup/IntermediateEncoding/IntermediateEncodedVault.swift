@@ -11,8 +11,4 @@ import Foundation
 struct IntermediateEncodedVault: Equatable {
     /// The raw encoded vault data.
     var data: Data
-
-    init(data: Data) {
-        self.data = data
-    }
 }

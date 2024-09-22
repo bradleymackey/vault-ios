@@ -62,6 +62,8 @@ extension SemVer: Comparable {
 
 extension SemVer: ExpressibleByStringLiteral {
     public init(stringLiteral value: String) {
+        // It's fine to crash on an invalid literal.
+        // swiftlint:disable:next force_try
         try! self.init(string: value)
     }
 }

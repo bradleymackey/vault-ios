@@ -10,7 +10,6 @@ protocol SecureNotePreviewViewFactory {
 }
 
 struct SecureNotePreviewViewFactoryImpl: SecureNotePreviewViewFactory {
-    init() {}
     func makeSecureNoteView(
         viewModel: SecureNotePreviewViewModel,
         behaviour: VaultItemViewBehaviour
