@@ -2,6 +2,11 @@
 
 import PackageDescription
 
+let swiftLintVersion: Version = "0.56.1"
+let swiftLintChecksum: String = "146ef723e83d301b9f1ef647dc924a55dae293887e633618e76f8cb526292f0c"
+let swiftFormatVersion: Version = "0.54.3"
+let swiftFormatChecksum: String = "b9d4e1a76449ab0c3beb3eb34fb3dcf396589afb1ee75764767a6ef541c63d67"
+
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
     .enableExperimentalFeature("AccessLevelOnImport"),
@@ -29,6 +34,7 @@ let package = Package(
             name: "KeygenSpeedtest",
             targets: ["KeygenSpeedtest"]
         ),
+        .plugin(name: "FormatLint", targets: ["FormatLint"]),
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.4"),
@@ -39,8 +45,7 @@ let package = Package(
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.0"),
-        .package(url: "https://github.com/nicklockwood/SwiftFormat", exact: "0.54.3"),
-        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: "0.56.1"),
+        .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: swiftLintVersion),
     ],
     targets: [
         .target(
@@ -233,6 +238,27 @@ let package = Package(
             name: "mockolo",
             url: "https://github.com/uber/mockolo/releases/download/2.1.1/mockolo.artifactbundle.zip",
             checksum: "e3aa6e3aacec6b75ee971d7ba1ed326ff22372a8dc60a581cec742441cdbd9db"
+        ),
+
+        .plugin(
+            name: "FormatLint",
+            capability: .command(
+                intent: .custom(
+                    verb: "format",
+                    description: "Formats Swift source files using swiftformat and swiftlint"
+                ),
+                permissions: [.writeToPackageDirectory(reason: "Format source code")]
+            )
+        ),
+        .binaryTarget(
+            name: "swiftformat",
+            url: "https://github.com/nicklockwood/SwiftFormat/releases/download/\(swiftFormatVersion)/swiftformat.artifactbundle.zip",
+            checksum: swiftFormatChecksum
+        ),
+        .binaryTarget(
+            name: "swiftlint",
+            url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: swiftLintChecksum
         ),
 
         .executableTarget(
