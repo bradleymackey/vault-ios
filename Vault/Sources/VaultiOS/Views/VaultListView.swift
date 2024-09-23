@@ -54,6 +54,15 @@ struct VaultListView<
                         } label: {
                             Label("Edit", systemImage: "ellipsis")
                         }
+                        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
+                            Button {
+                                isEditing = true
+                            } label: {
+                                Label("Edit Items", systemImage: "pencil")
+                            }
+
+                            Button("Cancel", role: .cancel) {}
+                        })
                     }
                 }
 
@@ -84,15 +93,6 @@ struct VaultListView<
                 }
             }
         }
-        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
-            Button {
-                isEditing = true
-            } label: {
-                Label("Edit Items", systemImage: "pencil")
-            }
-
-            Button("Cancel", role: .cancel) {}
-        })
         .sheet(item: $modal, onDismiss: nil) { visible in
             switch visible {
             case let .detail(_, storedCode):
