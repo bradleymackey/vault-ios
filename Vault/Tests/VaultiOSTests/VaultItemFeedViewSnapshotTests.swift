@@ -56,6 +56,25 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
     }
 
     @MainActor
+    func test_viewState_toggleEditingMode() async throws {
+        let state = VaultItemFeedState()
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel, state: state)
+            .framedToTestDeviceSize()
+
+        state.isEditing = true
+        assertSnapshot(of: sut, as: .image, named: "editing")
+
+        state.isEditing = false
+        assertSnapshot(of: sut, as: .image, named: "notEditing")
+    }
+
+    @MainActor
     func test_searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
@@ -103,20 +122,38 @@ extension VaultItemFeedViewSnapshotTests {
     @MainActor
     private func makeSUT(
         dataModel: VaultDataModel,
+        state: VaultItemFeedState = VaultItemFeedState(),
         localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
     ) -> some View {
-        let generator = VaultItemPreviewViewGeneratorMock.mockGenerating {
-            ZStack {
-                Color.blue
-                Text("Code")
-                    .foregroundStyle(.white)
+        struct CodePlaceholderView: View {
+            var behaviour: VaultItemViewBehaviour
+
+            var body: some View {
+                VStack {
+                    Text("Code")
+                    Text("Placeholder")
+                    switch behaviour {
+                    case .normal: EmptyView()
+                    case let .editingState(message):
+                        Text("is editing").font(.caption)
+                        if let message {
+                            Text(message).font(.caption)
+                        }
+                    }
+                }
+                .foregroundStyle(.white)
+                .frame(maxWidth: .infinity, maxHeight: .infinity)
+                .aspectRatio(1, contentMode: .fill)
+                .background(Color.blue)
             }
-            .frame(minHeight: 100)
+        }
+        let generator = VaultItemPreviewViewGeneratorMock.mockGenerating { _, _, behaviour in
+            CodePlaceholderView(behaviour: behaviour)
         }
         return VaultItemFeedView(
             localSettings: localSettings,
             viewGenerator: generator,
-            isEditing: .constant(false)
+            state: state
         )
         .environment(dataModel)
         .environment(VaultInjector(
