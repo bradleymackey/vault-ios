@@ -57,15 +57,9 @@ struct VaultItemFeedView<
             .modifier(VaultCardModifier())
     }
 
-    private var reorderingBehaviour: VaultItemViewBehaviour {
-        .editingState(message: nil)
-    }
-
     private var currentBehaviour: VaultItemViewBehaviour {
         if state.isEditing {
             .editingState(message: localized(key: "action.tapToView"))
-        } else if state.isReordering {
-            reorderingBehaviour
         } else {
             .normal
         }
@@ -154,7 +148,7 @@ struct VaultItemFeedView<
             viewGenerator.makeVaultPreviewView(
                 item: storedItem.item,
                 metadata: storedItem.metadata,
-                behaviour: reorderingBehaviour
+                behaviour: .editingState(message: nil)
             )
             .frame(width: 150, height: 150)
         } moveAction: { from, to in
