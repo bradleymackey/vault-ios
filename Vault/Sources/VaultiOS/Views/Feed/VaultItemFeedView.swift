@@ -11,22 +11,21 @@ struct VaultItemFeedView<
 {
     var localSettings: LocalSettings
     var viewGenerator: ViewGenerator
-    @Binding var isEditing: Bool
     var gridSpacing: Double
 
     @Environment(VaultInjector.self) private var injector
     @Environment(VaultDataModel.self) private var dataModel
-    @State private var isReordering = false
+    @State private var state: VaultItemFeedState
 
     init(
         localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
-        isEditing: Binding<Bool>,
+        state: VaultItemFeedState,
         gridSpacing: Double = 8
     ) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
-        _isEditing = Binding(projectedValue: isEditing)
+        self.state = state
         self.gridSpacing = gridSpacing
     }
 
@@ -58,15 +57,9 @@ struct VaultItemFeedView<
             .modifier(VaultCardModifier())
     }
 
-    private var reorderingBehaviour: VaultItemViewBehaviour {
-        .editingState(message: nil)
-    }
-
     private var currentBehaviour: VaultItemViewBehaviour {
-        if isEditing {
+        if state.isEditing {
             .editingState(message: localized(key: "action.tapToView"))
-        } else if isReordering {
-            reorderingBehaviour
         } else {
             .normal
         }
@@ -142,30 +135,22 @@ struct VaultItemFeedView<
     private var vaultItemsList: some View {
         ReorderableForEach(
             items: dataModel.items,
-            isDragging: $isReordering,
-            isEnabled: isEditing,
+            isDragging: $state.isReordering,
+            isEnabled: state.isEditing,
             clock: injector.clock
         ) { storedItem in
-            GeometryReader { geo in
-                viewGenerator.makeVaultPreviewView(
-                    item: storedItem.item,
-                    metadata: storedItem.metadata,
-                    behaviour: currentBehaviour
-                )
-                .frame(width: geo.size.width, height: geo.size.height)
-            }
-            .aspectRatio(1, contentMode: .fit)
+            viewGenerator.makeVaultPreviewView(
+                item: storedItem.item,
+                metadata: storedItem.metadata,
+                behaviour: currentBehaviour
+            )
         } previewContent: { storedItem in
-            GeometryReader { geo in
-                viewGenerator.makeVaultPreviewView(
-                    item: storedItem.item,
-                    metadata: storedItem.metadata,
-                    behaviour: reorderingBehaviour
-                )
-                .frame(width: geo.size.width, height: geo.size.height)
-            }
-            .aspectRatio(1, contentMode: .fit)
-            .frame(width: 150)
+            viewGenerator.makeVaultPreviewView(
+                item: storedItem.item,
+                metadata: storedItem.metadata,
+                behaviour: .editingState(message: nil)
+            )
+            .frame(width: 150, height: 150)
         } moveAction: { from, to in
             let movingIds = from.map { dataModel.items[$0].id }.reducedToSet()
             let targetPosition: VaultReorderingPosition = if to == 0 {
@@ -178,6 +163,9 @@ struct VaultItemFeedView<
                 try await dataModel.reorder(items: movingIds, to: targetPosition)
             }
         }
+        // Reload content when editing state changes.
+        // The content needs to rerender when the editing state changes.
+        .id(state.isEditing)
     }
 
     private var columns: [GridItem] {
@@ -224,7 +212,7 @@ struct VaultItemFeedView<
     return VaultItemFeedView(
         localSettings: .init(defaults: .init(userDefaults: .standard)),
         viewGenerator: GenericGenerator(),
-        isEditing: .constant(false)
+        state: VaultItemFeedState()
     )
     .environment(dataModel)
 }

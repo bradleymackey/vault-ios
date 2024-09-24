@@ -18,7 +18,7 @@ struct VaultListView<
 
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
-    @State private var isEditing = false
+    @State private var vaultItemFeedState = VaultItemFeedState()
     @State private var isShowingEditSheet = false
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
@@ -33,14 +33,14 @@ struct VaultListView<
         VaultItemFeedView(
             localSettings: localSettings,
             viewGenerator: interactableViewGenerator(),
-            isEditing: $isEditing,
+            state: vaultItemFeedState,
             gridSpacing: 12
         )
         .toolbar {
-            if isEditing {
+            if vaultItemFeedState.isEditing {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        isEditing = false
+                        vaultItemFeedState.isEditing = false
                     } label: {
                         Label("Done", systemImage: "checkmark")
                     }
@@ -52,8 +52,17 @@ struct VaultListView<
                         Button {
                             isShowingEditSheet.toggle()
                         } label: {
-                            Label("Edit", systemImage: "ellipsis.circle")
+                            Label("Edit", systemImage: "ellipsis")
                         }
+                        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
+                            Button {
+                                vaultItemFeedState.isEditing = true
+                            } label: {
+                                Label("Edit Items", systemImage: "pencil")
+                            }
+
+                            Button("Cancel", role: .cancel) {}
+                        })
                     }
                 }
 
@@ -84,15 +93,6 @@ struct VaultListView<
                 }
             }
         }
-        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
-            Button {
-                isEditing = true
-            } label: {
-                Label("Edit Items", systemImage: "pencil")
-            }
-
-            Button("Cancel", role: .cancel) {}
-        })
         .sheet(item: $modal, onDismiss: nil) { visible in
             switch visible {
             case let .detail(_, storedCode):
@@ -100,7 +100,7 @@ struct VaultListView<
                     VaultDetailEditView(
                         storedItem: storedCode,
                         previewGenerator: viewGenerator,
-                        openInEditMode: isEditing,
+                        openInEditMode: vaultItemFeedState.isEditing,
                         navigationPath: $navigationPath
                     )
                 }
@@ -116,7 +116,7 @@ struct VaultListView<
         }
         .onChange(of: modal) { _, newValue in
             // When the detail modal is dismissed, exit editing mode.
-            if newValue == nil { isEditing = false }
+            if newValue == nil { vaultItemFeedState.isEditing = false }
         }
         .onChange(of: scenePhase) { _, newValue in
             viewGenerator.scenePhaseDidChange(to: newValue)
@@ -130,7 +130,7 @@ struct VaultListView<
         -> VaultItemOnTapDecoratorViewGenerator<Generator>
     {
         VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
-            if isEditing {
+            if vaultItemFeedState.isEditing {
                 guard let item = dataModel.code(id: id) else { return }
                 modal = .detail(id, item)
             } else if let previewAction = viewGenerator.previewActionForVaultItem(id: id) {

@@ -91,17 +91,20 @@ func anyOTPVaultItem(
 
 extension VaultItemPreviewViewGeneratorMock {
     static func defaultMock() -> VaultItemPreviewViewGeneratorMock {
-        mockGenerating {
+        mockGenerating { _, _, _ in
             Text("Preview View")
         }
     }
 
     /// The preview view will be generated with the provided view.
-    static func mockGenerating(@ViewBuilder view: @escaping () -> some View) -> VaultItemPreviewViewGeneratorMock {
+    static func mockGenerating(
+        @ViewBuilder view: @escaping (PreviewItem, VaultItem.Metadata, VaultItemViewBehaviour)
+            -> some View
+    ) -> VaultItemPreviewViewGeneratorMock {
         let s = VaultItemPreviewViewGeneratorMock()
-        s.makeVaultPreviewViewHandler = { _, _, _ in
+        s.makeVaultPreviewViewHandler = { item, metadata, behaviour in
             AnyView(
-                view()
+                view(item, metadata, behaviour)
             )
         }
         return s
