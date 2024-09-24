@@ -5,6 +5,9 @@ import VaultCore
 
 /// `ForEach` that supports reordering from a given source.
 ///
+/// This is a bit of a hack, because SwiftUI doesn't currently natively support reordering in Lazy{V,H}Grid.
+/// This should be removed in favor of a native solution when possible.
+///
 /// https://stackoverflow.com/a/68963988/3261161
 @MainActor
 struct ReorderableForEach<Content: View, PreviewContent: View, Item: VaultDraggableItem>: View {
@@ -36,6 +39,7 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: VaultDragga
 
     @State private var draggingItem: Item?
     @State private var draggingItemCache: Item?
+    @State private var canStartDrag = true
 
     var body: some View {
         ForEach(items) { item in
@@ -47,9 +51,15 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: VaultDragga
                         .animation(.easeOut, value: draggingItem?.id)
                 )
                 .onDrag {
-                    // Clears the drag cache if not enabled!
-                    draggingItem = isEnabled ? item : nil
-                    draggingItemCache = isEnabled ? item : nil
+                    // Check this flag, because this closure may be triggered falsely after completing a drop in iOS 18
+                    if canStartDrag {
+                        draggingItem = isEnabled ? item : nil
+                        draggingItemCache = isEnabled ? item : nil
+                    } else {
+                        // We may get one false event, after that we can drag again.
+                        // (Due to that same iOS 18 bug)
+                        canStartDrag = true
+                    }
                     let string = item.sharingContent(clock: clock)
                     return NSItemProvider(object: string as NSString)
                 } preview: {
@@ -70,6 +80,9 @@ struct ReorderableForEach<Content: View, PreviewContent: View, Item: VaultDragga
                 )
                 .onChange(of: draggingItem?.id) { _, newValue in
                     isDragging = newValue != nil
+                    if isDragging {
+                        canStartDrag = false
+                    }
                 }
         }
     }
