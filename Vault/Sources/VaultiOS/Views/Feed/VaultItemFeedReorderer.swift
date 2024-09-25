@@ -8,11 +8,11 @@ struct VaultItemFeedReorderer {
         self.state = state
     }
 
-    enum ReorderResult {
+    enum ReorderResult: Equatable {
         case noMove
         case move(Move)
 
-        struct Move {
+        struct Move: Equatable {
             var fromIndex: Int
             var toIndex: Int
             var reorderingPosition: VaultReorderingPosition
