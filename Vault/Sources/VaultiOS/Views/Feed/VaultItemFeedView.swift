@@ -147,31 +147,23 @@ struct VaultItemFeedView<
             .if(state.isEditing) {
                 $0.dropDestination(for: Identifier<VaultItem>.self) { dropItems, _ in
                     // Semantically, it only makes sense to move or drag a single item at once.
-                    guard
-                        dropItems.count == 1,
-                        let dropItem = dropItems.first
-                    else { return false }
-                    guard dropItem != storedItem.id else { return false }
-                    guard let from = dataModel.items.firstIndex(where: { $0.id == dropItem }),
-                          var to = dataModel.items.firstIndex(where: { $0.id == storedItem.id }),
-                          from != to
-                    else {
+                    guard dropItems.count == 1, let dropItem = dropItems.first else {
                         return false
                     }
-                    // If we are moving this item further down the list, advance it by 1 more position.
-                    if to > from { to += 1 }
-                    let targetPosition: VaultReorderingPosition = if to == 0 {
-                        .start
-                    } else {
-                        .after(dataModel.items[to - 1].id)
+                    let reorderer = VaultItemFeedReorderer(state: dataModel.items.map(\.id))
+                    let move = reorderer.reorder(item: dropItem, to: storedItem.id)
+                    switch move {
+                    case .noMove:
+                        return false
+                    case let .move(move):
+                        withAnimation {
+                            dataModel.items.move(fromOffsets: [move.fromIndex], toOffset: move.toIndex)
+                        }
+                        Task {
+                            try await dataModel.reorder(items: [dropItem], to: move.reorderingPosition)
+                        }
+                        return true
                     }
-                    withAnimation {
-                        dataModel.items.move(fromOffsets: [from], toOffset: to)
-                    }
-                    Task {
-                        try await dataModel.reorder(items: [dropItem], to: targetPosition)
-                    }
-                    return true
                 } isTargeted: { isTarget in
                     if isTarget {
                         targetedIds.insert(storedItem.id)
