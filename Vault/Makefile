@@ -1,12 +1,8 @@
 SHELL = /bin/sh
 
-.PHONY: benchmark-release
-benchmark-release:
-	swift run -c release KeygenSpeedtest
-
-.PHONY: benchmark-debug
-benchmark-debug:
-	swift run-c debug KeygenSpeedtest
+.PHONY: benchmark-keygen
+benchmark-keygen:
+	swift run -c release vault-keygen-speedtest
 
 .PHONY: format
 format:

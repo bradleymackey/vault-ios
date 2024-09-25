@@ -31,7 +31,7 @@ let package = Package(
             targets: ["VaultiOS"]
         ),
         .executable(
-            name: "keygen-speedtest",
+            name: "vault-keygen-speedtest",
             targets: ["VaultKeygenSpeedtest"]
         ),
         .plugin(name: "FormatLint", targets: ["FormatLint"]),
