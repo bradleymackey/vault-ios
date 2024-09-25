@@ -146,16 +146,20 @@ struct VaultItemFeedView<
             .draggable(storedItem)
             .if(state.isEditing) {
                 $0.dropDestination(for: Identifier<VaultItem>.self) { dropItems, _ in
-                    guard dropItems.count == 1 else { return false }
-                    guard let dropItem = dropItems.first else { return false }
+                    // Semantically, it only makes sense to move or drag a single item at once.
+                    guard
+                        dropItems.count == 1,
+                        let dropItem = dropItems.first
+                    else { return false }
                     guard dropItem != storedItem.id else { return false }
                     guard let from = dataModel.items.firstIndex(where: { $0.id == dropItem }),
-                          let to = dataModel.items.firstIndex(where: { $0.id == storedItem.id })
+                          var to = dataModel.items.firstIndex(where: { $0.id == storedItem.id }),
+                          from != to
                     else {
                         return false
                     }
-                    guard dataModel.items[to].id != dropItem else { return false }
-                    guard to != from else { return false }
+                    // If we are moving this item further down the list, advance it by 1 more position.
+                    if to > from { to += 1 }
                     let targetPosition: VaultReorderingPosition = if to == 0 {
                         .start
                     } else {
