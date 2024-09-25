@@ -4,16 +4,12 @@ import CryptoEngine
 import Foundation
 import VaultKeygen
 
-// To test this, run:
-// `swift run -c release keygen-speedtest`
+// To test this, make sure this is being run in the "release" configuration.
+// This is tested by this command: `make benchmark-keygen`
 
 // Latest results (M1 Pro MacBook Pro - Firestorm Core):
-// - RELEASE
-//      - Fast = ~0.01s
-//      - Secure = ~30s
-// - DEBUG
-//      - Fast = ~2s
-//      - Secure = ???
+//   - Fast = ~0.01s
+//   - Secure = ~30s
 
 @main
 struct KeygenSpeedtest {
@@ -35,7 +31,7 @@ func benchmark(keyDeriver: some KeyDeriver, description: String) throws {
 
 func buildConfigString() -> String {
     #if DEBUG
-    return "⚠️ DEBUG"
+    #error("⚠️ DEBUG configuration: this script should be run in release mode")
     #else
     return "✅ RELEASE"
     #endif
