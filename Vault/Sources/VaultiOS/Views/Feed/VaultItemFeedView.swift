@@ -132,35 +132,49 @@ struct VaultItemFeedView<
         .font(.caption)
     }
 
+    @State private var targetedIds = Set<Identifier<VaultItem>>()
+
     private var vaultItemsList: some View {
-        ReorderableForEach(
-            items: dataModel.items,
-            isDragging: $state.isReordering,
-            isEnabled: state.isEditing,
-            clock: injector.clock
-        ) { storedItem in
+        ForEach(dataModel.items) { storedItem in
             viewGenerator.makeVaultPreviewView(
                 item: storedItem.item,
                 metadata: storedItem.metadata,
                 behaviour: currentBehaviour
             )
-        } previewContent: { storedItem in
-            viewGenerator.makeVaultPreviewView(
-                item: storedItem.item,
-                metadata: storedItem.metadata,
-                behaviour: .editingState(message: nil)
-            )
-            .frame(width: 150, height: 150)
-        } moveAction: { from, to in
-            let movingIds = from.map { dataModel.items[$0].id }.reducedToSet()
-            let targetPosition: VaultReorderingPosition = if to == 0 {
-                .start
-            } else {
-                .after(dataModel.items[to - 1].id)
-            }
-            dataModel.items.move(fromOffsets: from, toOffset: to)
-            Task {
-                try await dataModel.reorder(items: movingIds, to: targetPosition)
+            .opacity(targetedIds.contains(storedItem.id) ? 0.5 : 1)
+            .id(storedItem.id)
+            .draggable(storedItem)
+            .if(state.isEditing) {
+                $0.dropDestination(for: Identifier<VaultItem>.self) { dropItems, _ in
+                    guard dropItems.count == 1 else { return false }
+                    guard let dropItem = dropItems.first else { return false }
+                    guard dropItem != storedItem.id else { return false }
+                    guard let from = dataModel.items.firstIndex(where: { $0.id == dropItem }),
+                          let to = dataModel.items.firstIndex(where: { $0.id == storedItem.id })
+                    else {
+                        return false
+                    }
+                    guard dataModel.items[to].id != dropItem else { return false }
+                    guard to != from else { return false }
+                    let targetPosition: VaultReorderingPosition = if to == 0 {
+                        .start
+                    } else {
+                        .after(dataModel.items[to - 1].id)
+                    }
+                    withAnimation {
+                        dataModel.items.move(fromOffsets: [from], toOffset: to)
+                    }
+                    Task {
+                        try await dataModel.reorder(items: [dropItem], to: targetPosition)
+                    }
+                    return true
+                } isTargeted: { isTarget in
+                    if isTarget {
+                        targetedIds.insert(storedItem.id)
+                    } else {
+                        targetedIds.remove(storedItem.id)
+                    }
+                }
             }
         }
         // Reload content when editing state changes.
