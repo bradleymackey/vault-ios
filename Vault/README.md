@@ -38,6 +38,8 @@ Vault defines some standard key derivers that are used by default to create encr
 
 In the case of a composition key deriver: the output at each step is directed as an input to the next step.
 
+These derivers are benchmarked via `make benchmark-keygen`, so you can see their performance on your machine.
+
 | Key Deriver | Signature                        | Purpose                                    |
 | ----------- | -------------------------------- | ------------------------------------------ |
 | Fast V1     | `vault.keygen.default.fast-v1`   | Derivation for `DEBUG` builds              |
