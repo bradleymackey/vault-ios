@@ -180,6 +180,9 @@ struct VaultItemFeedView<
         // Reload content when editing state changes.
         // The content needs to rerender when the editing state changes.
         .id(state.isEditing)
+        .onChange(of: state.isEditing) { _, isEditing in
+            if !isEditing { targetedIds.removeAll() }
+        }
     }
 
     private var columns: [GridItem] {
