@@ -23,6 +23,7 @@ struct BackupImportFlowView: View {
 
     private enum Modal: IdentifiableSelf {
         case generateDecryptionKey(EncryptedVault)
+        case cameraScanning
     }
 
     var body: some View {
@@ -41,6 +42,11 @@ struct BackupImportFlowView: View {
                         decryptedVaultSubject: decryptedVaultSubject
                     ))
                     .navigationBarTitleDisplayMode(.inline)
+                }
+            case .cameraScanning:
+                NavigationStack {
+                    BackupImportCodeScannerView(intervalTimer: injector.intervalTimer)
+                        .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
@@ -143,7 +149,7 @@ struct BackupImportFlowView: View {
             }
 
             Button {
-                // FIXME: import from camera
+                modal = .cameraScanning
             } label: {
                 FormRow(
                     image: Image(systemName: "qrcode.viewfinder"),
