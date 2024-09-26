@@ -31,7 +31,7 @@ func benchmark(keyDeriver: some KeyDeriver, description: String) throws {
 
 func buildConfigString() -> String {
     #if DEBUG
-    #error("⚠️ DEBUG configuration: this script should be run in release mode")
+    return "⚠️ DEBUG"
     #else
     return "✅ RELEASE"
     #endif
