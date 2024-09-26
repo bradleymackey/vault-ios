@@ -97,7 +97,7 @@ extension CodeScanningManagerTests {
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> CodeScanningManager<DummyModel> {
-        let sut = CodeScanningManager(intervalTimer: intervalTimer, mapper: mapper)
+        let sut = CodeScanningManager(configuration: .slowerNotices, intervalTimer: intervalTimer, mapper: mapper)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }

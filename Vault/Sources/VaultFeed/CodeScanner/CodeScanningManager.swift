@@ -12,12 +12,18 @@ import VaultCore
 @Observable
 public final class CodeScanningManager<Model> {
     public private(set) var scanningState: CodeScanningState = .disabled
+    public let configuration: Configuration
     private let scannedCodeSubject = PassthroughSubject<Model, Never>()
     private let intervalTimer: any IntervalTimer
     private let mapper: (String) throws -> Model
     private var timerBag = Set<AnyCancellable>()
 
-    public init(intervalTimer: any IntervalTimer, mapper: @escaping (String) throws -> Model) {
+    public init(
+        configuration: Configuration,
+        intervalTimer: any IntervalTimer,
+        mapper: @escaping (String) throws -> Model
+    ) {
+        self.configuration = configuration
         self.intervalTimer = intervalTimer
         self.mapper = mapper
     }
@@ -38,14 +44,31 @@ public final class CodeScanningManager<Model> {
         do {
             let decoded = try mapper(string)
             scanningState = .success
-            intervalTimer.schedule(wait: 0.5, tolerance: 0.5) { @MainActor [scannedCodeSubject] in
+            intervalTimer.schedule(wait: configuration.successDelay) { @MainActor [scannedCodeSubject] in
                 scannedCodeSubject.send(decoded)
             }
         } catch {
             scanningState = .invalidCodeScanned
-            intervalTimer.schedule(wait: 1, tolerance: 0.5) { @MainActor [weak self] in
+            intervalTimer.schedule(wait: configuration.errorDelay) { @MainActor [weak self] in
                 self?.scanningState = .scanning
             }
+        }
+    }
+}
+
+extension CodeScanningManager {
+    public struct Configuration {
+        /// How long the error UI is shown for before we start scanning again.
+        public var errorDelay: TimeInterval
+        /// How long the success UI is shown for before we show the success UI.
+        public var successDelay: TimeInterval
+
+        public static var slowerNotices: Configuration {
+            Configuration(errorDelay: 1, successDelay: 0.5)
+        }
+
+        public static var quickNotices: Configuration {
+            Configuration(errorDelay: 1, successDelay: 0.3)
         }
     }
 }

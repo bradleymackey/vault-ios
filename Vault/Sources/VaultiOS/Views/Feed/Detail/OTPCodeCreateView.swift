@@ -18,12 +18,13 @@ struct OTPCodeCreateView<
     ) {
         self.previewGenerator = previewGenerator
         _navigationPath = navigationPath
-        _scanner = .init(wrappedValue: CodeScanningManager(intervalTimer: intervalTimer) { string in
+        let manager = CodeScanningManager(configuration: .slowerNotices, intervalTimer: intervalTimer) { string in
             guard let uri = OTPAuthURI(string: string) else {
                 throw URLError(.badURL)
             }
             return try OTPAuthURIDecoder().decode(uri: uri)
-        })
+        }
+        _scanner = .init(wrappedValue: manager)
     }
 
     // Using 'dismiss' here and in a child will cause a hang here!
