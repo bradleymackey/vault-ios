@@ -9,7 +9,7 @@ struct OTPCodeCreateView<
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
-    @State private var scanner: SingleCodeScanner<OTPAuthCode>
+    @State private var scanner: CodeScanningManager<OTPAuthCode>
 
     init(
         previewGenerator: PreviewGenerator,
@@ -18,7 +18,7 @@ struct OTPCodeCreateView<
     ) {
         self.previewGenerator = previewGenerator
         _navigationPath = navigationPath
-        _scanner = .init(wrappedValue: SingleCodeScanner(intervalTimer: intervalTimer) { string in
+        _scanner = .init(wrappedValue: CodeScanningManager(intervalTimer: intervalTimer) { string in
             guard let uri = OTPAuthURI(string: string) else {
                 throw URLError(.badURL)
             }

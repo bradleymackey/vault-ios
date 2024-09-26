@@ -10,10 +10,9 @@ import VaultCore
 /// The scanned model is broadcast at `itemScannedPublisher`.
 @MainActor
 @Observable
-public final class SingleCodeScanner<Model> {
+public final class CodeScanningManager<Model> {
     public private(set) var scanningState: CodeScanningState = .disabled
     private let scannedCodeSubject = PassthroughSubject<Model, Never>()
-
     private let intervalTimer: any IntervalTimer
     private let mapper: (String) throws -> Model
     private var timerBag = Set<AnyCancellable>()

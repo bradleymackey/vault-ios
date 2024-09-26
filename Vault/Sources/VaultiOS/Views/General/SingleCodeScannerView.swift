@@ -5,7 +5,7 @@ import VaultFeed
 
 @MainActor
 struct SingleCodeScannerView<Model>: View {
-    @State var scanner: SingleCodeScanner<Model>
+    @State var scanner: CodeScanningManager<Model>
     @Binding var isImagePickerVisible: Bool
     @State private var isCameraError = false
 

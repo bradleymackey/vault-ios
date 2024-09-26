@@ -4,7 +4,7 @@ import VaultCore
 import VaultFeed
 import XCTest
 
-final class SingleCodeScannerTests: XCTestCase {
+final class CodeScanningManagerTests: XCTestCase {
     @MainActor
     func test_init_initialStateIsDisabled() {
         let sut = makeSUT()
@@ -87,7 +87,7 @@ final class SingleCodeScannerTests: XCTestCase {
     }
 }
 
-extension SingleCodeScannerTests {
+extension CodeScanningManagerTests {
     private struct DummyModel {}
 
     @MainActor
@@ -96,8 +96,8 @@ extension SingleCodeScannerTests {
         mapper: @escaping (String) throws -> DummyModel = { _ in DummyModel() },
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> SingleCodeScanner<DummyModel> {
-        let sut = SingleCodeScanner(intervalTimer: intervalTimer, mapper: mapper)
+    ) -> CodeScanningManager<DummyModel> {
+        let sut = CodeScanningManager(intervalTimer: intervalTimer, mapper: mapper)
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
