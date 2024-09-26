@@ -7,3 +7,6 @@ public enum CodeScanningResult<Model> {
     /// The model was decoded.
     case completedScanning(Model)
 }
+
+extension CodeScanningResult: Equatable where Model: Equatable {}
+extension CodeScanningResult: Hashable where Model: Hashable {}

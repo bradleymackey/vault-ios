@@ -19,7 +19,7 @@ public struct EncryptedVaultCoder {
         return try decoder.decode(EncryptedVault.self, from: vaultData)
     }
 
-    func encode(shard: DataShard) throws -> Data {
+    public func encode(shard: DataShard) throws -> Data {
         let encoder = JSONEncoder()
         encoder.dateEncodingStrategy = .millisecondsSince1970
         encoder.dataEncodingStrategy = .base64
@@ -27,7 +27,7 @@ public struct EncryptedVaultCoder {
         return try encoder.encode(shard)
     }
 
-    func decode(dataShard: Data) throws -> DataShard {
+    public func decode(dataShard: Data) throws -> DataShard {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .millisecondsSince1970
         decoder.dataDecodingStrategy = .base64
