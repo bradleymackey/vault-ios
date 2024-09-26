@@ -24,10 +24,8 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             switch scanner.scanningState {
             case .disabled:
                 scanningDisabledView
-            case .scanning, .invalidCodeScanned:
+            case .scanning, .invalidCodeScanned, .success:
                 scannerView
-            case .success:
-                scanningSuccessView
             }
         }
     }
@@ -36,8 +34,13 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
         ZStack {
             scannerViewWindow
 
-            if scanner.scanningState == .invalidCodeScanned {
+            switch scanner.scanningState {
+            case .invalidCodeScanned:
                 scanningFailedView
+            case .success:
+                scanningSuccessView
+            default:
+                EmptyView()
             }
         }
     }
