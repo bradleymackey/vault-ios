@@ -104,7 +104,7 @@ struct OTPCodeCreateView<
             }
             .foregroundStyle(.primary)
         } header: {
-            SingleCodeScannerView(scanner: scanner, isImagePickerVisible: $isCodeImagePickerGalleryVisible)
+            CodeScanningView(scanner: scanner, isImagePickerVisible: $isCodeImagePickerGalleryVisible)
                 .padding()
                 .modifier(HorizontallyCenter())
         }
