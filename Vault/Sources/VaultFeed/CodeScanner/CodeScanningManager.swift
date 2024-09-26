@@ -10,22 +10,21 @@ import VaultCore
 /// The scanned model is broadcast at `itemScannedPublisher`.
 @MainActor
 @Observable
-public final class CodeScanningManager<Model> {
+public final class CodeScanningManager<Handler: CodeScanningHandler> {
+    public typealias Model = Handler.DecodedModel
+
     public private(set) var scanningState: CodeScanningState = .disabled
-    public let configuration: Configuration
     private let scannedCodeSubject = PassthroughSubject<Model, Never>()
     private let intervalTimer: any IntervalTimer
-    private let mapper: (String) throws -> Model
+    private let handler: Handler
     private var timerBag = Set<AnyCancellable>()
 
     public init(
-        configuration: Configuration,
         intervalTimer: any IntervalTimer,
-        mapper: @escaping (String) throws -> Model
+        handler: Handler
     ) {
-        self.configuration = configuration
         self.intervalTimer = intervalTimer
-        self.mapper = mapper
+        self.handler = handler
     }
 
     public func startScanning() {
@@ -42,33 +41,30 @@ public final class CodeScanningManager<Model> {
 
     public func scan(text string: String) {
         do {
-            let decoded = try mapper(string)
+            let decoded = try handler.decode(data: string)
             scanningState = .success
-            intervalTimer.schedule(wait: configuration.successDelay) { @MainActor [scannedCodeSubject] in
-                scannedCodeSubject.send(decoded)
+            intervalTimer.schedule(wait: decoded.successDelay) { @MainActor [weak self] in
+                switch decoded {
+                case .continueScanning:
+                    self?.scanningState = .scanning
+                case let .completedScanning(model):
+                    self?.scannedCodeSubject.send(model)
+                }
             }
         } catch {
             scanningState = .invalidCodeScanned
-            intervalTimer.schedule(wait: configuration.errorDelay) { @MainActor [weak self] in
+            intervalTimer.schedule(wait: 1) { @MainActor [weak self] in
                 self?.scanningState = .scanning
             }
         }
     }
 }
 
-extension CodeScanningManager {
-    public struct Configuration {
-        /// How long the error UI is shown for before we start scanning again.
-        public var errorDelay: TimeInterval
-        /// How long the success UI is shown for before we show the success UI.
-        public var successDelay: TimeInterval
-
-        public static var slowerNotices: Configuration {
-            Configuration(errorDelay: 1, successDelay: 0.5)
-        }
-
-        public static var quickNotices: Configuration {
-            Configuration(errorDelay: 1, successDelay: 0.3)
+extension CodeScanningResult {
+    fileprivate var successDelay: TimeInterval {
+        switch self {
+        case .continueScanning: 0.3 // continue fast
+        case .completedScanning: 0.5 // enjoy the success
         }
     }
 }

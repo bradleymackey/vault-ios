@@ -4,8 +4,8 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-struct SingleCodeScannerView<Model>: View {
-    @State var scanner: CodeScanningManager<Model>
+struct SingleCodeScannerView<Handler: CodeScanningHandler>: View {
+    @State var scanner: CodeScanningManager<Handler>
     @Binding var isImagePickerVisible: Bool
     @State private var isCameraError = false
 

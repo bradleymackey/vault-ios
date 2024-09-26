@@ -34,9 +34,9 @@ final class CodeScanningManagerTests: XCTestCase {
     @MainActor
     func test_scan_setsStateToInvalidForInvalidCode() {
         let timer = IntervalTimerMock()
-        let sut = makeSUT(intervalTimer: timer, mapper: { _ in
-            throw anyNSError()
-        })
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in throw TestError() }
+        let sut = makeSUT(intervalTimer: timer, handler: handler)
 
         sut.scan(text: "any")
 
@@ -46,9 +46,9 @@ final class CodeScanningManagerTests: XCTestCase {
     @MainActor
     func test_scan_returnsToScanningAfterInvalidCodeFailure() async {
         let timer = IntervalTimerMock()
-        let sut = makeSUT(intervalTimer: timer, mapper: { _ in
-            throw anyNSError()
-        })
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in throw TestError() }
+        let sut = makeSUT(intervalTimer: timer, handler: handler)
 
         sut.scan(text: "invalid")
         await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
@@ -69,8 +69,10 @@ final class CodeScanningManagerTests: XCTestCase {
     }
 
     @MainActor
-    func test_scan_publishesScannedCodeAfterDelay() async throws {
+    func test_scan_publishesScannedCodeAfterDelayWhenCompletedScanning() async throws {
         let timer = IntervalTimerMock()
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in .completedScanning("any") }
         let sut = makeSUT(intervalTimer: timer)
 
         sut.scan(text: OTPAuthURI.exampleCodeString)
@@ -84,21 +86,46 @@ final class CodeScanningManagerTests: XCTestCase {
 
         await fulfillment(of: [exp], timeout: 1.0)
         results.cancel()
+
+        XCTAssertEqual(sut.scanningState, .success, "State stays on success")
+    }
+
+    @MainActor
+    func test_scan_returnsToScanningAfterDelayWhenContinueScanningReturned() async throws {
+        let timer = IntervalTimerMock()
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in .continueScanning }
+        let sut = makeSUT(intervalTimer: timer, handler: handler)
+
+        sut.scan(text: OTPAuthURI.exampleCodeString)
+
+        await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
+            await timer.finishTimer()
+        }
+
+        XCTAssertEqual(sut.scanningState, .scanning)
     }
 }
 
 extension CodeScanningManagerTests {
-    private struct DummyModel {}
-
     @MainActor
     private func makeSUT(
         intervalTimer: IntervalTimerMock = IntervalTimerMock(),
-        mapper: @escaping (String) throws -> DummyModel = { _ in DummyModel() },
+        handler: CodeScanningHandlerMock = .defaultCompletedScanning,
         file: StaticString = #filePath,
         line: UInt = #line
-    ) -> CodeScanningManager<DummyModel> {
-        let sut = CodeScanningManager(configuration: .slowerNotices, intervalTimer: intervalTimer, mapper: mapper)
+    ) -> CodeScanningManager<CodeScanningHandlerMock> {
+        let sut = CodeScanningManager(intervalTimer: intervalTimer, handler: handler)
         trackForMemoryLeaks(sut, file: file, line: line)
+        trackForMemoryLeaks(handler, file: file, line: line)
         return sut
+    }
+}
+
+extension CodeScanningHandlerMock {
+    fileprivate static var defaultCompletedScanning: CodeScanningHandlerMock {
+        let mock = CodeScanningHandlerMock()
+        mock.decodeHandler = { _ in .completedScanning("any") }
+        return mock
     }
 }
