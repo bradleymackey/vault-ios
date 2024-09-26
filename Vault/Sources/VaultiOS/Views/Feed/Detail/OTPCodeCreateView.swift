@@ -9,7 +9,7 @@ struct OTPCodeCreateView<
 >: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
     var previewGenerator: PreviewGenerator
     @Binding var navigationPath: NavigationPath
-    @State private var scanner: SingleCodeScanner<OTPAuthCode>
+    @State private var scanner: CodeScanningManager<OTPCodeScanningHandler>
 
     init(
         previewGenerator: PreviewGenerator,
@@ -18,12 +18,8 @@ struct OTPCodeCreateView<
     ) {
         self.previewGenerator = previewGenerator
         _navigationPath = navigationPath
-        _scanner = .init(wrappedValue: SingleCodeScanner(intervalTimer: intervalTimer) { string in
-            guard let uri = OTPAuthURI(string: string) else {
-                throw URLError(.badURL)
-            }
-            return try OTPAuthURIDecoder().decode(uri: uri)
-        })
+        let manager = CodeScanningManager(intervalTimer: intervalTimer, handler: OTPCodeScanningHandler())
+        _scanner = .init(wrappedValue: manager)
     }
 
     // Using 'dismiss' here and in a child will cause a hang here!
@@ -108,7 +104,7 @@ struct OTPCodeCreateView<
             }
             .foregroundStyle(.primary)
         } header: {
-            SingleCodeScannerView(scanner: scanner, isImagePickerVisible: $isCodeImagePickerGalleryVisible)
+            CodeScanningView(scanner: scanner, isImagePickerVisible: $isCodeImagePickerGalleryVisible)
                 .padding()
                 .modifier(HorizontallyCenter())
         }

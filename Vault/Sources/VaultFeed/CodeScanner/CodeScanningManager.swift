@@ -10,17 +10,21 @@ import VaultCore
 /// The scanned model is broadcast at `itemScannedPublisher`.
 @MainActor
 @Observable
-public final class SingleCodeScanner<Model> {
+public final class CodeScanningManager<Handler: CodeScanningHandler> {
+    public typealias Model = Handler.DecodedModel
+
     public private(set) var scanningState: CodeScanningState = .disabled
     private let scannedCodeSubject = PassthroughSubject<Model, Never>()
-
     private let intervalTimer: any IntervalTimer
-    private let mapper: (String) throws -> Model
+    private let handler: Handler
     private var timerBag = Set<AnyCancellable>()
 
-    public init(intervalTimer: any IntervalTimer, mapper: @escaping (String) throws -> Model) {
+    public init(
+        intervalTimer: any IntervalTimer,
+        handler: Handler
+    ) {
         self.intervalTimer = intervalTimer
-        self.mapper = mapper
+        self.handler = handler
     }
 
     public func startScanning() {
@@ -37,16 +41,30 @@ public final class SingleCodeScanner<Model> {
 
     public func scan(text string: String) {
         do {
-            let decoded = try mapper(string)
+            let decoded = try handler.decode(data: string)
             scanningState = .success
-            intervalTimer.schedule(wait: 0.5, tolerance: 0.5) { @MainActor [scannedCodeSubject] in
-                scannedCodeSubject.send(decoded)
+            intervalTimer.schedule(wait: decoded.successDelay) { @MainActor [weak self] in
+                switch decoded {
+                case .continueScanning:
+                    self?.scanningState = .scanning
+                case let .completedScanning(model):
+                    self?.scannedCodeSubject.send(model)
+                }
             }
         } catch {
             scanningState = .invalidCodeScanned
-            intervalTimer.schedule(wait: 1, tolerance: 0.5) { @MainActor [weak self] in
+            intervalTimer.schedule(wait: 1) { @MainActor [weak self] in
                 self?.scanningState = .scanning
             }
+        }
+    }
+}
+
+extension CodeScanningResult {
+    fileprivate var successDelay: TimeInterval {
+        switch self {
+        case .continueScanning: 0.3 // continue fast
+        case .completedScanning: 0.5 // enjoy the success
         }
     }
 }
