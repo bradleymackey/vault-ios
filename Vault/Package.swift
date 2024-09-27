@@ -24,7 +24,7 @@ let testTargetPlugins: [Target.PluginUsage] = [
 let package = Package(
     name: "Vault",
     defaultLocalization: "en",
-    platforms: [.iOS("17.4"), .macOS("14.4")],
+    platforms: [.iOS("18.0"), .macOS("15.0")],
     products: [
         .library(
             name: "VaultiOS",
