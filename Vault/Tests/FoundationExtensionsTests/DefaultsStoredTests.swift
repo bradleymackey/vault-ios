@@ -1,28 +1,30 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class DefaultsStoredTests: XCTestCase {
-    func test_init_fallsBackToDefaultIfNoStoredValue() throws {
+struct DefaultsStoredTests {
+    @Test(arguments: [0, 1234, 456])
+    func init_fallsBackToDefaultIfNoStoredValue(defaultValue: Int) throws {
         let defaults = try makeDefaults()
 
-        @DefaultsStored(defaults: defaults, defaultsKey: .init("test1"), defaultValue: 1234)
+        @DefaultsStored(defaults: defaults, defaultsKey: .init("test1"), defaultValue: defaultValue)
         var coolNumber: Int
 
-        XCTAssertEqual(coolNumber, 1234)
+        #expect(coolNumber == defaultValue)
     }
 
-    func test_init_fetchesInitialValueStoredInDefaults() throws {
-        let coolNumberInitial = 4567
+    @Test(arguments: [4567, 0, 99999])
+    func init_fetchesInitialValueStoredInDefaults(initialValue: Int) throws {
         let defaults = try makeDefaults()
-        try defaults.set(coolNumberInitial, for: .init("test2"))
+        try defaults.set(initialValue, for: .init("test2"))
 
         @DefaultsStored(defaults: defaults, defaultsKey: .init("test2"), defaultValue: 1234)
         var coolNumber: Int
 
-        XCTAssertEqual(coolNumber, 4567)
+        #expect(coolNumber == initialValue)
     }
 
+    @Test
     func test_wrappedValue_setsValueInDefaults() throws {
         let key: Key<Int> = .init("test3")
         let coolNumberInitial = 4567
@@ -34,10 +36,10 @@ final class DefaultsStoredTests: XCTestCase {
 
         coolNumber = 9876
 
-        XCTAssertEqual(coolNumber, 9876)
+        #expect(coolNumber == 9876)
 
-        let defaultsValue = try XCTUnwrap(defaults.get(for: key))
-        XCTAssertEqual(defaultsValue, 9876)
+        let defaultsValue = try #require(defaults.get(for: key))
+        #expect(defaultsValue == 9876)
     }
 }
 
@@ -45,7 +47,7 @@ final class DefaultsStoredTests: XCTestCase {
 
 extension DefaultsStoredTests {
     private func makeDefaults() throws -> Defaults {
-        let userDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
+        let userDefaults = try #require(UserDefaults(suiteName: #file))
         userDefaults.removePersistentDomain(forName: #file)
         return Defaults(userDefaults: userDefaults)
     }
