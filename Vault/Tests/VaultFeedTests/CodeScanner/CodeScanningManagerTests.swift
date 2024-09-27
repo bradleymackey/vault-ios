@@ -41,7 +41,7 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "any")
 
-        XCTAssertEqual(sut.scanningState, .invalidCodeScanned)
+        XCTAssertEqual(sut.scanningState, .failure(.temporary))
     }
 
     @MainActor
@@ -52,7 +52,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
-        sut.scan(text: "invalid")
+        sut.scan(text: "any")
         await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
             await timer.finishTimer()
         }
@@ -63,12 +63,14 @@ final class CodeScanningManagerTests: XCTestCase {
     @MainActor
     func test_scan_successSetsStateToSuccess() {
         let timer = IntervalTimerMock()
-        let sut = makeSUT(intervalTimer: timer)
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in .continueScanning(.success) }
+        let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
-        sut.scan(text: OTPAuthURI.exampleCodeString)
+        sut.scan(text: "any")
 
-        XCTAssertEqual(sut.scanningState, .success)
+        XCTAssertEqual(sut.scanningState, .success(.temporary))
     }
 
     @MainActor
@@ -79,7 +81,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let sut = makeSUT(intervalTimer: timer)
         sut.startScanning()
 
-        sut.scan(text: OTPAuthURI.exampleCodeString)
+        sut.scan(text: "any")
 
         let exp = expectation(description: "Wait for code")
         let results = sut.itemScannedPublisher().collectFirst(1).sink { _ in
@@ -91,7 +93,7 @@ final class CodeScanningManagerTests: XCTestCase {
         await fulfillment(of: [exp], timeout: 1.0)
         results.cancel()
 
-        XCTAssertEqual(sut.scanningState, .success, "State stays on success")
+        XCTAssertEqual(sut.scanningState, .success(.complete))
     }
 
     @MainActor
@@ -102,11 +104,11 @@ final class CodeScanningManagerTests: XCTestCase {
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
-        sut.scan(text: OTPAuthURI.exampleCodeString)
+        sut.scan(text: "any")
         await expectNoMutation(observable: sut, keyPath: \.scanningState) {
             await timer.finishTimer()
         }
-        XCTAssertEqual(sut.scanningState, .codeDataError)
+        XCTAssertEqual(sut.scanningState, .failure(.unrecoverable))
     }
 
     @MainActor
@@ -117,7 +119,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
-        sut.scan(text: OTPAuthURI.exampleCodeString)
+        sut.scan(text: "any")
 
         await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
             await timer.finishTimer()

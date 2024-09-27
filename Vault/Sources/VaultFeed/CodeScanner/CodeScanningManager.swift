@@ -46,12 +46,12 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
             switch state {
             case .ignore: break
             case .invalidCode:
-                scanningState = .invalidCodeScanned
+                scanningState = .failure(.temporary)
                 intervalTimer.schedule(wait: 0.7) { @MainActor [weak self] in
                     self?.scanningState = .scanning
                 }
             case .success:
-                scanningState = .success
+                scanningState = .success(.temporary)
                 intervalTimer.schedule(wait: 0.3) { @MainActor [weak self] in
                     self?.scanningState = .scanning
                 }
@@ -59,12 +59,12 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
         case let .endScanning(state):
             switch state {
             case let .dataRetrieved(model):
-                scanningState = .success
+                scanningState = .success(.complete)
                 intervalTimer.schedule(wait: 0.5) { @MainActor [scannedCodeSubject] in
                     scannedCodeSubject.send(model)
                 }
             case .unrecoverableError:
-                scanningState = .codeDataError
+                scanningState = .failure(.unrecoverable)
             }
         }
     }
