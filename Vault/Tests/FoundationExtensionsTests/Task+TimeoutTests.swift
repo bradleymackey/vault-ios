@@ -1,13 +1,13 @@
 import Foundation
 import FoundationExtensions
+import TestHelpers
 import Testing
 
 struct TaskTimeoutTests {
     @Test
     func timeoutReturnsTimeoutError() async throws {
-        let pending = PendingValue<Void>()
         let t = Task.withTimeout(delay: .milliseconds(100)) {
-            try await pending.awaitValue()
+            try await suspendForever()
         }
         try await Task.sleep(for: .milliseconds(500))
         await #expect(throws: TimeoutError.self, performing: {
@@ -17,9 +17,8 @@ struct TaskTimeoutTests {
 
     @Test
     func cancelledReturnsCancelledError() async throws {
-        let pending = PendingValue<Void>()
         let t = Task.withTimeout(delay: .milliseconds(500)) {
-            try await pending.awaitValue()
+            try await suspendForever()
         }
         t.cancel()
 
