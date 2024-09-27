@@ -84,6 +84,22 @@ final class PendingValueTests: XCTestCase {
     }
 
     @MainActor
+    func test_awaitValue_timeoutFulfillsWithError() async throws {
+        let sut = makeSUT()
+
+        do {
+            _ = try await sut.awaitValue(timeout: .nanoseconds(1))
+            XCTFail("Unexpected success")
+        } catch is TimeoutError {
+            // nice!
+        } catch {
+            XCTFail("Unexpected error")
+        }
+
+        await sut.cancel()
+    }
+
+    @MainActor
     func test_fulfill_unsuspendsAwait() async throws {
         let sut = makeSUT()
 

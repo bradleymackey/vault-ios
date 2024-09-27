@@ -43,8 +43,8 @@ extension PendingValue {
     /// Wait for the production of the target value, cancelling on a Task cancellation.
     /// Yields the value when `fulfill` or `reject` is called, but waits until that moment.
     ///
-    /// - throws: `CancellationError` if cancelled, `AlreadyWaitingError` if already waiting.
-    public func awaitValue() async throws -> Output {
+    /// - throws: `CancellationError` if cancelled, `AlreadyWaitingError` if already waiting, `TimeoutError` if the given `timeout` is reached before a value is produced.
+    public func awaitValue(timeout: Duration? = nil) async throws -> Output {
         if isWaiting {
             throw AlreadyWaitingError()
         }
@@ -67,12 +67,23 @@ extension PendingValue {
             self.streamContinuation = continuation
         }
 
-        if let first = try await stream.first {
-            return first
+        @Sendable func getValue() async throws -> Output {
+            if let first = try await stream.first {
+                return first
+            } else {
+                // The stream will only exit without a value in the case that it's been cancelled.
+                // Propagate the cancellation.
+                throw CancellationError()
+            }
+        }
+
+        if let timeout {
+            let timeoutTask = Task.withTimeout(delay: timeout) {
+                try await getValue()
+            }
+            return try await timeoutTask.value
         } else {
-            // The stream will only exit without a value in the case that it's been cancelled.
-            // Propagate the cancellation.
-            throw CancellationError()
+            return try await getValue()
         }
     }
 }
