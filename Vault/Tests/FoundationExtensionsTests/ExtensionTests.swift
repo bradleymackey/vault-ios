@@ -1,22 +1,10 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class ExtensionTests: XCTestCase {
-    func test_sequence_reducedToSet() {
-        XCTAssertEqual(
-            Set([1, 2, 3]).reducedToSet(),
-            [1, 2, 3]
-        )
-
-        XCTAssertEqual(
-            [Int]().reducedToSet(),
-            []
-        )
-
-        XCTAssertEqual(
-            [1, 1, 1, 1].reducedToSet(),
-            [1]
-        )
-    }
+@Test
+func sequence_reducedToSet() {
+    #expect(Set([1, 2, 3]).reducedToSet() == [1, 2, 3])
+    #expect([Int]().reducedToSet() == [])
+    #expect([1, 1, 1, 1].reducedToSet() == [1])
 }
