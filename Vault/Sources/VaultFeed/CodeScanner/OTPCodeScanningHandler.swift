@@ -5,11 +5,15 @@ import VaultCore
 public final class OTPCodeScanningHandler: CodeScanningHandler {
     public init() {}
 
-    public func decode(data: String) throws -> CodeScanningResult<OTPAuthCode> {
-        guard let uri = OTPAuthURI(string: data) else {
-            throw URLError(.badURL)
+    public func decode(data: String) -> CodeScanningResult<OTPAuthCode> {
+        do {
+            guard let uri = OTPAuthURI(string: data) else {
+                throw URLError(.badURL)
+            }
+            let code = try OTPAuthURIDecoder().decode(uri: uri)
+            return .endScanning(.dataRetrieved(code))
+        } catch {
+            return .continueScanning(.invalidCode)
         }
-        let code = try OTPAuthURIDecoder().decode(uri: uri)
-        return .completedScanning(code)
     }
 }
