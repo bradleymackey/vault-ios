@@ -6,8 +6,10 @@ final class DefaultsStoredTests {
     let defaults: Defaults
 
     init() throws {
-        let userDefaults = try #require(UserDefaults(suiteName: #file + #function))
-        userDefaults.removePersistentDomain(forName: #file + #function)
+        // Must be unique across ALL tests due to concurrent execution.
+        let suite = #file + Data.random(count: 10).base64EncodedString()
+        let userDefaults = try #require(UserDefaults(suiteName: suite))
+        userDefaults.removePersistentDomain(forName: suite)
         defaults = Defaults(userDefaults: userDefaults)
     }
 
