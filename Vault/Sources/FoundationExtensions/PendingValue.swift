@@ -43,7 +43,8 @@ extension PendingValue {
     /// Wait for the production of the target value, cancelling on a Task cancellation.
     /// Yields the value when `fulfill` or `reject` is called, but waits until that moment.
     ///
-    /// - throws: `CancellationError` if cancelled, `AlreadyWaitingError` if already waiting, `TimeoutError` if the given `timeout` is reached before a value is produced.
+    /// - throws: `CancellationError` if cancelled, `AlreadyWaitingError` if already waiting, `TimeoutError` if the
+    /// given `timeout` is reached before a value is produced.
     public func awaitValue(timeout: Duration? = nil) async throws -> Output {
         if isWaiting {
             throw AlreadyWaitingError()
