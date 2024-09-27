@@ -24,9 +24,9 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             switch scanner.scanningState {
             case .disabled:
                 scanningDisabledView
-            case .codeDataError:
-                scanningDataErrorView
-            case .scanning, .invalidCodeScanned, .success:
+            case .failure(.unrecoverable):
+                scanningUnrecoverableErrorView
+            case .scanning, .failure(.temporary), .success:
                 scannerView
             }
         }
@@ -37,10 +37,12 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             scannerViewWindow
 
             switch scanner.scanningState {
-            case .invalidCodeScanned:
+            case .failure(.temporary):
                 scanningFailedView
-            case .success:
-                scanningSuccessView
+            case .success(.temporary):
+                scanningTemporarySuccessView
+            case .success(.complete):
+                scanningCompleteSuccessView
             default:
                 EmptyView()
             }
@@ -59,7 +61,21 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
         }
     }
 
-    private var scanningSuccessView: some View {
+    private var scanningCompleteSuccessView: some View {
+        ZStack {
+            Color.green
+            VStack(spacing: 8) {
+                Image(systemName: "checkmark.circle.fill")
+                    .font(.largeTitle.bold())
+                Text("Success")
+                    .font(.callout.bold())
+                    .textCase(.uppercase)
+            }
+            .foregroundStyle(.white)
+        }
+    }
+
+    private var scanningTemporarySuccessView: some View {
         ZStack {
             Color.green
             Image(systemName: "checkmark.circle.fill")
@@ -82,7 +98,7 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
         }
     }
 
-    private var scanningDataErrorView: some View {
+    private var scanningUnrecoverableErrorView: some View {
         ZStack {
             Color.red
             VStack(spacing: 8) {
@@ -153,7 +169,7 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
 extension CodeScanningState {
     fileprivate var pausesCamera: Bool {
         switch self {
-        case .disabled, .success, .invalidCodeScanned, .codeDataError: true
+        case .disabled, .success, .failure: true
         case .scanning: false
         }
     }
