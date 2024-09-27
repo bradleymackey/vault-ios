@@ -1,31 +1,30 @@
 import Foundation
-import XCTest
+import Testing
 @testable import FoundationExtensions
 
-final class StubLocalResourceFetcherTests: XCTestCase {
-    func test_fetchLocalResourceFromURL_fetchesStubbedData() async throws {
+struct StubLocalResourceFetcherTests {
+    @Test
+    func fetchLocalResourceFromURL_fetchesStubbedData() async throws {
         let stubData = Data("Hello world".utf8)
         let sut = makeSUT(data: stubData)
 
-        let anyURL = try XCTUnwrap(URL(string: "https://google.com"))
+        let anyURL = try #require(URL(string: "https://google.com"))
         let response = try await sut.fetchLocalResource(at: anyURL)
 
-        XCTAssertEqual(response, stubData)
+        #expect(response == stubData)
     }
 
-    func test_fetchLocalResourceFromBundle_fetchesStubbedData() async throws {
+    @Test(arguments: [Bundle.main, .module])
+    func fetchLocalResourceFromBundle_fetchesStubbedData(bundle: Bundle) async throws {
         let stubData = Data("Hello world".utf8)
         let sut = makeSUT(data: stubData)
 
-        let bundlesToCheck: [Bundle] = [.main, .module]
-        for bundle in bundlesToCheck {
-            let response = try await sut.fetchLocalResource(
-                fromBundle: bundle,
-                fileName: "any",
-                fileExtension: "any"
-            )
-            XCTAssertEqual(response, stubData)
-        }
+        let response = try await sut.fetchLocalResource(
+            fromBundle: bundle,
+            fileName: "any",
+            fileExtension: "any"
+        )
+        #expect(response == stubData)
     }
 }
 
