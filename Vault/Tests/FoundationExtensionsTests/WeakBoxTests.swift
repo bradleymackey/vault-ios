@@ -1,16 +1,17 @@
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class WeakBoxTests: XCTestCase {
-    func test_value_isRetainedWeakly() {
+struct WeakBoxTests {
+    @Test
+    func value_isRetainedWeakly() throws {
         var source: Person? = Person()
         let box = WeakBox(source)
 
-        XCTAssertNotNil(box.value)
+        try #require(box.value != nil)
 
         source = nil
 
-        XCTAssertNil(box.value)
+        #expect(box.value == nil)
     }
 }
 
