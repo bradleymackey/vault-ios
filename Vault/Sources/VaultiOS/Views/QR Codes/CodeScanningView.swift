@@ -24,6 +24,8 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             switch scanner.scanningState {
             case .disabled:
                 scanningDisabledView
+            case .codeDataError:
+                scanningDataErrorView
             case .scanning, .invalidCodeScanned, .success:
                 scannerView
             }
@@ -75,6 +77,25 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
                 Text("Invalid Code")
                     .font(.callout.bold())
                     .textCase(.uppercase)
+            }
+            .foregroundStyle(.white)
+        }
+    }
+
+    private var scanningDataErrorView: some View {
+        ZStack {
+            Color.red
+            VStack(spacing: 8) {
+                Image(systemName: "xmark.diamond.fill")
+                    .font(.largeTitle.bold())
+                VStack {
+                    Text("Invalid Data")
+                        .fontWeight(.bold)
+                    Text("Please try again")
+                        .foregroundStyle(.secondary)
+                }
+                .font(.callout)
+                .textCase(.uppercase)
             }
             .foregroundStyle(.white)
         }
@@ -132,7 +153,7 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
 extension CodeScanningState {
     fileprivate var pausesCamera: Bool {
         switch self {
-        case .disabled, .success, .invalidCodeScanned: true
+        case .disabled, .success, .invalidCodeScanned, .codeDataError: true
         case .scanning: false
         }
     }

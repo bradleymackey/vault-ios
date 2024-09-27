@@ -35,8 +35,9 @@ final class CodeScanningManagerTests: XCTestCase {
     func test_scan_setsStateToInvalidForInvalidCode() {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
-        handler.decodeHandler = { _ in throw TestError() }
+        handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
+        sut.startScanning()
 
         sut.scan(text: "any")
 
@@ -47,8 +48,9 @@ final class CodeScanningManagerTests: XCTestCase {
     func test_scan_returnsToScanningAfterInvalidCodeFailure() async {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
-        handler.decodeHandler = { _ in throw TestError() }
+        handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
+        sut.startScanning()
 
         sut.scan(text: "invalid")
         await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
@@ -62,6 +64,7 @@ final class CodeScanningManagerTests: XCTestCase {
     func test_scan_successSetsStateToSuccess() {
         let timer = IntervalTimerMock()
         let sut = makeSUT(intervalTimer: timer)
+        sut.startScanning()
 
         sut.scan(text: OTPAuthURI.exampleCodeString)
 
@@ -72,8 +75,9 @@ final class CodeScanningManagerTests: XCTestCase {
     func test_scan_publishesScannedCodeAfterDelayWhenCompletedScanning() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
-        handler.decodeHandler = { _ in .completedScanning("any") }
+        handler.decodeHandler = { _ in .endScanning(.dataRetrieved("any")) }
         let sut = makeSUT(intervalTimer: timer)
+        sut.startScanning()
 
         sut.scan(text: OTPAuthURI.exampleCodeString)
 
@@ -91,11 +95,27 @@ final class CodeScanningManagerTests: XCTestCase {
     }
 
     @MainActor
+    func test_scan_unrecoverableErrorSetsStateToDataError() async throws {
+        let timer = IntervalTimerMock()
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in .endScanning(.unrecoverableError) }
+        let sut = makeSUT(intervalTimer: timer, handler: handler)
+        sut.startScanning()
+
+        sut.scan(text: OTPAuthURI.exampleCodeString)
+        await expectNoMutation(observable: sut, keyPath: \.scanningState) {
+            await timer.finishTimer()
+        }
+        XCTAssertEqual(sut.scanningState, .codeDataError)
+    }
+
+    @MainActor
     func test_scan_returnsToScanningAfterDelayWhenContinueScanningReturned() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
-        handler.decodeHandler = { _ in .continueScanning }
+        handler.decodeHandler = { _ in .continueScanning(.success) }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
+        sut.startScanning()
 
         sut.scan(text: OTPAuthURI.exampleCodeString)
 
@@ -103,6 +123,21 @@ final class CodeScanningManagerTests: XCTestCase {
             await timer.finishTimer()
         }
 
+        XCTAssertEqual(sut.scanningState, .scanning)
+    }
+
+    @MainActor
+    func test_scan_scanningStateUnchangedIfShouldIgnore() async throws {
+        let timer = IntervalTimerMock()
+        let handler = CodeScanningHandlerMock()
+        handler.decodeHandler = { _ in .continueScanning(.ignore) }
+        let sut = makeSUT(intervalTimer: timer, handler: handler)
+        sut.startScanning()
+
+        sut.scan(text: "any")
+        await expectNoMutation(observable: sut, keyPath: \.scanningState) {
+            await timer.finishTimer()
+        }
         XCTAssertEqual(sut.scanningState, .scanning)
     }
 }
@@ -125,7 +160,7 @@ extension CodeScanningManagerTests {
 extension CodeScanningHandlerMock {
     fileprivate static var defaultCompletedScanning: CodeScanningHandlerMock {
         let mock = CodeScanningHandlerMock()
-        mock.decodeHandler = { _ in .completedScanning("any") }
+        mock.decodeHandler = { _ in .endScanning(.dataRetrieved("any")) }
         return mock
     }
 }

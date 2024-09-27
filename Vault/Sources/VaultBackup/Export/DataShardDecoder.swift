@@ -17,6 +17,13 @@ public struct DataShardDecoder {
     public enum AddShardError: Error, Equatable {
         case inconsistentGroup
         case shardAlreadyExists
+
+        /// Is this a non-critical error that can be resolved by scanning another code?
+        public var canIgnoreError: Bool {
+            switch self {
+            case .inconsistentGroup, .shardAlreadyExists: true
+            }
+        }
     }
 
     public enum DecoderError: Error, Equatable {

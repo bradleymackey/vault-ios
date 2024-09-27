@@ -6,4 +6,5 @@ public enum CodeScanningState: Hashable, IdentifiableSelf {
     case scanning
     case success
     case invalidCodeScanned
+    case codeDataError
 }

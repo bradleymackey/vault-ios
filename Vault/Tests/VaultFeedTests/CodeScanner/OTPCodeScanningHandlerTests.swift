@@ -6,24 +6,23 @@ struct OTPCodeScanningHandlerTests {
     let sut = OTPCodeScanningHandler()
 
     @Test(arguments: ["", "invalid", "invalid://totp/issuer"])
-    func decode_invalidDataThrowsError(string: String) {
-        #expect(throws: (any Error).self) {
-            try sut.decode(data: string)
-        }
+    func decode_invalidDataReturnsInvalidCode(string: String) {
+        let result = sut.decode(data: string)
+        #expect(result == .continueScanning(.invalidCode))
     }
 
     @Test
     func decode_successCompletesWithExpectedCode() throws {
-        let result = try sut.decode(data: "otpauth://totp/issuer?secret=AA&algorithm=SHA256&digits=7&period=32")
+        let result = sut.decode(data: "otpauth://totp/issuer?secret=AA&algorithm=SHA256&digits=7&period=32")
 
         switch result {
-        case let .completedScanning(code):
+        case let .endScanning(.dataRetrieved(code)):
             #expect(code.data.secret.base32EncodedString == "AA======")
             #expect(code.data.algorithm == .sha256)
             #expect(code.type.kind == .totp)
             #expect(code.data.digits == .init(value: 7))
-        case .continueScanning:
-            Issue.record("Expected completedScanning")
+        default:
+            Issue.record("Expected completedScanning, got \(result)")
         }
     }
 }

@@ -6,30 +6,40 @@ import VaultBackup
 struct BackupImportScanningHandlerTests {
     let sut = BackupImportScanningHandler()
 
-    @Test
-    func decode_emptyStringThrowsError() {
-        #expect(throws: (any Error).self) {
-            try sut.decode(data: "")
-        }
+    @Test(arguments: ["", "invalid", "{}"])
+    func decode_invalidDataReportsInvalidCode(string: String) {
+        let result = sut.decode(data: string)
+        #expect(result == .continueScanning(.invalidCode))
     }
 
     @Test(arguments: ["", "invalid", "{}"])
-    func decode_invalidDataThrowsError(string: String) {
-        #expect(throws: (any Error).self) {
-            try sut.decode(data: string)
-        }
-    }
-
-    @Test
-    func decode_partialShardContinuesScanning() throws {
-        let result = try sut.decode(data: """
+    func decode_addShardErrorIgnoresError(string _: String) throws {
+        let result1 = sut.decode(data: """
         {
             "G":{"ID":10,"N":4,"I":0},
             "D": "AA=="
         }
         """)
+        try #require(result1 == .continueScanning(.success))
 
-        #expect(result == .continueScanning)
+        let result2 = sut.decode(data: """
+        {
+            "G":{"ID":11,"N":4,"I":0},
+            "D": "AA=="
+        }
+        """)
+        #expect(result2 == .continueScanning(.ignore), "Different group number is an ignorable error")
+    }
+
+    @Test(arguments: [0, 1, 2, 3])
+    func decode_partialShardContinuesScanning(shardNumber: Int) throws {
+        let result = sut.decode(data: """
+        {
+            "G":{"ID":10,"N":4,"I":\(shardNumber)},
+            "D": "AA=="
+        }
+        """)
+        #expect(result == .continueScanning(.success))
     }
 
     @Test
@@ -50,13 +60,32 @@ struct BackupImportScanningHandlerTests {
 
         // Intermediate shards should continue scanning.
         for encodedShard in encodedShards[0 ..< encodedShards.count - 1] {
-            let result = try sut.decode(data: String(decoding: encodedShard, as: UTF8.self))
-            #expect(result == .continueScanning)
+            let result = sut.decode(data: String(decoding: encodedShard, as: UTF8.self))
+            try #require(result == .continueScanning(.success))
         }
 
         // The last shard triggers the completion.
         let lastShard = try #require(encodedShards.last)
-        let result = try sut.decode(data: String(decoding: lastShard, as: UTF8.self))
-        #expect(result == .completedScanning(expectedVault))
+        let result = sut.decode(data: String(decoding: lastShard, as: UTF8.self))
+        #expect(result == .endScanning(.dataRetrieved(expectedVault)))
+    }
+
+    @Test
+    func test_decodeInvalidFullDataEndsWithUnrecoverableError() throws {
+        let result1 = sut.decode(data: """
+        {
+            "G":{"ID":10,"N":2,"I":0},
+            "D": "AA=="
+        }
+        """)
+        try #require(result1 == .continueScanning(.success))
+
+        let result2 = sut.decode(data: """
+        {
+            "G":{"ID":10,"N":2,"I":1},
+            "D": "AA=="
+        }
+        """)
+        #expect(result2 == .endScanning(.unrecoverableError), "Because AA== twice is not a valid vault.")
     }
 }

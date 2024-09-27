@@ -16,15 +16,30 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
         shardDecoder.state?.remaining
     }
 
-    public func decode(data: String) throws -> CodeScanningResult<EncryptedVault> {
+    public func decode(data: String) -> CodeScanningResult<EncryptedVault> {
         let shardData = Data(data.utf8)
-        try shardDecoder.add(shardData: shardData)
-        if shardDecoder.isReadyToDecode {
-            let encryptedVaultData = try shardDecoder.decodeData()
-            let decodedEncryptedVault = try EncryptedVaultCoder().decode(vaultData: encryptedVaultData)
-            return .completedScanning(decodedEncryptedVault)
-        } else {
-            return .continueScanning
+        do {
+            try shardDecoder.add(shardData: shardData)
+            if !shardDecoder.isReadyToDecode { return .continueScanning(.success) }
+        } catch let error as DataShardDecoder.AddShardError where error.canIgnoreError {
+            return .continueScanning(.ignore)
+        } catch {
+            return .continueScanning(.invalidCode)
         }
+
+        do {
+            let encryptedVault = try decodeEncryptedVault()
+            return .endScanning(.dataRetrieved(encryptedVault))
+        } catch {
+            // We cannot recover if this fails because the state is tainted and we
+            // have no idea what caused it.
+            return .endScanning(.unrecoverableError)
+        }
+    }
+
+    private func decodeEncryptedVault() throws -> EncryptedVault {
+        let encryptedVaultData = try shardDecoder.decodeData()
+        let decodedEncryptedVault = try EncryptedVaultCoder().decode(vaultData: encryptedVaultData)
+        return decodedEncryptedVault
     }
 }

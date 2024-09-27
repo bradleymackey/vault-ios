@@ -40,31 +40,32 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
     }
 
     public func scan(text string: String) {
-        do {
-            let decoded = try handler.decode(data: string)
-            scanningState = .success
-            intervalTimer.schedule(wait: decoded.successDelay) { @MainActor [weak self] in
-                switch decoded {
-                case .continueScanning:
+        let decoded = handler.decode(data: string)
+        switch decoded {
+        case let .continueScanning(state):
+            switch state {
+            case .ignore: break
+            case .invalidCode:
+                scanningState = .invalidCodeScanned
+                intervalTimer.schedule(wait: 0.7) { @MainActor [weak self] in
                     self?.scanningState = .scanning
-                case let .completedScanning(model):
-                    self?.scannedCodeSubject.send(model)
+                }
+            case .success:
+                scanningState = .success
+                intervalTimer.schedule(wait: 0.3) { @MainActor [weak self] in
+                    self?.scanningState = .scanning
                 }
             }
-        } catch {
-            scanningState = .invalidCodeScanned
-            intervalTimer.schedule(wait: 1) { @MainActor [weak self] in
-                self?.scanningState = .scanning
+        case let .endScanning(state):
+            switch state {
+            case let .dataRetrieved(model):
+                scanningState = .success
+                intervalTimer.schedule(wait: 0.5) { @MainActor [scannedCodeSubject] in
+                    scannedCodeSubject.send(model)
+                }
+            case .unrecoverableError:
+                scanningState = .codeDataError
             }
-        }
-    }
-}
-
-extension CodeScanningResult {
-    fileprivate var successDelay: TimeInterval {
-        switch self {
-        case .continueScanning: 0.3 // continue fast
-        case .completedScanning: 0.5 // enjoy the success
         }
     }
 }

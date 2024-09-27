@@ -4,5 +4,5 @@ import Foundation
 public protocol CodeScanningHandler {
     associatedtype DecodedModel
     /// Decode data from the QR code to a model type.
-    func decode(data: String) throws -> CodeScanningResult<DecodedModel>
+    func decode(data: String) -> CodeScanningResult<DecodedModel>
 }
