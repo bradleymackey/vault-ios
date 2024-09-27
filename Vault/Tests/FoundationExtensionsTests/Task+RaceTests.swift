@@ -1,5 +1,6 @@
 import Foundation
 import FoundationExtensions
+import TestHelpers
 import Testing
 
 enum TaskRaceTests {
@@ -204,7 +205,7 @@ enum TaskRaceTests {
 
 private func longTask() -> TaskRace<Void> {
     {
-        try await Task.sleep(for: .seconds(100_000))
+        try await suspendForever()
     }
 }
 
