@@ -18,6 +18,10 @@ public struct Cache<Key: Hashable, Value> {
         cacheStorage.count
     }
 
+    public var isEmpty: Bool {
+        cacheStorage.isEmpty
+    }
+
     /// Removes all items from the cache, requiring them to be recreated.
     public mutating func removeAll() {
         cacheStorage.removeAll()
