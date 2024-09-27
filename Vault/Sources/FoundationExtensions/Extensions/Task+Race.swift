@@ -1,0 +1,79 @@
+import Foundation
+
+public enum TaskRaceError: Error, Equatable, Hashable {
+    case noTasksScheduled
+}
+
+/// Operation that can yield a value or throw, to be used in `Task.race`.
+public typealias TaskRace<T> = @Sendable () async throws -> T
+
+extension Task where Failure == any Error {
+    /// Race for the first result by any of the provided tasks.
+    ///
+    /// This will return the first valid result or throw the first thrown error by *any* task.
+    ///
+    /// - returns: The task that is running this race, which is composed of the child tasks. Cancelling this task will
+    /// cancel all the child tasks.
+    public static func race(
+        priority: TaskPriority? = nil,
+        firstResolved tasks: [TaskRace<Success>]
+    ) -> Task<Success, any Error> {
+        Task<Success, any Error>(priority: priority) {
+            try await withThrowingTaskGroup(of: Success.self) { group -> Success in
+                for task in tasks {
+                    group.addTask(priority: priority) {
+                        try await task()
+                    }
+                }
+                defer { group.cancelAll() }
+                try Task<Never, Never>.checkCancellation()
+
+                if let firstToResolve = try await group.next() {
+                    return firstToResolve
+                } else {
+                    throw TaskRaceError.noTasksScheduled
+                }
+            }
+        }
+    }
+
+    /// Race for the first valid value.
+    ///
+    /// Ignores errors that may be thrown and waits for the first result.
+    /// If all tasks fail, returns `nil`.
+    ///
+    /// - throws: `CancellationError` if cancelled.
+    /// - returns: The task that is running this race, which is composed of the child tasks.
+    public static func race(
+        priority: TaskPriority? = nil,
+        firstValue tasks: [TaskRace<Success>]
+    ) -> Task<Success?, any Error> {
+        Task<Success?, any Error>(priority: priority) {
+            try await withThrowingTaskGroup(of: Success.self) { group -> Success? in
+                try Task<Never, Never>.checkCancellation()
+                if tasks.isEmpty { throw TaskRaceError.noTasksScheduled }
+                for task in tasks {
+                    group.addTask(priority: priority) {
+                        try await task()
+                    }
+                }
+
+                defer { group.cancelAll() }
+                try Task<Never, Never>.checkCancellation()
+
+                while let nextResult = await group.nextResult() {
+                    try Task<Never, Never>.checkCancellation()
+                    switch nextResult {
+                    case .failure:
+                        continue
+                    case let .success(result):
+                        return result
+                    }
+                }
+
+                // If all the racing tasks error, we will reach this point.
+                return nil
+            }
+        }
+    }
+}
