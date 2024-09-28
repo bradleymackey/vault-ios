@@ -15,6 +15,7 @@ opt_in_rules:
   - no_direct_standard_out_logs
   - no_unchecked_sendable
   - no_preconcurrency
+  - no_xctest
 
 # Some are dumb, some are broken.
 # Broken ones are commented.
@@ -81,4 +82,13 @@ custom_rules:
       - attribute.builtin
       - typeidentifier
     message: "Is there a library that supports concurrency instead? We want to be thread safe, if at all possible! Please provide a description if this is unavoidable."
+    severity: error
+  no_xctest:
+    included: "Tests/FoundationExtensionsTests/*"
+    name: "XCTest is not allowed in this target."
+    regex: "import XCTest"
+    match_kinds:
+      - keyword
+      - identifier
+    message: "`import Testing` to use Swift Testing"
     severity: error

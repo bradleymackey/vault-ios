@@ -1,32 +1,44 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class DefaultsStoredTests: XCTestCase {
-    func test_init_fallsBackToDefaultIfNoStoredValue() throws {
-        let defaults = try makeDefaults()
+final class DefaultsStoredTests {
+    let defaults: Defaults
 
-        @DefaultsStored(defaults: defaults, defaultsKey: .init("test1"), defaultValue: 1234)
-        var coolNumber: Int
-
-        XCTAssertEqual(coolNumber, 1234)
+    init() throws {
+        // Must be unique across ALL tests due to concurrent execution.
+        let suite = #file + Data.random(count: 10).base64EncodedString()
+        let userDefaults = try #require(UserDefaults(suiteName: suite))
+        userDefaults.removePersistentDomain(forName: suite)
+        defaults = Defaults(userDefaults: userDefaults)
     }
 
-    func test_init_fetchesInitialValueStoredInDefaults() throws {
-        let coolNumberInitial = 4567
-        let defaults = try makeDefaults()
-        try defaults.set(coolNumberInitial, for: .init("test2"))
+    deinit {
+        defaults.removeAll()
+    }
+
+    @Test(arguments: [0, 1234, 456])
+    func init_fallsBackToDefaultIfNoStoredValue(defaultValue: Int) throws {
+        @DefaultsStored(defaults: defaults, defaultsKey: .init("test1"), defaultValue: defaultValue)
+        var coolNumber: Int
+
+        #expect(coolNumber == defaultValue)
+    }
+
+    @Test(arguments: [4567, 0, 99999])
+    func init_fetchesInitialValueStoredInDefaults(initialValue: Int) throws {
+        try defaults.set(initialValue, for: .init("test2"))
 
         @DefaultsStored(defaults: defaults, defaultsKey: .init("test2"), defaultValue: 1234)
         var coolNumber: Int
 
-        XCTAssertEqual(coolNumber, 4567)
+        #expect(coolNumber == initialValue)
     }
 
+    @Test
     func test_wrappedValue_setsValueInDefaults() throws {
         let key: Key<Int> = .init("test3")
         let coolNumberInitial = 4567
-        let defaults = try makeDefaults()
         try defaults.set(coolNumberInitial, for: key)
 
         @DefaultsStored(defaults: defaults, defaultsKey: key, defaultValue: 1234)
@@ -34,19 +46,9 @@ final class DefaultsStoredTests: XCTestCase {
 
         coolNumber = 9876
 
-        XCTAssertEqual(coolNumber, 9876)
+        #expect(coolNumber == 9876)
 
-        let defaultsValue = try XCTUnwrap(defaults.get(for: key))
-        XCTAssertEqual(defaultsValue, 9876)
-    }
-}
-
-// MARK: - Helpers
-
-extension DefaultsStoredTests {
-    private func makeDefaults() throws -> Defaults {
-        let userDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
-        userDefaults.removePersistentDomain(forName: #file)
-        return Defaults(userDefaults: userDefaults)
+        let defaultsValue = try #require(defaults.get(for: key))
+        #expect(defaultsValue == 9876)
     }
 }

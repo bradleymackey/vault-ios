@@ -1,17 +1,19 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class DataRandomTests: XCTestCase {
-    func test_random_producesZeroBytes() {
+struct DataRandomTests {
+    @Test
+    func random_producesZeroBytes() {
         let sut = Data.random(count: 0)
 
-        XCTAssertTrue(sut.isEmpty)
+        #expect(sut.isEmpty)
     }
 
-    func test_random_producesGivenNumberOfBytes() {
-        let sut = Data.random(count: 100)
+    @Test(arguments: [1, 100, 1024])
+    func random_producesGivenNumberOfBytes(bytes: Int) {
+        let sut = Data.random(count: bytes)
 
-        XCTAssertEqual(sut.count, 100)
+        #expect(sut.count == bytes)
     }
 }

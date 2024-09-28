@@ -1,47 +1,51 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class AtomicTests: XCTestCase {
-    func test_init_setsValue() {
-        let a = Atomic(initialValue: 100)
+struct AtomicTests {
+    @Test(arguments: [1, 2, 3, 100, 12345])
+    func init_setsValue(initialValue: Int) {
+        let a = Atomic(initialValue: initialValue)
 
-        XCTAssertEqual(a.get { $0 }, 100)
+        #expect(a.get { $0 } == initialValue)
     }
 
-    func test_get_getsValueSafely() async {
-        let a = Atomic(initialValue: 100)
+    @Test(arguments: [1, 2, 3, 100, 12345])
+    func get_getsValueSafely(initialValue: Int) async {
+        let a = Atomic(initialValue: initialValue)
 
         await withDiscardingTaskGroup { group in
             for _ in 0 ... 1000 {
                 group.addTask {
                     for _ in 0 ... 100 {
-                        let n = a.get { $0 }
-                        XCTAssertEqual(n, 100)
+                        #expect(a.get { $0 } == initialValue)
                     }
                 }
             }
         }
     }
 
-    func test_value_getsValue() async {
-        let a = Atomic(initialValue: 100)
+    @Test(arguments: [1, 2, 3, 100, 12345])
+    func value_getsValue(initialValue: Int) async {
+        let a = Atomic(initialValue: initialValue)
 
-        XCTAssertEqual(a.value, 100)
+        #expect(a.value == initialValue)
     }
 
-    func test_modify_modifiesExistingValue() async {
-        let a = Atomic(initialValue: 100)
+    @Test(arguments: [1, 2, 3, 100, 12345])
+    func modify_modifiesExistingValue(initialValue: Int) async {
+        let a = Atomic(initialValue: initialValue)
 
         a.modify { value in
             value += 2
         }
 
-        XCTAssertEqual(a.get { $0 }, 102)
+        #expect(a.get { $0 } == initialValue + 2)
     }
 
-    func test_modify_modifiesValueSafely() async {
-        let a = Atomic(initialValue: 100)
+    @Test(arguments: [1, 2, 3, 100, 12345])
+    func modify_modifiesValueSafely(initialValue: Int) async {
+        let a = Atomic(initialValue: initialValue)
 
         await withDiscardingTaskGroup { group in
             for i in 0 ... 1000 {

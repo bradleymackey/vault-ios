@@ -1,47 +1,45 @@
 import FoundationExtensions
-import XCTest
+import Testing
 
-final class CacheTests: XCTestCase {
-    func test_init_hasNoSideEffects() {
-        let sut = makeSUT()
+struct CacheTests {
+    typealias TestCache = Cache<String, String>
+    var sut = TestCache()
 
-        XCTAssertEqual(sut.count, 0)
+    @Test
+    func init_hasNoSideEffects() {
+        #expect(sut.isEmpty)
     }
 
-    func test_count_isNumberOfElementsInCache() {
-        var sut = makeSUT()
-
-        _ = sut.getOrCreateValue(for: "key1") {
+    @Test(arguments: ["k1", "k2", "k3"])
+    mutating func count_isNumberOfElementsInCache(key: String) {
+        _ = sut.getOrCreateValue(for: key) {
             "value1"
         }
 
-        XCTAssertEqual(sut.count, 1)
+        #expect(sut.count == 1)
     }
 
-    func test_removeAll_clearsCache() {
-        var sut = makeSUT()
-
+    @Test
+    mutating func removeAll_clearsCache() {
         _ = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
         sut.removeAll()
 
-        XCTAssertEqual(sut.count, 0)
+        #expect(sut.isEmpty)
     }
 
-    func test_getOrCreate_createsObjectIfNotInCache() {
-        var sut = makeSUT()
-
+    @Test
+    mutating func getOrCreate_createsObjectIfNotInCache() {
         let result = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
 
-        XCTAssertEqual(result, "value1")
+        #expect(result == "value1")
     }
 
-    func test_getOrCreate_returnsCachedIfAlreadyCached() {
-        var sut = makeSUT()
-
+    @Test
+    mutating func getOrCreate_returnsCachedIfAlreadyCached() {
         _ = sut.getOrCreateValue(for: "key1") {
             "value1"
         }
@@ -49,65 +47,54 @@ final class CacheTests: XCTestCase {
             "value2"
         }
 
-        XCTAssertEqual(result, "value1")
+        #expect(result == "value1")
     }
 
-    func test_remove_hasNoEffectIfItemNotInCache() {
-        var sut = makeSUT()
-
+    @Test
+    mutating func remove_hasNoEffectIfItemNotInCache() {
         sut.remove(key: "key1")
 
-        XCTAssertEqual(sut.count, 0)
+        #expect(sut.isEmpty)
     }
 
-    func test_remove_removesItemIfInCache() {
-        var sut = makeSUT()
-
-        _ = sut.getOrCreateValue(for: "key1") {
+    @Test(arguments: ["", "k1", "k2"])
+    mutating func remove_removesItemIfInCache(key: String) {
+        _ = sut.getOrCreateValue(for: key) {
             "value1"
         }
-        sut.remove(key: "key1")
+        sut.remove(key: key)
 
-        XCTAssertEqual(sut.count, 0)
+        #expect(sut.isEmpty)
     }
 
-    func test_subscript_returnsNilIfItemNotPresent() {
-        let sut = makeSUT()
+    @Test(arguments: ["", " ", "k1", "k2"])
+    func subscript_returnsNilIfItemNotPresent(key: String) {
+        let result = sut[key]
 
-        let result = sut["key1"]
-
-        XCTAssertNil(result)
+        #expect(result == nil)
+        #expect(sut.isEmpty)
     }
 
-    func test_subscript_returnsItemIfItemPresent() {
-        var sut = makeSUT()
-
-        _ = sut.getOrCreateValue(for: "key1", otherwise: {
+    @Test(arguments: ["", " ", "k1", "k2"])
+    mutating func subscript_returnsItemIfItemPresent(key: String) {
+        _ = sut.getOrCreateValue(for: key, otherwise: {
             "value1"
         })
-        let result = sut["key1"]
+        let result = sut[key]
 
-        XCTAssertEqual(result, "value1")
+        #expect(result == "value1")
     }
 
-    func test_values_returnsAllValuesInTheCache() {
-        var sut = makeSUT()
-
-        _ = sut.getOrCreateValue(for: "key1", otherwise: {
-            "value1"
+    @Test(arguments: [("k1", "v1")])
+    mutating func values_returnsAllValuesInTheCache(key: String, value: String) {
+        _ = sut.getOrCreateValue(for: key, otherwise: {
+            value
         })
         _ = sut.getOrCreateValue(for: "key2", otherwise: {
             "value2"
         })
         let result = sut.values
 
-        XCTAssertEqual(result.sorted(), ["value1", "value2"])
-    }
-}
-
-extension CacheTests {
-    typealias TestCache = Cache<String, String>
-    private func makeSUT() -> TestCache {
-        TestCache()
+        #expect(result.sorted() == [value, "value2"])
     }
 }

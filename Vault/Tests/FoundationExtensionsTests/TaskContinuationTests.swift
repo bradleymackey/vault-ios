@@ -1,71 +1,64 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import os
+import TestHelpers
+import Testing
 
-final class TaskContinuationTests: XCTestCase {
-    func test_runsTaskToCompletion() async throws {
-        let exp = expectation(description: "Wait for task")
-        try await Task.continuation {
-            exp.fulfill()
+@Suite("Task Continuation Tests", .timeLimit(.minutes(1)))
+struct TaskContinuationTests {
+    @Test
+    func runsTaskToCompletion() async throws {
+        try await confirmation(expectedCount: 1) { confirmation in
+            try await Task.continuation {
+                confirmation.confirm()
+            }
         }
-
-        await fulfillment(of: [exp])
     }
 
-    func test_cancellationCancelsTask() async throws {
-        let exp1 = expectation(description: "Wait for task start")
-        let exp2 = expectation(description: "Wait for continuation to finish")
-        let exp3 = expectation(description: "Wait for continuation to throw")
-        exp3.isInverted = true
-        let outer = Task {
-            exp1.fulfill()
-            let result = try await Task.continuation {
-                sleep(1) // heavy work
-                exp2.fulfill() // task still finishes, even if cancelled
-                return 100
+    @Test
+    func cancellationCancelsTask() async throws {
+        let isStarted = Atomic(initialValue: false)
+
+        let outer = Task.detached {
+            try await Task.continuation {
+                isStarted.modify { $0 = true }
+                // make sure it starts first
+                // then immediately cancel this task
+                sleep(1)
             }
-            exp3.fulfill() // continutation should throw before here
-            return result
         }
-        await fulfillment(of: [exp1])
+
+        while !isStarted.value {
+            try await Task.sleep(for: .milliseconds(50))
+        }
 
         outer.cancel()
-
-        await fulfillment(of: [exp2, exp3], timeout: 2, enforceOrder: true)
-
-        let error = await withCatchingAsyncError {
-            try await outer.result.get()
-        }
-        XCTAssertTrue(error is CancellationError)
+        await #expect(throws: CancellationError.self, performing: {
+            try await outer.value
+        })
     }
 
-    func test_cancelsBeforeTaskRuns() async throws {
-        let exp1 = expectation(description: "Wait for task start")
-        let exp2 = expectation(description: "The continuation should not start")
-        exp2.isInverted = true
-        let exp3 = expectation(description: "Should have thrown before here")
-        exp3.isInverted = true
+    @Test
+    func cancelsBeforeTaskRuns() async throws {
+        let pending1 = PendingValue<Void>()
         let waiter = TaskCancellationWaiter()
-        let outer = Task {
-            exp1.fulfill()
+        let outer = Task.detached {
+            await pending1.fulfill()
             await waiter.waitForTaskCancellation()
             let result = try await Task.continuation {
-                exp2.fulfill() // should not reach here; task never starts
+                Issue.record("Should not reach here, task should never start.")
                 return 100
             }
-            exp3.fulfill() // should not reach here; Cancellation error thrown from continuation
+            Issue.record("Cancellation error should be thrown from continuation")
             return result
         }
-        await fulfillment(of: [exp1]) // wait for task to start
+        try await pending1.awaitValue() // wait for task to start
 
         outer.cancel()
 
-        await fulfillment(of: [exp2, exp3], timeout: 1)
-
-        let error = await withCatchingAsyncError {
+        await #expect(throws: CancellationError.self, performing: {
             try await outer.result.get()
-        }
-        XCTAssertTrue(error is CancellationError)
+        })
     }
 }
 

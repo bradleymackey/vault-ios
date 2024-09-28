@@ -1,300 +1,256 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
-import XCTest
+import Testing
 
-final class PendingValueTests: XCTestCase {
+/// A common pattern we use in these tests is starting a background task that calls `awaitValue`.
+/// We then want to check the state of the `sut` while it is waiting in the background.
+///
+/// To maximise correctness, there's a few things to keep in mind:
+///  - The task should be `detached` to ensure that this task is running independently of the test task.
+///  - After `await`ing the start of the task, call `Task.yield()` to ensure that the SUT is actually waiting.
+///  - The priority of this `detached` task should be `high` to make sure that yielding doesn't just resume on the
+///  test task immediately.
+struct PendingValueTests {
     enum TestError: Error {
         case testCase
         case testCase2
     }
 
-    @MainActor
-    func test_awaitValue_throwsCancellationErrorIfCancelled() async throws {
-        let sut = makeSUT()
+    private typealias SUT = PendingValue<Int>
+    private let sut = SUT()
 
-        let exp = expectation(description: "waiting for value")
-        let handle = Task.detached {
-            do {
-                _ = try await sut.awaitValue()
-            } catch is CancellationError {
-                exp.fulfill()
-            } catch {
-                XCTFail("Unexpected error thrown: \(error)")
+    @Test
+    func awaitValue_throwsCancellationErrorIfCancelled() async throws {
+        try await confirmation { confirmation in
+            let startedWaiting = PendingValue<Void>()
+            let finishedWaiting = PendingValue<Void>()
+            let task = Task.detached(priority: .high) {
+                await startedWaiting.fulfill()
+                do {
+                    _ = try await sut.awaitValue()
+                } catch is CancellationError {
+                    confirmation.confirm()
+                }
+                await finishedWaiting.fulfill()
             }
+
+            try await startedWaiting.awaitValue()
+            await Task.yield()
+
+            task.cancel()
+
+            try await finishedWaiting.awaitValue()
         }
-
-        handle.cancel()
-
-        await fulfillment(of: [exp], timeout: 1.0)
     }
 
-    @MainActor
-    func test_awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
-        let sut = makeSUT()
-
-        let result1 = await awaitValueForcingAsync(on: sut) {
+    @Test
+    func awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
+        let result1 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(100)
         }
-        XCTAssertEqual(result1?.withAnyEquatableError(), .success(100))
+        #expect(result1.withAnyEquatableError() == .success(100))
 
-        let result2 = await awaitValueForcingAsync(on: sut) {
+        let result2 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(101)
         }
-        XCTAssertEqual(result2?.withAnyEquatableError(), .success(101))
+        #expect(result2.withAnyEquatableError() == .success(101))
     }
 
-    @MainActor
-    func test_awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
-        let sut = makeSUT()
-
-        let result1 = await awaitValueForcingAsync(on: sut) {
+    @Test
+    func awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
+        let result1 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(100)
         }
-        XCTAssertEqual(result1?.withAnyEquatableError(), .success(100))
+        #expect(result1.withAnyEquatableError() == .success(100))
 
         await awaitNoValueProduced(on: sut)
 
         await sut.cancel()
     }
 
-    @MainActor
-    func test_awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
-        let sut = makeSUT()
-
-        let exp1 = expectation(description: "Start waiting 1")
-        let task = Task.detached {
-            exp1.fulfill()
-            _ = try await sut.awaitValue()
+    @Test
+    func awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
+        var task: Task<Void, any Error>?
+        await withCheckedContinuation { continutation in
+            task = Task.detached(priority: .high) {
+                continutation.resume()
+                _ = try await sut.awaitValue()
+            }
         }
+        await Task.yield()
 
-        await fulfillment(of: [exp1], timeout: 1.0)
-
-        do {
+        await #expect(throws: SUT.AlreadyWaitingError.self, performing: {
             _ = try await sut.awaitValue()
-            XCTFail("Unexpected success")
-        } catch is SUT.AlreadyWaitingError {
-            // nice!
-        } catch {
-            XCTFail("Unexpected error")
-        }
+        })
 
-        task.cancel()
+        task?.cancel()
         await sut.cancel()
     }
 
-    @MainActor
-    func test_awaitValue_timeoutFulfillsWithError() async throws {
-        let sut = makeSUT()
-
-        do {
+    @Test
+    func awaitValue_timeoutFulfillsWithError() async throws {
+        await #expect(throws: TimeoutError.self, performing: {
             _ = try await sut.awaitValue(timeout: .nanoseconds(1))
-            XCTFail("Unexpected success")
-        } catch is TimeoutError {
-            // nice!
-        } catch {
-            XCTFail("Unexpected error")
-        }
+        })
 
         await sut.cancel()
     }
 
-    @MainActor
-    func test_fulfill_unsuspendsAwait() async throws {
-        let sut = makeSUT()
-
-        let result = await awaitValueForcingAsync(on: sut) {
+    @Test
+    func fulfill_unsuspendsAwait() async throws {
+        let result = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(42)
         }
 
-        XCTAssertEqual(result?.withAnyEquatableError(), .success(42))
+        #expect(result.withAnyEquatableError() == .success(42))
     }
 
-    @MainActor
-    func test_fulfill_beforeAwaitingReturnsInitialValue() async throws {
-        let sut = makeSUT()
+    @Test
+    func fulfill_beforeAwaitingReturnsInitialValue() async throws {
         await sut.fulfill(42)
 
         let value = try await sut.awaitValue()
 
-        XCTAssertEqual(value, 42)
+        #expect(value == 42)
     }
 
-    @MainActor
-    func test_fulfill_remembersMostRecentValueOnly() async throws {
-        let sut = makeSUT()
+    @Test
+    func fulfill_remembersMostRecentValueOnly() async throws {
         await sut.fulfill(42)
         await sut.fulfill(43)
         await sut.fulfill(44)
 
         let value = try await sut.awaitValue()
-        XCTAssertEqual(value, 44)
+        #expect(value == 44)
     }
 
-    @MainActor
-    func test_reject_unsuspendsAwait() async throws {
-        let sut = makeSUT()
-
-        let result = await awaitValueForcingAsync(on: sut) {
+    @Test
+    func reject_unsuspendsAwait() async throws {
+        let result = try await awaitValueInBackground(on: sut) {
             await sut.reject(error: TestError.testCase)
         }
 
-        switch result {
-        case .failure(TestError.testCase):
-            break
-        default:
-            XCTFail("Unexpected result")
-        }
+        #expect(throws: TestError.testCase, performing: {
+            try result.get()
+        })
     }
 
-    @MainActor
-    func test_reject_beforeAwaitResolvesWithInitialError() async throws {
-        let sut = makeSUT()
+    @Test
+    func reject_beforeAwaitResolvesWithInitialError() async throws {
         await sut.reject(error: TestError.testCase)
 
-        do {
+        await #expect(throws: TestError.testCase, performing: {
             _ = try await sut.awaitValue()
-            XCTFail("Error expected to be thrown.")
-        } catch TestError.testCase {
-            XCTAssert(true)
-        } catch {
-            XCTFail("Wrong thrown error type")
-        }
+        })
     }
 
-    @MainActor
-    func test_reject_resolvesWithMostRecentError() async throws {
-        let sut = makeSUT()
+    @Test
+    func reject_resolvesWithMostRecentError() async throws {
         await sut.reject(error: TestError.testCase)
         await sut.reject(error: TestError.testCase2)
 
-        do {
+        await #expect(throws: TestError.testCase2, performing: {
             _ = try await sut.awaitValue()
-            XCTFail("Expected error to be thrown")
-        } catch TestError.testCase2 {
-            XCTAssert(true)
-        } catch {
-            XCTFail("Wrong thrown error type")
+        })
+    }
+
+    @Test
+    func isWaiting_initiallyFalse() async {
+        let isWaiting = await sut.isWaiting
+        #expect(!isWaiting)
+    }
+
+    @Test
+    func isWaiting_trueWhenWaiting() async throws {
+        let waitForTaskStart = PendingValue<Void>()
+        Task.detached(priority: .high) {
+            await waitForTaskStart.fulfill()
+            _ = try await sut.awaitValue()
         }
-    }
 
-    @MainActor
-    func test_isWaiting_initiallyFalse() async {
-        let sut = makeSUT()
+        try await waitForTaskStart.awaitValue()
+        await Task.yield()
 
         let isWaiting = await sut.isWaiting
-        XCTAssertFalse(isWaiting)
-    }
-
-    @MainActor
-    func test_isWaiting_trueWhenWaiting() async {
-        let sut = makeSUT()
-
-        await awaitNoValueProduced(on: sut)
-
-        let isWaiting = await sut.isWaiting
-        XCTAssertTrue(isWaiting)
+        #expect(isWaiting)
 
         await sut.cancel()
     }
 
-    @MainActor
-    func test_isWaiting_falseWhenFulfilled() async throws {
-        let sut = makeSUT()
-
-        _ = await awaitValueForcingAsync(on: sut) {
+    @Test
+    func isWaiting_falseWhenFulfilled() async throws {
+        _ = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(42)
         }
 
         let isWaiting = await sut.isWaiting
-        XCTAssertFalse(isWaiting)
+        #expect(!isWaiting)
     }
 
-    @MainActor
-    func test_isWaiting_falseWhenRejected() async throws {
-        let sut = makeSUT()
-
-        _ = await awaitValueForcingAsync(on: sut) {
-            await sut.reject(error: anyError())
+    @Test
+    func isWaiting_falseWhenRejected() async throws {
+        _ = try await awaitValueInBackground(on: sut) {
+            await sut.reject(error: TestError.testCase)
         }
 
         let isWaiting = await sut.isWaiting
-        XCTAssertFalse(isWaiting)
+        #expect(!isWaiting)
     }
 
-    @MainActor
-    func test_isWaiting_falseWhenCancelled() async throws {
-        let sut = makeSUT()
-
-        _ = await awaitValueForcingAsync(on: sut) {
+    @Test
+    func isWaiting_falseWhenCancelled() async throws {
+        _ = try await awaitValueInBackground(on: sut) {
             await sut.cancel()
         }
 
         let isWaiting = await sut.isWaiting
-        XCTAssertFalse(isWaiting)
+        #expect(!isWaiting)
     }
 }
 
 // MARK: Helpers
 
 extension PendingValueTests {
-    private typealias SUT = PendingValue<Int>
-
-    @MainActor
-    private func makeSUT(file: StaticString = #filePath, line: UInt = #line) -> SUT {
-        let sut = PendingValue<Int>()
-        trackForMemoryLeaks(sut, file: file, line: line)
-        return sut
-    }
-
-    private func anyError() -> any Error {
-        struct SomeError: Error {}
-        return SomeError()
-    }
-
     /// Forces the SUT to start awaiting before calling `action`.
     ///
     /// This ensures the last value cache is checked before any action (fulfill/reject) is called.
     /// Without this, you might acidentally call `fulfill`/`reject` before await, and thus the value will be cached.
-    @MainActor
-    private func awaitValueForcingAsync(
+    private func awaitValueInBackground(
         on sut: SUT,
-        action: @MainActor () async -> Void
-    ) async -> Result<Int, any Error>? {
-        var capturedResult: Result<Int, any Error>?
-        let expStartedWaiting = expectation(description: "Started waiting")
-        let expInitial = expectation(description: "waiting for value")
-        Task {
-            expStartedWaiting.fulfill()
+        action: () async -> Void
+    ) async throws -> Result<Int, any Error> {
+        let startedWaiting = PendingValue<Void>()
+        let finishedWaiting = PendingValue<Void>()
+
+        var result: Result<Int, any Error>?
+        let task = Task.detached(priority: .high) {
+            await startedWaiting.fulfill()
             do {
                 let value = try await sut.awaitValue()
-                capturedResult = .success(value)
+                result = .success(value)
             } catch {
-                capturedResult = .failure(error)
+                result = .failure(error)
             }
-            expInitial.fulfill()
+            await finishedWaiting.fulfill()
         }
 
-        // Wait for the task to start before the action, so we know that we hit the `awaitValue` call.
-        await fulfillment(of: [expStartedWaiting], timeout: 1.0)
+        try await startedWaiting.awaitValue(timeout: .seconds(1))
+        await Task.yield()
 
         await action()
 
-        // Make sure we captured the result of the value that we awaited.
-        await fulfillment(of: [expInitial], timeout: 1.0)
+        try await finishedWaiting.awaitValue(timeout: .seconds(1))
 
-        return capturedResult
+        task.cancel()
+        return try #require(result)
     }
 
-    @MainActor
     private func awaitNoValueProduced(on sut: SUT) async {
-        let expNext = expectation(description: "Wait for no value")
-        expNext.isInverted = true
-        Task.detached {
-            _ = try await sut.awaitValue()
-            expNext.fulfill()
-        }
-        await fulfillment(of: [expNext], timeout: 1.0)
+        // If no value is produced, this will timeout.
+        await #expect(throws: TimeoutError.self, performing: {
+            try await sut.awaitValue(timeout: .seconds(1))
+        })
     }
 }
 

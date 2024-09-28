@@ -22,203 +22,192 @@
 //  SOFTWARE.
 //
 
+import Combine
+import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import FoundationExtensions
 
-final class DefaultsKitTests: XCTestCase {
-    // swiftlint:disable:next implicitly_unwrapped_optional
-    private var defaults: Defaults!
+final class DefaultTests {
+    let defaults: Defaults
 
-    override func setUpWithError() throws {
-        try super.setUpWithError()
-        let ephemeralDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
-        ephemeralDefaults.removePersistentDomain(forName: #file)
-        defaults = Defaults(userDefaults: ephemeralDefaults)
+    init() throws {
+        // Must be unique across ALL tests due to concurrent execution.
+        let suite = #file + Data.random(count: 10).base64EncodedString()
+        let userDefaults = try #require(UserDefaults(suiteName: suite))
+        userDefaults.removePersistentDomain(forName: suite)
+        defaults = Defaults(userDefaults: userDefaults)
     }
 
-    override func tearDown() {
-        super.tearDown()
-        defaults = nil
+    deinit {
+        defaults.removeAll()
     }
 
-    func testInteger() throws {
-        let value = 123
-
+    @Test(arguments: [0, 123, 456])
+    func integer(value: Int) throws {
         try defaults.set(value, for: .integerKey)
 
         let hasKey = defaults.has(.integerKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .integerKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testFloat() throws {
-        let value: Float = 123.1
-
+    @Test(arguments: [123.1, 0.0, 100.345])
+    func float(value: Float) throws {
         try defaults.set(value, for: .floatKey)
 
         let hasKey = defaults.has(.floatKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .floatKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testDouble() throws {
-        let value = 123.1
-
+    @Test(arguments: [123.1, 0.0, 100.345])
+    func double(value: Double) throws {
         try defaults.set(value, for: .doubleKey)
 
         let hasKey = defaults.has(.doubleKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .doubleKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testString() throws {
-        let value = "a string"
-
+    @Test(arguments: ["", "a string", "longer string with data"])
+    func string(value: String) throws {
         try defaults.set(value, for: .stringKey)
 
         let hasKey = defaults.has(.stringKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .stringKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testBool() throws {
-        let value = true
-
+    @Test(arguments: [true, false])
+    func bool(value: Bool) throws {
         try defaults.set(value, for: .boolKey)
 
         let hasKey = defaults.has(.boolKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .boolKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testDate() throws {
-        let value = Date()
-
+    @Test(arguments: [Date(), Date(timeIntervalSince1970: 100)])
+    func date(value: Date) throws {
         try defaults.set(value, for: .dateKey)
 
         let hasKey = defaults.has(.dateKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .dateKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testEnum() throws {
-        let value = EnumMock.three
-
+    @Test(arguments: [EnumMock.one, .two, .three])
+    private func customEnum(value: EnumMock) throws {
         try defaults.set(value, for: .enumKey)
 
         let hasKey = defaults.has(.enumKey)
-        XCTAssert(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .enumKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testOptionSet() throws {
-        let value = OptionSetMock.option3
-
+    @Test(arguments: [OptionSetMock.option1, .option2, .option3])
+    private func optionSet(value: OptionSetMock) throws {
         try defaults.set(value, for: .optionSetKey)
 
         let hasKey = defaults.has(.optionSetKey)
-        XCTAssert(hasKey)
+        try #require(hasKey)
 
         let savedValue = defaults.get(for: .optionSetKey)
-        XCTAssertEqual(savedValue, value)
+        #expect(savedValue == value)
     }
 
-    func testSet() throws {
-        let values = [1, 2, 3, 4]
-
+    @Test(arguments: [[1, 2, 3, 4], [], [1, 1, 1]])
+    func set(values: [Int]) throws {
         try defaults.set(values, for: .arrayOfIntegersKey)
 
         let hasKey = defaults.has(.arrayOfIntegersKey)
-        XCTAssertTrue(hasKey)
+        try #require(hasKey)
 
         let savedValues = defaults.get(for: .arrayOfIntegersKey)
-        XCTAssertNotNil(savedValues)
+        #expect(savedValues != nil)
         savedValues?.forEach { value in
-            XCTAssertTrue(savedValues?.contains(value) ?? false)
+            #expect(savedValues?.contains(value) ?? false)
         }
     }
 
-    func testClear() throws {
+    @Test
+    func clear() throws {
         let values = [1, 2, 3, 4]
 
         try defaults.set(values, for: .arrayOfIntegersKey)
         defaults.clear(.arrayOfIntegersKey)
 
         let hasKey = defaults.has(.arrayOfIntegersKey)
-        XCTAssertFalse(hasKey)
+        #expect(!hasKey)
 
         let savedValues = defaults.get(for: .arrayOfIntegersKey)
-        XCTAssertNil(savedValues)
+        #expect(savedValues == nil)
     }
 
-    func testSetObject() throws {
+    @Test
+    func setObject() throws {
         let child = PersonMock(name: "Anne Greenwell", age: 30, children: [])
         let person = PersonMock(name: "Bonnie Greenwell", age: 80, children: [child])
 
         try defaults.set(person, for: .personMockKey)
 
         let hasKey = defaults.has(.personMockKey)
-        XCTAssertTrue(hasKey)
+        #expect(hasKey)
 
         let savedPerson = defaults.get(for: .personMockKey)
-        XCTAssertEqual(savedPerson?.name, "Bonnie Greenwell")
-        XCTAssertEqual(savedPerson?.age, 80)
-        XCTAssertEqual(savedPerson?.children.first?.name, "Anne Greenwell")
-        XCTAssertEqual(savedPerson?.children.first?.age, 30)
+        #expect(savedPerson?.name == "Bonnie Greenwell")
+        #expect(savedPerson?.age == 80)
+        #expect(savedPerson?.children.first?.name == "Anne Greenwell")
+        #expect(savedPerson?.children.first?.age == 30)
     }
 
-    @MainActor
-    func test_clear_didChangeDefaults() async throws {
-        let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
-
-        let values: [Void] = try await awaitPublisher(publisher) {
-            defaults.clear(Key<String>("test1"))
-            defaults.clear(Key<String>("test2"))
-            defaults.clear(Key<String>("test3"))
-        }
-
-        XCTAssertEqual(values.count, 3)
+    @Test
+    func clear_didChangeDefaults() async throws {
+        try await defaults
+            .defaultsDidChangePublisher()
+            .testingConfirm(eventCount: 3) {
+                defaults.clear(Key<String>("test1"))
+                defaults.clear(Key<String>("test2"))
+                defaults.clear(Key<String>("test3"))
+            }
     }
 
-    @MainActor
-    func test_removeAll_didChangeDefaults() async throws {
-        let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
-
-        let values: [Void] = try await awaitPublisher(publisher) {
-            defaults.removeAll()
-            defaults.removeAll()
-            defaults.removeAll()
-        }
-
-        XCTAssertEqual(values.count, 3)
+    @Test
+    func removeAll_didChangeDefaults() async throws {
+        try await defaults
+            .defaultsDidChangePublisher()
+            .testingConfirm(eventCount: 3) {
+                defaults.removeAll()
+                defaults.removeAll()
+                defaults.removeAll()
+            }
     }
 
-    @MainActor
-    func test_set_didChangeDefaults() async throws {
-        let publisher = defaults.defaultsDidChangePublisher().collectFirst(3)
-
-        let values: [Void] = try await awaitPublisher(publisher) {
-            try defaults.set("test1", for: Key<String>("test1"))
-            try defaults.set("test1", for: Key<String>("test1"))
-            try defaults.set("test1", for: Key<String>("test1"))
-        }
-
-        XCTAssertEqual(values.count, 3)
+    @Test
+    func set_didChangeDefaults() async throws {
+        try await defaults
+            .defaultsDidChangePublisher()
+            .testingConfirm(eventCount: 4) {
+                try defaults.set("test1", for: Key<String>("test1"))
+                try defaults.set("test1", for: Key<String>("test1"))
+                try defaults.set("test1", for: Key<String>("test1"))
+                try defaults.set("test1", for: Key<String>("test1"))
+            }
     }
 }
 
