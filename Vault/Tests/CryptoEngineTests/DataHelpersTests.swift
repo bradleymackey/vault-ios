@@ -3,12 +3,26 @@ import Testing
 @testable import CryptoEngine
 
 struct DataHelpersTests {
-    @Test
-    func dataAsType_interpretsAsLittleEndian() {
-        let data32 = Data(hex: "ffffffee")
-        #expect(data32.asType(UInt32.self) == 0xEEFF_FFFF)
-        let data64 = Data(hex: "ffffffffffffffee")
-        #expect(data64.asType(UInt64.self) == 0xEEFF_FFFF_FFFF_FFFF)
+    @Test(arguments: [
+        ("ffffffee", 0xEEFF_FFFF),
+        ("00000000", 0x0000_0000),
+        ("00000001", 0x0100_0000),
+        ("ffffffff", 0xFFFF_FFFF),
+    ])
+    func dataAsType_interpretsAsLittleEndianInt32(hex: String, expected: UInt32) {
+        let data32 = Data(hex: hex)
+        #expect(data32.asType(UInt32.self) == expected)
+    }
+
+    @Test(arguments: [
+        ("ffffffffffffffee", 0xEEFF_FFFF_FFFF_FFFF),
+        ("0000000000000000", 0x0000_0000_0000_0000),
+        ("0000000000000001", 0x0100_0000_0000_0000),
+        ("ffffffffffffffff", 0xFFFF_FFFF_FFFF_FFFF),
+    ])
+    func dataAsType_interpretsAsLittleEndianInt64(hex: String, expected: UInt64) {
+        let data64 = Data(hex: hex)
+        #expect(data64.asType(UInt64.self) == expected)
     }
 
     @Test
