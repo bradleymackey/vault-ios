@@ -1,60 +1,55 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import FoundationExtensions
 
-final class FileSystemLocalResourceFetcherTests: XCTestCase {
-    func test_fetchLocalResourceFromURL_throwsIfResourceIsNotPresentForFileURL() async throws {
-        let sut = makeSUT()
+struct FileSystemLocalResourceFetcherTests {
+    let sut = FileSystemLocalResourceFetcher()
 
-        let url = try XCTUnwrap(URL(string: "file:///doesnotexist"))
-        await XCTAssertThrowsError(try await sut.fetchLocalResource(at: url))
+    @Test
+    func fetchLocalResourceFromURL_throwsIfResourceIsNotPresentForFileURL() async throws {
+        let url = try #require(URL(string: "file:///doesnotexist"))
+        await #expect(throws: (any Error).self, performing: {
+            try await sut.fetchLocalResource(at: url)
+        })
     }
 
-    func test_fetchLocalResourceFromURL_fetchesResourceFromModule() async throws {
-        let sut = makeSUT()
-
-        let path = try XCTUnwrap(Bundle.module.path(forResource: "TestFile", ofType: "txt"))
+    @Test
+    func fetchLocalResourceFromURL_fetchesResourceFromModule() async throws {
+        let path = try #require(Bundle.module.path(forResource: "TestFile", ofType: "txt"))
         let url = URL(fileURLWithPath: path)
         let data = try await sut.fetchLocalResource(at: url)
 
-        XCTAssertEqual(data, Data("Test contents\n".utf8))
+        #expect(data == Data("Test contents\n".utf8))
     }
 
-    func test_fetchLocalResourceFromBundle_throwsIfFileNotPresentInBundle() async throws {
-        let sut = makeSUT()
-
-        let bundlesToCheck: [Bundle] = [.main, .module]
-        for bundle in bundlesToCheck {
-            await XCTAssertThrowsError(try await sut.fetchLocalResource(
+    @Test(arguments: [Bundle.main, .module])
+    func fetchLocalResourceFromBundle_throwsIfFileNotPresentInBundle(bundle: Bundle) async throws {
+        await #expect(throws: (any Error).self) {
+            try await sut.fetchLocalResource(
                 fromBundle: bundle,
                 fileName: "doesnotexist",
                 fileExtension: "any"
-            ))
+            )
         }
     }
 
-    func test_fetchLocalResourceFromBundle_fetchesDataFromBundle() async throws {
-        let sut = makeSUT()
-
+    @Test
+    func fetchLocalResourceFromBundle_fetchesDataFromBundle() async throws {
         let response = try await sut.fetchLocalResource(
             fromBundle: .module,
             fileName: "TestFile",
             fileExtension: "txt"
         )
-        XCTAssertEqual(response, Data("Test contents\n".utf8))
+        #expect(response == Data("Test contents\n".utf8))
     }
 }
 
 // MARK: - Helpers
 
 extension FileSystemLocalResourceFetcherTests {
-    private func makeSUT() -> any LocalResourceFetcher {
-        FileSystemLocalResourceFetcher()
-    }
-
     private func makeURL(forBundleFile filename: String, fileExtension: String) throws -> URL {
-        let path = try XCTUnwrap(Bundle.module.path(forResource: filename, ofType: fileExtension))
+        let path = try #require(Bundle.module.path(forResource: filename, ofType: fileExtension))
         return URL(fileURLWithPath: path)
     }
 }
