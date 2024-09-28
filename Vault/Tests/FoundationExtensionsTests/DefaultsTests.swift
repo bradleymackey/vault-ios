@@ -178,51 +178,36 @@ final class DefaultTests {
 
     @Test
     func clear_didChangeDefaults() async throws {
-        var cancellable: AnyCancellable?
-        await confirmation(expectedCount: 3) { confirmation in
-            cancellable = defaults.defaultsDidChangePublisher()
-                .sink { _ in
-                    confirmation.confirm()
-                }
-
-            defaults.clear(Key<String>("test1"))
-            defaults.clear(Key<String>("test2"))
-            defaults.clear(Key<String>("test3"))
-        }
-        cancellable?.cancel()
+        try await defaults
+            .defaultsDidChangePublisher()
+            .testingConfirm(eventCount: 3) {
+                defaults.clear(Key<String>("test1"))
+                defaults.clear(Key<String>("test2"))
+                defaults.clear(Key<String>("test3"))
+            }
     }
 
     @Test
     func removeAll_didChangeDefaults() async throws {
-        var cancellable: AnyCancellable?
-        await confirmation(expectedCount: 3) { confirmation in
-            cancellable = defaults.defaultsDidChangePublisher()
-                .sink { _ in
-                    confirmation.confirm()
-                }
-
-            defaults.removeAll()
-            defaults.removeAll()
-            defaults.removeAll()
-        }
-        cancellable?.cancel()
+        try await defaults
+            .defaultsDidChangePublisher()
+            .testingConfirm(eventCount: 3) {
+                defaults.removeAll()
+                defaults.removeAll()
+                defaults.removeAll()
+            }
     }
 
     @Test
     func set_didChangeDefaults() async throws {
-        var cancellable: AnyCancellable?
-        try await confirmation(expectedCount: 4) { confirmation in
-            cancellable = defaults.defaultsDidChangePublisher()
-                .sink { _ in
-                    confirmation.confirm()
-                }
-
-            try defaults.set("test1", for: Key<String>("test1"))
-            try defaults.set("test1", for: Key<String>("test1"))
-            try defaults.set("test1", for: Key<String>("test1"))
-            try defaults.set("test1", for: Key<String>("test1"))
-        }
-        cancellable?.cancel()
+        try await defaults
+            .defaultsDidChangePublisher()
+            .testingConfirm(eventCount: 4) {
+                try defaults.set("test1", for: Key<String>("test1"))
+                try defaults.set("test1", for: Key<String>("test1"))
+                try defaults.set("test1", for: Key<String>("test1"))
+                try defaults.set("test1", for: Key<String>("test1"))
+            }
     }
 }
 
