@@ -70,6 +70,8 @@ struct PendingValueTests {
             }
         }
 
+        await Task.yield()
+
         await #expect(throws: SUT.AlreadyWaitingError.self, performing: {
             _ = try await sut.awaitValue()
         })
@@ -160,6 +162,7 @@ struct PendingValueTests {
         }
 
         try await waitForTaskStart.awaitValue()
+        await Task.yield()
 
         let isWaiting = await sut.isWaiting
         #expect(isWaiting)
