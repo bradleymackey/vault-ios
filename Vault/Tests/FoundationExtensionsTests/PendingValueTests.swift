@@ -3,6 +3,14 @@ import FoundationExtensions
 import TestHelpers
 import Testing
 
+/// A common pattern we use in these tests is starting a background task that calls `awaitValue`.
+/// We then want to check the state of the `sut` while it is waiting in the background.
+///
+/// To maximise correctness, there's a few things to keep in mind:
+///  - The task should be `detached` to ensure that this task is running independently of the test task.
+///  - After `await`ing the start of the task, call `Task.yield()` to ensure that the SUT is actually waiting.
+///  - The priority of this `detached` task should be `high` to make sure that yielding doesn't just resume on the
+///  test task immediately.
 struct PendingValueTests {
     enum TestError: Error {
         case testCase
@@ -17,7 +25,7 @@ struct PendingValueTests {
         try await confirmation { confirmation in
             let startedWaiting = PendingValue<Void>()
             let finishedWaiting = PendingValue<Void>()
-            let task = Task.detached {
+            let task = Task.detached(priority: .high) {
                 await startedWaiting.fulfill()
                 do {
                     _ = try await sut.awaitValue()
@@ -28,6 +36,7 @@ struct PendingValueTests {
             }
 
             try await startedWaiting.awaitValue()
+            await Task.yield()
 
             task.cancel()
 
@@ -37,12 +46,12 @@ struct PendingValueTests {
 
     @Test
     func awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
-        let result1 = try await awaitValueForcingAsync(on: sut) {
+        let result1 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(100)
         }
         #expect(result1.withAnyEquatableError() == .success(100))
 
-        let result2 = try await awaitValueForcingAsync(on: sut) {
+        let result2 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(101)
         }
         #expect(result2.withAnyEquatableError() == .success(101))
@@ -50,7 +59,7 @@ struct PendingValueTests {
 
     @Test
     func awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
-        let result1 = try await awaitValueForcingAsync(on: sut) {
+        let result1 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(100)
         }
         #expect(result1.withAnyEquatableError() == .success(100))
@@ -64,12 +73,11 @@ struct PendingValueTests {
     func awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
         var task: Task<Void, any Error>?
         await withCheckedContinuation { continutation in
-            task = Task.detached {
+            task = Task.detached(priority: .high) {
                 continutation.resume()
                 _ = try await sut.awaitValue()
             }
         }
-
         await Task.yield()
 
         await #expect(throws: SUT.AlreadyWaitingError.self, performing: {
@@ -91,7 +99,7 @@ struct PendingValueTests {
 
     @Test
     func fulfill_unsuspendsAwait() async throws {
-        let result = try await awaitValueForcingAsync(on: sut) {
+        let result = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(42)
         }
 
@@ -119,7 +127,7 @@ struct PendingValueTests {
 
     @Test
     func reject_unsuspendsAwait() async throws {
-        let result = try await awaitValueForcingAsync(on: sut) {
+        let result = try await awaitValueInBackground(on: sut) {
             await sut.reject(error: TestError.testCase)
         }
 
@@ -156,7 +164,7 @@ struct PendingValueTests {
     @Test
     func isWaiting_trueWhenWaiting() async throws {
         let waitForTaskStart = PendingValue<Void>()
-        Task.detached {
+        Task.detached(priority: .high) {
             await waitForTaskStart.fulfill()
             _ = try await sut.awaitValue()
         }
@@ -172,7 +180,7 @@ struct PendingValueTests {
 
     @Test
     func isWaiting_falseWhenFulfilled() async throws {
-        _ = try await awaitValueForcingAsync(on: sut) {
+        _ = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(42)
         }
 
@@ -182,7 +190,7 @@ struct PendingValueTests {
 
     @Test
     func isWaiting_falseWhenRejected() async throws {
-        _ = try await awaitValueForcingAsync(on: sut) {
+        _ = try await awaitValueInBackground(on: sut) {
             await sut.reject(error: TestError.testCase)
         }
 
@@ -192,7 +200,7 @@ struct PendingValueTests {
 
     @Test
     func isWaiting_falseWhenCancelled() async throws {
-        _ = try await awaitValueForcingAsync(on: sut) {
+        _ = try await awaitValueInBackground(on: sut) {
             await sut.cancel()
         }
 
@@ -208,7 +216,7 @@ extension PendingValueTests {
     ///
     /// This ensures the last value cache is checked before any action (fulfill/reject) is called.
     /// Without this, you might acidentally call `fulfill`/`reject` before await, and thus the value will be cached.
-    private func awaitValueForcingAsync(
+    private func awaitValueInBackground(
         on sut: SUT,
         action: () async -> Void
     ) async throws -> Result<Int, any Error> {
@@ -216,7 +224,7 @@ extension PendingValueTests {
         let finishedWaiting = PendingValue<Void>()
 
         var result: Result<Int, any Error>?
-        let task = Task.detached(priority: .background) {
+        let task = Task.detached(priority: .high) {
             await startedWaiting.fulfill()
             do {
                 let value = try await sut.awaitValue()
