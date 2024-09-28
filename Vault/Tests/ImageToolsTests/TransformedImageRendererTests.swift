@@ -1,19 +1,22 @@
 import Foundation
-import ImageTools
 import TestHelpers
-import XCTest
+import Testing
+import UIKit
+@testable import ImageTools
 
-final class TransformedImageRendererTests: XCTestCase {
-    func test_makeImage_nilFromRendererIsNil() {
+struct TransformedImageRendererTests {
+    @Test
+    func makeImage_nilFromRendererIsNil() {
         let renderer = ImageDataRendererMock()
         renderer.makeImageHandler = { _ in nil }
         let transformer = ImageTransformerMock()
         let sut = TransformedImageRenderer(renderer: renderer, transformer: transformer)
 
-        XCTAssertNil(sut.makeImage(fromData: Data()))
+        #expect(sut.makeImage(fromData: Data()) == nil)
     }
 
-    func test_makeImage_appliesTransformOnce() {
+    @Test
+    func makeImage_appliesTransformOnce() {
         let imageData = Data(repeating: 0x44, count: 45)
         let renderer = ImageDataRendererMock()
         renderer.makeImageHandler = { _ in UIImage() }
@@ -22,8 +25,8 @@ final class TransformedImageRendererTests: XCTestCase {
 
         let image = sut.makeImage(fromData: imageData)
 
-        XCTAssertNotNil(image)
-        XCTAssertEqual(renderer.makeImageCallCount, 1)
-        XCTAssertEqual(transformer.tranformCallCount, 1)
+        #expect(image != nil)
+        #expect(renderer.makeImageCallCount == 1)
+        #expect(transformer.tranformCallCount == 1)
     }
 }
