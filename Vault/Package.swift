@@ -124,20 +124,6 @@ let package = Package(
                 "ImageTools",
                 "TestHelpers",
             ],
-            swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
-        ),
-        .testTarget(
-            name: "CryptoDocumentExporterSnapshotTests",
-            dependencies: [
-                "CryptoDocumentExporter",
-                "ImageTools",
-                "TestHelpers",
-                .product(
-                    name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
-                ),
-            ],
             exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins

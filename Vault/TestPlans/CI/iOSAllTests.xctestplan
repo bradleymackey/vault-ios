@@ -81,13 +81,6 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "CryptoDocumentExporterSnapshotTests",
-        "name" : "CryptoDocumentExporterSnapshotTests"
-      }
-    },
-    {
-      "target" : {
-        "containerPath" : "container:",
         "identifier" : "CryptoEngineTests",
         "name" : "CryptoEngineTests"
       }

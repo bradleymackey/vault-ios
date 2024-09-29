@@ -4,7 +4,7 @@ import PDFKit
 import TestHelpers
 import XCTest
 
-final class PDFDataBlockDocumentRendererTests: XCTestCase {
+final class PDFDataBlockDocumentRendererSnapshotTests: XCTestCase {
     func test_render_drawsEmptyPDFDocument() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let pdf = try XCTUnwrap(sut.render(document: emptyDocument()))
