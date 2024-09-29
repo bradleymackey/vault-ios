@@ -54,7 +54,7 @@ struct HOTPGeneratorTests {
         (.max, 094_451),
     ])
     func code_generatesSHA1SixDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 6, algorithm: .sha1)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 6, algorithm: .sha1)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -72,7 +72,7 @@ struct HOTPGeneratorTests {
         (.max, 3_094_451),
     ])
     func code_generatesSHA1SevenDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 7, algorithm: .sha1)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 7, algorithm: .sha1)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -90,7 +90,7 @@ struct HOTPGeneratorTests {
         (.max, 63_094_451),
     ])
     func code_generatesSHA1EightDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 8, algorithm: .sha1)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 8, algorithm: .sha1)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -108,7 +108,7 @@ struct HOTPGeneratorTests {
         (.max, 790_413),
     ])
     func code_generatesSHA256SixDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 6, algorithm: .sha256)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 6, algorithm: .sha256)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -126,7 +126,7 @@ struct HOTPGeneratorTests {
         (.max, 7_790_413),
     ])
     func code_generatesSHA256SevenDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 7, algorithm: .sha256)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 7, algorithm: .sha256)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -144,7 +144,7 @@ struct HOTPGeneratorTests {
         (.max, 27_790_413),
     ])
     func code_generatesSHA256EightDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 8, algorithm: .sha256)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 8, algorithm: .sha256)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -162,7 +162,7 @@ struct HOTPGeneratorTests {
         (.max, 381_515),
     ])
     func code_generatesSHA512SixDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 6, algorithm: .sha512)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 6, algorithm: .sha512)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -180,7 +180,7 @@ struct HOTPGeneratorTests {
         (.max, 1_381_515),
     ])
     func code_generatesSHA512SevenDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 7, algorithm: .sha512)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 7, algorithm: .sha512)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -198,7 +198,7 @@ struct HOTPGeneratorTests {
         (.max, 11_381_515),
     ])
     func code_generatesSHA512EightDigitCodes(counter: UInt64, value: BigUInt) throws {
-        let sut = makeSUT(secret: rfcSecret, digits: 8, algorithm: .sha512)
+        let sut = makeSUT(secret: OTPRFCSecret.default, digits: 8, algorithm: .sha512)
         #expect(try sut.code(counter: counter) == value)
     }
 
@@ -210,13 +210,6 @@ struct HOTPGeneratorTests {
         algorithm: HOTPGenerator.Algorithm = .sha1
     ) -> HOTPGenerator {
         HOTPGenerator(secret: secret, digits: digits, algorithm: algorithm)
-    }
-
-    /// A secret seed used in the RFC.
-    ///
-    /// We can use this to validate against known-good values.
-    private var rfcSecret: Data {
-        Data(byteString: "12345678901234567890")
     }
 
     private var zeroSecret: Data {

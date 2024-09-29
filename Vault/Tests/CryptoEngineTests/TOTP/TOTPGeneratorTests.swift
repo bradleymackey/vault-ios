@@ -24,7 +24,7 @@ struct TOTPGeneratorTests {
 
     @Test
     func code_rollover30Seconds() throws {
-        let hotp = HOTPGenerator(secret: rfcSecretSHA1, digits: 8, algorithm: .sha1)
+        let hotp = HOTPGenerator(secret: OTPRFCSecret.sha1, digits: 8, algorithm: .sha1)
         let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         #expect(try sut.code(epochSeconds: 30) == sut.code(epochSeconds: 31))
@@ -37,7 +37,7 @@ struct TOTPGeneratorTests {
 
     @Test
     func code_rfcSHA1Example() throws {
-        let hotp = HOTPGenerator(secret: rfcSecretSHA1, digits: 8, algorithm: .sha1)
+        let hotp = HOTPGenerator(secret: OTPRFCSecret.sha1, digits: 8, algorithm: .sha1)
         let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         #expect(try sut.code(epochSeconds: 59) == 94_287_082)
@@ -50,7 +50,7 @@ struct TOTPGeneratorTests {
 
     @Test
     func code_rfcSHA256Example() throws {
-        let hotp = HOTPGenerator(secret: rfcSecretSHA256, digits: 8, algorithm: .sha256)
+        let hotp = HOTPGenerator(secret: OTPRFCSecret.sha256, digits: 8, algorithm: .sha256)
         let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         #expect(try sut.code(epochSeconds: 59) == 46_119_246)
@@ -63,7 +63,7 @@ struct TOTPGeneratorTests {
 
     @Test
     func code_rfcSHA512Example() throws {
-        let hotp = HOTPGenerator(secret: rfcSecretSHA512, digits: 8, algorithm: .sha512)
+        let hotp = HOTPGenerator(secret: OTPRFCSecret.sha512, digits: 8, algorithm: .sha512)
         let sut = TOTPGenerator(generator: hotp, timeInterval: 30)
 
         #expect(try sut.code(epochSeconds: 59) == 90_693_936)
@@ -72,21 +72,5 @@ struct TOTPGeneratorTests {
         #expect(try sut.code(epochSeconds: 1_234_567_890) == 93_441_116)
         #expect(try sut.code(epochSeconds: 2_000_000_000) == 38_618_901)
         #expect(try sut.code(epochSeconds: 20_000_000_000) == 47_863_826)
-    }
-}
-
-// MARK: - Helpers
-
-extension TOTPGeneratorTests {
-    private var rfcSecretSHA1: Data {
-        Data(byteString: "12345678901234567890")
-    }
-
-    private var rfcSecretSHA256: Data {
-        Data(byteString: "12345678901234567890123456789012")
-    }
-
-    private var rfcSecretSHA512: Data {
-        Data(byteString: "1234567890123456789012345678901234567890123456789012345678901234")
     }
 }
