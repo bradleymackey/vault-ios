@@ -84,7 +84,7 @@ custom_rules:
     message: "Is there a library that supports concurrency instead? We want to be thread safe, if at all possible! Please provide a description if this is unavoidable."
     severity: error
   no_xctest:
-    included: "Tests/(FoundationExtensionsTests|ImageToolsTests)/*"
+    included: "Tests/(FoundationExtensionsTests|ImageToolsTests|CryptoEngineTests)/*"
     name: "XCTest is not allowed in this target."
     regex: "import XCTest"
     match_kinds:
