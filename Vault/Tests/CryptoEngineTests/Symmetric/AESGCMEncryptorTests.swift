@@ -1,17 +1,25 @@
 import CryptoEngine
 import CryptoSwift
 import Foundation
-import XCTest
+import Testing
 
-final class AESGCMEncryptorTests: XCTestCase {
-    func test_encrypt_throwsForInvalidKeyLength() throws {
-        let key = Data("a".utf8)
+struct AESGCMEncryptorTests {
+    @Test(arguments: [
+        Data(),
+        Data.random(count: 1),
+        Data.random(count: 15),
+        Data.random(count: 100),
+    ])
+    func encrypt_throwsForInvalidKeyLength(key: Data) throws {
         let sut = makeSUT(key: key)
 
-        XCTAssertThrowsError(try sut.encrypt(plaintext: anyData(), iv: Data()))
+        #expect(throws: (any Error).self) {
+            try sut.encrypt(plaintext: anyData(), iv: Data())
+        }
     }
 
-    func test_encrypt_performsKnownGoodOperationWithZero() throws {
+    @Test
+    func encrypt_performsKnownGoodOperationWithZero() throws {
         let key = Data(hex: "0x00000000000000000000000000000000")
         let iv = Data(hex: "0x000000000000000000000000")
         let sut = makeSUT(key: key)
@@ -19,11 +27,12 @@ final class AESGCMEncryptorTests: XCTestCase {
         let message = Data()
         let result = try sut.encrypt(plaintext: message, iv: iv)
 
-        XCTAssertEqual(result.ciphertext, Data([]))
-        XCTAssertEqual(result.authenticationTag, Data(hex: "58e2fccefa7e3061367f1d57a4e7455a"))
+        #expect(result.ciphertext == Data([]))
+        #expect(result.authenticationTag == Data(hex: "58e2fccefa7e3061367f1d57a4e7455a"))
     }
 
-    func test_encrypt_performsKnownGoodOperationWithMessage() throws {
+    @Test
+    func encrypt_performsKnownGoodOperationWithMessage() throws {
         let key = Data(hex: "0xfeffe9928665731c6d6a8f9467308308")
         let iv = Data(hex: "0xcafebabefacedbaddecaf888")
         let sut = makeSUT(key: key)
@@ -34,17 +43,19 @@ final class AESGCMEncryptorTests: XCTestCase {
             )
         let result = try sut.encrypt(plaintext: message, iv: iv)
 
-        XCTAssertEqual(
-            result.ciphertext,
-            Data(
-                hex: "0x42831ec2217774244b7221b784d0d49ce3aa212f2c02a4e035c17e2329aca12e21d514b25466931c7d8f6a5aac84aa051ba30b396a0aac973d58e091473f5985"
-            )
+        #expect(
+            result.ciphertext ==
+                Data(
+                    hex: "0x42831ec2217774244b7221b784d0d49ce3aa212f2c02a4e035c17e2329aca12e21d514b25466931c7d8f6a5aac84aa051ba30b396a0aac973d58e091473f5985"
+                )
         )
-        XCTAssertEqual(result.authenticationTag, Data(hex: "0x4d5c2af327cd64a62cf35abd2ba6fab4"))
+        #expect(result.authenticationTag == Data(hex: "0x4d5c2af327cd64a62cf35abd2ba6fab4"))
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
+extension AESGCMEncryptorTests {
     private func makeSUT(key: Data = anyData()) -> AESGCMEncryptor {
         AESGCMEncryptor(key: key)
     }
