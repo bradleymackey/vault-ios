@@ -1,26 +1,24 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultKeygen
 
-final class VaultKeyDeriverFactoryImplTests: XCTestCase {
-    // Assumption: tests are run in DEBUG configuration
-    func test_makeVaultKeyDeriver_debugGeneratesFast() {
+struct VaultKeyDeriverFactoryImplTests {
+    @Test
+    func makeVaultKeyDeriver_debugGeneratesFast() {
         let sut = VaultKeyDeriverFactoryImpl()
 
         let result = sut.makeVaultKeyDeriver()
 
-        XCTAssertEqual(result.signature, .fastV1)
+        #expect(result.signature == .fastV1, "We assume tests are run in DEBUG")
     }
 
-    func test_lookupVaultKeyDeriver_looksUpCorrect() {
-        let signatures = VaultKeyDeriver.Signature.allCases
-        for signature in signatures {
-            let sut = VaultKeyDeriverFactoryImpl()
+    @Test(arguments: VaultKeyDeriver.Signature.allCases)
+    func lookupVaultKeyDeriver_looksUpCorrect(signature: VaultKeyDeriver.Signature) {
+        let sut = VaultKeyDeriverFactoryImpl()
 
-            let result = sut.lookupVaultKeyDeriver(signature: signature)
+        let result = sut.lookupVaultKeyDeriver(signature: signature)
 
-            XCTAssertEqual(result.signature, signature)
-        }
+        #expect(result.signature == signature)
     }
 }
