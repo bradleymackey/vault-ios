@@ -1,11 +1,13 @@
 import CryptoEngine
 import CryptoSwift
+import Foundation
 import FoundationExtensions
 import TestHelpers
-import XCTest
+import Testing
 
-final class ScryptKeyDeriverTests: XCTestCase {
-    func test_key_doesNotThrowForValidParameters() async {
+struct ScryptKeyDeriverTests {
+    @Test
+    func key_doesNotThrowForValidParameters() async {
         let params = ScryptKeyDeriver<Bits64>.Parameters(
             costFactor: 1 << 4,
             blockSizeFactor: 2,
@@ -13,10 +15,13 @@ final class ScryptKeyDeriverTests: XCTestCase {
         )
         let sut = ScryptKeyDeriver(parameters: params)
 
-        await XCTAssertNoThrow(try sut.key(password: anyData(), salt: anyData()))
+        #expect(throws: Never.self) {
+            try sut.key(password: anyData(), salt: anyData())
+        }
     }
 
-    func test_key_throwsForInvalidParameters() async {
+    @Test
+    func key_throwsForInvalidParameters() async {
         let params = ScryptKeyDeriver<Bits64>.Parameters(
             costFactor: 16385,
             blockSizeFactor: 8,
@@ -24,34 +29,42 @@ final class ScryptKeyDeriverTests: XCTestCase {
         )
         let sut = ScryptKeyDeriver<Bits64>(parameters: params)
 
-        await XCTAssertThrowsError(try sut.key(password: anyData(), salt: anyData()))
+        #expect(throws: (any Error).self) {
+            try sut.key(password: anyData(), salt: anyData())
+        }
     }
 
-    func test_key_throwsIfMissingSalt() async {
+    @Test
+    func key_throwsIfMissingSalt() async {
         let sut = makeSUT(parameters: .fastForTesting)
 
-        await XCTAssertThrowsError(try sut.key(password: anyData(), salt: Data()))
+        #expect(throws: (any Error).self) {
+            try sut.key(password: anyData(), salt: Data())
+        }
     }
 
-    func test_key_generatesValidKeyWithSalt() async throws {
+    @Test
+    func key_generatesValidKeyWithSalt() async throws {
         let password = Data(byteString: "hello world")
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
 
         let key = try sut.key(password: password, salt: salt)
-        XCTAssertEqual(key.data, Data(hex: "14a1ba9b9236df39"))
+        #expect(key.data == Data(hex: "14a1ba9b9236df39"))
     }
 
-    func test_key_generatesValidKeyWithEmptyPassword() async throws {
+    @Test
+    func key_generatesValidKeyWithEmptyPassword() async throws {
         let password = Data()
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
 
         let key = try sut.key(password: password, salt: salt)
-        XCTAssertEqual(key.data, Data(hex: "fa09cf2f564fb137"))
+        #expect(key.data == Data(hex: "fa09cf2f564fb137"))
     }
 
-    func test_key_generatesTheSameKeyMultipleTimes() async throws {
+    @Test
+    func key_generatesTheSameKeyMultipleTimes() async throws {
         let password = Data()
         let salt = Data(hex: "ABCDEF")
         let sut = makeSUT(parameters: .fastForTesting)
@@ -62,24 +75,25 @@ final class ScryptKeyDeriverTests: XCTestCase {
             sut.key(password: password, salt: salt),
             sut.key(password: password, salt: salt),
         ]
-        XCTAssertEqual(keys, [expected, expected, expected])
+        #expect(keys == [expected, expected, expected])
     }
 
-    func test_uniqueAlgorithmIdentifier_matchesParameters() {
+    @Test
+    func uniqueAlgorithmIdentifier_matchesParameters() {
         let sut = makeSUT(parameters: .init(
             costFactor: 998,
             blockSizeFactor: 432,
             parallelizationFactor: 555
         ))
 
-        XCTAssertEqual(
-            sut.uniqueAlgorithmIdentifier,
-            "SCRYPT<keyLength=8;costFactor=998;blockSizeFactor=432;parallelizationFactor=555>"
-        )
+        let expected = "SCRYPT<keyLength=8;costFactor=998;blockSizeFactor=432;parallelizationFactor=555>"
+        #expect(sut.uniqueAlgorithmIdentifier == expected)
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
+extension ScryptKeyDeriverTests {
     private func makeSUT(
         parameters: ScryptKeyDeriver<Bits64>
             .Parameters = .fastForTesting
