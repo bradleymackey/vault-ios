@@ -1,9 +1,11 @@
 import CryptoEngine
 import CryptoSwift
-import XCTest
+import Foundation
+import Testing
 
-final class AESGCMDecryptorTests: XCTestCase {
-    func test_decrypt_decryptsEmptyMessageWithAnyTag() throws {
+struct AESGCMDecryptorTests {
+    @Test
+    func decrypt_decryptsEmptyMessageWithAnyTag() throws {
         let key = Data(hex: "00000000000000000000000000000000")
         let iv = Data(hex: "000000000000000000000000")
         let plaintext = Data(hex: "")
@@ -15,10 +17,11 @@ final class AESGCMDecryptorTests: XCTestCase {
         let sut = makeSUT(key: key)
         let decrypted = try sut.decrypt(message: message, iv: iv)
 
-        XCTAssertEqual(decrypted, plaintext)
+        #expect(decrypted == plaintext)
     }
 
-    func test_decrypt_decryptsNonEmptyMessage() throws {
+    @Test
+    func decrypt_decryptsNonEmptyMessage() throws {
         let key = Data(hex: "0xfeffe9928665731c6d6a8f9467308308")
         let iv = Data(hex: "0xcafebabefacedbaddecaf888")
         let plaintext =
@@ -35,10 +38,11 @@ final class AESGCMDecryptorTests: XCTestCase {
         let sut = makeSUT(key: key)
         let decrypted = try sut.decrypt(message: message, iv: iv)
 
-        XCTAssertEqual(decrypted, plaintext)
+        #expect(decrypted == plaintext)
     }
 
-    func test_decrypt_throwsErrorIfTagIsBadForNonEmptyMessage() throws {
+    @Test
+    func decrypt_throwsErrorIfTagIsBadForNonEmptyMessage() throws {
         let key = Data(hex: "0xfeffe9928665731c6d6a8f9467308308")
         let iv = Data(hex: "0xcafebabefacedbaddecaf888")
         let message = AESGCMEncryptedMessage(
@@ -49,11 +53,15 @@ final class AESGCMDecryptorTests: XCTestCase {
         )
 
         let sut = makeSUT(key: key)
-        XCTAssertThrowsError(try sut.decrypt(message: message, iv: iv))
+        #expect(throws: (any Error).self, performing: {
+            try sut.decrypt(message: message, iv: iv)
+        })
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
+extension AESGCMDecryptorTests {
     private func makeSUT(key: Data = anyData()) -> AESGCMDecryptor {
         AESGCMDecryptor(key: key)
     }
