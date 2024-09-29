@@ -1,8 +1,8 @@
-import CryptoDocumentExporter
 import Foundation
 import ImageTools
 import PDFKit
 import VaultCore
+import VaultExport
 
 public struct VaultBackupPDFGenerator {
     public var size: any PDFDocumentSize

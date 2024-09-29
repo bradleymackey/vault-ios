@@ -1,9 +1,9 @@
-import CryptoDocumentExporter
 import Foundation
 import FoundationExtensions
 import PDFKit
 import VaultBackup
 import VaultCore
+import VaultExport
 import VaultKeygen
 
 @MainActor

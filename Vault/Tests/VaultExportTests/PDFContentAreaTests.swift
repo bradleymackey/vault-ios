@@ -1,7 +1,7 @@
 import TestHelpers
 import UIKit
 import XCTest
-@testable import CryptoDocumentExporter
+@testable import VaultExport
 
 final class PDFContentAreaTests: XCTestCase {
     func test_init_currentBoundsIsZero() {

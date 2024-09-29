@@ -28,8 +28,8 @@
     {
       "target" : {
         "containerPath" : "container:",
-        "identifier" : "CryptoDocumentExporterTests",
-        "name" : "CryptoDocumentExporterTests"
+        "identifier" : "VaultExportTests",
+        "name" : "VaultExportTests"
       }
     }
   ],

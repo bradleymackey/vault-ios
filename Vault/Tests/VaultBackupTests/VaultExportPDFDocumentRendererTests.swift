@@ -1,7 +1,7 @@
-import CryptoDocumentExporter
 import Foundation
 import PDFKit
 import TestHelpers
+import VaultExport
 import XCTest
 @testable import VaultBackup
 

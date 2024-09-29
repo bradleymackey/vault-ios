@@ -1,6 +1,6 @@
-import CryptoDocumentExporter
 import Foundation
 import ImageTools
+import VaultExport
 
 struct DataShardEncoder {
     private let dataShardBuilder: DataShardBuilder

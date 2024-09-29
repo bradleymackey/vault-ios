@@ -1,10 +1,10 @@
-import CryptoDocumentExporter
 import Foundation
 import ImageTools
 import TestHelpers
+import VaultExport
 import XCTest
 
-final class PDFDataBlockDocumentRendererTests: XCTestCase {
+final class PDFDataBlockDocumentRendererUnitTests: XCTestCase {
     func test_init_rendersNoImages() {
         let imageRenderer = makeImageRenderer()
 
@@ -50,7 +50,7 @@ final class PDFDataBlockDocumentRendererTests: XCTestCase {
 
 // MARK: - Helpers
 
-extension PDFDataBlockDocumentRendererTests {
+extension PDFDataBlockDocumentRendererUnitTests {
     private func makeSUT(
         rendererFactory: PDFRendererFactoryMock = makeRendererFactory(),
         imageRenderer: ImageDataRendererMock = makeImageRenderer(),

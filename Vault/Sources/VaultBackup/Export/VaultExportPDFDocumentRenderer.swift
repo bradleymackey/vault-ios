@@ -1,7 +1,7 @@
-import CryptoDocumentExporter
 import Foundation
 import PDFKit
 import VaultCore
+import VaultExport
 
 /// A renderer for an exported vault.
 ///

@@ -1,5 +1,5 @@
-import CryptoDocumentExporter
 import Foundation
+import VaultExport
 import XCTest
 
 final class PDFDocumentSizeTests: XCTestCase {
