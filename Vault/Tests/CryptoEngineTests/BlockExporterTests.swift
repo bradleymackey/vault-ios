@@ -49,7 +49,7 @@ struct BlockExporterTests {
     }
 
     @Test(arguments: [8, 16])
-    func test_noHeader_returnsMultipleBlocksWithOneByteLastBlock(chunkSize: Int) {
+    func noHeader_returnsMultipleBlocksWithOneByteLastBlock(chunkSize: Int) {
         let block1 = repeatingData(byte: 0xFF, bytes: chunkSize)
         let block2 = repeatingData(byte: 0xEE, bytes: chunkSize)
         let block3 = repeatingData(byte: 0xDD, bytes: 1)
