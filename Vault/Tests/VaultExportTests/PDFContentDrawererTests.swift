@@ -1,7 +1,7 @@
 import Foundation
 import TestHelpers
 import XCTest
-@testable import CryptoDocumentExporter
+@testable import VaultExport
 
 final class PDFContentDrawererTests: XCTestCase {
     func test_drawContent_drawsOnceIfSuccess() throws {

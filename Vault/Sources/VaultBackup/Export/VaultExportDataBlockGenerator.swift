@@ -1,5 +1,5 @@
-import CryptoDocumentExporter
 import Foundation
+import VaultExport
 
 /// Helper for creating the data block document from an exported vault.
 struct VaultExportDataBlockGenerator {

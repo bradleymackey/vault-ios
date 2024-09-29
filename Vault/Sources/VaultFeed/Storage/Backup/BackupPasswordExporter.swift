@@ -1,5 +1,5 @@
-import CryptoDocumentExporter
 import Foundation
+import VaultExport
 import VaultKeygen
 
 public actor BackupPasswordExporter {

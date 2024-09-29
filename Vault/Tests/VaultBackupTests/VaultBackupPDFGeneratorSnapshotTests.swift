@@ -1,7 +1,7 @@
-import CryptoDocumentExporter
 import Foundation
 import TestHelpers
 import VaultBackup
+import VaultExport
 import XCTest
 
 final class VaultBackupPDFGeneratorSnapshotTests: XCTestCase {

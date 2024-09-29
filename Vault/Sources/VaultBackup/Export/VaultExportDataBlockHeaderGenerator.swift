@@ -1,5 +1,5 @@
-import CryptoDocumentExporter
 import Foundation
+import VaultExport
 
 struct VaultExportDataBlockHeaderGenerator: DataBlockHeaderGenerator {
     let dateCreated: Date

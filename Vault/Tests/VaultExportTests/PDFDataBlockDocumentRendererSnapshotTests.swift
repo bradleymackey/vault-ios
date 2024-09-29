@@ -1,7 +1,7 @@
-import CryptoDocumentExporter
 import ImageTools
 import PDFKit
 import TestHelpers
+import VaultExport
 import XCTest
 
 final class PDFDataBlockDocumentRendererSnapshotTests: XCTestCase {

@@ -76,7 +76,7 @@ let package = Package(
         ),
         .target(
             name: "VaultBackup",
-            dependencies: ["VaultCore", "VaultKeygen", "CryptoDocumentExporter", "FoundationExtensions"],
+            dependencies: ["VaultCore", "VaultKeygen", "VaultExport", "FoundationExtensions"],
             swiftSettings: swiftSettings,
             plugins: targetPlugins
         ),
@@ -108,7 +108,7 @@ let package = Package(
             plugins: testTargetPlugins
         ),
         .target(
-            name: "CryptoDocumentExporter",
+            name: "VaultExport",
             dependencies: [
                 "CryptoEngine",
                 "FoundationExtensions",
@@ -118,9 +118,9 @@ let package = Package(
             plugins: targetPlugins
         ),
         .testTarget(
-            name: "CryptoDocumentExporterTests",
+            name: "VaultExportTests",
             dependencies: [
-                "CryptoDocumentExporter",
+                "VaultExport",
                 "ImageTools",
                 "TestHelpers",
             ],

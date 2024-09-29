@@ -1,6 +1,6 @@
 import CoreGraphics
-import CryptoDocumentExporter
 import Foundation
+import VaultExport
 import XCTest
 
 final class VerticalTilingDataBlockLayoutTests: XCTestCase {
