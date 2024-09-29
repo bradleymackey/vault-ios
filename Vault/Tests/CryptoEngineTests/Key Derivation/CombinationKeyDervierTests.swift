@@ -1,17 +1,21 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
-import XCTest
+import Testing
 @testable import CryptoEngine
 
-final class CombinationKeyDeriverTests: XCTestCase {
-    func test_key_throwsErrorIfNoKeyDerivers() {
+struct CombinationKeyDeriverTests {
+    @Test
+    func key_throwsErrorIfNoKeyDerivers() {
         let sut = CombinationKeyDeriver<Bits256>(derivers: [])
 
-        XCTAssertThrowsError(try sut.key(password: anyData(), salt: anyData()))
+        #expect(throws: (any Error).self) {
+            try sut.key(password: anyData(), salt: anyData())
+        }
     }
 
-    func test_key_returnsResultOfSingleKeyDeriver() throws {
+    @Test
+    func key_returnsResultOfSingleKeyDeriver() throws {
         let expectedData = KeyData<Bits256>.random()
         let deriver = KeyDeriverMock()
         deriver.keyHandler = { _, _ in
@@ -20,24 +24,26 @@ final class CombinationKeyDeriverTests: XCTestCase {
         let sut = CombinationKeyDeriver(derivers: [deriver])
 
         let result = try sut.key(password: anyData(), salt: anyData())
-        XCTAssertEqual(result, expectedData)
-        XCTAssertEqual(deriver.keyCallCount, 1)
+        #expect(result == expectedData)
+        #expect(deriver.keyCallCount == 1)
     }
 
-    func test_key_returnsResultOfLastKeyDervier() throws {
+    @Test
+    func key_returnsResultOfLastKeyDervier() throws {
         let deriver1 = mockKeyDeriver(returning: .repeating(byte: 0x00))
         let deriver2 = mockKeyDeriver(returning: .repeating(byte: 0x01))
         let deriver3 = mockKeyDeriver(returning: .repeating(byte: 0x02))
         let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
 
         let result = try sut.key(password: anyData(), salt: anyData())
-        XCTAssertEqual(result, .repeating(byte: 0x02))
-        XCTAssertEqual(deriver1.keyCallCount, 1)
-        XCTAssertEqual(deriver2.keyCallCount, 1)
-        XCTAssertEqual(deriver3.keyCallCount, 1)
+        #expect(result == .repeating(byte: 0x02))
+        #expect(deriver1.keyCallCount == 1)
+        #expect(deriver2.keyCallCount == 1)
+        #expect(deriver3.keyCallCount == 1)
     }
 
-    func test_key_usesKeyFromPreviousDeriverInNextDeriver() throws {
+    @Test
+    func key_usesKeyFromPreviousDeriverInNextDeriver() throws {
         let deriver1 = mockKeyDeriver(returning: .repeating(byte: 0x00))
         let deriver2 = mockKeyDeriver(returning: .repeating(byte: 0x01))
         let deriver3 = mockKeyDeriver(returning: .repeating(byte: 0x02))
@@ -45,12 +51,13 @@ final class CombinationKeyDeriverTests: XCTestCase {
 
         let initialPassword = Data(hex: "deadbeef")
         _ = try sut.key(password: initialPassword, salt: anyData())
-        XCTAssertEqual(deriver1.keyArgValues.first?.0, initialPassword)
-        XCTAssertEqual(deriver2.keyArgValues.first?.0, Data(repeating: 0x00, count: 32))
-        XCTAssertEqual(deriver3.keyArgValues.first?.0, Data(repeating: 0x01, count: 32))
+        #expect(deriver1.keyArgValues.first?.0 == initialPassword)
+        #expect(deriver2.keyArgValues.first?.0 == Data(repeating: 0x00, count: 32))
+        #expect(deriver3.keyArgValues.first?.0 == Data(repeating: 0x01, count: 32))
     }
 
-    func test_key_usesSameSaltForAllDerivers() throws {
+    @Test
+    func key_usesSameSaltForAllDerivers() throws {
         let deriver1 = mockKeyDeriver(returning: .repeating(byte: 0x00))
         let deriver2 = mockKeyDeriver(returning: .repeating(byte: 0x01))
         let deriver3 = mockKeyDeriver(returning: .repeating(byte: 0x02))
@@ -58,58 +65,51 @@ final class CombinationKeyDeriverTests: XCTestCase {
 
         let salt = Data(hex: "123456789aaaa")
         _ = try sut.key(password: anyData(), salt: salt)
-        XCTAssertEqual(deriver1.keyArgValues.first?.1, salt)
-        XCTAssertEqual(deriver2.keyArgValues.first?.1, salt)
-        XCTAssertEqual(deriver3.keyArgValues.first?.1, salt)
+        #expect(deriver1.keyArgValues.first?.1 == salt)
+        #expect(deriver2.keyArgValues.first?.1 == salt)
+        #expect(deriver3.keyArgValues.first?.1 == salt)
     }
 
-    func test_key_checksCancellationBetweenAlgs() async throws {
-        let exp1 = expectation(description: "Wait for signal")
-        let exp2 = expectation(description: "Wait for signal")
-        let deriver1 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg1")
-        let deriver2 = signalKeyDeriver {
-            exp1.fulfill()
-        }
-        let deriver3 = signalKeyDeriver {
-            self.wait(for: [exp2])
-        }
-        let deriver4 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
+    @Test
+    func key_checksCancellationBetweenAlgs() async throws {
+        // We expect 3 confirmations, from the first 3 algos, the 4th should not run.
+        await confirmation(expectedCount: 3) { confirmation in
+            let keyTask = Atomic<Task<KeyData<Bits256>, any Error>?>(initialValue: nil)
+            await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
+                let d1 = SignalKeyDeriver(signal: { confirmation.confirm() })
+                let d2 = SignalKeyDeriver(signal: { confirmation.confirm() })
+                let d3 = SignalKeyDeriver(signal: {
+                    // Cancel the task during d3.
+                    keyTask.modify { $0?.cancel() }
+                    confirmation.confirm()
+                })
+                let d4 = SignalKeyDeriver(signal: { confirmation.confirm() })
+                let sut = CombinationKeyDeriver(derivers: [d1, d2, d3, d4])
 
-        let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3, deriver4])
-
-        let exp3 = expectation(description: "Wait for task")
-        let task = Task {
-            defer { exp3.fulfill() }
-            do {
-                _ = try sut.key(password: Data(), salt: Data())
-                XCTFail("Expected cancellation")
-            } catch {
-                XCTAssertTrue(error is CancellationError)
+                keyTask.modify {
+                    $0 = Task {
+                        // Once the keygen task is done or cancelled, resume the continuation
+                        defer { continuation.resume() }
+                        return try sut.key(password: Data(), salt: Data())
+                    }
+                }
             }
+
+            await #expect(throws: CancellationError.self, performing: {
+                try await keyTask.value?.value
+            })
         }
-
-        // Wait for the second deriver to get hit. This will give us the opportunity to make sure we can
-        // actually cancel it before the test code ends.
-        await fulfillment(of: [exp1])
-
-        // Cancel the alg.
-        task.cancel()
-
-        // Now, fire deriver3, which ensures that the sut keeps running and we hit the cancellation check.
-        exp2.fulfill()
-
-        // Final wait for task to complete, so we're sure the expectations run
-        await fulfillment(of: [exp3])
     }
 
-    func test_uniqueAlgorithmIdentifier_matchesParametersOfPassedAlgorithms() {
-        let deriver1 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg1")
-        let deriver2 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg2")
-        let deriver3 = mockKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
+    @Test
+    func uniqueAlgorithmIdentifier_matchesParametersOfPassedAlgorithms() {
+        let deriver1 = StubKeyDeriver(uniqueAlgorithmIdentifier: "alg1")
+        let deriver2 = StubKeyDeriver(uniqueAlgorithmIdentifier: "alg2")
+        let deriver3 = StubKeyDeriver(uniqueAlgorithmIdentifier: "alg3")
 
         let sut = CombinationKeyDeriver(derivers: [deriver1, deriver2, deriver3])
 
-        XCTAssertEqual(sut.uniqueAlgorithmIdentifier, "COMBINATION<alg1|alg2|alg3>")
+        #expect(sut.uniqueAlgorithmIdentifier == "COMBINATION<alg1|alg2|alg3>")
     }
 }
 
@@ -124,21 +124,35 @@ extension CombinationKeyDeriverTests {
         return deriver1
     }
 
-    private func mockKeyDeriver(uniqueAlgorithmIdentifier: String) -> KeyDeriverMock {
-        let deriver1 = KeyDeriverMock()
-        deriver1.uniqueAlgorithmIdentifier = uniqueAlgorithmIdentifier
-        deriver1.keyHandler = { _, _ in
-            .zero()
+    private struct StubKeyDeriver: KeyDeriver {
+        var stubKey: KeyData<Bits256>
+        var uniqueAlgorithmIdentifier: String
+
+        init(
+            stubKey: KeyData<Bits256> = .zero(),
+            uniqueAlgorithmIdentifier: String = "stub"
+        ) {
+            self.stubKey = stubKey
+            self.uniqueAlgorithmIdentifier = uniqueAlgorithmIdentifier
         }
-        return deriver1
+
+        func key(password _: Data, salt _: Data) throws -> KeyData<Bits256> {
+            stubKey
+        }
     }
 
-    private func signalKeyDeriver(signal: @escaping () -> Void) -> KeyDeriverMock {
-        let deriver1 = KeyDeriverMock()
-        deriver1.keyHandler = { _, _ in
+    /// Calls a signal closure before returning data.
+    private final class SignalKeyDeriver: KeyDeriver {
+        let signal: @Sendable () -> Void
+
+        init(signal: @Sendable @escaping () -> Void) {
+            self.signal = signal
+        }
+
+        var uniqueAlgorithmIdentifier: String { "signal" }
+        func key(password _: Data, salt _: Data) throws -> KeyData<Bits256> {
             signal()
             return .zero()
         }
-        return deriver1
     }
 }
