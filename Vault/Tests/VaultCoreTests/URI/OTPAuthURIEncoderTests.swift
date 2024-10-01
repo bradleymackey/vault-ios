@@ -1,20 +1,21 @@
 import Foundation
+import Testing
 import VaultCore
-import XCTest
 
-final class OTPAuthURIEncoderTests: XCTestCase {
+struct OTPAuthURIEncoderTests {
+    let sut = OTPAuthURIEncoder()
+
+    @Test
     func test_encodeScheme_isOtpauth() throws {
         let code = makeCode(type: .totp())
-        let sut = makeSUT()
-
         let encoded = try sut.encode(code: code)
 
         expect(encoded, hasScheme: "otpauth")
     }
 
-    func test_encodeType_totp() throws {
+    @Test
+    func encodeType_totp() throws {
         let code = makeCode(type: .totp(), accountName: "")
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
@@ -22,9 +23,9 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(encoded, hasPathComponents: ["/"])
     }
 
-    func test_encodeType_hotp() throws {
+    @Test
+    func encodeType_hotp() throws {
         let code = makeCode(type: .hotp(), accountName: "")
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
@@ -32,27 +33,27 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(encoded, hasPathComponents: ["/"])
     }
 
-    func test_encodeAccountName_includesInPath() throws {
+    @Test
+    func encodeAccountName_includesInPath() throws {
         let code = makeCode(accountName: "Account")
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
         expect(encoded, hasPathComponents: ["/", "Account"])
     }
 
-    func test_encodeAccountName_includesInPathWithSpaces() throws {
+    @Test
+    func encodeAccountName_includesInPathWithSpaces() throws {
         let code = makeCode(accountName: "Account Name")
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
         expect(encoded, hasPathComponents: ["/", "Account Name"])
     }
 
-    func test_encodeIssuer_includesInPathAndParameter() throws {
+    @Test
+    func encodeIssuer_includesInPathAndParameter() throws {
         let code = makeCode(accountName: "Account", issuer: "Issuer")
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
@@ -60,9 +61,9 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(encoded, containsQueryParameter: ("issuer", "Issuer"))
     }
 
-    func test_encodeIssuer_includesInPathAndParameterWithSpaces() throws {
+    @Test
+    func encodeIssuer_includesInPathAndParameterWithSpaces() throws {
         let code = makeCode(accountName: "Account Name", issuer: "Issuer Name")
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
 
@@ -70,99 +71,94 @@ final class OTPAuthURIEncoderTests: XCTestCase {
         expect(encoded, containsQueryParameter: ("issuer", "Issuer Name"))
     }
 
-    func test_encodeAlgorithm_includesInParameters() throws {
-        let expected: [OTPAuthAlgorithm: String] = [
-            .sha1: "SHA1",
-            .sha256: "SHA256",
-            .sha512: "SHA512",
-        ]
-        for (algorithm, string) in expected {
-            let code = makeCode(algorithm: algorithm)
-            let sut = makeSUT()
+    @Test(arguments: [
+        (.sha1, "SHA1"),
+        (.sha256, "SHA256"),
+        (.sha512, "SHA512"),
+    ] as [(OTPAuthAlgorithm, String)])
+    func encodeAlgorithm_includesInParameters(algorithm: OTPAuthAlgorithm, string: String) throws {
+        let code = makeCode(algorithm: algorithm)
 
-            let encoded = try sut.encode(code: code)
+        let encoded = try sut.encode(code: code)
 
-            expect(encoded, containsQueryParameter: ("algorithm", string))
-        }
+        expect(encoded, containsQueryParameter: ("algorithm", string))
     }
 
-    func test_encodeDigits_includesInParameters() throws {
-        let expected: [OTPAuthDigits: String] = [
-            OTPAuthDigits(value: 6): "6",
-            OTPAuthDigits(value: 7): "7",
-            OTPAuthDigits(value: 8): "8",
-            OTPAuthDigits(value: 120): "120",
-        ]
+    @Test(arguments: [
+        (6, "6"),
+        (7, "7"),
+        (8, "8"),
+        (120, "120"),
+    ] as [(OTPAuthDigits, String)])
+    func encodeDigits_includesInParameters(digits: OTPAuthDigits, string: String) throws {
+        let code = makeCode(digits: digits)
 
-        for (digits, string) in expected {
-            let code = makeCode(digits: digits)
-            let sut = makeSUT()
+        let encoded = try sut.encode(code: code)
 
-            let encoded = try sut.encode(code: code)
-
-            expect(encoded, containsQueryParameter: ("digits", string))
-        }
+        expect(encoded, containsQueryParameter: ("digits", string))
     }
 
-    func test_encodePeriod_includesPeriodInParameters() throws {
-        let samples: [UInt64] = [2, 100, 200, 2_000_000]
-        for sample in samples {
-            let code = makeCode(type: .totp(period: sample))
-            let sut = makeSUT()
+    @Test(arguments: [
+        2,
+        100,
+        200,
+        2_000_000,
+    ])
+    func encodePeriod_includesPeriodInParameters(period: UInt64) throws {
+        let code = makeCode(type: .totp(period: period))
 
-            let encoded = try sut.encode(code: code)
+        let encoded = try sut.encode(code: code)
 
-            expect(encoded, containsQueryParameter: ("period", "\(sample)"))
-            expect(encoded, doesNotContainQueryParameter: "counter")
-        }
+        expect(encoded, containsQueryParameter: ("period", "\(period)"))
+        expect(encoded, doesNotContainQueryParameter: "counter")
     }
 
-    func test_encodeCounter_includesCounterInParameters() throws {
-        let samples: [UInt64] = [2, 100, 200, 2_000_000]
-        for sample in samples {
-            let code = makeCode(type: .hotp(counter: sample))
-            let sut = makeSUT()
+    @Test(arguments: [
+        2,
+        100,
+        200,
+        2_000_000,
+    ])
+    func encodeCounter_includesCounterInParameters(counter: UInt64) throws {
+        let code = makeCode(type: .hotp(counter: counter))
 
-            let encoded = try sut.encode(code: code)
+        let encoded = try sut.encode(code: code)
 
-            expect(encoded, containsQueryParameter: ("counter", "\(sample)"))
-            expect(encoded, doesNotContainQueryParameter: "period")
-        }
+        expect(encoded, containsQueryParameter: ("counter", "\(counter)"))
+        expect(encoded, doesNotContainQueryParameter: "period")
     }
 
-    func test_encodeSecret_includesEmptySecret() throws {
+    @Test
+    func encodeSecret_includesEmptySecret() throws {
         let secret = OTPAuthSecret(data: Data(), format: .base32)
         let code = makeCode(secret: secret)
-        let sut = makeSUT()
-
         let encoded = try sut.encode(code: code)
 
         expect(encoded, containsQueryParameter: ("secret", ""))
     }
 
-    func test_encodeSecret_includesSecretWithData() throws {
+    @Test
+    func encodeSecret_includesSecretWithData() throws {
         let data = Data(repeating: 0xAA, count: 5)
         let secret = OTPAuthSecret(data: data, format: .base32)
         let code = makeCode(secret: secret)
-        let sut = makeSUT()
-
         let encoded = try sut.encode(code: code)
 
         expect(encoded, containsQueryParameter: ("secret", "VKVKVKVK"))
     }
 
-    func test_encodeSecret_includesSecretWithDataAndPadding() throws {
+    @Test
+    func encodeSecret_includesSecretWithDataAndPadding() throws {
         let bytes: [UInt8] = [0xAB, 0x21, 0x12, 0x43, 0xFF, 0xEE, 0xDD, 0x00]
         let secret = OTPAuthSecret(data: Data(bytes), format: .base32)
         let code = makeCode(secret: secret)
-        let sut = makeSUT()
-
         let encoded = try sut.encode(code: code)
 
         expect(encoded, containsQueryParameter: ("secret", "VMQREQ7753OQA==="))
     }
 
-    func test_encode_encodesAllParameters() throws {
+    @Test
+    func encode_encodesAllParameters() throws {
         let data = Data(repeating: 0xAA, count: 5)
         let secret = OTPAuthSecret(data: data, format: .base32)
         let code = makeCode(
@@ -173,8 +169,6 @@ final class OTPAuthURIEncoderTests: XCTestCase {
             digits: .init(value: 8),
             secret: secret
         )
-
-        let sut = makeSUT()
 
         let encoded = try sut.encode(code: code)
         expect(encoded, hasScheme: "otpauth")
@@ -188,13 +182,11 @@ final class OTPAuthURIEncoderTests: XCTestCase {
             "algorithm": "SHA512",
         ])
     }
+}
 
-    // MARK: - Helpers
+// MARK: - Helpers
 
-    private func makeSUT() -> OTPAuthURIEncoder {
-        OTPAuthURIEncoder()
-    }
-
+extension OTPAuthURIEncoderTests {
     private func makeCode(
         type: OTPAuthType = .totp(),
         accountName: String = "any",
@@ -218,54 +210,49 @@ final class OTPAuthURIEncoderTests: XCTestCase {
     private func expect(
         _ uri: OTPAuthURI,
         hasScheme scheme: String,
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = .__here()
     ) {
         let actual = uri.scheme
-        XCTAssertEqual(actual, scheme, file: file, line: line)
+        #expect(actual == scheme, sourceLocation: sourceLocation)
     }
 
-    private func expect(_ uri: OTPAuthURI, hasType type: String, file: StaticString = #filePath, line: UInt = #line) {
+    private func expect(_ uri: OTPAuthURI, hasType type: String, sourceLocation: SourceLocation = .__here()) {
         let actual = uri.host
-        XCTAssertEqual(actual, type, file: file, line: line)
+        #expect(actual == type, sourceLocation: sourceLocation)
     }
 
     private func expect(
         _ uri: OTPAuthURI,
         hasPathComponents pathComponents: [String],
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = .__here()
     ) {
-        XCTAssertEqual(uri.pathComponents, pathComponents, file: file, line: line)
+        #expect(uri.pathComponents == pathComponents, sourceLocation: sourceLocation)
     }
 
     private func expect(
         _ uri: OTPAuthURI,
         hasAllQueryParameters queryParamters: [String: String],
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = .__here()
     ) {
-        XCTAssertEqual(uri.queryParameters, queryParamters, file: file, line: line)
+        #expect(uri.queryParameters == queryParamters, sourceLocation: sourceLocation)
     }
 
     private func expect(
         _ uri: OTPAuthURI,
         containsQueryParameter parameter: (key: String, value: String),
-        file: StaticString = #filePath,
-        line: UInt = #line
+        sourceLocation: SourceLocation = .__here()
     ) {
         let actualValue = uri.queryParameters[parameter.key]
-        XCTAssertEqual(actualValue, parameter.value, file: file, line: line)
+        #expect(actualValue == parameter.value, sourceLocation: sourceLocation)
     }
 
     private func expect(
         _ uri: OTPAuthURI,
         doesNotContainQueryParameter parameter: String,
-        file _: StaticString = #filePath,
-        line _: UInt = #line
+        sourceLocation: SourceLocation = .__here()
     ) {
         let keys = uri.queryParameters.keys
-        XCTAssertFalse(keys.contains(where: { $0 == parameter }))
+        #expect(keys.contains(where: { $0 == parameter }) == false, sourceLocation: sourceLocation)
     }
 }
 
