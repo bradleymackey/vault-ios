@@ -24,6 +24,17 @@ struct OTPAuthURIEncoderTests {
     }
 
     @Test
+    func encodeType_totpWithPeriod() throws {
+        let code = makeCode(type: .totp(period: 69), accountName: "")
+
+        let encoded = try sut.encode(code: code)
+
+        expect(encoded, hasType: "totp")
+        expect(encoded, hasPathComponents: ["/"])
+        expect(encoded, containsQueryParameter: ("period", "69"))
+    }
+
+    @Test
     func encodeType_hotp() throws {
         let code = makeCode(type: .hotp(), accountName: "")
 
@@ -31,6 +42,17 @@ struct OTPAuthURIEncoderTests {
 
         expect(encoded, hasType: "hotp")
         expect(encoded, hasPathComponents: ["/"])
+    }
+
+    @Test
+    func encodeType_hotpWithCounter() throws {
+        let code = makeCode(type: .hotp(counter: 71), accountName: "")
+
+        let encoded = try sut.encode(code: code)
+
+        expect(encoded, hasType: "hotp")
+        expect(encoded, hasPathComponents: ["/"])
+        expect(encoded, containsQueryParameter: ("counter", "71"))
     }
 
     @Test
