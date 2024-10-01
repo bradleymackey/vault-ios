@@ -8,26 +8,31 @@ enum TaskRaceTests {
         @Test
         func noScheduledTasksThrows() async throws {
             await #expect(throws: TaskRaceError.noTasksScheduled) {
-                let task = Task.race(firstResolved: [TaskRace<Void>]())
-                try await task.value
+                try await Task.race(firstResolved: [TaskRace<Void>]())
             }
         }
 
         @Test("Cancellation is always checked before returning")
         func noScheduledTasksCancelledThrowsCancellation() async throws {
+            let parent = Task {
+                try await Task.race(firstResolved: [TaskRace<Void>]())
+            }
+            parent.cancel()
+
             await #expect(throws: CancellationError.self) {
-                let task = Task.race(firstResolved: [TaskRace<Void>]())
-                task.cancel()
-                try await task.value
+                try await parent.value
             }
         }
 
         @Test
         func propagatesCancellation() async throws {
+            let parent = Task {
+                try await Task.race(firstResolved: [longTask()])
+            }
+            parent.cancel()
+
             await #expect(throws: CancellationError.self) {
-                let task = Task.race(firstResolved: [longTask()])
-                task.cancel()
-                _ = try await task.value
+                _ = try await parent.value
             }
         }
 
@@ -48,13 +53,15 @@ enum TaskRaceTests {
                 try await pending3.awaitValue()
                 return TestTask.t3.testValue
             }
-            let task = Task.race(firstResolved: [t1, t2, t3])
+            let parent = Task {
+                try await Task.race(firstResolved: [t1, t2, t3])
+            }
             switch resolvingTask {
             case .t1: await pending1.fulfill()
             case .t2: await pending2.fulfill()
             case .t3: await pending3.fulfill()
             }
-            let value = try await task.value
+            let value = try await parent.value
 
             #expect(value == resolvingTask.testValue)
         }
@@ -82,14 +89,16 @@ enum TaskRaceTests {
                     throw SomeError()
                 }
             }
-            let task = Task.race(firstResolved: [t1, t2, t3])
+            let parent = Task {
+                try await Task.race(firstResolved: [t1, t2, t3])
+            }
             switch erroringTask {
             case .t1: await pending1.fulfill()
             case .t2: await pending2.fulfill()
             case .t3: await pending3.fulfill()
             }
             await #expect(throws: SomeError.self, performing: {
-                _ = try await task.value
+                _ = try await parent.value
             })
         }
     }
@@ -98,26 +107,31 @@ enum TaskRaceTests {
         @Test
         func noScheduledTasksThrows() async throws {
             await #expect(throws: TaskRaceError.noTasksScheduled) {
-                let task = Task.race(firstValue: [TaskRace<Void>]())
-                try await task.value
+                try await Task.race(firstValue: [TaskRace<Void>]())
             }
         }
 
         @Test("Cancellation is always checked before returning")
         func noScheduledTasksCancelledThrowsCancellation() async throws {
+            let parent = Task {
+                try await Task.race(firstValue: [TaskRace<Void>]())
+            }
+            parent.cancel()
+
             await #expect(throws: CancellationError.self) {
-                let task = Task.race(firstValue: [TaskRace<Void>]())
-                task.cancel()
-                try await task.value
+                try await parent.value
             }
         }
 
         @Test
         func propagatesCancellation() async throws {
+            let parent = Task {
+                try await Task.race(firstValue: [longTask()])
+            }
+            parent.cancel()
+
             await #expect(throws: CancellationError.self) {
-                let task = Task.race(firstValue: [longTask()])
-                task.cancel()
-                _ = try await task.value
+                _ = try await parent.value
             }
         }
 
@@ -138,13 +152,16 @@ enum TaskRaceTests {
                 try await pending3.awaitValue()
                 return TestTask.t3.testValue
             }
-            let task = Task.race(firstValue: [t1, t2, t3])
+            let parent = Task {
+                try await Task.race(firstValue: [t1, t2, t3])
+            }
+
             switch resolvingTask {
             case .t1: await pending1.fulfill()
             case .t2: await pending2.fulfill()
             case .t3: await pending3.fulfill()
             }
-            let value = try await task.value
+            let value = try await parent.value
 
             #expect(value == resolvingTask.testValue)
         }
@@ -166,11 +183,13 @@ enum TaskRaceTests {
                 try await pending3.awaitValue()
                 return 103
             }
-            let task = Task.race(firstValue: [t1, t2, t3])
+            let parent = Task {
+                try await Task.race(firstValue: [t1, t2, t3])
+            }
             await pending1.fulfill()
             await pending2.fulfill()
             await pending3.fulfill()
-            let value = try await task.value
+            let value = try await parent.value
 
             #expect(value == 103)
         }
@@ -192,11 +211,13 @@ enum TaskRaceTests {
                 try await pending3.awaitValue()
                 throw SomeError()
             }
-            let task = Task.race(firstValue: [t1, t2, t3])
+            let parent = Task {
+                try await Task.race(firstValue: [t1, t2, t3])
+            }
             await pending1.fulfill()
             await pending2.fulfill()
             await pending3.fulfill()
-            let value = try await task.value
+            let value = try await parent.value
 
             #expect(value == nil)
         }
