@@ -79,10 +79,9 @@ extension PendingValue {
         }
 
         if let timeout {
-            let timeoutTask = Task.withTimeout(delay: timeout) {
+            return try await Task.withTimeout(delay: timeout) {
                 try await getValue()
             }
-            return try await timeoutTask.value
         } else {
             return try await getValue()
         }
