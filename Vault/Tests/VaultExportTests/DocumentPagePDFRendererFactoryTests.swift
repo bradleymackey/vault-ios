@@ -1,58 +1,59 @@
 import Foundation
+import Testing
+import UIKit
 import VaultExport
-import XCTest
 
-final class DocumentPagePDFRendererFactoryTests: XCTestCase {
-    func test_makeRenderer_rendererHasSpecifiedSizeSet() {
-        let documentSize = USLetterDocumentSize()
+struct DocumentPagePDFRendererFactoryTests {
+    @Test(arguments: [USLetterDocumentSize(), A4DocumentSize()] as [any PDFDocumentSize])
+    func makeRenderer_rendererHasSpecifiedSizeSet(documentSize: any PDFDocumentSize) {
         let sut = makeSUT(size: documentSize)
 
         let renderer = sut.makeRenderer()
 
         let expectedSize = documentSize.pointSize()
         let actualSize = renderer.format.bounds.size
-        XCTAssertEqual(actualSize.width, expectedSize.width)
-        XCTAssertEqual(actualSize.height, expectedSize.height)
+        #expect(actualSize.width.isAlmostEqual(to: expectedSize.width))
+        #expect(actualSize.height.isAlmostEqual(to: expectedSize.height))
     }
 
-    func test_makeRenderer_rendererStartsAtOrigin() {
-        let documentSize = USLetterDocumentSize()
+    @Test(arguments: [USLetterDocumentSize(), A4DocumentSize()] as [any PDFDocumentSize])
+    func makeRenderer_rendererStartsAtOrigin(documentSize: any PDFDocumentSize) {
         let sut = makeSUT(size: documentSize)
 
         let renderer = sut.makeRenderer()
 
         let actualOrigin = renderer.format.bounds.origin
-        XCTAssertEqual(actualOrigin, .zero)
+        #expect(actualOrigin == .zero)
     }
 
-    func test_makeRenderer_formatCreatorIsApplicationName() throws {
-        let applicationName = UUID().uuidString
+    @Test(arguments: ["", "one", "two"])
+    func makeRenderer_formatCreatorIsApplicationName(applicationName: String) throws {
         let sut = makeSUT(applicationName: applicationName)
 
         let renderer = sut.makeRenderer()
 
-        let format = try XCTUnwrap(renderer.format as? UIGraphicsPDFRendererFormat)
-        XCTAssertEqual(format.documentInfo(forKey: kCGPDFContextCreator) as? String?, applicationName)
+        let format = try #require(renderer.format as? UIGraphicsPDFRendererFormat)
+        #expect(format.documentInfo(forKey: kCGPDFContextCreator) as? String? == applicationName)
     }
 
-    func test_makeRenderer_formatAuthorIsAuthorName() throws {
-        let authorName = UUID().uuidString
+    @Test(arguments: ["", "one", "two"])
+    func makeRenderer_formatAuthorIsAuthorName(authorName: String) throws {
         let sut = makeSUT(authorName: authorName)
 
         let renderer = sut.makeRenderer()
 
-        let format = try XCTUnwrap(renderer.format as? UIGraphicsPDFRendererFormat)
-        XCTAssertEqual(format.documentInfo(forKey: kCGPDFContextAuthor) as? String?, authorName)
+        let format = try #require(renderer.format as? UIGraphicsPDFRendererFormat)
+        #expect(format.documentInfo(forKey: kCGPDFContextAuthor) as? String? == authorName)
     }
 
-    func test_makeRenderer_formatDocumentTitleIsDocumentTitle() throws {
-        let documentTitle = UUID().uuidString
+    @Test(arguments: ["", "one", "two"])
+    func makeRenderer_formatDocumentTitleIsDocumentTitle(documentTitle: String) throws {
         let sut = makeSUT(documentTitle: documentTitle)
 
         let renderer = sut.makeRenderer()
 
-        let format = try XCTUnwrap(renderer.format as? UIGraphicsPDFRendererFormat)
-        XCTAssertEqual(format.documentInfo(forKey: kCGPDFContextTitle) as? String?, documentTitle)
+        let format = try #require(renderer.format as? UIGraphicsPDFRendererFormat)
+        #expect(format.documentInfo(forKey: kCGPDFContextTitle) as? String? == documentTitle)
     }
 
     // MARK: - Helpers

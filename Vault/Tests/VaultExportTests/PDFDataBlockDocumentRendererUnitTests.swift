@@ -1,50 +1,60 @@
 import Foundation
 import ImageTools
 import TestHelpers
+import Testing
+import UIKit
 import VaultExport
-import XCTest
 
-final class PDFDataBlockDocumentRendererUnitTests: XCTestCase {
-    func test_init_rendersNoImages() {
+struct PDFDataBlockDocumentRendererUnitTests {
+    @Test
+    func init_rendersNoImages() {
         let imageRenderer = makeImageRenderer()
 
         _ = makeSUT(imageRenderer: imageRenderer)
 
-        XCTAssertEqual(imageRenderer.makeImageCallCount, 0)
+        #expect(imageRenderer.makeImageCallCount == 0)
     }
 
-    func test_init_rendersNoBlocks() {
+    @Test
+    func init_rendersNoBlocks() {
         let layoutSpy = LayoutSpy()
 
         _ = makeSUT(rectLayout: layoutSpy)
 
-        XCTAssertFalse(layoutSpy.rectAtIndexCalled)
+        #expect(!layoutSpy.rectAtIndexCalled)
     }
 
-    func test_render_makesSingleRendererFromFactory() throws {
+    @Test
+    func render_makesSingleRendererFromFactory() throws {
         let rendererFactory = makeRendererFactory()
         let sut = makeSUT(rendererFactory: rendererFactory)
 
         _ = try? sut.render(document: anyDataBlockExportDocument())
 
-        XCTAssertEqual(rendererFactory.makeRendererCallCount, 1)
+        #expect(rendererFactory.makeRendererCallCount == 1)
     }
 
-    func test_render_returnsPDFDocumentForValidData() {
+    @Test
+    func render_returnsPDFDocumentForValidData() {
         let renderer = UIGraphicsPDFRenderer(bounds: .init())
         let rendererFactory = makeRendererFactory(renderer: renderer)
         let sut = makeSUT(rendererFactory: rendererFactory)
 
-        XCTAssertNoThrow(try sut.render(document: anyDataBlockExportDocument()))
+        #expect(throws: Never.self) {
+            try sut.render(document: anyDataBlockExportDocument())
+        }
     }
 
-    func test_render_throwsForInvalidPDFData() {
+    @Test
+    func render_throwsForInvalidPDFData() {
         let renderer = UIGraphicsPDFRendererStub()
         renderer.pdfDataValue = makeInvalidPDFData()
         let rendererFactory = makeRendererFactory(renderer: renderer)
         let sut = makeSUT(rendererFactory: rendererFactory)
 
-        XCTAssertThrowsError(try sut.render(document: anyDataBlockExportDocument()))
+        #expect(throws: (any Error).self) {
+            try sut.render(document: anyDataBlockExportDocument())
+        }
     }
 }
 

@@ -1,26 +1,29 @@
 import CoreGraphics
 import Foundation
+import Testing
 import VaultExport
-import XCTest
 
-final class VerticalTilingDataBlockLayoutTests: XCTestCase {
-    func test_rect_isOriginForFirstPosition() {
+struct VerticalTilingDataBlockLayoutTests {
+    @Test
+    func rect_isOriginForFirstPosition() {
         let sut = makeSUT(size: .square(90), tilesPerRow: 3)
 
         let first = sut.rect(atIndex: 0)
 
-        XCTAssertEqual(first?.origin, .zero)
+        #expect(first?.origin == .zero)
     }
 
-    func test_rect_isSizeOfSquareThatFits() {
+    @Test
+    func rect_isSizeOfSquareThatFits() {
         let sut = makeSUT(size: .square(90), tilesPerRow: 3)
 
         let first = sut.rect(atIndex: 0)
 
-        XCTAssertEqual(first?.size, .square(30))
+        #expect(first?.size == .square(30))
     }
 
-    func test_rect_laysOutGridEvenly() {
+    @Test
+    func rect_laysOutGridEvenly() {
         let sut = makeSUT(size: .square(90), tilesPerRow: 3)
 
         expectFirstRow(
@@ -35,7 +38,8 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    func test_rect_layoutSizesToRespectSpacing() {
+    @Test
+    func rect_layoutSizesToRespectSpacing() {
         let sut = makeSUT(size: .square(110), tilesPerRow: 3, spacing: 10)
 
         expectFirstRow(
@@ -50,7 +54,8 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    func test_rect_adjustsLayoutRelativeToBounds() {
+    @Test
+    func rect_adjustsLayoutRelativeToBounds() {
         let sut = makeSUT(
             origin: .init(x: 20, y: 20),
             size: .square(100),
@@ -69,47 +74,41 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    func test_rect_isNotNilIfContainedWithinBounds() {
+    @Test
+    func rect_isNotNilIfContainedWithinBounds() {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3)
 
         for index: UInt in 0 ..< 9 {
-            XCTAssertNotNil(sut.rect(atIndex: index))
+            #expect(sut.rect(atIndex: index) != nil)
         }
     }
 
-    func test_rect_isNilIfOutsideOfBounds() {
+    @Test
+    func rect_isNilIfOutsideOfBounds() {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3)
 
         for index: UInt in 9 ..< 100 {
-            XCTAssertNil(sut.rect(atIndex: index))
+            #expect(sut.rect(atIndex: index) == nil)
         }
     }
 
-    func test_isFullyWithinBounds_containsItem() {
+    @Test(arguments: [
+        CGRect(x: 5, y: 5, width: 10, height: 10),
+        CGRect(x: 5, y: 5, width: 90, height: 90),
+        CGRect(x: 50, y: 50, width: 40, height: 40),
+    ])
+    func isFullyWithinBounds_containsItem(validRect: CGRect) {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3)
-
-        let validRects: [CGRect] = [
-            CGRect(x: 5, y: 5, width: 10, height: 10),
-            CGRect(x: 5, y: 5, width: 90, height: 90),
-            CGRect(x: 50, y: 50, width: 40, height: 40),
-        ]
-
-        for rect in validRects {
-            XCTAssertTrue(sut.isFullyWithinBounds(rect: rect), "Does not contain \(rect)")
-        }
+        #expect(sut.isFullyWithinBounds(rect: validRect), "Does not contain \(validRect)")
     }
 
-    func test_isFullyWithinBounds_doesNotContainItem() {
+    @Test(arguments: [
+        CGRect(x: -5, y: -5, width: 10, height: 10),
+        CGRect(x: -5, y: -5, width: 500, height: 10),
+    ])
+    func isFullyWithinBounds_doesNotContainItem(invalidRect: CGRect) {
         let sut = makeSUT(size: .square(100), tilesPerRow: 3)
-
-        let invalidRects: [CGRect] = [
-            CGRect(x: -5, y: -5, width: 10, height: 10),
-            CGRect(x: -5, y: -5, width: 500, height: 10),
-        ]
-
-        for rect in invalidRects {
-            XCTAssertFalse(sut.isFullyWithinBounds(rect: rect), "Contains \(rect)")
-        }
+        #expect(!sut.isFullyWithinBounds(rect: invalidRect), "Contains \(invalidRect)")
     }
 
     // MARK: - Helpers
@@ -127,21 +126,39 @@ final class VerticalTilingDataBlockLayoutTests: XCTestCase {
         )
     }
 
-    private func expectFirstRow(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
+    private func expectFirstRow(
+        for sut: VerticalTilingDataBlockLayout,
+        sizes: [CGSize],
+        origins: [CGPoint],
+        sourceLocation: SourceLocation = .__here()
+    ) {
         let rowIndexes: [UInt] = Array(0 ..< sut.tilesPerRow)
         for (index, rowIndex) in rowIndexes.enumerated() {
             let point = sut.rect(atIndex: rowIndex)
-            XCTAssertEqual(point?.size, sizes[index])
-            XCTAssertEqual(point?.origin, origins[index])
+            #expect(point?.size == sizes[index], "Unexpected size at index \(index)", sourceLocation: sourceLocation)
+            #expect(
+                point?.origin == origins[index],
+                "Unexpected origin at index \(index)",
+                sourceLocation: sourceLocation
+            )
         }
     }
 
-    private func expectFirstColumn(for sut: VerticalTilingDataBlockLayout, sizes: [CGSize], origins: [CGPoint]) {
+    private func expectFirstColumn(
+        for sut: VerticalTilingDataBlockLayout,
+        sizes: [CGSize],
+        origins: [CGPoint],
+        sourceLocation: SourceLocation = .__here()
+    ) {
         let columnIndexes: [UInt] = Array(0 ..< sut.tilesPerRow).map { $0 * sut.tilesPerRow }
         for (index, columnIndex) in columnIndexes.enumerated() {
             let point = sut.rect(atIndex: columnIndex)
-            XCTAssertEqual(point?.size, sizes[index])
-            XCTAssertEqual(point?.origin, origins[index])
+            #expect(point?.size == sizes[index], "Unexpected size at index \(index)", sourceLocation: sourceLocation)
+            #expect(
+                point?.origin == origins[index],
+                "Unexpected origin at index \(index)",
+                sourceLocation: sourceLocation
+            )
         }
     }
 }

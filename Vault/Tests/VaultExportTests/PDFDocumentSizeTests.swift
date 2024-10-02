@@ -1,44 +1,49 @@
 import Foundation
+import Testing
 import VaultExport
-import XCTest
 
-final class PDFDocumentSizeTests: XCTestCase {
-    func test_inchDimensions_usLetter() {
+struct PDFDocumentSizeTests {
+    @Test
+    func inchDimensions_usLetter() {
         let (width, height) = makeInches(USLetterDocumentSize())
 
-        XCTAssertEqual(width, 8.5)
-        XCTAssertEqual(height, 11)
+        #expect(width == 8.5)
+        #expect(height == 11)
     }
 
-    func test_pointSize_isCorrect() {
+    @Test
+    func pointSize_isCorrect() {
         let (width, height) = makeDefaultPointSize(USLetterDocumentSize())
 
-        XCTAssertEqual(width, 612)
-        XCTAssertEqual(height, 792)
+        #expect(width == 612)
+        #expect(height == 792)
     }
 
-    func test_idealNumberOfHorizontalSquaresForPaperSize_isCorrect() {
+    @Test
+    func idealNumberOfHorizontalSquaresForPaperSize_isCorrect() {
         let number = makeSquares(USLetterDocumentSize())
 
-        XCTAssertEqual(number, 6)
+        #expect(number == 6)
     }
 
-    func test_inchMargins_isStandardForUSLetter() {
+    @Test
+    func inchMargins_isStandardForUSLetter() {
         let margins = USLetterDocumentSize().inchMargins
 
-        XCTAssertEqual(margins.top, 1)
-        XCTAssertEqual(margins.left, 1)
-        XCTAssertEqual(margins.bottom, 1)
-        XCTAssertEqual(margins.right, 1)
+        #expect(margins.top == 1)
+        #expect(margins.left == 1)
+        #expect(margins.bottom == 1)
+        #expect(margins.right == 1)
     }
 
-    func test_pointMargins_isCorrect() {
+    @Test
+    func pointMargins_isCorrect() {
         let margins = USLetterDocumentSize().pointMargins
 
-        XCTAssertEqual(margins.top, 72)
-        XCTAssertEqual(margins.left, 72)
-        XCTAssertEqual(margins.bottom, 72)
-        XCTAssertEqual(margins.right, 72)
+        #expect(margins.top == 72)
+        #expect(margins.left == 72)
+        #expect(margins.bottom == 72)
+        #expect(margins.right == 72)
     }
 
     // MARK: - Helpers
