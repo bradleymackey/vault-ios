@@ -9,8 +9,9 @@ struct FormatLintPlugin: CommandPlugin {
         let formatLintContext = try makeFormatLintContext(context: context, arguments: arguments)
 
         let start = Date()
-        try formatLintContext.runSwiftFormat()
+        // Lint before formatting so any formatting that results in lint errors is surfaced and we can address it.
         try formatLintContext.runSwiftLint()
+        try formatLintContext.runSwiftFormat()
         let end = Date()
         let elapsed = end.timeIntervalSince(start)
         print("✅ in \(String(format: "%.2f", elapsed)) seconds")
