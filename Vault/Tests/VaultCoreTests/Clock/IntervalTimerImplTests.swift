@@ -1,124 +1,89 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultCore
-import XCTest
 
-final class IntervalTimerImplTests: XCTestCase {
-    func test_waitAsync_negativeCompletesImmediately() async throws {
-        let sut = IntervalTimerImpl()
+struct IntervalTimerImplTests {
+    let sut = IntervalTimerImpl()
 
-        let exp = expectation(description: "Wait for fulfull")
-        Task {
+    @Test
+    func waitAsync_negativeCompletesImmediately() async throws {
+        try await confirmation(timeout: .seconds(1)) { confirmation in
             try await sut.wait(for: -20)
-            exp.fulfill()
+            confirmation.confirm()
         }
-
-        await fulfillment(of: [exp], timeout: 2)
     }
 
-    func test_waitAsync_zeroCompletesImmediately() async throws {
-        let sut = IntervalTimerImpl()
-
-        let exp = expectation(description: "Wait for fulfull")
-        Task {
-            try await sut.wait(for: 0)
-            exp.fulfill()
-        }
-
-        await fulfillment(of: [exp], timeout: 2)
-    }
-
-    func test_waitAsync_publishesAfterWait() async throws {
-        let sut = IntervalTimerImpl()
-
-        let exp = expectation(description: "Wait for fulfull")
-        Task {
+    @Test
+    func waitAsync_publishesAfterWait() async throws {
+        try await confirmation(timeout: .seconds(1)) { confirmation in
             try await sut.wait(for: 0.5)
-            exp.fulfill()
+            confirmation.confirm()
         }
-
-        await fulfillment(of: [exp], timeout: 2)
     }
 
-    func test_waitAsync_doesNotPublishBeforeWait() async throws {
-        let sut = IntervalTimerImpl()
-
-        let exp = expectation(description: "Wait no for fulfull")
-        exp.isInverted = true
-        Task {
+    @Test
+    func waitAsync_doesNotPublishBeforeWait() async throws {
+        try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
             try await sut.wait(for: 10)
-            exp.fulfill()
+            confirmation.confirm()
         }
-
-        await fulfillment(of: [exp], timeout: 2)
     }
 
-    func test_waitAsyncWithTolerance_publishesAfterWait() async throws {
-        let sut = IntervalTimerImpl()
-
-        let exp = expectation(description: "Wait for fulfull")
-        Task {
-            try await sut.wait(for: 0.5, tolerance: 0.5)
-            exp.fulfill()
+    @Test
+    func waitAsyncWithTolerance_publishesAfterWait() async throws {
+        try await confirmation(timeout: .seconds(1)) { confirmation in
+            try await sut.wait(for: 0.2, tolerance: 0.2)
+            confirmation.confirm()
         }
-
-        await fulfillment(of: [exp], timeout: 2)
     }
 
-    func test_waitAsyncWithTolerance_doesNotPublishBeforeWait() async throws {
-        let sut = IntervalTimerImpl()
-
-        let exp = expectation(description: "Wait no for fulfull")
-        exp.isInverted = true
-        Task {
+    @Test
+    func waitAsyncWithTolerance_doesNotPublishBeforeWait() async throws {
+        try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
             try await sut.wait(for: 10, tolerance: 0.5)
-            exp.fulfill()
+            confirmation.confirm()
         }
-
-        await fulfillment(of: [exp], timeout: 2)
     }
 
-    func test_schedule_publishesAfterWait() async throws {
-        let sut = IntervalTimerImpl()
-
+    @Test(arguments: [101, 102, 103])
+    func schedule_publishesAfterWait(expectedValue: Int) async throws {
         let task = sut.schedule(wait: 0.5) {
-            100
+            expectedValue
         }
 
         let value = try await task.value
-        XCTAssertEqual(value, 100)
+        #expect(value == expectedValue)
     }
 
-    func test_schedule_publishesAfterWaitWithTolerance() async throws {
-        let sut = IntervalTimerImpl()
-
+    @Test(arguments: [101, 102, 103])
+    func schedule_publishesAfterWaitWithTolerance(expectedValue: Int) async throws {
         let task = sut.schedule(wait: 0.5, tolerance: 0.5) {
-            100
+            expectedValue
         }
 
         let value = try await task.value
-        XCTAssertEqual(value, 100)
+        #expect(value == expectedValue)
     }
 
-    func test_schedule_isolatesWorkToGlobalActor() async throws {
+    @Test
+    func schedule_isolatesWorkToGlobalActor() async throws {
         @MainActor
         class Thing {
             var time = 100
         }
         let thing = Thing()
-        let sut = IntervalTimerImpl()
-        let exp = expectation(description: "Wait for execution")
 
-        Task.detached(priority: .background) {
-            XCTAssertFalse(Thread.isMainThread)
-            sut.schedule(wait: 0.5) { @MainActor in
-                XCTAssertTrue(Thread.isMainThread)
-                thing.time = 200
-                exp.fulfill()
+        await withCheckedContinuation { continuation in
+            Task.detached(priority: .background) {
+                dispatchPrecondition(condition: .notOnQueue(.main))
+                sut.schedule(wait: 0.5) { @MainActor in
+                    dispatchPrecondition(condition: .onQueue(.main))
+                    thing.time = 200
+                    continuation.resume()
+                }
             }
         }
-
-        await fulfillment(of: [exp])
     }
 }
