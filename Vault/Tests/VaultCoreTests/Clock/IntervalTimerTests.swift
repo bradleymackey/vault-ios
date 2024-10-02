@@ -69,7 +69,7 @@ enum IntervalTimerTests {
         let sut = IntervalTimerImpl()
 
         @Test
-        func waitAsync_negativeCompletesImmediately() async throws {
+        func wait_negativeCompletesImmediately() async throws {
             try await confirmation(timeout: .seconds(1)) { confirmation in
                 try await sut.wait(for: -20)
                 confirmation.confirm()
@@ -77,7 +77,7 @@ enum IntervalTimerTests {
         }
 
         @Test
-        func waitAsync_publishesAfterWait() async throws {
+        func wait_publishesAfterWait() async throws {
             try await confirmation(timeout: .seconds(1)) { confirmation in
                 try await sut.wait(for: 0.5)
                 confirmation.confirm()
@@ -85,7 +85,7 @@ enum IntervalTimerTests {
         }
 
         @Test
-        func waitAsync_doesNotPublishBeforeWait() async throws {
+        func wait_doesNotPublishBeforeWait() async throws {
             try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
                 try await sut.wait(for: 10)
                 confirmation.confirm()
@@ -93,7 +93,7 @@ enum IntervalTimerTests {
         }
 
         @Test
-        func waitAsyncWithTolerance_publishesAfterWait() async throws {
+        func waitWithTolerance_publishesAfterWait() async throws {
             try await confirmation(timeout: .seconds(1)) { confirmation in
                 try await sut.wait(for: 0.2, tolerance: 0.2)
                 confirmation.confirm()
@@ -101,7 +101,7 @@ enum IntervalTimerTests {
         }
 
         @Test
-        func waitAsyncWithTolerance_doesNotPublishBeforeWait() async throws {
+        func waitWithTolerance_doesNotPublishBeforeWait() async throws {
             try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
                 try await sut.wait(for: 10, tolerance: 0.5)
                 confirmation.confirm()
