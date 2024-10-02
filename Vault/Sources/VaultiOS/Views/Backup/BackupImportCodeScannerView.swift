@@ -38,6 +38,8 @@ struct BackupImportCodeScannerView: View {
             scanner.disable()
         }
         .onReceive(scanner.itemScannedPublisher()) { encryptedVault in
+            // FIXME: import the scanned vault
+            // swiftlint:disable:next no_direct_standard_out_logs
             print("Scanned vault", encryptedVault)
         }
     }
