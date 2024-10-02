@@ -60,13 +60,15 @@ struct BackupImportScanningHandlerTests {
 
         // Intermediate shards should continue scanning.
         for encodedShard in encodedShards[0 ..< encodedShards.count - 1] {
-            let result = sut.decode(data: String(decoding: encodedShard, as: UTF8.self))
+            let string = try #require(String(data: encodedShard, encoding: .utf8))
+            let result = sut.decode(data: string)
             try #require(result == .continueScanning(.success))
         }
 
         // The last shard triggers the completion.
         let lastShard = try #require(encodedShards.last)
-        let result = sut.decode(data: String(decoding: lastShard, as: UTF8.self))
+        let string = try #require(String(data: lastShard, encoding: .utf8))
+        let result = sut.decode(data: string)
         #expect(result == .endScanning(.dataRetrieved(expectedVault)))
     }
 
