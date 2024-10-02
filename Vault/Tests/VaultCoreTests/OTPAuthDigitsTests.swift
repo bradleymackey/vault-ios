@@ -1,11 +1,12 @@
 import Foundation
+import Testing
 import VaultCore
-import XCTest
 
-final class OTPAuthDigitsTests: XCTestCase {
+struct OTPAuthDigitsTests {
+    @Test
     func test_description_encodesToSimpleDigits() {
         let digits = OTPAuthDigits(value: 123)
 
-        XCTAssertEqual("\(digits)", "123")
+        #expect("\(digits)" == "123")
     }
 }

@@ -1,19 +1,29 @@
-import Combine
 import Foundation
+import Testing
 import VaultCore
-import XCTest
 
-final class EpochClockTests: XCTestCase {
-    func test_impl_isCurrentTime() {
-        let currentTime = Date.now.timeIntervalSince1970
-        let sut = EpochClockImpl()
+enum EpochClockTests {
+    struct MockTests {
+        @Test(arguments: [
+            1,
+            1234,
+            Date.now.timeIntervalSince1970,
+        ])
+        func isInjectedTime(injectedTime: Double) {
+            let sut = EpochClockMock(currentTime: injectedTime)
 
-        XCTAssertEqual(currentTime, sut.currentTime, accuracy: 10)
+            #expect(sut.currentTime == injectedTime)
+        }
     }
 
-    func test_mock_isInjectedTime() {
-        let sut = EpochClockMock(currentTime: 1234)
+    struct ImplTests {
+        @Test
+        func isCurrentTime() {
+            let currentTime = Date.now.timeIntervalSince1970
+            let sut = EpochClockImpl()
 
-        XCTAssertEqual(sut.currentTime, 1234)
+            let difference = abs(currentTime - sut.currentTime)
+            #expect(difference < 0.5, "This should be the time as of now")
+        }
     }
 }

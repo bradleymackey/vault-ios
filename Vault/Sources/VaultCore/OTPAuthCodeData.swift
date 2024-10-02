@@ -64,6 +64,14 @@ public struct OTPAuthDigits: Equatable, Hashable, CustomStringConvertible, Senda
     }
 }
 
+extension OTPAuthDigits: ExpressibleByIntegerLiteral {
+    public typealias IntegerLiteralType = UInt16
+
+    public init(integerLiteral value: UInt16) {
+        self.value = value
+    }
+}
+
 extension OTPAuthDigits {
     public static var `default`: OTPAuthDigits { .init(value: 6) }
 }

@@ -25,20 +25,16 @@
 //  THE SOFTWARE.
 
 import Foundation
-import XCTest
+import Testing
 @testable import VaultCore
 
-final class StringExtensionTests: XCTestCase {
-    func test_dataUsingUTF8StringEncoding() throws {
-        let string = "0112233445566778899AABBCCDDEEFFaabbccddeefff"
-        let expected = try XCTUnwrap(string.data(using: .utf8, allowLossyConversion: false))
-        XCTAssertEqual(string.dataUsingUTF8StringEncoding, expected)
-    }
-
-    func test_dataUsingUTF8StringEncoding_empty() throws {
-        let emptyString = ""
-        let expected = try XCTUnwrap(emptyString.data(using: .utf8, allowLossyConversion: false))
-
-        XCTAssertEqual(emptyString.dataUsingUTF8StringEncoding, expected)
+struct StringExtensionTests {
+    @Test(arguments: [
+        "",
+        "0112233445566778899AABBCCDDEEFFaabbccddeefff",
+    ])
+    func dataUsingUTF8StringEncoding(input: String) throws {
+        let expected = try #require(input.data(using: .utf8, allowLossyConversion: false))
+        #expect(input.dataUsingUTF8StringEncoding == expected)
     }
 }

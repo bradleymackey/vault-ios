@@ -9,19 +9,20 @@ extension Task where Failure == any Error {
     public static func withTimeout(
         delay: Duration,
         priority: TaskPriority? = nil,
+        timeoutID: UUID = UUID(),
         task: @escaping TaskRace<Success>
     ) async throws -> Success {
         try await Task.race(priority: priority, firstResolved: [
             task,
-            { try await Task<Never, TimeoutError>.timeout(in: delay) },
+            { try await Task<Never, TimeoutError>.timeout(in: delay, id: timeoutID) },
         ])
     }
 }
 
 extension Task where Success == Never, Failure == TimeoutError {
     /// Throws a `TimeoutError` after `duration`. Never returns.
-    public static func timeout(in duration: Duration) async throws -> Never {
+    public static func timeout(in duration: Duration, id: UUID = UUID()) async throws -> Never {
         try await Task<Never, Never>.sleep(for: duration)
-        throw TimeoutError()
+        throw TimeoutError(id: id)
     }
 }

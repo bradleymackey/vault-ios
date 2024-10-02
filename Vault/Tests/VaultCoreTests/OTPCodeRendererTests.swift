@@ -1,31 +1,39 @@
+import CryptoEngine
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultCore
 
-final class OTPCodeRendererTests: XCTestCase {
-    func test_render_numberOfLength() {
+struct OTPCodeRendererTests {
+    @Test(arguments: [
+        (1, 1, "1"),
+        (1234, 4, "1234"),
+        (12345, 5, "12345"),
+    ])
+    func render_numberOfLength(code: BigUInt, digits: UInt16, expected: String) {
         let sut = OTPCodeRenderer()
-
-        XCTAssertEqual(sut.render(code: 1234, digits: 4), "1234")
+        #expect(sut.render(code: code, digits: digits) == expected)
     }
 
-    func test_render_padsWithLeadingZeros() {
+    @Test(arguments: [
+        (1, 6, "000001"),
+        (1234, 5, "01234"),
+        (1234, 6, "001234"),
+    ])
+    func render_padsWithLeadingZeros(code: BigUInt, digits: UInt16, expected: String) {
         let sut = OTPCodeRenderer()
-
-        XCTAssertEqual(sut.render(code: 1234, digits: 4), "1234")
-        XCTAssertEqual(sut.render(code: 1234, digits: 5), "01234")
-        XCTAssertEqual(sut.render(code: 1234, digits: 6), "001234")
-        XCTAssertEqual(sut.render(code: 1, digits: 6), "000001")
+        #expect(sut.render(code: code, digits: digits) == expected)
     }
 
-    func test_render_codeTooLongTruncatesToSuffix() throws {
+    @Test(arguments: [
+        (1, 0, ""),
+        (1234, 0, ""),
+        (1234, 1, "4"),
+        (1234, 2, "34"),
+        (1234, 3, "234"),
+    ])
+    func render_codeTooLongTruncatesToSuffix(code: BigUInt, digits: UInt16, expected: String) throws {
         let sut = OTPCodeRenderer()
-
-        XCTAssertEqual(sut.render(code: 1, digits: 0), "")
-        XCTAssertEqual(sut.render(code: 1234, digits: 0), "")
-        XCTAssertEqual(sut.render(code: 1234, digits: 1), "4")
-        XCTAssertEqual(sut.render(code: 1234, digits: 2), "34")
-        XCTAssertEqual(sut.render(code: 1234, digits: 3), "234")
+        #expect(sut.render(code: code, digits: digits) == expected)
     }
 }
