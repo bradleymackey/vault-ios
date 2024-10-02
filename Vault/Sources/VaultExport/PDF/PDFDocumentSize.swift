@@ -1,7 +1,7 @@
 import Foundation
 import UIKit
 
-public protocol PDFDocumentSize {
+public protocol PDFDocumentSize: Sendable {
     /// PPI of the document.
     var pointsPerInch: Double { get }
     /// The size of the document in inches.
