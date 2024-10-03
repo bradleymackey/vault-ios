@@ -1,53 +1,55 @@
 import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
-public actor PendingValue<Output: Sendable> {
-    /// The stream that outputs the value internally within `awaitValue`.
-    private var streamContinuation: AsyncThrowingStream<Output, any Error>.Continuation?
+public actor Pending<Value: Sendable> {
+    /// The stream that outputs the value internally within `wait`.
+    private var streamContinuation: AsyncThrowingStream<Value, any Swift.Error>.Continuation?
 
     /// Last remembered value, used if the value is fulfilled before
     /// we await the given value.
-    private var lastValue: Result<Output, any Error>?
+    private var lastValue: Result<Value, any Swift.Error>?
 
     public init() {}
 }
 
 // MARK: - API
 
-extension PendingValue {
-    /// Whether a value is currently being waited for via `awaitValue`.
+extension Pending {
+    /// Whether a value is currently being waited for via `wait`.
     public var isWaiting: Bool {
         streamContinuation != nil
     }
 
-    /// Cancel the `awaitValue`, causing it to throw a `CancellationError`.
+    /// Cancel the `wait`, causing it to throw a `CancellationError`.
     public func cancel() {
         streamContinuation?.finish()
     }
 
-    /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
-    public func fulfill(_ value: Output) {
+    /// If pending, produces the value, causing `wait` to return it's value immediately.
+    public func fulfill(_ value: Value) {
         lastValue = .success(value)
         streamContinuation?.yield(value)
         streamContinuation?.finish()
     }
 
-    /// Produces an error to cause `waitToForValue` to throw.
-    public func reject(error: any Error) {
+    /// Produces an error to cause `wait` to throw.
+    public func reject(error: any Swift.Error) {
         lastValue = .failure(error)
         streamContinuation?.finish(throwing: error)
     }
 
-    public struct AlreadyWaitingError: Error {}
+    public enum Error: Swift.Error, Equatable {
+        case alreadyWaiting
+    }
 
     /// Wait for the production of the target value, cancelling on a Task cancellation.
     /// Yields the value when `fulfill` or `reject` is called, but waits until that moment.
     ///
     /// - throws: `CancellationError` if cancelled, `AlreadyWaitingError` if already waiting, `TimeoutError` if the
     /// given `timeout` is reached before a value is produced.
-    public func awaitValue(timeout: Duration? = nil) async throws -> Output {
+    public func wait(timeout: Duration? = nil) async throws -> Value {
         if isWaiting {
-            throw AlreadyWaitingError()
+            throw Error.alreadyWaiting
         }
 
         // Always drop the last value after awaiting.
@@ -68,7 +70,7 @@ extension PendingValue {
             self.streamContinuation = continuation
         }
 
-        @Sendable func getValue() async throws -> Output {
+        @Sendable func getValue() async throws -> Value {
             if let first = try await stream.first {
                 return first
             } else {
@@ -90,10 +92,17 @@ extension PendingValue {
 
 // MARK: - Specialisation
 
-extension PendingValue where Output == Void {
-    /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
+extension Pending where Value == Void {
+    /// If pending, produces the value, causing `wait` to return it's value immediately.
     public func fulfill() {
         fulfill(())
+    }
+
+    /// When `Pending` is just being used as a signal, `Void` is the type that will be used.
+    ///
+    /// You don't care about a value, you just want to know when this is fulfilled.
+    public static func signal() -> Self {
+        .init()
     }
 }
 

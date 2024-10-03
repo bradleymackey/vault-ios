@@ -40,7 +40,7 @@ struct TaskContinuationTests {
 
     @Test
     func cancelsBeforeTaskRuns() async throws {
-        let pending1 = PendingValue<Void>()
+        let pending1 = Pending.signal()
         let waiter = TaskCancellationWaiter()
         let outer = Task.detached {
             await pending1.fulfill()
@@ -52,29 +52,12 @@ struct TaskContinuationTests {
             Issue.record("Cancellation error should be thrown from continuation")
             return result
         }
-        try await pending1.awaitValue() // wait for task to start
+        try await pending1.wait() // wait for task to start
 
         outer.cancel()
 
         await #expect(throws: CancellationError.self, performing: {
             try await outer.result.get()
         })
-    }
-}
-
-// MARK: - Task Cancellation waiting helpers
-
-private typealias TaskCancellationWaiter = PendingValue<Void>
-
-extension PendingValue where Output == Void {
-    fileprivate func waitForTaskCancellation() async {
-        do {
-            // Awaiting a value will throw `CancellationError` when the Task it's part of is cancelled.
-            try await awaitValue()
-        } catch {
-            guard error is CancellationError else {
-                preconditionFailure("Expected a cancellation error!")
-            }
-        }
     }
 }

@@ -27,7 +27,7 @@ struct DetailEditStateTests {
     func saveChanges_setsIsSavingToTrue() async throws {
         let sut = makeSUT()
 
-        let savingStart = PendingValue<Void>()
+        let savingStart = Pending.signal()
         let task = Task {
             try await sut.saveChanges {
                 await savingStart.fulfill()
@@ -35,7 +35,7 @@ struct DetailEditStateTests {
             }
         }
 
-        try await savingStart.awaitValue()
+        try await savingStart.wait()
 
         #expect(sut.isSaving)
 
@@ -46,7 +46,7 @@ struct DetailEditStateTests {
     func saveChanges_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
         let sut = makeSUT()
 
-        let savingStart1 = PendingValue<Void>()
+        let savingStart1 = Pending.signal()
         let task1 = Task {
             try await sut.saveChanges {
                 await savingStart1.fulfill()
@@ -54,7 +54,7 @@ struct DetailEditStateTests {
             }
         }
 
-        try await savingStart1.awaitValue()
+        try await savingStart1.wait()
 
         try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
             try await sut.saveChanges {
@@ -107,7 +107,7 @@ struct DetailEditStateTests {
     func deleteItem_setsIsSavingToTrue() async throws {
         let sut = makeSUT()
 
-        let deletingStart = PendingValue<Void>()
+        let deletingStart = Pending.signal()
         let task = Task {
             try await sut.deleteItem {
                 await deletingStart.fulfill()
@@ -117,7 +117,7 @@ struct DetailEditStateTests {
             }
         }
 
-        try await deletingStart.awaitValue()
+        try await deletingStart.wait()
 
         #expect(sut.isSaving)
 
@@ -128,7 +128,7 @@ struct DetailEditStateTests {
     func deleteItem_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
         let sut = makeSUT()
 
-        let startDeleting1 = PendingValue<Void>()
+        let startDeleting1 = Pending.signal()
         let task1 = Task {
             try await sut.deleteItem {
                 await startDeleting1.fulfill()
@@ -138,7 +138,7 @@ struct DetailEditStateTests {
             }
         }
 
-        try await startDeleting1.awaitValue()
+        try await startDeleting1.wait()
 
         try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
             try await sut.deleteItem {

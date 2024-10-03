@@ -33,10 +33,10 @@ struct TaskTimeoutTests {
 
     @Test
     func returnsValue() async throws {
-        let pending = PendingValue<Int>()
+        let pending = Pending<Int>()
         let parent = Task {
             try await Task.withTimeout(delay: .seconds(10)) {
-                try await pending.awaitValue()
+                try await pending.wait()
             }
         }
         try await Task.sleep(for: .milliseconds(100))

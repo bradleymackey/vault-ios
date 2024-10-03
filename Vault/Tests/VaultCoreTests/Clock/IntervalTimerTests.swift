@@ -18,8 +18,8 @@ enum IntervalTimerTests {
 
         @Test(arguments: [-1, 0, 0.1])
         func wait_fulfillsWhenFinishTimerIsCalled(duration _: Double) async throws {
-            let pendingStart = PendingValue<Void>()
-            let completed = PendingValue<Void>()
+            let pendingStart = Pending.signal()
+            let completed = Pending.signal()
             Task {
                 try await confirmation(timeout: .seconds(1), expectedCount: 0) { _ in
                     await pendingStart.fulfill()
@@ -28,12 +28,12 @@ enum IntervalTimerTests {
                 }
             }
 
-            try await pendingStart.awaitValue(timeout: .seconds(1))
+            try await pendingStart.wait(timeout: .seconds(1))
             await Task.yield()
 
             await sut.finishTimer()
 
-            try await completed.awaitValue(timeout: .seconds(1))
+            try await completed.wait(timeout: .seconds(1))
         }
 
         @Test(arguments: [-1, 0, 0.1, 0.2, 1])
@@ -46,8 +46,8 @@ enum IntervalTimerTests {
 
         @Test(arguments: [-1, 0, 0.1])
         func waitWithTolerance_fulfillsWhenFinishTimerIsCalled(duration _: Double) async throws {
-            let pendingStart = PendingValue<Void>()
-            let completed = PendingValue<Void>()
+            let pendingStart = Pending.signal()
+            let completed = Pending.signal()
             Task {
                 try await confirmation(timeout: .seconds(1), expectedCount: 0) { _ in
                     await pendingStart.fulfill()
@@ -56,12 +56,12 @@ enum IntervalTimerTests {
                 }
             }
 
-            try await pendingStart.awaitValue(timeout: .seconds(1))
+            try await pendingStart.wait(timeout: .seconds(1))
             await Task.yield()
 
             await sut.finishTimer()
 
-            try await completed.awaitValue(timeout: .seconds(1))
+            try await completed.wait(timeout: .seconds(1))
         }
     }
 

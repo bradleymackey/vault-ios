@@ -3,7 +3,7 @@ import FoundationExtensions
 import TestHelpers
 import Testing
 
-/// A common pattern we use in these tests is starting a background task that calls `awaitValue`.
+/// A common pattern we use in these tests is starting a background task that calls `wait`.
 /// We then want to check the state of the `sut` while it is waiting in the background.
 ///
 /// To maximise correctness, there's a few things to keep in mind:
@@ -17,35 +17,35 @@ struct PendingValueTests {
         case testCase2
     }
 
-    private typealias SUT = PendingValue<Int>
+    private typealias SUT = Pending<Int>
     private let sut = SUT()
 
     @Test
-    func awaitValue_throwsCancellationErrorIfCancelled() async throws {
+    func wait_throwsCancellationErrorIfCancelled() async throws {
         try await confirmation { confirmation in
-            let startedWaiting = PendingValue<Void>()
-            let finishedWaiting = PendingValue<Void>()
+            let startedWaiting = Pending.signal()
+            let finishedWaiting = Pending.signal()
             let task = Task.detached(priority: .high) {
                 await startedWaiting.fulfill()
                 do {
-                    _ = try await sut.awaitValue()
+                    _ = try await sut.wait()
                 } catch is CancellationError {
                     confirmation.confirm()
                 }
                 await finishedWaiting.fulfill()
             }
 
-            try await startedWaiting.awaitValue()
+            try await startedWaiting.wait()
             await Task.yield()
 
             task.cancel()
 
-            try await finishedWaiting.awaitValue()
+            try await finishedWaiting.wait()
         }
     }
 
     @Test
-    func awaitValue_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
+    func wait_asyncFulfillsWithDifferingValuesWhenCalledMoreThanOnce() async throws {
         let result1 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(100)
         }
@@ -58,7 +58,7 @@ struct PendingValueTests {
     }
 
     @Test
-    func awaitValue_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
+    func wait_asyncDoesNotFulfillMoreThanOnceForSingleValue() async throws {
         let result1 = try await awaitValueInBackground(on: sut) {
             await sut.fulfill(100)
         }
@@ -70,18 +70,18 @@ struct PendingValueTests {
     }
 
     @Test
-    func awaitValue_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
+    func wait_throwsAlreadyWaitingErrorIfAlreadyWaiting() async throws {
         var task: Task<Void, any Error>?
         await withCheckedContinuation { continutation in
             task = Task.detached(priority: .high) {
                 continutation.resume()
-                _ = try await sut.awaitValue()
+                _ = try await sut.wait()
             }
         }
         await Task.yield()
 
-        await #expect(throws: SUT.AlreadyWaitingError.self, performing: {
-            _ = try await sut.awaitValue()
+        await #expect(throws: SUT.Error.alreadyWaiting, performing: {
+            _ = try await sut.wait()
         })
 
         task?.cancel()
@@ -89,9 +89,9 @@ struct PendingValueTests {
     }
 
     @Test
-    func awaitValue_timeoutFulfillsWithError() async throws {
+    func wait_timeoutFulfillsWithError() async throws {
         await #expect(throws: TimeoutError.self, performing: {
-            _ = try await sut.awaitValue(timeout: .nanoseconds(1))
+            _ = try await sut.wait(timeout: .nanoseconds(1))
         })
 
         await sut.cancel()
@@ -110,7 +110,7 @@ struct PendingValueTests {
     func fulfill_beforeAwaitingReturnsInitialValue() async throws {
         await sut.fulfill(42)
 
-        let value = try await sut.awaitValue()
+        let value = try await sut.wait()
 
         #expect(value == 42)
     }
@@ -121,7 +121,7 @@ struct PendingValueTests {
         await sut.fulfill(43)
         await sut.fulfill(44)
 
-        let value = try await sut.awaitValue()
+        let value = try await sut.wait()
         #expect(value == 44)
     }
 
@@ -141,7 +141,7 @@ struct PendingValueTests {
         await sut.reject(error: TestError.testCase)
 
         await #expect(throws: TestError.testCase, performing: {
-            _ = try await sut.awaitValue()
+            _ = try await sut.wait()
         })
     }
 
@@ -151,7 +151,7 @@ struct PendingValueTests {
         await sut.reject(error: TestError.testCase2)
 
         await #expect(throws: TestError.testCase2, performing: {
-            _ = try await sut.awaitValue()
+            _ = try await sut.wait()
         })
     }
 
@@ -163,13 +163,13 @@ struct PendingValueTests {
 
     @Test
     func isWaiting_trueWhenWaiting() async throws {
-        let waitForTaskStart = PendingValue<Void>()
+        let waitForTaskStart = Pending.signal()
         Task.detached(priority: .high) {
             await waitForTaskStart.fulfill()
-            _ = try await sut.awaitValue()
+            _ = try await sut.wait()
         }
 
-        try await waitForTaskStart.awaitValue()
+        try await waitForTaskStart.wait()
         await Task.yield()
 
         let isWaiting = await sut.isWaiting
@@ -220,14 +220,14 @@ extension PendingValueTests {
         on sut: SUT,
         action: () async -> Void
     ) async throws -> Result<Int, any Error> {
-        let startedWaiting = PendingValue<Void>()
-        let finishedWaiting = PendingValue<Void>()
+        let startedWaiting = Pending.signal()
+        let finishedWaiting = Pending.signal()
 
         var result: Result<Int, any Error>?
         let task = Task.detached(priority: .high) {
             await startedWaiting.fulfill()
             do {
-                let value = try await sut.awaitValue()
+                let value = try await sut.wait()
                 result = .success(value)
             } catch {
                 result = .failure(error)
@@ -235,12 +235,12 @@ extension PendingValueTests {
             await finishedWaiting.fulfill()
         }
 
-        try await startedWaiting.awaitValue(timeout: .seconds(1))
+        try await startedWaiting.wait(timeout: .seconds(1))
         await Task.yield()
 
         await action()
 
-        try await finishedWaiting.awaitValue(timeout: .seconds(1))
+        try await finishedWaiting.wait(timeout: .seconds(1))
 
         task.cancel()
         return try #require(result)
@@ -249,7 +249,7 @@ extension PendingValueTests {
     private func awaitNoValueProduced(on sut: SUT) async {
         // If no value is produced, this will timeout.
         await #expect(throws: TimeoutError.self, performing: {
-            try await sut.awaitValue(timeout: .seconds(1))
+            try await sut.wait(timeout: .seconds(1))
         })
     }
 }

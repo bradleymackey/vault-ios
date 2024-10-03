@@ -37,7 +37,7 @@ extension IntervalTimer {
 public final class IntervalTimerMock: IntervalTimer {
     /// Mock: the intervals that were waited for.
     private let waitArgValuesData = Atomic<[Double]>(initialValue: [])
-    private let pendingTimer = Atomic<PendingValue<Void>?>(initialValue: nil)
+    private let pendingTimer = Atomic<Pending<Void>?>(initialValue: nil)
 
     public var waitArgValues: [Double] {
         waitArgValuesData.get { $0 }
@@ -52,14 +52,14 @@ public final class IntervalTimerMock: IntervalTimer {
 
     public func wait(for time: Double) async throws {
         waitArgValuesData.modify { $0.append(time) }
-        pendingTimer.modify { $0 = PendingValue() }
-        try await pendingTimer.value?.awaitValue()
+        pendingTimer.modify { $0 = Pending() }
+        try await pendingTimer.value?.wait()
     }
 
     public func wait(for time: Double, tolerance _: Double) async throws {
         waitArgValuesData.modify { $0.append(time) }
-        pendingTimer.modify { $0 = PendingValue() }
-        try await pendingTimer.value?.awaitValue()
+        pendingTimer.modify { $0 = Pending() }
+        try await pendingTimer.value?.wait()
     }
 }
 
