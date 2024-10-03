@@ -80,7 +80,7 @@ struct PendingValueTests {
         }
         await Task.yield()
 
-        await #expect(throws: SUT.AlreadyWaitingError.self, performing: {
+        await #expect(throws: SUT.Error.alreadyWaiting, performing: {
             _ = try await sut.wait()
         })
 

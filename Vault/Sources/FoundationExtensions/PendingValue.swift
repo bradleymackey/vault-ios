@@ -3,11 +3,11 @@ import Foundation
 /// Asynchronously return a value when a signal is triggered.
 public actor Pending<Value: Sendable> {
     /// The stream that outputs the value internally within `awaitValue`.
-    private var streamContinuation: AsyncThrowingStream<Value, any Error>.Continuation?
+    private var streamContinuation: AsyncThrowingStream<Value, any Swift.Error>.Continuation?
 
     /// Last remembered value, used if the value is fulfilled before
     /// we await the given value.
-    private var lastValue: Result<Value, any Error>?
+    private var lastValue: Result<Value, any Swift.Error>?
 
     public init() {}
 }
@@ -33,12 +33,14 @@ extension Pending {
     }
 
     /// Produces an error to cause `waitToForValue` to throw.
-    public func reject(error: any Error) {
+    public func reject(error: any Swift.Error) {
         lastValue = .failure(error)
         streamContinuation?.finish(throwing: error)
     }
 
-    public struct AlreadyWaitingError: Error {}
+    public enum Error: Swift.Error, Equatable {
+        case alreadyWaiting
+    }
 
     /// Wait for the production of the target value, cancelling on a Task cancellation.
     /// Yields the value when `fulfill` or `reject` is called, but waits until that moment.
@@ -47,7 +49,7 @@ extension Pending {
     /// given `timeout` is reached before a value is produced.
     public func wait(timeout: Duration? = nil) async throws -> Value {
         if isWaiting {
-            throw AlreadyWaitingError()
+            throw Error.alreadyWaiting
         }
 
         // Always drop the last value after awaiting.
