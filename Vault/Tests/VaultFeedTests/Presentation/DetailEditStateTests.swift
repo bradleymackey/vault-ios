@@ -1,209 +1,219 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class DetailEditStateTests: XCTestCase {
-    @MainActor
-    func test_init_isInitiallyNotPerformingAnyOperations() {
+@MainActor
+struct DetailEditStateTests {
+    @Test
+    func init_isInitiallyNotPerformingAnyOperations() {
         let sut = makeSUT()
 
-        XCTAssertFalse(sut.isSaving)
-        XCTAssertFalse(sut.isInEditMode)
+        #expect(!sut.isSaving)
+        #expect(!sut.isInEditMode)
     }
 
-    @MainActor
-    func test_startEditing_setsModeToEditing() {
+    @Test
+    func startEditing_setsModeToEditing() {
         let sut = makeSUT()
 
         sut.startEditing()
 
-        XCTAssertTrue(sut.isInEditMode)
+        #expect(sut.isInEditMode)
     }
 
-    @MainActor
-    func test_saveChanges_setsIsSavingToTrue() async throws {
+    @Test
+    func saveChanges_setsIsSavingToTrue() async throws {
         let sut = makeSUT()
 
-        let exp = expectation(description: "Wait for performUpdate")
-        let pendingCall = PendingValue<Void>()
-        // Save changes in a different task, so we don't suspend the current (test) task
-        Task.detached(priority: .background) {
+        let savingStart = PendingValue<Void>()
+        let task = Task {
             try await sut.saveChanges {
-                exp.fulfill()
-                try? await pendingCall.awaitValue()
+                await savingStart.fulfill()
+                try await suspendForever()
             }
         }
 
-        await fulfillment(of: [exp])
+        try await savingStart.awaitValue()
 
-        XCTAssertTrue(sut.isSaving)
+        #expect(sut.isSaving)
 
-        await pendingCall.fulfill()
-        await pendingCall.cancel()
+        task.cancel()
     }
 
-    @MainActor
-    func test_saveChanges_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
+    @Test
+    func saveChanges_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
         let sut = makeSUT()
 
-        let exp = expectation(description: "Wait for performUpdate")
-        let pendingCall = PendingValue<Void>()
-        Task.detached(priority: .background) {
-            await withTaskGroup(of: Void.self) { group in
-                for _ in 0 ..< 3 {
-                    // Multiple calls being made, concurrently.
-                    group.addTask {
-                        try? await sut.saveChanges {
-                            exp.fulfill()
-                            try? await pendingCall.awaitValue()
-                        }
-                    }
-                }
+        let savingStart1 = PendingValue<Void>()
+        let task1 = Task {
+            try await sut.saveChanges {
+                await savingStart1.fulfill()
+                try await suspendForever()
             }
         }
 
-        await fulfillment(of: [exp])
+        try await savingStart1.awaitValue()
 
-        await pendingCall.fulfill()
+        try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
+            try await sut.saveChanges {
+                confirmation.confirm()
+            }
+        }
+
+        task1.cancel()
     }
 
-    @MainActor
-    func test_saveChanges_successSetsEditModeToFalse() async throws {
+    @Test
+    func saveChanges_successSetsEditModeToFalse() async throws {
         let sut = makeSUT()
         sut.startEditing()
 
         try await sut.saveChanges { /* noop */ }
 
-        XCTAssertFalse(sut.isInEditMode)
+        #expect(!sut.isInEditMode)
     }
 
-    @MainActor
-    func test_saveChanges_failureDoesNotChangeEditMode() async throws {
+    @Test
+    func saveChanges_failureDoesNotChangeEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
 
         try? await sut.saveChanges { throw anyNSError() }
 
-        XCTAssertTrue(sut.isInEditMode)
+        #expect(sut.isInEditMode)
     }
 
-    @MainActor
-    func test_saveChanges_failureThrowsError() async {
+    @Test
+    func saveChanges_failureThrowsError() async {
         let sut = makeSUT()
 
-        await XCTAssertThrowsError(try await sut.saveChanges {
-            throw anyNSError()
-        })
+        // TODO: replace with "#expect(throws: OperationError.save)" in Swift 6.1
+        // https://github.com/swiftlang/swift-testing/pull/624
+        do {
+            try await sut.saveChanges {
+                throw TestError()
+            }
+            Issue.record("Expected error to be thrown")
+        } catch DetailEditState<MockState>.OperationError.save {
+            // expected
+        } catch {
+            Issue.record("Unexpected error type")
+        }
     }
 
-    @MainActor
-    func test_deleteItem_setsIsSavingToTrue() async throws {
+    @Test
+    func deleteItem_setsIsSavingToTrue() async throws {
         let sut = makeSUT()
 
-        let exp = expectation(description: "Wait for performDeletion")
-        let pendingCall = PendingValue<Void>()
-        // Save changes in a different task, so we don't suspend the current (test) task
-        Task.detached(priority: .background) {
+        let deletingStart = PendingValue<Void>()
+        let task = Task {
             try await sut.deleteItem {
-                exp.fulfill()
-                try? await pendingCall.awaitValue()
+                await deletingStart.fulfill()
+                try await suspendForever()
             } finished: {
-                /* noop */
+                // noop
             }
         }
 
-        await fulfillment(of: [exp])
+        try await deletingStart.awaitValue()
 
-        XCTAssertTrue(sut.isSaving)
+        #expect(sut.isSaving)
 
-        await pendingCall.fulfill()
+        task.cancel()
     }
 
-    @MainActor
-    func test_deleteItem_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
+    @Test
+    func deleteItem_hasNoEffectIfCalledWhileExistingSaveInProgress() async throws {
         let sut = makeSUT()
 
-        let exp = expectation(description: "Wait for performDeletion")
-        let pendingCall = PendingValue<Void>()
-        Task.detached(priority: .background) {
-            await withTaskGroup(of: Void.self) { group in
-                for _ in 0 ..< 3 {
-                    // Multiple calls being made, concurrently.
-                    group.addTask {
-                        try? await sut.deleteItem {
-                            exp.fulfill()
-                            try? await pendingCall.awaitValue()
-                        } finished: {
-                            /* noop */
-                        }
-                    }
-                }
+        let startDeleting1 = PendingValue<Void>()
+        let task1 = Task {
+            try await sut.deleteItem {
+                await startDeleting1.fulfill()
+                try await suspendForever()
+            } finished: {
+                // noop
             }
         }
 
-        await fulfillment(of: [exp])
+        try await startDeleting1.awaitValue()
 
-        await pendingCall.fulfill()
+        try await confirmation(timeout: .seconds(1), expectedCount: 0) { confirmation in
+            try await sut.deleteItem {
+                confirmation.confirm()
+            } finished: {
+                confirmation.confirm()
+            }
+        }
+
+        task1.cancel()
     }
 
-    @MainActor
-    func test_deleteItem_successExitsEditor() async throws {
+    @Test
+    func deleteItem_successCallsFinished() async throws {
         let sut = makeSUT()
 
-        let expDelete = expectation(description: "Wait for perform deletion")
-        let expExit = expectation(description: "Wait for exit current mode")
+        var called = [String]()
         try await sut.deleteItem {
-            expDelete.fulfill()
+            called.append("delete")
         } finished: {
-            expExit.fulfill()
+            called.append("finished")
         }
 
-        await fulfillment(of: [expDelete, expExit], enforceOrder: true)
+        #expect(called == ["delete", "finished"])
     }
 
-    @MainActor
-    func test_deleteItem_failureDoesNotExitEditor() async throws {
+    @Test
+    func deleteItem_failureDoesNotCallFinished() async throws {
         let sut = makeSUT()
 
-        var exited = false
-        try? await sut.deleteItem {
-            throw anyNSError()
-        } finished: {
-            exited = false
+        try await confirmation(timeout: .milliseconds(200), expectedCount: 0) { confirmation in
+            try? await sut.deleteItem {
+                throw TestError()
+            } finished: {
+                confirmation.confirm()
+            }
         }
-
-        XCTAssertFalse(exited)
     }
 
-    @MainActor
-    func test_deleteItem_failureDoesNotChangeEditMode() async throws {
+    @Test
+    func deleteItem_failureDoesNotChangeEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
 
         try? await sut.deleteItem {
-            throw anyNSError()
+            throw TestError()
         } finished: {
             // noop
         }
 
-        XCTAssertTrue(sut.isInEditMode)
+        #expect(sut.isInEditMode)
     }
 
-    @MainActor
-    func test_deleteItem_failureThrowsError() async {
+    @Test
+    func deleteItem_failureThrowsError() async {
         let sut = makeSUT()
 
-        await XCTAssertThrowsError(try await sut.deleteItem {
-            throw anyNSError()
-        } finished: {
-            // noop
-        })
+        // TODO: replace with "#expect(throws: OperationError.delete)" in Swift 6.1
+        // https://github.com/swiftlang/swift-testing/pull/624
+        do {
+            try await sut.deleteItem {
+                throw TestError()
+            } finished: {
+                // noop
+            }
+            Issue.record("Expected error to be thrown")
+        } catch DetailEditState<MockState>.OperationError.delete {
+            // expected
+        } catch {
+            Issue.record("Unexpected error")
+        }
     }
 
-    @MainActor
-    func test_exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() {
+    @Test
+    func exitCurrentModeClearingDirtyState_clearsDirtyStateInEditMode() async {
         let sut = makeSUT()
         sut.startEditing()
 
@@ -215,12 +225,12 @@ final class DetailEditStateTests: XCTestCase {
             exitedEditor = true
         }
 
-        XCTAssertTrue(clearedState)
-        XCTAssertFalse(exitedEditor, "Should not have exited editor")
+        #expect(clearedState)
+        #expect(!exitedEditor, "Should not have exited editor")
     }
 
-    @MainActor
-    func test_exitCurrentModeClearingDirtyState_disablesEditModeIfInEditMode() {
+    @Test
+    func exitCurrentModeClearingDirtyState_disablesEditModeIfInEditMode() {
         let sut = makeSUT()
         sut.startEditing()
 
@@ -230,11 +240,11 @@ final class DetailEditStateTests: XCTestCase {
             // noop
         }
 
-        XCTAssertFalse(sut.isInEditMode)
+        #expect(!sut.isInEditMode)
     }
 
-    @MainActor
-    func test_exitCurrentModeClearingDirtyState_existsCurrentModeIfNotInEditMode() {
+    @Test
+    func exitCurrentModeClearingDirtyState_existsCurrentModeIfNotInEditMode() {
         let sut = makeSUT()
 
         var clearedState = false
@@ -245,8 +255,8 @@ final class DetailEditStateTests: XCTestCase {
             exitedEditor = true
         }
 
-        XCTAssertTrue(exitedEditor)
-        XCTAssertFalse(clearedState, "Should not have cleared state")
+        #expect(exitedEditor)
+        #expect(!clearedState, "Should not have cleared state")
     }
 }
 
