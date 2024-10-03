@@ -1,15 +1,17 @@
+import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 @testable import VaultSettings
 
-final class ThirdPartyLibrariesLoaderTests: XCTestCase {
-    func test_load_loadsLibrariesFileFromRealDiskFile() async throws {
+struct ThirdPartyLibrariesLoaderTests {
+    @Test
+    func load_loadsLibrariesFileFromRealDiskFile() async throws {
         let fetcher = FileSystemLocalResourceFetcher()
         let sut = makeSUT(resourceFetcher: fetcher)
 
         let loaded = try await sut.load()
 
-        XCTAssertEqual(loaded.map(\.name), [
+        #expect(loaded.map(\.name) == [
             "SwiftUI-Shimmer",
             "CryptoSwift",
             "SnapshotTesting",
@@ -21,7 +23,8 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
         ])
     }
 
-    func test_load_parsesValuesCorrectly() async throws {
+    @Test
+    func load_parsesValuesCorrectly() async throws {
         let exampleFile = """
         {
             "libraries": [
@@ -43,12 +46,12 @@ final class ThirdPartyLibrariesLoaderTests: XCTestCase {
 
         let loaded = try await sut.load()
 
-        XCTAssertEqual(loaded.map(\.name), ["First", "Second"])
-        XCTAssertEqual(loaded.map(\.licence), ["My First Licence", "My Second Licence"])
-        XCTAssertEqual(
-            loaded.map(\.url.absoluteString),
-            ["https://github.com/first/first", "https://github.com/second/second"]
-        )
+        #expect(loaded.map(\.name) == ["First", "Second"])
+        #expect(loaded.map(\.licence) == ["My First Licence", "My Second Licence"])
+        #expect(loaded.map(\.url.absoluteString) == [
+            "https://github.com/first/first",
+            "https://github.com/second/second",
+        ])
     }
 }
 

@@ -32,11 +32,7 @@ final class DefaultTests {
     let defaults: Defaults
 
     init() throws {
-        // Must be unique across ALL tests due to concurrent execution.
-        let suite = #file + Data.random(count: 10).base64EncodedString()
-        let userDefaults = try #require(UserDefaults(suiteName: suite))
-        userDefaults.removePersistentDomain(forName: suite)
-        defaults = Defaults(userDefaults: userDefaults)
+        defaults = try .nonPersistent()
     }
 
     deinit {
