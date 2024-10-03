@@ -1,10 +1,11 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultBackup
 
-final class EncryptedVaultCoderTests: XCTestCase {
-    func test_encodeVault_encodesToExpectedFormat() throws {
+struct EncryptedVaultCoderTests {
+    @Test
+    func encodeVault_encodesToExpectedFormat() throws {
         let vault = EncryptedVault(
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
@@ -16,9 +17,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
         let result = try sut.encode(vault: vault)
 
-        XCTAssertEqual(
-            String(data: result, encoding: .utf8),
-            """
+        #expect(
+            String(data: result, encoding: .utf8) == """
             {
               "ENCRYPTION_AUTH_TAG" : "YXV0aA==",
               "ENCRYPTION_DATA" : "ZGF0YQ==",
@@ -31,7 +31,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
         )
     }
 
-    func test_decodeVault_decodesFromExpectedFormat() {
+    @Test
+    func decodeVault_decodesFromExpectedFormat() throws {
         let vaultData = Data("""
         {
           "ENCRYPTION_AUTH_TAG" : "YXV0aA==",
@@ -44,9 +45,9 @@ final class EncryptedVaultCoderTests: XCTestCase {
         """.utf8)
         let sut = EncryptedVaultCoder()
 
-        let result = try? sut.decode(vaultData: vaultData)
+        let result = try sut.decode(vaultData: vaultData)
 
-        XCTAssertEqual(result, EncryptedVault(
+        #expect(result == EncryptedVault(
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
@@ -55,7 +56,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
         ))
     }
 
-    func test_encodeShard_encodesToExpectedFormat() throws {
+    @Test
+    func encodeShard_encodesToExpectedFormat() throws {
         let shard = DataShard(
             group: .init(
                 id: 0,
@@ -68,9 +70,8 @@ final class EncryptedVaultCoderTests: XCTestCase {
 
         let result = try sut.encode(shard: shard)
 
-        XCTAssertEqual(
-            String(data: result, encoding: .utf8),
-            """
+        #expect(
+            String(data: result, encoding: .utf8) == """
             {
               "D" : "ZGF0YQ==",
               "G" : {
@@ -83,15 +84,16 @@ final class EncryptedVaultCoderTests: XCTestCase {
         )
     }
 
-    func test_decodeShard_decodesFromExpectedFormat() {
+    @Test
+    func decodeShard_decodesFromExpectedFormat() throws {
         let shardData = Data("""
         {"D":"ZGF0YQ==","G":{"ID":0,"I":1,"N":2}}
         """.utf8)
         let sut = EncryptedVaultCoder()
 
-        let result = try? sut.decode(dataShard: shardData)
+        let result = try sut.decode(dataShard: shardData)
 
-        XCTAssertEqual(result, DataShard(
+        #expect(result == DataShard(
             group: .init(
                 id: 0,
                 number: 1,
