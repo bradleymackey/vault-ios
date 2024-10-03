@@ -13,7 +13,7 @@ struct OTPCodeTimerUpdaterImplTests {
         let sut = makeSUT(clock: clock, period: 30)
 
         let expected = [OTPCodeTimerState(startTime: 60, endTime: 90)]
-        try await sut.timerUpdatedPublisher().expect(firstValues: expected) {
+        try await sut.timerUpdatedPublisher.expect(firstValues: expected) {
             // noop
         }
     }
@@ -28,7 +28,7 @@ struct OTPCodeTimerUpdaterImplTests {
             OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
             OTPCodeTimerState(startTime: 60, endTime: 90),
         ]
-        try await sut.timerUpdatedPublisher().expect(firstValues: expected) {
+        try await sut.timerUpdatedPublisher.expect(firstValues: expected) {
             clock.currentTime = 62
             await timer.finishTimer()
         }
@@ -45,7 +45,7 @@ struct OTPCodeTimerUpdaterImplTests {
             OTPCodeTimerState(startTime: 300, endTime: 330),
             OTPCodeTimerState(startTime: 330, endTime: 360),
         ]
-        try await sut.timerUpdatedPublisher().expect(firstValues: expected) {
+        try await sut.timerUpdatedPublisher.expect(firstValues: expected) {
             clock.currentTime = 301
             await sut.recalculate()
             clock.currentTime = 330
@@ -63,7 +63,7 @@ struct OTPCodeTimerUpdaterImplTests {
             OTPCodeTimerState(startTime: 30, endTime: 60),
             OTPCodeTimerState(startTime: 30, endTime: 60),
         ]
-        try await sut.timerUpdatedPublisher().expect(firstValues: expected) {
+        try await sut.timerUpdatedPublisher.expect(firstValues: expected) {
             await sut.recalculate()
             await sut.recalculate()
         }

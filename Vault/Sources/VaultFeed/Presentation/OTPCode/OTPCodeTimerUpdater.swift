@@ -7,7 +7,7 @@ import VaultCore
 
 public protocol OTPCodeTimerUpdater {
     @MainActor func recalculate()
-    @MainActor func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never>
+    @MainActor var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> { get }
 }
 
 // MARK: - Mock
@@ -17,7 +17,7 @@ public final class OTPCodeTimerUpdaterMock: OTPCodeTimerUpdater {
 
     public let subject = PassthroughSubject<OTPCodeTimerState, Never>()
     public var recalculateCallCount = 0
-    public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
+    public var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> {
         subject.eraseToAnyPublisher()
     }
 
@@ -55,7 +55,7 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
 
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
     @MainActor
-    public func timerUpdatedPublisher() -> AnyPublisher<OTPCodeTimerState, Never> {
+    public var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> {
         timerStateSubject
             .eraseToAnyPublisher()
     }

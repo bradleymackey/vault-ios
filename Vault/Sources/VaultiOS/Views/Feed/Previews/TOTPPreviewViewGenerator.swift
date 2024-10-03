@@ -103,7 +103,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
     private func makeTimerPeriodState(period: UInt64) -> OTPCodeTimerPeriodState {
         timerPeriodStateCache.getOrCreateValue(for: period) {
             let timerController = makeTimerController(period: period)
-            return OTPCodeTimerPeriodState(statePublisher: timerController.timerUpdatedPublisher())
+            return OTPCodeTimerPeriodState(statePublisher: timerController.timerUpdatedPublisher)
         }
     }
 
