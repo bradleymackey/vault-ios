@@ -2,7 +2,7 @@ import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
 public actor Pending<Value: Sendable> {
-    /// The stream that outputs the value internally within `awaitValue`.
+    /// The stream that outputs the value internally within `wait`.
     private var streamContinuation: AsyncThrowingStream<Value, any Swift.Error>.Continuation?
 
     /// Last remembered value, used if the value is fulfilled before
@@ -15,24 +15,24 @@ public actor Pending<Value: Sendable> {
 // MARK: - API
 
 extension Pending {
-    /// Whether a value is currently being waited for via `awaitValue`.
+    /// Whether a value is currently being waited for via `wait`.
     public var isWaiting: Bool {
         streamContinuation != nil
     }
 
-    /// Cancel the `awaitValue`, causing it to throw a `CancellationError`.
+    /// Cancel the `wait`, causing it to throw a `CancellationError`.
     public func cancel() {
         streamContinuation?.finish()
     }
 
-    /// If pending, produces the value, causing `waitToProduce` to return it's value immediately.
+    /// If pending, produces the value, causing `wait` to return it's value immediately.
     public func fulfill(_ value: Value) {
         lastValue = .success(value)
         streamContinuation?.yield(value)
         streamContinuation?.finish()
     }
 
-    /// Produces an error to cause `waitToForValue` to throw.
+    /// Produces an error to cause `wait` to throw.
     public func reject(error: any Swift.Error) {
         lastValue = .failure(error)
         streamContinuation?.finish(throwing: error)

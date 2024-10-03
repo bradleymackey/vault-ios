@@ -3,7 +3,7 @@ import FoundationExtensions
 import TestHelpers
 import Testing
 
-/// A common pattern we use in these tests is starting a background task that calls `awaitValue`.
+/// A common pattern we use in these tests is starting a background task that calls `wait`.
 /// We then want to check the state of the `sut` while it is waiting in the background.
 ///
 /// To maximise correctness, there's a few things to keep in mind:
