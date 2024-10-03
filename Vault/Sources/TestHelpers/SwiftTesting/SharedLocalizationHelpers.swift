@@ -1,13 +1,19 @@
-import XCTest
+import Foundation
+import Testing
 
-public func assertLocalizedKeyAndValuesExist(
+/// Creates an assertion using Swift Testing that localizations exist for all bundles.
+public func expectLocalizedKeyAndValuesExist(
     in presentationBundle: Bundle,
     _ table: String,
-    file: StaticString = #filePath,
-    line: UInt = #line
+    sourceLocation: SourceLocation = .__here()
 ) {
-    let localizationBundles = allLocalizationBundles(in: presentationBundle, file: file, line: line)
-    let localizedStringKeys = allLocalizedStringKeys(in: localizationBundles, table: table, file: file, line: line)
+    guard Test.current != nil else { fatalError("This must be running within a test!") }
+    let localizationBundles = allLocalizationBundles(in: presentationBundle, sourceLocation: sourceLocation)
+    let localizedStringKeys = allLocalizedStringKeys(
+        in: localizationBundles,
+        table: table,
+        sourceLocation: sourceLocation
+    )
 
     for (bundle, localization) in localizationBundles {
         for key in localizedStringKeys {
@@ -15,16 +21,14 @@ public func assertLocalizedKeyAndValuesExist(
 
             let language = Locale.current.localizedString(forLanguageCode: localization) ?? ""
             if localizedString == key {
-                XCTFail(
+                Issue.record(
                     "Missing \(language) (\(localization)) localized string for key: '\(key)' in table: '\(table)'",
-                    file: file,
-                    line: line
+                    sourceLocation: sourceLocation
                 )
             } else if localizedString.isEmpty {
-                XCTFail(
+                Issue.record(
                     "Empty string for '\(key)' in table: '\(table)' for \(language) (\(localization))",
-                    file: file,
-                    line: line
+                    sourceLocation: sourceLocation
                 )
             }
         }
@@ -35,15 +39,14 @@ private typealias LocalizedBundle = (bundle: Bundle, localization: String)
 
 private func allLocalizationBundles(
     in bundle: Bundle,
-    file: StaticString = #filePath,
-    line: UInt = #line
+    sourceLocation: SourceLocation
 ) -> [LocalizedBundle] {
     bundle.localizations.compactMap { localization in
         guard
             let path = bundle.path(forResource: localization, ofType: "lproj"),
             let localizedBundle = Bundle(path: path)
         else {
-            XCTFail("Couldn't find bundle for localization: \(localization)", file: file, line: line)
+            Issue.record("Couldn't find bundle for localization: \(localization)", sourceLocation: sourceLocation)
             return nil
         }
 
@@ -54,8 +57,7 @@ private func allLocalizationBundles(
 private func allLocalizedStringKeys(
     in bundles: [LocalizedBundle],
     table: String,
-    file: StaticString = #filePath,
-    line: UInt = #line
+    sourceLocation: SourceLocation
 ) -> Set<String> {
     bundles.reduce([]) { acc, current in
         guard
@@ -63,7 +65,10 @@ private func allLocalizedStringKeys(
             let strings = NSDictionary(contentsOfFile: path),
             let keys = strings.allKeys as? [String]
         else {
-            XCTFail("Couldn't load localized strings for localization: \(current.localization)", file: file, line: line)
+            Issue.record(
+                "Couldn't load localized strings for localization: \(current.localization)",
+                sourceLocation: sourceLocation
+            )
             return acc
         }
 

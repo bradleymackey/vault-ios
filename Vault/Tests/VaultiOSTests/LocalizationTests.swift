@@ -1,19 +1,17 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultiOS
 
-final class PresentationLocalizationTests: XCTestCase {
-    func test_localizedStrings_haveKeysAndValuesForAllSupportedLocalizations() {
-        let table = "Feed"
-        let bundle = Bundle.module
-
-        assertLocalizedKeyAndValuesExist(in: bundle, table)
+struct PresentationLocalizationTests {
+    @Test
+    func localizedStrings_haveKeysAndValuesForAllSupportedLocalizations() {
+        expectLocalizedKeyAndValuesExist(in: .module, "Feed")
     }
 
-    func test_localizedStrings_getsKeyFromTable() {
+    @Test
+    func localizedStrings_getsKeyFromTable() {
         let value = localized(key: "TEST_KEY_DONT_CHANGE")
-
-        XCTAssertEqual(value, "TEST_VALUE_DONT_CHANGE")
+        #expect(value == "TEST_VALUE_DONT_CHANGE")
     }
 }
