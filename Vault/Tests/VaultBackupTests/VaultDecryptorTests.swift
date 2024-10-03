@@ -1,11 +1,11 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultBackup
 
-final class VaultDecryptorTests: XCTestCase {
-    @MainActor
-    func test_decrypt_emptyDataDecryptsToEmpty() throws {
+struct VaultDecryptorTests {
+    @Test
+    func decrypt_emptyDataDecryptsToEmpty() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let vault = EncryptedVault(
             data: Data(),
@@ -17,11 +17,11 @@ final class VaultDecryptorTests: XCTestCase {
 
         let decrypted = try sut.decrypt(encryptedVault: vault)
 
-        XCTAssertEqual(decrypted.data, Data())
+        #expect(decrypted.data == Data())
     }
 
-    @MainActor
-    func test_decrypt_invalidDataFails() throws {
+    @Test
+    func decrypt_invalidDataFails() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let vault = EncryptedVault(
             data: Data(hex: "0x1234"),
@@ -31,12 +31,14 @@ final class VaultDecryptorTests: XCTestCase {
             keygenSignature: "signature"
         )
 
-        XCTAssertThrowsError(try sut.decrypt(encryptedVault: vault))
+        #expect(throws: (any Error).self, performing: {
+            try sut.decrypt(encryptedVault: vault)
+        })
     }
 
     /// Reference test case: https://gchq.github.io/CyberChef/#recipe=AES_Encrypt(%7B'option':'Hex','string':'3131313131313131313131313131313131313131313131313131313131313131'%7D,%7B'option':'Hex','string':'3232323232323232323232323232323232323232323232323232323232323232'%7D,'GCM','Hex','Hex',%7B'option':'Hex','string':''%7D)&input=NDE0MTQxNDE0MTQxNDE
-    @MainActor
-    func test_decrypt_expectedDataIsDecrypted() throws {
+    @Test
+    func decrypt_expectedDataIsDecrypted() throws {
         let iv = Data(repeating: 0x32, count: 32)
         let key = Data(repeating: 0x31, count: 32)
         let sut = try makeSUT(key: key)
@@ -53,17 +55,15 @@ final class VaultDecryptorTests: XCTestCase {
         let decrypted = try sut.decrypt(encryptedVault: vault)
 
         let plainData = Data(hex: "0x41414141414141")
-        XCTAssertEqual(decrypted.data, plainData)
+        #expect(decrypted.data == plainData)
     }
 }
 
 // MARK: - Helpers
 
 extension VaultDecryptorTests {
-    @MainActor
     private func makeSUT(key: Data) throws -> VaultDecryptor {
         let sut = try VaultDecryptor(key: .init(data: key))
-        trackForMemoryLeaks(sut)
         return sut
     }
 
