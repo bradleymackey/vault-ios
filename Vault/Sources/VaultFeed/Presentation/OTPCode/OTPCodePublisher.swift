@@ -38,7 +38,7 @@ public final class TOTPCodePublisher: OTPCodePublisher {
     @MainActor
     private func codeValuePublisher() -> AnyPublisher<BigUInt, any Error> {
         let generator = totpGenerator
-        return timer.timerUpdatedPublisher()
+        return timer.timerUpdatedPublisher
             .setFailureType(to: (any Error).self)
             .tryMap { state in
                 try generator.code(epochSeconds: UInt64(state.startTime))

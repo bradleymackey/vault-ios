@@ -14,9 +14,18 @@ final class TOTPCodePublisherTests: XCTestCase {
         let publisher = sut.renderedCodePublisher().collectFirst(3)
 
         let values = try await awaitPublisher(publisher, when: {
-            timer.subject.send(OTPCodeTimerState(startTime: 1_111_111_109, endTime: 1_111_111_109 + 1))
-            timer.subject.send(OTPCodeTimerState(startTime: 1_111_111_111, endTime: 1_111_111_111 + 1))
-            timer.subject.send(OTPCodeTimerState(startTime: 2_000_000_000, endTime: 2_000_000_000 + 1))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 1_111_111_109,
+                endTime: 1_111_111_109 + 1
+            ))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 1_111_111_111,
+                endTime: 1_111_111_111 + 1
+            ))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 2_000_000_000,
+                endTime: 2_000_000_000 + 1
+            ))
         })
         XCTAssertEqual(values, [
             "07081804",
@@ -32,8 +41,14 @@ final class TOTPCodePublisherTests: XCTestCase {
         let publisher = sut.renderedCodePublisher().collectFirst(2)
 
         let values = try await awaitPublisher(publisher, when: {
-            timer.subject.send(OTPCodeTimerState(startTime: 1_111_111_109, endTime: 1_111_111_109 + 1))
-            timer.subject.send(OTPCodeTimerState(startTime: 1_111_111_111, endTime: 1_111_111_111 + 1))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 1_111_111_109,
+                endTime: 1_111_111_109 + 1
+            ))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 1_111_111_111,
+                endTime: 1_111_111_111 + 1
+            ))
         })
         XCTAssertEqual(values, [
             "",
@@ -48,8 +63,14 @@ final class TOTPCodePublisherTests: XCTestCase {
         let publisher = sut.renderedCodePublisher().collectFirst(2)
 
         let values = try await awaitPublisher(publisher, when: {
-            timer.subject.send(OTPCodeTimerState(startTime: 1_111_111_109, endTime: 1_111_111_109 + 1))
-            timer.subject.send(OTPCodeTimerState(startTime: 1_111_111_111, endTime: 1_111_111_111 + 1))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 1_111_111_109,
+                endTime: 1_111_111_109 + 1
+            ))
+            timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
+                startTime: 1_111_111_111,
+                endTime: 1_111_111_111 + 1
+            ))
         })
         XCTAssertEqual(values, [
             "00000000000907081804",
