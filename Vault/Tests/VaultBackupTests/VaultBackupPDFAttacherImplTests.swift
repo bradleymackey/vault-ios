@@ -1,33 +1,37 @@
 import Foundation
 import PDFKit
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultBackup
 
-final class VaultBackupPDFAttacherImplTests: XCTestCase {
-    func test_attach_noPagesGeneratesError() throws {
+struct VaultBackupPDFAttacherImplTests {
+    @Test
+    func attach_noPagesGeneratesError() throws {
         let sut = VaultBackupPDFAttacherImpl()
         var page = PDFDocument.noPages
 
-        XCTAssertThrowsError(try sut.attach(vault: anyEncryptedVault(), to: &page))
+        #expect(throws: (any Error).self) {
+            try sut.attach(vault: anyEncryptedVault(), to: &page)
+        }
     }
 
-    func test_attach_addsAttachmentOfEncryptedVault() throws {
+    @Test
+    func attach_addsAttachmentOfEncryptedVault() throws {
         let sut = VaultBackupPDFAttacherImpl()
         var page = PDFDocument.onePage
 
         try sut.attach(vault: anyEncryptedVault(), to: &page)
 
-        let pageOne = try XCTUnwrap(page.page(at: 0))
+        let pageOne = try #require(page.page(at: 0))
         let annotations = pageOne.annotations
-        XCTAssertEqual(annotations.count, 1)
+        try #require(annotations.count == 1)
 
-        let targetAnnotation = try XCTUnwrap(annotations.first)
+        let targetAnnotation = try #require(annotations.first)
 
         let expected =
             "vault.backup.encrypted-vault:ewogICJFTkNSWVBUSU9OX0FVVEhfVEFHIiA6ICIiLAogICJFTkNSWVBUSU9OX0RBVEEiIDogIiIsCiAgIkVOQ1JZUFRJT05fSVYiIDogIiIsCiAgIkVOQ1JZUFRJT05fVkVSU0lPTiIgOiAiMS4wLjAiLAogICJLRVlHRU5fU0FMVCIgOiAiIiwKICAiS0VZR0VOX1NJR05BVFVSRSIgOiAibXktc2lnbmF0dXJlIgp9"
         let retrieved = targetAnnotation.contents
-        XCTAssertEqual(retrieved, expected)
+        #expect(retrieved == expected)
     }
 }
 
