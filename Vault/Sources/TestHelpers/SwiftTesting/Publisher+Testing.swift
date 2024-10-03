@@ -24,9 +24,10 @@ extension Publisher {
 }
 
 extension Publisher where Output: Equatable, Output: Sendable {
+    @MainActor
     public func expect(
         firstValues: [Output],
-        timeout: Duration? = nil,
+        timeout: Duration = .seconds(1),
         sourceLocation: SourceLocation = .__here(),
         // swiftlint:disable all
         when actions: sending @escaping () async throws -> Void
@@ -46,10 +47,10 @@ extension Publisher where Output: Equatable, Output: Sendable {
             }
         }
 
-        Task {
-            try await actions()
-        }
+        // Concurrently run actions while we are collecting the values.
+        Task { try await actions() }
 
+        // Wait for all the values to be recieved.
         try await pending.awaitValue(timeout: timeout)
         #expect(collectedValues.value == firstValues, sourceLocation: sourceLocation)
     }
