@@ -1,29 +1,32 @@
 import Foundation
-import XCTest
+import Testing
 @testable import VaultBackup
 
-final class IntermediateEncodedVaultDecoderTests: XCTestCase {
-    @MainActor
-    func test_decodeVault_throwsForEmptyData() {
-        let sut = makeSUT()
+struct IntermediateEncodedVaultDecoderTests {
+    let sut = IntermediateEncodedVaultDecoder()
+
+    @Test
+    func decodeVault_throwsForEmptyData() {
         let data = Data()
         let vault = IntermediateEncodedVault(data: data)
 
-        XCTAssertThrowsError(try sut.decode(encodedVault: vault))
+        #expect(throws: (any Error).self, performing: {
+            try sut.decode(encodedVault: vault)
+        })
     }
 
-    @MainActor
-    func test_decodeVault_throwsForInvalidJSON() {
-        let sut = makeSUT()
+    @Test
+    func decodeVault_throwsForInvalidJSON() {
         let data = Data("{}".utf8)
         let vault = IntermediateEncodedVault(data: data)
 
-        XCTAssertThrowsError(try sut.decode(encodedVault: vault))
+        #expect(throws: (any Error).self) {
+            try sut.decode(encodedVault: vault)
+        }
     }
 
-    @MainActor
-    func test_decodeVault_decodesZeroItems() throws {
-        let sut = makeSUT()
+    @Test
+    func decodeVault_decodesZeroItems() throws {
         let input = VaultBackupPayload(
             version: "1.0.0",
             created: Date(timeIntervalSince1970: 1_700_575_468),
@@ -36,14 +39,13 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
 
         let decoded = try sut.decode(encodedVault: encoder.encode(vaultBackup: input))
 
-        XCTAssertEqual(decoded, input, "Decoded backup differs from input")
+        #expect(decoded == input, "Decoded backup differs from input")
     }
 
-    @MainActor
-    func test_decodeVault_decodesNonZeroItems() throws {
-        let sut = makeSUT()
+    @Test
+    func decodeVault_decodesNonZeroItems() throws {
         let date1 = Date(timeIntervalSince1970: 12345)
-        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid1 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
         let item1 = VaultBackupItem(
             id: uuid1,
             createdDate: date1,
@@ -57,7 +59,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
-        let uuid2 = try XCTUnwrap(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
+        let uuid2 = try #require(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
         let item2 = VaultBackupItem(
             id: uuid2,
             createdDate: date2,
@@ -71,7 +73,7 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
             item: .note(data: .init(title: "Hello world again", rawContents: nil, format: .markdown))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
-        let uuid3 = try XCTUnwrap(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))
+        let uuid3 = try #require(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))
         let item3 = VaultBackupItem(
             id: uuid3,
             createdDate: date3,
@@ -104,20 +106,13 @@ final class IntermediateEncodedVaultDecoderTests: XCTestCase {
 
         let decoded = try sut.decode(encodedVault: encoder.encode(vaultBackup: input))
 
-        XCTAssertEqual(decoded, input, "Decoded backup differs from input")
+        #expect(decoded == input, "Decoded backup differs from input")
     }
 }
 
 // MARK: - Helpers
 
 extension IntermediateEncodedVaultDecoderTests {
-    @MainActor
-    private func makeSUT() -> IntermediateEncodedVaultDecoder {
-        let sut = IntermediateEncodedVaultDecoder()
-        trackForMemoryLeaks(sut)
-        return sut
-    }
-
     private func anyBackupPayload(
         created: Date = Date(),
         userDescription: String = "my description",

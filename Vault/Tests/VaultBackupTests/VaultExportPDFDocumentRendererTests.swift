@@ -1,20 +1,22 @@
 import Foundation
 import PDFKit
 import TestHelpers
+import Testing
 import VaultExport
-import XCTest
 @testable import VaultBackup
 
-final class VaultExportPDFDocumentRendererTests: XCTestCase {
-    func test_init_doesNotHaveAnySideEffects() {
+struct VaultExportPDFDocumentRendererTests {
+    @Test
+    func init_doesNotHaveAnySideEffects() {
         let renderer = PDFDocumentRendererMock()
 
         _ = makeSUT(documentRenderer: renderer)
 
-        XCTAssertEqual(renderer.renderCallCount, 0)
+        #expect(renderer.renderCallCount == 0)
     }
 
-    func test_render_rendersVaultParsedToDocument() throws {
+    @Test
+    func render_rendersVaultParsedToDocument() throws {
         let exportPayload = VaultExportPayload(
             encryptedVault: EncryptedVault(
                 data: Data(),
@@ -32,16 +34,16 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
 
         let document = try sut.render(document: exportPayload)
 
-        XCTAssertIdentical(
-            document,
-            pdfDocument,
+        #expect(
+            document === pdfDocument,
             "Document should be returned from the block renderer"
         )
-        XCTAssertEqual(renderer.renderCallCount, 2, "Renders twice, first pass and final render")
-        XCTAssertEqual(renderer.renderArgValues.last?.content.count, 4)
+        #expect(renderer.renderCallCount == 2, "Renders twice, first pass and final render")
+        #expect(renderer.renderArgValues.last?.content.count == 4)
     }
 
-    func test_render_attachesBackupPayload() throws {
+    @Test
+    func render_attachesBackupPayload() throws {
         let exportPayload = VaultExportPayload(
             encryptedVault: EncryptedVault(
                 data: Data(),
@@ -58,7 +60,7 @@ final class VaultExportPDFDocumentRendererTests: XCTestCase {
 
         _ = try sut.render(document: exportPayload)
 
-        XCTAssertEqual(attacher.attachCallCount, 1)
+        #expect(attacher.attachCallCount == 1)
     }
 }
 

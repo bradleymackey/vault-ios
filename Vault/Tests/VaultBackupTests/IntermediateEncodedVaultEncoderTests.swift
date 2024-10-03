@@ -1,12 +1,13 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultBackup
 
-final class IntermediateEncodedVaultEncoderTests: XCTestCase {
-    @MainActor
-    func test_encodeVault_encodesToJSONFormat_emptyVault() throws {
-        let sut = makeSUT()
+struct IntermediateEncodedVaultEncoderTests {
+    let sut = IntermediateEncodedVaultEncoder()
+
+    @Test
+    func encodeVault_encodesToJSONFormat_emptyVault() throws {
         let date = Date(timeIntervalSince1970: 12345)
         let backup = anyBackupPayload(
             created: date,
@@ -17,15 +18,14 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let encodedVault = try sut.encode(vaultBackup: backup)
 
         let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
-        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
+        let encoded = try #require(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
-    @MainActor
-    func test_encodeVault_encodesToJSONFormat_topLevelTags() throws {
-        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
-        let uuid2 = try XCTUnwrap(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
-        let sut = makeSUT()
+    @Test
+    func encodeVault_encodesToJSONFormat_topLevelTags() throws {
+        let uuid1 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try #require(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
         let date = Date(timeIntervalSince1970: 12345)
         let backup = anyBackupPayload(
             created: date,
@@ -45,16 +45,15 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let encodedVault = try sut.encode(vaultBackup: backup)
 
         let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
-        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
+        let encoded = try #require(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
-    @MainActor
-    func test_encodeVault_encodesToJSONFormat_secureNote() throws {
-        let sut = makeSUT()
+    @Test
+    func encodeVault_encodesToJSONFormat_secureNote() throws {
         let date = Date(timeIntervalSince1970: 12345)
-        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
-        let uuid2 = try XCTUnwrap(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
+        let uuid1 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try #require(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
         let item = VaultBackupItem(
             id: uuid1,
             createdDate: date,
@@ -78,16 +77,15 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let encodedVault = try sut.encode(vaultBackup: backup)
 
         let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
-        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
+        let encoded = try #require(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
-    @MainActor
-    func test_encodeVault_encodesToJSONFormat_otpCode() throws {
-        let sut = makeSUT()
+    @Test
+    func encodeVault_encodesToJSONFormat_otpCode() throws {
         let date = Date(timeIntervalSince1970: 12345)
-        let uuid = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
-        let uuid2 = try XCTUnwrap(UUID(uuidString: "5738B828-FDE4-4F8C-8D4D-FF619054E98E"))
+        let uuid = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try #require(UUID(uuidString: "5738B828-FDE4-4F8C-8D4D-FF619054E98E"))
         let item = VaultBackupItem(
             id: uuid,
             createdDate: date,
@@ -122,15 +120,14 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let encodedVault = try sut.encode(vaultBackup: backup)
 
         let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
-        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
+        let encoded = try #require(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 
-    @MainActor
-    func test_encodeVault_encodesToJSONFormat_nonEmptyVault() throws {
-        let sut = makeSUT()
+    @Test
+    func encodeVault_encodesToJSONFormat_nonEmptyVault() throws {
         let date1 = Date(timeIntervalSince1970: 12345)
-        let uuid1 = try XCTUnwrap(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid1 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
         let item1 = VaultBackupItem(
             id: uuid1,
             createdDate: date1,
@@ -145,8 +142,8 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
         )
         let date2 = Date(timeIntervalSince1970: 45658)
-        let uuid2 = try XCTUnwrap(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
-        let uuidTag = try XCTUnwrap(UUID(uuidString: "493DF342-E537-4722-B6DC-6430A1413E34"))
+        let uuid2 = try #require(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
+        let uuidTag = try #require(UUID(uuidString: "493DF342-E537-4722-B6DC-6430A1413E34"))
         let item2 = VaultBackupItem(
             id: uuid2,
             createdDate: date2,
@@ -160,7 +157,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
             item: .note(data: .init(title: "Hello world again", rawContents: "contents", format: .markdown))
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
-        let uuid3 = try XCTUnwrap(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))
+        let uuid3 = try #require(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))
         let item3 = VaultBackupItem(
             id: uuid3,
             createdDate: date3,
@@ -193,7 +190,7 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
         let encodedVault = try sut.encode(vaultBackup: backup)
 
         let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
-        let encoded = try XCTUnwrap(String(data: decompressedData, encoding: .utf8))
+        let encoded = try #require(String(data: decompressedData, encoding: .utf8))
         assertSnapshot(of: encoded, as: .lines)
     }
 }
@@ -201,13 +198,6 @@ final class IntermediateEncodedVaultEncoderTests: XCTestCase {
 // MARK: - Helpers
 
 extension IntermediateEncodedVaultEncoderTests {
-    @MainActor
-    private func makeSUT() -> IntermediateEncodedVaultEncoder {
-        let sut = IntermediateEncodedVaultEncoder()
-        trackForMemoryLeaks(sut)
-        return sut
-    }
-
     private func anyBackupPayload(
         created: Date = Date(),
         userDescription: String = "my description",

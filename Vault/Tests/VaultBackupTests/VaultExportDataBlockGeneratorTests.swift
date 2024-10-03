@@ -1,10 +1,11 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultBackup
 
-final class VaultExportDataBlockGeneratorTests: XCTestCase {
-    func test_makeDocument_createsExpectedContent() throws {
+struct VaultExportDataBlockGeneratorTests {
+    @Test
+    func makeDocument_createsExpectedContent() throws {
         let sut = VaultExportDataBlockGenerator(payload: .init(
             encryptedVault: .init(
                 data: Data(),
@@ -19,7 +20,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
 
         let document = try sut.makeDocument(knownPageCount: 2)
 
-        XCTAssertEqual(document.content.map(\.debugDescription), [
+        #expect(document.content.map(\.debugDescription) == [
             "TITLE: Vault Export",
             "TITLE: my desc",
             "TITLE: Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are 1 QR codes.",
@@ -27,7 +28,8 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
         ])
     }
 
-    func test_makeDocument_splitsUserDescription() throws {
+    @Test
+    func makeDocument_splitsUserDescription() throws {
         let description = """
         This is my description
         It's very long
@@ -52,7 +54,7 @@ final class VaultExportDataBlockGeneratorTests: XCTestCase {
 
         let document = try sut.makeDocument(knownPageCount: 2)
 
-        XCTAssertEqual(document.content.map(\.debugDescription), [
+        #expect(document.content.map(\.debugDescription) == [
             "TITLE: Vault Export",
             "TITLE: This is my description",
             "TITLE: It\'s very long",
