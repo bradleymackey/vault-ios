@@ -4,7 +4,7 @@ import Testing
 
 extension Publisher where Failure == Never {
     /// Creates a testing `confirmation` that a
-    public func testingConfirm(eventCount: Int, actions: () async throws -> Void) async throws {
+    public func expect(eventCount: Int, actions: () async throws -> Void) async throws {
         var cancellable: AnyCancellable?
         try await confirmation(expectedCount: eventCount) { confirmation in
             cancellable = sink { _ in

@@ -176,7 +176,7 @@ final class DefaultTests {
     func clear_didChangeDefaults() async throws {
         try await defaults
             .defaultsDidChangePublisher()
-            .testingConfirm(eventCount: 3) {
+            .expect(eventCount: 3) {
                 defaults.clear(Key<String>("test1"))
                 defaults.clear(Key<String>("test2"))
                 defaults.clear(Key<String>("test3"))
@@ -187,7 +187,7 @@ final class DefaultTests {
     func removeAll_didChangeDefaults() async throws {
         try await defaults
             .defaultsDidChangePublisher()
-            .testingConfirm(eventCount: 3) {
+            .expect(eventCount: 3) {
                 defaults.removeAll()
                 defaults.removeAll()
                 defaults.removeAll()
@@ -198,7 +198,7 @@ final class DefaultTests {
     func set_didChangeDefaults() async throws {
         try await defaults
             .defaultsDidChangePublisher()
-            .testingConfirm(eventCount: 4) {
+            .expect(eventCount: 4) {
                 try defaults.set("test1", for: Key<String>("test1"))
                 try defaults.set("test1", for: Key<String>("test1"))
                 try defaults.set("test1", for: Key<String>("test1"))
