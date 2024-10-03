@@ -170,7 +170,7 @@ struct DetailEditStateTests {
         let sut = makeSUT()
 
         try await confirmation(timeout: .milliseconds(200), expectedCount: 0) { confirmation in
-            try await sut.deleteItem {
+            try? await sut.deleteItem {
                 throw TestError()
             } finished: {
                 confirmation.confirm()
