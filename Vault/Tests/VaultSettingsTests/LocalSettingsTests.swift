@@ -7,7 +7,7 @@ import VaultSettings
 struct LocalSettingsTests {
     @Test
     func pasteTimeToLive_defaultsToDefaultValue() throws {
-        let defaults = try makeDefaults()
+        let defaults = try Defaults.nonPersistent()
         let sut = try makeSUT(defaults: defaults)
 
         #expect(sut.state.pasteTimeToLive == .default)
@@ -15,7 +15,7 @@ struct LocalSettingsTests {
 
     @Test
     func pasteTimeToLive_savesStateAfterStateChanged() throws {
-        let defaults = try makeDefaults()
+        let defaults = try Defaults.nonPersistent()
         let sutSave = try makeSUT(defaults: defaults)
         sutSave.state.pasteTimeToLive = .init(duration: 1234)
 
@@ -30,12 +30,6 @@ extension LocalSettingsTests {
     private func makeSUT(defaults: Defaults) throws -> LocalSettings {
         let settings = LocalSettings(defaults: defaults)
         return settings
-    }
-
-    private func makeDefaults() throws -> Defaults {
-        let userDefaults = try #require(UserDefaults(suiteName: #file))
-        userDefaults.removePersistentDomain(forName: #file)
-        return Defaults(userDefaults: userDefaults)
     }
 }
 

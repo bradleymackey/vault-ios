@@ -157,13 +157,6 @@ func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date().addingTimeInterval(0.1))
 }
 
-func nonPersistentDefaults() -> Defaults {
-    let name = UUID().uuidString
-    let user = UserDefaults(suiteName: name)
-    user?.removePersistentDomain(forName: name)
-    return Defaults(userDefaults: user!)
-}
-
 extension View {
     func framedToTestDeviceSize() -> some View {
         // iPhone 14 size

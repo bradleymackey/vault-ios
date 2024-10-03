@@ -123,7 +123,8 @@ extension VaultItemFeedViewSnapshotTests {
     private func makeSUT(
         dataModel: VaultDataModel,
         state: VaultItemFeedState = VaultItemFeedState(),
-        localSettings: LocalSettings = LocalSettings(defaults: nonPersistentDefaults())
+        // swiftlint:disable:next force_try
+        localSettings: LocalSettings = LocalSettings(defaults: try! .nonPersistent())
     ) -> some View {
         struct CodePlaceholderView: View {
             var behaviour: VaultItemViewBehaviour
