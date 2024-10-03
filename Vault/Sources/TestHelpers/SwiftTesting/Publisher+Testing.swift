@@ -36,11 +36,11 @@ extension Publisher where Output: Equatable, Output: Sendable {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
 
-        let pending = PendingValue<Void>()
+        let signal = Pending.signal()
 
         let collectedValues = Atomic<[Output]>(initialValue: [])
         cancellable = prefix(firstValues.count).sink { _ in
-            Task { await pending.fulfill() }
+            Task { await signal.fulfill() }
         } receiveValue: { value in
             collectedValues.modify {
                 $0.append(value)
@@ -51,7 +51,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
         Task { try await actions() }
 
         // Wait for all the values to be recieved.
-        try await pending.awaitValue(timeout: timeout)
+        try await signal.wait(timeout: timeout)
         #expect(collectedValues.value == firstValues, sourceLocation: sourceLocation)
     }
 }

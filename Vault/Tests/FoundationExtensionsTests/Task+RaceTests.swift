@@ -38,19 +38,19 @@ enum TaskRaceTests {
 
         @Test(arguments: [TestTask.t1, .t2, .t3])
         func firstResolvedReturnsFirstResolvedValue(resolvingTask: TestTask) async throws {
-            let pending1 = PendingValue<Void>()
-            let pending2 = PendingValue<Void>()
-            let pending3 = PendingValue<Void>()
+            let pending1 = Pending.signal()
+            let pending2 = Pending.signal()
+            let pending3 = Pending.signal()
             let t1: TaskRace<Int> = {
-                try await pending1.awaitValue()
+                try await pending1.wait()
                 return TestTask.t1.testValue
             }
             let t2: TaskRace<Int> = {
-                try await pending2.awaitValue()
+                try await pending2.wait()
                 return TestTask.t2.testValue
             }
             let t3: TaskRace<Int> = {
-                try await pending3.awaitValue()
+                try await pending3.wait()
                 return TestTask.t3.testValue
             }
             let parent = Task {
@@ -68,23 +68,23 @@ enum TaskRaceTests {
 
         @Test(arguments: [TestTask.t1, .t2, .t3])
         func errorInAnyTaskPropagatesError(erroringTask: TestTask) async throws {
-            let pending1 = PendingValue<Void>()
-            let pending2 = PendingValue<Void>()
-            let pending3 = PendingValue<Void>()
+            let pending1 = Pending.signal()
+            let pending2 = Pending.signal()
+            let pending3 = Pending.signal()
             let t1: TaskRace<Void> = {
-                try await pending1.awaitValue()
+                try await pending1.wait()
                 if erroringTask == .t1 {
                     throw SomeError()
                 }
             }
             let t2: TaskRace<Void> = {
-                try await pending2.awaitValue()
+                try await pending2.wait()
                 if erroringTask == .t2 {
                     throw SomeError()
                 }
             }
             let t3: TaskRace<Void> = {
-                try await pending3.awaitValue()
+                try await pending3.wait()
                 if erroringTask == .t3 {
                     throw SomeError()
                 }
@@ -137,19 +137,19 @@ enum TaskRaceTests {
 
         @Test(arguments: [TestTask.t1, .t2, .t3])
         func firstResolvedReturnsFirstResolvedValue(resolvingTask: TestTask) async throws {
-            let pending1 = PendingValue<Void>()
-            let pending2 = PendingValue<Void>()
-            let pending3 = PendingValue<Void>()
+            let pending1 = Pending.signal()
+            let pending2 = Pending.signal()
+            let pending3 = Pending.signal()
             let t1: TaskRace<Int> = {
-                try await pending1.awaitValue()
+                try await pending1.wait()
                 return TestTask.t1.testValue
             }
             let t2: TaskRace<Int> = {
-                try await pending2.awaitValue()
+                try await pending2.wait()
                 return TestTask.t2.testValue
             }
             let t3: TaskRace<Int> = {
-                try await pending3.awaitValue()
+                try await pending3.wait()
                 return TestTask.t3.testValue
             }
             let parent = Task {
@@ -168,19 +168,19 @@ enum TaskRaceTests {
 
         @Test
         func ignoresErrorsUntilValue() async throws {
-            let pending1 = PendingValue<Void>()
-            let pending2 = PendingValue<Void>()
-            let pending3 = PendingValue<Void>()
+            let pending1 = Pending.signal()
+            let pending2 = Pending.signal()
+            let pending3 = Pending.signal()
             let t1: TaskRace<Int> = {
-                try await pending1.awaitValue()
+                try await pending1.wait()
                 throw SomeError()
             }
             let t2: TaskRace<Int> = {
-                try await pending2.awaitValue()
+                try await pending2.wait()
                 throw SomeError()
             }
             let t3: TaskRace<Int> = {
-                try await pending3.awaitValue()
+                try await pending3.wait()
                 return 103
             }
             let parent = Task {
@@ -196,19 +196,19 @@ enum TaskRaceTests {
 
         @Test
         func allErroringTasksReturnsNil() async throws {
-            let pending1 = PendingValue<Void>()
-            let pending2 = PendingValue<Void>()
-            let pending3 = PendingValue<Void>()
+            let pending1 = Pending.signal()
+            let pending2 = Pending.signal()
+            let pending3 = Pending.signal()
             let t1: TaskRace<Int> = {
-                try await pending1.awaitValue()
+                try await pending1.wait()
                 throw SomeError()
             }
             let t2: TaskRace<Int> = {
-                try await pending2.awaitValue()
+                try await pending2.wait()
                 throw SomeError()
             }
             let t3: TaskRace<Int> = {
-                try await pending3.awaitValue()
+                try await pending3.wait()
                 throw SomeError()
             }
             let parent = Task {
