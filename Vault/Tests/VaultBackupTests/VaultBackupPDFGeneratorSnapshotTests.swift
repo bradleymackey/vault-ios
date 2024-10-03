@@ -1,41 +1,44 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultBackup
 import VaultExport
-import XCTest
 
-final class VaultBackupPDFGeneratorSnapshotTests: XCTestCase {
-    func test_makeDocument_attachesMetadataDocumentAttributes() throws {
+struct VaultBackupPDFGeneratorSnapshotTests {
+    @Test
+    func makeDocument_attachesMetadataDocumentAttributes() throws {
         let payload = makeTestingPayload(encryptedDataLength: 100)
 
         let sut = makeSUT()
         let pdf = try sut.makePDF(payload: payload)
 
         let attributes = pdf.documentAttributes as? [String: Any]
-        XCTAssertEqual(attributes?["Creator"] as? String, "my app")
-        XCTAssertEqual(attributes?["Author"] as? String, "my author")
-        XCTAssertEqual(attributes?["Title"] as? String, "my document")
+        #expect(attributes?["Creator"] as? String == "my app")
+        #expect(attributes?["Author"] as? String == "my author")
+        #expect(attributes?["Title"] as? String == "my document")
     }
 
-    func test_makeDocument_attachesEncryptedPayloadAsAnnotationOnFirstPage() throws {
+    @Test
+    func makeDocument_attachesEncryptedPayloadAsAnnotationOnFirstPage() throws {
         let payload = makeTestingPayload(encryptedDataLength: 100)
 
         let sut = makeSUT()
         let pdf = try sut.makePDF(payload: payload)
 
-        let pageOne = try XCTUnwrap(pdf.page(at: 0))
+        let pageOne = try #require(pdf.page(at: 0))
         let annotations = pageOne.annotations
-        XCTAssertEqual(annotations.count, 1)
+        try #require(annotations.count == 1)
 
-        let targetAnnotation = try XCTUnwrap(annotations.first)
+        let targetAnnotation = try #require(annotations.first)
 
         let expected =
             "vault.backup.encrypted-vault:ewogICJFTkNSWVBUSU9OX0FVVEhfVEFHIiA6ICJJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU1qSXlNakl5TWpJeU09IiwKICAiRU5DUllQVElPTl9EQVRBIiA6ICJSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSVVZGUlVWRlJVVkZSUT09IiwKICAiRU5DUllQVElPTl9JViIgOiAicjYrdnI2K3ZyNit2cjYrdnI2K3ZyNit2cjYrdnI2K3ZyNit2cjYrdiIsCiAgIkVOQ1JZUFRJT05fVkVSU0lPTiIgOiAiMS4wLjAiLAogICJLRVlHRU5fU0FMVCIgOiAiSWlJaUlpSWlJaUlpSWc9PSIsCiAgIktFWUdFTl9TSUdOQVRVUkUiIDogInNpZ25hdHVyZSIKfQ=="
         let retrieved = targetAnnotation.contents
-        XCTAssertEqual(retrieved, expected)
+        #expect(retrieved == expected)
     }
 
-    func test_makeDocument_createsExpectedContent() throws {
+    @Test
+    func makeDocument_createsExpectedContent() throws {
         let payload = makeTestingPayload(encryptedDataLength: 10000)
         let sut = makeSUT()
 
@@ -44,7 +47,8 @@ final class VaultBackupPDFGeneratorSnapshotTests: XCTestCase {
         assertSnapshot(of: pdf, as: .pdf())
     }
 
-    func test_makeDocument_sizesCorrectlyToOtherSize() throws {
+    @Test
+    func makeDocument_sizesCorrectlyToOtherSize() throws {
         let payload = makeTestingPayload(encryptedDataLength: 10000)
         let sut = makeSUT(size: A5DocumentSize())
 
