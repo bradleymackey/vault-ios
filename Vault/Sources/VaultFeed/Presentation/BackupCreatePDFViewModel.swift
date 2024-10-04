@@ -69,7 +69,7 @@ public final class BackupCreatePDFViewModel {
     private static let pdfSizeKey = Key<Size>(VaultIdentifiers.Preferences.PDF.defaultSize)
     private static let userHintKey = Key<String>(VaultIdentifiers.Preferences.PDF.userHint)
     private static let defaultUserHint =
-        "This is my description, which is visible in plain text on the vault backup. You can use the Vault app to import this data if you lose access to this data."
+        "This is my description, which is visible in plain text on the vault backup. You can use the Vault app to import this data if you lose access to your device."
 
     public private(set) var state: State = .idle
     public var size: Size = .a4
