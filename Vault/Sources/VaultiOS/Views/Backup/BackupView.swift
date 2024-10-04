@@ -48,11 +48,12 @@ struct BackupView: View {
                         fileManager: injector.fileManager
                     ))
                     .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
+                        ToolbarItem(placement: .cancellationAction) {
                             Button {
                                 modal = nil
                             } label: {
-                                Text("Done")
+                                Text("Cancel")
+                                    .foregroundStyle(.red)
                             }
                         }
                     }
