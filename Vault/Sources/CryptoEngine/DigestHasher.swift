@@ -2,7 +2,7 @@ import Foundation
 internal import CryptoSwift
 
 /// Produces hashes of data.
-public struct Hasher {
+public struct DigestHasher {
     public init() {}
 
     public func sha256<T: Digestable>(value: T) throws -> Digest<T>.SHA256 {
@@ -12,7 +12,7 @@ public struct Hasher {
     }
 }
 
-extension Hasher {
+extension DigestHasher {
     /// A hasher that will consistently hash data given a particular input.
     private func hashEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()

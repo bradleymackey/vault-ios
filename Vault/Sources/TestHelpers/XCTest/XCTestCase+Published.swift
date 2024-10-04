@@ -1,5 +1,6 @@
 import Combine
 import Foundation
+import FoundationExtensions
 import XCTest
 
 extension XCTestCase {
@@ -78,6 +79,29 @@ extension XCTestCase {
 
         await fulfillment(of: [expectation], timeout: timeout)
         cancellable.cancel()
+    }
+}
+
+extension XCTestCase {
+    /// Creates a testing `confirmation` that a publisher will produce the given number of elements.
+    @MainActor
+    public func expect(
+        publisher: some Publisher,
+        valueCount: Int,
+        when actions: sending @isolated(any) @escaping () async throws -> Void
+    ) async throws {
+        var cancellable: AnyCancellable?
+        defer { cancellable?.cancel() }
+        let exp = expectation(description: "Wait for values")
+        exp.expectedFulfillmentCount = valueCount
+        cancellable = publisher.sink { _ in
+            // noop
+        } receiveValue: { _ in
+            exp.fulfill()
+        }
+        Task { try await actions() }
+
+        await fulfillment(of: [exp], timeout: 2.0)
     }
 }
 

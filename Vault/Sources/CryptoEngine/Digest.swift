@@ -14,7 +14,7 @@ extension Digest {
         }
 
         public static func makeHash(_ value: T) throws -> Self where T: Digestable {
-            let hasher = Hasher()
+            let hasher = DigestHasher()
             return try hasher.sha256(value: value)
         }
     }
