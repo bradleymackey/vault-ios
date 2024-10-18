@@ -10,6 +10,12 @@ let swiftFormatChecksum: String = "39b4530054003cf9c668b0f9391b977fc13215925aaaa
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
     .enableExperimentalFeature("AccessLevelOnImport"),
+//    .unsafeFlags([
+//        "-Xfrontend",
+//        "-warn-long-function-bodies=100",
+//        "-Xfrontend",
+//        "-warn-long-expression-type-checking=100"
+//    ]),
 ]
 
 let targetPlugins: [Target.PluginUsage] = [
