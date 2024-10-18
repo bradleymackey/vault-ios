@@ -78,12 +78,18 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     }
 
     private func makeSearchTextPredicate(matchingText query: String) -> Predicate<PersistedVaultItem> {
-        // NOTE: Compounding queries in SwiftData is a bit rough at the moment.
+        // Compounding queries in SwiftData is a bit rough at the moment.
         // Each Predicate can only contain a single expression, so we must create them seperately
         // then compound them (a big chain of disjunctions leads to "expression too complex" errors).
-
-        // It also really doesn't play well with Optional Chaining (it leads to internal SQL errors),
-        // but flapMap works just fine.
+        //
+        // ** SLOW COMPILE TIMES? **
+        // Use a MAX of 2 expressions per predicate, or it could lead to EXPONENTIAL compile time increases.
+        //
+        // ** CRASHES AT RUNTIME DUE TO SQLITE ERRORS? **
+        //  - Optional chaining does not seem to work, use `flatMap`.
+        //  - Only compare LOCAL CONSTANTS, create local variables outside the predicate then compare those.
+        //  - Stick to the supported operators inside of #Predicate, not everything works, even things you would expect.
+        //
 
         let full = VaultEncodingConstants.SearchableLevel.full
         let onlyTitle = VaultEncodingConstants.SearchableLevel.onlyTitle
@@ -136,13 +142,27 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             } ?? false
         }
 
-        return #Predicate<PersistedVaultItem> {
+        let matchesMetadata = #Predicate<PersistedVaultItem> {
             passphrasePredicate.evaluate($0) ||
-                userDescriptionPredicate.evaluate($0) ||
-                noteTitlePredicate.evaluate($0) ||
-                noteContentsPredicate.evaluate($0) ||
-                codeNamePredicate.evaluate($0) ||
+                userDescriptionPredicate.evaluate($0)
+        }
+
+        let matchesNote = #Predicate<PersistedVaultItem> {
+            noteTitlePredicate.evaluate($0) ||
+                noteContentsPredicate.evaluate($0)
+        }
+
+        let matchesCode = #Predicate<PersistedVaultItem> {
+            codeNamePredicate.evaluate($0) ||
                 codeIssuerPredicate.evaluate($0)
+        }
+
+        let matchesItem = #Predicate<PersistedVaultItem> {
+            matchesCode.evaluate($0) || matchesNote.evaluate($0)
+        }
+
+        return #Predicate<PersistedVaultItem> {
+            matchesMetadata.evaluate($0) || matchesItem.evaluate($0)
         }
     }
 }
