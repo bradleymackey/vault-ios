@@ -6,6 +6,10 @@ struct BackupGeneratedPDFView: View {
     typealias ViewModel = BackupCreatePDFViewModel
     private let pdf: ViewModel.GeneratedPDF
 
+    @Environment(\.displayScale) var displayScale
+
+    private let previewTargetWidth = 80.0
+
     init(pdf: ViewModel.GeneratedPDF) {
         self.pdf = pdf
     }
@@ -13,26 +17,39 @@ struct BackupGeneratedPDFView: View {
     var body: some View {
         Form {
             pdfPreviewSection
-            actionSection
         }
-        .navigationTitle(Text("Generated"))
+        .navigationTitle(Text("PDF"))
         .navigationBarTitleDisplayMode(.inline)
     }
 
     private var pdfPreviewSection: some View {
         Section {
-            PDFViewer(pdf.document)
-                .listRowInsets(EdgeInsets())
-                .frame(minHeight: 200)
-                .aspectRatio(pdf.size.aspectRatio, contentMode: .fit)
+            LazyVGrid(columns: [.init(.adaptive(minimum: previewTargetWidth, maximum: previewTargetWidth))]) {
+                ForEach(0 ..< pdf.document.pageCount, id: \.self) { pageIndex in
+                    thumbnail(pageIndex: pageIndex)?
+                        .resizable(resizingMode: .stretch)
+                        .aspectRatio(pdf.size.aspectRatio, contentMode: .fit)
+                        .frame(width: previewTargetWidth)
+                }
+            }
+            .listRowInsets(EdgeInsets())
+
+            ShareLink(item: pdf.diskURL, subject: .init("Vault Export")) {
+                FormRow(image: Image(systemName: "square.and.arrow.up.fill"), color: .accentColor, style: .standard) {
+                    Text("Export")
+                }
+            }
+        } header: {
+            Text("Document")
         }
     }
 
-    private var actionSection: some View {
-        Section {
-            ShareLink(item: pdf.diskURL, subject: .init("Vault Export")) {
-                Text("Export")
-            }
-        }
+    private func thumbnail(pageIndex: Int) -> Image? {
+        let pageAspectRatio = pdf.size.aspectRatio
+        let devicePreviewSize = displayScale * previewTargetWidth
+        let scaledSize = CGSize(width: devicePreviewSize, height: devicePreviewSize / pageAspectRatio)
+        let page = pdf.document.page(at: pageIndex)
+        guard let uiimage = page?.thumbnail(of: scaledSize, for: .trimBox) else { return nil }
+        return Image(uiImage: uiimage)
     }
 }
