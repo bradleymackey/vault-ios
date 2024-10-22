@@ -56,6 +56,7 @@ struct BackupView: View {
                             modal = nil
                         }
                         .onDisappear {
+                            // Reset PDF navigation path so next generation starts from the beginning
                             pdfNavigationPath.removeLast(pdfNavigationPath.count)
                         }
                     })
