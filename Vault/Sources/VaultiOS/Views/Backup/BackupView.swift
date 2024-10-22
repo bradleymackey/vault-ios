@@ -55,6 +55,9 @@ struct BackupView: View {
                         BackupGeneratedPDFView(pdf: pdf) {
                             modal = nil
                         }
+                        .onDisappear {
+                            pdfNavigationPath.removeLast(pdfNavigationPath.count)
+                        }
                     })
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
