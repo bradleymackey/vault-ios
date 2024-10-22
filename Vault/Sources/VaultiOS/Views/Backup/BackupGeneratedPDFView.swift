@@ -11,16 +11,28 @@ struct BackupGeneratedPDFView: View {
     }
 
     var body: some View {
-        PDFViewer(pdf.document)
-            .navigationTitle(Text("PDF"))
-            .navigationBarTitleDisplayMode(.inline)
-            .toolbar {
-                ToolbarItem(placement: .primaryAction) {
-                    ShareLink(
-                        item: pdf.diskURL,
-                        subject: .init("Vault Export")
-                    )
-                }
+        Form {
+            pdfPreviewSection
+            actionSection
+        }
+        .navigationTitle(Text("Generated"))
+        .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var pdfPreviewSection: some View {
+        Section {
+            PDFViewer(pdf.document)
+                .listRowInsets(EdgeInsets())
+                .frame(minHeight: 200)
+                .aspectRatio(pdf.size.aspectRatio, contentMode: .fit)
+        }
+    }
+
+    private var actionSection: some View {
+        Section {
+            ShareLink(item: pdf.diskURL, subject: .init("Vault Export")) {
+                Text("Export")
             }
+        }
     }
 }

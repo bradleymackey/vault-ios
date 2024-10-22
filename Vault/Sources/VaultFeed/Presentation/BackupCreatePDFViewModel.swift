@@ -59,12 +59,17 @@ public final class BackupCreatePDFViewModel {
             case .usLedger: USLedgerDocumentSize()
             }
         }
+
+        public var aspectRatio: Double {
+            documentSize.aspectRatio
+        }
     }
 
     /// Exported PDF document that has been generated.
     public struct GeneratedPDF: Equatable, Hashable {
         public let document: PDFDocument
         public let diskURL: URL
+        public let size: Size
         public let dataHash: Digest<VaultApplicationPayload>.SHA256
 
         public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -130,7 +135,7 @@ public final class BackupCreatePDFViewModel {
             let tempURL = fileManager.temporaryDirectory.appending(path: filename)
             document.write(to: tempURL)
             let hash = try DigestHasher().sha256(value: payload)
-            generatedPDFSubject.send(.init(document: document, diskURL: tempURL, dataHash: hash))
+            generatedPDFSubject.send(.init(document: document, diskURL: tempURL, size: size, dataHash: hash))
 
             commitLatestSettings()
             backupEventLogger.exportedToPDF(date: currentDate, hash: hash)
