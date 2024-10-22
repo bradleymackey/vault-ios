@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import FoundationExtensions
 import PDFKit
@@ -58,12 +59,26 @@ public final class BackupCreatePDFViewModel {
             case .usLedger: USLedgerDocumentSize()
             }
         }
+
+        public var aspectRatio: Double {
+            documentSize.aspectRatio
+        }
     }
 
     /// Exported PDF document that has been generated.
     public struct GeneratedPDF: Equatable, Hashable {
         public let document: PDFDocument
         public let diskURL: URL
+        public let size: Size
+        public let dataHash: Digest<VaultApplicationPayload>.SHA256
+
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.dataHash == rhs.dataHash
+        }
+
+        public func hash(into hasher: inout Hasher) {
+            hasher.combine(dataHash)
+        }
     }
 
     private static let pdfSizeKey = Key<Size>(VaultIdentifiers.Preferences.PDF.defaultSize)
@@ -76,7 +91,7 @@ public final class BackupCreatePDFViewModel {
     public var authorName: String = "Vault"
     public var userHint: String = ""
     public var userDescriptionEncrypted: String = "You can use the Vault app to import this backup."
-    public private(set) var generatedPDF: GeneratedPDF?
+    private let generatedPDFSubject = PassthroughSubject<GeneratedPDF, Never>()
 
     private let backupPassword: DerivedEncryptionKey
     private let dataModel: VaultDataModel
@@ -104,6 +119,11 @@ public final class BackupCreatePDFViewModel {
         userHint = defaults.get(for: Self.userHintKey) ?? Self.defaultUserHint
     }
 
+    /// Publishes a PDF whenever one is generated.
+    public func generatedPDFPublisher() -> some Publisher<GeneratedPDF, Never> {
+        generatedPDFSubject
+    }
+
     public func createPDF() async {
         do {
             let currentDate = clock.currentDate
@@ -114,10 +134,10 @@ public final class BackupCreatePDFViewModel {
             let filename = "vault-export-\(timestamp).pdf"
             let tempURL = fileManager.temporaryDirectory.appending(path: filename)
             document.write(to: tempURL)
-            generatedPDF = .init(document: document, diskURL: tempURL)
+            let hash = try DigestHasher().sha256(value: payload)
+            generatedPDFSubject.send(.init(document: document, diskURL: tempURL, size: size, dataHash: hash))
 
             commitLatestSettings()
-            let hash = try Hasher().sha256(value: payload)
             backupEventLogger.exportedToPDF(date: currentDate, hash: hash)
             state = .success
         } catch {

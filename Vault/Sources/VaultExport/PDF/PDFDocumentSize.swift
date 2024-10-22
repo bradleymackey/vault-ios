@@ -15,6 +15,10 @@ extension PDFDocumentSize {
         72
     }
 
+    public var aspectRatio: Double {
+        inchDimensions.width / inchDimensions.height
+    }
+
     /// The size of the document in points, given the `pointsPerInch`.
     ///
     /// The default PPI of a PDF is 72.

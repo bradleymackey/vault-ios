@@ -7,14 +7,11 @@ import VaultFeed
 struct BackupCreatePDFView: View {
     typealias ViewModel = BackupCreatePDFViewModel
     @State private var viewModel: ViewModel
-    @State private var modal: Modal?
+    @Binding private var navigationPath: NavigationPath
 
-    private enum Modal: IdentifiableSelf {
-        case pdf(ViewModel.GeneratedPDF)
-    }
-
-    init(viewModel: BackupCreatePDFViewModel) {
+    init(viewModel: BackupCreatePDFViewModel, navigationPath: Binding<NavigationPath>) {
         _viewModel = .init(initialValue: viewModel)
+        _navigationPath = navigationPath
     }
 
     var body: some View {
@@ -24,41 +21,9 @@ struct BackupCreatePDFView: View {
         }
         .navigationTitle(Text("Create PDF"))
         .navigationBarTitleDisplayMode(.inline)
-        .onChange(of: viewModel.generatedPDF) { _, newValue in
-            if let newValue {
-                modal = .pdf(newValue)
-            }
-        }
-        .sheet(item: $modal, onDismiss: nil) { item in
-            switch item {
-            case let .pdf(generated):
-                pdfPreview(generated: generated)
-            }
-        }
-    }
-
-    private func pdfPreview(generated: ViewModel.GeneratedPDF) -> some View {
-        NavigationStack {
-            PDFViewer(generated.document)
-                .navigationTitle(Text("PDF"))
-                .navigationBarTitleDisplayMode(.inline)
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        ShareLink(
-                            item: generated.diskURL,
-                            subject: .init("Vault Export")
-                        )
-                    }
-
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button(role: .cancel) {
-                            modal = nil
-                        } label: {
-                            Text("Close")
-                        }
-                    }
-                }
-        }
+        .onReceive(viewModel.generatedPDFPublisher(), perform: { value in
+            navigationPath.append(value)
+        })
     }
 
     private var optionsSection: some View {

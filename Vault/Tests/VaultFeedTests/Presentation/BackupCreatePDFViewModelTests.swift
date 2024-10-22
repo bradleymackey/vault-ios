@@ -34,10 +34,11 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
         }
         let sut = try makeSUT(vaultStore: vaultStore)
 
-        await sut.createPDF()
+        try await expect(publisher: sut.generatedPDFPublisher(), valueCount: 1) {
+            await sut.createPDF()
+        }
 
         XCTAssertEqual(sut.state, .success)
-        XCTAssertNotNil(sut.generatedPDF)
     }
 
     @MainActor
@@ -60,10 +61,11 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
         vaultStore.exportVaultHandler = { _ in throw TestError() }
         let sut = try makeSUT(vaultStore: vaultStore)
 
-        await sut.createPDF()
+        _ = await awaitNoPublish(publisher: sut.generatedPDFPublisher(), when: {
+            await sut.createPDF()
+        })
 
         XCTAssertTrue(sut.state.isError)
-        XCTAssertNil(sut.generatedPDF)
     }
 }
 

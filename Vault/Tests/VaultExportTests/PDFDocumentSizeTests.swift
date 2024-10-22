@@ -46,6 +46,16 @@ struct PDFDocumentSizeTests {
         #expect(margins.right == 72)
     }
 
+    @Test(arguments: [
+        (USLetterDocumentSize(), 0.773),
+        (A4DocumentSize(), 0.707),
+        (A3DocumentSize(), 0.707),
+    ] as [(any PDFDocumentSize, Double)])
+    func aspectRatio_isCorrect(size: any PDFDocumentSize, expectedRatio: Double) {
+        let aspectRatio = size.aspectRatio
+        #expect(aspectRatio.isAlmostEqual(to: expectedRatio, tolerance: 0.001))
+    }
+
     // MARK: - Helpers
 
     private func makeInches(_ size: any PDFDocumentSize) -> (width: Double, height: Double) {

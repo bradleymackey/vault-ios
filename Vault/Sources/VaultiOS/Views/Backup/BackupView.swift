@@ -10,6 +10,7 @@ struct BackupView: View {
     @Environment(VaultInjector.self) var injector
     @State private var viewModel = BackupViewModel()
     @State private var modal: Modal?
+    @State private var pdfNavigationPath = NavigationPath()
 
     enum Modal: IdentifiableSelf {
         case updatePassword
@@ -38,21 +39,34 @@ struct BackupView: View {
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case let .pdfBackup(password):
-                NavigationStack {
-                    BackupCreatePDFView(viewModel: .init(
-                        backupPassword: password,
-                        dataModel: dataModel,
-                        clock: injector.clock,
-                        backupEventLogger: injector.backupEventLogger,
-                        defaults: injector.defaults,
-                        fileManager: injector.fileManager
-                    ))
+                NavigationStack(path: $pdfNavigationPath) {
+                    BackupCreatePDFView(
+                        viewModel: .init(
+                            backupPassword: password,
+                            dataModel: dataModel,
+                            clock: injector.clock,
+                            backupEventLogger: injector.backupEventLogger,
+                            defaults: injector.defaults,
+                            fileManager: injector.fileManager
+                        ),
+                        navigationPath: $pdfNavigationPath
+                    )
+                    .navigationDestination(for: BackupCreatePDFViewModel.GeneratedPDF.self, destination: { pdf in
+                        BackupGeneratedPDFView(pdf: pdf) {
+                            modal = nil
+                        }
+                        .onDisappear {
+                            // Reset PDF navigation path so next generation starts from the beginning
+                            pdfNavigationPath.removeLast(pdfNavigationPath.count)
+                        }
+                    })
                     .toolbar {
-                        ToolbarItem(placement: .confirmationAction) {
+                        ToolbarItem(placement: .cancellationAction) {
                             Button {
                                 modal = nil
                             } label: {
-                                Text("Done")
+                                Text("Cancel")
+                                    .foregroundStyle(.red)
                             }
                         }
                     }
