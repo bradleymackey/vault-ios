@@ -6,7 +6,8 @@ struct BackupGeneratedPDFView: View {
     typealias ViewModel = BackupCreatePDFViewModel
     private let pdf: ViewModel.GeneratedPDF
 
-    @Environment(\.displayScale) var displayScale
+    @Environment(\.displayScale) private var displayScale
+    @Environment(\.dismiss) private var dismiss
 
     private let previewTargetWidth = 80.0
 
@@ -20,6 +21,17 @@ struct BackupGeneratedPDFView: View {
         }
         .navigationTitle(Text("PDF"))
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .confirmationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Done")
+                        .foregroundStyle(Color.accentColor)
+                }
+            }
+        }
+        .interactiveDismissDisabled()
     }
 
     private var pdfPreviewSection: some View {
