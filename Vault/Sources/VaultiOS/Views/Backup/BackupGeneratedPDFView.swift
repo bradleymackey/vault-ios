@@ -32,6 +32,7 @@ struct BackupGeneratedPDFView: View {
             }
         }
         .interactiveDismissDisabled()
+        .navigationBarBackButtonHidden()
     }
 
     private var pdfPreviewSection: some View {
