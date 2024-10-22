@@ -5,14 +5,15 @@ import VaultFeed
 struct BackupGeneratedPDFView: View {
     typealias ViewModel = BackupCreatePDFViewModel
     private let pdf: ViewModel.GeneratedPDF
+    private let dismiss: () -> Void
 
     @Environment(\.displayScale) private var displayScale
-    @Environment(\.dismiss) private var dismiss
 
     private let previewTargetWidth = 80.0
 
-    init(pdf: ViewModel.GeneratedPDF) {
+    init(pdf: ViewModel.GeneratedPDF, dismiss: @escaping () -> Void) {
         self.pdf = pdf
+        self.dismiss = dismiss
     }
 
     var body: some View {

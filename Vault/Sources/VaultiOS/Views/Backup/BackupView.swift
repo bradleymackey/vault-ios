@@ -52,7 +52,9 @@ struct BackupView: View {
                         navigationPath: $pdfNavigationPath
                     )
                     .navigationDestination(for: BackupCreatePDFViewModel.GeneratedPDF.self, destination: { pdf in
-                        BackupGeneratedPDFView(pdf: pdf)
+                        BackupGeneratedPDFView(pdf: pdf) {
+                            modal = nil
+                        }
                     })
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
