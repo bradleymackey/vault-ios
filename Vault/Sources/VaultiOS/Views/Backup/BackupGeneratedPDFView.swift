@@ -18,6 +18,7 @@ struct BackupGeneratedPDFView: View {
 
     var body: some View {
         Form {
+            warningSection
             pdfPreviewSection
         }
         .navigationTitle(Text("PDF"))
@@ -34,6 +35,18 @@ struct BackupGeneratedPDFView: View {
         }
         .interactiveDismissDisabled()
         .navigationBarBackButtonHidden()
+    }
+
+    private var warningSection: some View {
+        Section {
+            Label(
+                "Make sure you export and save the PDF, or your data will not be backed up.",
+                systemImage: "exclamationmark.triangle.fill"
+            )
+            .foregroundStyle(.red)
+            .font(.footnote.bold())
+            .noListBackground()
+        }
     }
 
     private var pdfPreviewSection: some View {
