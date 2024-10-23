@@ -18,7 +18,6 @@ struct BackupGeneratedPDFView: View {
 
     var body: some View {
         Form {
-            warningSection
             pdfPreviewSection
         }
         .navigationTitle(Text("PDF"))
@@ -37,27 +36,20 @@ struct BackupGeneratedPDFView: View {
         .navigationBarBackButtonHidden()
     }
 
-    private var warningSection: some View {
-        Section {
-            Label(
-                "Make sure you export and save the PDF, or your data will not be backed up.",
-                systemImage: "exclamationmark.triangle.fill"
-            )
-            .foregroundStyle(.red)
-            .font(.footnote.bold())
-            .noListBackground()
-        }
-    }
-
     private var pdfPreviewSection: some View {
         Section {
-            LazyVGrid(columns: [.init(.adaptive(minimum: previewTargetWidth, maximum: previewTargetWidth))]) {
-                ForEach(0 ..< pdf.document.pageCount, id: \.self) { pageIndex in
-                    thumbnail(pageIndex: pageIndex)?
-                        .resizable(resizingMode: .stretch)
-                        .aspectRatio(pdf.size.aspectRatio, contentMode: .fit)
-                        .frame(width: previewTargetWidth)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    Spacer(minLength: 16)
+                    ForEach(0 ..< pdf.document.pageCount, id: \.self) { pageIndex in
+                        thumbnail(pageIndex: pageIndex)?
+                            .resizable(resizingMode: .stretch)
+                            .aspectRatio(pdf.size.aspectRatio, contentMode: .fit)
+                            .frame(width: previewTargetWidth)
+                    }
+                    Spacer(minLength: 16)
                 }
+                .padding(.vertical, 16)
             }
             .listRowInsets(EdgeInsets())
 
@@ -66,8 +58,13 @@ struct BackupGeneratedPDFView: View {
                     Text("Export")
                 }
             }
-        } header: {
-            Text("Document")
+        } footer: {
+            Label(
+                "Make sure you export and save the PDF, or your data will not be backed up.",
+                systemImage: "exclamationmark.triangle.fill"
+            )
+            .foregroundStyle(.red)
+            .font(.footnote)
         }
     }
 
