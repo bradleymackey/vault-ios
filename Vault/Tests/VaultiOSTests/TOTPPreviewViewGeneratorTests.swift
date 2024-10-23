@@ -143,6 +143,19 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
+    func test_scenePhaseDidChange_unknownAndBackgroundCancelsAllCachedTimers() {
+        let phases = [ScenePhase.background, .inactive]
+        for phase in phases {
+            let factory = makeTOTPPreviewViewFactoryMock()
+            let sut = makeSUT(factory: factory)
+
+            expectCancelsCachedTimers(sut: sut, factory: factory) {
+                sut.scenePhaseDidChange(to: phase)
+            }
+        }
+    }
+
+    @MainActor
     func test_didAppear_recalculatesAllCachedTimers() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let sut = makeSUT(factory: factory)
@@ -191,6 +204,29 @@ extension TOTPPreviewViewGeneratorTests {
 
         for updater in updaters {
             XCTAssertEqual(updater.recalculateCallCount, 1)
+        }
+    }
+
+    @MainActor
+    private func expectCancelsCachedTimers(
+        sut: SUT,
+        factory: TOTPPreviewViewFactoryMock,
+        when action: () -> Void
+    ) {
+        let updaters = collectCodeTimerUpdaters(
+            sut: sut,
+            factory: factory,
+            ids: [Identifier<VaultItem>(), Identifier<VaultItem>(), Identifier<VaultItem>()]
+        )
+
+        for updater in updaters {
+            XCTAssertEqual(updater.cancelCallCount, 0)
+        }
+
+        action()
+
+        for updater in updaters {
+            XCTAssertEqual(updater.cancelCallCount, 1)
         }
     }
 

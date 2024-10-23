@@ -5,7 +5,10 @@ import VaultCore
 /// @mockable
 @MainActor
 public protocol OTPCodeTimerUpdater {
+    /// Updates the timer immediately and schedules regular updates..
     func recalculate()
+    /// Cancels the timer and stops updates.
+    func cancel()
     var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> { get }
 }
 
