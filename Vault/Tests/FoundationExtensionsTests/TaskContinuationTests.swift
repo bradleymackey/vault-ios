@@ -17,20 +17,18 @@ struct TaskContinuationTests {
 
     @Test
     func cancellationCancelsTask() async throws {
-        let isStarted = Atomic(initialValue: false)
+        let pending = Pending.signal()
 
         let outer = Task.detached {
             try await Task.continuation {
-                isStarted.modify { $0 = true }
+                Task { await pending.fulfill() }
                 // make sure it starts first
                 // then immediately cancel this task
-                sleep(1)
+                sleep(3)
             }
         }
 
-        while !isStarted.value {
-            try await Task.sleep(for: .milliseconds(50))
-        }
+        try await pending.wait(timeout: .seconds(1))
 
         outer.cancel()
         await #expect(throws: CancellationError.self, performing: {
