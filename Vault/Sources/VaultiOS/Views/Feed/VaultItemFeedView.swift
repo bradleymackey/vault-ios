@@ -81,6 +81,7 @@ struct VaultItemFeedView<
             .scrollTargetLayout()
             .padding(.horizontal)
             .padding(.bottom)
+            .animation(.easeOut, value: dataModel.itemsFilteringByTags)
         }
         .scrollTargetBehavior(.viewAligned)
     }
