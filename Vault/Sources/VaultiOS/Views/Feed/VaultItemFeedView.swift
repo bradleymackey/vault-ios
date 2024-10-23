@@ -81,7 +81,7 @@ struct VaultItemFeedView<
             .scrollTargetLayout()
             .padding(.horizontal)
             .padding(.bottom)
-            .animation(.easeOut, value: dataModel.itemsFilteringByTags)
+            .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
         }
         .scrollTargetBehavior(.viewAligned)
     }
@@ -177,6 +177,7 @@ struct VaultItemFeedView<
         // Reload content when editing state changes.
         // The content needs to rerender when the editing state changes.
         .id(state.isEditing)
+        .id(dataModel.itemSearchHash)
         .onChange(of: state.isEditing) { _, isEditing in
             if !isEditing { targetedIds.removeAll() }
         }
