@@ -70,9 +70,18 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             // We're not filtering by any tags, so don't check tags.
             return .true
         } else {
-            let tagUUIDs = tags.map(\.id).reducedToSet()
+            let searchingTagIds = tags.map(\.id).reducedToSet()
+            // Returns the number of tags matched by this item.
+            let tagsMatchingSearch = #Expression<PersistedVaultItem, Int> { item in
+                item.tags.filter { tag in
+                    searchingTagIds.contains(tag.id)
+                }.count
+            }
+            // Performs an "AND" query by checking if the number of tags matched equals
+            // the number of tags we are searching for.
+            let searchingTagsCount = searchingTagIds.count
             return #Predicate<PersistedVaultItem> { item in
-                item.tags.contains(where: { tagUUIDs.contains($0.id) })
+                tagsMatchingSearch.evaluate(item) == searchingTagsCount
             }
         }
     }
