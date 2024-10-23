@@ -81,6 +81,7 @@ struct VaultItemFeedView<
             .scrollTargetLayout()
             .padding(.horizontal)
             .padding(.bottom)
+            .animation(.easeOut, value: dataModel.itemsFilteringByTags)
         }
         .scrollTargetBehavior(.viewAligned)
     }
@@ -116,7 +117,7 @@ struct VaultItemFeedView<
     /// Small informational section when we are filtering by tags
     private var filteringByTagsInfoSection: some View {
         HStack {
-            Text("Filtering by tags: \(dataModel.itemsFilteringByTags.count)")
+            Text(dataModel.filteringByTagsDescription)
                 .foregroundColor(.secondary)
 
             Spacer()

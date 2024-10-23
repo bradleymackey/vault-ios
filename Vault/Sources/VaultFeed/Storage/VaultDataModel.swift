@@ -34,6 +34,10 @@ public final class VaultDataModel: Sendable {
         }
     }
 
+    public var filteringByTagsDescription: String {
+        localized(key: "feed.searching.filteringByTags.\(itemsFilteringByTags.count)")
+    }
+
     private var itemsSanitizedQuery: String? {
         let trimmed = itemsSearchQuery.trimmingCharacters(in: .whitespacesAndNewlines)
         guard trimmed.isNotEmpty else { return nil }

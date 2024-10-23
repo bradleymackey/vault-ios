@@ -553,6 +553,29 @@
         }
       }
     },
+    "feed.searching.filteringByTags.%lld" : {
+      "extractionState" : "migrated",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag filter"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag filters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "itemDetail.cancelEdits.title" : {
       "extractionState" : "manual",
       "localizations" : {
