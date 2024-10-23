@@ -664,6 +664,31 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_retrieveMatchingTags_returnsMatchingTags_ANDSemantics() async throws {
+        let tag1 = try await sut.insertTag(item: anyVaultItemTag().makeWritable())
+        let tag2 = try await sut.insertTag(item: anyVaultItemTag().makeWritable())
+
+        let codes: [VaultItem.Write] = [
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
+            anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1, tag2]).makeWritable(),
+        ]
+        var insertedIDs = [Identifier<VaultItem>]()
+        for code in codes {
+            let id = try await sut.insert(item: code)
+            insertedIDs.append(id)
+        }
+
+        let query1 = VaultStoreQuery(filterTags: [tag1])
+        let result1 = try await sut.retrieve(query: query1)
+        XCTAssertEqual(result1.items.count, 2)
+        XCTAssertEqual(result1.errors, [])
+
+        let query2 = VaultStoreQuery(filterTags: [tag1, tag2])
+        let result2 = try await sut.retrieve(query: query2)
+        XCTAssertEqual(result2.items.map(\.metadata.id), [insertedIDs[1]], "Matches second only with AND semantics")
+        XCTAssertEqual(result2.errors, [])
+    }
+
     func test_retrieveMatchingTags_returnsLimitedItemsMatchingTags() async throws {
         let tag1 = try await sut.insertTag(item: anyVaultItemTag().makeWritable())
         let tag2 = try await sut.insertTag(item: anyVaultItemTag().makeWritable())
