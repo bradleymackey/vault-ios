@@ -21,6 +21,12 @@ public final class VaultDataModel: Sendable {
 
     public var itemsSearchQuery: String = ""
     public var itemsFilteringByTags: Set<Identifier<VaultItemTag>> = []
+    public var itemSearchHash: Int {
+        var hasher = Hasher()
+        hasher.combine(itemsSearchQuery)
+        hasher.combine(itemsFilteringByTags)
+        return hasher.finalize()
+    }
 
     public var isSearching: Bool {
         itemsSanitizedQuery != nil

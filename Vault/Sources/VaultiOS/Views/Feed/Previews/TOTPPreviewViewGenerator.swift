@@ -44,8 +44,13 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
     }
 
     func scenePhaseDidChange(to scene: ScenePhase) {
-        if scene == .active {
+        switch scene {
+        case .background, .inactive:
+            cancelAllTimers()
+        case .active:
             recalculateAllTimers()
+        @unknown default:
+            break
         }
     }
 
@@ -58,6 +63,12 @@ extension TOTPPreviewViewGenerator {
     func recalculateAllTimers() {
         for timerUpdater in timerUpdaterCache.values {
             timerUpdater.recalculate()
+        }
+    }
+
+    func cancelAllTimers() {
+        for timerUpdater in timerUpdaterCache.values {
+            timerUpdater.cancel()
         }
     }
 }
