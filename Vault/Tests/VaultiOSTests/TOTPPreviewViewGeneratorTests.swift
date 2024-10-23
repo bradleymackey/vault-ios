@@ -271,7 +271,11 @@ extension TOTPPreviewViewGeneratorTests {
 extension OTPCodeTimerUpdaterFactoryMock {
     static func defaultMock() -> OTPCodeTimerUpdaterFactoryMock {
         let s = OTPCodeTimerUpdaterFactoryMock()
-        s.makeUpdaterHandler = { _ in OTPCodeTimerUpdaterMock() }
+        s.makeUpdaterHandler = { _ in
+            MainActor.assumeIsolated {
+                OTPCodeTimerUpdaterMock()
+            }
+        }
         return s
     }
 }

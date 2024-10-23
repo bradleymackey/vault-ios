@@ -1,26 +1,23 @@
-// `CurrentValueSubject` is not Sendable. This is worked around by ensuring that we only send values via this subject
-// on the main thread.
-// swiftlint:disable:next no_preconcurrency
-@preconcurrency import Combine
+import Combine
 import Foundation
 import VaultCore
 
 /// @mockable
+@MainActor
 public protocol OTPCodeTimerUpdater {
-    @MainActor func recalculate()
-    @MainActor var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> { get }
+    func recalculate()
+    var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> { get }
 }
 
 /// Controller for producing timers for a given code, according to a clock.
+@MainActor
 public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
-    @MainActor
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
     private let period: UInt64
     private let timerTask = Atomic<Task<Void, any Error>?>(initialValue: nil)
     private let timer: any IntervalTimer
     private let clock: any EpochClock
 
-    @MainActor
     public init(timer: any IntervalTimer, period: UInt64, clock: any EpochClock) {
         self.period = period
         self.timer = timer
@@ -31,19 +28,13 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
         scheduleNextUpdate()
     }
 
-    deinit {
-        cancel()
-    }
-
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
-    @MainActor
     public var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> {
         timerStateSubject
             .eraseToAnyPublisher()
     }
 
     /// Forces the timer to recalculate it's current state and republish.
-    @MainActor
     public func recalculate() {
         timerTask.value?.cancel()
         let currentState = OTPCodeTimerState(currentTime: clock.currentTime, period: period)
@@ -61,7 +52,6 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
 
 extension OTPCodeTimerUpdaterImpl {
     /// Schedules the next display of the timer state.
-    @MainActor
     private func scheduleNextUpdate() {
         timerTask.value?.cancel()
         let currentState = timerStateSubject.value
