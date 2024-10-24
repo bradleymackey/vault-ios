@@ -3,12 +3,17 @@ import Foundation
 public enum OTPCodeState: Equatable {
     case notReady
     case finished
-    case obfuscated
+    case obfuscated(ObfuscationReason)
     case visible(String)
     case error(PresentationError, digits: Int)
 }
 
 extension OTPCodeState {
+    public enum ObfuscationReason: Equatable {
+        case privacy
+        case expiry
+    }
+
     public var allowsNextCodeToBeGenerated: Bool {
         switch self {
         case .visible, .obfuscated:

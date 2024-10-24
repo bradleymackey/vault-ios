@@ -35,7 +35,7 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         )
 
         XCTAssertEqual(viewModels.count, 2)
-        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
+        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated(.expiry) })
     }
 
     @MainActor
@@ -130,11 +130,11 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_hideAllCodesUntilNextUpdate_marksCachedViewModelsAsObfuscated() {
+    func test_markAllCodesAsExpired_marksCachedViewModelsAsObfuscated() {
         let (sut, _, factory) = makeSUT()
 
         expectHidesAllCodesUntilNextUpdate(sut: sut, factory: factory) {
-            sut.hideAllCodesUntilNextUpdate()
+            sut.markAllCodesAsExpired()
         }
     }
 
@@ -199,11 +199,11 @@ extension HOTPPreviewViewGeneratorTests {
             viewModel.update(code: .visible("1234"))
         }
 
-        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated })
+        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated(.expiry) })
 
         action()
 
-        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated })
+        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated(.expiry) })
     }
 
     @MainActor

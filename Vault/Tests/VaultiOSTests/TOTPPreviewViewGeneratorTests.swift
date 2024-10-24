@@ -143,13 +143,26 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_scenePhaseDidChange_unknownAndBackgroundCancelsAllCachedTimers() {
+    func test_scenePhaseDidChange_inactiveAndBackgroundCancelsAllCachedTimers() {
         let phases = [ScenePhase.background, .inactive]
         for phase in phases {
             let factory = makeTOTPPreviewViewFactoryMock()
             let sut = makeSUT(factory: factory)
 
             expectCancelsCachedTimers(sut: sut, factory: factory) {
+                sut.scenePhaseDidChange(to: phase)
+            }
+        }
+    }
+
+    @MainActor
+    func test_scenePhaseDidChange_inactiveAndBackgroundObfuscatesAllTimerCodes() {
+        let phases = [ScenePhase.background, .inactive]
+        for phase in phases {
+            let factory = makeTOTPPreviewViewFactoryMock()
+            let sut = makeSUT(factory: factory)
+
+            expectObfuscatesAllViews(sut: sut, factory: factory) {
                 sut.scenePhaseDidChange(to: phase)
             }
         }
@@ -227,6 +240,29 @@ extension TOTPPreviewViewGeneratorTests {
 
         for updater in updaters {
             XCTAssertEqual(updater.cancelCallCount, 1)
+        }
+    }
+
+    @MainActor
+    private func expectObfuscatesAllViews(
+        sut: SUT,
+        factory: TOTPPreviewViewFactoryMock,
+        when action: () -> Void
+    ) {
+        let viewModels = collectCodePreviewViewModels(
+            sut: sut,
+            factory: factory,
+            ids: [Identifier<VaultItem>(), Identifier<VaultItem>(), Identifier<VaultItem>()]
+        )
+
+        for viewModel in viewModels {
+            XCTAssertNotEqual(viewModel.code, .obfuscated(.privacy))
+        }
+
+        action()
+
+        for viewModel in viewModels {
+            XCTAssertEqual(viewModel.code, .obfuscated(.privacy))
         }
     }
 

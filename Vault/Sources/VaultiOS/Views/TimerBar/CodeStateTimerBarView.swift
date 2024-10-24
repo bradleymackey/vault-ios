@@ -48,11 +48,17 @@ struct CodeStateTimerBarView<Timer: View>: View {
         case let .editingState(message):
             message
         case .normal:
-            if case let .error(err, _) = codeState {
-                err.userTitle
-            } else if case .obfuscated = codeState {
-                localized(key: "code.updateRequired")
-            } else {
+            switch codeState {
+            case let .obfuscated(obfuscationReason):
+                switch obfuscationReason {
+                case .expiry:
+                    localized(key: "code.updateRequired")
+                case .privacy:
+                    nil
+                }
+            case let .error(presentationError, _):
+                presentationError.userTitle
+            case .visible, .notReady, .finished:
                 nil
             }
         }

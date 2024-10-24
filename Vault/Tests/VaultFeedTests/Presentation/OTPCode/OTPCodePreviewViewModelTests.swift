@@ -52,14 +52,25 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_hideCodeUntilNextUpdate_obfuscatesCode() async throws {
+    func test_codeExpired_obfuscatesCode() async throws {
         let (_, sut) = makeSUT()
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            sut.hideCodeUntilNextUpdate()
+            sut.codeExpired()
         }
 
-        XCTAssertEqual(sut.code, .obfuscated)
+        XCTAssertEqual(sut.code, .obfuscated(.expiry))
+    }
+
+    @MainActor
+    func test_obfuscateCodeForPrivacy_obfuscatesCode() async throws {
+        let (_, sut) = makeSUT()
+
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
+            sut.obfuscateCodeForPrivacy()
+        }
+
+        XCTAssertEqual(sut.code, .obfuscated(.privacy))
     }
 
     @MainActor
