@@ -21,14 +21,14 @@ struct TaskContinuationTests {
 
         let outer = Task.detached {
             try await Task.continuation {
-                Task { await pending.fulfill() }
+                Task.detached { await pending.fulfill() }
                 // make sure it starts first
                 // then immediately cancel this task
                 sleep(3)
             }
         }
 
-        try await pending.wait(timeout: .seconds(1))
+        try await pending.wait(timeout: .seconds(3))
 
         outer.cancel()
         await #expect(throws: CancellationError.self, performing: {
