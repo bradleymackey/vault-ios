@@ -14,7 +14,6 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
-            Spacer()
             codeSection
             Spacer()
             CodeStateTimerBarView(
@@ -22,13 +21,19 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
                 codeState: previewViewModel.code,
                 behaviour: behaviour
             )
+            .frame(height: 12)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
         }
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
         .shimmering(active: isEditing)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color)
+                configuration: .init(
+                    style: isEditing ? .prominent : .secondary,
+                    border: previewViewModel.color.color,
+                    padding: .init(all: 8)
+                )
             )
         )
     }

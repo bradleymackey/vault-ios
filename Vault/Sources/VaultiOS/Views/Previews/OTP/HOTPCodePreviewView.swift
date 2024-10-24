@@ -12,7 +12,6 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             labelsStack
-            Spacer()
             codeText
             Spacer()
             timerSection
@@ -68,25 +67,30 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     private var codeText: some View {
-        HStack(alignment: .center) {
+        VStack(alignment: .leading, spacing: 4) {
             OTPCodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
                 .font(.system(.largeTitle, design: .monospaced))
                 .fontWeight(.bold)
+                .padding(.horizontal, 2)
                 .foregroundColor(isEditing ? .white : .primary)
         }
+        .frame(maxWidth: .infinity, alignment: .center)
     }
 
     private var timerSection: some View {
-        HStack(alignment: .center, spacing: 4) {
+        HStack(alignment: .bottom, spacing: 4) {
             CodeStateTimerBarView(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
                 behaviour: behaviour
             )
+            .frame(height: 12)
+            .clipShape(RoundedRectangle(cornerRadius: 6))
+
             buttonView
-                .font(canLoadNextCode ? .title.bold() : .title)
                 .disabled(!canLoadNextCode)
         }
+        .animation(.easeOut, value: canLoadNextCode)
     }
 
     private var canLoadNextCode: Bool {

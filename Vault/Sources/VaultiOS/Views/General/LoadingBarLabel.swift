@@ -8,7 +8,7 @@ struct LoadingBarLabel: View {
             .lineLimit(1)
             .truncationMode(.tail)
             .textCase(.uppercase)
-            .font(.system(size: 10, weight: .bold))
+            .font(.system(size: 6, weight: .regular))
             .foregroundColor(.white)
             .padding(.horizontal, 8)
     }

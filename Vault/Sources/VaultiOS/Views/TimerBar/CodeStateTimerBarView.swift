@@ -10,9 +10,6 @@ struct CodeStateTimerBarView<Timer: View>: View {
     var body: some View {
         ZStack(alignment: .leading) {
             timerView
-                .frame(height: barHeight)
-                .clipShape(RoundedRectangle(cornerRadius: barHeight))
-                .frame(height: containerHeight)
                 .transition(.blurReplace())
 
             if let textToDisplay {
@@ -21,19 +18,6 @@ struct CodeStateTimerBarView<Timer: View>: View {
             }
         }
         .animation(.easeOut, value: behaviour)
-        .clipShape(RoundedRectangle(cornerRadius: barHeight))
-    }
-
-    private var containerHeight: Double {
-        24
-    }
-
-    private var barHeight: Double {
-        if textToDisplay != nil {
-            20
-        } else {
-            12
-        }
     }
 
     private var isShimmering: Bool {
