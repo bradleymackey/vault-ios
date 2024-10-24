@@ -7,8 +7,6 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     var previewViewModel: OTPCodePreviewViewModel
     var behaviour: VaultItemViewBehaviour
 
-    @Namespace private var codeTimerAnimation
-
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             labelsStack

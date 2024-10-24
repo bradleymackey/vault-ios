@@ -9,8 +9,6 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
     var timerView: TimerBar
     var behaviour: VaultItemViewBehaviour
 
-    @Namespace private var codeTimerAnimation
-
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
