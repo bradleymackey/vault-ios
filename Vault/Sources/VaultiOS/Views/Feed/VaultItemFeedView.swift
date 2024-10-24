@@ -54,7 +54,7 @@ struct VaultItemFeedView<
             .foregroundStyle(.secondary)
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .aspectRatio(1, contentMode: .fit)
-            .modifier(VaultCardModifier())
+            .modifier(VaultCardModifier(context: .init(style: .secondary, border: .secondary)))
     }
 
     private var currentBehaviour: VaultItemViewBehaviour {

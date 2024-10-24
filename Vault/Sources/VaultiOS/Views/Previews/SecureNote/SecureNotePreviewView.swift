@@ -39,7 +39,11 @@ struct SecureNotePreviewView: View {
         .shimmering(active: isEditing)
         .aspectRatio(1, contentMode: .fill)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
+        .modifier(
+            VaultCardModifier(
+                context: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color)
+            )
+        )
     }
 
     private var isEditing: Bool {
