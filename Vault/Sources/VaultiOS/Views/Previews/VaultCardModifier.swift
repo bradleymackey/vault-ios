@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 
 struct VaultCardModifier: ViewModifier {
-    struct Context {
+    struct Configuration {
         enum Style {
             case prominent
             case secondary
@@ -10,16 +10,17 @@ struct VaultCardModifier: ViewModifier {
 
         var style: Style
         var border: Color
+        var padding: EdgeInsets = .init(all: 8)
     }
 
-    var context: Context
-    init(context: Context) {
-        self.context = context
+    var configuration: Configuration
+    init(configuration: Configuration) {
+        self.configuration = configuration
     }
 
     func body(content: Content) -> some View {
         content
-            .padding(8)
+            .padding(configuration.padding)
             .background(backgroundColor)
             .clipShape(clipShape())
             .overlay(
@@ -30,16 +31,16 @@ struct VaultCardModifier: ViewModifier {
     }
 
     private var backgroundColor: Color {
-        switch context.style {
+        switch configuration.style {
         case .prominent: Color.blue
         case .secondary: Color(UIColor.secondarySystemBackground)
         }
     }
 
     private var borderColor: Color {
-        switch context.style {
+        switch configuration.style {
         case .prominent: Color.clear
-        case .secondary: context.border.opacity(0.3)
+        case .secondary: configuration.border.opacity(0.3)
         }
     }
 
@@ -50,5 +51,5 @@ struct VaultCardModifier: ViewModifier {
 
 #Preview {
     Text("Testing")
-        .modifier(VaultCardModifier(context: .init(style: .secondary, border: .blue)))
+        .modifier(VaultCardModifier(configuration: .init(style: .secondary, border: .blue)))
 }
