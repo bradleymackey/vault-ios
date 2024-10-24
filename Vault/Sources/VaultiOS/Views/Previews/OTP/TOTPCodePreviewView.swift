@@ -14,7 +14,8 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
             labelsStack
-            codeSection
+            Spacer()
+            codeSection.layoutPriority(100)
             Spacer()
             CodeStateTimerBarView(
                 timerView: activeTimerView,

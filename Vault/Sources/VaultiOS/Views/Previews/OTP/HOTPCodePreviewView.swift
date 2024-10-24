@@ -12,11 +12,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     var body: some View {
         VStack(alignment: .center, spacing: 8) {
             labelsStack
-            codeText
+            Spacer()
+            codeText.layoutPriority(100)
             Spacer()
             timerSection
         }
         .animation(.easeOut, value: behaviour)
+        .animation(.easeOut, value: canLoadNextCode)
         .aspectRatio(1, contentMode: .fill)
         .shimmering(active: isEditing)
         .modifier(
