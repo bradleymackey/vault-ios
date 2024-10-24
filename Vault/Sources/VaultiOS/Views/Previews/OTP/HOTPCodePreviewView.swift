@@ -20,7 +20,11 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         .animation(.easeOut, value: behaviour)
         .aspectRatio(1, contentMode: .fill)
         .shimmering(active: isEditing)
-        .modifier(VaultCardModifier(context: isEditing ? .prominent : .secondary))
+        .modifier(
+            VaultCardModifier(
+                context: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color)
+            )
+        )
     }
 
     @ViewBuilder

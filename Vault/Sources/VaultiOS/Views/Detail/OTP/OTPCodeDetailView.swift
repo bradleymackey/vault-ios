@@ -246,14 +246,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 metadata: metadata,
                 behaviour: .normal
             )
-            .frame(maxWidth: 220)
-            .padding(4) // some additional padding because it's bigger
-            .padding(.horizontal, 4)
-            .overlay(
-                RoundedRectangle(cornerRadius: 16)
-                    .stroke(.secondary, lineWidth: 4)
-            )
+            .frame(maxWidth: 200)
             .padding()
+            .shadow(radius: 10)
             .modifier(HorizontallyCenter())
             .listRowBackground(EmptyView())
         } footer: {
