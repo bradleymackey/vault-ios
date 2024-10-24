@@ -10,6 +10,7 @@ struct VaultCardModifier: ViewModifier {
 
         var style: Style
         var border: Color
+        var padding: EdgeInsets = .init(all: 8)
     }
 
     var context: Context
@@ -19,7 +20,7 @@ struct VaultCardModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .padding(8)
+            .padding(context.padding)
             .background(backgroundColor)
             .clipShape(clipShape())
             .overlay(
