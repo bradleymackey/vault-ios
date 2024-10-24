@@ -41,7 +41,7 @@ struct SecureNotePreviewView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .modifier(
             VaultCardModifier(
-                context: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color)
+                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color)
             )
         )
     }

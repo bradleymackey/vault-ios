@@ -22,7 +22,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         .shimmering(active: isEditing)
         .modifier(
             VaultCardModifier(
-                context: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color)
+                configuration: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color)
             )
         )
     }
