@@ -29,7 +29,7 @@ final class OTPCodeTextViewSnapshotTests: XCTestCase {
 
     @MainActor
     func test_obfuscated_staysOnSingleLine() {
-        let view = makeSUT(codeState: .obfuscated)
+        let view = makeSUT(codeState: .obfuscated(.expiry))
 
         assertSnapshot(of: view, as: .image)
     }

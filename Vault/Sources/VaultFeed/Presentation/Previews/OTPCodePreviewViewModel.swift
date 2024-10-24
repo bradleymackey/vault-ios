@@ -70,7 +70,12 @@ public final class OTPCodePreviewViewModel {
         self.code = code
     }
 
-    public func hideCodeUntilNextUpdate() {
-        code = .obfuscated
+    public func obfuscateCodeForPrivacy() {
+        code = .obfuscated(.privacy)
+    }
+
+    /// Indicates that the code has expired
+    public func codeExpired() {
+        code = .obfuscated(.expiry)
     }
 }

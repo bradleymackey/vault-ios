@@ -34,7 +34,7 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
 
     func scenePhaseDidChange(to scene: ScenePhase) {
         if scene == .background {
-            hideAllCodesUntilNextUpdate()
+            markAllCodesAsExpired()
         }
     }
 
@@ -44,9 +44,9 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
 }
 
 extension HOTPPreviewViewGenerator {
-    func hideAllCodesUntilNextUpdate() {
+    func markAllCodesAsExpired() {
         for viewModel in previewViewModelCache.values {
-            viewModel.hideCodeUntilNextUpdate()
+            viewModel.codeExpired()
         }
     }
 }
@@ -117,7 +117,7 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
                 color: metadata.color ?? .default,
                 codePublisher: makeCodePublisher(id: metadata.id, code: code)
             )
-            viewModel.hideCodeUntilNextUpdate()
+            viewModel.codeExpired()
             return viewModel
         }
     }
