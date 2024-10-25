@@ -33,8 +33,15 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
     }
 
     func scenePhaseDidChange(to scene: ScenePhase) {
-        if scene == .background {
+        switch scene {
+        case .active:
+            break
+        case .inactive:
+            hideAllPreviewsForPrivacy()
+        case .background:
             markAllCodesAsExpired()
+        @unknown default:
+            break
         }
     }
 
@@ -47,6 +54,12 @@ extension HOTPPreviewViewGenerator {
     func markAllCodesAsExpired() {
         for viewModel in previewViewModelCache.values {
             viewModel.codeExpired()
+        }
+    }
+
+    func hideAllPreviewsForPrivacy() {
+        for viewModel in previewViewModelCache.values {
+            viewModel.obfuscateCodeForPrivacy()
         }
     }
 }

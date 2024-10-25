@@ -148,6 +148,15 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
+    func test_scenePhaseDidChange_inactiveObfuscatesAllCodesForPrivacy() {
+        let (sut, _, factory) = makeSUT()
+
+        expectObfuscatesAllCodesForPrivacy(sut: sut, factory: factory) {
+            sut.scenePhaseDidChange(to: .inactive)
+        }
+    }
+
+    @MainActor
     func test_invalidateCache_removesCodeSpecificObjectsFromCache() async throws {
         let (sut, _, _) = makeSUT()
 
@@ -181,6 +190,29 @@ extension HOTPPreviewViewGeneratorTests {
     private func anyHOTPCode() -> HOTPAuthCode {
         let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
         return .init(data: codeData)
+    }
+
+    @MainActor
+    private func expectObfuscatesAllCodesForPrivacy(
+        sut: SUT,
+        factory: HOTPPreviewViewFactoryMock,
+        when action: () -> Void
+    ) {
+        let viewModels = collectCodePreviewViewModels(
+            sut: sut,
+            factory: factory,
+            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
+        )
+
+        for viewModel in viewModels {
+            viewModel.update(code: .visible("1234"))
+        }
+
+        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated(.privacy) })
+
+        action()
+
+        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated(.privacy) })
     }
 
     @MainActor
