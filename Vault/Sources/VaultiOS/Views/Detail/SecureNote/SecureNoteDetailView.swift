@@ -14,6 +14,7 @@ struct SecureNoteDetailView: View {
     private enum Modal: IdentifiableSelf {
         case tagSelector
         case editLock
+        case editPassphrase
     }
 
     init(
@@ -95,10 +96,29 @@ struct SecureNoteDetailView: View {
                 .presentationDragIndicator(.visible)
             case .editLock:
                 NavigationStack {
-                    VaultDetailLockItemView(
+                    VaultDetailLockEditView(
                         title: "Lock",
                         description: "Locked notes require authentication to view or edit. The title and first line of the note will be visible in the preview.",
                         lockState: $viewModel.editingModel.detail.lockState
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
+            case .editPassphrase:
+                NavigationStack {
+                    VaultDetailPassphraseEditView(
+                        title: "Passphrase",
+                        description: "Notes that require a passphrase are hidden from the main feed. You need to search exactly for your chosen passphrase each time to view this note.",
+                        hiddenWithPassphraseTitle: viewModel.strings.passphraseSubtitle,
+                        viewConfig: $viewModel.editingModel.detail.viewConfig,
+                        passphrase: $viewModel.editingModel.detail.searchPassphrase
                     )
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
@@ -290,36 +310,20 @@ struct SecureNoteDetailView: View {
                 }
             }
 
-            Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
+            Button {
+                modal = .editPassphrase
+            } label: {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
-                    color: viewModel.editingModel.detail.isHiddenWithPassphrase ? .red : .green,
-                    style: .prominent
+                    color: .accentColor,
+                    style: .standard
                 ) {
-                    VStack(alignment: .leading) {
-                        Text("Hide with passphrase")
-                            .font(.body)
-                        Text("Hide this note from being visible in the feed")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                FormRow(image: Image(systemName: "entry.lever.keypad.fill"), color: .blue, style: .standard) {
-                    TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
-                        .keyboardType(.default)
-                        .autocorrectionDisabled()
-                        .submitLabel(.done)
-                        .textInputAutocapitalization(.never)
+                    LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
                 }
             }
         } header: {
             Text(viewModel.strings.noteVisibilityTitle)
-        } footer: {
-            if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                Text(viewModel.strings.passphraseSubtitle)
-            }
         }
     }
 

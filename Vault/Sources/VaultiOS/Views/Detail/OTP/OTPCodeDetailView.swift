@@ -21,6 +21,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private enum Modal: IdentifiableSelf {
         case tagSelector
         case editLock
+        case editPassphrase
     }
 
     init(
@@ -116,10 +117,29 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 .presentationDragIndicator(.visible)
             case .editLock:
                 NavigationStack {
-                    VaultDetailLockItemView(
+                    VaultDetailLockEditView(
                         title: "Lock",
                         description: "Locked codes require authentication to view or edit. You will need to authenticate every time before you can view or copy the code.",
                         lockState: $viewModel.editingModel.detail.lockState
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
+            case .editPassphrase:
+                NavigationStack {
+                    VaultDetailPassphraseEditView(
+                        title: "Passphrase",
+                        description: "Codes that require a passphrase are hidden from the main feed. You need to search exactly for your chosen passphrase each time to view this code.",
+                        hiddenWithPassphraseTitle: viewModel.strings.passphraseSubtitle,
+                        viewConfig: $viewModel.editingModel.detail.viewConfig,
+                        passphrase: $viewModel.editingModel.detail.searchPassphrase
                     )
                     .toolbar {
                         ToolbarItem(placement: .primaryAction) {
@@ -366,41 +386,25 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     color: .accentColor,
                     style: .standard
                 ) {
-                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
+                    LabeledContent("Security", value: viewModel.editingModel.detail.lockState.localizedTitle)
                         .font(.body)
                 }
             }
 
-            Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
+            Button {
+                modal = .editPassphrase
+            } label: {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
-                    color: viewModel.editingModel.detail.isHiddenWithPassphrase ? .red : .green,
-                    style: .prominent
+                    color: .accentColor,
+                    style: .standard
                 ) {
-                    VStack(alignment: .leading) {
-                        Text("Hide with passphrase")
-                            .font(.body)
-                        Text("Hide this code from being visible in the feed")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
-                }
-            }
-            if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                FormRow(image: Image(systemName: "entry.lever.keypad.fill"), color: .blue, style: .standard) {
-                    TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
-                        .keyboardType(.default)
-                        .autocorrectionDisabled()
-                        .submitLabel(.done)
-                        .textInputAutocapitalization(.never)
+                    LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
                 }
             }
         } header: {
             Text(viewModel.strings.visibilitySectionTitle)
-        } footer: {
-            if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                Text(viewModel.strings.passphraseSubtitle)
-            }
         }
     }
 
