@@ -123,7 +123,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             case .editPassphrase:
                 NavigationStack {
                     VaultDetailPassphraseEditView(
-                        title: "Passphrase",
+                        title: "Visibility",
                         description: "Codes that require a passphrase are hidden from the main feed. You need to search exactly for your chosen passphrase each time to view this code.",
                         hiddenWithPassphraseTitle: viewModel.strings.passphraseSubtitle,
                         viewConfig: $viewModel.editingModel.detail.viewConfig,
