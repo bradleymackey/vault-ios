@@ -59,4 +59,8 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader, VaultTag
     public func updateTag(id _: Identifier<VaultItemTag>, item _: VaultItemTag.Write) async throws {
         throw error
     }
+
+    public func incrementCounter(id _: Identifier<VaultItem>) async throws {
+        throw error
+    }
 }

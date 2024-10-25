@@ -2,7 +2,9 @@ import Foundation
 import FoundationExtensions
 import VaultCore
 
-public typealias VaultStore = VaultStoreExporter & VaultStoreReader & VaultStoreReorderable & VaultStoreWriter
+public typealias VaultStore = VaultStoreExporter & VaultStoreHOTPIncrementer & VaultStoreReader &
+    VaultStoreReorderable &
+    VaultStoreWriter
 
 public protocol VaultStoreReader: Sendable {
     /// Retrieve items matching the given query.

@@ -86,6 +86,11 @@ public final class VaultStoreStub: VaultStore {
         reorderCallCount += 1
         try reorderHandler(items, position)
     }
+
+    public private(set) var incrementCounterCallCount = 0
+    public func incrementCounter(id _: Identifier<VaultItem>) async throws {
+        incrementCounterCallCount += 1
+    }
 }
 
 // MARK: - Helpers

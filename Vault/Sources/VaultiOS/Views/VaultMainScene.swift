@@ -47,11 +47,6 @@ public struct VaultMainScene: Scene {
             clock: clock,
             timer: timer
         )
-        let hotp = HOTPPreviewViewGenerator(
-            viewFactory: HOTPPreviewViewFactoryImpl(),
-            timer: timer,
-            store: store
-        )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
         let backupStore = BackupPasswordStoreImpl(
@@ -65,9 +60,15 @@ public struct VaultMainScene: Scene {
             vaultImporter: store,
             vaultDeleter: store,
             backupPasswordStore: backupStore,
-            backupEventLogger: backupEventLogger,
-            itemCaches: [totp, hotp]
+            backupEventLogger: backupEventLogger
         )
+        let hotp = HOTPPreviewViewGenerator(
+            viewFactory: HOTPPreviewViewFactoryImpl(),
+            timer: timer,
+            store: vaultDataModel
+        )
+        vaultDataModel.itemCaches = [totp, hotp]
+
         let injector = VaultInjector(
             clock: clock,
             intervalTimer: timer,
