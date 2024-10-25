@@ -43,8 +43,9 @@ extension VaultItem: Transferable {
                 case let .totp(period):
                     let totp = TOTPAuthCode(period: period, data: code.data)
                     return try totp.renderCode(epochSeconds: UInt64(clock.currentTime))
-                case .hotp:
-                    return "" // TODO: support this, need latest counter value
+                case let .hotp(counter):
+                    let hotp = HOTPAuthCode(counter: counter, data: code.data)
+                    return try hotp.renderCode()
                 }
             } catch {
                 // Error, just return empty string

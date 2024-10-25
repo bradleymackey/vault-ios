@@ -57,7 +57,7 @@ public final class VaultDataModel: Sendable {
     public private(set) var itemErrors = [VaultRetrievalResult<VaultItem>.Error]()
     public private(set) var itemsState: State = .base
     public private(set) var itemsRetrievalError: PresentationError?
-    private let itemCaches: [any VaultItemCache]
+    public var itemCaches: [any VaultItemCache]
 
     // MARK: Tags
 
@@ -309,6 +309,13 @@ extension VaultDataModel {
         itemsFilteringByTags.remove(tagID)
         await reloadItems()
         await updateCurrentPayloadHash()
+    }
+}
+
+extension VaultDataModel: VaultStoreHOTPIncrementer {
+    public func incrementCounter(id: Identifier<VaultItem>) async throws {
+        try await vaultStore.incrementCounter(id: id)
+        await reloadItems()
     }
 }
 
