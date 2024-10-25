@@ -35,7 +35,7 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
     func scenePhaseDidChange(to scene: ScenePhase) {
         switch scene {
         case .active:
-            break
+            unhideAllPreviewsForPrivacy()
         case .inactive:
             hideAllPreviewsForPrivacy()
         case .background:
@@ -60,6 +60,12 @@ extension HOTPPreviewViewGenerator {
     func hideAllPreviewsForPrivacy() {
         for viewModel in previewViewModelCache.values {
             viewModel.obfuscateCodeForPrivacy()
+        }
+    }
+
+    func unhideAllPreviewsForPrivacy() {
+        for viewModel in previewViewModelCache.values {
+            viewModel.unobfuscateCodeForPrivacy()
         }
     }
 }
