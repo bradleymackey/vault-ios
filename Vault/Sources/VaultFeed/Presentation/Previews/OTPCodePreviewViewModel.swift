@@ -10,6 +10,7 @@ public final class OTPCodePreviewViewModel {
     public let issuer: String
     public let color: VaultItemColor
     public private(set) var code: OTPCodeState = .notReady
+    private var obfuscatedCode: OTPCodeState?
 
     public var visibleIssuer: String {
         if issuer.isNotEmpty {
@@ -71,7 +72,18 @@ public final class OTPCodePreviewViewModel {
     }
 
     public func obfuscateCodeForPrivacy() {
+        obfuscatedCode = code
         code = .obfuscated(.privacy)
+    }
+
+    /// If the code was obfuscated for privacy, this removes the obfuscation.
+    ///
+    /// Has no effect if the code was not hidden for a privacy.
+    public func unobfuscateCodeForPrivacy() {
+        if let obfuscatedCode, case .obfuscated(.privacy) = code {
+            code = obfuscatedCode
+        }
+        obfuscatedCode = nil
     }
 
     /// Indicates that the code has expired
