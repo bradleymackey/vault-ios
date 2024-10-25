@@ -1,7 +1,7 @@
 import SwiftUI
 import VaultFeed
 
-struct VaultDetailLockItemView: View {
+struct VaultDetailLockEditView: View {
     var title: String
     var description: String
     @Binding var lockState: VaultItemLockState
@@ -57,5 +57,5 @@ struct VaultDetailLockItemView: View {
 }
 
 #Preview {
-    VaultDetailLockItemView(title: "Hello", description: "Hello world", lockState: .constant(.lockedWithNativeSecurity))
+    VaultDetailLockEditView(title: "Hello", description: "Hello world", lockState: .constant(.lockedWithNativeSecurity))
 }
