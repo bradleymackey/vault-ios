@@ -68,7 +68,7 @@ public final class OTPCodePreviewViewModel {
             } receiveValue: { [weak self] code in
                 guard let self else { return }
                 if isLocked {
-                    self.code = .obfuscated(.locked(code: code))
+                    self.code = .locked(code: code)
                 } else {
                     self.code = .visible(code)
                 }

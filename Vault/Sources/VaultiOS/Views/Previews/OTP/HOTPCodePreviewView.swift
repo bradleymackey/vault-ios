@@ -31,7 +31,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         switch behaviour {
         case .normal:
             switch previewViewModel.code {
-            case .visible:
+            case .visible, .locked:
                 Color.blue
             case .notReady, .obfuscated:
                 Color.gray

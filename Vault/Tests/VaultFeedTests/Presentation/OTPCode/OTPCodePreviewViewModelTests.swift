@@ -27,12 +27,12 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         await expectSingleMutation(observable: sut, keyPath: \.code) {
             codePublisher.subject.send("hello")
         }
-        XCTAssertEqual(sut.code, .obfuscated(.locked(code: "hello")))
+        XCTAssertEqual(sut.code, .locked(code: "hello"))
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
             codePublisher.subject.send("world")
         }
-        XCTAssertEqual(sut.code, .obfuscated(.locked(code: "world")))
+        XCTAssertEqual(sut.code, .locked(code: "world"))
     }
 
     @MainActor

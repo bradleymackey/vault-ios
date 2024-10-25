@@ -76,7 +76,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
         switch behaviour {
         case .normal:
             switch previewViewModel.code {
-            case .visible:
+            case .visible, .locked:
                 timerView
             case .finished, .notReady, .obfuscated:
                 Color.gray

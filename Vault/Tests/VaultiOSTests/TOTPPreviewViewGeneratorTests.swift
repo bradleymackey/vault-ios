@@ -86,7 +86,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
 
         for viewModel in viewModels {
-            viewModel.update(code: .obfuscated(.locked(code: "123456")))
+            viewModel.update(code: .locked(code: "123456"))
         }
 
         let code = sut.previewActionForVaultItem(id: id)
@@ -127,7 +127,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
 
         for viewModel in viewModels {
-            viewModel.update(code: .obfuscated(.locked(code: "123456")))
+            viewModel.update(code: .locked(code: "123456"))
         }
 
         let code = sut.textToCopyForVaultItem(id: id)

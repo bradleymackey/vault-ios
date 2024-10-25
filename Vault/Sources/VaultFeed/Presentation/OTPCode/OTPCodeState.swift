@@ -5,6 +5,7 @@ public enum OTPCodeState: Equatable {
     case finished
     case obfuscated(ObfuscationReason)
     case visible(String)
+    case locked(code: String)
     case error(PresentationError, digits: Int)
 }
 
@@ -12,12 +13,11 @@ extension OTPCodeState {
     public enum ObfuscationReason: Equatable {
         case privacy
         case expiry
-        case locked(code: String)
     }
 
     public var allowsNextCodeToBeGenerated: Bool {
         switch self {
-        case .visible, .obfuscated:
+        case .visible, .obfuscated, .locked:
             true
         case .notReady, .finished, .error:
             false
@@ -38,7 +38,7 @@ extension OTPCodeState {
         switch self {
         case let .visible(code):
             VaultTextCopyAction(text: code, requiresAuthenticationToCopy: false)
-        case let .obfuscated(.locked(code: code)):
+        case let .locked(code: code):
             VaultTextCopyAction(text: code, requiresAuthenticationToCopy: true)
         default:
             nil
