@@ -19,7 +19,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
-        case tagSelector
         case editLock
         case editPassphrase
         case editTags
@@ -91,9 +90,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 nameEditingSection
                 descriptionEditingSection
-                if viewModel.allTags.isNotEmpty {
-                    tagSelectionSection
-                }
                 passphraseEditingSection
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
@@ -107,15 +103,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         .animation(.easeOut, value: viewModel.editingModel.detail.viewConfig)
         .sheet(item: $modal, onDismiss: nil, content: { item in
             switch item {
-            case .tagSelector:
-                NavigationStack {
-                    VaultTagSelectorView(currentTags: viewModel.remainingTags) { selectedTag in
-                        viewModel.editingModel.detail.tags.insert(selectedTag.id)
-                    }
-                    .navigationTitle(Text("Add Tag"))
-                }
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
             case .editLock:
                 NavigationStack {
                     VaultDetailLockEditView(
@@ -156,16 +143,21 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
             case .editTags:
                 NavigationStack {
-                    VaultDetailTagEditView()
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button {
-                                    modal = nil
-                                } label: {
-                                    Text("Done")
-                                }
+                    VaultDetailTagEditView(
+                        tagsThatAreSelected: viewModel.tagsThatAreSelected,
+                        remainingTags: viewModel.remainingTags,
+                        didAdd: { viewModel.editingModel.detail.tags.insert($0.id) },
+                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) }
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
                             }
                         }
+                    }
                 }
             }
         })
@@ -345,51 +337,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             }
             .padding(.top, 16)
         }
-    }
-
-    private var tagSelectionSection: some View {
-        Section {
-            if viewModel.tagsThatAreSelected.isEmpty {
-                PlaceholderView(
-                    systemIcon: "tag.fill",
-                    title: "None",
-                    subtitle: "Add a tag to categorize this item"
-                )
-                .foregroundStyle(.secondary)
-                .containerRelativeFrame(.horizontal)
-                .padding()
-            }
-
-            ForEach(viewModel.tagsThatAreSelected) { tag in
-                FormRow(
-                    image: Image(systemName: tag.iconName),
-                    color: tag.color.color,
-                    style: .standard
-                ) {
-                    Text(tag.name)
-                }
-            }
-            .onDelete { indexes in
-                let tagIds = viewModel.tagsThatAreSelected.map(\.id)
-                let tagsToRemove = indexes.map { tagIds[$0] }
-                for tag in tagsToRemove {
-                    viewModel.editingModel.detail.tags.remove(tag)
-                }
-            }
-        } header: {
-            HStack(alignment: .center) {
-                Text("Tags")
-                Spacer()
-                if viewModel.remainingTags.isNotEmpty {
-                    Button {
-                        modal = .tagSelector
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                }
-            }
-        }
-        .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
     }
 
     private var passphraseEditingSection: some View {

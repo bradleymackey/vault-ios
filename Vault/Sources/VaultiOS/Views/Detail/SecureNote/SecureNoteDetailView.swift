@@ -12,7 +12,6 @@ struct SecureNoteDetailView: View {
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
-        case tagSelector
         case editLock
         case editPassphrase
         case editTags
@@ -68,9 +67,6 @@ struct SecureNoteDetailView: View {
         ) {
             if viewModel.isInEditMode {
                 noteContentsEditingSection
-                if viewModel.allTags.isNotEmpty {
-                    tagSelectionSection
-                }
                 passphraseEditingSection
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
@@ -85,16 +81,6 @@ struct SecureNoteDetailView: View {
         }
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
-            case .tagSelector:
-                NavigationStack {
-                    VaultTagSelectorView(currentTags: viewModel.remainingTags) { selectedTag in
-                        viewModel.editingModel.detail.tags.insert(selectedTag.id)
-                    }
-                    .navigationTitle(Text("Add Tag"))
-                    .navigationBarTitleDisplayMode(.inline)
-                }
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
             case .editLock:
                 NavigationStack {
                     VaultDetailLockEditView(
@@ -135,80 +121,20 @@ struct SecureNoteDetailView: View {
                 }
             case .editTags:
                 NavigationStack {
-                    VaultDetailTagEditView()
-                        .toolbar {
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button {
-                                    modal = nil
-                                } label: {
-                                    Text("Done")
-                                }
+                    VaultDetailTagEditView(
+                        tagsThatAreSelected: viewModel.tagsThatAreSelected,
+                        remainingTags: viewModel.remainingTags,
+                        didAdd: { viewModel.editingModel.detail.tags.insert($0.id) },
+                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) }
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
                             }
                         }
-                }
-            }
-        }
-    }
-
-    // MARK: Tags
-
-    private var tagSelectionSection: some View {
-        Section {
-            if viewModel.tagsThatAreSelected.isEmpty {
-                PlaceholderView(
-                    systemIcon: "tag.fill",
-                    title: "None",
-                    subtitle: "Add a tag to categorize this item"
-                )
-                .containerRelativeFrame(.horizontal)
-                .padding()
-                .foregroundStyle(.secondary)
-            }
-
-            ForEach(viewModel.tagsThatAreSelected) { tag in
-                FormRow(
-                    image: Image(systemName: tag.iconName),
-                    color: tag.color.color,
-                    style: .standard
-                ) {
-                    Text(tag.name)
-                }
-            }
-            .onDelete { indexes in
-                let tagIds = viewModel.tagsThatAreSelected.map(\.id)
-                let tagsToRemove = indexes.map { tagIds[$0] }
-                for tag in tagsToRemove {
-                    viewModel.editingModel.detail.tags.remove(tag)
-                }
-            }
-        } header: {
-            HStack(alignment: .center) {
-                Text("Tags")
-                Spacer()
-                if viewModel.remainingTags.isNotEmpty {
-                    Button {
-                        modal = .tagSelector
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
-                    }
-                }
-            }
-        }
-        .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
-    }
-
-    private var tagSelectorList: some View {
-        List {
-            ForEach(viewModel.remainingTags) { tag in
-                Button {
-                    viewModel.editingModel.detail.tags.insert(tag.id)
-                } label: {
-                    FormRow(
-                        image: Image(systemName: tag.iconName),
-                        color: tag.color.color,
-                        style: .standard
-                    ) {
-                        Text(tag.name)
                     }
                 }
             }
