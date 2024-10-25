@@ -387,7 +387,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         ScrollView(.horizontal, showsIndicators: false) {
                             HStack(alignment: .center, spacing: 8) {
                                 ForEach(viewModel.tagsThatAreSelected) { tag in
-                                    TagPillView(tag: tag)
+                                    TagPillView(tag: tag, isSelected: true)
                                 }
                             }
                             .padding(.vertical, 4)
