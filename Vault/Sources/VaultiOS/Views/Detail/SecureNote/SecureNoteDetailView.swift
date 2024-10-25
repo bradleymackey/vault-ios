@@ -13,6 +13,7 @@ struct SecureNoteDetailView: View {
 
     private enum Modal: IdentifiableSelf {
         case tagSelector
+        case editLock
     }
 
     init(
@@ -88,9 +89,27 @@ struct SecureNoteDetailView: View {
                         viewModel.editingModel.detail.tags.insert(selectedTag.id)
                     }
                     .navigationTitle(Text("Add Tag"))
+                    .navigationBarTitleDisplayMode(.inline)
                 }
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
+            case .editLock:
+                NavigationStack {
+                    VaultDetailLockItemView(
+                        title: "Lock",
+                        description: "Locked notes require authentication to view or edit. The title and first line of the note will be visible in the preview.",
+                        lockState: $viewModel.editingModel.detail.lockState
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -258,21 +277,19 @@ struct SecureNoteDetailView: View {
                 }
             }
 
-            Toggle(isOn: $viewModel.editingModel.detail.isLocked) {
+            Button {
+                modal = .editLock
+            } label: {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
-                    color: viewModel.editingModel.detail.isLocked ? .red : .green,
-                    style: .prominent
+                    color: .accentColor,
+                    style: .standard
                 ) {
-                    VStack(alignment: .leading) {
-                        Text("Lock note")
-                            .font(.body)
-                        Text("Require authentication to view this note")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
+                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
+                        .font(.body)
                 }
             }
+
             Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),

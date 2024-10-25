@@ -20,6 +20,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     private enum Modal: IdentifiableSelf {
         case tagSelector
+        case editLock
     }
 
     init(
@@ -113,6 +114,23 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 }
                 .presentationDetents([.medium, .large])
                 .presentationDragIndicator(.visible)
+            case .editLock:
+                NavigationStack {
+                    VaultDetailLockItemView(
+                        title: "Lock",
+                        description: "Locked codes require authentication to view or edit. You will need to authenticate every time before you can view or copy the code.",
+                        lockState: $viewModel.editingModel.detail.lockState
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .primaryAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
             }
         })
         .onChange(of: selectedColor.hashValue) { _, _ in
@@ -340,21 +358,19 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     private var passphraseEditingSection: some View {
         Section {
-            Toggle(isOn: $viewModel.editingModel.detail.isLocked) {
+            Button {
+                modal = .editLock
+            } label: {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
-                    color: viewModel.editingModel.detail.isLocked ? .red : .green,
-                    style: .prominent
+                    color: .accentColor,
+                    style: .standard
                 ) {
-                    VStack(alignment: .leading) {
-                        Text("Lock code")
-                            .font(.body)
-                        Text("Require authentication to view this code")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
+                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
+                        .font(.body)
                 }
             }
+
             Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
