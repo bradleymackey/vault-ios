@@ -82,12 +82,12 @@ extension TOTPPreviewViewGenerator {
 
 extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        guard let visibleCode = textToCopyForVaultItem(id: id) else { return nil }
-        return .copyText(visibleCode)
+        guard let copyableCode = textToCopyForVaultItem(id: id) else { return nil }
+        return .copyText(copyableCode)
     }
 
     func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
-        viewModelCache[id]?.code.visibleCode
+        viewModelCache[id]?.code.copyableCode
     }
 }
 
@@ -139,6 +139,7 @@ extension TOTPPreviewViewGenerator: VaultItemCache {
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 color: metadata.color ?? .default,
+                isLocked: metadata.lockState.isLocked,
                 codePublisher: codePublisher
             )
         }

@@ -37,6 +37,8 @@ struct CodeStateTimerBarView<Timer: View>: View {
                 switch obfuscationReason {
                 case .expiry:
                     localized(key: "code.updateRequired")
+                case .locked:
+                    "Code is locked"
                 case .privacy:
                     nil
                 }

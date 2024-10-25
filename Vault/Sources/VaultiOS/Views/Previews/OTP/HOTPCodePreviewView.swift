@@ -120,6 +120,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             accountName: accountName,
             issuer: "Authority",
             color: .default,
+            isLocked: false,
             codePublisher: codePublisher
         )
         return HOTPCodePreviewView(

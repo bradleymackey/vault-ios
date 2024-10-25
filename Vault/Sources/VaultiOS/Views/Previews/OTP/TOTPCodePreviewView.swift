@@ -123,6 +123,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
             accountName: "test@example.com",
             issuer: issuer,
             color: .default,
+            isLocked: false,
             codePublisher: codePublisher
         )
         return TOTPCodePreviewView(

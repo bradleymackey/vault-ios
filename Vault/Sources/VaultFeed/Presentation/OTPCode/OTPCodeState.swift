@@ -12,6 +12,7 @@ extension OTPCodeState {
     public enum ObfuscationReason: Equatable {
         case privacy
         case expiry
+        case locked(code: String)
     }
 
     public var allowsNextCodeToBeGenerated: Bool {
@@ -32,9 +33,10 @@ extension OTPCodeState {
         }
     }
 
-    public var visibleCode: String? {
+    /// The raw code that is able to be copied to the clipboard.
+    public var copyableCode: String? {
         switch self {
-        case let .visible(code):
+        case let .visible(code), let .obfuscated(.locked(code)):
             code
         default:
             nil
