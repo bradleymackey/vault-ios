@@ -165,6 +165,9 @@ extension SecureNoteDetailViewModel {
         public let passphraseTitle = localized(key: "itemDetail.passphrase.title")
         public let passphrasePrompt = localized(key: "itemDetail.passphrase.prompt")
         public let passphraseSubtitle = localized(key: "itemDetail.passphrase.subtitle")
+        public func tagCount(tags: Int) -> String {
+            localized(key: "itemDetail.tagsCount.\(tags)")
+        }
     }
 
     public var strings: Strings {

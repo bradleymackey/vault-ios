@@ -576,6 +576,29 @@
         }
       }
     },
+    "itemDetail.tagsCount.%lld" : {
+      "extractionState" : "migrated",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tags"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "itemDetail.cancelEdits.title" : {
       "extractionState" : "manual",
       "localizations" : {

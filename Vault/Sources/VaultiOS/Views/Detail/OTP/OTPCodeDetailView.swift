@@ -376,8 +376,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         color: .accentColor,
                         style: .standard
                     ) {
-                        LabeledContent("Tags", value: "\(viewModel.editingModel.detail.tags.count) tags")
-                            .font(.body)
+                        LabeledContent(
+                            "Tags",
+                            value: viewModel.strings.tagCount(tags: viewModel.editingModel.detail.tags.count)
+                        )
+                        .font(.body)
                     }
 
                     if viewModel.tagsThatAreSelected.isNotEmpty {
