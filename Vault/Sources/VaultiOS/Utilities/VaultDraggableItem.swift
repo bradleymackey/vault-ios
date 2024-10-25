@@ -33,6 +33,7 @@ extension VaultItem: Transferable {
     }
 
     func sharingContent(clock: any EpochClock) -> String {
+        if metadata.lockState.isLocked { return "" }
         switch item {
         case let .secureNote(note):
             return note.title
@@ -46,7 +47,8 @@ extension VaultItem: Transferable {
                     return "" // TODO: support this, need latest counter value
                 }
             } catch {
-                return "ERROR"
+                // Error, just return empty string
+                return ""
             }
         }
     }

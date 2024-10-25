@@ -38,7 +38,9 @@ func anySecureNote(title: String = "any") -> SecureNote {
     .init(title: title, contents: "This is my note", format: .markdown)
 }
 
-func anyVaultItemMetadata() -> VaultItem.Metadata {
+func anyVaultItemMetadata(
+    lockState: VaultItemLockState = .notLocked
+) -> VaultItem.Metadata {
     .init(
         id: Identifier<VaultItem>(),
         created: Date(),
@@ -49,7 +51,7 @@ func anyVaultItemMetadata() -> VaultItem.Metadata {
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: "",
-        lockState: .notLocked,
+        lockState: lockState,
         color: .black
     )
 }
