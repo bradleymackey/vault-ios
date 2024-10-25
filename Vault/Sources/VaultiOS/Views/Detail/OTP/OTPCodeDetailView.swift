@@ -123,7 +123,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         lockState: $viewModel.editingModel.detail.lockState
                     )
                     .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
+                        ToolbarItem(placement: .confirmationAction) {
                             Button {
                                 modal = nil
                             } label: {
@@ -141,13 +141,15 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                         viewConfig: $viewModel.editingModel.detail.viewConfig,
                         passphrase: $viewModel.editingModel.detail.searchPassphrase
                     )
+                    .interactiveDismissDisabled(!viewModel.editingModel.detail.isPassphraseValid)
                     .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
+                        ToolbarItem(placement: .confirmationAction) {
                             Button {
                                 modal = nil
                             } label: {
                                 Text("Done")
                             }
+                            .disabled(!viewModel.editingModel.detail.isPassphraseValid)
                         }
                     }
                 }

@@ -102,7 +102,7 @@ struct SecureNoteDetailView: View {
                         lockState: $viewModel.editingModel.detail.lockState
                     )
                     .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
+                        ToolbarItem(placement: .confirmationAction) {
                             Button {
                                 modal = nil
                             } label: {
@@ -120,13 +120,15 @@ struct SecureNoteDetailView: View {
                         viewConfig: $viewModel.editingModel.detail.viewConfig,
                         passphrase: $viewModel.editingModel.detail.searchPassphrase
                     )
+                    .interactiveDismissDisabled(!viewModel.editingModel.detail.isPassphraseValid)
                     .toolbar {
-                        ToolbarItem(placement: .primaryAction) {
+                        ToolbarItem(placement: .confirmationAction) {
                             Button {
                                 modal = nil
                             } label: {
                                 Text("Done")
                             }
+                            .disabled(!viewModel.editingModel.detail.isPassphraseValid)
                         }
                     }
                 }
@@ -202,7 +204,7 @@ struct SecureNoteDetailView: View {
     // MARK: Title
 
     private var noteIconHeader: some View {
-        Image(systemName: viewModel.editingModel.detail.isLocked ? "lock.doc.fill" : "doc.text.fill")
+        Image(systemName: viewModel.editingModel.detail.lockState.isLocked ? "lock.doc.fill" : "doc.text.fill")
             .font(.title)
             .foregroundStyle(selectedColor)
     }

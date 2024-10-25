@@ -134,7 +134,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         $secretBase32String.isValid && $issuerTitle.isValid && isPassphraseValid
     }
 
-    private var isPassphraseValid: Bool {
+    public var isPassphraseValid: Bool {
         switch viewConfig {
         case .requiresSearchPassphrase: $searchPassphrase.isValid
         default: true
