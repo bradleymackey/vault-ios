@@ -22,6 +22,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         case tagSelector
         case editLock
         case editPassphrase
+        case editTags
     }
 
     init(
@@ -152,6 +153,19 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                             .disabled(!viewModel.editingModel.detail.isPassphraseValid)
                         }
                     }
+                }
+            case .editTags:
+                NavigationStack {
+                    VaultDetailTagEditView()
+                        .toolbar {
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button {
+                                    modal = nil
+                                } label: {
+                                    Text("Done")
+                                }
+                            }
+                        }
                 }
             }
         })
@@ -403,6 +417,33 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
                         .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editTags
+            } label: {
+                VStack {
+                    FormRow(
+                        image: Image(systemName: "tag.fill"),
+                        color: .accentColor,
+                        style: .standard
+                    ) {
+                        LabeledContent("Tags", value: "\(viewModel.editingModel.detail.tags.count) tags")
+                            .font(.body)
+                    }
+
+                    if viewModel.tagsThatAreSelected.isNotEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(alignment: .center, spacing: 8) {
+                                ForEach(viewModel.tagsThatAreSelected) { tag in
+                                    TagPillView(tag: tag)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .scrollClipDisabled()
+                    }
                 }
             }
         } header: {
