@@ -149,17 +149,16 @@ struct SecureNoteDetailView: View {
             .foregroundStyle(selectedColor)
     }
 
-    private var noteIconPickerHeader: some View {
-        HStack(spacing: 8) {
-            noteIconHeader
-                .padding(8)
-                .background(Circle().fill(Color(UIColor.secondarySystemBackground)))
-                .padding(8)
-                .background(Circle().fill(AngularGradient(
-                    gradient: Gradient(colors: [.red, .yellow, .green, .blue, .purple, .pink]),
-                    center: .center
-                ).opacity(0.8)))
-                .overlay(ColorPicker("", selection: $selectedColor).labelsHidden().opacity(0.015))
+    private var noteIconEditingHeader: some View {
+        VStack(spacing: 8) {
+            Image(systemName: viewModel.editingModel.detail.lockState.isLocked ? "lock.doc.fill" : "doc.text.fill")
+                .font(.largeTitle)
+                .foregroundStyle(selectedColor)
+
+            ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
+                EmptyView()
+            })
+            .labelsHidden()
         }
     }
 
@@ -220,9 +219,10 @@ struct SecureNoteDetailView: View {
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
         } header: {
-            noteIconPickerHeader
+            noteIconEditingHeader
                 .containerRelativeFrame(.horizontal)
                 .padding(.vertical, 4)
+                .padding(.bottom, 8)
         }
     }
 
