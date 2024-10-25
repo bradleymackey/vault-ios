@@ -270,7 +270,7 @@ struct SecureNoteDetailView: View {
             } label: {
                 VStack {
                     FormRow(
-                        image: Image(systemName: "tag.fill"),
+                        image: Image(systemName: "tag"),
                         color: .accentColor,
                         style: .standard
                     ) {
