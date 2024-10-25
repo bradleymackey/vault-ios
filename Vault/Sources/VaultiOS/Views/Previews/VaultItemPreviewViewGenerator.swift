@@ -15,7 +15,7 @@ protocol VaultItemPreviewViewGenerator {
 
 @MainActor
 protocol VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String?
+    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction?
 }
 
 /// Handle a given action after interacting with a vault item.
@@ -26,14 +26,14 @@ protocol VaultItemPreviewActionHandler {
 
 /// A kind of action that can be taken after interacting with a given vault item.
 enum VaultItemPreviewAction: Equatable {
-    case copyText(String)
+    case copyText(VaultTextCopyAction)
     case openItemDetail(Identifier<VaultItem>)
 }
 
 // MARK: - Mock
 
 extension VaultItemPreviewViewGeneratorMock: VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
         nil
     }
 }

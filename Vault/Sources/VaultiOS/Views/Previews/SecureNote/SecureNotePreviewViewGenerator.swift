@@ -43,7 +43,7 @@ extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler, VaultIt
         .openItemDetail(id)
     }
 
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
-        "TODO"
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
+        nil
     }
 }

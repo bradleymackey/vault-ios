@@ -94,6 +94,7 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
             accountName: accountName,
             issuer: issuer,
             color: .default,
+            isLocked: false,
             fixedCodeState: state
         )
         return TOTPCodePreviewView(

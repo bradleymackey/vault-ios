@@ -75,7 +75,23 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
         let code = sut.previewActionForVaultItem(id: id)
 
-        XCTAssertEqual(code, .copyText("123456"))
+        XCTAssertEqual(code, .copyText(.init(text: "123456", requiresAuthenticationToCopy: false)))
+    }
+
+    @MainActor
+    func test_previewActionForVaultItem_isCopyTextWithAuthenticationForLockedCode() {
+        let factory = makeTOTPPreviewViewFactoryMock()
+        let sut = makeSUT(factory: factory)
+        let id = Identifier<VaultItem>()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .obfuscated(.locked(code: "123456")))
+        }
+
+        let code = sut.previewActionForVaultItem(id: id)
+
+        XCTAssertEqual(code, .copyText(.init(text: "123456", requiresAuthenticationToCopy: true)))
     }
 
     @MainActor
@@ -100,7 +116,23 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
 
         let code = sut.textToCopyForVaultItem(id: id)
 
-        XCTAssertEqual(code, "123456")
+        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: false))
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_isCopyTextWithAuthenticationForLockedCode() {
+        let factory = makeTOTPPreviewViewFactoryMock()
+        let sut = makeSUT(factory: factory)
+        let id = Identifier<VaultItem>()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .obfuscated(.locked(code: "123456")))
+        }
+
+        let code = sut.textToCopyForVaultItem(id: id)
+
+        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: true))
     }
 
     @MainActor

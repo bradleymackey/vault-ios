@@ -18,6 +18,7 @@ struct VaultListView<
 
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
+    @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var vaultItemFeedState = VaultItemFeedState()
     @State private var isShowingEditSheet = false
     @State private var modal: Modal?
@@ -135,8 +136,12 @@ struct VaultListView<
                 modal = .detail(id, item)
             } else if let previewAction = viewGenerator.previewActionForVaultItem(id: id) {
                 switch previewAction {
-                case let .copyText(text):
-                    pasteboard.copy(text)
+                case let .copyText(copyAction):
+                    if copyAction.requiresAuthenticationToCopy {
+                        let result = try await authenticationService.authenticate(reason: "Copy locked text")
+                        guard result == .success(.authenticated) else { return }
+                    }
+                    pasteboard.copy(copyAction.text)
                 case let .openItemDetail(id):
                     guard let item = dataModel.code(id: id) else { return }
                     modal = .detail(id, item)

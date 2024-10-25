@@ -82,11 +82,11 @@ extension TOTPPreviewViewGenerator {
 
 extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        guard let copyableCode = textToCopyForVaultItem(id: id) else { return nil }
-        return .copyText(copyableCode)
+        guard let copyAction = textToCopyForVaultItem(id: id) else { return nil }
+        return .copyText(copyAction)
     }
 
-    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
+    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
         viewModelCache[id]?.code.copyableCode
     }
 }

@@ -105,7 +105,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_previewActionForVaultItem_returnsIfTOTPCanHandle() {
         let totp = TOTPGeneratorMock()
-        totp.previewActionForVaultItemValue = .copyText("totp")
+        totp.previewActionForVaultItemValue = .copyText(.init(text: "totp", requiresAuthenticationToCopy: false))
         let hotp = HOTPGeneratorMock()
         hotp.previewActionForVaultItemValue = nil
         let note = SecureNoteGeneratorMock()
@@ -114,7 +114,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         let action = sut.previewActionForVaultItem(id: .new())
 
-        XCTAssertEqual(action, .copyText("totp"))
+        XCTAssertEqual(action, .copyText(.init(text: "totp", requiresAuthenticationToCopy: false)))
     }
 
     @MainActor
@@ -122,14 +122,14 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         totp.previewActionForVaultItemValue = nil
         let hotp = HOTPGeneratorMock()
-        hotp.previewActionForVaultItemValue = .copyText("hotp")
+        hotp.previewActionForVaultItemValue = .copyText(.init(text: "hotp", requiresAuthenticationToCopy: false))
         let note = SecureNoteGeneratorMock()
         note.previewActionForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let action = sut.previewActionForVaultItem(id: .new())
 
-        XCTAssertEqual(action, .copyText("hotp"))
+        XCTAssertEqual(action, .copyText(.init(text: "hotp", requiresAuthenticationToCopy: false)))
     }
 
     @MainActor
@@ -139,12 +139,12 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let hotp = HOTPGeneratorMock()
         hotp.previewActionForVaultItemValue = nil
         let note = SecureNoteGeneratorMock()
-        note.previewActionForVaultItemValue = .copyText("secure note")
+        note.previewActionForVaultItemValue = .copyText(.init(text: "secure note", requiresAuthenticationToCopy: false))
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let action = sut.previewActionForVaultItem(id: .new())
 
-        XCTAssertEqual(action, .copyText("secure note"))
+        XCTAssertEqual(action, .copyText(.init(text: "secure note", requiresAuthenticationToCopy: false)))
     }
 
     @MainActor
@@ -165,7 +165,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_textToCopyForVaultItem_returnsIfTOTPCanHandle() {
         let totp = TOTPGeneratorMock()
-        totp.textToCopyForVaultItemValue = "totp"
+        totp.textToCopyForVaultItemValue = .init(text: "totp", requiresAuthenticationToCopy: false)
         let hotp = HOTPGeneratorMock()
         hotp.textToCopyForVaultItemValue = nil
         let note = SecureNoteGeneratorMock()
@@ -174,7 +174,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         let action = sut.textToCopyForVaultItem(id: .new())
 
-        XCTAssertEqual(action, "totp")
+        XCTAssertEqual(action, .init(text: "totp", requiresAuthenticationToCopy: false))
     }
 
     @MainActor
@@ -182,14 +182,14 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         totp.textToCopyForVaultItemValue = nil
         let hotp = HOTPGeneratorMock()
-        hotp.textToCopyForVaultItemValue = "hotp"
+        hotp.textToCopyForVaultItemValue = .init(text: "hotp", requiresAuthenticationToCopy: false)
         let note = SecureNoteGeneratorMock()
         note.textToCopyForVaultItemValue = nil
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let action = sut.textToCopyForVaultItem(id: .new())
 
-        XCTAssertEqual(action, "hotp")
+        XCTAssertEqual(action, .init(text: "hotp", requiresAuthenticationToCopy: false))
     }
 
     @MainActor
@@ -199,12 +199,12 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let hotp = HOTPGeneratorMock()
         hotp.textToCopyForVaultItemValue = nil
         let note = SecureNoteGeneratorMock()
-        note.textToCopyForVaultItemValue = "secure note"
+        note.textToCopyForVaultItemValue = .init(text: "secure note", requiresAuthenticationToCopy: false)
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
 
         let action = sut.textToCopyForVaultItem(id: .new())
 
-        XCTAssertEqual(action, "secure note")
+        XCTAssertEqual(action, .init(text: "secure note", requiresAuthenticationToCopy: false))
     }
 }
 
@@ -263,8 +263,8 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
         return previewActionForVaultItemValue
     }
 
-    var textToCopyForVaultItemValue: String?
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
+    var textToCopyForVaultItemValue: VaultTextCopyAction?
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
     }
@@ -301,8 +301,8 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
         return previewActionForVaultItemValue
     }
 
-    var textToCopyForVaultItemValue: String?
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
+    var textToCopyForVaultItemValue: VaultTextCopyAction?
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
     }
@@ -339,8 +339,8 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemP
         return previewActionForVaultItemValue
     }
 
-    var textToCopyForVaultItemValue: String?
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> String? {
+    var textToCopyForVaultItemValue: VaultTextCopyAction?
+    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
         calledMethods.append(#function)
         return textToCopyForVaultItemValue
     }

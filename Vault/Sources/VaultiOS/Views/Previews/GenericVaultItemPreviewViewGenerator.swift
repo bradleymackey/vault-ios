@@ -72,10 +72,10 @@ struct GenericVaultItemPreviewViewGenerator<
 }
 
 extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
+    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
         for generator in allGenerators {
-            if let text = generator.textToCopyForVaultItem(id: id) {
-                return text
+            if let copyAction = generator.textToCopyForVaultItem(id: id) {
+                return copyAction
             }
         }
         return nil
