@@ -446,8 +446,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
                     }
                 }
             }
-        } header: {
-            Text(viewModel.strings.visibilitySectionTitle)
         }
     }
 

@@ -365,8 +365,6 @@ struct SecureNoteDetailView: View {
                     }
                 }
             }
-        } header: {
-            Text(viewModel.strings.noteVisibilityTitle)
         }
     }
 
