@@ -5,6 +5,20 @@ import VaultFeed
 
 struct VaultItemTransferableTests {
     @Test
+    func test_sharingContent_secureNoteIsTitle() {
+        let item = anySecureNote(title: "my title")
+        let clock = EpochClockMock(currentTime: 1234)
+        let vaultItem = VaultItem(
+            metadata: anyVaultItemMetadata(),
+            item: .secureNote(item)
+        )
+
+        let sharingItem = vaultItem.sharingContent(clock: clock)
+
+        #expect(sharingItem == "my title")
+    }
+
+    @Test
     func sharingContent_rendersTOTPCodeForTimestamp() throws {
         let item = try VaultItem(
             metadata: anyVaultItemMetadata(lockState: .notLocked),
