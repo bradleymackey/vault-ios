@@ -35,6 +35,18 @@ extension VaultItemViewConfiguration {
         case .requiresSearchPassphrase: .onlyPassphrase
         }
     }
+
+    public var isEnabled: Bool {
+        get {
+            switch self {
+            case .alwaysVisible: false
+            case .requiresSearchPassphrase: true
+            }
+        }
+        set {
+            self = newValue ? .requiresSearchPassphrase : .alwaysVisible
+        }
+    }
 }
 
 // MARK: - Localization

@@ -12,7 +12,9 @@ struct SecureNoteDetailView: View {
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
-        case tagSelector
+        case editLock
+        case editPassphrase
+        case editTags
     }
 
     init(
@@ -65,9 +67,6 @@ struct SecureNoteDetailView: View {
         ) {
             if viewModel.isInEditMode {
                 noteContentsEditingSection
-                if viewModel.allTags.isNotEmpty {
-                    tagSelectionSection
-                }
                 passphraseEditingSection
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
@@ -82,78 +81,60 @@ struct SecureNoteDetailView: View {
         }
         .sheet(item: $modal, onDismiss: nil) { item in
             switch item {
-            case .tagSelector:
+            case .editLock:
                 NavigationStack {
-                    VaultTagSelectorView(currentTags: viewModel.remainingTags) { selectedTag in
-                        viewModel.editingModel.detail.tags.insert(selectedTag.id)
-                    }
-                    .navigationTitle(Text("Add Tag"))
-                }
-                .presentationDetents([.medium, .large])
-                .presentationDragIndicator(.visible)
-            }
-        }
-    }
-
-    // MARK: Tags
-
-    private var tagSelectionSection: some View {
-        Section {
-            if viewModel.tagsThatAreSelected.isEmpty {
-                PlaceholderView(
-                    systemIcon: "tag.fill",
-                    title: "None",
-                    subtitle: "Add a tag to categorize this item"
-                )
-                .containerRelativeFrame(.horizontal)
-                .padding()
-                .foregroundStyle(.secondary)
-            }
-
-            ForEach(viewModel.tagsThatAreSelected) { tag in
-                FormRow(
-                    image: Image(systemName: tag.iconName),
-                    color: tag.color.color,
-                    style: .standard
-                ) {
-                    Text(tag.name)
-                }
-            }
-            .onDelete { indexes in
-                let tagIds = viewModel.tagsThatAreSelected.map(\.id)
-                let tagsToRemove = indexes.map { tagIds[$0] }
-                for tag in tagsToRemove {
-                    viewModel.editingModel.detail.tags.remove(tag)
-                }
-            }
-        } header: {
-            HStack(alignment: .center) {
-                Text("Tags")
-                Spacer()
-                if viewModel.remainingTags.isNotEmpty {
-                    Button {
-                        modal = .tagSelector
-                    } label: {
-                        Image(systemName: "plus.circle.fill")
+                    VaultDetailLockEditView(
+                        title: "Lock",
+                        description: "Locked notes require authentication to view or edit. The title and first line of the note will be visible in the preview.",
+                        lockState: $viewModel.editingModel.detail.lockState
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
                     }
                 }
-            }
-        }
-        .listRowSeparator(viewModel.tagsThatAreSelected.isEmpty ? .hidden : .automatic)
-    }
-
-    private var tagSelectorList: some View {
-        List {
-            ForEach(viewModel.remainingTags) { tag in
-                Button {
-                    viewModel.editingModel.detail.tags.insert(tag.id)
-                } label: {
-                    FormRow(
-                        image: Image(systemName: tag.iconName),
-                        color: tag.color.color,
-                        style: .standard
-                    ) {
-                        Text(tag.name)
+            case .editPassphrase:
+                NavigationStack {
+                    VaultDetailPassphraseEditView(
+                        title: "Visibility",
+                        description: "Notes that require a passphrase are hidden from the main feed. You need to search exactly for your chosen passphrase each time to view this note.",
+                        hiddenWithPassphraseTitle: viewModel.strings.passphraseSubtitle,
+                        viewConfig: $viewModel.editingModel.detail.viewConfig,
+                        passphrase: $viewModel.editingModel.detail.searchPassphrase
+                    )
+                    .interactiveDismissDisabled(!viewModel.editingModel.detail.isPassphraseValid)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                            .disabled(!viewModel.editingModel.detail.isPassphraseValid)
+                        }
+                    }
+                }
+            case .editTags:
+                NavigationStack {
+                    VaultDetailTagEditView(
+                        tagsThatAreSelected: viewModel.tagsThatAreSelected,
+                        remainingTags: viewModel.remainingTags,
+                        didAdd: { viewModel.editingModel.detail.tags.insert($0.id) },
+                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) }
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
                     }
                 }
             }
@@ -163,7 +144,7 @@ struct SecureNoteDetailView: View {
     // MARK: Title
 
     private var noteIconHeader: some View {
-        Image(systemName: viewModel.editingModel.detail.isLocked ? "lock.doc.fill" : "doc.text.fill")
+        Image(systemName: viewModel.editingModel.detail.lockState.isLocked ? "lock.doc.fill" : "doc.text.fill")
             .font(.title)
             .foregroundStyle(selectedColor)
     }
@@ -258,50 +239,60 @@ struct SecureNoteDetailView: View {
                 }
             }
 
-            Toggle(isOn: $viewModel.editingModel.detail.isLocked) {
+            Button {
+                modal = .editLock
+            } label: {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
-                    color: viewModel.editingModel.detail.isLocked ? .red : .green,
-                    style: .prominent
+                    color: .accentColor,
+                    style: .standard
                 ) {
-                    VStack(alignment: .leading) {
-                        Text("Lock note")
-                            .font(.body)
-                        Text("Require authentication to view this note")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
-                    }
+                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
+                        .font(.body)
                 }
             }
-            Toggle(isOn: $viewModel.editingModel.detail.isHiddenWithPassphrase) {
+
+            Button {
+                modal = .editPassphrase
+            } label: {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
-                    color: viewModel.editingModel.detail.isHiddenWithPassphrase ? .red : .green,
-                    style: .prominent
+                    color: .accentColor,
+                    style: .standard
                 ) {
-                    VStack(alignment: .leading) {
-                        Text("Hide with passphrase")
-                            .font(.body)
-                        Text("Hide this note from being visible in the feed")
-                            .font(.footnote)
-                            .foregroundStyle(.secondary)
+                    LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editTags
+            } label: {
+                VStack {
+                    FormRow(
+                        image: Image(systemName: "tag"),
+                        color: .accentColor,
+                        style: .standard
+                    ) {
+                        LabeledContent(
+                            "Tags",
+                            value: viewModel.strings.tagCount(tags: viewModel.editingModel.detail.tags.count)
+                        )
+                        .font(.body)
+                    }
+
+                    if viewModel.tagsThatAreSelected.isNotEmpty {
+                        ScrollView(.horizontal, showsIndicators: false) {
+                            HStack(alignment: .center, spacing: 8) {
+                                ForEach(viewModel.tagsThatAreSelected) { tag in
+                                    TagPillView(tag: tag, isSelected: true)
+                                }
+                            }
+                            .padding(.vertical, 4)
+                        }
+                        .scrollClipDisabled()
                     }
                 }
-            }
-            if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                FormRow(image: Image(systemName: "entry.lever.keypad.fill"), color: .blue, style: .standard) {
-                    TextField(viewModel.strings.passphrasePrompt, text: $viewModel.editingModel.detail.searchPassphrase)
-                        .keyboardType(.default)
-                        .autocorrectionDisabled()
-                        .submitLabel(.done)
-                        .textInputAutocapitalization(.never)
-                }
-            }
-        } header: {
-            Text(viewModel.strings.noteVisibilityTitle)
-        } footer: {
-            if viewModel.editingModel.detail.isHiddenWithPassphrase {
-                Text(viewModel.strings.passphraseSubtitle)
             }
         }
     }
