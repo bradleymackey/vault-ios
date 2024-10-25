@@ -11,6 +11,9 @@ struct OTPCodeTextView: View {
         case .notReady, .finished, .obfuscated:
             placeholderCode(digits: 6)
                 .transition(.blurReplace(.downUp))
+        case let .locked(code):
+            placeholderCode(digits: code.count)
+                .transition(.blurReplace(.downUp))
         case let .error(_, digits):
             placeholderCode(digits: digits)
                 .foregroundColor(.red)

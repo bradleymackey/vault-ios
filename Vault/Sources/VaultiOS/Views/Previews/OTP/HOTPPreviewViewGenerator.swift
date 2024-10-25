@@ -72,12 +72,12 @@ extension HOTPPreviewViewGenerator {
 
 extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        guard let visibleCode = textToCopyForVaultItem(id: id) else { return nil }
-        return .copyText(visibleCode)
+        guard let copyAction = textToCopyForVaultItem(id: id) else { return nil }
+        return .copyText(copyAction)
     }
 
-    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> String? {
-        previewViewModelCache[id]?.code.visibleCode
+    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
+        previewViewModelCache[id]?.code.copyableCode
     }
 }
 
@@ -134,6 +134,7 @@ extension HOTPPreviewViewGenerator: VaultItemCache {
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 color: metadata.color ?? .default,
+                isLocked: metadata.lockState.isLocked,
                 codePublisher: makeCodePublisher(id: metadata.id, code: code)
             )
             viewModel.codeExpired()

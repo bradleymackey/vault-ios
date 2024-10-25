@@ -21,6 +21,21 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_code_lockedUpdatesWithObfuscatedCodes() async throws {
+        let (codePublisher, sut) = makeSUT(isLocked: true)
+
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
+            codePublisher.subject.send("hello")
+        }
+        XCTAssertEqual(sut.code, .locked(code: "hello"))
+
+        await expectSingleMutation(observable: sut, keyPath: \.code) {
+            codePublisher.subject.send("world")
+        }
+        XCTAssertEqual(sut.code, .locked(code: "world"))
+    }
+
+    @MainActor
     func test_code_goesToNoMoreCodesWhenFinished() async throws {
         let (codePublisher, sut) = makeSUT()
 
@@ -92,6 +107,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     @MainActor
     private func makeSUT(
         issuer: String = "any",
+        isLocked: Bool = false,
         file: StaticString = #filePath,
         line: UInt = #line
     ) -> (OTPCodePublisherMock, OTPCodePreviewViewModel) {
@@ -100,6 +116,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
             accountName: "any",
             issuer: issuer,
             color: .default,
+            isLocked: isLocked,
             codePublisher: codePublisher
         )
         trackForMemoryLeaks(viewModel, file: file, line: line)

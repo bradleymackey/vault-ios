@@ -7,9 +7,9 @@ struct VaultItemOnTapDecoratorViewGenerator<
 >: VaultItemPreviewViewGenerator {
     typealias PreviewItem = Generator.PreviewItem
     let generator: Generator
-    let onTap: (Identifier<VaultItem>) -> Void
+    let onTap: (Identifier<VaultItem>) async throws -> Void
 
-    init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) -> Void) {
+    init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) async throws -> Void) {
         self.generator = generator
         self.onTap = onTap
     }
@@ -20,7 +20,7 @@ struct VaultItemOnTapDecoratorViewGenerator<
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         Button {
-            onTap(metadata.id)
+            Task { try await onTap(metadata.id) }
         } label: {
             generator.makeVaultPreviewView(item: item, metadata: metadata, behaviour: behaviour)
         }

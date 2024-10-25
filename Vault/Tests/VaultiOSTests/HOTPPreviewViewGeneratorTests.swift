@@ -91,7 +91,22 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let code = sut.previewActionForVaultItem(id: id)
 
-        XCTAssertEqual(code, .copyText("123456"))
+        XCTAssertEqual(code, .copyText(.init(text: "123456", requiresAuthenticationToCopy: false)))
+    }
+
+    @MainActor
+    func test_previewActionForVaultItem_requiresAuthenticationWhenLocked() {
+        let (sut, _, factory) = makeSUT()
+        let id = Identifier<VaultItem>()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .locked(code: "123456"))
+        }
+
+        let code = sut.previewActionForVaultItem(id: id)
+
+        XCTAssertEqual(code, .copyText(.init(text: "123456", requiresAuthenticationToCopy: true)))
     }
 
     @MainActor
@@ -126,7 +141,22 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
 
         let code = sut.textToCopyForVaultItem(id: id)
 
-        XCTAssertEqual(code, "123456")
+        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: false))
+    }
+
+    @MainActor
+    func test_textToCopyForVaultItem_requiresAuthenticationToCopyIfLocked() {
+        let (sut, _, factory) = makeSUT()
+        let id = Identifier<VaultItem>()
+        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+
+        for viewModel in viewModels {
+            viewModel.update(code: .locked(code: "123456"))
+        }
+
+        let code = sut.textToCopyForVaultItem(id: id)
+
+        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: true))
     }
 
     @MainActor

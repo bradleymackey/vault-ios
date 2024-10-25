@@ -42,6 +42,8 @@ struct CodeStateTimerBarView<Timer: View>: View {
                 }
             case let .error(presentationError, _):
                 presentationError.userTitle
+            case .locked:
+                "Code is locked"
             case .visible, .notReady, .finished:
                 nil
             }

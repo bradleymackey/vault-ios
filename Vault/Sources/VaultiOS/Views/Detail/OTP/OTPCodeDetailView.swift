@@ -12,6 +12,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
     private var presentationMode: Binding<PresentationMode>?
 
     @Environment(Pasteboard.self) private var pasteboard: Pasteboard
+    @Environment(DeviceAuthenticationService.self) private var authenticationService
     @State private var selectedColor: Color
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
@@ -415,8 +416,12 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {
         VaultItemOnTapDecoratorViewGenerator(generator: previewGenerator) { id in
-            if let text = previewGenerator.textToCopyForVaultItem(id: id) {
-                pasteboard.copy(text)
+            if let copyAction = previewGenerator.textToCopyForVaultItem(id: id) {
+                if copyAction.requiresAuthenticationToCopy {
+                    let result = try await authenticationService.authenticate(reason: "Copy locked text")
+                    guard result == .success(.authenticated) else { return }
+                }
+                pasteboard.copy(copyAction.text)
             }
         }
     }

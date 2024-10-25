@@ -9,6 +9,7 @@ public final class OTPCodePreviewViewModel {
     public let accountName: String
     public let issuer: String
     public let color: VaultItemColor
+    public let isLocked: Bool
     public private(set) var code: OTPCodeState = .notReady
     private var obfuscatedCode: OTPCodeState?
 
@@ -26,11 +27,13 @@ public final class OTPCodePreviewViewModel {
         accountName: String,
         issuer: String,
         color: VaultItemColor,
+        isLocked: Bool,
         fixedCodeState: OTPCodeState
     ) {
         self.accountName = accountName
         self.issuer = issuer
         self.color = color
+        self.isLocked = isLocked
         code = fixedCodeState
     }
 
@@ -38,11 +41,13 @@ public final class OTPCodePreviewViewModel {
         accountName: String,
         issuer: String,
         color: VaultItemColor,
+        isLocked: Bool,
         codePublisher: some OTPCodePublisher
     ) {
         self.accountName = accountName
         self.color = color
         self.issuer = issuer
+        self.isLocked = isLocked
         codePublisher.renderedCodePublisher()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] completion in
@@ -62,7 +67,11 @@ public final class OTPCodePreviewViewModel {
                 }
             } receiveValue: { [weak self] code in
                 guard let self else { return }
-                self.code = .visible(code)
+                if isLocked {
+                    self.code = .locked(code: code)
+                } else {
+                    self.code = .visible(code)
+                }
             }
             .store(in: &cancellables)
     }

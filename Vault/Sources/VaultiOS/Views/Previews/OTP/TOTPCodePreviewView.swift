@@ -76,7 +76,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
         switch behaviour {
         case .normal:
             switch previewViewModel.code {
-            case .visible:
+            case .visible, .locked:
                 timerView
             case .finished, .notReady, .obfuscated:
                 Color.gray
@@ -123,6 +123,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
             accountName: "test@example.com",
             issuer: issuer,
             color: .default,
+            isLocked: false,
             codePublisher: codePublisher
         )
         return TOTPCodePreviewView(
