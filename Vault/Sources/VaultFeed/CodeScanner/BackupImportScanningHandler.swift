@@ -12,8 +12,16 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
         shardDecoder.state?.total
     }
 
+    public var remainingShardIndexes: Set<Int>? {
+        shardDecoder.state?.remainingIndexes
+    }
+
+    public var collectedShardIndexes: Set<Int>? {
+        shardDecoder.state?.collectedIndexes
+    }
+
     public var remainingShards: Int? {
-        shardDecoder.state?.remaining
+        remainingShardIndexes?.count
     }
 
     public func decode(data: String) -> CodeScanningResult<EncryptedVault> {

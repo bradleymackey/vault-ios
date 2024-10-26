@@ -5,12 +5,16 @@ public struct DataShardDecoder {
     private var currentShards: [Int: DataShard] = [:]
     public private(set) var state: State?
     public var isReadyToDecode: Bool {
-        state?.remaining == 0
+        state?.remainingIndexes.isEmpty == true
     }
 
     public struct State {
         var groupID: UInt16
-        public var remaining: Int
+        /// The remaining shared indexes in the group that need to be added.
+        public var remainingIndexes: Set<Int>
+        /// The indexes of the shards that we have scanned so far.
+        public var collectedIndexes: Set<Int>
+        /// The total number of shards in the group.
         public var total: Int
     }
 
@@ -40,10 +44,15 @@ public struct DataShardDecoder {
         try verifyShardGroupIsConsistent(shard: nextShard)
         try verifyShardDoesNotExist(shard: nextShard)
         currentShards[nextShard.group.number] = nextShard
+
+        let totalNumber = nextShard.group.totalNumber
+        let collectedIndexes = currentShards.keys.reducedToSet()
+        let remainingIndexes = (0 ..< totalNumber).reducedToSet().subtracting(collectedIndexes)
         state = State(
             groupID: nextShard.group.id,
-            remaining: nextShard.group.totalNumber - currentShards.count,
-            total: nextShard.group.totalNumber
+            remainingIndexes: remainingIndexes,
+            collectedIndexes: collectedIndexes,
+            total: totalNumber
         )
     }
 

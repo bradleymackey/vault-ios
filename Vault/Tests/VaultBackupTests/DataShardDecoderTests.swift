@@ -15,7 +15,8 @@ struct DataShardDecoderTests {
         #expect(sut.state?.groupID == 10)
         #expect(sut.isReadyToDecode == false)
         #expect(sut.state?.total == 6)
-        #expect(sut.state?.remaining == 5)
+        #expect(sut.state?.remainingIndexes == [0, 1, 2, 3, 5])
+        #expect(sut.state?.collectedIndexes == [4])
     }
 
     @Test(arguments: [0, 1, 2, 3, 4, 5])
@@ -26,7 +27,8 @@ struct DataShardDecoderTests {
         #expect(sut.state?.groupID == 10)
         #expect(sut.isReadyToDecode == false)
         #expect(sut.state?.total == 6)
-        #expect(sut.state?.remaining == 5)
+        #expect(sut.state?.remainingIndexes.count == 5)
+        #expect(sut.state?.collectedIndexes == [number])
     }
 
     @Test
@@ -39,7 +41,8 @@ struct DataShardDecoderTests {
         #expect(sut.state?.groupID == 10)
         #expect(sut.isReadyToDecode == false)
         #expect(sut.state?.total == 6)
-        #expect(sut.state?.remaining == 1)
+        #expect(sut.state?.remainingIndexes == [5])
+        #expect(sut.state?.collectedIndexes == [0, 1, 2, 3, 4])
     }
 
     @Test
@@ -52,7 +55,8 @@ struct DataShardDecoderTests {
         #expect(sut.state?.groupID == 10)
         #expect(sut.isReadyToDecode == true)
         #expect(sut.state?.total == 6)
-        #expect(sut.state?.remaining == 0)
+        #expect(sut.state?.remainingIndexes == [])
+        #expect(sut.state?.collectedIndexes == [0, 1, 2, 3, 4, 5])
     }
 
     @Test
