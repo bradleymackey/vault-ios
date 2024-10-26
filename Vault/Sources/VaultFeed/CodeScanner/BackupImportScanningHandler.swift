@@ -8,12 +8,22 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
     private var shardDecoder = DataShardDecoder()
     public init() {}
 
-    public var totalNumberOfShards: Int? {
-        shardDecoder.state?.total
+    public struct State {
+        public var totalNumberOfShards: Int
+        public var collectedShardIndexes: Set<Int>
+        public var remainingShardIndexes: Set<Int>
     }
 
-    public var remainingShards: Int? {
-        shardDecoder.state?.remaining
+    public var shardState: State? {
+        if let state = shardDecoder.state {
+            State(
+                totalNumberOfShards: state.total,
+                collectedShardIndexes: state.collectedIndexes,
+                remainingShardIndexes: state.remainingIndexes
+            )
+        } else {
+            nil
+        }
     }
 
     public func decode(data: String) -> CodeScanningResult<EncryptedVault> {
