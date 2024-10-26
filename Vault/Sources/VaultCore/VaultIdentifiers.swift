@@ -17,4 +17,8 @@ public enum VaultIdentifiers {
             public static let settingsPasteTTL = "vault.preferences.general.settings-paste-ttl"
         }
     }
+
+    public enum CodeScanning {
+        public static let simulatedCode = "vault.codescanning.simulated-code"
+    }
 }

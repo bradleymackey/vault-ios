@@ -65,9 +65,12 @@ struct BackupImportCodeScannerView: View {
                 .containerRelativeFrame(.horizontal)
             }
         } header: {
-            CodeScanningView(scanner: scanner, isImagePickerVisible: $isCodeImagePickerGalleryVisible)
-                .padding()
-                .modifier(HorizontallyCenter())
+            CodeScanningView(
+                scanner: scanner,
+                isImagePickerVisible: $isCodeImagePickerGalleryVisible
+            )
+            .padding()
+            .modifier(HorizontallyCenter())
         }
     }
 }

@@ -3,20 +3,25 @@ import Foundation
 /// Represents the state of an accumulation when scanning codes.
 public enum CodeScanningResult<Model> {
     /// Keep scanning for more codes.
+    ///
+    /// This implies more data is needed, as the current state isn't enough to build a `Model`.
     case continueScanning(ContinueScanningState)
     /// Scanning should end.
     case endScanning(EndScanningState)
 }
 
 extension CodeScanningResult {
-    /// The message that should appear before continuing to scan.
     public enum ContinueScanningState: Equatable, Hashable {
+        /// The given data was good, but more data is needed.
         case success
+        /// This data is explicitly invalid, but it doesn't break anything.
         case invalidCode
+        /// Take no action, this data is entirely uninteresting.
         case ignore
     }
 
     public enum EndScanningState {
+        /// We have been able to fully decode a `Model`.
         case dataRetrieved(Model)
         /// The data is unable to be scanned in a way that we cannot recover from.
         /// We will be unable to retrieve data.

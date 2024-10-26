@@ -26,6 +26,10 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
         }
     }
 
+    public func makeSimulatedHandler() -> some SimulatedCodeScanningHandler<EncryptedVault> {
+        BackupImportScanningHandlerSimulated()
+    }
+
     public func decode(data: String) -> CodeScanningResult<EncryptedVault> {
         let shardData = Data(data.utf8)
         do {
@@ -51,5 +55,23 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
         let encryptedVaultData = try shardDecoder.decodeData()
         let decodedEncryptedVault = try EncryptedVaultCoder().decode(vaultData: encryptedVaultData)
         return decodedEncryptedVault
+    }
+}
+
+public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHandler {
+    public init() {}
+
+    public func decodeSimulated() -> CodeScanningResult<EncryptedVault> {
+        .endScanning(.dataRetrieved(makeExampleEncryptedVault()))
+    }
+
+    private func makeExampleEncryptedVault() -> EncryptedVault {
+        EncryptedVault(
+            data: Data(),
+            authentication: Data(),
+            encryptionIV: Data(),
+            keygenSalt: Data(),
+            keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
+        )
     }
 }

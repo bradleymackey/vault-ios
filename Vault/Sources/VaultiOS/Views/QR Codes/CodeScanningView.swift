@@ -144,14 +144,18 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             scanInterval: 2.0,
             showViewfinder: false,
             requiresPhotoOutput: false,
-            simulatedData: OTPAuthURI.exampleCodeString,
+            simulatedData: VaultIdentifiers.CodeScanning.simulatedCode,
             shouldVibrateOnSuccess: false,
             isPaused: scanner.scanningState.pausesCamera,
             isGalleryPresented: $isImagePickerVisible
         ) { response in
             do {
                 let result = try response.get()
-                scanner.scan(text: result.string)
+                if result.string == VaultIdentifiers.CodeScanning.simulatedCode {
+                    scanner.simulatedScan()
+                } else {
+                    scanner.scan(text: result.string)
+                }
             } catch {
                 isCameraError = true
             }

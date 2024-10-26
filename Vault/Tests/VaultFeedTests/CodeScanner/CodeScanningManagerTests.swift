@@ -45,6 +45,38 @@ final class CodeScanningManagerTests: XCTestCase {
     }
 
     @MainActor
+    func test_simulatedScan_triggersSimulatedHandler() {
+        let simulatedHandler = SimulatedCodeScanningHandlerMock()
+        simulatedHandler.decodeSimulatedHandler = { .continueScanning(.ignore) }
+        let handler = CodeScanningHandlerMock()
+        handler.makeSimulatedHandlerHandler = { simulatedHandler }
+        handler.decodeHandler = { _ in .continueScanning(.ignore) }
+        let sut = makeSUT(handler: handler)
+        sut.startScanning()
+
+        sut.simulatedScan()
+
+        XCTAssertEqual(simulatedHandler.decodeSimulatedCallCount, 1)
+        XCTAssertEqual(handler.decodeCallCount, 0)
+    }
+
+    @MainActor
+    func test_scan_triggersNormalHandler() {
+        let simulatedHandler = SimulatedCodeScanningHandlerMock()
+        simulatedHandler.decodeSimulatedHandler = { .continueScanning(.ignore) }
+        let handler = CodeScanningHandlerMock()
+        handler.makeSimulatedHandlerHandler = { simulatedHandler }
+        handler.decodeHandler = { _ in .continueScanning(.ignore) }
+        let sut = makeSUT(handler: handler)
+        sut.startScanning()
+
+        sut.scan(text: "some data")
+
+        XCTAssertEqual(simulatedHandler.decodeSimulatedCallCount, 0)
+        XCTAssertEqual(handler.decodeCallCount, 1)
+    }
+
+    @MainActor
     func test_scan_returnsToScanningAfterInvalidCodeFailure() async {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()

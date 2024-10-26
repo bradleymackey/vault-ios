@@ -17,6 +17,7 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
     private let scannedCodeSubject = PassthroughSubject<Model, Never>()
     private let intervalTimer: any IntervalTimer
     private let handler: Handler
+    private let simulatedHandler: Handler.Simulated
     private var timerBag = Set<AnyCancellable>()
 
     public init(
@@ -25,6 +26,7 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
     ) {
         self.intervalTimer = intervalTimer
         self.handler = handler
+        simulatedHandler = handler.makeSimulatedHandler()
     }
 
     public func startScanning() {
@@ -39,8 +41,17 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
         scannedCodeSubject.eraseToAnyPublisher()
     }
 
+    public func simulatedScan() {
+        let decoded = simulatedHandler.decodeSimulated()
+        process(decoded: decoded)
+    }
+
     public func scan(text string: String) {
         let decoded = handler.decode(data: string)
+        process(decoded: decoded)
+    }
+
+    private func process(decoded: CodeScanningResult<Handler.DecodedModel>) {
         switch decoded {
         case let .continueScanning(state):
             switch state {
