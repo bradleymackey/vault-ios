@@ -4,7 +4,10 @@ extension Task where Failure == Never {
     /// Creates a continuation task that runs as a detached `Task`.
     ///
     /// Checks for cancellation just before the continuation is resumed.
-    /// If it's cancelled, it will throw a standard `CancellationError`.
+    /// If it's cancelled before the sync task is scheduled to run, it will throw a standard `CancellationError`.
+    ///
+    /// If the task is cancelled during, or after the sync task has been scheduled, the task will not throw any
+    /// cancellation error. You should explcitly check for cancellation after running if this is desired.
     public static func continuation(
         priority: TaskPriority? = nil,
         body: @Sendable @escaping () throws -> Success
@@ -33,10 +36,6 @@ private func computeContinuationResult<T>(
     isCancelled: Atomic<Bool>,
     body: @Sendable @escaping () throws -> T
 ) throws -> T {
-    if isCancelled.value {
-        throw CancellationError()
-    }
-    let result = try body()
-    try Task<Never, Never>.checkCancellation()
-    return result
+    guard !isCancelled.value else { throw CancellationError() }
+    return try body()
 }
