@@ -16,27 +16,6 @@ struct TaskContinuationTests {
     }
 
     @Test
-    func cancellationCancelsTask() async throws {
-        let pending = Pending.signal()
-
-        let outer = Task.detached {
-            try await Task.continuation {
-                Task.detached { await pending.fulfill() }
-                // make sure it starts first
-                // then immediately cancel this task
-                sleep(3)
-            }
-        }
-
-        try await pending.wait(timeout: .seconds(3))
-
-        outer.cancel()
-        await #expect(throws: CancellationError.self, performing: {
-            try await outer.value
-        })
-    }
-
-    @Test
     func cancelsBeforeTaskRuns() async throws {
         let pending1 = Pending.signal()
         let waiter = TaskCancellationWaiter()

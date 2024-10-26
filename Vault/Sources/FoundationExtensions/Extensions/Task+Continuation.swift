@@ -13,7 +13,7 @@ extension Task where Failure == Never {
         // It's just for safely cancelling the task.
         let isCancelled = Atomic<Bool>(initialValue: false)
         let runningTask: Atomic<Task<Void, Never>?> = .init(initialValue: nil)
-        return try await withTaskCancellationHandler {
+        return try await withTaskCancellationHandler { () async throws -> Success in
             try await withCheckedThrowingContinuation { cont in
                 let task = Task<Void, Never>.detached(priority: priority) {
                     cont.resume(with: Result {
@@ -23,8 +23,8 @@ extension Task where Failure == Never {
                 runningTask.modify { $0 = task }
             }
         } onCancel: {
-            isCancelled.modify { $0 = true }
             runningTask.modify { $0?.cancel() }
+            isCancelled.modify { $0 = true }
         }
     }
 }
@@ -33,10 +33,6 @@ private func computeContinuationResult<T>(
     isCancelled: Atomic<Bool>,
     body: @Sendable @escaping () throws -> T
 ) throws -> T {
-    if isCancelled.value {
-        throw CancellationError()
-    }
-    let result = try body()
-    try Task<Never, Never>.checkCancellation()
-    return result
+    guard !isCancelled.value else { throw CancellationError() }
+    return try body()
 }
