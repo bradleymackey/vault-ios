@@ -144,7 +144,7 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             scanInterval: 2.0,
             showViewfinder: false,
             requiresPhotoOutput: false,
-            simulatedData: OTPAuthURI.exampleCodeString,
+            simulatedData: VaultIdentifiers.CodeScanning.simulatedCode,
             shouldVibrateOnSuccess: false,
             isPaused: scanner.scanningState.pausesCamera,
             isGalleryPresented: $isImagePickerVisible

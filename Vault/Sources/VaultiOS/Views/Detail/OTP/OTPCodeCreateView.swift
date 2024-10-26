@@ -104,9 +104,12 @@ struct OTPCodeCreateView<
             }
             .foregroundStyle(.primary)
         } header: {
-            CodeScanningView(scanner: scanner, isImagePickerVisible: $isCodeImagePickerGalleryVisible)
-                .padding()
-                .modifier(HorizontallyCenter())
+            CodeScanningView(
+                scanner: scanner,
+                isImagePickerVisible: $isCodeImagePickerGalleryVisible
+            )
+            .padding()
+            .modifier(HorizontallyCenter())
         }
     }
 }
