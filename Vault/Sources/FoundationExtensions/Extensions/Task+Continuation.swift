@@ -16,7 +16,7 @@ extension Task where Failure == Never {
         // It's just for safely cancelling the task.
         let isCancelled = Atomic<Bool>(initialValue: false)
         let runningTask: Atomic<Task<Void, Never>?> = .init(initialValue: nil)
-        return try await withTaskCancellationHandler { () async throws -> Success in
+        return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { cont in
                 let task = Task<Void, Never>.detached(priority: priority) {
                     cont.resume(with: Result {
@@ -26,8 +26,8 @@ extension Task where Failure == Never {
                 runningTask.modify { $0 = task }
             }
         } onCancel: {
-            runningTask.modify { $0?.cancel() }
             isCancelled.modify { $0 = true }
+            runningTask.modify { $0?.cancel() }
         }
     }
 }
