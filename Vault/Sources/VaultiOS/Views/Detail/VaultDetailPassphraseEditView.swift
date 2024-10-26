@@ -18,12 +18,9 @@ struct VaultDetailPassphraseEditView: View {
 
     private var titleSection: some View {
         Section {
-            FormTitleView(
-                title: title,
-                description: description,
-                systemIcon: "eye.fill",
-                color: .blue
-            )
+            PlaceholderView(systemIcon: "eye.fill", title: title, subtitle: description)
+                .padding()
+                .containerRelativeFrame(.horizontal)
         }
     }
 
