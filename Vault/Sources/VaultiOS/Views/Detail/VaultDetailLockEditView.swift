@@ -15,12 +15,13 @@ struct VaultDetailLockEditView: View {
 
     private var titleSection: some View {
         Section {
-            FormTitleView(
-                title: title,
-                description: description,
+            PlaceholderView(
                 systemIcon: lockState.isLocked ? "lock.fill" : "lock.open.fill",
-                color: .blue
+                title: title,
+                subtitle: description
             )
+            .padding()
+            .containerRelativeFrame(.horizontal)
         }
     }
 
