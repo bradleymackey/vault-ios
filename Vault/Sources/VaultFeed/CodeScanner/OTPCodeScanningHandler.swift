@@ -16,4 +16,28 @@ public final class OTPCodeScanningHandler: CodeScanningHandler {
             return .continueScanning(.invalidCode)
         }
     }
+
+    public func makeSimulatedHandler() -> some SimulatedCodeScanningHandler<OTPAuthCode> {
+        SimulatedOTPCodeScanningHandler()
+    }
+}
+
+final class SimulatedOTPCodeScanningHandler: SimulatedCodeScanningHandler {
+    init() {}
+
+    func decodeSimulated() -> CodeScanningResult<OTPAuthCode> {
+        do {
+            let demoCode = try makeDemoCode()
+            return .endScanning(.dataRetrieved(demoCode))
+        } catch {
+            return .endScanning(.unrecoverableError)
+        }
+    }
+
+    private func makeDemoCode() throws -> OTPAuthCode {
+        try OTPAuthCode(
+            type: .totp(period: 30),
+            data: .init(secret: .base32EncodedString("AA"), accountName: "Test Account", issuer: "Test Issuer")
+        )
+    }
 }

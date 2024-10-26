@@ -151,7 +151,11 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
         ) { response in
             do {
                 let result = try response.get()
-                scanner.scan(text: result.string)
+                if result.string == VaultIdentifiers.CodeScanning.simulatedCode {
+                    scanner.simulatedScan()
+                } else {
+                    scanner.scan(text: result.string)
+                }
             } catch {
                 isCameraError = true
             }
