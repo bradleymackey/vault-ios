@@ -17,7 +17,7 @@ struct BackupKeyDecryptorView: View {
             informationSection
             entrySection
         }
-        .navigationTitle(Text("Decrypt"))
+        .navigationTitle(Text("Decrypt Backup"))
         .interactiveDismissDisabled(viewModel.isDecrypting)
         .toolbar {
             if !viewModel.decryptionKeyState.isSuccess {
@@ -37,7 +37,7 @@ struct BackupKeyDecryptorView: View {
     private var informationSection: some View {
         Section {
             PlaceholderView(
-                systemIcon: viewModel.decryptionKeyState.isSuccess ? "lock.open.fill" : "lock.fill",
+                systemIcon: viewModel.decryptionKeyState.isSuccess ? "lock.open.fill" : "lock.document.fill",
                 title: viewModel.decryptionKeyState.title,
                 subtitle: viewModel.decryptionKeyState.description
             )
@@ -67,7 +67,11 @@ struct BackupKeyDecryptorView: View {
                     AsyncButton {
                         await viewModel.attemptDecryption()
                     } label: {
-                        FormRow(image: Image(systemName: "checkmark"), color: .accentColor, style: .standard) {
+                        FormRow(
+                            image: Image(systemName: "checkmark.circle.fill"),
+                            color: .accentColor,
+                            style: .standard
+                        ) {
                             Text("Decrypt")
                         }
                     }
