@@ -29,9 +29,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
         firstValues: [Output],
         timeout: Duration = .seconds(1),
         sourceLocation: SourceLocation = .__here(),
-        // swiftlint:disable all
         when actions: sending @escaping () async throws -> Void
-        // swiftlint:enable all
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
