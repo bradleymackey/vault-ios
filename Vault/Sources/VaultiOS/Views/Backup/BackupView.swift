@@ -22,21 +22,17 @@ struct BackupView: View {
 
     var body: some View {
         Form {
-            if let password = dataModel.backupPassword.fetchedPassword {
-                currentBackupsSection(password: password)
-            }
-
             switch dataModel.backupPassword {
             case .error:
                 authenticateSection(isError: true)
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
+                currentBackupsSection(password: nil)
                 importSection
-                keySection(existingPassword: nil)
             case let .fetched(password):
+                currentBackupsSection(password: password)
                 importSection
-                keySection(existingPassword: password)
             }
         }
         .animation(.default, value: dataModel.backupPassword)
@@ -112,19 +108,25 @@ struct BackupView: View {
         }
     }
 
-    private func currentBackupsSection(password: DerivedEncryptionKey) -> some View {
+    private func currentBackupsSection(password: DerivedEncryptionKey?) -> some View {
         Section {
-            LastBackupSummaryView(
-                lastBackup: dataModel.lastBackupEvent,
-                currentHash: dataModel.currentPayloadHash
-            )
+            if let password {
+                LastBackupSummaryView(
+                    lastBackup: dataModel.lastBackupEvent,
+                    currentHash: dataModel.currentPayloadHash
+                )
 
-            Button {
-                modal = .pdfBackup(password)
-            } label: {
-                FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
-                    Text("Create PDF Backup")
+                Button {
+                    modal = .pdfBackup(password)
+                } label: {
+                    FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
+                        Text("Create PDF Backup")
+                    }
                 }
+
+                updateButton
+            } else {
+                createButton
             }
         }
         .transition(.slide)
@@ -147,7 +149,7 @@ struct BackupView: View {
                 createButton
             }
         } header: {
-            Text("Encryption Key")
+            Text("Backup Encryption Key")
         }
         .transition(.slide)
     }
@@ -184,7 +186,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .prominent) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .standard) {
                 Text(viewModel.strings.backupPasswordCreateTitle)
             }
         }
@@ -194,7 +196,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "arrow.triangle.2.circlepath"), color: .accentColor, style: .prominent) {
+            FormRow(image: Image(systemName: "key.2.on.ring.fill"), color: .accentColor, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
         }

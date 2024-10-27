@@ -35,7 +35,7 @@ struct BackupKeyChangeView: View {
                 .padding()
             }
         }
-        .navigationTitle(Text("Key Generator"))
+        .navigationTitle(Text("Backup Password"))
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.newPassword.isLoading)
         .animation(.easeOut, value: viewModel.newlyEnteredPassword.isNotEmpty)
@@ -100,7 +100,7 @@ struct BackupKeyChangeView: View {
                         await viewModel.saveEnteredPassword()
                     }
                 } label: {
-                    Text("Generate Key")
+                    Text("Generate Encryption Key")
                 }
                 .modifier(ProminentButtonModifier())
                 .animation(.none, value: viewModel.newPassword)
