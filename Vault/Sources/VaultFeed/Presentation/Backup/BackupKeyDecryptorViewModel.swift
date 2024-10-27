@@ -36,9 +36,9 @@ public final class BackupKeyDecryptorViewModel {
 
         public var description: String? {
             switch self {
-            case .validDecryptionKey: "Your vault has been decrypted"
+            case .validDecryptionKey: "Your vault has been decrypted."
             case let .error(error): error.userDescription
-            case .none: "Your password is needed to decrypt the encrypted vault"
+            case .none: "Your password is needed to decrypt the encrypted vault. Make sure this matches the original password used at the time this backup was created."
             }
         }
     }
