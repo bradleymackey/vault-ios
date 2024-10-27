@@ -74,7 +74,7 @@ struct CombinationKeyDeriverTests {
     func key_checksCancellationBetweenAlgs() async throws {
         // We expect 3 confirmations, from the first 3 algos, the 4th should not run.
         await confirmation(expectedCount: 3) { confirmation in
-            let keyTask = Atomic<Task<KeyData<Bits256>, any Error>?>(initialValue: nil)
+            let keyTask = SharedMutex<Task<KeyData<Bits256>, any Error>?>(nil)
             await withCheckedContinuation { (continuation: CheckedContinuation<Void, Never>) in
                 let d1 = SignalKeyDeriver(signal: { confirmation.confirm() })
                 let d2 = SignalKeyDeriver(signal: { confirmation.confirm() })

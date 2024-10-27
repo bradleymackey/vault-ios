@@ -14,8 +14,8 @@ extension Task where Failure == Never {
     ) async throws -> Success {
         // The atomic here does not violate the SC model as it never blocks.
         // It's just for safely cancelling the task.
-        let isCancelled = Atomic<Bool>(initialValue: false)
-        let runningTask: Atomic<Task<Void, Never>?> = .init(initialValue: nil)
+        let isCancelled = SharedMutex<Bool>(false)
+        let runningTask = SharedMutex<Task<Void, Never>?>(nil)
         return try await withTaskCancellationHandler {
             try await withCheckedThrowingContinuation { cont in
                 let task = Task<Void, Never>.detached(priority: priority) {
@@ -33,7 +33,7 @@ extension Task where Failure == Never {
 }
 
 private func computeContinuationResult<T>(
-    isCancelled: Atomic<Bool>,
+    isCancelled: SharedMutex<Bool>,
     body: @Sendable @escaping () throws -> T
 ) throws -> T {
     guard !isCancelled.value else { throw CancellationError() }

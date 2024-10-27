@@ -19,10 +19,10 @@ extension EpochClock {
 /// This is a reference type, so can be shared and is useful for injecting.
 public final class EpochClockMock: EpochClock {
     /// Thread-safe storage value for the current time.
-    private let currentTimeProvider: Atomic<Double>
+    private let currentTimeProvider: SharedMutex<Double>
 
     public init(currentTime: Double) {
-        currentTimeProvider = .init(initialValue: currentTime)
+        currentTimeProvider = .init(currentTime)
     }
 
     public var currentTime: Double {

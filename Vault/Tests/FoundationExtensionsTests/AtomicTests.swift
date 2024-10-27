@@ -2,17 +2,29 @@ import Foundation
 import FoundationExtensions
 import Testing
 
-struct AtomicTests {
+struct SharedMutexTests {
     @Test(arguments: [1, 2, 3, 100, 12345])
     func init_setsValue(initialValue: Int) {
-        let a = Atomic(initialValue: initialValue)
+        let a = SharedMutex(initialValue)
 
         #expect(a.get { $0 } == initialValue)
     }
 
+    @Test
+    func init_acceptsNonSendableValue() {
+        class MyNonSendable {
+            var count = 0
+        }
+
+        let a = SharedMutex(MyNonSendable())
+        a.modify { $0.count += 1 }
+        let count = a.get { $0.count }
+        #expect(count == 1)
+    }
+
     @Test(arguments: [1, 2, 3, 100, 12345])
     func get_getsValueSafely(initialValue: Int) async {
-        let a = Atomic(initialValue: initialValue)
+        let a = SharedMutex(initialValue)
 
         await withDiscardingTaskGroup { group in
             for _ in 0 ... 1000 {
@@ -27,14 +39,14 @@ struct AtomicTests {
 
     @Test(arguments: [1, 2, 3, 100, 12345])
     func value_getsValue(initialValue: Int) async {
-        let a = Atomic(initialValue: initialValue)
+        let a = SharedMutex(initialValue)
 
         #expect(a.value == initialValue)
     }
 
     @Test(arguments: [1, 2, 3, 100, 12345])
     func modify_modifiesExistingValue(initialValue: Int) async {
-        let a = Atomic(initialValue: initialValue)
+        let a = SharedMutex(initialValue)
 
         a.modify { value in
             value += 2
@@ -45,7 +57,7 @@ struct AtomicTests {
 
     @Test(arguments: [1, 2, 3, 100, 12345])
     func modify_modifiesValueSafely(initialValue: Int) async {
-        let a = Atomic(initialValue: initialValue)
+        let a = SharedMutex(initialValue)
 
         await withDiscardingTaskGroup { group in
             for i in 0 ... 1000 {

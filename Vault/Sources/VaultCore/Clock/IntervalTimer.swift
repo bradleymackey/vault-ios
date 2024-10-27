@@ -36,8 +36,8 @@ extension IntervalTimer {
 
 public final class IntervalTimerMock: IntervalTimer {
     /// Mock: the intervals that were waited for.
-    private let waitArgValuesData = Atomic<[Double]>(initialValue: [])
-    private let pendingTimer = Atomic<Pending<Void>?>(initialValue: nil)
+    private let waitArgValuesData = SharedMutex<[Double]>([])
+    private let pendingTimer = SharedMutex<Pending<Void>?>(nil)
 
     public var waitArgValues: [Double] {
         waitArgValuesData.get { $0 }
