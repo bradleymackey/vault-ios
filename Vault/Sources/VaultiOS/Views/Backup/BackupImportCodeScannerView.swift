@@ -21,6 +21,7 @@ struct BackupImportCodeScannerView: View {
             section
         }
         .navigationTitle(Text("Import Vault"))
+        .interactiveDismissDisabled(scanner.hasPartialState)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {

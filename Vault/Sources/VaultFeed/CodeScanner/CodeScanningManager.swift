@@ -29,6 +29,10 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
         simulatedHandler = handler.makeSimulatedHandler()
     }
 
+    public var hasPartialState: Bool {
+        handler.hasPartialState
+    }
+
     public func startScanning() {
         scanningState = .scanning
     }
