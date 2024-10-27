@@ -1,6 +1,7 @@
 import CodeScanner
 import Foundation
 import SwiftUI
+import VaultBackup
 import VaultFeed
 
 @MainActor
@@ -9,11 +10,13 @@ struct BackupImportCodeScannerView: View {
     @Environment(\.presentationMode) private var presentationMode
     @State private var isCodeImagePickerGalleryVisible = false
     @State private var handler: BackupImportScanningHandler
+    var loadedEncryptedVault: (EncryptedVault) async -> Void
 
-    init(intervalTimer: any IntervalTimer) {
+    init(intervalTimer: any IntervalTimer, loadedEncryptedVault: @escaping (EncryptedVault) async -> Void) {
         let handler = BackupImportScanningHandler()
         scanner = CodeScanningManager(intervalTimer: intervalTimer, handler: handler)
         self.handler = handler
+        self.loadedEncryptedVault = loadedEncryptedVault
     }
 
     var body: some View {
@@ -21,6 +24,7 @@ struct BackupImportCodeScannerView: View {
             section
         }
         .navigationTitle(Text("Import Vault"))
+        .interactiveDismissDisabled(scanner.hasPartialState)
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
@@ -38,9 +42,7 @@ struct BackupImportCodeScannerView: View {
             scanner.disable()
         }
         .onReceive(scanner.itemScannedPublisher()) { encryptedVault in
-            // FIXME: import the scanned vault
-            // swiftlint:disable:next no_direct_standard_out_logs
-            print("Scanned vault", encryptedVault)
+            Task { await loadedEncryptedVault(encryptedVault) }
         }
     }
 

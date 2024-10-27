@@ -26,6 +26,10 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
         }
     }
 
+    public var hasPartialState: Bool {
+        shardState != nil
+    }
+
     public func makeSimulatedHandler() -> some SimulatedCodeScanningHandler<EncryptedVault> {
         BackupImportScanningHandlerSimulated()
     }
@@ -66,12 +70,42 @@ public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHa
     }
 
     private func makeExampleEncryptedVault() -> EncryptedVault {
-        EncryptedVault(
-            data: Data(),
-            authentication: Data(),
-            encryptionIV: Data(),
-            keygenSalt: Data(),
-            keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
-        )
+        do {
+            let application = VaultApplicationPayload(
+                userDescription: "Hello",
+                items: [.init(
+                    metadata: .init(
+                        id: .new(),
+                        created: Date(),
+                        updated: Date(),
+                        relativeOrder: 0,
+                        userDescription: "This is a test item",
+                        tags: [],
+                        visibility: .always,
+                        searchableLevel: .full,
+                        searchPassphrase: nil,
+                        lockState: .notLocked,
+                        color: nil
+                    ),
+                    item: .secureNote(.init(
+                        title: "My example secure note",
+                        contents: "This is contents",
+                        format: .markdown
+                    ))
+                )],
+                tags: []
+            )
+            let derived = try VaultKeyDeriver.testing.createEncryptionKey(password: "hello")
+            let encoder = EncryptedVaultEncoder(clock: EpochClockImpl(), backupPassword: derived)
+            return try encoder.encryptAndEncode(payload: application)
+        } catch {
+            return EncryptedVault(
+                data: Data(),
+                authentication: Data(),
+                encryptionIV: Data(),
+                keygenSalt: Data(),
+                keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
+            )
+        }
     }
 }

@@ -5,6 +5,11 @@ import Testing
 struct OTPCodeScanningHandlerTests {
     let sut = OTPCodeScanningHandler()
 
+    @Test
+    func hasPartialState_isFalse() {
+        #expect(sut.hasPartialState == false)
+    }
+
     @Test(arguments: ["", "invalid", "invalid://totp/issuer"])
     func decode_invalidDataReturnsInvalidCode(string: String) {
         let result = sut.decode(data: string)

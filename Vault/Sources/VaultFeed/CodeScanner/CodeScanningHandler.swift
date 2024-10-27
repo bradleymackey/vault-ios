@@ -9,6 +9,8 @@ import Foundation
 public protocol CodeScanningHandler<DecodedModel> {
     associatedtype Simulated: SimulatedCodeScanningHandler where Simulated.DecodedModel == DecodedModel
     associatedtype DecodedModel
+    /// This is true if the handler
+    var hasPartialState: Bool { get }
     /// Decode data from the QR code to a model type.
     func decode(data: String) -> CodeScanningResult<DecodedModel>
     /// Creates a handler that can decode simulated results.
@@ -35,6 +37,8 @@ public final class CodeScanningHandlerMock: CodeScanningHandler {
 
     public typealias Simulated = SimulatedCodeScanningHandlerMock
     public typealias DecodedModel = String
+
+    public var hasPartialState: Bool = false
 
     public private(set) var decodeCallCount = 0
     public var decodeArgValues = [String]()

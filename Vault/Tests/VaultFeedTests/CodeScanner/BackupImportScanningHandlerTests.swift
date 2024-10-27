@@ -6,6 +6,23 @@ import VaultBackup
 struct BackupImportScanningHandlerTests {
     let sut = BackupImportScanningHandler()
 
+    @Test
+    func hasPartialState_isInitiallyFalse() {
+        #expect(sut.hasPartialState == false)
+    }
+
+    @Test
+    func hasPartialState_isTrueAfterScan() {
+        _ = sut.decode(data: """
+        {
+            "G":{"ID":10,"N":4,"I":0},
+            "D": "AA=="
+        }
+        """)
+
+        #expect(sut.hasPartialState == true)
+    }
+
     @Test(arguments: ["", "invalid", "{}"])
     func decode_invalidDataReportsInvalidCode(string: String) {
         let result = sut.decode(data: string)
@@ -57,12 +74,14 @@ struct BackupImportScanningHandlerTests {
         let encodedShards = try shards.map {
             try EncryptedVaultCoder().encode(shard: $0)
         }
+        #expect(sut.hasPartialState == false)
 
         // Intermediate shards should continue scanning.
         for encodedShard in encodedShards[0 ..< encodedShards.count - 1] {
             let string = try #require(String(data: encodedShard, encoding: .utf8))
             let result = sut.decode(data: string)
             try #require(result == .continueScanning(.success))
+            #expect(sut.hasPartialState == true)
         }
 
         // The last shard triggers the completion.
@@ -70,6 +89,7 @@ struct BackupImportScanningHandlerTests {
         let string = try #require(String(data: lastShard, encoding: .utf8))
         let result = sut.decode(data: string)
         #expect(result == .endScanning(.dataRetrieved(expectedVault)))
+        #expect(sut.hasPartialState == true)
     }
 
     @Test

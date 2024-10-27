@@ -63,40 +63,35 @@ public final class BackupImportFlowViewModel {
         self.backupPDFDetatcher = backupPDFDetatcher
     }
 
-    public func handleImport(result: Result<Data, any Error>) async {
+    public func handleImport(fromPDF pdfDataResult: Result<Data, any Error>) async {
         importState = .notStarted
-        switch result {
-        case let .success(data):
-            await importPDF(data: data)
-        case let .failure(error):
-            payloadState = .error(PresentationError(
-                userTitle: "File Error",
-                userDescription: "There was an error with the file you selected. Please try again.",
-                debugDescription: error.localizedDescription
-            ))
-        }
-    }
-
-    struct InvalidURLError: Error {}
-    enum PasswordError: Error, LocalizedError {
-        case noPassword
-
-        var errorDescription: String? {
-            switch self {
-            case .noPassword: "No password"
+        await performImport {
+            let data = pdfDataResult.mapError { error in
+                PresentationError(
+                    userTitle: "File Error",
+                    userDescription: "There was an error with the file you selected. Please try again.",
+                    debugDescription: error.localizedDescription
+                )
             }
+            let pdfData = try data.get()
+            guard let pdf = PDFDocument(data: pdfData) else { throw InvalidURLError() }
+            return try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
         }
     }
 
-    private func importPDF(data: Data) async {
+    public func handleImport(fromEncryptedVault encryptedVault: EncryptedVault) async {
+        importState = .notStarted
+        await performImport {
+            encryptedVault
+        }
+    }
+
+    private func performImport(getEncryptedVault: () throws -> EncryptedVault) async {
         do {
             isImporting = true
             defer { isImporting = false }
-            guard let pdf = PDFDocument(data: data) else {
-                throw InvalidURLError()
-            }
 
-            let encryptedVault = try backupPDFDetatcher.detachEncryptedVault(fromPDF: pdf)
+            let encryptedVault = try getEncryptedVault()
             let flowState = BackupImportFlowState(
                 encryptedVault: encryptedVault,
                 encryptedVaultDecoder: encryptedVaultDecoder
@@ -114,10 +109,21 @@ public final class BackupImportFlowViewModel {
             payloadState = .error(.init(localizedError: error))
         } catch {
             payloadState = .error(PresentationError(
-                userTitle: "PDF Error",
-                userDescription: "There was an error with the this PDF document. Please check the PDF, your internet, and try again.",
+                userTitle: "Document Error",
+                userDescription: "There was an error with the this Vault export document. Please check the document, your internet, and try again.",
                 debugDescription: error.localizedDescription
             ))
+        }
+    }
+
+    struct InvalidURLError: Error {}
+    enum PasswordError: Error, LocalizedError {
+        case noPassword
+
+        var errorDescription: String? {
+            switch self {
+            case .noPassword: "No password"
+            }
         }
     }
 

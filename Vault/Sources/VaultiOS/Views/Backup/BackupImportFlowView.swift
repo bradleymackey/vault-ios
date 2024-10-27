@@ -45,8 +45,14 @@ struct BackupImportFlowView: View {
                 }
             case .cameraScanning:
                 NavigationStack {
-                    BackupImportCodeScannerView(intervalTimer: injector.intervalTimer)
-                        .navigationBarTitleDisplayMode(.inline)
+                    BackupImportCodeScannerView(
+                        intervalTimer: injector.intervalTimer,
+                        loadedEncryptedVault: {
+                            modal = nil
+                            await viewModel.handleImport(fromEncryptedVault: $0)
+                        }
+                    )
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
@@ -140,7 +146,7 @@ struct BackupImportFlowView: View {
             .foregroundStyle(Color.accentColor)
             .fileImporter(isPresented: $isImporting, allowedContentTypes: [.pdf]) { result in
                 importTask = Task {
-                    await viewModel.handleImport(result: result.tryMap { url in
+                    await viewModel.handleImport(fromPDF: result.tryMap { url in
                         _ = url.startAccessingSecurityScopedResource()
                         defer { url.stopAccessingSecurityScopedResource() }
                         return try Data(contentsOf: url)
