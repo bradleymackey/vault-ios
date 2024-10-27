@@ -218,7 +218,7 @@ struct BackupView: View {
                 }
             }
         } header: {
-            Text("Import")
+            Text("Import from a backup")
         }
     }
 
@@ -235,8 +235,8 @@ struct BackupView: View {
                     alignment: .firstTextBaseline
                 ) {
                     TextAndSubtitle(
-                        title: "Merge Backup",
-                        subtitle: "Import a backup file and merge with your existing data. If any items conflict, the most recent version will be used."
+                        title: "Import & Merge",
+                        subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device."
                     )
                 }
             }
@@ -252,14 +252,14 @@ struct BackupView: View {
                     alignment: .firstTextBaseline
                 ) {
                     TextAndSubtitle(
-                        title: "Override Backup",
-                        subtitle: "Import a backup file and override any existing data. Any existing data in your vault will be deleted. Warning!"
+                        title: "Import & Override",
+                        subtitle: "Warning! Overrides your existing on-device data with the data from the backup. On device data will be replaced by the backup data. If an item exists on device but not in the backup, it will be lost."
                     )
                 }
                 .foregroundStyle(.red)
             }
         } header: {
-            Text("Import")
+            Text("Import from a backup")
         }
     }
 }
