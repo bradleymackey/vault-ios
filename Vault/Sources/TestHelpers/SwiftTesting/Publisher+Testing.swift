@@ -38,7 +38,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
 
         let signal = Pending.signal()
 
-        let collectedValues = Atomic<[Output]>(initialValue: [])
+        let collectedValues = SharedMutex<[Output]>([])
         cancellable = prefix(firstValues.count).sink { _ in
             Task { await signal.fulfill() }
         } receiveValue: { value in

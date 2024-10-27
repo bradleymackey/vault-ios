@@ -17,7 +17,7 @@ public protocol OTPCodeTimerUpdater {
 public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
     private let period: UInt64
-    private let timerTask = Atomic<Task<Void, any Error>?>(initialValue: nil)
+    private let timerTask = SharedMutex<Task<Void, any Error>?>(nil)
     private let timer: any IntervalTimer
     private let clock: any EpochClock
 
