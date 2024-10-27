@@ -45,8 +45,14 @@ struct BackupImportFlowView: View {
                 }
             case .cameraScanning:
                 NavigationStack {
-                    BackupImportCodeScannerView(intervalTimer: injector.intervalTimer)
-                        .navigationBarTitleDisplayMode(.inline)
+                    BackupImportCodeScannerView(
+                        intervalTimer: injector.intervalTimer,
+                        loadedEncryptedVault: {
+                            modal = nil
+                            await viewModel.handleImport(fromEncryptedVault: $0)
+                        }
+                    )
+                    .navigationBarTitleDisplayMode(.inline)
                 }
             }
         }
