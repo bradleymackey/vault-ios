@@ -28,9 +28,11 @@ struct OTPCodeTimerUpdaterImplTests {
             OTPCodeTimerState(startTime: 30, endTime: 60), // initial time
             OTPCodeTimerState(startTime: 60, endTime: 90),
         ]
-        try await sut.timerUpdatedPublisher.expect(firstValues: expected) {
+        try await sut.timerUpdatedPublisher.expect(firstValues: expected) { @MainActor in
             clock.currentTime = 62
             await timer.finishTimer()
+            // Make sure that the timer block is actually called.
+            try await sut.timerFiredPublisher.waitForFirstValue()
         }
     }
 
