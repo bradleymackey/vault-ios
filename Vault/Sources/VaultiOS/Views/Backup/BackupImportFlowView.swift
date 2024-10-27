@@ -132,7 +132,7 @@ struct BackupImportFlowView: View {
                 isImporting = true
             } label: {
                 FormRow(
-                    image: Image(systemName: "externaldrive.fill"),
+                    image: Image(systemName: "arrow.down.document.fill"),
                     color: .accentColor,
                     style: .standard,
                     alignment: .firstTextBaseline
