@@ -17,19 +17,22 @@ struct BackupKeyDecryptorView: View {
             informationSection
             entrySection
         }
-        .navigationTitle(Text("Decrypt"))
+        .navigationTitle(Text("Decrypt Backup"))
         .interactiveDismissDisabled(viewModel.isDecrypting)
+        .onChange(of: viewModel.decryptionKeyState) { _, newValue in
+            if newValue.isSuccess {
+                dismiss()
+            }
+        }
         .toolbar {
-            if !viewModel.decryptionKeyState.isSuccess {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                    }
-                    .tint(.red)
-                    .disabled(viewModel.isDecrypting)
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
                 }
+                .tint(.red)
+                .disabled(viewModel.isDecrypting)
             }
         }
     }
@@ -37,7 +40,7 @@ struct BackupKeyDecryptorView: View {
     private var informationSection: some View {
         Section {
             PlaceholderView(
-                systemIcon: viewModel.decryptionKeyState.isSuccess ? "lock.open.fill" : "lock.fill",
+                systemIcon: "lock.document.fill",
                 title: viewModel.decryptionKeyState.title,
                 subtitle: viewModel.decryptionKeyState.description
             )
@@ -49,31 +52,23 @@ struct BackupKeyDecryptorView: View {
 
     private var entrySection: some View {
         Section {
-            if viewModel.decryptionKeyState.isSuccess {
-                Button {
-                    dismiss()
-                } label: {
-                    FormRow(image: Image(systemName: "play"), color: .accentColor, style: .standard) {
-                        Text("Continue")
-                    }
-                }
-            } else {
-                FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
-                    SecureField("Decryption Password", text: $viewModel.enteredPassword)
-                }
-                .disabled(viewModel.isDecrypting)
-
-                if viewModel.canAttemptDecryption {
-                    AsyncButton {
-                        await viewModel.attemptDecryption()
-                    } label: {
-                        FormRow(image: Image(systemName: "checkmark"), color: .accentColor, style: .standard) {
-                            Text("Decrypt")
-                        }
-                    }
-                    .transition(.opacity)
-                }
+            FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
+                SecureField("Enter decryption password...", text: $viewModel.enteredPassword)
             }
+            .disabled(viewModel.isDecrypting)
+        } footer: {
+            VStack(alignment: .center) {
+                AsyncButton {
+                    await viewModel.attemptDecryption()
+                } label: {
+                    Label("Decrypt", systemImage: "checkmark.circle.fill")
+                }
+                .modifier(ProminentButtonModifier())
+                .transition(.opacity)
+                .disabled(!viewModel.canAttemptDecryption || viewModel.isDecrypting)
+            }
+            .padding()
+            .modifier(HorizontallyCenter())
         }
         .animation(.easeOut, value: viewModel.canAttemptDecryption)
     }

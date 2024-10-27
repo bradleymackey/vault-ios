@@ -21,7 +21,6 @@ public struct VaultMainScene: Scene {
         case items
         case tags
         case backups
-        case restoreBackup
         case settings
     }
 
@@ -105,13 +104,6 @@ public struct VaultMainScene: Scene {
                         NavigationLink(value: SidebarItem.backups) {
                             Label("Backups", systemImage: "doc.on.doc.fill")
                         }
-
-                        NavigationLink(value: SidebarItem.restoreBackup) {
-                            Label("Restore Backup", systemImage: "square.and.arrow.down.fill")
-                        }
-                    }
-
-                    Section {
                         NavigationLink(value: SidebarItem.settings) {
                             Label("Settings", systemImage: "gear")
                         }
@@ -144,11 +136,6 @@ public struct VaultMainScene: Scene {
                 case .backups:
                     NavigationStack {
                         BackupView()
-                    }
-                    .navigationBarTitleDisplayMode(.inline)
-                case .restoreBackup:
-                    NavigationStack {
-                        BackupImportView()
                     }
                     .navigationBarTitleDisplayMode(.inline)
                 case .none:

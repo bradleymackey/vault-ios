@@ -15,27 +15,39 @@ struct BackupView: View {
     enum Modal: IdentifiableSelf {
         case updatePassword
         case pdfBackup(DerivedEncryptionKey)
+        case importToCurrentlyEmpty(DerivedEncryptionKey?)
+        case importAndMerge(DerivedEncryptionKey?)
+        case importAndOverride(DerivedEncryptionKey?)
     }
 
     var body: some View {
         Form {
-            if let password = dataModel.backupPassword.fetchedPassword {
-                currentBackupsSection(password: password)
-            }
-
             switch dataModel.backupPassword {
             case .error:
                 authenticateSection(isError: true)
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
-                keySection(existingPassword: nil)
+                if dataModel.hasAnyItems {
+                    currentBackupsSection(password: nil)
+                    hasExistingCodesImportSection
+                } else {
+                    noExistingCodesImportSection
+                }
             case let .fetched(password):
-                keySection(existingPassword: password)
+                if dataModel.hasAnyItems {
+                    currentBackupsSection(password: password)
+                    hasExistingCodesImportSection
+                } else {
+                    noExistingCodesImportSection
+                }
             }
         }
         .animation(.default, value: dataModel.backupPassword)
         .navigationTitle(Text(viewModel.strings.homeTitle))
+        .task {
+            await dataModel.reloadItems()
+        }
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case let .pdfBackup(password):
@@ -79,23 +91,50 @@ struct BackupView: View {
                         deriverFactory: injector.vaultKeyDeriverFactory
                     ))
                 }
+            case let .importToCurrentlyEmpty(backupPassword):
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .toEmptyVault,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
+            case let .importAndMerge(backupPassword):
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .merge,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
+            case let .importAndOverride(backupPassword):
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .override,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
             }
         }
     }
 
-    private func currentBackupsSection(password: DerivedEncryptionKey) -> some View {
+    private func currentBackupsSection(password: DerivedEncryptionKey?) -> some View {
         Section {
-            LastBackupSummaryView(
-                lastBackup: dataModel.lastBackupEvent,
-                currentHash: dataModel.currentPayloadHash
-            )
+            if let password {
+                LastBackupSummaryView(
+                    lastBackup: dataModel.lastBackupEvent,
+                    currentHash: dataModel.currentPayloadHash
+                )
 
-            Button {
-                modal = .pdfBackup(password)
-            } label: {
-                FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
-                    Text("Create PDF Backup")
+                Button {
+                    modal = .pdfBackup(password)
+                } label: {
+                    FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
+                        Text("Create PDF Backup")
+                    }
                 }
+
+                updateButton
+            } else {
+                createButton
             }
         }
         .transition(.slide)
@@ -109,7 +148,7 @@ struct BackupView: View {
                 createButton
             }
         } header: {
-            Text("Encryption Key")
+            Text("Backup Encryption Key")
         }
         .transition(.slide)
     }
@@ -146,7 +185,7 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .prominent) {
+            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .standard) {
                 Text(viewModel.strings.backupPasswordCreateTitle)
             }
         }
@@ -156,9 +195,71 @@ struct BackupView: View {
         Button {
             modal = .updatePassword
         } label: {
-            FormRow(image: Image(systemName: "arrow.triangle.2.circlepath"), color: .accentColor, style: .prominent) {
+            FormRow(image: Image(systemName: "key.2.on.ring.fill"), color: .accentColor, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
+        }
+    }
+
+    private var noExistingCodesImportSection: some View {
+        Section {
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importToCurrentlyEmpty(dataModel.backupPassword.fetchedPassword)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.fill"),
+                    color: .accentColor,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Import Backup",
+                        subtitle: "Using a Vault PDF backup file, import data to your device locally."
+                    )
+                }
+            }
+        }
+    }
+
+    private var hasExistingCodesImportSection: some View {
+        Section {
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importAndMerge(dataModel.backupPassword.fetchedPassword)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.on.square.fill"),
+                    color: .accentColor,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Import & Merge",
+                        subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device."
+                    )
+                }
+            }
+
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importAndOverride(dataModel.backupPassword.fetchedPassword)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.fill"),
+                    color: .red,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Import & Override",
+                        subtitle: "Warning! Overrides your existing on-device data with the data from the backup. On device data will be replaced by the backup data. If an item exists on device but not in the backup, it will be lost."
+                    )
+                }
+                .foregroundStyle(.red)
+            }
+        } header: {
+            Text("Import from a backup")
         }
     }
 }

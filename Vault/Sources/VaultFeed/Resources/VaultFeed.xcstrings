@@ -7,7 +7,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Backup"
+            "value" : "Backups"
           }
         }
       }
@@ -18,7 +18,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Create Key"
+            "value" : "Create Backup Password"
           }
         }
       }
@@ -29,7 +29,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Share Key"
+            "value" : "Share Backup Password"
           }
         }
       }
@@ -40,7 +40,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Import Different Key"
+            "value" : "Import Different Backup Password"
           }
         }
       }
@@ -62,7 +62,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Unable to fetch encryption key information"
+            "value" : "Unable to fetch backup password information"
           }
         }
       }
@@ -95,7 +95,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Override Key"
+            "value" : "Change Backup Password"
           }
         }
       }
@@ -497,6 +497,29 @@
         }
       }
     },
+    "feed.searching.filteringByTags.%lld" : {
+      "extractionState" : "migrated",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag filter"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag filters"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "feedRetrieval.error.description" : {
       "extractionState" : "migrated",
       "localizations" : {
@@ -546,52 +569,6 @@
                 "stringUnit" : {
                   "state" : "translated",
                   "value" : "%lld items"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "feed.searching.filteringByTags.%lld" : {
-      "extractionState" : "migrated",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tag filter"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tag filters"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "itemDetail.tagsCount.%lld" : {
-      "extractionState" : "migrated",
-      "localizations" : {
-        "en" : {
-          "variations" : {
-            "plural" : {
-              "one" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tag"
-                }
-              },
-              "other" : {
-                "stringUnit" : {
-                  "state" : "translated",
-                  "value" : "%lld tags"
                 }
               }
             }
@@ -672,6 +649,29 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Save"
+          }
+        }
+      }
+    },
+    "itemDetail.tagsCount.%lld" : {
+      "extractionState" : "migrated",
+      "localizations" : {
+        "en" : {
+          "variations" : {
+            "plural" : {
+              "one" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tag"
+                }
+              },
+              "other" : {
+                "stringUnit" : {
+                  "state" : "translated",
+                  "value" : "%lld tags"
+                }
+              }
+            }
           }
         }
       }
