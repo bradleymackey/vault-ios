@@ -140,7 +140,7 @@ struct BackupImportFlowView: View {
             .foregroundStyle(Color.accentColor)
             .fileImporter(isPresented: $isImporting, allowedContentTypes: [.pdf]) { result in
                 importTask = Task {
-                    await viewModel.handleImport(result: result.tryMap { url in
+                    await viewModel.handleImport(fromPDF: result.tryMap { url in
                         _ = url.startAccessingSecurityScopedResource()
                         defer { url.stopAccessingSecurityScopedResource() }
                         return try Data(contentsOf: url)

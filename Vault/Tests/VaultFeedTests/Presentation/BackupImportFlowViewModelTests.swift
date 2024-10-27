@@ -17,27 +17,104 @@ final class BackupImportFlowViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_handleImport_errorUpdatesPresentationError() async {
-        let sut = makeSUT()
+    func test_handleImportFromEncryptedVault_validGivesSuccess() async {
+        let encryptedVaultDecoder = EncryptedVaultDecoderMock()
+        let payload = anyVaultApplicationPayload()
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
+            payload
+        }
+        let sut = makeSUT(
+            existingBackupPassword: anyBackupPassword(),
+            encryptedVaultDecoder: encryptedVaultDecoder
+        )
 
-        await sut.handleImport(result: .failure(TestError()))
+        await sut.handleImport(fromEncryptedVault: anyEncryptedVault())
+
+        switch sut.payloadState {
+        case let .ready(readyPayload, _):
+            XCTAssertEqual(readyPayload, payload)
+        default:
+            XCTFail("Invalid state")
+        }
+        XCTAssertEqual(sut.importState, .notStarted)
+    }
+
+    @MainActor
+    func test_handleImportFromEncryptedVault_failedToDecrypt() async throws {
+        let encryptedVaultDecoder = EncryptedVaultDecoderMock()
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
+            throw TestError()
+        }
+        let sut = makeSUT(
+            existingBackupPassword: anyBackupPassword(),
+            encryptedVaultDecoder: encryptedVaultDecoder
+        )
+        let pdfData = try anyPDFData()
+
+        await sut.handleImport(fromEncryptedVault: anyEncryptedVault())
 
         XCTAssertTrue(sut.payloadState.isError)
         XCTAssertEqual(sut.importState, .notStarted)
     }
 
     @MainActor
-    func test_handleImport_invalidPDFDataFails() async {
+    func test_handleImportFromEncryptedVault_noExistingPasswordPromptsForDifferentPassword() async throws {
+        let encryptedVaultDecoder = EncryptedVaultDecoderMock()
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
+            anyVaultApplicationPayload()
+        }
+        let sut = makeSUT(
+            existingBackupPassword: nil,
+            encryptedVaultDecoder: encryptedVaultDecoder
+        )
+        let encryptedVault = anyEncryptedVault()
+
+        await sut.handleImport(fromEncryptedVault: encryptedVault)
+
+        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
+        XCTAssertEqual(sut.importState, .notStarted)
+    }
+
+    @MainActor
+    func test_handleImportFromEncryptedVault_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
+        let encryptedVaultDecoder = EncryptedVaultDecoderMock()
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
+            throw EncryptedVaultDecoderError.decryption
+        }
+        let sut = makeSUT(
+            existingBackupPassword: anyBackupPassword(),
+            encryptedVaultDecoder: encryptedVaultDecoder
+        )
+        let encryptedVault = anyEncryptedVault()
+
+        await sut.handleImport(fromEncryptedVault: encryptedVault)
+
+        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
+        XCTAssertEqual(sut.importState, .notStarted)
+    }
+
+    @MainActor
+    func test_handleImportFromPDF_errorUpdatesPresentationError() async {
         let sut = makeSUT()
 
-        await sut.handleImport(result: .success(Data()))
+        await sut.handleImport(fromPDF: .failure(TestError()))
 
         XCTAssertTrue(sut.payloadState.isError)
         XCTAssertEqual(sut.importState, .notStarted)
     }
 
     @MainActor
-    func test_handleImport_validExtractionGivesSuccess() async throws {
+    func test_handleImportFromPDF_invalidPDFDataFails() async {
+        let sut = makeSUT()
+
+        await sut.handleImport(fromPDF: .success(Data()))
+
+        XCTAssertTrue(sut.payloadState.isError)
+        XCTAssertEqual(sut.importState, .notStarted)
+    }
+
+    @MainActor
+    func test_handleImportFromPDF_validExtractionGivesSuccess() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         let payload = anyVaultApplicationPayload()
@@ -54,7 +131,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let pdfData = try anyPDFData()
 
-        await sut.handleImport(result: .success(pdfData))
+        await sut.handleImport(fromPDF: .success(pdfData))
 
         switch sut.payloadState {
         case let .ready(readyPayload, _):
@@ -66,7 +143,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_handleImport_failedToDecrypt() async throws {
+    func test_handleImportFromPDF_failedToDecrypt() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -82,14 +159,14 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let pdfData = try anyPDFData()
 
-        await sut.handleImport(result: .success(pdfData))
+        await sut.handleImport(fromPDF: .success(pdfData))
 
         XCTAssertTrue(sut.payloadState.isError)
         XCTAssertEqual(sut.importState, .notStarted)
     }
 
     @MainActor
-    func test_handleImport_noExistingPasswordPromptsForDifferentPassword() async throws {
+    func test_handleImportFromPDF_noExistingPasswordPromptsForDifferentPassword() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -106,14 +183,14 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let pdfData = try anyPDFData()
 
-        await sut.handleImport(result: .success(pdfData))
+        await sut.handleImport(fromPDF: .success(pdfData))
 
         XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
         XCTAssertEqual(sut.importState, .notStarted)
     }
 
     @MainActor
-    func test_handleImport_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
+    func test_handleImportFromPDF_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -130,7 +207,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let pdfData = try anyPDFData()
 
-        await sut.handleImport(result: .success(pdfData))
+        await sut.handleImport(fromPDF: .success(pdfData))
 
         XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
         XCTAssertEqual(sut.importState, .notStarted)
