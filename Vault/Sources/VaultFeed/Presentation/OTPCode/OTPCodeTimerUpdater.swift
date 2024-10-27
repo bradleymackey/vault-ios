@@ -16,6 +16,7 @@ public protocol OTPCodeTimerUpdater {
 @MainActor
 public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
+    private let timerFiredSubject = PassthroughSubject<Void, Never>()
     private let period: UInt64
     private let timerTask = SharedMutex<Task<Void, any Error>?>(nil)
     private let timer: any IntervalTimer
@@ -35,6 +36,10 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
     public var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> {
         timerStateSubject
             .eraseToAnyPublisher()
+    }
+
+    public var timerFiredPublisher: AnyPublisher<Void, Never> {
+        timerFiredSubject.eraseToAnyPublisher()
     }
 
     /// Forces the timer to recalculate it's current state and republish.
@@ -64,11 +69,10 @@ extension OTPCodeTimerUpdaterImpl {
         // Wait with some additional tolerance (it's OK if we're a little late)
         // This can help system performance
         timerTask.modify {
-            $0 = timer.schedule(wait: timeUntilTarget, tolerance: 0.2) { [weak self] in
-                DispatchQueue.main.async {
-                    self?.scheduleNextUpdate()
-                    self?.timerStateSubject.send(targetState)
-                }
+            $0 = timer.schedule(wait: timeUntilTarget, tolerance: 0.2) { @MainActor [weak self] in
+                self?.scheduleNextUpdate()
+                self?.timerStateSubject.send(targetState)
+                self?.timerFiredSubject.send()
             }
         }
     }
