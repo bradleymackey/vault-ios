@@ -17,6 +17,7 @@ extension XCTestCase {
         }
 
         try await action()
+        await Task.yield()
 
         await fulfillment(of: [exp], timeout: 1.0)
     }
@@ -37,6 +38,7 @@ extension XCTestCase {
         }
 
         try await action()
+        await Task.yield()
 
         await fulfillment(of: [exp], timeout: timeout)
     }
