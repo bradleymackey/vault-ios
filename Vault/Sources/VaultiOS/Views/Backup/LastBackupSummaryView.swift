@@ -41,7 +41,7 @@ struct LastBackupSummaryView: View {
                     }
                 }
             } else {
-                Text("You have never created a backup and are at risk of data loss.")
+                Text("You haven't created a backup from this device and could be at risk of data loss.")
                     .multilineTextAlignment(.center)
                     .foregroundStyle(.secondary)
                     .font(.callout)

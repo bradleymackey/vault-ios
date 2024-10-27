@@ -30,13 +30,17 @@ struct BackupView: View {
             case .notCreated:
                 if dataModel.hasAnyItems {
                     currentBackupsSection(password: nil)
+                    hasExistingCodesImportSection
+                } else {
+                    noExistingCodesImportSection
                 }
-                importSection
             case let .fetched(password):
                 if dataModel.hasAnyItems {
                     currentBackupsSection(password: password)
+                    hasExistingCodesImportSection
+                } else {
+                    noExistingCodesImportSection
                 }
-                importSection
             }
         }
         .animation(.default, value: dataModel.backupPassword)
@@ -136,15 +140,6 @@ struct BackupView: View {
         .transition(.slide)
     }
 
-    @ViewBuilder
-    private var importSection: some View {
-        if dataModel.hasAnyItems {
-            hasExistingCodesImportSection
-        } else {
-            noExistingCodesImportSection
-        }
-    }
-
     private func keySection(existingPassword: DerivedEncryptionKey?) -> some View {
         Section {
             if existingPassword != nil {
@@ -215,16 +210,15 @@ struct BackupView: View {
                 FormRow(
                     image: Image(systemName: "square.and.arrow.down.fill"),
                     color: .accentColor,
+                    style: .standard,
                     alignment: .firstTextBaseline
                 ) {
                     TextAndSubtitle(
                         title: "Import Backup",
-                        subtitle: "Use a backup file to populate your Vault"
+                        subtitle: "Using a Vault PDF backup file, import data to your device locally."
                     )
                 }
             }
-        } header: {
-            Text("Import from a backup")
         }
     }
 
