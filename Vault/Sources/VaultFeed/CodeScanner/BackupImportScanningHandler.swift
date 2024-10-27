@@ -26,6 +26,10 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
         }
     }
 
+    public var hasPartialState: Bool {
+        shardState != nil
+    }
+
     public func makeSimulatedHandler() -> some SimulatedCodeScanningHandler<EncryptedVault> {
         BackupImportScanningHandlerSimulated()
     }
