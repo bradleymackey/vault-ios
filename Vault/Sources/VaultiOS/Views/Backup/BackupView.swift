@@ -15,6 +15,9 @@ struct BackupView: View {
     enum Modal: IdentifiableSelf {
         case updatePassword
         case pdfBackup(DerivedEncryptionKey)
+        case importToCurrentlyEmpty(DerivedEncryptionKey?)
+        case importAndMerge(DerivedEncryptionKey?)
+        case importAndOverride(DerivedEncryptionKey?)
     }
 
     var body: some View {
@@ -29,13 +32,18 @@ struct BackupView: View {
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
+                importSection
                 keySection(existingPassword: nil)
             case let .fetched(password):
+                importSection
                 keySection(existingPassword: password)
             }
         }
         .animation(.default, value: dataModel.backupPassword)
         .navigationTitle(Text(viewModel.strings.homeTitle))
+        .task {
+            await dataModel.reloadItems()
+        }
         .sheet(item: $modal, onDismiss: nil) { sheet in
             switch sheet {
             case let .pdfBackup(password):
@@ -79,6 +87,27 @@ struct BackupView: View {
                         deriverFactory: injector.vaultKeyDeriverFactory
                     ))
                 }
+            case let .importToCurrentlyEmpty(backupPassword):
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .toEmptyVault,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
+            case let .importAndMerge(backupPassword):
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .merge,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
+            case let .importAndOverride(backupPassword):
+                BackupImportFlowView(viewModel: .init(
+                    importContext: .override,
+                    dataModel: dataModel,
+                    existingBackupPassword: backupPassword,
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                ))
             }
         }
     }
@@ -99,6 +128,15 @@ struct BackupView: View {
             }
         }
         .transition(.slide)
+    }
+
+    @ViewBuilder
+    private var importSection: some View {
+        if dataModel.hasAnyItems {
+            hasExistingCodesImportSection
+        } else {
+            noExistingCodesImportSection
+        }
     }
 
     private func keySection(existingPassword: DerivedEncryptionKey?) -> some View {
@@ -159,6 +197,69 @@ struct BackupView: View {
             FormRow(image: Image(systemName: "arrow.triangle.2.circlepath"), color: .accentColor, style: .prominent) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
+        }
+    }
+
+    private var noExistingCodesImportSection: some View {
+        Section {
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importToCurrentlyEmpty(dataModel.backupPassword.fetchedPassword)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.fill"),
+                    color: .accentColor,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Import Backup",
+                        subtitle: "Use a backup file to populate your Vault"
+                    )
+                }
+            }
+        } header: {
+            Text("Import")
+        }
+    }
+
+    private var hasExistingCodesImportSection: some View {
+        Section {
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importAndMerge(dataModel.backupPassword.fetchedPassword)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.on.square.fill"),
+                    color: .accentColor,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Merge Backup",
+                        subtitle: "Import a backup file and merge with your existing data. If any items conflict, the most recent version will be used."
+                    )
+                }
+            }
+
+            AsyncButton {
+                await dataModel.loadBackupPassword()
+                modal = .importAndOverride(dataModel.backupPassword.fetchedPassword)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "square.and.arrow.down.fill"),
+                    color: .red,
+                    style: .standard,
+                    alignment: .firstTextBaseline
+                ) {
+                    TextAndSubtitle(
+                        title: "Override Backup",
+                        subtitle: "Import a backup file and override any existing data. Any existing data in your vault will be deleted. Warning!"
+                    )
+                }
+                .foregroundStyle(.red)
+            }
+        } header: {
+            Text("Import")
         }
     }
 }
