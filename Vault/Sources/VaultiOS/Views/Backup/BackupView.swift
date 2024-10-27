@@ -28,10 +28,14 @@ struct BackupView: View {
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
-                currentBackupsSection(password: nil)
+                if dataModel.hasAnyItems {
+                    currentBackupsSection(password: nil)
+                }
                 importSection
             case let .fetched(password):
-                currentBackupsSection(password: password)
+                if dataModel.hasAnyItems {
+                    currentBackupsSection(password: password)
+                }
                 importSection
             }
         }
