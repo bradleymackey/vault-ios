@@ -45,7 +45,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
         firstValues: [Output],
         timeout: Duration = .seconds(1),
         sourceLocation: SourceLocation = .__here(),
-        when actions: sending @escaping () async throws -> Void
+        when actions: sending @isolated(any) @escaping () async throws -> Void
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
@@ -62,7 +62,11 @@ extension Publisher where Output: Equatable, Output: Sendable {
         }
 
         // Concurrently run actions while we are collecting the values.
-        Task { try await actions() }
+        Task.detached {
+            try await actions()
+            // Yield to allow some extra time for the publisher to collect the results.
+            await Task.yield()
+        }
 
         // Wait for all the values to be recieved.
         try await signal.wait(timeout: timeout)
