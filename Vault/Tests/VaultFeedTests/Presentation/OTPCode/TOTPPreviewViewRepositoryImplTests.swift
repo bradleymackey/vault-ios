@@ -114,7 +114,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
     func test_stopAllTimers_cancelsAllTimers() async {
         let updater = OTPCodeTimerUpdaterMock()
         let sut = makeSUT(updater: updater)
-        let timerUpdater = sut.timerUpdater(period: 100)
+        _ = sut.timerUpdater(period: 100)
 
         let exp = expectation(description: "Wait for timer cancelled")
         updater.cancelHandler = {
@@ -130,7 +130,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
     func test_restartAllTimers_restartsAllTimers() async {
         let updater = OTPCodeTimerUpdaterMock()
         let sut = makeSUT(updater: updater)
-        let timerUpdater = sut.timerUpdater(period: 100)
+        _ = sut.timerUpdater(period: 100)
 
         let exp = expectation(description: "Wait for timer updated")
         updater.recalculateHandler = {
