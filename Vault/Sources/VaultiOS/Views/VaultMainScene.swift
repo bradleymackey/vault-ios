@@ -40,12 +40,6 @@ public struct VaultMainScene: Scene {
         let fileManager = FileManager.default
         let storeFactory = PersistedLocalVaultStoreFactory(fileManager: fileManager)
         let store = storeFactory.makeVaultStore()
-        let totp = TOTPPreviewViewGenerator(
-            viewFactory: TOTPPreviewViewFactoryImpl(),
-            updaterFactory: OTPCodeTimerUpdaterFactoryImpl(timer: timer, clock: clock),
-            clock: clock,
-            timer: timer
-        )
         let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
         let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
         let backupStore = BackupPasswordStoreImpl(
@@ -61,12 +55,21 @@ public struct VaultMainScene: Scene {
             backupPasswordStore: backupStore,
             backupEventLogger: backupEventLogger
         )
+        let totpRepository = TOTPPreviewViewRepositoryImpl(
+            clock: clock,
+            timer: timer,
+            updaterFactory: OTPCodeTimerUpdaterFactoryImpl(timer: timer, clock: clock)
+        )
+        let totp = TOTPPreviewViewGenerator(
+            viewFactory: TOTPPreviewViewFactoryImpl(),
+            repository: totpRepository
+        )
+        let hotpRepository = HOTPPreviewViewRepositoryImpl(timer: timer, store: vaultDataModel)
         let hotp = HOTPPreviewViewGenerator(
             viewFactory: HOTPPreviewViewFactoryImpl(),
-            timer: timer,
-            store: vaultDataModel
+            repository: hotpRepository
         )
-        vaultDataModel.itemCaches = [totp, hotp]
+        vaultDataModel.itemCaches = [totpRepository, hotpRepository]
 
         let injector = VaultInjector(
             clock: clock,

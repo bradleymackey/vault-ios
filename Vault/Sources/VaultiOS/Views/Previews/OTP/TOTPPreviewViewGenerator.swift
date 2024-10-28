@@ -11,23 +11,14 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
     typealias PreviewItem = TOTPAuthCode
 
     private let viewFactory: Factory
-    private let updaterFactory: any OTPCodeTimerUpdaterFactory
-    private let clock: any EpochClock
-    private let timer: any IntervalTimer
-    private var timerUpdaterCache = Cache<UInt64, any OTPCodeTimerUpdater>()
-    private var timerPeriodStateCache = Cache<UInt64, OTPCodeTimerPeriodState>()
-    private var viewModelCache = Cache<Identifier<VaultItem>, OTPCodePreviewViewModel>()
+    private let repository: any TOTPPreviewViewRepository
 
     init(
         viewFactory: Factory,
-        updaterFactory: any OTPCodeTimerUpdaterFactory,
-        clock: any EpochClock,
-        timer: any IntervalTimer
+        repository: any TOTPPreviewViewRepository
     ) {
         self.viewFactory = viewFactory
-        self.updaterFactory = updaterFactory
-        self.clock = clock
-        self.timer = timer
+        self.repository = repository
     }
 
     func makeVaultPreviewView(
@@ -36,9 +27,9 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
         behaviour: VaultItemViewBehaviour
     ) -> some View {
         viewFactory.makeTOTPView(
-            viewModel: makeViewModelForCode(metadata: metadata, code: item),
-            periodState: makeTimerPeriodState(period: item.period),
-            updater: makeTimerController(period: item.period),
+            viewModel: repository.previewViewModel(metadata: metadata, code: item),
+            periodState: repository.timerPeriodState(period: item.period),
+            updater: repository.timerUpdater(period: item.period),
             behaviour: behaviour
         )
     }
@@ -46,37 +37,17 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
     func scenePhaseDidChange(to scene: ScenePhase) {
         switch scene {
         case .background, .inactive:
-            hideAllPreviewsForPrivacy()
-            cancelAllTimers()
+            repository.obfuscateForPrivacy()
+            repository.stopAllTimers()
         case .active:
-            recalculateAllTimers()
+            repository.restartAllTimers()
         @unknown default:
             break
         }
     }
 
     func didAppear() {
-        recalculateAllTimers()
-    }
-}
-
-extension TOTPPreviewViewGenerator {
-    func recalculateAllTimers() {
-        for timerUpdater in timerUpdaterCache.values {
-            timerUpdater.recalculate()
-        }
-    }
-
-    func cancelAllTimers() {
-        for timerUpdater in timerUpdaterCache.values {
-            timerUpdater.cancel()
-        }
-    }
-
-    func hideAllPreviewsForPrivacy() {
-        for viewModel in viewModelCache.values {
-            viewModel.obfuscateCodeForPrivacy()
-        }
+        repository.restartAllTimers()
     }
 }
 
@@ -87,61 +58,6 @@ extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopy
     }
 
     func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
-        viewModelCache[id]?.code.copyableCode
-    }
-}
-
-// MARK: - Caching
-
-extension TOTPPreviewViewGenerator: VaultItemCache {
-    func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) {
-        viewModelCache.remove(key: id)
-        // don't invalidate period caches, as they are independant of the code detail
-    }
-
-    /// The number of views models that are currently held in cache.
-    var cachedViewsCount: Int {
-        viewModelCache.count
-    }
-
-    var cachedTimerControllerCount: Int {
-        timerUpdaterCache.count
-    }
-
-    var cachedPeriodStateCount: Int {
-        timerPeriodStateCache.count
-    }
-
-    private func makeTimerController(period: UInt64) -> any OTPCodeTimerUpdater {
-        timerUpdaterCache.getOrCreateValue(for: period) {
-            updaterFactory.makeUpdater(period: period)
-        }
-    }
-
-    private func makeTimerPeriodState(period: UInt64) -> OTPCodeTimerPeriodState {
-        timerPeriodStateCache.getOrCreateValue(for: period) {
-            let timerController = makeTimerController(period: period)
-            return OTPCodeTimerPeriodState(statePublisher: timerController.timerUpdatedPublisher)
-        }
-    }
-
-    private func makeViewModelForCode(
-        metadata: VaultItem.Metadata,
-        code: TOTPAuthCode
-    ) -> OTPCodePreviewViewModel {
-        viewModelCache.getOrCreateValue(for: metadata.id) {
-            let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
-            let codePublisher = TOTPCodePublisher(
-                timer: makeTimerController(period: code.period),
-                totpGenerator: totpGenerator
-            )
-            return OTPCodePreviewViewModel(
-                accountName: code.data.accountName,
-                issuer: code.data.issuer,
-                color: metadata.color ?? .default,
-                isLocked: metadata.lockState.isLocked,
-                codePublisher: codePublisher
-            )
-        }
+        repository.textToCopyForVaultItem(id: id)
     }
 }

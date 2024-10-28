@@ -13,11 +13,6 @@ protocol VaultItemPreviewViewGenerator {
     func didAppear()
 }
 
-@MainActor
-protocol VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction?
-}
-
 /// Handle a given action after interacting with a vault item.
 @MainActor
 protocol VaultItemPreviewActionHandler {
