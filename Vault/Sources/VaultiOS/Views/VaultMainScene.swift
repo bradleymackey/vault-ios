@@ -61,12 +61,12 @@ public struct VaultMainScene: Scene {
             backupPasswordStore: backupStore,
             backupEventLogger: backupEventLogger
         )
+        let hotpRepository = HOTPPreviewViewRepositoryImpl(timer: timer, store: vaultDataModel)
         let hotp = HOTPPreviewViewGenerator(
             viewFactory: HOTPPreviewViewFactoryImpl(),
-            timer: timer,
-            store: vaultDataModel
+            repository: hotpRepository
         )
-        vaultDataModel.itemCaches = [totp, hotp]
+        vaultDataModel.itemCaches = [totp, hotpRepository]
 
         let injector = VaultInjector(
             clock: clock,

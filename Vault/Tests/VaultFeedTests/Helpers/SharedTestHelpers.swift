@@ -43,6 +43,16 @@ func anyPDFData() throws -> Data {
     return try Data(contentsOf: path)
 }
 
+func anyHOTPCode() -> HOTPAuthCode {
+    let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
+    return .init(data: codeData)
+}
+
+func anyTOTPCode() -> TOTPAuthCode {
+    let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
+    return .init(data: codeData)
+}
+
 func anyVaultApplicationPayload() -> VaultApplicationPayload {
     .init(userDescription: "", items: [], tags: [])
 }

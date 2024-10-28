@@ -10,15 +10,38 @@ import XCTest
 final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_init_hasNoSideEffects() {
-        let (_, timer, factory) = makeSUT()
+        let repository = HOTPPreviewViewRepositoryMock()
+        let timer = IntervalTimerMock()
+        let (_, factory) = makeSUT(repository: repository, timer: timer)
 
         XCTAssertEqual(factory.makeHOTPViewCallCount, 0)
         XCTAssertEqual(timer.waitArgValues, [])
+        XCTAssertEqual(repository.expireAllCallCount, 0)
+        XCTAssertEqual(repository.previewViewModelCallCount, 0)
+        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
+        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 0)
+        XCTAssertEqual(repository.incrementerViewModelCallCount, 0)
+        XCTAssertEqual(repository.textToCopyForVaultItemCallCount, 0)
     }
 
     @MainActor
     func test_makeOTPView_generatesViews() throws {
-        let (sut, _, _) = makeSUT()
+        let repository = HOTPPreviewViewRepositoryMock()
+        repository.previewViewModelHandler = { _, _ in OTPCodePreviewViewModel(
+            accountName: "any",
+            issuer: "any",
+            color: .black,
+            isLocked: false,
+            fixedCodeState: .visible("123456")
+        ) }
+        repository.incrementerViewModelHandler = { _, _ in OTPCodeIncrementerViewModel(
+            id: .new(),
+            codePublisher: .init(hotpGenerator: .init(secret: .random(count: 123))),
+            timer: IntervalTimerMock(),
+            initialCounter: 0,
+            incrementerStore: VaultStoreHOTPIncrementerMock()
+        ) }
+        let (sut, _) = makeSUT(repository: repository)
 
         let view = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
 
@@ -26,278 +49,91 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_makeOTPView_viewModelsAreInitiallyObfuscated() {
-        let (sut, _, factory) = makeSUT()
-        let viewModels = collectCodePreviewViewModels(
-            sut: sut,
-            factory: factory,
-            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
-        )
+    func test_previewActionForVaultItem_isNilIfNoTextToCopy() {
+        let repository = HOTPPreviewViewRepositoryMock()
+        repository.textToCopyForVaultItemHandler = { _ in nil }
+        let (sut, _) = makeSUT(repository: repository)
 
-        XCTAssertEqual(viewModels.count, 2)
-        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated(.expiry) })
+        let action = sut.previewActionForVaultItem(id: Identifier<VaultItem>())
+
+        XCTAssertNil(action)
     }
 
     @MainActor
-    func test_makeOTPView_returnsSameViewModelInstanceUsingCachedViewModels() {
-        let (sut, _, factory) = makeSUT()
-        let sharedID = Identifier<VaultItem>()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
+    func test_previewActionForVaultItem_isCopyTextWhenReturned() {
+        let repository = HOTPPreviewViewRepositoryMock()
+        repository.textToCopyForVaultItemHandler = { _ in .init(text: "1234", requiresAuthenticationToCopy: false) }
+        let (sut, _) = makeSUT(repository: repository)
 
-        XCTAssertEqual(sut.cachedViewsCount, 1)
-        XCTAssertEqual(viewModels.count, 2)
-        expectAllIdentical(in: viewModels)
+        let action = sut.previewActionForVaultItem(id: .new())
+
+        XCTAssertEqual(action, .copyText(.init(text: "1234", requiresAuthenticationToCopy: false)))
     }
 
     @MainActor
-    func test_makeOTPView_returnsSameIncrementerInstanceUsingCachedViewModels() {
-        let (sut, _, factory) = makeSUT()
-        let sharedID = Identifier<VaultItem>()
-        let viewModels = collectCodeIncrementerViewModels(sut: sut, factory: factory, ids: [sharedID, sharedID])
+    func test_textToCopyForVaultItem_getsFromRepository() {
+        let repository = HOTPPreviewViewRepositoryMock()
+        repository.textToCopyForVaultItemHandler = { _ in .init(text: "1234", requiresAuthenticationToCopy: false) }
+        let (sut, _) = makeSUT(repository: repository)
 
-        XCTAssertEqual(viewModels.count, 2)
-        expectAllIdentical(in: viewModels)
+        let action = sut.textToCopyForVaultItem(id: .new())
+
+        XCTAssertEqual(action, .init(text: "1234", requiresAuthenticationToCopy: false))
     }
 
     @MainActor
-    func test_previewActionForVaultItem_isNilIfCacheEmpty() {
-        let (sut, _, _) = makeSUT()
+    func test_scenePhaseDidChange_backgroundExpiresAll() {
+        let repository = HOTPPreviewViewRepositoryMock()
+        let (sut, _) = makeSUT(repository: repository)
 
-        let code = sut.previewActionForVaultItem(id: Identifier<VaultItem>())
+        sut.scenePhaseDidChange(to: .background)
 
-        XCTAssertNil(code)
+        XCTAssertEqual(repository.expireAllCallCount, 1)
+        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 0)
+        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
     }
 
     @MainActor
-    func test_previewActionForVaultItem_isNilWhenCodeIsObfuscated() {
-        let (sut, _, _) = makeSUT()
+    func test_scenePhaseDidChange_inactiveObfuscatesAll() {
+        let repository = HOTPPreviewViewRepositoryMock()
+        let (sut, _) = makeSUT(repository: repository)
 
-        let id = Identifier<VaultItem>()
-        _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
-        let code = sut.previewActionForVaultItem(id: id)
+        sut.scenePhaseDidChange(to: .inactive)
 
-        XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
+        XCTAssertEqual(repository.expireAllCallCount, 0)
+        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 0)
+        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 1)
     }
 
     @MainActor
-    func test_previewActionForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
-        let (sut, _, factory) = makeSUT()
-        let id = Identifier<VaultItem>()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
+    func test_scenePhaseDidChange_activeUnobfuscatesAll() {
+        let repository = HOTPPreviewViewRepositoryMock()
+        let (sut, _) = makeSUT(repository: repository)
 
-        for viewModel in viewModels {
-            viewModel.update(code: .visible("123456"))
-        }
+        sut.scenePhaseDidChange(to: .active)
 
-        let code = sut.previewActionForVaultItem(id: id)
-
-        XCTAssertEqual(code, .copyText(.init(text: "123456", requiresAuthenticationToCopy: false)))
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_requiresAuthenticationWhenLocked() {
-        let (sut, _, factory) = makeSUT()
-        let id = Identifier<VaultItem>()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
-
-        for viewModel in viewModels {
-            viewModel.update(code: .locked(code: "123456"))
-        }
-
-        let code = sut.previewActionForVaultItem(id: id)
-
-        XCTAssertEqual(code, .copyText(.init(text: "123456", requiresAuthenticationToCopy: true)))
-    }
-
-    @MainActor
-    func test_textToCopyForVaultItem_isNilIfCacheEmpty() {
-        let (sut, _, _) = makeSUT()
-
-        let code = sut.textToCopyForVaultItem(id: Identifier<VaultItem>())
-
-        XCTAssertNil(code)
-    }
-
-    @MainActor
-    func test_textToCopyForVaultItem_isNilWhenCodeIsObfuscated() {
-        let (sut, _, _) = makeSUT()
-
-        let id = Identifier<VaultItem>()
-        _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
-        let code = sut.textToCopyForVaultItem(id: id)
-
-        XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
-    }
-
-    @MainActor
-    func test_textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
-        let (sut, _, factory) = makeSUT()
-        let id = Identifier<VaultItem>()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
-
-        for viewModel in viewModels {
-            viewModel.update(code: .visible("123456"))
-        }
-
-        let code = sut.textToCopyForVaultItem(id: id)
-
-        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: false))
-    }
-
-    @MainActor
-    func test_textToCopyForVaultItem_requiresAuthenticationToCopyIfLocked() {
-        let (sut, _, factory) = makeSUT()
-        let id = Identifier<VaultItem>()
-        let viewModels = collectCodePreviewViewModels(sut: sut, factory: factory, ids: [id])
-
-        for viewModel in viewModels {
-            viewModel.update(code: .locked(code: "123456"))
-        }
-
-        let code = sut.textToCopyForVaultItem(id: id)
-
-        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: true))
-    }
-
-    @MainActor
-    func test_markAllCodesAsExpired_marksCachedViewModelsAsObfuscated() {
-        let (sut, _, factory) = makeSUT()
-
-        expectHidesAllCodesUntilNextUpdate(sut: sut, factory: factory) {
-            sut.markAllCodesAsExpired()
-        }
-    }
-
-    @MainActor
-    func test_scenePhaseDidChange_backgroundHidesAllCodesUntilNextUpdate() {
-        let (sut, _, factory) = makeSUT()
-
-        expectHidesAllCodesUntilNextUpdate(sut: sut, factory: factory) {
-            sut.scenePhaseDidChange(to: .background)
-        }
-    }
-
-    @MainActor
-    func test_scenePhaseDidChange_inactiveObfuscatesAllCodesForPrivacy() {
-        let (sut, _, factory) = makeSUT()
-
-        expectObfuscatesAllCodesForPrivacy(sut: sut, factory: factory) {
-            sut.scenePhaseDidChange(to: .inactive)
-        }
-    }
-
-    @MainActor
-    func test_scenePhaseDidChange_activeUnobfuscatesPrivacyHiddenViews() {
-        let (sut, _, factory) = makeSUT()
-
-        expectUnobfuscatesAllCodesForPrivacy(sut: sut, factory: factory) {
-            sut.scenePhaseDidChange(to: .active)
-        }
-    }
-
-    @MainActor
-    func test_invalidateCache_removesCodeSpecificObjectsFromCache() async throws {
-        let (sut, _, _) = makeSUT()
-
-        let id = Identifier<VaultItem>()
-
-        _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
-
-        XCTAssertEqual(sut.cachedViewsCount, 1)
-        XCTAssertEqual(sut.cachedRendererCount, 1)
-        XCTAssertEqual(sut.cachedIncrementerCount, 1)
-
-        await sut.invalidateVaultItemDetailCache(forVaultItemWithID: id)
-
-        XCTAssertEqual(sut.cachedViewsCount, 0)
-        XCTAssertEqual(sut.cachedRendererCount, 0)
-        XCTAssertEqual(sut.cachedIncrementerCount, 0)
+        XCTAssertEqual(repository.expireAllCallCount, 0)
+        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 1)
+        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
     }
 }
 
 extension HOTPPreviewViewGeneratorTests {
     private typealias SUT = HOTPPreviewViewGenerator<HOTPPreviewViewFactoryMock>
     @MainActor
-    private func makeSUT() -> (SUT, IntervalTimerMock, HOTPPreviewViewFactoryMock) {
+    private func makeSUT(
+        repository: HOTPPreviewViewRepositoryMock = HOTPPreviewViewRepositoryMock(),
+        timer _: IntervalTimerMock = IntervalTimerMock()
+    ) -> (SUT, HOTPPreviewViewFactoryMock) {
         let factory = HOTPPreviewViewFactoryMock()
         factory.makeHOTPViewHandler = { _, _, _ in AnyView(Color.green) }
-        let timer = IntervalTimerMock()
-        let sut = HOTPPreviewViewGenerator(viewFactory: factory, timer: timer, store: VaultStoreHOTPIncrementerMock())
-        return (sut, timer, factory)
+        let sut = HOTPPreviewViewGenerator(viewFactory: factory, repository: repository)
+        return (sut, factory)
     }
 
     private func anyHOTPCode() -> HOTPAuthCode {
         let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
         return .init(data: codeData)
-    }
-
-    @MainActor
-    private func expectUnobfuscatesAllCodesForPrivacy(
-        sut: SUT,
-        factory: HOTPPreviewViewFactoryMock,
-        when action: () -> Void
-    ) {
-        let viewModels = collectCodePreviewViewModels(
-            sut: sut,
-            factory: factory,
-            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
-        )
-
-        viewModels[0].update(code: .visible("1234"))
-        viewModels[1].update(code: .visible("5678"))
-        viewModels[0].obfuscateCodeForPrivacy()
-        viewModels[1].update(code: .obfuscated(.expiry))
-
-        action()
-
-        XCTAssertEqual(viewModels[0].code, .visible("1234"))
-        XCTAssertEqual(viewModels[1].code, .obfuscated(.expiry))
-    }
-
-    @MainActor
-    private func expectObfuscatesAllCodesForPrivacy(
-        sut: SUT,
-        factory: HOTPPreviewViewFactoryMock,
-        when action: () -> Void
-    ) {
-        let viewModels = collectCodePreviewViewModels(
-            sut: sut,
-            factory: factory,
-            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
-        )
-
-        for viewModel in viewModels {
-            viewModel.update(code: .visible("1234"))
-        }
-
-        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated(.privacy) })
-
-        action()
-
-        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated(.privacy) })
-    }
-
-    @MainActor
-    private func expectHidesAllCodesUntilNextUpdate(
-        sut: SUT,
-        factory: HOTPPreviewViewFactoryMock,
-        when action: () -> Void
-    ) {
-        let viewModels = collectCodePreviewViewModels(
-            sut: sut,
-            factory: factory,
-            ids: [Identifier<VaultItem>(), Identifier<VaultItem>()]
-        )
-
-        for viewModel in viewModels {
-            viewModel.update(code: .visible("1234"))
-        }
-
-        XCTAssertTrue(viewModels.allSatisfy { $0.code != .obfuscated(.expiry) })
-
-        action()
-
-        XCTAssertTrue(viewModels.allSatisfy { $0.code == .obfuscated(.expiry) })
     }
 
     @MainActor
@@ -313,40 +149,6 @@ extension HOTPPreviewViewGeneratorTests {
         let group = DispatchGroup()
         factory.makeHOTPViewHandler = { viewModel, _, _ in
             viewModels.append(viewModel)
-            group.leave()
-            return AnyView(Text("Hello, HOTP!"))
-        }
-
-        for id in ids {
-            group.enter()
-            _ = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(id: id), behaviour: .normal)
-        }
-
-        _ = group.wait(timeout: .now() + .seconds(1))
-
-        XCTAssertEqual(
-            viewModels.count,
-            ids.count,
-            "Invariant failed, expected number of view models to match the number of IDs we requested",
-            file: file,
-            line: line
-        )
-        return viewModels
-    }
-
-    @MainActor
-    private func collectCodeIncrementerViewModels(
-        sut: SUT,
-        factory: HOTPPreviewViewFactoryMock,
-        ids: [Identifier<VaultItem>],
-        file: StaticString = #filePath,
-        line: UInt = #line
-    ) -> [OTPCodeIncrementerViewModel] {
-        var viewModels = [OTPCodeIncrementerViewModel]()
-
-        let group = DispatchGroup()
-        factory.makeHOTPViewHandler = { _, incrementer, _ in
-            viewModels.append(incrementer)
             group.leave()
             return AnyView(Text("Hello, HOTP!"))
         }
