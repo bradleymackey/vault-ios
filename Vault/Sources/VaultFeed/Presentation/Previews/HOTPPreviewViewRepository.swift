@@ -101,15 +101,15 @@ extension HOTPPreviewViewRepositoryImpl: VaultItemCache {
         }
     }
 
-    public var cachedViewsCount: Int {
+    var cachedViewsCount: Int {
         previewViewModelCache.count
     }
 
-    public var cachedRendererCount: Int {
+    var cachedRendererCount: Int {
         codePublisherCache.count
     }
 
-    public var cachedIncrementerCount: Int {
+    var cachedIncrementerCount: Int {
         incrementerViewModelCache.count
     }
 }

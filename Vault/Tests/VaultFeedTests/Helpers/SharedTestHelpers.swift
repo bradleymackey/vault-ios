@@ -48,9 +48,9 @@ func anyHOTPCode() -> HOTPAuthCode {
     return .init(data: codeData)
 }
 
-func anyTOTPCode() -> TOTPAuthCode {
+func anyTOTPCode(period: UInt64 = 30) -> TOTPAuthCode {
     let codeData = OTPAuthCodeData(secret: .empty(), accountName: "Test")
-    return .init(data: codeData)
+    return .init(period: period, data: codeData)
 }
 
 func anyVaultApplicationPayload() -> VaultApplicationPayload {
