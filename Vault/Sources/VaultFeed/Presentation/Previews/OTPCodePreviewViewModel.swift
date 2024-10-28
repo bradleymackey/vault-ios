@@ -76,7 +76,7 @@ public final class OTPCodePreviewViewModel {
             .store(in: &cancellables)
     }
 
-    public func update(code: OTPCodeState) {
+    public func update(_ code: OTPCodeState) {
         self.code = code
     }
 

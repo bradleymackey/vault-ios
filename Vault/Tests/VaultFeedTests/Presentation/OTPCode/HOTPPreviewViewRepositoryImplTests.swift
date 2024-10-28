@@ -83,7 +83,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
-        viewModel.update(code: .visible("123456"))
+        viewModel.update(.visible("123456"))
 
         let code = sut.textToCopyForVaultItem(id: id)
 
@@ -95,7 +95,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
-        viewModel.update(code: .locked(code: "123456"))
+        viewModel.update(.locked(code: "123456"))
 
         let code = sut.textToCopyForVaultItem(id: id)
 
@@ -107,7 +107,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
-        viewModel.update(code: .visible("123456"))
+        viewModel.update(.visible("123456"))
 
         sut.expireAll()
 
@@ -119,7 +119,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
-        viewModel.update(code: .visible("123456"))
+        viewModel.update(.visible("123456"))
 
         sut.obfuscateForPrivacy()
 
@@ -131,7 +131,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
-        viewModel.update(code: .visible("123456"))
+        viewModel.update(.visible("123456"))
         viewModel.obfuscateCodeForPrivacy()
 
         sut.unobfuscateForPrivacy()

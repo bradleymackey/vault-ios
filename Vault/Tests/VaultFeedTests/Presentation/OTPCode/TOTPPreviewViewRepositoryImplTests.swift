@@ -91,7 +91,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyTOTPCode())
-        viewModel.update(code: .visible("123456"))
+        viewModel.update(.visible("123456"))
 
         let code = sut.textToCopyForVaultItem(id: id)
 
@@ -103,7 +103,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyTOTPCode())
-        viewModel.update(code: .locked(code: "123456"))
+        viewModel.update(.locked(code: "123456"))
 
         let code = sut.textToCopyForVaultItem(id: id)
 
@@ -146,7 +146,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
     func test_obfuscateForPrivacy_obfuscatesViewModelsForPrivacy() async {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyTOTPCode())
-        viewModel.update(code: .visible("123456"))
+        viewModel.update(.visible("123456"))
 
         sut.obfuscateForPrivacy()
 
