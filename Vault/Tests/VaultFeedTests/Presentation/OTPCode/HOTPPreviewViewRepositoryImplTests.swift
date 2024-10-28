@@ -132,7 +132,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
         viewModel.update(.visible("123456"))
-        viewModel.obfuscateCodeForPrivacy()
+        viewModel.update(.obfuscated(.privacy))
 
         sut.unobfuscateForPrivacy()
 

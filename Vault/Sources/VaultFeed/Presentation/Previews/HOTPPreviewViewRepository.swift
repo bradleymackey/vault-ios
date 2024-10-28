@@ -38,7 +38,7 @@ public final class HOTPPreviewViewRepositoryImpl: HOTPPreviewViewRepository {
                 isLocked: metadata.lockState.isLocked,
                 codePublisher: makeCodePublisher(id: metadata.id, code: code)
             )
-            viewModel.codeExpired()
+            viewModel.update(.obfuscated(.expiry))
             return viewModel
         }
     }
@@ -57,19 +57,19 @@ public final class HOTPPreviewViewRepositoryImpl: HOTPPreviewViewRepository {
 
     public func expireAll() {
         for viewModel in previewViewModelCache.values {
-            viewModel.codeExpired()
+            viewModel.update(.obfuscated(.expiry))
         }
     }
 
     public func obfuscateForPrivacy() {
         for viewModel in previewViewModelCache.values {
-            viewModel.obfuscateCodeForPrivacy()
+            viewModel.update(.obfuscated(.privacy))
         }
     }
 
     public func unobfuscateForPrivacy() {
         for viewModel in previewViewModelCache.values {
-            viewModel.unobfuscateCodeForPrivacy()
+            viewModel.updateRemovePrivacyObfuscation()
         }
     }
 }

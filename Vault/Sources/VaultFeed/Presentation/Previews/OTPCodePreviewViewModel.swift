@@ -76,27 +76,22 @@ public final class OTPCodePreviewViewModel {
             .store(in: &cancellables)
     }
 
-    public func update(_ code: OTPCodeState) {
-        self.code = code
+    public func update(_ newValue: OTPCodeState) {
+        let oldValue = code
+        if oldValue != .obfuscated(.privacy), newValue == .obfuscated(.privacy) {
+            obfuscatedCode = oldValue
+        }
+        code = newValue
     }
 
-    public func obfuscateCodeForPrivacy() {
-        obfuscatedCode = code
-        code = .obfuscated(.privacy)
-    }
-
-    /// If the code was obfuscated for privacy, this removes the obfuscation.
+    /// If the code was obfuscated for privacy, this removes the obfuscation and sets the code value to the value before
+    /// it was obfuscated.
     ///
     /// Has no effect if the code was not hidden for a privacy.
-    public func unobfuscateCodeForPrivacy() {
+    public func updateRemovePrivacyObfuscation() {
         if let obfuscatedCode, case .obfuscated(.privacy) = code {
             code = obfuscatedCode
         }
         obfuscatedCode = nil
-    }
-
-    /// Indicates that the code has expired
-    public func codeExpired() {
-        code = .obfuscated(.expiry)
     }
 }

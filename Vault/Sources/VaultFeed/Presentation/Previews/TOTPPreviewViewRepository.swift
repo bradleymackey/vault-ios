@@ -75,7 +75,7 @@ public final class TOTPPreviewViewRepositoryImpl: TOTPPreviewViewRepository {
 
     public func obfuscateForPrivacy() {
         for viewModel in viewModelCache.values {
-            viewModel.obfuscateCodeForPrivacy()
+            viewModel.update(.obfuscated(.privacy))
         }
     }
 }

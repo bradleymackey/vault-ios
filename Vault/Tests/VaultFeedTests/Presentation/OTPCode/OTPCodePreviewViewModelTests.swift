@@ -67,25 +67,53 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     }
 
     @MainActor
-    func test_codeExpired_obfuscatesCode() async throws {
+    func test_update_setsCodeToVisible() {
         let (_, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
-            sut.codeExpired()
-        }
+        sut.update(.visible("123456"))
 
-        XCTAssertEqual(sut.code, .obfuscated(.expiry))
+        XCTAssertEqual(sut.code, .visible("123456"))
     }
 
     @MainActor
-    func test_obfuscateCodeForPrivacy_obfuscatesCode() async throws {
+    func test_update_obfuscatesForPrivacy() {
         let (_, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
-            sut.obfuscateCodeForPrivacy()
-        }
+        sut.update(.visible("123456"))
+        sut.update(.obfuscated(.privacy))
 
         XCTAssertEqual(sut.code, .obfuscated(.privacy))
+    }
+
+    @MainActor
+    func test_updateRemovePrivacyObfuscation_removesPreviousPrivacyObfuscation() {
+        let (_, sut) = makeSUT()
+
+        sut.update(.visible("456"))
+        sut.update(.obfuscated(.privacy))
+        sut.updateRemovePrivacyObfuscation()
+
+        XCTAssertEqual(sut.code, .visible("456"))
+    }
+
+    @MainActor
+    func test_updateRemovePrivacyObfuscation_hasNoEffectForNonPrivacyObfuscation() {
+        let states: [OTPCodeState] = [
+            .obfuscated(.expiry),
+            .error(.init(userTitle: "", debugDescription: ""), digits: 1),
+            .finished,
+            .notReady,
+            .visible("111"),
+            .locked(code: "1234"),
+        ]
+        for state in states {
+            let (_, sut) = makeSUT()
+            sut.update(.visible("456"))
+            sut.update(state)
+            sut.updateRemovePrivacyObfuscation()
+
+            XCTAssertEqual(sut.code, state, "\(state) should be the current state")
+        }
     }
 
     @MainActor
