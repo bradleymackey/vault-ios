@@ -35,11 +35,14 @@ public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
     /// Publishes when there is a change to the timer that needs to be reflected in the view.
     public var timerUpdatedPublisher: AnyPublisher<OTPCodeTimerState, Never> {
         timerStateSubject
+            .share()
             .eraseToAnyPublisher()
     }
 
     public var timerFiredPublisher: AnyPublisher<Void, Never> {
-        timerFiredSubject.eraseToAnyPublisher()
+        timerFiredSubject
+            .share()
+            .eraseToAnyPublisher()
     }
 
     /// Forces the timer to recalculate it's current state and republish.
