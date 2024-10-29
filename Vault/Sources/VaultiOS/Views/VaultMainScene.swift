@@ -6,15 +6,12 @@ import VaultSettings
 /// Entrypoint scene for the vault app.
 @MainActor
 public struct VaultMainScene: Scene {
-    @State private var totpPreviewGenerator: TOTPPreviewViewGenerator<TOTPPreviewViewFactoryImpl>
-    @State private var hotpPreviewGenerator: HOTPPreviewViewGenerator<HOTPPreviewViewFactoryImpl>
-    @State private var notePreviewGenerator: SecureNotePreviewViewGenerator<SecureNotePreviewViewFactoryImpl>
-    @State private var pasteboard: Pasteboard
-    @State private var localSettings: LocalSettings
+    @State private var pasteboard: Pasteboard = VaultRoot.pasteboard
+    @State private var localSettings: LocalSettings = VaultRoot.localSettings
     @State private var isShowingCopyPaste = false
-    @State private var deviceAuthenticationService = DeviceAuthenticationService(policy: .default)
-    @State private var vaultDataModel: VaultDataModel
-    @State private var injector: VaultInjector
+    @State private var deviceAuthenticationService = VaultRoot.deviceAuthenticationService
+    @State private var vaultDataModel: VaultDataModel = VaultRoot.vaultDataModel
+    @State private var injector: VaultInjector = VaultRoot.vaultInjector
     @State private var selectedView: SidebarItem? = .items
 
     enum SidebarItem: Hashable {
@@ -32,63 +29,7 @@ public struct VaultMainScene: Scene {
         modifierType: .slide
     )
 
-    public init() {
-        let defaults = Defaults(userDefaults: .standard)
-        let localSettings = LocalSettings(defaults: defaults)
-        let timer = IntervalTimerImpl()
-        let clock = EpochClockImpl()
-        let fileManager = FileManager.default
-        let storeFactory = PersistedLocalVaultStoreFactory(fileManager: fileManager)
-        let store = storeFactory.makeVaultStore()
-        let note = SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
-        let pasteboard = Pasteboard(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
-        let backupStore = BackupPasswordStoreImpl(
-            secureStorage: SecureStorageImpl(keychain: .default)
-        )
-        let backupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
-        let encryptedVaultDecoder = EncryptedVaultDecoderImpl()
-        let vaultDataModel = VaultDataModel(
-            vaultStore: store,
-            vaultTagStore: store,
-            vaultImporter: store,
-            vaultDeleter: store,
-            backupPasswordStore: backupStore,
-            backupEventLogger: backupEventLogger
-        )
-        let totpRepository = TOTPPreviewViewRepositoryImpl(
-            clock: clock,
-            timer: timer,
-            updaterFactory: OTPCodeTimerUpdaterFactoryImpl(timer: timer, clock: clock)
-        )
-        let totp = TOTPPreviewViewGenerator(
-            viewFactory: TOTPPreviewViewFactoryImpl(),
-            repository: totpRepository
-        )
-        let hotpRepository = HOTPPreviewViewRepositoryImpl(timer: timer, store: vaultDataModel)
-        let hotp = HOTPPreviewViewGenerator(
-            viewFactory: HOTPPreviewViewFactoryImpl(),
-            repository: hotpRepository
-        )
-        vaultDataModel.itemCaches = [totpRepository, hotpRepository]
-
-        let injector = VaultInjector(
-            clock: clock,
-            intervalTimer: timer,
-            backupEventLogger: backupEventLogger,
-            vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
-            encryptedVaultDecoder: encryptedVaultDecoder,
-            defaults: defaults,
-            fileManager: fileManager
-        )
-
-        _pasteboard = State(wrappedValue: pasteboard)
-        _totpPreviewGenerator = State(wrappedValue: totp)
-        _hotpPreviewGenerator = State(wrappedValue: hotp)
-        _notePreviewGenerator = State(wrappedValue: note)
-        _localSettings = State(wrappedValue: localSettings)
-        _vaultDataModel = State(wrappedValue: vaultDataModel)
-        _injector = State(wrappedValue: injector)
-    }
+    public init() {}
 
     public var body: some Scene {
         WindowGroup {
@@ -121,9 +62,9 @@ public struct VaultMainScene: Scene {
                     VaultListView(
                         localSettings: localSettings,
                         viewGenerator: GenericVaultItemPreviewViewGenerator(
-                            totpGenerator: totpPreviewGenerator,
-                            hotpGenerator: hotpPreviewGenerator,
-                            noteGenerator: notePreviewGenerator
+                            totpGenerator: VaultRoot.totpPreviewViewGenerator,
+                            hotpGenerator: VaultRoot.hotpPreviewViewGenerator,
+                            noteGenerator: VaultRoot.secureNotePreviewViewGenerator
                         )
                     )
                     .navigationBarTitleDisplayMode(.inline)

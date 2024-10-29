@@ -2,29 +2,26 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
-typealias GeneratorWithActions = VaultItemCopyActionHandler & VaultItemPreviewActionHandler &
-    VaultItemPreviewViewGenerator
-
 struct GenericVaultItemPreviewViewGenerator<
-    TOTP: GeneratorWithActions,
-    HOTP: GeneratorWithActions,
-    Note: GeneratorWithActions
->: VaultItemPreviewViewGenerator
-    where TOTP.PreviewItem == TOTPAuthCode,
-    HOTP.PreviewItem == HOTPAuthCode,
-    Note.PreviewItem == SecureNote
-{
+    TOTP: ActionableVaultItemPreviewViewGenerator<TOTPAuthCode>,
+    HOTP: ActionableVaultItemPreviewViewGenerator<HOTPAuthCode>,
+    Note: ActionableVaultItemPreviewViewGenerator<SecureNote>
+>: VaultItemPreviewViewGenerator {
     typealias PreviewItem = VaultItem.Payload
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note
-    private let allGenerators: [any GeneratorWithActions]
+    private let sceneResponders: [any VaultItemPreviewSceneResponder]
+    private let previewActionHandlers: [any VaultItemPreviewActionHandler]
+    private let copyActionHandlers: [any VaultItemCopyActionHandler]
 
     init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note) {
         self.totpGenerator = totpGenerator
         self.hotpGenerator = hotpGenerator
         self.noteGenerator = noteGenerator
-        allGenerators = [totpGenerator, hotpGenerator, noteGenerator]
+        sceneResponders = [totpGenerator, hotpGenerator, noteGenerator]
+        previewActionHandlers = [totpGenerator, hotpGenerator, noteGenerator]
+        copyActionHandlers = [totpGenerator, hotpGenerator, noteGenerator]
     }
 
     @ViewBuilder
@@ -59,22 +56,22 @@ struct GenericVaultItemPreviewViewGenerator<
     }
 
     func scenePhaseDidChange(to scenePhase: ScenePhase) {
-        for generator in allGenerators {
-            generator.scenePhaseDidChange(to: scenePhase)
+        for sceneResponder in sceneResponders {
+            sceneResponder.scenePhaseDidChange(to: scenePhase)
         }
     }
 
     func didAppear() {
-        for generator in allGenerators {
-            generator.didAppear()
+        for sceneResponder in sceneResponders {
+            sceneResponder.didAppear()
         }
     }
 }
 
 extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
     func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
-        for generator in allGenerators {
-            if let copyAction = generator.textToCopyForVaultItem(id: id) {
+        for handler in copyActionHandlers {
+            if let copyAction = handler.textToCopyForVaultItem(id: id) {
                 return copyAction
             }
         }
@@ -82,8 +79,8 @@ extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, V
     }
 
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        for generator in allGenerators {
-            if let action = generator.previewActionForVaultItem(id: id) {
+        for handler in previewActionHandlers {
+            if let action = handler.previewActionForVaultItem(id: id) {
                 return action
             }
         }
