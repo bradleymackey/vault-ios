@@ -9,48 +9,34 @@ private enum VaultItemTransferError: Error {
 
 extension VaultItem: Transferable {
     public static var transferRepresentation: some TransferRepresentation {
-        VaultSharingContentTransferRepresentation(clock: EpochClockImpl())
+        MainActor.assumeIsolated {
+            VaultSharingContentTransferRepresentation(copyActionHandler: VaultRoot.vaultItemCopyHandler)
+        }
     }
 
-    public struct VaultSharingContentTransferRepresentation: TransferRepresentation {
+    public struct VaultSharingContentTransferRepresentation<C: VaultItemCopyActionHandler>: TransferRepresentation {
         public typealias Item = VaultItem
-        private let clock: any EpochClock
+        private let copyActionHandler: C
 
-        init(clock: any EpochClock) {
-            self.clock = clock
+        init(copyActionHandler: C) {
+            self.copyActionHandler = copyActionHandler
         }
 
         public var body: some TransferRepresentation {
             DataRepresentation(exportedContentType: .plainText) { item in
-                if let string = item.sharingContent(clock: clock).data(using: .utf8) {
+                guard
+                    let data = await copyActionHandler.textToCopyForVaultItem(id: item.id),
+                    !data.requiresAuthenticationToCopy
+                else {
+                    return Data()
+                }
+                if let string = data.text.data(using: .utf8) {
                     return string
                 } else {
                     throw VaultItemTransferError.unableToCreateString
                 }
             }
             ProxyRepresentation(exporting: \.id)
-        }
-    }
-
-    func sharingContent(clock: any EpochClock) -> String {
-        if metadata.lockState.isLocked { return "" }
-        switch item {
-        case let .secureNote(note):
-            return note.title
-        case let .otpCode(code):
-            do {
-                switch code.type {
-                case let .totp(period):
-                    let totp = TOTPAuthCode(period: period, data: code.data)
-                    return try totp.renderCode(epochSeconds: UInt64(clock.currentTime))
-                case let .hotp(counter):
-                    let hotp = HOTPAuthCode(counter: counter, data: code.data)
-                    return try hotp.renderCode()
-                }
-            } catch {
-                // Error, just return empty string
-                return ""
-            }
         }
     }
 }
