@@ -55,28 +55,32 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             Text(error.localizedDescription)
         }
         .toolbar {
-            // Only if this view is the root of the navigation stack should we show these actions.
-            // If it isn't, it implies going back to the original context is more likely the correct
-            // action to take.
-            if navigationPath.isEmpty, !viewModel.isLocked {
-                if viewModel.isInitialCreation {
-                    cancelCreationItem
-                } else {
-                    if viewModel.editingModel.isDirty {
-                        cancelEditsItem
-                    } else if !viewModel.isInEditMode {
-                        startEditingItem
+            if viewModel.isLocked {
+                cancelImmediatelyItem
+            } else {
+                // Only if this view is the root of the navigation stack should we show these actions.
+                // If it isn't, it implies going back to the original context is more likely the correct
+                // action to take.
+                if navigationPath.isEmpty {
+                    if viewModel.isInitialCreation {
+                        cancelCreationItem
+                    } else {
+                        if viewModel.editingModel.isDirty {
+                            cancelEditsItem
+                        } else if !viewModel.isInEditMode {
+                            startEditingItem
+                        }
                     }
                 }
-            }
 
-            if viewModel.editingModel.isDirty {
-                saveDirtyChangesItem
-            } else {
-                // Don't show the "done" item during initial creation if not dirty
-                // The only option should be to cancel.
-                if !viewModel.isInitialCreation {
-                    doneItem
+                if viewModel.editingModel.isDirty {
+                    saveDirtyChangesItem
+                } else {
+                    // Don't show the "done" item during initial creation if not dirty
+                    // The only option should be to cancel.
+                    if !viewModel.isInitialCreation {
+                        doneItem
+                    }
                 }
             }
         }
@@ -181,6 +185,18 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             } label: {
                 Text(viewModel.strings.doneEditingTitle)
                     .tint(.accentColor)
+            }
+        }
+    }
+
+    private var cancelImmediatelyItem: some ToolbarContent {
+        ToolbarItem(placement: .cancellationAction) {
+            Button {
+                // Bypass view model state and just dismiss the view right now.
+                dismiss()
+            } label: {
+                Text(viewModel.strings.cancelEditsTitle)
+                    .tint(.red)
             }
         }
     }
