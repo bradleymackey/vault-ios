@@ -66,24 +66,26 @@ struct VaultItemFeedView<
     }
 
     private var listOfCodesView: some View {
-        ScrollView {
-            LazyVGrid(columns: columns, pinnedViews: [.sectionHeaders]) {
-                Section {
-                    if dataModel.items.isNotEmpty {
-                        vaultItemsList
-                    } else {
-                        noCodesFoundView
+        VStack(alignment: .leading) {
+            listOfCodesHeader
+            ScrollView(.vertical, showsIndicators: true) {
+                Spacer(minLength: 8)
+                LazyVGrid(columns: columns) {
+                    Section {
+                        if dataModel.items.isNotEmpty {
+                            vaultItemsList
+                        } else {
+                            noCodesFoundView
+                        }
                     }
-                } header: {
-                    listOfCodesHeader
                 }
+                .scrollTargetLayout()
+                .padding(.horizontal)
+                .padding(.bottom)
+                .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
             }
-            .scrollTargetLayout()
-            .padding(.horizontal)
-            .padding(.bottom)
-            .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
+            .scrollTargetBehavior(.viewAligned)
         }
-        .scrollTargetBehavior(.viewAligned)
     }
 
     private var listOfCodesHeader: some View {
@@ -110,6 +112,7 @@ struct VaultItemFeedView<
             }
         }
         .padding(.vertical, 8)
+        .padding(.horizontal)
         .background(Color(UIColor.systemBackground))
         .animation(.easeOut, value: dataModel.itemsFilteringByTags)
     }
