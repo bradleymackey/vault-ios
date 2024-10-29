@@ -61,7 +61,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_createCode_propagatesFailureOnError() async throws {
-        let store = VaultStoreErroring(error: anyNSError())
+        let store = VaultStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
@@ -252,7 +252,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_updateNote_propagatesFailureOnError() async {
-        let store = VaultStoreErroring(error: anyNSError())
+        let store = VaultStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
@@ -281,7 +281,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
 
     @MainActor
     func test_deleteNote_propagatesFailureOnError() async {
-        let store = VaultStoreErroring(error: anyNSError())
+        let store = VaultStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 

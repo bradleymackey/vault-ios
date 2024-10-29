@@ -114,7 +114,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_saveChanges_creatingSendsErrorIfSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.createNoteHandler = { _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTCreating(editor: editor)
 
@@ -130,7 +130,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.createNoteHandler = { _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTCreating(editor: editor)
 
@@ -168,7 +168,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
@@ -181,7 +181,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
         makeDirty(sut: sut)
@@ -195,7 +195,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_saveChanges_sendsErrorIfSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
@@ -242,7 +242,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_deleteNote_sendsErrorIfDeleteError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.deleteNoteHandler = { _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 

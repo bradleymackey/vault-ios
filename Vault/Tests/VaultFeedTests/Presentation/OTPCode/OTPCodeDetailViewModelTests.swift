@@ -161,7 +161,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_creatingSendsErrorIfSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.createCodeHandler = { _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTCreating(editor: editor)
 
@@ -177,7 +177,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.createCodeHandler = { _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTCreating(editor: editor)
 
@@ -200,7 +200,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_editingSetsSavingToFalseAfterSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
@@ -213,7 +213,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_editingDoesNotPersistEditingModelIfSaveFailed() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
         makeDirty(sut: sut)
@@ -227,7 +227,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_saveChanges_editingSendsErrorIfSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
@@ -274,7 +274,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
     func test_deleteCode_editingSendsErrorIfDeleteError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.deleteCodeHandler = { _ in
-            throw anyNSError()
+            throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
