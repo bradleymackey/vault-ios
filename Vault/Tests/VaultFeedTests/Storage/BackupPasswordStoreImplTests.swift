@@ -18,7 +18,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
     func test_fetchPassword_fetchErrorRethrowsError() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
-        storage.retrieveHandler = { _ in throw anyNSError() }
+        storage.retrieveHandler = { _ in throw TestError() }
 
         await XCTAssertThrowsError(try await sut.fetchPassword())
     }
@@ -39,7 +39,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.storeHandler = { _, _ in
-            throw anyNSError()
+            throw TestError()
         }
 
         let password = anyBackupPassword()

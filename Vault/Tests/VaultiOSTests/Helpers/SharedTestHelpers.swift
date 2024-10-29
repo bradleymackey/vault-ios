@@ -113,10 +113,6 @@ extension VaultItemPreviewViewGeneratorMock {
     }
 }
 
-func anyNSError() -> NSError {
-    NSError(domain: "any", code: 100)
-}
-
 func uniqueCode() -> OTPAuthCode {
     let randomData = Data.random(count: 50)
     return OTPAuthCode(

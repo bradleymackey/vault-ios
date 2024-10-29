@@ -80,7 +80,7 @@ struct DetailEditStateTests {
         let sut = makeSUT()
         sut.startEditing()
 
-        try? await sut.saveChanges { throw anyNSError() }
+        try? await sut.saveChanges { throw TestError() }
 
         #expect(sut.isInEditMode)
     }

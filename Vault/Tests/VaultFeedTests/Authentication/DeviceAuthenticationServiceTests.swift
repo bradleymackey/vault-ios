@@ -98,7 +98,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true
         )
-        policy.authenticateWithBiometricsHandler = { _ in throw anyNSError() }
+        policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
 
         await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))
@@ -142,7 +142,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false
         )
-        policy.authenticateWithPasscodeHandler = { _ in throw anyNSError() }
+        policy.authenticateWithPasscodeHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
 
         await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))

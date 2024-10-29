@@ -55,7 +55,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         let (codePublisher, sut) = makeSUT()
 
         await expectSingleMutation(observable: sut, keyPath: \.code) {
-            codePublisher.subject.send(completion: .failure(anyNSError()))
+            codePublisher.subject.send(completion: .failure(TestError()))
         }
 
         switch sut.code {

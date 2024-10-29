@@ -221,7 +221,7 @@ final class VaultDataModelTests: XCTestCase {
 
     @MainActor
     func test_reloadItems_presentsErrorOnFailure() async {
-        let store = VaultStoreErroring(error: anyNSError())
+        let store = VaultStoreErroring(error: TestError())
         let sut = makeSUT(vaultStore: store)
 
         await sut.reloadData()
