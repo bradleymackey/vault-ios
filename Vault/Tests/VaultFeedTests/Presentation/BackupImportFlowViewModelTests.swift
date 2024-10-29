@@ -49,7 +49,6 @@ final class BackupImportFlowViewModelTests: XCTestCase {
             existingBackupPassword: anyBackupPassword(),
             encryptedVaultDecoder: encryptedVaultDecoder
         )
-        let pdfData = try anyPDFData()
 
         await sut.handleImport(fromEncryptedVault: anyEncryptedVault())
 
