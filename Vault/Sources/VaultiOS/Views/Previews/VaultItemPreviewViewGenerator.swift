@@ -2,13 +2,22 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
+/// A `VaultItemPreviewViewGenerator` that is able to perform basic actions.
+typealias ActionableVaultItemPreviewViewGenerator<PreviewItem> = VaultItemCopyActionHandler &
+    VaultItemPreviewActionHandler & VaultItemPreviewViewGenerator<PreviewItem>
+
 /// @mockable(typealias: PreviewView = AnyView; PreviewItem = VaultItem.Payload)
 @MainActor
-protocol VaultItemPreviewViewGenerator {
+protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewSceneResponder {
     associatedtype PreviewItem
     associatedtype PreviewView: View
     func makeVaultPreviewView(item: PreviewItem, metadata: VaultItem.Metadata, behaviour: VaultItemViewBehaviour)
         -> PreviewView
+}
+
+/// A vault item that is able to respond to scene changes.
+@MainActor
+protocol VaultItemPreviewSceneResponder {
     func scenePhaseDidChange(to scene: ScenePhase)
     func didAppear()
 }
