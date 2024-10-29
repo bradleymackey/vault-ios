@@ -130,6 +130,41 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         XCTAssertEqual(sut.visibleIssuer, "my issuer")
     }
 
+    @MainActor
+    func test_pasteboardCopyText_isVisibleCode() {
+        let (_, sut) = makeSUT()
+        sut.update(.visible("1234"))
+
+        let expected = VaultTextCopyAction(text: "1234", requiresAuthenticationToCopy: false)
+        XCTAssertEqual(sut.pasteboardCopyText, expected)
+    }
+
+    @MainActor
+    func test_pasteboardCopyText_isLockedCode() {
+        let (_, sut) = makeSUT()
+        sut.update(.locked(code: "4567"))
+
+        let expected = VaultTextCopyAction(text: "4567", requiresAuthenticationToCopy: true)
+        XCTAssertEqual(sut.pasteboardCopyText, expected)
+    }
+
+    @MainActor
+    func test_pasteboardCopyText_isNil() {
+        let nilCases: [OTPCodeState] = [
+            .notReady,
+            .finished,
+            .error(.init(userTitle: "", debugDescription: ""), digits: 1),
+            .obfuscated(.privacy),
+            .obfuscated(.expiry),
+        ]
+        for nilCase in nilCases {
+            let (_, sut) = makeSUT()
+            sut.update(nilCase)
+
+            XCTAssertNil(sut.pasteboardCopyText)
+        }
+    }
+
     // MARK: - Helpers
 
     @MainActor

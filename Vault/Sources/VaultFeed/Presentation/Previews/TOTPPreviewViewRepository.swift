@@ -82,7 +82,7 @@ public final class TOTPPreviewViewRepositoryImpl: TOTPPreviewViewRepository {
 
 extension TOTPPreviewViewRepositoryImpl: VaultItemCopyActionHandler {
     public func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
-        viewModelCache[id]?.code.copyableCode
+        viewModelCache[id]?.pasteboardCopyText
     }
 }
 
