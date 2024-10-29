@@ -7,20 +7,23 @@ import VaultSettings
 /// The root entrypoint for the vault application.
 ///
 /// This is the composition root of the application.
-@MainActor
 enum VaultRoot {
     // MARK: - Primitives
 
+    @MainActor
     static let defaults: Defaults = .init(userDefaults: .standard)
 
+    @MainActor
     static let localSettings: LocalSettings = .init(defaults: defaults)
 
     static let timer: some IntervalTimer = IntervalTimerImpl()
 
     static let clock: some EpochClock = EpochClockImpl()
 
+    @MainActor
     static let fileManager: FileManager = .default
 
+    @MainActor
     static let pasteboard: Pasteboard = .init(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
 
     // MARK: - Stores
@@ -29,11 +32,13 @@ enum VaultRoot {
 
     static let secureStorage: some SecureStorage = SecureStorageImpl(keychain: keychain)
 
+    @MainActor
     static let vaultStore: PersistedLocalVaultStore = PersistedLocalVaultStoreFactory(fileManager: fileManager)
         .makeVaultStore()
 
     static let backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreImpl(secureStorage: secureStorage)
 
+    @MainActor
     static let vaultDataModel: VaultDataModel = .init(
         vaultStore: vaultStore,
         vaultTagStore: vaultStore,
@@ -45,14 +50,25 @@ enum VaultRoot {
 
     // MARK: - Previews
 
+    @MainActor
+    static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
+        GenericVaultItemCopyActionHandler(childHandlers: [
+            secureNotePreviewViewGenerator,
+            totpPreviewViewGenerator,
+            hotpPreviewViewGenerator,
+        ])
+
+    @MainActor
     static let secureNotePreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<SecureNote> =
         SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
 
+    @MainActor
     static let otpCodeTimerUpdaterFactory: some OTPCodeTimerUpdaterFactory = OTPCodeTimerUpdaterFactoryImpl(
         timer: timer,
         clock: clock
     )
 
+    @MainActor
     static let totpPreviewRepository: some TOTPPreviewViewRepository = {
         let repo = TOTPPreviewViewRepositoryImpl(
             clock: clock,
@@ -63,12 +79,14 @@ enum VaultRoot {
         return repo
     }()
 
+    @MainActor
     static let totpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<TOTPAuthCode> =
         TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
             repository: totpPreviewRepository
         )
 
+    @MainActor
     static let hotpPreviewRepository: some HOTPPreviewViewRepository = {
         let repo = HOTPPreviewViewRepositoryImpl(
             timer: timer,
@@ -78,6 +96,7 @@ enum VaultRoot {
         return repo
     }()
 
+    @MainActor
     static let hotpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<HOTPAuthCode> =
         HOTPPreviewViewGenerator(
             viewFactory: HOTPPreviewViewFactoryImpl(),
@@ -86,14 +105,18 @@ enum VaultRoot {
 
     // MARK: - Misc
 
+    @MainActor
     static let vaultKeyDeriverFactory: some VaultKeyDeriverFactory = VaultKeyDeriverFactoryImpl()
 
+    @MainActor
     static let backupEventLogger: some BackupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
 
     static let encryptedVaultDecoder: some EncryptedVaultDecoder = EncryptedVaultDecoderImpl()
 
+    @MainActor
     static let deviceAuthenticationService: DeviceAuthenticationService = .init(policy: .default)
 
+    @MainActor
     static let vaultInjector: VaultInjector = .init(
         clock: clock,
         intervalTimer: timer,

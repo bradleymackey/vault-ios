@@ -94,4 +94,15 @@ public final class OTPCodePreviewViewModel {
         }
         obfuscatedCode = nil
     }
+
+    public var pasteboardCopyText: VaultTextCopyAction? {
+        switch code {
+        case let .visible(code):
+            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: false)
+        case let .locked(code):
+            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: true)
+        case .notReady, .finished, .obfuscated, .error:
+            nil
+        }
+    }
 }

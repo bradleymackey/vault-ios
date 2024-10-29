@@ -1,6 +1,6 @@
 import Foundation
 
-public struct VaultTextCopyAction: Equatable, Hashable {
+public struct VaultTextCopyAction: Equatable, Hashable, Sendable {
     public var text: String
     /// If this is `true` it indicates that the `text` should NOT be copied to the clipboard until the user has
     /// performed authentication.

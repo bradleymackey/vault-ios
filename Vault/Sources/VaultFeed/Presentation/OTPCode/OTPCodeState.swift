@@ -32,16 +32,4 @@ extension OTPCodeState {
             false
         }
     }
-
-    /// The raw code that is able to be copied to the clipboard.
-    public var copyableCode: VaultTextCopyAction? {
-        switch self {
-        case let .visible(code):
-            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: false)
-        case let .locked(code: code):
-            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: true)
-        default:
-            nil
-        }
-    }
 }

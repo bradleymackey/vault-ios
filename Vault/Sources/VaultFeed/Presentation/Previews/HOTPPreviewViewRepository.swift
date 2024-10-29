@@ -88,7 +88,7 @@ extension HOTPPreviewViewRepositoryImpl {
 
 extension HOTPPreviewViewRepositoryImpl: VaultItemCopyActionHandler {
     public func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
-        previewViewModelCache[id]?.code.copyableCode
+        previewViewModelCache[id]?.pasteboardCopyText
     }
 }
 
