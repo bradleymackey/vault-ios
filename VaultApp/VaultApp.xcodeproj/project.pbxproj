@@ -11,6 +11,7 @@
 		1C2856652ADFF39800DA4AA9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */; };
 		1C45B07C2ADFE8BE00197B32 /* VaultAppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */; };
 		1C58F2F32AE5764100962BAB /* VaultiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1C58F2F22AE5764100962BAB /* VaultiOS */; };
+		1C8B89EF2CD25B7D00F3D340 /* VaultAutofillProvider in Frameworks */ = {isa = PBXBuildFile; productRef = 1C8B89EE2CD25B7D00F3D340 /* VaultAutofillProvider */; };
 		1CBE0CCD2CD229FF000EA09D /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBE0CCC2CD229FF000EA09D /* AuthenticationServices.framework */; };
 		1CBE0CD82CD229FF000EA09D /* VaultAppAutofill.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -69,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1C8B89EF2CD25B7D00F3D340 /* VaultAutofillProvider in Frameworks */,
 				1CBE0CCD2CD229FF000EA09D /* AuthenticationServices.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -151,6 +153,7 @@
 			);
 			name = VaultAppAutofill;
 			packageProductDependencies = (
+				1C8B89EE2CD25B7D00F3D340 /* VaultAutofillProvider */,
 			);
 			productName = VaultAppAutofill;
 			productReference = 1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */;
@@ -271,7 +274,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VaultAppAutofill/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VaultAppAutofill;
+				INFOPLIST_KEY_CFBundleDisplayName = "Vault Autofill";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -301,7 +304,7 @@
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = VaultAppAutofill/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = VaultAppAutofill;
+				INFOPLIST_KEY_CFBundleDisplayName = "Vault Autofill";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -540,6 +543,10 @@
 		1C58F2F22AE5764100962BAB /* VaultiOS */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = VaultiOS;
+		};
+		1C8B89EE2CD25B7D00F3D340 /* VaultAutofillProvider */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = VaultAutofillProvider;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

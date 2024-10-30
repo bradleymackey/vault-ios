@@ -1,13 +1,25 @@
 import AuthenticationServices
+import SwiftUI
+import VaultAutofillProvider
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
-    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        let autofillView = VaultAutofillView()
+        let hosting = UIHostingController(rootView: autofillView)
+        addChild(hosting)
+        view.addConstrained(subview: hosting.view)
+        hosting.didMove(toParent: self)
     }
     
+    // This function is called when autofill is initially enabled.
+    // It allows configuration before enable.
+    // It's not required, but would be good to do some config here.
+    //
+    // It's triggered by the "ASCredentialProviderExtensionShowsConfigurationUI" key in the Info.plist
     override func prepareInterfaceForExtensionConfiguration() {
-        super.prepareInterfaceForExtensionConfiguration()
+//        extensionContext.completeExtensionConfigurationRequest()
     }
 
     /*! @abstract Prepare the view controller to show a list of one time code credentials.
@@ -20,7 +32,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
     override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        print("PREPARE LIST")
+//        print("PREPARE LIST")
     }
     
     struct CredentialTypeNotSupportedError: Error, LocalizedError {
@@ -61,20 +73,20 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      Implement this method if provideCredentialWithoutUserInteraction(for:) can fail with
      ASExtensionError.userInteractionRequired. In this case, the system may present your extension's
      UI and call this method. Show appropriate UI for authenticating the user then provide the password
-     by completing the extension request with the associated ASPasswordCredential.
+     by completing the extension request with the associated AS PasswordCredential.
 
     override func prepareInterfaceToProvideCredential(for credentialIdentity: ASPasswordCredentialIdentity) {
     }
     */
 
-    @IBAction func cancel(_ sender: AnyObject?) {
-        self.extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: ASExtensionError.userCanceled.rawValue))
-    }
-
-    @IBAction func passwordSelected(_ sender: AnyObject?) {
-        let exampleCredential = ASOneTimeCodeCredential(code: "123456")
-        extensionContext.completeOneTimeCodeRequest(using: exampleCredential)
-    }
+//    @IBAction func cancel(_ sender: AnyObject?) {
+//        self.extensionContext.cancelRequest(withError: NSError(domain: ASExtensionErrorDomain, code: ASExtensionError.userCanceled.rawValue))
+//    }
+//
+//    @IBAction func passwordSelected(_ sender: AnyObject?) {
+//        let exampleCredential = ASOneTimeCodeCredential(code: "123456")
+//        extensionContext.completeOneTimeCodeRequest(using: exampleCredential)
+//    }
 }
 
 // MARK: - Unused at the moment
@@ -83,4 +95,22 @@ extension CredentialProviderViewController {
     // For passwords and passkeys
 //    override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
 //    }
+}
+
+private extension UIView {
+    /// Add a subview, constrained to the specified top, left, bottom and right margins.
+    ///
+    /// - Parameters:
+    ///   - view: The subview to add.
+    ///
+    func addConstrained(subview: UIView) {
+        subview.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(subview)
+        NSLayoutConstraint.activate([
+            subview.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
+            subview.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
+            subview.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
+            subview.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+        ])
+    }
 }

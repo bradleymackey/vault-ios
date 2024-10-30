@@ -36,6 +36,7 @@ let package = Package(
             name: "VaultiOS",
             targets: ["VaultiOS"]
         ),
+        .library(name: "VaultAutofillProvider", targets: ["VaultAutofillProvider"]),
         .executable(
             name: "vault-keygen-speedtest",
             targets: ["VaultKeygenSpeedtest"]
