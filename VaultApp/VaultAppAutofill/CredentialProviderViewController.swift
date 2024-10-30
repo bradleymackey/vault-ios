@@ -20,6 +20,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
     override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        print("PREPARE LIST")
     }
     
     struct CredentialTypeNotSupportedError: Error, LocalizedError {
@@ -71,10 +72,9 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     }
 
     @IBAction func passwordSelected(_ sender: AnyObject?) {
-        let passwordCredential = ASPasswordCredential(user: "j_appleseed", password: "apple1234")
-        self.extensionContext.completeRequest(withSelectedCredential: passwordCredential, completionHandler: nil)
+        let exampleCredential = ASOneTimeCodeCredential(code: "123456")
+        extensionContext.completeOneTimeCodeRequest(using: exampleCredential)
     }
-
 }
 
 // MARK: - Unused at the moment
