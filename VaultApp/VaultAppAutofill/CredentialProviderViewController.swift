@@ -6,7 +6,9 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let autofillView = VaultAutofillView()
+        let autofillView = VaultAutofillView(dismiss: { [weak self] in
+            self?.extensionContext.completeExtensionConfigurationRequest()
+        })
         let hosting = UIHostingController(rootView: autofillView)
         addChild(hosting)
         view.addConstrained(subview: hosting.view)
@@ -105,12 +107,14 @@ private extension UIView {
     ///
     func addConstrained(subview: UIView) {
         subview.translatesAutoresizingMaskIntoConstraints = false
+        subview.preservesSuperviewLayoutMargins = false
+        subview.frame = frame
         addSubview(subview)
         NSLayoutConstraint.activate([
-            subview.topAnchor.constraint(equalTo: safeAreaLayoutGuide.topAnchor),
-            subview.bottomAnchor.constraint(equalTo: safeAreaLayoutGuide.bottomAnchor),
-            subview.leadingAnchor.constraint(equalTo: safeAreaLayoutGuide.leadingAnchor),
-            subview.trailingAnchor.constraint(equalTo: safeAreaLayoutGuide.trailingAnchor),
+            subview.topAnchor.constraint(equalTo: topAnchor),
+            subview.bottomAnchor.constraint(equalTo: bottomAnchor),
+            subview.leadingAnchor.constraint(equalTo: leadingAnchor),
+            subview.trailingAnchor.constraint(equalTo: trailingAnchor),
         ])
     }
 }
