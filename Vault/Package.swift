@@ -244,6 +244,18 @@ let package = Package(
             dependencies: ["VaultKeygenSpeedtest"],
             swiftSettings: swiftSettings
         ),
+        .target(
+            name: "VaultAutofillProvider",
+            dependencies: ["VaultCore"],
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins
+        ),
+        .testTarget(
+            name: "VaultAutofillProviderTests",
+            dependencies: ["VaultAutofillProvider", "TestHelpers"],
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
+        ),
 
         // MARK: - TOOLING
 
