@@ -3,12 +3,12 @@ import SwiftUI
 import VaultFeed
 import VaultiOS
 
-public struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>>: View {
+struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>>: View {
     @State private var viewModel: VaultAutofillViewModel
     var generator: Generator
     var copyActionHandler: any VaultItemCopyActionHandler
 
-    public init(
+    init(
         viewModel: VaultAutofillViewModel,
         copyActionHandler: any VaultItemCopyActionHandler,
         generator: Generator
@@ -18,7 +18,7 @@ public struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultIt
         self.copyActionHandler = copyActionHandler
     }
 
-    public var body: some View {
+    var body: some View {
         Group {
             switch viewModel.feature {
             case .setupConfiguration:
