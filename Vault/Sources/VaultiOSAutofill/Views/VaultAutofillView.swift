@@ -1,9 +1,9 @@
 import Foundation
 import SwiftUI
 
-public struct VaultAutofillEntrypointView: View {
-    @State private var viewModel: VaultAutofillEntrypointViewModel
-    public init(viewModel: VaultAutofillEntrypointViewModel) {
+public struct VaultAutofillView: View {
+    @State private var viewModel: VaultAutofillViewModel
+    public init(viewModel: VaultAutofillViewModel) {
         self.viewModel = viewModel
     }
 
@@ -12,6 +12,8 @@ public struct VaultAutofillEntrypointView: View {
             switch viewModel.feature {
             case .setupConfiguration:
                 VaultAutofillConfigurationView(viewModel: .init(dismissSubject: viewModel.configurationDismissSubject))
+            case .showCodeSelector:
+                ProgressView()
             case nil:
                 ProgressView()
             }

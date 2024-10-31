@@ -4,11 +4,11 @@ import VaultiOSAutofill
 import Combine
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
-    private let vaultAutofillEntrypointViewModel: VaultAutofillEntrypointViewModel
+    private let vaultAutofillViewModel: VaultAutofillViewModel
     private var cancellables = Set<AnyCancellable>()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        self.vaultAutofillEntrypointViewModel = VaultAutofillEntrypointViewModel()
+        self.vaultAutofillViewModel = VaultAutofillViewModel()
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
@@ -20,7 +20,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let entrypointView = VaultAutofillEntrypointView(viewModel: vaultAutofillEntrypointViewModel)
+        let entrypointView = VaultAutofillView(viewModel: vaultAutofillViewModel)
         let hosting = UIHostingController(rootView: entrypointView)
         addChild(hosting)
         view.addConstrained(subview: hosting.view)
@@ -29,7 +29,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     }
     
     private func setupBindings() {
-        vaultAutofillEntrypointViewModel.configurationDismissPublisher.sink { [weak self] in
+        vaultAutofillViewModel.configurationDismissPublisher.sink { [weak self] in
             self?.extensionContext.completeExtensionConfigurationRequest()
         }.store(in: &cancellables)
     }
@@ -40,7 +40,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     //
     // It's triggered by the "ASCredentialProviderExtensionShowsConfigurationUI" key in the Info.plist
     override func prepareInterfaceForExtensionConfiguration() {
-        vaultAutofillEntrypointViewModel.show(feature: .setupConfiguration)
+        vaultAutofillViewModel.show(feature: .setupConfiguration)
     }
     
     struct CredentialTypeNotSupportedError: Error, LocalizedError {

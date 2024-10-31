@@ -3,9 +3,10 @@ import Combine
 
 @MainActor
 @Observable
-public final class VaultAutofillEntrypointViewModel {
+public final class VaultAutofillViewModel {
     public enum DisplayedFeature: Equatable {
         case setupConfiguration
+        case showCodeSelector
     }
     
     private(set) var feature: DisplayedFeature?
