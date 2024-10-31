@@ -24,7 +24,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             userDescription: "mydesc",
             color: color,
             viewConfig: .alwaysVisible,
-            searchPassphrase: "",
+            searchPassphrase: "search",
+            killphrase: "killme",
             tags: [],
             lockState: .lockedWithNativeSecurity
         )
@@ -40,6 +41,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
         XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+        XCTAssertEqual(sut.searchPassphrase, "search")
+        XCTAssertEqual(sut.killphrase, "killme")
         XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
         XCTAssertEqual(sut.relativeOrder, 1234)
     }
@@ -63,7 +66,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             userDescription: "mydesc2",
             color: color,
             viewConfig: .alwaysVisible,
-            searchPassphrase: "",
+            searchPassphrase: "search",
+            killphrase: "killme",
             tags: [],
             lockState: .lockedWithNativeSecurity
         )
@@ -79,6 +83,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
         XCTAssertEqual(sut.color, color)
         XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
         XCTAssertEqual(sut.viewConfig, .alwaysVisible)
+        XCTAssertEqual(sut.searchPassphrase, "search")
+        XCTAssertEqual(sut.killphrase, "killme")
         XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
         XCTAssertEqual(sut.relativeOrder, 4321)
     }
@@ -93,6 +99,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )
@@ -110,6 +117,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )
@@ -165,6 +173,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )
@@ -183,6 +192,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )

@@ -23,6 +23,7 @@ final class VaultBackupItemEncoder {
             visibility: encodeVisibility(metadata: storedItem.metadata),
             searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
             searchPassphrase: storedItem.metadata.searchPassphrase,
+            killphrase: storedItem.metadata.killphrase,
             lockState: encodeLockState(metadata: storedItem.metadata),
             tintColor: encodeTintColor(meta: storedItem.metadata),
             item: itemDetail

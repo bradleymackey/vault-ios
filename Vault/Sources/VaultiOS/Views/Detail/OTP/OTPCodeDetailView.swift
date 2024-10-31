@@ -452,6 +452,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
+            killphrase: "",
             lockState: .notLocked,
             color: VaultItemColor(color: .green)
         ),

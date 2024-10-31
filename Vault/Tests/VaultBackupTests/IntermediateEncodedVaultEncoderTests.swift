@@ -64,6 +64,7 @@ struct IntermediateEncodedVaultEncoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "passphrase",
+            killphrase: "kill",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "Example Note", rawContents: "Example note", format: .markdown))
@@ -96,6 +97,7 @@ struct IntermediateEncodedVaultEncoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
+            killphrase: "kill",
             lockState: .lockedWithNativeSecurity,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
@@ -138,6 +140,7 @@ struct IntermediateEncodedVaultEncoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "searchphrase",
+            killphrase: "killme",
             lockState: .notLocked,
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
         )
@@ -153,6 +156,8 @@ struct IntermediateEncodedVaultEncoderTests {
             tags: [uuidTag],
             visibility: .always,
             searchableLevel: .none,
+            searchPassphrase: nil,
+            killphrase: nil,
             lockState: .lockedWithNativeSecurity,
             item: .note(data: .init(title: "Hello world again", rawContents: "contents", format: .markdown))
         )
@@ -167,6 +172,8 @@ struct IntermediateEncodedVaultEncoderTests {
             tags: [uuidTag],
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
+            searchPassphrase: "search3",
+            killphrase: "kill3",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(

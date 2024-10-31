@@ -14,6 +14,7 @@ func anyVaultItemMetadata(
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: "",
+        killphrase: "",
         lockState: lockState,
         color: .black
     )

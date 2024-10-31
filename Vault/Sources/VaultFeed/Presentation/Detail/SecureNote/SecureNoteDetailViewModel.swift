@@ -39,6 +39,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 color: metadata.color,
                 viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),
                 searchPassphrase: metadata.searchPassphrase ?? "",
+                killphrase: metadata.killphrase ?? "",
                 tags: metadata.tags,
                 lockState: metadata.lockState,
                 relativeOrder: metadata.relativeOrder

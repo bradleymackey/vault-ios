@@ -55,6 +55,8 @@ struct IntermediateEncodedVaultDecoderTests {
             tags: [],
             visibility: .always,
             searchableLevel: .full,
+            searchPassphrase: "hello",
+            killphrase: "killme",
             lockState: .lockedWithNativeSecurity,
             item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
         )
@@ -69,6 +71,8 @@ struct IntermediateEncodedVaultDecoderTests {
             tags: [],
             visibility: .always,
             searchableLevel: .none,
+            searchPassphrase: nil,
+            killphrase: "kill",
             lockState: .notLocked,
             item: .note(data: .init(title: "Hello world again", rawContents: nil, format: .markdown))
         )
@@ -84,6 +88,7 @@ struct IntermediateEncodedVaultDecoderTests {
             visibility: .onlySearch,
             searchableLevel: .onlyTitle,
             searchPassphrase: "phrase",
+            killphrase: nil,
             lockState: .lockedWithNativeSecurity,
             item: .otp(data: .init(
                 secretFormat: "any",

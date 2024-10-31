@@ -14,6 +14,7 @@ struct PersistedVaultItemDecoder {
             visibility: decodeVisibility(level: item.visibility),
             searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
             searchPassphrase: item.searchPassphrase,
+            killphrase: item.killphrase,
             lockState: decodeLockState(value: item.lockState),
             color: decodeColor(item: item)
         )

@@ -16,6 +16,8 @@ public struct SecureNoteDetailEdits: EditableState {
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var searchPassphrase: String = ""
 
+    public var killphrase: String = ""
+
     public var color: VaultItemColor?
 
     public var tags: Set<Identifier<VaultItemTag>>
@@ -30,6 +32,7 @@ public struct SecureNoteDetailEdits: EditableState {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
+        killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         relativeOrder: UInt64
@@ -39,6 +42,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.color = color
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
+        self.killphrase = killphrase
         self.tags = tags
         self.lockState = lockState
         self.relativeOrder = relativeOrder
@@ -89,6 +93,7 @@ extension SecureNoteDetailEdits {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked,
             relativeOrder: .min

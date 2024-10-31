@@ -22,6 +22,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: nil
             ),
@@ -48,6 +49,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .lockedWithNativeSecurity,
                 color: nil
             ),
@@ -74,6 +76,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .lockedWithNativeSecurity,
                 color: nil
             ),
@@ -100,6 +103,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .none,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: nil
             ),
@@ -126,6 +130,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: nil
             ),
@@ -153,6 +158,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: .gray
             ),
@@ -180,6 +186,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: .black
             ),
@@ -206,6 +213,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: nil
             ),
@@ -233,6 +241,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: .black
             ),

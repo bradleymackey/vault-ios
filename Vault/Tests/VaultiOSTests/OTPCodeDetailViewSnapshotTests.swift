@@ -23,6 +23,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: nil
             ),
@@ -51,6 +52,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .lockedWithNativeSecurity,
                 color: nil
             ),
@@ -79,6 +81,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .lockedWithNativeSecurity,
                 color: nil
             ),
@@ -107,6 +110,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .onlySearch,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: nil
             ),
@@ -135,6 +139,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: nil
             ),

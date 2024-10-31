@@ -55,6 +55,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var visibility: Visibility
     public var searchableLevel: SearchableLevel
     public var searchPassphrase: String?
+    public var killphrase: String?
     public var lockState: LockState
     /// The tint color associated with the item.
     public var tintColor: VaultBackupRGBColor?
@@ -70,7 +71,8 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         tags: Set<UUID>,
         visibility: Visibility,
         searchableLevel: SearchableLevel,
-        searchPassphrase: String? = nil,
+        searchPassphrase: String?,
+        killphrase: String?,
         lockState: LockState,
         tintColor: VaultBackupRGBColor? = nil,
         item: Item
@@ -84,6 +86,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         self.visibility = visibility
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase
+        self.killphrase = killphrase
         self.tintColor = tintColor
         self.lockState = lockState
         self.item = item

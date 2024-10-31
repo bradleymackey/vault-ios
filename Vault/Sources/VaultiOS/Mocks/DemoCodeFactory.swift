@@ -14,6 +14,7 @@ enum DemoVaultFactory {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: nil
             ),
@@ -40,6 +41,7 @@ enum DemoVaultFactory {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green)
             ),
@@ -66,6 +68,7 @@ enum DemoVaultFactory {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .red)
             ),

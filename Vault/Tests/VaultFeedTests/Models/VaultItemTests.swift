@@ -74,6 +74,7 @@ extension VaultItemTests {
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
+        killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil,
         format: TextFormat = .markdown
@@ -89,6 +90,7 @@ extension VaultItemTests {
                 visibility: visibility,
                 searchableLevel: searchableLevel,
                 searchPassphrase: searchPassphrase,
+                killphrase: killphrase,
                 lockState: lockState,
                 color: color
             ),

@@ -26,6 +26,7 @@ extension VaultBackupItemDecoder {
             visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
             searchPassphrase: backupItem.searchPassphrase,
+            killphrase: backupItem.killphrase,
             lockState: decodeLockState(state: backupItem.lockState),
             color: decodeColor(color: backupItem.tintColor)
         )

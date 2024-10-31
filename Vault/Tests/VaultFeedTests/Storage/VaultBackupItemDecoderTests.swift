@@ -24,6 +24,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "hello",
+            killphrase: "killme",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: "contents", format: .markdown))
@@ -39,6 +40,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.visibility, .always)
         XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "hello")
+        XCTAssertEqual(decodedItem.metadata.killphrase, "killme")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.metadata.tags, [.init(id: tag)])
         XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
@@ -74,6 +76,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
+            killphrase: "killme",
             lockState: .lockedWithNativeSecurity,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
@@ -99,6 +102,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.userDescription, description)
         XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "pass")
+        XCTAssertEqual(decodedItem.metadata.killphrase, "killme")
         XCTAssertEqual(decodedItem.metadata.visibility, .always)
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.metadata.lockState, .lockedWithNativeSecurity)
@@ -126,6 +130,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "nice",
+            killphrase: "killmeNOW",
             lockState: .notLocked,
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
@@ -153,6 +158,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
         XCTAssertEqual(decodedItem.metadata.visibility, .onlySearch)
         XCTAssertEqual(decodedItem.metadata.searchPassphrase, "nice")
+        XCTAssertEqual(decodedItem.metadata.killphrase, "killmeNOW")
         XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.2, green: 0.2, blue: 0.3))
         XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
         XCTAssertEqual(decodedItem.item.otpCode?.type, .hotp(counter: 10))
@@ -243,6 +249,7 @@ extension VaultBackupItemDecoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
+            killphrase: "killme",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: contents, format: .markdown))
@@ -269,6 +276,7 @@ extension VaultBackupItemDecoderTests {
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "",
+            killphrase: "killer",
             lockState: .notLocked,
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(

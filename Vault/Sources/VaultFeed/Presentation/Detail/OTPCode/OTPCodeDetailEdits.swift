@@ -37,6 +37,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var searchPassphrase: String = ""
 
+    public var killphrase: String = ""
+
     public var color: VaultItemColor?
 
     public var tags: Set<Identifier<VaultItemTag>>
@@ -56,6 +58,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         description: String,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
+        killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         color: VaultItemColor?
@@ -72,6 +75,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.description = description
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
+        self.killphrase = killphrase
         self.tags = tags
         self.lockState = lockState
         self.color = color
@@ -84,6 +88,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
+        killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState
     ) {
@@ -105,6 +110,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.tags = tags
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
+        self.killphrase = killphrase
         self.lockState = lockState
         self.color = color
         self.relativeOrder = relativeOrder
@@ -163,6 +169,7 @@ extension OTPCodeDetailEdits {
             description: "",
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked,
             color: nil
@@ -177,6 +184,7 @@ extension OTPCodeDetailEdits {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )

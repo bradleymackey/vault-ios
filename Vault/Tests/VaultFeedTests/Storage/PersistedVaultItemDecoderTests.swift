@@ -160,6 +160,14 @@ extension PersistedVaultItemDecoderTests {
         XCTAssertEqual(decoded.metadata.searchPassphrase, "my secret - super secret")
     }
 
+    func test_decodeMetadata_decodesKillphrase() throws {
+        let item = makePersistedItem(killphrase: "kill me now")
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        XCTAssertEqual(decoded.metadata.killphrase, "kill me now")
+    }
+
     func test_decodeMetadata_decodesEmptyItemTags() throws {
         let item = makePersistedItem(tags: [])
         let sut = makeSUT()
@@ -414,6 +422,7 @@ extension PersistedVaultItemDecoderTests {
         visibility: String = "ALWAYS",
         searchableLevel: String = "FULL",
         searchPassphrase: String? = nil,
+        killphrase: String? = nil,
         lockState: String? = nil,
         color: PersistedColor? = nil,
         tags: [PersistedVaultTag] = [],
@@ -439,6 +448,7 @@ extension PersistedVaultItemDecoderTests {
             visibility: visibility,
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
+            killphrase: killphrase,
             lockState: lockState,
             color: color,
             tags: tags,

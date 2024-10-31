@@ -204,6 +204,50 @@ extension PersistedVaultItemEncoderTests {
         }
     }
 
+    func test_encodeMetadata_newItemEncodesSearchPassphrase() throws {
+        let sut1 = makeSUT()
+        var existingItem = uniqueVaultItem().makeWritable()
+        existingItem.searchPassphrase = "my search"
+        let existing = try encode(sut: sut1, item: existingItem)
+
+        XCTAssertEqual(existing.searchPassphrase, "my search")
+    }
+
+    func test_encodeMetadata_existingItemEncodesSearchPassphrase() throws {
+        let sut = makeSUT()
+        var item1 = uniqueVaultItem().makeWritable()
+        item1.searchPassphrase = "my search 1"
+        let existing = try encode(sut: sut, item: item1)
+
+        var item2 = uniqueVaultItem().makeWritable()
+        item2.searchPassphrase = "my search 2"
+        let existing2 = try encode(sut: sut, item: item2, existing: existing)
+
+        XCTAssertEqual(existing2.searchPassphrase, "my search 2")
+    }
+
+    func test_encodeMetadata_newItemEncodesKillphrase() throws {
+        let sut1 = makeSUT()
+        var existingItem = uniqueVaultItem().makeWritable()
+        existingItem.killphrase = "kill me"
+        let existing = try encode(sut: sut1, item: existingItem)
+
+        XCTAssertEqual(existing.killphrase, "kill me")
+    }
+
+    func test_encodeMetadata_existingItemEncodesKillphrase() throws {
+        let sut = makeSUT()
+        var item1 = uniqueVaultItem().makeWritable()
+        item1.killphrase = "kill 1"
+        let existing = try encode(sut: sut, item: item1)
+
+        var item2 = uniqueVaultItem().makeWritable()
+        item2.killphrase = "kill 2"
+        let existing2 = try encode(sut: sut, item: item2, existing: existing)
+
+        XCTAssertEqual(existing2.killphrase, "kill 2")
+    }
+
     func test_encodeMetadata_newItemEncodesEmptyTags() throws {
         let sut = makeSUT()
         let item = uniqueVaultItem(tags: []).makeWritable()
@@ -420,7 +464,7 @@ extension PersistedVaultItemEncoderTests {
 extension PersistedVaultItemEncoderTests {
     func test_encodeNote_title() throws {
         let sut = makeSUT()
-        let item = makeWritable(note: anySecureNote(title: "this is my title"))
+        let item = anySecureNote(title: "this is my title").wrapInAnyVaultItem().makeWritable()
 
         let encoded = try encode(sut: sut, item: item)
         XCTAssertEqual(encoded.noteDetails?.title, "this is my title")
@@ -428,7 +472,7 @@ extension PersistedVaultItemEncoderTests {
 
     func test_encodeNote_contents() throws {
         let sut = makeSUT()
-        let item = makeWritable(note: anySecureNote(contents: "this is the note contents"))
+        let item = anySecureNote(contents: "this is the note contents").wrapInAnyVaultItem().makeWritable()
 
         let encoded = try encode(sut: sut, item: item)
         XCTAssertEqual(encoded.noteDetails?.contents, "this is the note contents")
@@ -468,6 +512,7 @@ extension PersistedVaultItemEncoderTests {
         searchableLevel: VaultItemSearchableLevel = .full,
         tags: Set<Identifier<VaultItemTag>> = [],
         searchPassphrase: String = "",
+        killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked
     ) -> VaultItem.Write {
         VaultItem.Write(
@@ -478,7 +523,8 @@ extension PersistedVaultItemEncoderTests {
             tags: tags,
             visibility: visibility,
             searchableLevel: searchableLevel,
-            searchPassphase: searchPassphrase,
+            searchPassphrase: searchPassphrase,
+            killphrase: killphrase,
             lockState: lockState
         )
     }
@@ -500,27 +546,6 @@ extension PersistedVaultItemEncoderTests {
                 accountName: accountName,
                 issuer: issuer
             )
-        )
-    }
-
-    private func makeWritable(
-        relativeOrder: UInt64 = .min,
-        userDescription: String = "",
-        note: SecureNote,
-        color: VaultItemColor? = nil,
-        tags: Set<Identifier<VaultItemTag>> = [],
-        lockState: VaultItemLockState = .notLocked
-    ) -> VaultItem.Write {
-        VaultItem.Write(
-            relativeOrder: relativeOrder,
-            userDescription: userDescription,
-            color: color,
-            item: .secureNote(note),
-            tags: tags,
-            visibility: .always,
-            searchableLevel: .full,
-            searchPassphase: "",
-            lockState: lockState
         )
     }
 }

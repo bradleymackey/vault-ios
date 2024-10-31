@@ -25,6 +25,7 @@ extension PersistedSchemaV1 {
         var visibility: String
         var searchableLevel: String
         var searchPassphrase: String?
+        var killphrase: String?
         var lockState: String?
         var color: PersistedColor?
         @Relationship(deleteRule: .noAction)
@@ -45,6 +46,7 @@ extension PersistedSchemaV1 {
             visibility: String,
             searchableLevel: String,
             searchPassphrase: String?,
+            killphrase: String?,
             lockState: String?,
             color: PersistedColor?,
             tags: [PersistedVaultTag],
@@ -59,6 +61,7 @@ extension PersistedSchemaV1 {
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphrase = searchPassphrase
+            self.killphrase = killphrase
             self.lockState = lockState
             self.color = color
             self.tags = tags
