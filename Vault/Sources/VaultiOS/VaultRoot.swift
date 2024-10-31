@@ -81,6 +81,14 @@ public enum VaultRoot {
     }()
 
     @MainActor
+    public static let genericVaultItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<VaultItem.Payload> =
+        GenericVaultItemPreviewViewGenerator(
+            totpGenerator: totpPreviewViewGenerator,
+            hotpGenerator: hotpPreviewViewGenerator,
+            noteGenerator: secureNotePreviewViewGenerator
+        )
+
+    @MainActor
     static let totpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<TOTPAuthCode> =
         TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
@@ -118,7 +126,7 @@ public enum VaultRoot {
     public static let deviceAuthenticationService: DeviceAuthenticationService = .init(policy: .default)
 
     @MainActor
-    static let vaultInjector: VaultInjector = .init(
+    public static let vaultInjector: VaultInjector = .init(
         clock: clock,
         intervalTimer: timer,
         backupEventLogger: backupEventLogger,

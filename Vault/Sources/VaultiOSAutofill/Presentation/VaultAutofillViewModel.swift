@@ -1,5 +1,7 @@
 import Combine
 import Foundation
+import VaultFeed
+import VaultSettings
 
 @MainActor
 @Observable
@@ -11,8 +13,13 @@ public final class VaultAutofillViewModel {
     }
 
     private(set) var feature: DisplayedFeature?
+    let localSettings: LocalSettings
 
-    public init() {}
+    public init(
+        localSettings: LocalSettings
+    ) {
+        self.localSettings = localSettings
+    }
 
     public func show(feature: DisplayedFeature) {
         self.feature = feature

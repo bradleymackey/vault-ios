@@ -4,10 +4,8 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Generator: VaultItemPreviewViewGenerator & VaultItemPreviewActionHandler & VaultItemCopyActionHandler
->: View
-    where Generator.PreviewItem == VaultItem.Payload
-{
+    Generator: ActionableVaultItemPreviewViewGenerator<VaultItem.Payload>
+>: View {
     var localSettings: LocalSettings
     var viewGenerator: Generator
 

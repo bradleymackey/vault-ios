@@ -1,6 +1,7 @@
 import AuthenticationServices
 import SwiftUI
 import VaultiOSAutofill
+import VaultiOS
 import Combine
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
@@ -8,7 +9,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private var cancellables = Set<AnyCancellable>()
     
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        self.vaultAutofillViewModel = VaultAutofillViewModel()
+        self.vaultAutofillViewModel = VaultAutofillViewModel(localSettings: VaultRoot.localSettings)
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
     }
     
@@ -20,7 +21,11 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let entrypointView = VaultAutofillView(viewModel: vaultAutofillViewModel)
+        let entrypointView = VaultAutofillView(viewModel: vaultAutofillViewModel, generator: VaultRoot.genericVaultItemPreviewViewGenerator)
+            .environment(VaultRoot.pasteboard)
+            .environment(VaultRoot.deviceAuthenticationService)
+            .environment(VaultRoot.vaultDataModel)
+            .environment(VaultRoot.vaultInjector)
         let hosting = UIHostingController(rootView: entrypointView)
         addChild(hosting)
         view.addConstrained(subview: hosting.view)

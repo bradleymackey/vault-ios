@@ -4,7 +4,7 @@ import VaultFeed
 import VaultSettings
 
 @MainActor
-struct VaultItemFeedView<
+public struct VaultItemFeedView<
     ViewGenerator: VaultItemPreviewViewGenerator
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload
@@ -17,7 +17,7 @@ struct VaultItemFeedView<
     @Environment(VaultDataModel.self) private var dataModel
     @State private var state: VaultItemFeedState
 
-    init(
+    public init(
         localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
         state: VaultItemFeedState,
@@ -29,7 +29,7 @@ struct VaultItemFeedView<
         self.gridSpacing = gridSpacing
     }
 
-    var body: some View {
+    public var body: some View {
         VStack {
             listOfCodesView
         }

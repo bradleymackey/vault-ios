@@ -1,10 +1,18 @@
 import Foundation
 import SwiftUI
+import VaultFeed
+import VaultiOS
 
-public struct VaultAutofillView: View {
+public struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>>: View {
     @State private var viewModel: VaultAutofillViewModel
-    public init(viewModel: VaultAutofillViewModel) {
+    var generator: Generator
+
+    public init(
+        viewModel: VaultAutofillViewModel,
+        generator: Generator
+    ) {
         self.viewModel = viewModel
+        self.generator = generator
     }
 
     public var body: some View {
@@ -13,7 +21,9 @@ public struct VaultAutofillView: View {
             case .setupConfiguration:
                 VaultAutofillConfigurationView(viewModel: .init(dismissSubject: viewModel.configurationDismissSubject))
             case .showAllCodesSelector:
-                VaultAutofillCodeSelectorView()
+                NavigationStack {
+                    VaultAutofillCodeSelectorView(localSettings: viewModel.localSettings, viewGenerator: generator)
+                }
             case let .unimplemented(name):
                 Text("Unimplemented \(name)")
             case nil:

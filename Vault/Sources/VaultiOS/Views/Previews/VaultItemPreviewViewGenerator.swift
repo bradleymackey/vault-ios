@@ -8,7 +8,7 @@ typealias ActionableVaultItemPreviewViewGenerator<PreviewItem> = VaultItemCopyAc
 
 /// @mockable(typealias: PreviewView = AnyView; PreviewItem = VaultItem.Payload)
 @MainActor
-protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewSceneResponder {
+public protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewSceneResponder {
     associatedtype PreviewItem
     associatedtype PreviewView: View
     func makeVaultPreviewView(item: PreviewItem, metadata: VaultItem.Metadata, behaviour: VaultItemViewBehaviour)
@@ -17,7 +17,7 @@ protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewSceneRespon
 
 /// A vault item that is able to respond to scene changes.
 @MainActor
-protocol VaultItemPreviewSceneResponder {
+public protocol VaultItemPreviewSceneResponder {
     func scenePhaseDidChange(to scene: ScenePhase)
     func didAppear()
 }
@@ -37,7 +37,7 @@ enum VaultItemPreviewAction: Equatable {
 // MARK: - Mock
 
 extension VaultItemPreviewViewGeneratorMock: VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
+    public func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
         nil
     }
 }

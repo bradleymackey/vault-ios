@@ -2,19 +2,19 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
-struct VaultItemOnTapDecoratorViewGenerator<
+public struct VaultItemOnTapDecoratorViewGenerator<
     Generator: VaultItemPreviewViewGenerator
 >: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = Generator.PreviewItem
+    public typealias PreviewItem = Generator.PreviewItem
     let generator: Generator
     let onTap: (Identifier<VaultItem>) async throws -> Void
 
-    init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) async throws -> Void) {
+    public init(generator: Generator, onTap: @escaping (Identifier<VaultItem>) async throws -> Void) {
         self.generator = generator
         self.onTap = onTap
     }
 
-    func makeVaultPreviewView(
+    public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -26,11 +26,11 @@ struct VaultItemOnTapDecoratorViewGenerator<
         }
     }
 
-    func scenePhaseDidChange(to scene: ScenePhase) {
+    public func scenePhaseDidChange(to scene: ScenePhase) {
         generator.scenePhaseDidChange(to: scene)
     }
 
-    func didAppear() {
+    public func didAppear() {
         generator.didAppear()
     }
 }
