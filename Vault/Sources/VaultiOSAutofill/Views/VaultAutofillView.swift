@@ -13,7 +13,7 @@ public struct VaultAutofillView: View {
             case .setupConfiguration:
                 VaultAutofillConfigurationView(viewModel: .init(dismissSubject: viewModel.configurationDismissSubject))
             case .showCodeSelector:
-                ProgressView()
+                VaultAutofillCodeSelectorView()
             case nil:
                 ProgressView()
             }

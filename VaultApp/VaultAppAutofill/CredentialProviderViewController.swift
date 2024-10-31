@@ -58,13 +58,16 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      the request with error code ASExtensionError.userInteractionRequired.
      */
     override func provideCredentialWithoutUserInteraction(for credentialRequest: any ASCredentialRequest) {
-        guard credentialRequest.type == .oneTimeCode else {
-            extensionContext.cancelRequest(withError: CredentialTypeNotSupportedError())
-            return
-        }
-        
-        let credential = ASOneTimeCodeCredential(code: "123456")
-        extensionContext.completeOneTimeCodeRequest(using: credential)
+        // TODO: OTP autofill does not currently work in iOS 18
+//        guard credentialRequest.type == .oneTimeCode else {
+//            extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+//            return
+//        }
+//       
+//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+//            let credential = ASOneTimeCodeCredential(code: "123456")
+//            self.extensionContext.completeOneTimeCodeRequest(using: credential)
+//        }
     }
     
     /*
@@ -87,7 +90,14 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
     override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        // TODO
+        let requests: [CredentialRequest] = serviceIdentifiers.map {
+            switch $0.type {
+            case .URL: .url($0.identifier)
+            case .domain: .domain($0.identifier)
+            @unknown default: .substring($0.identifier)
+            }
+        }
+        vaultAutofillViewModel.show(feature: .showCodeSelector(requests))
     }
     
     /*
