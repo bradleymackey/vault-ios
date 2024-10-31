@@ -21,11 +21,16 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let entrypointView = VaultAutofillView(viewModel: vaultAutofillViewModel, generator: VaultRoot.genericVaultItemPreviewViewGenerator)
-            .environment(VaultRoot.pasteboard)
-            .environment(VaultRoot.deviceAuthenticationService)
-            .environment(VaultRoot.vaultDataModel)
-            .environment(VaultRoot.vaultInjector)
+        let entrypointView = VaultAutofillView(
+            viewModel: vaultAutofillViewModel,
+            copyActionHandler: VaultRoot.genericVaultItemPreviewViewGenerator,
+            generator: VaultRoot.genericVaultItemPreviewViewGenerator
+        )
+        .environment(VaultRoot.pasteboard)
+        .environment(VaultRoot.deviceAuthenticationService)
+        .environment(VaultRoot.vaultDataModel)
+        .environment(VaultRoot.vaultInjector)
+        
         let hosting = UIHostingController(rootView: entrypointView)
         addChild(hosting)
         view.addConstrained(subview: hosting.view)
@@ -36,6 +41,16 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     private func setupBindings() {
         vaultAutofillViewModel.configurationDismissPublisher.sink { [weak self] in
             self?.extensionContext.completeExtensionConfigurationRequest()
+        }.store(in: &cancellables)
+        vaultAutofillViewModel.textToInsertPublisher.sink { [weak self] text in
+            self?.extensionContext.completeRequest(withTextToInsert: text)
+        }.store(in: &cancellables)
+        vaultAutofillViewModel.cancelRequestPublisher.sink { [weak self] reason in
+            let error = switch reason {
+            case .userCancelled: ASExtensionError(.userCanceled)
+            case .dataNotAvailable: ASExtensionError(.credentialIdentityNotFound)
+            }
+            self?.extensionContext.cancelRequest(withError: error)
         }.store(in: &cancellables)
     }
     

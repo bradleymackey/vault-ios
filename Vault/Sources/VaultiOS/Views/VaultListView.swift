@@ -136,7 +136,8 @@ struct VaultListView<
                 switch previewAction {
                 case let .copyText(copyAction):
                     if copyAction.requiresAuthenticationToCopy {
-                        let result = try await authenticationService.authenticate(reason: "Copy locked text")
+                        let result = try await authenticationService
+                            .authenticate(reason: "Authenticate to copy locked data")
                         guard result == .success(.authenticated) else { return }
                     }
                     pasteboard.copy(copyAction.text)

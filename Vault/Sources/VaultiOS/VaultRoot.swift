@@ -91,7 +91,10 @@ public enum VaultRoot {
     }()
 
     @MainActor
-    public static let genericVaultItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<VaultItem.Payload> =
+    public static let genericVaultItemPreviewViewGenerator: some (
+        VaultItemPreviewViewGenerator<VaultItem.Payload> &
+            VaultItemCopyActionHandler
+    ) =
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totpPreviewViewGenerator,
             hotpGenerator: hotpPreviewViewGenerator,

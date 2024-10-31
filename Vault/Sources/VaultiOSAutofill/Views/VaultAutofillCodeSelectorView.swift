@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 import VaultFeed
@@ -8,10 +9,22 @@ import VaultSettings
 struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>>: View {
     var localSettings: LocalSettings
     var viewGenerator: Generator
+    let copyActionHandler: any VaultItemCopyActionHandler
+    let textToInsertSubject: PassthroughSubject<String, Never>
+    let cancelSubject: PassthroughSubject<VaultAutofillViewModel.RequestCancelReason, Never>
 
-    init(localSettings: LocalSettings, viewGenerator: Generator) {
+    init(
+        localSettings: LocalSettings,
+        viewGenerator: Generator,
+        copyActionHandler: any VaultItemCopyActionHandler,
+        textToInsertSubject: PassthroughSubject<String, Never>,
+        cancelSubject: PassthroughSubject<VaultAutofillViewModel.RequestCancelReason, Never>
+    ) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
+        self.copyActionHandler = copyActionHandler
+        self.textToInsertSubject = textToInsertSubject
+        self.cancelSubject = cancelSubject
     }
 
     @Environment(VaultDataModel.self) private var dataModel
@@ -29,7 +42,7 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {
-                    // TODO: dismiss
+                    cancelSubject.send(.userCancelled)
                 } label: {
                     Text("Cancel")
                 }
@@ -46,8 +59,18 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
     }
 
     func interactableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<Generator> {
-        VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { _ in
-            // TODO: handle tap of id, return data
+        VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
+            guard let copyAction = copyActionHandler.textToCopyForVaultItem(id: id) else {
+                cancelSubject.send(.dataNotAvailable)
+                return
+            }
+
+            if copyAction.requiresAuthenticationToCopy {
+                let result = try await authenticationService.authenticate(reason: "Authenticate to access locked data")
+                guard result == .success(.authenticated) else { return }
+            }
+
+            textToInsertSubject.send(copyAction.text)
         }
     }
 }
