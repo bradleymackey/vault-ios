@@ -4,7 +4,7 @@ import VaultFeed
 import VaultSettings
 
 /// @mockable
-protocol SystemPasteboard {
+public protocol SystemPasteboard {
     /// Copy the given string to the pasteboard.
     ///
     /// `ttl` is the amount of time that this should live in the pasteboard.

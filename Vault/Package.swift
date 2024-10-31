@@ -36,6 +36,7 @@ let package = Package(
             name: "VaultiOS",
             targets: ["VaultiOS"]
         ),
+        .library(name: "VaultiOSAutofill", targets: ["VaultiOSAutofill"]),
         .executable(
             name: "vault-keygen-speedtest",
             targets: ["VaultKeygenSpeedtest"]
@@ -243,6 +244,18 @@ let package = Package(
             name: "VaultKeygenSpeedtestCompileTests",
             dependencies: ["VaultKeygenSpeedtest"],
             swiftSettings: swiftSettings
+        ),
+        .target(
+            name: "VaultiOSAutofill",
+            dependencies: ["VaultCore", "VaultiOS"],
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins
+        ),
+        .testTarget(
+            name: "VaultiOSAutofillTests",
+            dependencies: ["VaultiOSAutofill", "TestHelpers"],
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins
         ),
 
         // MARK: - TOOLING

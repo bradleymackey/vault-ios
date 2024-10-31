@@ -19,6 +19,7 @@ public struct VaultMainScene: Scene {
         case tags
         case backups
         case settings
+        case demos
     }
 
     @Environment(\.scenePhase) private var scenePhase
@@ -52,6 +53,16 @@ public struct VaultMainScene: Scene {
                             Label("Settings", systemImage: "gear")
                         }
                     }
+
+                    #if DEBUG
+                    Section {
+                        NavigationLink(value: SidebarItem.demos) {
+                            Label("Demos", systemImage: "hammer.fill")
+                        }
+                    } header: {
+                        Text("Demos")
+                    }
+                    #endif
                 }
                 .navigationTitle("Vault")
                 .listStyle(.sidebar)
@@ -80,6 +91,11 @@ public struct VaultMainScene: Scene {
                 case .backups:
                     NavigationStack {
                         BackupView()
+                    }
+                    .navigationBarTitleDisplayMode(.inline)
+                case .demos:
+                    NavigationStack {
+                        DemoViewHome()
                     }
                     .navigationBarTitleDisplayMode(.inline)
                 case .none:

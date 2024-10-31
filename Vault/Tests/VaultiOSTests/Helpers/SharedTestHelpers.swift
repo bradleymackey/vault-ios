@@ -154,10 +154,3 @@ func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> Vaul
 func forceRunLoopAdvance() {
     RunLoop.main.run(until: Date().addingTimeInterval(0.1))
 }
-
-extension View {
-    func framedToTestDeviceSize() -> some View {
-        // iPhone 14 size
-        frame(width: 390, height: 844)
-    }
-}
