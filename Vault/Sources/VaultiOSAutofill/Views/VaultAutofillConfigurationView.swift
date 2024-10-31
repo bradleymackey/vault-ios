@@ -1,5 +1,6 @@
 import Foundation
 import SwiftUI
+import VaultiOS
 
 struct VaultAutofillConfigurationView: View {
     @State private var viewModel: VaultAutofillConfigurationViewModel
@@ -8,18 +9,48 @@ struct VaultAutofillConfigurationView: View {
     }
 
     public var body: some View {
-        NavigationStack {
+        ScrollView {
+            container
+                .padding(.vertical, 16)
+                .padding(24)
+                .containerRelativeFrame([.horizontal, .vertical])
+        }
+        .containerRelativeFrame([.horizontal, .vertical])
+    }
+
+    private var container: some View {
+        VStack(alignment: .center, spacing: 24) {
             VStack(alignment: .center, spacing: 8) {
+                Image(systemName: "character.textbox")
+                    .font(.largeTitle.bold())
                 Text("Vault Autofill")
                     .font(.largeTitle.bold())
-                Text("Only 2FA codes must be visible to autofill.")
-                Text("This means locked, hidden or other protected codes will not be offered for autofilling.")
-                Button {
-                    viewModel.dismiss()
-                } label: {
-                    Text("OK")
-                }
             }
+
+            VStack(alignment: .center, spacing: 8) {
+                Text("Autofill for your items is now enabled.")
+                Text(
+                    "To autofill in a text field, hold down on the text field, select 'Autofill' followed by 'Passwords'"
+                )
+            }
+            .font(.body)
+
+            VStack(alignment: .center, spacing: 8) {
+                Text(
+                    "Due to a bug in the latest release of iOS, OTP codes may not automatically offer to autofill currently. This feature will be added as soon as possible."
+                )
+            }
+            .font(.footnote)
+            .foregroundStyle(.secondary)
+
+            Button {
+                viewModel.dismiss()
+            } label: {
+                Text("Understood")
+                    .font(.headline)
+            }
+            .modifier(ProminentButtonModifier())
         }
+        .multilineTextAlignment(.center)
     }
 }

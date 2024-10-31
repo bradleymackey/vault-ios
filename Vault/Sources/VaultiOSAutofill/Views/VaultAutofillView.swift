@@ -22,7 +22,12 @@ struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payl
         Group {
             switch viewModel.feature {
             case .setupConfiguration:
-                VaultAutofillConfigurationView(viewModel: .init(dismissSubject: viewModel.configurationDismissSubject))
+                NavigationStack {
+                    VaultAutofillConfigurationView(viewModel: .init(
+                        dismissSubject: viewModel
+                            .configurationDismissSubject
+                    ))
+                }
             case .showAllCodesSelector:
                 NavigationStack {
                     VaultAutofillCodeSelectorView(
