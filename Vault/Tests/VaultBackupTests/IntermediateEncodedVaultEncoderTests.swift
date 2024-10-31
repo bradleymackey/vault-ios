@@ -3,6 +3,7 @@ import TestHelpers
 import Testing
 @testable import VaultBackup
 
+@MainActor
 struct IntermediateEncodedVaultEncoderTests {
     let sut = IntermediateEncodedVaultEncoder()
 
