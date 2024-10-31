@@ -12,8 +12,10 @@ public struct VaultAutofillView: View {
             switch viewModel.feature {
             case .setupConfiguration:
                 VaultAutofillConfigurationView(viewModel: .init(dismissSubject: viewModel.configurationDismissSubject))
-            case .showCodeSelector:
+            case .showAllCodesSelector:
                 VaultAutofillCodeSelectorView()
+            case let .unimplemented(name):
+                Text("Unimplemented \(name)")
             case nil:
                 ProgressView()
             }

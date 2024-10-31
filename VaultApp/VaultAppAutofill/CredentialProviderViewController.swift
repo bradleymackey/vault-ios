@@ -58,16 +58,12 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      the request with error code ASExtensionError.userInteractionRequired.
      */
     override func provideCredentialWithoutUserInteraction(for credentialRequest: any ASCredentialRequest) {
-        // TODO: OTP autofill does not currently work in iOS 18
-//        guard credentialRequest.type == .oneTimeCode else {
-//            extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
-//            return
-//        }
-//       
-//        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        // TODO: OTP QuickType autofill does not currently work in iOS 18, we need to use
+        // `prepareInterfaceForUserChoosingTextToInsert`
+        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+        extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
 //            let credential = ASOneTimeCodeCredential(code: "123456")
 //            self.extensionContext.completeOneTimeCodeRequest(using: credential)
-//        }
     }
     
     /*
@@ -77,7 +73,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      by completing the extension request with the associated AS PasswordCredential.
      */
     override func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
-        // TODO
+        vaultAutofillViewModel.show(feature: .unimplemented(#function))
     }
     
     /*! @abstract Prepare the view controller to show a list of one time code credentials.
@@ -90,14 +86,9 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
     override func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        let requests: [CredentialRequest] = serviceIdentifiers.map {
-            switch $0.type {
-            case .URL: .url($0.identifier)
-            case .domain: .domain($0.identifier)
-            @unknown default: .substring($0.identifier)
-            }
-        }
-        vaultAutofillViewModel.show(feature: .showCodeSelector(requests))
+        // This is not actually displayed when we want to autofill, `prepareInterfaceForUserChoosingTextToInsert`
+        // is called instead.
+        vaultAutofillViewModel.show(feature: .unimplemented(#function))
     }
     
     /*
@@ -109,8 +100,12 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
     override func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
-        // Unused, only for passwords and passkeys
-        // See prepareOneTimeCodeCredentialList
+        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+    }
+
+    override func prepareInterfaceForUserChoosingTextToInsert() {
+        // This is the UI that appears when the user chooses to "Autofill" a "Password" with Vault.
+        vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 }
 

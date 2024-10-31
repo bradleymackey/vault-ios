@@ -6,7 +6,8 @@ import Foundation
 public final class VaultAutofillViewModel {
     public enum DisplayedFeature: Equatable {
         case setupConfiguration
-        case showCodeSelector([CredentialRequest])
+        case showAllCodesSelector
+        case unimplemented(String)
     }
 
     private(set) var feature: DisplayedFeature?

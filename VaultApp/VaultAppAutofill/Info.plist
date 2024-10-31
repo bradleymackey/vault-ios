@@ -12,6 +12,8 @@
 				<true/>
 				<key>ProvidesPasskeys</key>
 				<false/>
+				<key>ProvidesPasswords</key>
+				<false/>
 				<key>ProvidesTextToInsert</key>
 				<true/>
 			</dict>
