@@ -1,7 +1,16 @@
 import Foundation
+import Combine
 
 @MainActor
 @Observable
-public final class VaultAutofillConfigurationViewModel {
-    public init() {}
+final class VaultAutofillConfigurationViewModel {
+    private let dismissSubject: PassthroughSubject<Void, Never>
+    
+    init(dismissSubject: PassthroughSubject<Void, Never>) {
+        self.dismissSubject = dismissSubject
+    }
+    
+    func dismiss() {
+        dismissSubject.send()
+    }
 }

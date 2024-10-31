@@ -1,17 +1,37 @@
 import AuthenticationServices
 import SwiftUI
 import VaultiOSAutofill
+import Combine
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
+    private let vaultAutofillEntrypointViewModel: VaultAutofillEntrypointViewModel
+    private var cancellables = Set<AnyCancellable>()
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        self.vaultAutofillEntrypointViewModel = VaultAutofillEntrypointViewModel()
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let viewModel = VaultAutofillConfigurationViewModel()
-        let autofillView = VaultAutofillConfigurationView(viewModel: viewModel)
-        let hosting = UIHostingController(rootView: autofillView)
+        let entrypointView = VaultAutofillEntrypointView(viewModel: vaultAutofillEntrypointViewModel)
+        let hosting = UIHostingController(rootView: entrypointView)
         addChild(hosting)
         view.addConstrained(subview: hosting.view)
         hosting.didMove(toParent: self)
+        setupBindings()
+    }
+    
+    private func setupBindings() {
+        vaultAutofillEntrypointViewModel.configurationDismissPublisher.sink { [weak self] in
+            self?.extensionContext.completeExtensionConfigurationRequest()
+        }.store(in: &cancellables)
     }
     
     // This function is called when autofill is initially enabled.
@@ -20,7 +40,7 @@ final class CredentialProviderViewController: ASCredentialProviderViewController
     //
     // It's triggered by the "ASCredentialProviderExtensionShowsConfigurationUI" key in the Info.plist
     override func prepareInterfaceForExtensionConfiguration() {
-//        extensionContext.completeExtensionConfigurationRequest()
+        vaultAutofillEntrypointViewModel.show(feature: .setupConfiguration)
     }
 
     /*! @abstract Prepare the view controller to show a list of one time code credentials.
