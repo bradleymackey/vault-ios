@@ -27,9 +27,9 @@
   "testTargets" : [
     {
       "target" : {
-        "containerPath" : "container:..\/Vault",
-        "identifier" : "VaultAutofillProviderTests",
-        "name" : "VaultAutofillProviderTests"
+        "containerPath" : "container:",
+        "identifier" : "VaultiOSAutofillTests",
+        "name" : "VaultiOSAutofillTests"
       }
     }
   ],
