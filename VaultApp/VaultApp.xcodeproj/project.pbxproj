@@ -11,7 +11,7 @@
 		1C2856652ADFF39800DA4AA9 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 1C1317FE2AD75008006F14F5 /* Preview Assets.xcassets */; };
 		1C45B07C2ADFE8BE00197B32 /* VaultAppMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */; };
 		1C58F2F32AE5764100962BAB /* VaultiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1C58F2F22AE5764100962BAB /* VaultiOS */; };
-		1C8B89EF2CD25B7D00F3D340 /* VaultAutofillProvider in Frameworks */ = {isa = PBXBuildFile; productRef = 1C8B89EE2CD25B7D00F3D340 /* VaultAutofillProvider */; };
+		1C8B89F52CD3759400F3D340 /* VaultiOSAutofill in Frameworks */ = {isa = PBXBuildFile; productRef = 1C8B89F42CD3759400F3D340 /* VaultiOSAutofill */; };
 		1CBE0CCD2CD229FF000EA09D /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBE0CCC2CD229FF000EA09D /* AuthenticationServices.framework */; };
 		1CBE0CD82CD229FF000EA09D /* VaultAppAutofill.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
@@ -70,8 +70,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				1C8B89EF2CD25B7D00F3D340 /* VaultAutofillProvider in Frameworks */,
 				1CBE0CCD2CD229FF000EA09D /* AuthenticationServices.framework in Frameworks */,
+				1C8B89F52CD3759400F3D340 /* VaultiOSAutofill in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -153,7 +153,7 @@
 			);
 			name = VaultAppAutofill;
 			packageProductDependencies = (
-				1C8B89EE2CD25B7D00F3D340 /* VaultAutofillProvider */,
+				1C8B89F42CD3759400F3D340 /* VaultiOSAutofill */,
 			);
 			productName = VaultAppAutofill;
 			productReference = 1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */;
@@ -544,9 +544,9 @@
 			isa = XCSwiftPackageProductDependency;
 			productName = VaultiOS;
 		};
-		1C8B89EE2CD25B7D00F3D340 /* VaultAutofillProvider */ = {
+		1C8B89F42CD3759400F3D340 /* VaultiOSAutofill */ = {
 			isa = XCSwiftPackageProductDependency;
-			productName = VaultAutofillProvider;
+			productName = VaultiOSAutofill;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

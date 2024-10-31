@@ -1,14 +1,13 @@
 import AuthenticationServices
 import SwiftUI
-import VaultAutofillProvider
+import VaultiOSAutofill
 
 final class CredentialProviderViewController: ASCredentialProviderViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let autofillView = VaultAutofillView(dismiss: { [weak self] in
-            self?.extensionContext.completeExtensionConfigurationRequest()
-        })
+        let viewModel = VaultAutofillConfigurationViewModel()
+        let autofillView = VaultAutofillConfigurationView(viewModel: viewModel)
         let hosting = UIHostingController(rootView: autofillView)
         addChild(hosting)
         view.addConstrained(subview: hosting.view)

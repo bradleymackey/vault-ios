@@ -8,7 +8,7 @@ import VaultSettings
 /// Publishes when a copy is performed to the pasteboard.
 @MainActor
 @Observable
-final class Pasteboard {
+public final class Pasteboard {
     private let systemPasteboard: any SystemPasteboard
     private let didPasteSubject = PassthroughSubject<Void, Never>()
     private let localSettings: LocalSettings

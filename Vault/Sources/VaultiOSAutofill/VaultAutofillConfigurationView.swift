@@ -1,10 +1,10 @@
 import Foundation
 import SwiftUI
 
-public struct VaultAutofillView: View {
-    var dismiss: () -> Void
-    public init(dismiss: @escaping () -> Void) {
-        self.dismiss = dismiss
+public struct VaultAutofillConfigurationView: View {
+    @State private var viewModel: VaultAutofillConfigurationViewModel
+    public init(viewModel: VaultAutofillConfigurationViewModel) {
+        self.viewModel = viewModel
     }
 
     public var body: some View {
@@ -15,7 +15,7 @@ public struct VaultAutofillView: View {
                 Text("Only 2FA codes must be visible to autofill.")
                 Text("This means locked, hidden or other protected codes will not be offered for autofilling.")
                 Button {
-                    dismiss()
+//                    dismiss()
                 } label: {
                     Text("OK")
                 }

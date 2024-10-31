@@ -7,39 +7,40 @@ import VaultSettings
 /// The root entrypoint for the vault application.
 ///
 /// This is the composition root of the application.
-enum VaultRoot {
+public enum VaultRoot {
     // MARK: - Primitives
 
     @MainActor
-    static let defaults: Defaults = .init(userDefaults: .standard)
+    public static let defaults: Defaults = .init(userDefaults: .standard)
 
     @MainActor
-    static let localSettings: LocalSettings = .init(defaults: defaults)
+    public static let localSettings: LocalSettings = .init(defaults: defaults)
 
-    static let timer: some IntervalTimer = IntervalTimerImpl()
+    public static let timer: some IntervalTimer = IntervalTimerImpl()
 
-    static let clock: some EpochClock = EpochClockImpl()
-
-    @MainActor
-    static let fileManager: FileManager = .default
+    public static let clock: some EpochClock = EpochClockImpl()
 
     @MainActor
-    static let pasteboard: Pasteboard = .init(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
+    public static let fileManager: FileManager = .default
+
+    @MainActor
+    public static let pasteboard: Pasteboard = .init(SystemPasteboardImpl(clock: clock), localSettings: localSettings)
 
     // MARK: - Stores
 
-    static let keychain: Keychain = .default
+    public static let keychain: Keychain = .default
 
-    static let secureStorage: some SecureStorage = SecureStorageImpl(keychain: keychain)
+    public static let secureStorage: some SecureStorage = SecureStorageImpl(keychain: keychain)
 
     @MainActor
-    static let vaultStore: PersistedLocalVaultStore = PersistedLocalVaultStoreFactory(fileManager: fileManager)
+    public static let vaultStore: PersistedLocalVaultStore = PersistedLocalVaultStoreFactory(fileManager: fileManager)
         .makeVaultStore()
 
-    static let backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreImpl(secureStorage: secureStorage)
+    public static let backupPasswordStore: some BackupPasswordStore =
+        BackupPasswordStoreImpl(secureStorage: secureStorage)
 
     @MainActor
-    static let vaultDataModel: VaultDataModel = .init(
+    public static let vaultDataModel: VaultDataModel = .init(
         vaultStore: vaultStore,
         vaultTagStore: vaultStore,
         vaultImporter: vaultStore,
@@ -106,7 +107,7 @@ enum VaultRoot {
     // MARK: - Misc
 
     @MainActor
-    static let vaultKeyDeriverFactory: some VaultKeyDeriverFactory = VaultKeyDeriverFactoryImpl()
+    public static let vaultKeyDeriverFactory: some VaultKeyDeriverFactory = VaultKeyDeriverFactoryImpl()
 
     @MainActor
     static let backupEventLogger: some BackupEventLogger = BackupEventLoggerImpl(defaults: defaults, clock: clock)
@@ -114,7 +115,7 @@ enum VaultRoot {
     static let encryptedVaultDecoder: some EncryptedVaultDecoder = EncryptedVaultDecoderImpl()
 
     @MainActor
-    static let deviceAuthenticationService: DeviceAuthenticationService = .init(policy: .default)
+    public static let deviceAuthenticationService: DeviceAuthenticationService = .init(policy: .default)
 
     @MainActor
     static let vaultInjector: VaultInjector = .init(
