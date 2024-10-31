@@ -34,7 +34,9 @@ public final class PersistedLocalVaultStoreFactory {
     }
 
     private func getDocumentDirectory() throws -> URL {
-        if let documentDirectory = fileManager.urls(for: .documentDirectory, in: .userDomainMask).first {
+        if let documentDirectory = fileManager
+            .containerURL(forSecurityApplicationGroupIdentifier: "group.dev.mcky.vault.group")
+        {
             return documentDirectory
         } else {
             throw NoUserDocumentDirectory()
