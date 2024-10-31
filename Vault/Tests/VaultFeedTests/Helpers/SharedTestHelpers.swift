@@ -99,6 +99,8 @@ func anySecureNote(
 
 func anyOTPAuthCode(
     type: OTPAuthType = .totp(),
+    algorithm: OTPAuthAlgorithm = .default,
+    digits: OTPAuthDigits = .default,
     accountName: String = "",
     issuerName: String = ""
 ) -> OTPAuthCode {
@@ -107,6 +109,8 @@ func anyOTPAuthCode(
         type: type,
         data: .init(
             secret: .init(data: randomData, format: .base32),
+            algorithm: algorithm,
+            digits: digits,
             accountName: accountName,
             issuer: issuerName
         )
@@ -160,7 +164,9 @@ func anyVaultItemMetadata(
     tags: Set<Identifier<VaultItemTag>> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil,
-    lockState: VaultItemLockState = .notLocked
+    killphrase: String? = nil,
+    lockState: VaultItemLockState = .notLocked,
+    color: VaultItemColor? = nil
 ) -> VaultItem.Metadata {
     .init(
         id: id,
@@ -172,8 +178,9 @@ func anyVaultItemMetadata(
         visibility: visibility,
         searchableLevel: searchableLevel,
         searchPassphrase: searchPassphrase,
+        killphrase: killphrase,
         lockState: lockState,
-        color: nil
+        color: color
     )
 }
 
@@ -184,6 +191,7 @@ extension SecureNote {
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
+        killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked
     ) -> VaultItem {
         VaultItem(
@@ -193,6 +201,7 @@ extension SecureNote {
                 tags: tags,
                 searchableLevel: searchableLevel,
                 searchPassphrase: searchPassphrase,
+                killphrase: killphrase,
                 lockState: lockState
             ),
             item: .secureNote(self)
@@ -206,7 +215,10 @@ extension OTPAuthCode {
         visibility: VaultItemVisibility = .always,
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String? = nil
+        searchPassphrase: String? = nil,
+        killphrase: String? = nil,
+        lockState: VaultItemLockState = .notLocked,
+        color: VaultItemColor? = nil
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -214,7 +226,10 @@ extension OTPAuthCode {
                 visibility: visibility,
                 tags: tags,
                 searchableLevel: searchableLevel,
-                searchPassphrase: searchPassphrase
+                searchPassphrase: searchPassphrase,
+                killphrase: killphrase,
+                lockState: lockState,
+                color: color
             ),
             item: .otpCode(self)
         )

@@ -26,7 +26,8 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 tags: tags,
                 visibility: .always,
                 searchableLevel: .onlyTitle,
-                searchPassphrase: "",
+                searchPassphrase: "searchme",
+                killphrase: "killme",
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
@@ -46,6 +47,8 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
+        XCTAssertEqual(encodedItem.searchPassphrase, "searchme")
+        XCTAssertEqual(encodedItem.killphrase, "killme")
         XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
         XCTAssertEqual(encodedItem.item.noteData?.format, .markdown)
@@ -78,6 +81,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
+                killphrase: "killme",
                 lockState: .lockedWithNativeSecurity,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
@@ -94,6 +98,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "hello")
+        XCTAssertEqual(encodedItem.killphrase, "killme")
         XCTAssertEqual(encodedItem.userDescription, description)
         XCTAssertEqual(encodedItem.lockState, .lockedWithNativeSecurity)
         XCTAssertEqual(encodedItem.tags, [])
@@ -136,6 +141,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
+                killphrase: "killme",
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3)
             ),
@@ -152,6 +158,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .full)
         XCTAssertEqual(encodedItem.searchPassphrase, "test")
+        XCTAssertEqual(encodedItem.killphrase, "killme")
         XCTAssertEqual(encodedItem.relativeOrder, .min)
         XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tags, [])
@@ -172,7 +179,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
     func test_encode_missingColor() {
         let sut = makeSUT()
 
-        let code1 = anyOTPVaultItem(color: nil)
+        let code1 = anyOTPAuthCode().wrapInAnyVaultItem(color: nil)
         let encoded1 = sut.encode(storedItem: code1)
         XCTAssertNil(encoded1.tintColor, "No encoded color, it should be nil")
     }
@@ -180,15 +187,15 @@ final class VaultBackupItemEncoderTests: XCTestCase {
     func test_encode_otpAlgorithmTypes() {
         let sut = makeSUT()
 
-        let code1 = anyOTPVaultItem(algorithm: .sha1)
+        let code1 = anyOTPAuthCode(algorithm: .sha1).wrapInAnyVaultItem()
         let encoded1 = sut.encode(storedItem: code1)
         XCTAssertEqual(encoded1.item.codeData?.algorithm, "SHA1")
 
-        let code2 = anyOTPVaultItem(algorithm: .sha256)
+        let code2 = anyOTPAuthCode(algorithm: .sha256).wrapInAnyVaultItem()
         let encoded2 = sut.encode(storedItem: code2)
         XCTAssertEqual(encoded2.item.codeData?.algorithm, "SHA256")
 
-        let code3 = anyOTPVaultItem(algorithm: .sha512)
+        let code3 = anyOTPAuthCode(algorithm: .sha512).wrapInAnyVaultItem()
         let encoded3 = sut.encode(storedItem: code3)
         XCTAssertEqual(encoded3.item.codeData?.algorithm, "SHA512")
     }
@@ -199,35 +206,6 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 extension VaultBackupItemEncoderTests {
     private func makeSUT() -> VaultBackupItemEncoder {
         VaultBackupItemEncoder()
-    }
-
-    private func anyOTPVaultItem(algorithm: OTPAuthAlgorithm = .sha1, color: VaultItemColor? = nil) -> VaultItem {
-        let code = OTPAuthCode(
-            type: .hotp(counter: 69),
-            data: .init(
-                secret: .empty(),
-                algorithm: algorithm,
-                digits: .init(value: 8),
-                accountName: "my account name",
-                issuer: "my issuer"
-            )
-        )
-        return VaultItem(
-            metadata: .init(
-                id: Identifier<VaultItem>(),
-                created: Date(),
-                updated: Date(),
-                relativeOrder: .min,
-                userDescription: "any",
-                tags: [],
-                visibility: .always,
-                searchableLevel: .full,
-                searchPassphrase: "",
-                lockState: .notLocked,
-                color: color
-            ),
-            item: .otpCode(code)
-        )
     }
 }
 

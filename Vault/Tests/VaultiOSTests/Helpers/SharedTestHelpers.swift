@@ -51,6 +51,7 @@ func anyVaultItemMetadata(
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: "",
+        killphrase: "",
         lockState: lockState,
         color: .black
     )
@@ -84,6 +85,7 @@ func anyOTPVaultItem(
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
+            killphrase: "",
             lockState: .notLocked,
             color: color
         ),
@@ -146,6 +148,7 @@ func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> Vaul
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: nil,
+        killphrase: nil,
         lockState: .notLocked,
         color: nil
     )

@@ -34,6 +34,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )
@@ -91,6 +92,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked
         )
@@ -98,11 +100,13 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         edits.accountNameTitle = "new account name"
         edits.description = "new description"
         edits.searchPassphrase = "new pass"
+        edits.killphrase = "new kill"
 
         let exp = expectation(description: "Wait for update")
         store.updateHandler = { _, data in
             XCTAssertEqual(data.userDescription, "new description")
-            XCTAssertEqual(data.searchPassphase, "new pass")
+            XCTAssertEqual(data.searchPassphrase, "new pass")
+            XCTAssertEqual(data.killphrase, "new kill")
             switch data.item {
             case let .otpCode(otpCode):
                 XCTAssertEqual(otpCode.data.accountName, "new account name")
@@ -174,6 +178,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         initialEdits.contents = "first line\nsecond line"
         initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
+        initialEdits.killphrase = "this is kill"
         initialEdits.lockState = .lockedWithNativeSecurity
 
         let exp = expectation(description: "Wait for creation")
@@ -182,7 +187,8 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             XCTAssertEqual(data.userDescription, "second line")
             XCTAssertEqual(data.visibility, .onlySearch)
             XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
-            XCTAssertEqual(data.searchPassphase, "pass")
+            XCTAssertEqual(data.searchPassphrase, "pass")
+            XCTAssertEqual(data.killphrase, "this is kill")
             switch data.item {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "first line")
@@ -227,6 +233,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         edits.contents = "first line\nsecond line"
         edits.viewConfig = .alwaysVisible
         edits.searchPassphrase = "new pass"
+        edits.killphrase = "this kill"
 
         let exp = expectation(description: "Wait for update")
         store.updateHandler = { _, data in
@@ -234,7 +241,8 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             XCTAssertEqual(data.userDescription, "second line")
             XCTAssertEqual(data.visibility, .always)
             XCTAssertEqual(data.searchableLevel, .full)
-            XCTAssertEqual(data.searchPassphase, "new pass")
+            XCTAssertEqual(data.searchPassphrase, "new pass")
+            XCTAssertEqual(data.killphrase, "this kill")
             switch data.item {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "first line")
@@ -318,6 +326,7 @@ extension VaultDataModelEditorAdapterTests {
             description: "desc",
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            killphrase: "",
             tags: [],
             lockState: .notLocked,
             color: nil

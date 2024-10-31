@@ -39,7 +39,8 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             tags: metadata.tags,
             visibility: metadata.visibility,
             searchableLevel: metadata.searchableLevel,
-            searchPassphase: metadata.searchPassphrase,
+            searchPassphrase: metadata.searchPassphrase,
+            killphrase: metadata.killphrase,
             lockState: metadata.lockState
         )
     }
@@ -106,6 +107,8 @@ extension VaultItem {
         public var searchableLevel: VaultItemSearchableLevel
         public var tags: Set<Identifier<VaultItemTag>>
         public var searchPassphrase: String?
+        /// The phrase that, when entered, will immediately delete this item
+        public var killphrase: String?
         public var lockState: VaultItemLockState
         /// The color tint for this item.
         public var color: VaultItemColor?
@@ -120,6 +123,7 @@ extension VaultItem {
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
+            killphrase: String?,
             lockState: VaultItemLockState,
             color: VaultItemColor?
         ) {
@@ -132,6 +136,7 @@ extension VaultItem {
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphrase = searchPassphrase
+            self.killphrase = killphrase
             self.lockState = lockState
             self.color = color
         }
@@ -148,7 +153,8 @@ extension VaultItem {
         public var tags: Set<Identifier<VaultItemTag>>
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
-        public var searchPassphase: String?
+        public var searchPassphrase: String?
+        public var killphrase: String?
         public var lockState: VaultItemLockState
 
         public init(
@@ -159,7 +165,8 @@ extension VaultItem {
             tags: Set<Identifier<VaultItemTag>>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
-            searchPassphase: String?,
+            searchPassphrase: String?,
+            killphrase: String?,
             lockState: VaultItemLockState
         ) {
             self.relativeOrder = relativeOrder
@@ -169,7 +176,8 @@ extension VaultItem {
             self.tags = tags
             self.visibility = visibility
             self.searchableLevel = searchableLevel
-            self.searchPassphase = searchPassphase
+            self.searchPassphrase = searchPassphrase
+            self.killphrase = killphrase
             self.lockState = lockState
         }
     }

@@ -213,6 +213,7 @@ public struct VaultItemFeedView<
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
+                killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green)
             ),

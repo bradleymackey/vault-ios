@@ -65,7 +65,8 @@ extension PersistedVaultItemEncoder {
             userDescription: newData.userDescription,
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
-            searchPassphrase: newData.searchPassphase,
+            searchPassphrase: newData.searchPassphrase,
+            killphrase: newData.killphrase,
             lockState: encodeLockState(state: newData.lockState),
             color: newData.color.flatMap { color in
                 .init(red: color.red, green: color.green, blue: color.blue)

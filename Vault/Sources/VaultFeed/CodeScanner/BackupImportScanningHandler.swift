@@ -84,6 +84,7 @@ public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHa
                         visibility: .always,
                         searchableLevel: .full,
                         searchPassphrase: nil,
+                        killphrase: nil,
                         lockState: .notLocked,
                         color: nil
                     ),

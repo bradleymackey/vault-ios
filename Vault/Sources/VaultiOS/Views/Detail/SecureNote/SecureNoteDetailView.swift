@@ -338,6 +338,7 @@ struct SecureNoteDetailView: View {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
+            killphrase: "",
             lockState: .notLocked,
             color: nil
         ),

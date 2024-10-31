@@ -21,7 +21,8 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
             tags: initialEdits.tags,
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
-            searchPassphase: initialEdits.searchPassphrase,
+            searchPassphrase: initialEdits.searchPassphrase,
+            killphrase: initialEdits.killphrase,
             lockState: initialEdits.lockState
         )
 
@@ -43,7 +44,8 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
                 tags: edits.tags,
                 visibility: edits.viewConfig.visibility,
                 searchableLevel: edits.viewConfig.searchableLevel,
-                searchPassphase: edits.searchPassphrase,
+                searchPassphrase: edits.searchPassphrase,
+                killphrase: edits.killphrase,
                 lockState: edits.lockState
             )
         )
@@ -69,7 +71,8 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             tags: initialEdits.tags,
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
-            searchPassphase: initialEdits.searchPassphrase,
+            searchPassphrase: initialEdits.searchPassphrase,
+            killphrase: initialEdits.killphrase,
             lockState: initialEdits.lockState
         )
 
@@ -86,7 +89,8 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             tags: edits.tags,
             visibility: edits.viewConfig.visibility,
             searchableLevel: edits.viewConfig.searchableLevel,
-            searchPassphase: edits.searchPassphrase,
+            searchPassphrase: edits.searchPassphrase,
+            killphrase: edits.killphrase,
             lockState: edits.lockState
         )
 

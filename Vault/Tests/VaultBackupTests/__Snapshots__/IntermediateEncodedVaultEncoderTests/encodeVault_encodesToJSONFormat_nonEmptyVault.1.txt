@@ -13,6 +13,7 @@
           }
         }
       },
+      "killphrase" : "killme",
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 0,
       "search_passphrase" : "searchphrase",
@@ -64,8 +65,10 @@
           }
         }
       },
+      "killphrase" : "kill3",
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 9999,
+      "search_passphrase" : "search3",
       "searchable_level" : "ONLY_TITLE",
       "tags" : [
         "493DF342-E537-4722-B6DC-6430A1413E34"
