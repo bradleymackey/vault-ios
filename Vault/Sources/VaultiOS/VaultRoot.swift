@@ -33,8 +33,18 @@ public enum VaultRoot {
     public static let secureStorage: some SecureStorage = SecureStorageImpl(keychain: keychain)
 
     @MainActor
-    public static let vaultStore: PersistedLocalVaultStore = PersistedLocalVaultStoreFactory(fileManager: fileManager)
-        .makeVaultStore()
+    static let vaultStorageDirectory: URL = {
+        let groupID = "group.dev.mcky.vault.group"
+        guard let url = fileManager.containerURL(forSecurityApplicationGroupIdentifier: groupID) else {
+            fatalError("Unable to access the provided directory")
+        }
+        return url
+    }()
+
+    @MainActor
+    public static let vaultStore: PersistedLocalVaultStore =
+        PersistedLocalVaultStoreFactory(storageDirectory: vaultStorageDirectory)
+            .makeVaultStore()
 
     public static let backupPasswordStore: some BackupPasswordStore =
         BackupPasswordStoreImpl(secureStorage: secureStorage)
