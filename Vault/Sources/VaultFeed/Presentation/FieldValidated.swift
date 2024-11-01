@@ -54,8 +54,7 @@ extension FieldValidationLogic {
 extension FieldValidationLogic where T == String {
     public static var otpSecretBase32: Self {
         FieldValidationLogic { currentValue in
-            if currentValue.isEmpty { return .invalid }
-            if currentValue.isBlank { return .invalid }
+            guard currentValue.isNotBlank else { return .invalid }
             do {
                 _ = try OTPAuthSecret.base32EncodedString(currentValue)
                 return .valid
@@ -69,10 +68,10 @@ extension FieldValidationLogic where T == String {
 extension FieldValidationLogic where T: StringProtocol {
     public static var stringRequiringContent: Self {
         FieldValidationLogic { currentValue in
-            if currentValue.isEmpty {
+            guard currentValue.isNotEmpty else {
                 return .invalid
             }
-            if currentValue.isBlank {
+            guard currentValue.isNotBlank else {
                 return .error(message: localized(key: "validation.rule.stringRequiringContent.isBlank"))
             }
             return .valid

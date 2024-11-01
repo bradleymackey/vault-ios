@@ -48,7 +48,6 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         vaultAutofillViewModel.cancelRequestPublisher.sink { [weak self] reason in
             let error = switch reason {
             case .userCancelled: ASExtensionError(.userCanceled)
-            case .dataNotAvailable: ASExtensionError(.credentialIdentityNotFound)
             }
             self?.extensionContext.cancelRequest(withError: error)
         }.store(in: &cancellables)

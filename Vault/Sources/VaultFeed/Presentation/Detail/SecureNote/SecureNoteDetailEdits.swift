@@ -64,7 +64,7 @@ public struct SecureNoteDetailEdits: EditableState {
         let firstLine = contents
             .split(separator: "\n")
             .lazy
-            .filter { !$0.isBlank }
+            .filter(\.isNotBlank)
             .first
         return String(firstLine ?? "")
     }
@@ -74,7 +74,7 @@ public struct SecureNoteDetailEdits: EditableState {
         let secondLine = contents
             .split(separator: "\n")
             .lazy
-            .filter { !$0.isBlank }
+            .filter(\.isNotBlank)
             .dropFirst()
             .first
         return String(secondLine ?? "")

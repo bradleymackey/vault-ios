@@ -303,7 +303,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             .listRowBackground(EmptyView())
         } footer: {
             VStack(alignment: .center, spacing: 24) {
-                if !viewModel.editingModel.detail.description.isBlank {
+                if viewModel.editingModel.detail.description.isNotBlank {
                     Text(viewModel.editingModel.detail.description)
                         .foregroundStyle(.primary)
                         .textSelection(.enabled)

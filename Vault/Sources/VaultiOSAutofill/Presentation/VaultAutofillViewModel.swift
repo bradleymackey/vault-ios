@@ -14,7 +14,6 @@ final class VaultAutofillViewModel {
 
     enum RequestCancelReason: Equatable {
         case userCancelled
-        case dataNotAvailable
     }
 
     private(set) var feature: DisplayedFeature?
@@ -38,13 +37,14 @@ final class VaultAutofillViewModel {
 
     let textToInsertSubject = PassthroughSubject<String, Never>()
 
-    var textToInsertPublisher: any Publisher<String, Never> {
-        textToInsertSubject
+    var textToInsertPublisher: some Publisher<String, Never> {
+        // Don't insert empty strings.
+        textToInsertSubject.filter(\.isNotBlank)
     }
 
     let cancelRequestSubject = PassthroughSubject<RequestCancelReason, Never>()
 
-    var cancelRequestPublisher: any Publisher<RequestCancelReason, Never> {
+    var cancelRequestPublisher: some Publisher<RequestCancelReason, Never> {
         cancelRequestSubject
     }
 

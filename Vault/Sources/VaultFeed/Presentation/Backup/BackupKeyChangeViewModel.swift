@@ -45,8 +45,7 @@ public final class BackupKeyChangeViewModel {
     }
 
     public var canGenerateNewPassword: Bool {
-        !newPassword.isLoading && passwordConfirmMatches && !newlyEnteredPassword.isBlank && newlyEnteredPassword
-            .isNotEmpty
+        !newPassword.isLoading && passwordConfirmMatches && newlyEnteredPassword.isNotBlank
     }
 
     public var encryptionKeyDeriverSignature: VaultKeyDeriver.Signature {
