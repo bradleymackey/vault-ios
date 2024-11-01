@@ -7,18 +7,10 @@ import VaultFeed
 @MainActor
 struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
     @Test
-    func noCopyHandlers_opensItemDetail() {
-        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [])
-
-        let id = Identifier<VaultItem>.new()
-        #expect(sut.previewActionForVaultItem(id: id) == .openItemDetail(id))
-    }
-
-    @Test
     func copyHandlersNil_opensItemDetail() {
         let handler = VaultItemCopyActionHandlerMock()
         handler.textToCopyForVaultItemHandler = { _ in nil }
-        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [handler, handler])
+        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: handler, handler)
 
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .openItemDetail(id))
@@ -28,7 +20,7 @@ struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
     func copyHandlers_copiesFirstText() {
         let handler1 = VaultItemCopyActionHandlerMock()
         handler1.textToCopyForVaultItemHandler = { _ in .init(text: "hi", requiresAuthenticationToCopy: false) }
-        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [handler1])
+        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: handler1)
 
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .copyText(.init(
@@ -43,7 +35,7 @@ struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
         handler1.textToCopyForVaultItemHandler = { _ in nil }
         let handler2 = VaultItemCopyActionHandlerMock()
         handler2.textToCopyForVaultItemHandler = { _ in .init(text: "hi", requiresAuthenticationToCopy: false) }
-        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [handler1, handler2])
+        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: handler1, handler2)
 
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .copyText(.init(
@@ -58,7 +50,7 @@ struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
         handler1.textToCopyForVaultItemHandler = { _ in .init(text: "first", requiresAuthenticationToCopy: false) }
         let handler2 = VaultItemCopyActionHandlerMock()
         handler2.textToCopyForVaultItemHandler = { _ in .init(text: "hi", requiresAuthenticationToCopy: false) }
-        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [handler1, handler2])
+        let sut = VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: handler1, handler2)
 
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .copyText(.init(

@@ -2,21 +2,24 @@ import Foundation
 import VaultFeed
 
 /// Attempts to perform actions in the order provided, or has no action.
-final class VaultItemPreviewActionHandlerPrefersTextCopy: VaultItemPreviewActionHandler {
-    private let copyHandlers: [any VaultItemCopyActionHandler]
+final class VaultItemPreviewActionHandlerPrefersTextCopy<each C>: VaultItemPreviewActionHandler
+    where repeat each C: VaultItemCopyActionHandler {
+        private let copyHandlers: (repeat each C)
 
-    init(copyHandlers: [any VaultItemCopyActionHandler]) {
-        self.copyHandlers = copyHandlers
-    }
-
-    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        for copyHandler in copyHandlers {
-            if let text = copyHandler.textToCopyForVaultItem(id: id) {
-                return .copyText(text)
-            }
+        init(copyHandlers: repeat each C) {
+            self.copyHandlers = (repeat each copyHandlers)
         }
 
-        // If there's no text to copy, then open the item detail.
-        return .openItemDetail(id)
+        func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
+            for copyHandler in repeat each copyHandlers {
+                if let text = copyHandler.textToCopyForVaultItem(id: id) {
+                    return .copyText(text)
+                } else {
+                    continue
+                }
+            }
+
+            // If there's no text to copy, then open the item detail.
+            return .openItemDetail(id)
+        }
     }
-}

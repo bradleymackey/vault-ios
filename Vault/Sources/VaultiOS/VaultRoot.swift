@@ -68,7 +68,7 @@ public enum VaultRoot {
     /// copying and, failing that, we then open the item detail.
     @MainActor
     static let vaultItemPreviewActionHandler: some VaultItemPreviewActionHandler =
-        VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [vaultItemCopyHandler])
+        VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: vaultItemCopyHandler)
 
     /// Available data sources for providing text to copy.
     @MainActor
