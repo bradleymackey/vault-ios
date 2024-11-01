@@ -3,12 +3,11 @@ import SwiftUI
 import VaultFeed
 
 struct VaultDetailEditView<
-    PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
->: View
-    where PreviewGenerator.PreviewItem == VaultItem.Payload
-{
+    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+>: View {
     var storedItem: VaultItem
     var previewGenerator: PreviewGenerator
+    var copyActionHandler: any VaultItemCopyActionHandler
     var openInEditMode: Bool
     @Binding var navigationPath: NavigationPath
 
@@ -25,6 +24,7 @@ struct VaultDetailEditView<
                 storedMetadata: storedItem.metadata,
                 editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 previewGenerator: previewGenerator,
+                copyActionHandler: copyActionHandler,
                 openInEditMode: openInEditMode,
                 presentationMode: presentationMode
             )

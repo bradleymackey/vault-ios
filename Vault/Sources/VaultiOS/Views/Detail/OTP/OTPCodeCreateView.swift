@@ -5,18 +5,21 @@ import VaultFeed
 
 @MainActor
 struct OTPCodeCreateView<
-    PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
->: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
+    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+>: View {
     var previewGenerator: PreviewGenerator
+    var copyActionHandler: any VaultItemCopyActionHandler
     @Binding var navigationPath: NavigationPath
     @State private var scanner: CodeScanningManager<OTPCodeScanningHandler>
 
     init(
         previewGenerator: PreviewGenerator,
+        copyActionHandler: any VaultItemCopyActionHandler,
         navigationPath: Binding<NavigationPath>,
         intervalTimer: any IntervalTimer
     ) {
         self.previewGenerator = previewGenerator
+        self.copyActionHandler = copyActionHandler
         _navigationPath = navigationPath
         let manager = CodeScanningManager(intervalTimer: intervalTimer, handler: OTPCodeScanningHandler())
         _scanner = .init(wrappedValue: manager)
@@ -75,6 +78,7 @@ struct OTPCodeCreateView<
                     dataModel: dataModel,
                     editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                     previewGenerator: previewGenerator,
+                    copyActionHandler: copyActionHandler,
                     presentationMode: presentationMode
                 )
             case let .cameraResult(scannedCode):
@@ -84,6 +88,7 @@ struct OTPCodeCreateView<
                     dataModel: dataModel,
                     editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                     previewGenerator: previewGenerator,
+                    copyActionHandler: copyActionHandler,
                     presentationMode: presentationMode
                 )
             }

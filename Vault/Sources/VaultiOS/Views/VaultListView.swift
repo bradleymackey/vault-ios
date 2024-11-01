@@ -99,6 +99,7 @@ struct VaultListView<
                     VaultDetailEditView(
                         storedItem: storedCode,
                         previewGenerator: viewGenerator,
+                        copyActionHandler: viewGenerator,
                         openInEditMode: vaultItemFeedState.isEditing,
                         navigationPath: $navigationPath
                     )
@@ -108,6 +109,7 @@ struct VaultListView<
                     VaultDetailCreateView(
                         creatingItem: creatingItem,
                         previewGenerator: viewGenerator,
+                        copyActionHandler: viewGenerator,
                         navigationPath: $navigationPath
                     )
                 }
