@@ -61,13 +61,14 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
     func interactableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<Generator> {
         VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
             guard let copyAction = copyActionHandler.textToCopyForVaultItem(id: id) else {
-                cancelSubject.send(.dataNotAvailable)
+                // ignore
                 return
             }
 
             if copyAction.requiresAuthenticationToCopy {
-                let result = try await authenticationService.authenticate(reason: "Authenticate to access locked data")
-                guard result == .success(.authenticated) else { return }
+                // ignore, authenticated codes cannot be copied due to the authentication UI presenting behind
+                // the autofill UI
+                return
             }
 
             textToInsertSubject.send(copyAction.text)

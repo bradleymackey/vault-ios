@@ -14,7 +14,6 @@ final class VaultAutofillViewModel {
 
     enum RequestCancelReason: Equatable {
         case userCancelled
-        case dataNotAvailable
     }
 
     private(set) var feature: DisplayedFeature?
