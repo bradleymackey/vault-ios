@@ -56,48 +56,6 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_previewActionForVaultItem_isNilIfCacheEmpty() {
-        let sut = makeSUT()
-
-        let code = sut.previewActionForVaultItem(id: .new())
-
-        XCTAssertNil(code)
-    }
-
-    @MainActor
-    func test_textToCopyForVaultItem_usesRepository() {
-        let repository = TOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in .init(text: "123", requiresAuthenticationToCopy: false) }
-        let sut = makeSUT(repository: repository)
-
-        let text = sut.textToCopyForVaultItem(id: Identifier<VaultItem>())
-
-        XCTAssertEqual(text, .init(text: "123", requiresAuthenticationToCopy: false))
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_isNilIfNoDataFromRepository() {
-        let repository = TOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in nil }
-        let sut = makeSUT(repository: repository)
-
-        let action = sut.previewActionForVaultItem(id: Identifier<VaultItem>())
-
-        XCTAssertNil(action)
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_isCopyTextIfThereIsTextToCopy() {
-        let repository = TOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in .init(text: "456", requiresAuthenticationToCopy: false) }
-        let sut = makeSUT(repository: repository)
-
-        let action = sut.previewActionForVaultItem(id: Identifier<VaultItem>())
-
-        XCTAssertEqual(action, .copyText(.init(text: "456", requiresAuthenticationToCopy: false)))
-    }
-
-    @MainActor
     func test_scenePhaseDidChange_activeRestartsAllTimers() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let repository = TOTPPreviewViewRepositoryMock()

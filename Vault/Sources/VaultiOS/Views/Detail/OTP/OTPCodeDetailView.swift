@@ -3,11 +3,10 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler>: View
-    where PreviewGenerator.PreviewItem == VaultItem.Payload
-{
+struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>>: View {
     @State private var viewModel: OTPCodeDetailViewModel
     private var previewGenerator: PreviewGenerator
+    private var copyActionHandler: any VaultItemCopyActionHandler
     @Binding var navigationPath: NavigationPath
     private var presentationMode: Binding<PresentationMode>?
 
@@ -32,6 +31,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         storedMetadata: VaultItem.Metadata,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
+        copyActionHandler: any VaultItemCopyActionHandler,
         openInEditMode: Bool,
         presentationMode: Binding<PresentationMode>?
     ) {
@@ -42,6 +42,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             editor: editor
         ))
         self.previewGenerator = previewGenerator
+        self.copyActionHandler = copyActionHandler
         self.presentationMode = presentationMode
         _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
 
@@ -56,6 +57,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         dataModel: VaultDataModel,
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
+        copyActionHandler: any VaultItemCopyActionHandler,
         presentationMode: Binding<PresentationMode>?
     ) {
         _navigationPath = navigationPath
@@ -65,6 +67,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
             editor: editor
         ))
         self.previewGenerator = previewGenerator
+        self.copyActionHandler = copyActionHandler
         self.presentationMode = presentationMode
         _selectedColor = .init(initialValue: VaultItemColor.default.color)
 
@@ -416,7 +419,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
 
     func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {
         VaultItemOnTapDecoratorViewGenerator(generator: previewGenerator) { id in
-            if let copyAction = previewGenerator.textToCopyForVaultItem(id: id) {
+            if let copyAction = copyActionHandler.textToCopyForVaultItem(id: id) {
                 if copyAction.requiresAuthenticationToCopy {
                     let result = try await authenticationService.authenticate(reason: "Copy locked text")
                     guard result == .success(.authenticated) else { return }
@@ -458,6 +461,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator & Vault
         ),
         editor: OTPCodeDetailEditorMock(),
         previewGenerator: VaultItemPreviewViewGeneratorMock(),
+        copyActionHandler: VaultItemCopyActionHandlerMock(),
         openInEditMode: false,
         presentationMode: nil
     )

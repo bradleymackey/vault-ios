@@ -6,12 +6,14 @@ import VaultSettings
 /// Entrypoint scene for the vault app.
 @MainActor
 public struct VaultMainScene: Scene {
+    @Environment(\.scenePhase) private var scenePhase
     @State private var pasteboard: Pasteboard = VaultRoot.pasteboard
     @State private var localSettings: LocalSettings = VaultRoot.localSettings
-    @State private var isShowingCopyPaste = false
     @State private var deviceAuthenticationService = VaultRoot.deviceAuthenticationService
     @State private var vaultDataModel: VaultDataModel = VaultRoot.vaultDataModel
     @State private var injector: VaultInjector = VaultRoot.vaultInjector
+
+    @State private var isShowingCopyPaste = false
     @State private var selectedView: SidebarItem? = .items
 
     enum SidebarItem: Hashable {
@@ -21,8 +23,6 @@ public struct VaultMainScene: Scene {
         case settings
         case demos
     }
-
-    @Environment(\.scenePhase) private var scenePhase
 
     private let toastOptions = SimpleToastOptions(
         hideAfter: 1.5,
@@ -72,11 +72,9 @@ public struct VaultMainScene: Scene {
                 case .items:
                     VaultListView(
                         localSettings: localSettings,
-                        viewGenerator: GenericVaultItemPreviewViewGenerator(
-                            totpGenerator: VaultRoot.totpPreviewViewGenerator,
-                            hotpGenerator: VaultRoot.hotpPreviewViewGenerator,
-                            noteGenerator: VaultRoot.secureNotePreviewViewGenerator
-                        )
+                        viewGenerator: VaultRoot.genericVaultItemPreviewViewGenerator,
+                        copyActionHandler: VaultRoot.vaultItemCopyHandler,
+                        previewActionHandler: VaultRoot.vaultItemPreviewActionHandler
                     )
                     .navigationBarTitleDisplayMode(.inline)
                 case .tags:

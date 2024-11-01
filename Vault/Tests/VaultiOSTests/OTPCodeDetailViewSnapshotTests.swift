@@ -29,6 +29,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
             presentationMode: .none
         )
@@ -58,6 +59,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
             presentationMode: .none
         )
@@ -87,6 +89,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
             presentationMode: .none
         )
@@ -116,6 +119,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
             presentationMode: .none
         )
@@ -145,6 +149,7 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
+            copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: true,
             presentationMode: .none
         )

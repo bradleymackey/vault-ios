@@ -3,10 +3,11 @@ import SwiftUI
 import VaultFeed
 
 struct VaultDetailCreateView<
-    PreviewGenerator: VaultItemPreviewViewGenerator & VaultItemCopyActionHandler
->: View where PreviewGenerator.PreviewItem == VaultItem.Payload {
+    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+>: View {
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator
+    var copyActionHandler: any VaultItemCopyActionHandler
     @Binding var navigationPath: NavigationPath
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(VaultInjector.self) private var injector
@@ -16,6 +17,7 @@ struct VaultDetailCreateView<
         case .otpCode:
             OTPCodeCreateView(
                 previewGenerator: previewGenerator,
+                copyActionHandler: copyActionHandler,
                 navigationPath: $navigationPath,
                 intervalTimer: injector.intervalTimer
             )

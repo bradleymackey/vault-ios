@@ -61,16 +61,25 @@ public enum VaultRoot {
 
     // MARK: - Previews
 
+    /// Performs the actions in order if it is able.
+    ///
+    /// We prefer copying text over opening item details.
+    /// Therefore, we first of all try to copy text from the available repositories that support
+    /// copying and, failing that, we then open the item detail.
     @MainActor
-    static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
+    static let vaultItemPreviewActionHandler: some VaultItemPreviewActionHandler =
+        VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [vaultItemCopyHandler])
+
+    /// Available data sources for providing text to copy.
+    @MainActor
+    public static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
         GenericVaultItemCopyActionHandler(childHandlers: [
-            secureNotePreviewViewGenerator,
-            totpPreviewViewGenerator,
-            hotpPreviewViewGenerator,
+            totpPreviewRepository,
+            hotpPreviewRepository,
         ])
 
     @MainActor
-    static let secureNotePreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<SecureNote> =
+    static let secureNotePreviewViewGenerator: some VaultItemPreviewViewGenerator<SecureNote> =
         SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
 
     @MainActor
@@ -91,10 +100,7 @@ public enum VaultRoot {
     }()
 
     @MainActor
-    public static let genericVaultItemPreviewViewGenerator: some (
-        VaultItemPreviewViewGenerator<VaultItem.Payload> &
-            VaultItemCopyActionHandler
-    ) =
+    public static let genericVaultItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<VaultItem.Payload> =
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totpPreviewViewGenerator,
             hotpGenerator: hotpPreviewViewGenerator,
@@ -102,7 +108,7 @@ public enum VaultRoot {
         )
 
     @MainActor
-    static let totpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<TOTPAuthCode> =
+    static let totpPreviewViewGenerator: some VaultItemPreviewViewGenerator<TOTPAuthCode> =
         TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
             repository: totpPreviewRepository
@@ -119,7 +125,7 @@ public enum VaultRoot {
     }()
 
     @MainActor
-    static let hotpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<HOTPAuthCode> =
+    static let hotpPreviewViewGenerator: some VaultItemPreviewViewGenerator<HOTPAuthCode> =
         HOTPPreviewViewGenerator(
             viewFactory: HOTPPreviewViewFactoryImpl(),
             repository: hotpPreviewRepository
