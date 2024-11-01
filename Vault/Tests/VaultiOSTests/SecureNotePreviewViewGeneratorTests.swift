@@ -28,16 +28,6 @@ final class SecureNotePreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(factory.makeSecureNoteViewCallCount, 1)
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
-
-    @MainActor
-    func test_previewActionForVaultItem_opensItemDetailForGivenID() {
-        let sut = makeSUT()
-        let itemID = Identifier<VaultItem>()
-
-        let action = sut.previewActionForVaultItem(id: itemID)
-
-        XCTAssertEqual(action, .openItemDetail(itemID))
-    }
 }
 
 // MARK: - Helpers

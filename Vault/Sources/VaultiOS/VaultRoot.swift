@@ -62,6 +62,13 @@ public enum VaultRoot {
     // MARK: - Previews
 
     @MainActor
+    static let vaultItemPreviewActionHandler: some VaultItemPreviewActionHandler =
+        GenericVaultItemPreviewActionHandler(childHandlers: [
+            .copyText(vaultItemCopyHandler),
+            .showItemDetail,
+        ])
+
+    @MainActor
     public static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
         GenericVaultItemCopyActionHandler(childHandlers: [
             totpPreviewRepository,
@@ -69,7 +76,7 @@ public enum VaultRoot {
         ])
 
     @MainActor
-    static let secureNotePreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<SecureNote> =
+    static let secureNotePreviewViewGenerator: some VaultItemPreviewViewGenerator<SecureNote> =
         SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
 
     @MainActor
@@ -98,7 +105,7 @@ public enum VaultRoot {
         )
 
     @MainActor
-    static let totpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<TOTPAuthCode> =
+    static let totpPreviewViewGenerator: some VaultItemPreviewViewGenerator<TOTPAuthCode> =
         TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
             repository: totpPreviewRepository
@@ -115,7 +122,7 @@ public enum VaultRoot {
     }()
 
     @MainActor
-    static let hotpPreviewViewGenerator: some ActionableVaultItemPreviewViewGenerator<HOTPAuthCode> =
+    static let hotpPreviewViewGenerator: some VaultItemPreviewViewGenerator<HOTPAuthCode> =
         HOTPPreviewViewGenerator(
             viewFactory: HOTPPreviewViewFactoryImpl(),
             repository: hotpPreviewRepository

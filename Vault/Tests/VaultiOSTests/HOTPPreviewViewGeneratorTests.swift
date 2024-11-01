@@ -49,28 +49,6 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_previewActionForVaultItem_isNilIfNoTextToCopy() {
-        let repository = HOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in nil }
-        let (sut, _) = makeSUT(repository: repository)
-
-        let action = sut.previewActionForVaultItem(id: Identifier<VaultItem>())
-
-        XCTAssertNil(action)
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_isCopyTextWhenReturned() {
-        let repository = HOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in .init(text: "1234", requiresAuthenticationToCopy: false) }
-        let (sut, _) = makeSUT(repository: repository)
-
-        let action = sut.previewActionForVaultItem(id: .new())
-
-        XCTAssertEqual(action, .copyText(.init(text: "1234", requiresAuthenticationToCopy: false)))
-    }
-
-    @MainActor
     func test_scenePhaseDidChange_backgroundExpiresAll() {
         let repository = HOTPPreviewViewRepositoryMock()
         let (sut, _) = makeSUT(repository: repository)

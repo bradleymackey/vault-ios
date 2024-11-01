@@ -50,10 +50,3 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
         repository.restartAllTimers()
     }
 }
-
-extension TOTPPreviewViewGenerator: VaultItemPreviewActionHandler {
-    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        guard let copyAction = repository.textToCopyForVaultItem(id: id) else { return nil }
-        return .copyText(copyAction)
-    }
-}

@@ -4,16 +4,23 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Generator: ActionableVaultItemPreviewViewGenerator<VaultItem.Payload>
+    Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>
 >: View {
     var localSettings: LocalSettings
     var viewGenerator: Generator
     var copyActionHandler: any VaultItemCopyActionHandler
+    var previewActionHandler: any VaultItemPreviewActionHandler
 
-    init(localSettings: LocalSettings, viewGenerator: Generator, copyActionHandler: any VaultItemCopyActionHandler) {
+    init(
+        localSettings: LocalSettings,
+        viewGenerator: Generator,
+        copyActionHandler: any VaultItemCopyActionHandler,
+        previewActionHandler: any VaultItemPreviewActionHandler
+    ) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
         self.copyActionHandler = copyActionHandler
+        self.previewActionHandler = previewActionHandler
     }
 
     @Environment(VaultDataModel.self) private var dataModel
@@ -136,7 +143,7 @@ struct VaultListView<
             if vaultItemFeedState.isEditing {
                 guard let item = dataModel.code(id: id) else { return }
                 modal = .detail(id, item)
-            } else if let previewAction = viewGenerator.previewActionForVaultItem(id: id) {
+            } else if let previewAction = previewActionHandler.previewActionForVaultItem(id: id) {
                 switch previewAction {
                 case let .copyText(copyAction):
                     if copyAction.requiresAuthenticationToCopy {

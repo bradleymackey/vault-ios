@@ -43,12 +43,3 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
         // noop
     }
 }
-
-// MARK: - Conformances
-
-extension HOTPPreviewViewGenerator: VaultItemPreviewActionHandler {
-    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        guard let copyAction = repository.textToCopyForVaultItem(id: id) else { return nil }
-        return .copyText(copyAction)
-    }
-}

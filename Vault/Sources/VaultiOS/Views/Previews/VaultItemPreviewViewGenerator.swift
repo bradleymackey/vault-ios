@@ -2,10 +2,6 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
-/// A `VaultItemPreviewViewGenerator` that is able to perform basic actions.
-typealias ActionableVaultItemPreviewViewGenerator<PreviewItem> = VaultItemPreviewActionHandler &
-    VaultItemPreviewViewGenerator<PreviewItem>
-
 /// @mockable(typealias: PreviewView = AnyView; PreviewItem = VaultItem.Payload)
 @MainActor
 public protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewSceneResponder {
@@ -20,18 +16,6 @@ public protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewScen
 public protocol VaultItemPreviewSceneResponder {
     func scenePhaseDidChange(to scene: ScenePhase)
     func didAppear()
-}
-
-/// Handle a given action after interacting with a vault item.
-@MainActor
-protocol VaultItemPreviewActionHandler {
-    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction?
-}
-
-/// A kind of action that can be taken after interacting with a given vault item.
-enum VaultItemPreviewAction: Equatable {
-    case copyText(VaultTextCopyAction)
-    case openItemDetail(Identifier<VaultItem>)
 }
 
 // MARK: - Mock

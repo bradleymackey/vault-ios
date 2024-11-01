@@ -86,66 +86,6 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(hotp.calledMethods, ["didAppear()"])
         XCTAssertEqual(note.calledMethods, ["didAppear()"])
     }
-
-    @MainActor
-    func test_previewActionForVaultItem_returnsNilIfNoGeneratorCanHandle() {
-        let totp = TOTPGeneratorMock()
-        totp.previewActionForVaultItemValue = nil
-        let hotp = HOTPGeneratorMock()
-        hotp.previewActionForVaultItemValue = nil
-        let note = SecureNoteGeneratorMock()
-        note.previewActionForVaultItemValue = nil
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
-
-        let action = sut.previewActionForVaultItem(id: .new())
-
-        XCTAssertNil(action)
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_returnsIfTOTPCanHandle() {
-        let totp = TOTPGeneratorMock()
-        totp.previewActionForVaultItemValue = .copyText(.init(text: "totp", requiresAuthenticationToCopy: false))
-        let hotp = HOTPGeneratorMock()
-        hotp.previewActionForVaultItemValue = nil
-        let note = SecureNoteGeneratorMock()
-        note.previewActionForVaultItemValue = nil
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
-
-        let action = sut.previewActionForVaultItem(id: .new())
-
-        XCTAssertEqual(action, .copyText(.init(text: "totp", requiresAuthenticationToCopy: false)))
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_returnsIfHOTPCanHandle() {
-        let totp = TOTPGeneratorMock()
-        totp.previewActionForVaultItemValue = nil
-        let hotp = HOTPGeneratorMock()
-        hotp.previewActionForVaultItemValue = .copyText(.init(text: "hotp", requiresAuthenticationToCopy: false))
-        let note = SecureNoteGeneratorMock()
-        note.previewActionForVaultItemValue = nil
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
-
-        let action = sut.previewActionForVaultItem(id: .new())
-
-        XCTAssertEqual(action, .copyText(.init(text: "hotp", requiresAuthenticationToCopy: false)))
-    }
-
-    @MainActor
-    func test_previewActionForVaultItem_returnsIfSecureNoteCanHandle() {
-        let totp = TOTPGeneratorMock()
-        totp.previewActionForVaultItemValue = nil
-        let hotp = HOTPGeneratorMock()
-        hotp.previewActionForVaultItemValue = nil
-        let note = SecureNoteGeneratorMock()
-        note.previewActionForVaultItemValue = .copyText(.init(text: "secure note", requiresAuthenticationToCopy: false))
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
-
-        let action = sut.previewActionForVaultItem(id: .new())
-
-        XCTAssertEqual(action, .copyText(.init(text: "secure note", requiresAuthenticationToCopy: false)))
-    }
 }
 
 // MARK: - Helpers
