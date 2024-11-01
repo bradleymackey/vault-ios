@@ -8,6 +8,9 @@ import FoundationExtensions
 /// @mockable(typealias: Length = Bits256)
 public protocol KeyDeriver<Length>: Sendable {
     associatedtype Length: KeyLength
+    /// Generate a the key using the provided data and parameters.
+    ///
+    /// Note that as key generation might be expensive, you probably want to run this on a background thread.
     func key(password: Data, salt: Data) throws -> KeyData<Length>
     var uniqueAlgorithmIdentifier: String { get }
 }

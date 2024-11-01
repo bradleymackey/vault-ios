@@ -2,6 +2,8 @@ import Foundation
 import FoundationExtensions
 
 /// A key deriver that is composed of a sequence of other `KeyDeriver`s
+///
+/// The output from the first is fed into the second, etc.
 public struct CombinationKeyDeriver<Length: KeyLength>: KeyDeriver {
     private let derivers: [any KeyDeriver<Length>]
 

@@ -12,10 +12,6 @@ public struct ScryptKeyDeriver<Length: KeyLength>: KeyDeriver {
         self.parameters = parameters
     }
 
-    /// Generate a the key using the provided data and parameters.
-    ///
-    /// Key generation is expensive, so this will asynchronously run on a background thread to avoid blocking the
-    /// current thread.
     public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         let engine = try Scrypt(
             password: password.bytes,
