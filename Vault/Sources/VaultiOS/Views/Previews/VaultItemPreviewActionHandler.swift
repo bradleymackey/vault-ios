@@ -12,34 +12,3 @@ enum VaultItemPreviewAction: Equatable {
     case copyText(VaultTextCopyAction)
     case openItemDetail(Identifier<VaultItem>)
 }
-
-final class ShowItemDetailVaultItemPreviewActionHandler: VaultItemPreviewActionHandler {
-    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        .openItemDetail(id)
-    }
-}
-
-extension VaultItemPreviewActionHandler where Self == ShowItemDetailVaultItemPreviewActionHandler {
-    static var showItemDetail: Self { .init() }
-}
-
-final class CopyTextVaultItemPreviewActionHandler: VaultItemPreviewActionHandler {
-    private let copyHandler: any VaultItemCopyActionHandler
-
-    init(copyHandler: any VaultItemCopyActionHandler) {
-        self.copyHandler = copyHandler
-    }
-
-    func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        guard let copy = copyHandler.textToCopyForVaultItem(id: id) else {
-            return nil
-        }
-        return .copyText(copy)
-    }
-}
-
-extension VaultItemPreviewActionHandler where Self == CopyTextVaultItemPreviewActionHandler {
-    static func copyText(_ handler: any VaultItemCopyActionHandler) -> Self {
-        .init(copyHandler: handler)
-    }
-}

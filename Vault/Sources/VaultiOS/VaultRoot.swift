@@ -61,13 +61,16 @@ public enum VaultRoot {
 
     // MARK: - Previews
 
+    /// Performs the actions in order if it is able.
+    ///
+    /// We prefer copying text over opening item details.
+    /// Therefore, we first of all try to copy text from the available repositories that support
+    /// copying and, failing that, we then open the item detail.
     @MainActor
     static let vaultItemPreviewActionHandler: some VaultItemPreviewActionHandler =
-        GenericVaultItemPreviewActionHandler(childHandlers: [
-            .copyText(vaultItemCopyHandler),
-            .showItemDetail,
-        ])
+        VaultItemPreviewActionHandlerPrefersTextCopy(copyHandlers: [vaultItemCopyHandler])
 
+    /// Available data sources for providing text to copy.
     @MainActor
     public static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
         GenericVaultItemCopyActionHandler(childHandlers: [
