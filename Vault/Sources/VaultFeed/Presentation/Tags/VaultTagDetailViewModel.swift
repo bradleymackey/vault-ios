@@ -106,7 +106,7 @@ public final class VaultTagDetailViewModel {
     }
 
     public var isValidToSave: Bool {
-        currentTag.name.isNotEmpty && !currentTag.name.isBlank
+        currentTag.name.isNotBlank
     }
 
     public func save() async {
