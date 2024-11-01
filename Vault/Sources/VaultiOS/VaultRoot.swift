@@ -62,11 +62,10 @@ public enum VaultRoot {
     // MARK: - Previews
 
     @MainActor
-    static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
+    public static let vaultItemCopyHandler: some VaultItemCopyActionHandler =
         GenericVaultItemCopyActionHandler(childHandlers: [
-            secureNotePreviewViewGenerator,
-            totpPreviewViewGenerator,
-            hotpPreviewViewGenerator,
+            totpPreviewRepository,
+            hotpPreviewRepository,
         ])
 
     @MainActor
@@ -91,10 +90,7 @@ public enum VaultRoot {
     }()
 
     @MainActor
-    public static let genericVaultItemPreviewViewGenerator: some (
-        VaultItemPreviewViewGenerator<VaultItem.Payload> &
-            VaultItemCopyActionHandler
-    ) =
+    public static let genericVaultItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<VaultItem.Payload> =
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totpPreviewViewGenerator,
             hotpGenerator: hotpPreviewViewGenerator,

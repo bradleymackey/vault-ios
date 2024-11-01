@@ -76,7 +76,8 @@ public struct VaultMainScene: Scene {
                             totpGenerator: VaultRoot.totpPreviewViewGenerator,
                             hotpGenerator: VaultRoot.hotpPreviewViewGenerator,
                             noteGenerator: VaultRoot.secureNotePreviewViewGenerator
-                        )
+                        ),
+                        copyActionHandler: VaultRoot.vaultItemCopyHandler
                     )
                     .navigationBarTitleDisplayMode(.inline)
                 case .tags:

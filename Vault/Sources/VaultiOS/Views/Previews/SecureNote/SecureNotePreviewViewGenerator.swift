@@ -38,12 +38,8 @@ final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory
     }
 }
 
-extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
+extension SecureNotePreviewViewGenerator: VaultItemPreviewActionHandler {
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         .openItemDetail(id)
-    }
-
-    func textToCopyForVaultItem(id _: Identifier<VaultItem>) -> VaultTextCopyAction? {
-        nil
     }
 }

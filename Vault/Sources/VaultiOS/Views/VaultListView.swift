@@ -8,10 +8,12 @@ struct VaultListView<
 >: View {
     var localSettings: LocalSettings
     var viewGenerator: Generator
+    var copyActionHandler: any VaultItemCopyActionHandler
 
-    init(localSettings: LocalSettings, viewGenerator: Generator) {
+    init(localSettings: LocalSettings, viewGenerator: Generator, copyActionHandler: any VaultItemCopyActionHandler) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
+        self.copyActionHandler = copyActionHandler
     }
 
     @Environment(VaultDataModel.self) private var dataModel
@@ -99,7 +101,7 @@ struct VaultListView<
                     VaultDetailEditView(
                         storedItem: storedCode,
                         previewGenerator: viewGenerator,
-                        copyActionHandler: viewGenerator,
+                        copyActionHandler: copyActionHandler,
                         openInEditMode: vaultItemFeedState.isEditing,
                         navigationPath: $navigationPath
                     )
@@ -109,7 +111,7 @@ struct VaultListView<
                     VaultDetailCreateView(
                         creatingItem: creatingItem,
                         previewGenerator: viewGenerator,
-                        copyActionHandler: viewGenerator,
+                        copyActionHandler: copyActionHandler,
                         navigationPath: $navigationPath
                     )
                 }

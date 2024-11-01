@@ -65,17 +65,6 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_textToCopyForVaultItem_usesRepository() {
-        let repository = TOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in .init(text: "123", requiresAuthenticationToCopy: false) }
-        let sut = makeSUT(repository: repository)
-
-        let text = sut.textToCopyForVaultItem(id: Identifier<VaultItem>())
-
-        XCTAssertEqual(text, .init(text: "123", requiresAuthenticationToCopy: false))
-    }
-
-    @MainActor
     func test_previewActionForVaultItem_isNilIfNoDataFromRepository() {
         let repository = TOTPPreviewViewRepositoryMock()
         repository.textToCopyForVaultItemHandler = { _ in nil }

@@ -71,17 +71,6 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
-    func test_textToCopyForVaultItem_getsFromRepository() {
-        let repository = HOTPPreviewViewRepositoryMock()
-        repository.textToCopyForVaultItemHandler = { _ in .init(text: "1234", requiresAuthenticationToCopy: false) }
-        let (sut, _) = makeSUT(repository: repository)
-
-        let action = sut.textToCopyForVaultItem(id: .new())
-
-        XCTAssertEqual(action, .init(text: "1234", requiresAuthenticationToCopy: false))
-    }
-
-    @MainActor
     func test_scenePhaseDidChange_backgroundExpiresAll() {
         let repository = HOTPPreviewViewRepositoryMock()
         let (sut, _) = makeSUT(repository: repository)

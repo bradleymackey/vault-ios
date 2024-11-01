@@ -3,8 +3,8 @@ import SwiftUI
 import VaultFeed
 
 /// A `VaultItemPreviewViewGenerator` that is able to perform basic actions.
-typealias ActionableVaultItemPreviewViewGenerator<PreviewItem> = VaultItemCopyActionHandler &
-    VaultItemPreviewActionHandler & VaultItemPreviewViewGenerator<PreviewItem>
+typealias ActionableVaultItemPreviewViewGenerator<PreviewItem> = VaultItemPreviewActionHandler &
+    VaultItemPreviewViewGenerator<PreviewItem>
 
 /// @mockable(typealias: PreviewView = AnyView; PreviewItem = VaultItem.Payload)
 @MainActor

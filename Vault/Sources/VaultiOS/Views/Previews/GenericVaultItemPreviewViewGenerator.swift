@@ -13,7 +13,6 @@ struct GenericVaultItemPreviewViewGenerator<
     private let noteGenerator: Note
     private let sceneResponders: [any VaultItemPreviewSceneResponder]
     private let previewActionHandlers: [any VaultItemPreviewActionHandler]
-    private let copyActionHandlers: [any VaultItemCopyActionHandler]
 
     init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note) {
         self.totpGenerator = totpGenerator
@@ -21,7 +20,6 @@ struct GenericVaultItemPreviewViewGenerator<
         self.noteGenerator = noteGenerator
         sceneResponders = [totpGenerator, hotpGenerator, noteGenerator]
         previewActionHandlers = [totpGenerator, hotpGenerator, noteGenerator]
-        copyActionHandlers = [totpGenerator, hotpGenerator, noteGenerator]
     }
 
     @ViewBuilder
@@ -68,16 +66,7 @@ struct GenericVaultItemPreviewViewGenerator<
     }
 }
 
-extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler, VaultItemCopyActionHandler {
-    func textToCopyForVaultItem(id: Identifier<VaultItem>) -> VaultTextCopyAction? {
-        for handler in copyActionHandlers {
-            if let copyAction = handler.textToCopyForVaultItem(id: id) {
-                return copyAction
-            }
-        }
-        return nil
-    }
-
+extension GenericVaultItemPreviewViewGenerator: VaultItemPreviewActionHandler {
     func previewActionForVaultItem(id: Identifier<VaultItem>) -> VaultItemPreviewAction? {
         for handler in previewActionHandlers {
             if let action = handler.previewActionForVaultItem(id: id) {
