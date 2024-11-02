@@ -13,18 +13,19 @@ env:
   IOS_VERSION: 17.4
 
 jobs:
-  lint:
-    name: Lint
-    timeout-minutes: 2
-    runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: ./Vault
-
-    steps:
-      - uses: actions/checkout@v4
-      - name: Lint Sources
-        run: make lint
+  # TODO: enable when swiftlint supports a linux binary in its artifact bundle
+  # lint:
+  #   name: Lint
+  #   timeout-minutes: 2
+  #   runs-on: ubuntu-latest
+  #   defaults:
+  #     run:
+  #       working-directory: ./Vault
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: Lint Sources
+  #       run: make lint
 
   # build:
   #   name: Build
