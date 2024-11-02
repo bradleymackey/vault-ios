@@ -68,7 +68,8 @@ extension FormatLintContext {
         print("🔍 swiftlint: \(action.swiftLintVerb.lowercased())")
         try runProcess(
             url: swiftlint.url,
-            arguments: makeSwiftLintArgs()
+            arguments: makeSwiftLintArgs(),
+            exitCodeHandler: swiftLintExitCodeHandler(code:)
         )
     }
 }
@@ -91,7 +92,8 @@ extension FormatLintContext {
         print("🖌️ swiftformat: \(action.swiftFormatVerb.lowercased())")
         try runProcess(
             url: swiftformat.url,
-            arguments: makeSwiftFormatArgs()
+            arguments: makeSwiftFormatArgs(),
+            exitCodeHandler: swiftFormatExitCodeHandler(code:)
         )
     }
 }
@@ -118,24 +120,42 @@ enum Action {
 }
 
 enum CommandError: Error {
-    case commandFailure
+    case exitWithError
     case unknownError(exitCode: Int32)
 }
 
-func runProcess(url: URL, arguments: [String]) throws {
+func runProcess(url: URL, arguments: [String], exitCodeHandler: (Int32) throws -> Void) throws {
     let process = Process()
     process.executableURL = url
     process.arguments = arguments
     try process.run()
     process.waitUntilExit()
 
-    switch process.terminationStatus {
-    case 0: break
+    try exitCodeHandler(process.terminationStatus)
+}
+
+func swiftFormatExitCodeHandler(code: Int32) throws {
+    switch code {
+    case 0:
+        print("☑️ swiftformat done")
     case 1:
-        print("🚨 Issues found")
-        throw CommandError.commandFailure
+        print("❌ swiftformat linting failure")
+        throw CommandError.exitWithError
+    case 70:
+        print("❌ swiftformat command failure")
+        throw CommandError.exitWithError
     default:
-        print("💀 Command failure")
-        throw CommandError.unknownError(exitCode: process.terminationStatus)
+        print("❌ swiftformat unknown failure")
+        throw CommandError.unknownError(exitCode: code)
+    }
+}
+
+func swiftLintExitCodeHandler(code: Int32) throws {
+    switch code {
+    case 0:
+        print("☑️ swiftlint done")
+    default:
+        print("❌ swiftlint failure")
+        throw CommandError.exitWithError
     }
 }
