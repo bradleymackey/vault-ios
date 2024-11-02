@@ -164,19 +164,17 @@ struct BackupView: View {
             .padding()
             .containerRelativeFrame(.horizontal)
 
-            authenticateButton
+        } footer: {
+            AsyncButton(progressAlignment: .center) {
+                await dataModel.loadBackupPassword()
+            } label: {
+                Label("Authenticate", systemImage: "key.horizontal.fill")
+            }
+            .modifier(ProminentButtonModifier())
+            .containerRelativeFrame(.horizontal)
+            .padding()
         }
         .transition(.slide)
-    }
-
-    private var authenticateButton: some View {
-        AsyncButton(progressAlignment: .center) {
-            await dataModel.loadBackupPassword()
-        } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .standard) {
-                Text("Authenticate")
-            }
-        }
     }
 
     private var createButton: some View {
