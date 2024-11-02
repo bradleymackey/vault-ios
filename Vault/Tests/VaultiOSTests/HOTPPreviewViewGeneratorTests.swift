@@ -83,6 +83,16 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 1)
         XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
     }
+
+    @MainActor
+    func test_clearViewCache_clearsRepositoryCache() async {
+        let repository = HOTPPreviewViewRepositoryMock()
+        let (sut, _) = makeSUT(repository: repository)
+
+        await sut.clearViewCache()
+
+        XCTAssertEqual(repository.vaultItemCacheClearAllCallCount, 1)
+    }
 }
 
 extension HOTPPreviewViewGeneratorTests {

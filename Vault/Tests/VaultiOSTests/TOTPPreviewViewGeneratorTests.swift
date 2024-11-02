@@ -85,6 +85,16 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
+    func test_clearViewCache_clearsRepositoryCache() async {
+        let repository = TOTPPreviewViewRepositoryMock()
+        let sut = makeSUT(repository: repository)
+
+        await sut.clearViewCache()
+
+        XCTAssertEqual(repository.vaultItemCacheClearAllCallCount, 1)
+    }
+
+    @MainActor
     func test_didAppear_restartsAllTimers() {
         let factory = makeTOTPPreviewViewFactoryMock()
         let repository = TOTPPreviewViewRepositoryMock()

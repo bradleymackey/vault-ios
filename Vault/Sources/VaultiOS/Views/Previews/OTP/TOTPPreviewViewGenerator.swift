@@ -34,6 +34,10 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
         )
     }
 
+    func clearViewCache() async {
+        await repository.vaultItemCacheClearAll()
+    }
+
     func scenePhaseDidChange(to scene: ScenePhase) {
         switch scene {
         case .background, .inactive:

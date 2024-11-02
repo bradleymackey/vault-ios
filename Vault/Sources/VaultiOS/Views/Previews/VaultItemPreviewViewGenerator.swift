@@ -9,6 +9,9 @@ public protocol VaultItemPreviewViewGenerator<PreviewItem>: VaultItemPreviewScen
     associatedtype PreviewView: View
     func makeVaultPreviewView(item: PreviewItem, metadata: VaultItem.Metadata, behaviour: VaultItemViewBehaviour)
         -> PreviewView
+    /// The view generator likely uses a cache to reduce the expensiveness of creating previews.
+    /// This method clears that cache, so we can be sure that all views are generated from-scratch.
+    func clearViewCache() async
 }
 
 /// A vault item that is able to respond to scene changes.

@@ -74,6 +74,20 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
     }
 
     @MainActor
+    func test_clearViewCache_callsOnAllCollaborators() async {
+        let totp = TOTPGeneratorMock()
+        let hotp = HOTPGeneratorMock()
+        let note = SecureNoteGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+
+        await sut.clearViewCache()
+
+        XCTAssertEqual(totp.calledMethods, ["clearViewCache()"])
+        XCTAssertEqual(hotp.calledMethods, ["clearViewCache()"])
+        XCTAssertEqual(note.calledMethods, ["clearViewCache()"])
+    }
+
+    @MainActor
     func test_didAppear_callsOnAllCollaborators() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
@@ -127,6 +141,10 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
         Text("HOTP")
     }
 
+    func clearViewCache() async {
+        calledMethods.append(#function)
+    }
+
     func scenePhaseDidChange(to _: ScenePhase) {
         calledMethods.append(#function)
     }
@@ -157,6 +175,10 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
         Text("TOTP")
     }
 
+    func clearViewCache() async {
+        calledMethods.append(#function)
+    }
+
     func scenePhaseDidChange(to _: ScenePhase) {
         calledMethods.append(#function)
     }
@@ -185,6 +207,10 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemP
         behaviour _: VaultItemViewBehaviour
     ) -> some View {
         Text("Secure Note")
+    }
+
+    func clearViewCache() async {
+        calledMethods.append(#function)
     }
 
     func scenePhaseDidChange(to _: ScenePhase) {

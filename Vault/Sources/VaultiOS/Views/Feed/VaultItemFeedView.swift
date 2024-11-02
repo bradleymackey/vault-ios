@@ -245,6 +245,10 @@ private struct GenericGenerator: VaultItemPreviewViewGenerator {
         Text("Code")
     }
 
+    func clearViewCache() async {
+        // noop
+    }
+
     func scenePhaseDidChange(to _: ScenePhase) {
         // noop
     }

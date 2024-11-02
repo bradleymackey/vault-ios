@@ -26,6 +26,10 @@ public struct VaultItemOnTapDecoratorViewGenerator<
         }
     }
 
+    public func clearViewCache() async {
+        await generator.clearViewCache()
+    }
+
     public func scenePhaseDidChange(to scene: ScenePhase) {
         generator.scenePhaseDidChange(to: scene)
     }
