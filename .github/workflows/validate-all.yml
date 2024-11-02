@@ -1,3 +1,4 @@
+# These jobs are run on everything, including main and PRs.
 name: Validate
 
 on:
