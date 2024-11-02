@@ -52,10 +52,21 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
         .onChange(of: scenePhase) { _, newValue in
             viewGenerator.scenePhaseDidChange(to: newValue)
         }
+        .task {
+            await prepareForDisplay()
+        }
         .onAppear {
             viewGenerator.didAppear()
-            Task { await dataModel.reloadData() }
         }
+    }
+
+    /// Performs necessary actions before displaying to ensure that the displayed data is correct.
+    private func prepareForDisplay() async {
+        // First reload data, so we are sure the preview generator will create views based on fresh data.
+        await dataModel.reloadData()
+        // The view generator uses cached data. Force it to clear so we are sure fresh data is generated.
+        // This is needed because data changes in-app may now be different that the data as seen by the extension.
+        await viewGenerator.clearViewCache()
     }
 
     func interactableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<Generator> {

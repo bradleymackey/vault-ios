@@ -22,7 +22,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(repository.stopAllTimersCallCount, 0)
         XCTAssertEqual(repository.restartAllTimersCallCount, 0)
         XCTAssertEqual(repository.textToCopyForVaultItemCallCount, 0)
-        XCTAssertEqual(repository.invalidateVaultItemDetailCacheCallCount, 0)
+        XCTAssertEqual(repository.vaultItemCacheClearCallCount, 0)
     }
 
     @MainActor
@@ -82,6 +82,16 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
             XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 1)
             XCTAssertEqual(repository.stopAllTimersCallCount, 1)
         }
+    }
+
+    @MainActor
+    func test_clearViewCache_clearsRepositoryCache() async {
+        let repository = TOTPPreviewViewRepositoryMock()
+        let sut = makeSUT(repository: repository)
+
+        await sut.clearViewCache()
+
+        XCTAssertEqual(repository.vaultItemCacheClearAllCallCount, 1)
     }
 
     @MainActor

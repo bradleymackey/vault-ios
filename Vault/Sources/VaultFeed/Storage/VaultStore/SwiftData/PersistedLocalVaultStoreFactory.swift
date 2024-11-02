@@ -10,7 +10,7 @@ public final class PersistedLocalVaultStoreFactory {
 
     public func makeVaultStore() -> PersistedLocalVaultStore {
         do {
-            let storeURL = storageDirectory.appending(path: "PersistedLocalVaultStore-Main")
+            let storeURL = storageDirectory.appending(path: "vault-primary.sqlite")
             let configuration = ModelConfiguration(
                 "PersistedLocalVaultStore",
                 schema: .init(versionedSchema: PersistedSchemaLatestVersion.self),

@@ -140,7 +140,7 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
     }
 
     @MainActor
-    func test_invalidateVaultItemDetailCache_removesItemsMatchingIDFromCache() async {
+    func test_vaultItemCacheClear_removesItemsMatchingIDFromCache() async {
         let sut = makeSUT()
 
         let id1 = Identifier<VaultItem>()
@@ -155,11 +155,33 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         XCTAssertEqual(sut.cachedRendererCount, 2)
         XCTAssertEqual(sut.cachedIncrementerCount, 2)
 
-        await sut.invalidateVaultItemDetailCache(forVaultItemWithID: id1)
+        await sut.vaultItemCacheClear(forVaultItemWithID: id1)
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(sut.cachedRendererCount, 1)
         XCTAssertEqual(sut.cachedIncrementerCount, 1)
+    }
+
+    @MainActor
+    func test_vaultItemCacheClearAll_removesItemsMatchingIDFromCache() async {
+        let sut = makeSUT()
+
+        let id1 = Identifier<VaultItem>()
+        let id2 = Identifier<VaultItem>()
+        _ = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id1), code: anyHOTPCode())
+        _ = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id2), code: anyHOTPCode())
+        _ = sut.incrementerViewModel(id: id1, code: anyHOTPCode())
+        _ = sut.incrementerViewModel(id: id2, code: anyHOTPCode())
+
+        XCTAssertEqual(sut.cachedViewsCount, 2)
+        XCTAssertEqual(sut.cachedRendererCount, 2)
+        XCTAssertEqual(sut.cachedIncrementerCount, 2)
+
+        await sut.vaultItemCacheClearAll()
+
+        XCTAssertEqual(sut.cachedViewsCount, 0)
+        XCTAssertEqual(sut.cachedRendererCount, 0)
+        XCTAssertEqual(sut.cachedIncrementerCount, 0)
     }
 }
 

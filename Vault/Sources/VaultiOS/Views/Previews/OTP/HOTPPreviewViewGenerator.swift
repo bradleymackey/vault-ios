@@ -26,6 +26,10 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
         )
     }
 
+    func clearViewCache() async {
+        await repository.vaultItemCacheClearAll()
+    }
+
     func scenePhaseDidChange(to scene: ScenePhase) {
         switch scene {
         case .active:

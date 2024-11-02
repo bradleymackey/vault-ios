@@ -29,6 +29,10 @@ final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory
         return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }
 
+    func clearViewCache() async {
+        // noop, cache is not used for secure note preview views
+    }
+
     func scenePhaseDidChange(to _: ScenePhase) {
         // noop
     }

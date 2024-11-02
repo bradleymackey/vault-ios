@@ -93,7 +93,15 @@ extension HOTPPreviewViewRepositoryImpl: VaultItemCopyActionHandler {
 }
 
 extension HOTPPreviewViewRepositoryImpl: VaultItemCache {
-    public nonisolated func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) async {
+    public nonisolated func vaultItemCacheClearAll() async {
+        await MainActor.run {
+            codePublisherCache.removeAll()
+            previewViewModelCache.removeAll()
+            incrementerViewModelCache.removeAll()
+        }
+    }
+
+    public nonisolated func vaultItemCacheClear(forVaultItemWithID id: Identifier<VaultItem>) async {
         await MainActor.run {
             codePublisherCache.remove(key: id)
             previewViewModelCache.remove(key: id)

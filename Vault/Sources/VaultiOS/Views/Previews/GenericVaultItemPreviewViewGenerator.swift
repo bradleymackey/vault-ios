@@ -49,6 +49,12 @@ struct GenericVaultItemPreviewViewGenerator<
         }
     }
 
+    func clearViewCache() async {
+        await totpGenerator.clearViewCache()
+        await hotpGenerator.clearViewCache()
+        await noteGenerator.clearViewCache()
+    }
+
     func scenePhaseDidChange(to scenePhase: ScenePhase) {
         totpGenerator.scenePhaseDidChange(to: scenePhase)
         hotpGenerator.scenePhaseDidChange(to: scenePhase)
