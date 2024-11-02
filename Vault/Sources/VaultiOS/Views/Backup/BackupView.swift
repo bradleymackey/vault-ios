@@ -120,8 +120,7 @@ struct BackupView: View {
         Section {
             if let password {
                 LastBackupSummaryView(
-                    lastBackup: dataModel.lastBackupEvent,
-                    currentHash: dataModel.currentPayloadHash
+                    lastBackup: dataModel.lastBackupEvent
                 )
 
                 Button {
