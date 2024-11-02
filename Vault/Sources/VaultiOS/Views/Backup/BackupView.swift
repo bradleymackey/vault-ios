@@ -159,9 +159,8 @@ struct BackupView: View {
                 title: isError ? viewModel.strings.backupPasswordErrorTitle : viewModel.strings
                     .backupPasswordLoadingTitle,
                 subtitle: isError ? viewModel.strings
-                    .backupPasswordErrorDetail : "Authenticate to access backup settings"
+                    .backupPasswordErrorDetail : "Authenticate to access backup settings."
             )
-            .foregroundStyle(.secondary)
             .padding()
             .containerRelativeFrame(.horizontal)
 

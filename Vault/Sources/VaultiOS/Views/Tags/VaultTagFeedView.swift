@@ -98,7 +98,6 @@ struct VaultTagFeedView: View {
             title: viewModel.strings.noTagsTitle,
             subtitle: viewModel.strings.noTagsDescription
         )
-        .foregroundStyle(.secondary)
         .containerRelativeFrame(.horizontal)
         .modifier(VerticallyCenterUpperThird(alignment: .center))
         .padding(24)

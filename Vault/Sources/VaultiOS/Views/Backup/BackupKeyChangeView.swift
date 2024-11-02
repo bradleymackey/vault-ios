@@ -18,7 +18,6 @@ struct BackupKeyChangeView: View {
             switch viewModel.permissionState {
             case .undetermined:
                 PlaceholderView(systemIcon: "lock.fill", title: "Locked")
-                    .foregroundStyle(.secondary)
                     .padding()
                     .containerRelativeFrame(.horizontal)
             case .allowed:
@@ -31,7 +30,6 @@ struct BackupKeyChangeView: View {
                     subtitle: "Please try again"
                 )
                 .containerRelativeFrame(.horizontal)
-                .foregroundStyle(.secondary)
                 .padding()
             }
         }
