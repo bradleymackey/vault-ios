@@ -52,9 +52,8 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
         .onChange(of: scenePhase) { _, newValue in
             viewGenerator.scenePhaseDidChange(to: newValue)
         }
-        .onAppear {
-            viewGenerator.didAppear()
-            Task { await dataModel.reloadData() }
+        .task {
+            await dataModel.reloadData()
         }
     }
 
