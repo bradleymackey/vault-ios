@@ -50,11 +50,18 @@ public struct VaultItemFeedView<
     }
 
     private var noCodesFoundView: some View {
-        PlaceholderView(systemIcon: "key.viewfinder", title: localized(key: "codeFeed.noCodes.title"))
-            .foregroundStyle(.secondary)
-            .frame(maxWidth: .infinity, maxHeight: .infinity)
-            .aspectRatio(1, contentMode: .fit)
-            .modifier(VaultCardModifier(configuration: .init(style: .secondary, border: .secondary)))
+        VStack(alignment: .center, spacing: 12) {
+            Image(systemName: "key.viewfinder")
+                .font(.largeTitle)
+            Text(localized(key: "codeFeed.noCodes.title"))
+                .font(.callout.bold())
+        }
+        .textCase(.none)
+        .multilineTextAlignment(.center)
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fit)
+        .modifier(VaultCardModifier(configuration: .init(style: .secondary, border: .secondary)))
     }
 
     private var currentBehaviour: VaultItemViewBehaviour {
