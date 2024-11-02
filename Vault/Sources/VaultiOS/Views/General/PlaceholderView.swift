@@ -11,9 +11,11 @@ struct PlaceholderView: View {
         VStack(alignment: .center, spacing: 12) {
             Image(systemName: systemIcon)
                 .font(.largeTitle)
+                .foregroundStyle(.primary)
             VStack(alignment: .center, spacing: 4) {
                 Text(title)
                     .font(.headline.bold())
+                    .foregroundStyle(.primary)
                 if let subtitle {
                     Text(subtitle)
                         .font(.subheadline)
