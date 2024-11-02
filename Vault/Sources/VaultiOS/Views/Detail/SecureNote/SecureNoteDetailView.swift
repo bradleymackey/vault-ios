@@ -14,6 +14,7 @@ struct SecureNoteDetailView: View {
     private enum Modal: IdentifiableSelf {
         case editLock
         case editPassphrase
+        case editKillphrase
         case editTags
     }
 
@@ -116,6 +117,26 @@ struct SecureNoteDetailView: View {
                                 Text("Done")
                             }
                             .disabled(!viewModel.editingModel.detail.isPassphraseValid)
+                        }
+                    }
+                }
+            case .editKillphrase:
+                NavigationStack {
+                    VaultDetailKillphraseEditView(
+                        title: "Killphrase",
+                        description: "A killphrase is a secret phrase that is used to immediately delete this note. In the search bar, search exactly for this text and the note will be immediately and quitely deleted. Combined with a search passphrase, you can delete an item without it being made visible.",
+                        hiddenWithKillphraseTitle: viewModel.strings.killphraseSubtitle,
+                        killphrase: $viewModel.editingModel.detail.killphrase
+                    )
+                    .interactiveDismissDisabled(!viewModel.editingModel.detail.isKillphraseValid)
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                            .disabled(!viewModel.editingModel.detail.isKillphraseValid)
                         }
                     }
                 }
@@ -261,6 +282,19 @@ struct SecureNoteDetailView: View {
                     style: .standard
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editKillphrase
+            } label: {
+                FormRow(
+                    image: Image(systemName: "delete.backward"),
+                    color: .accentColor,
+                    style: .standard
+                ) {
+                    LabeledContent("Killphrase", value: viewModel.editingModel.detail.killphraseEnabledText)
                         .font(.body)
                 }
             }

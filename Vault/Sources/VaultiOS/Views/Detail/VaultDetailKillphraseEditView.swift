@@ -9,7 +9,12 @@ struct VaultDetailKillphraseEditView: View {
     @State private var killphraseIsEnabled: Bool = false
     @Binding var killphrase: String
 
-    init(title: String, description: String, hiddenWithKillphraseTitle: String, killphrase: Binding<String>) {
+    init(
+        title: String,
+        description: String,
+        hiddenWithKillphraseTitle: String,
+        killphrase: Binding<String>
+    ) {
         self.title = title
         self.description = description
         self.hiddenWithKillphraseTitle = hiddenWithKillphraseTitle
