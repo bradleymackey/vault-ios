@@ -13,14 +13,8 @@ public final class DarwinNotificationCenter {
     public static let shared = DarwinNotificationCenter()
 
     /// Posts a Darwin notification with the specified name.
-    public func post(name: DarwinNotificationName) {
-        CFNotificationCenterPostNotification(
-            center,
-            CFNotificationName(rawValue: name.rawValue as CFString),
-            nil,
-            nil,
-            true
-        )
+    public func post(name: String) {
+        CFNotificationCenterPostNotification(center, CFNotificationName(rawValue: name as CFString), nil, nil, true)
     }
 
     /// Registers an observer closure for Darwin notifications of the specified name.
@@ -35,10 +29,7 @@ public final class DarwinNotificationCenter {
     ///
     /// To stop observing the notifiation, deallocate the `DarwinNotificationObservation`, or call its `cancel()`
     /// method.
-    public func addObserver(
-        name: DarwinNotificationName,
-        callback: @escaping @Sendable () -> Void
-    ) -> DarwinNotificationObservation {
+    public func addObserver(name: String, callback: @escaping @Sendable () -> Void) -> DarwinNotificationObservation {
         let observation = DarwinNotificationObservation(callback: callback)
 
         let pointer = UnsafeRawPointer(Unmanaged.passUnretained(observation.closure).toOpaque())
@@ -47,19 +38,12 @@ public final class DarwinNotificationCenter {
             center,
             pointer,
             notificationCallback,
-            name.rawValue as CFString,
+            name as CFString,
             nil,
             .deliverImmediately
         )
 
         return observation
-    }
-}
-
-public struct DarwinNotificationName: Sendable {
-    public var rawValue: String
-    public init(rawValue: String) {
-        self.rawValue = rawValue
     }
 }
 
@@ -125,7 +109,7 @@ public final class DarwinNotificationObservation: Cancellable, Sendable {
 
 extension DarwinNotificationCenter {
     /// Returns an asynchronous sequence of notifications for a given notification name.
-    func notifications(named name: DarwinNotificationName) -> AsyncStream<Void> {
+    func notifications(named name: String) -> AsyncStream<Void> {
         AsyncStream { continuation in
             let observation = addObserver(name: name) {
                 continuation.yield()
@@ -149,7 +133,7 @@ extension DarwinNotificationCenter {
     /// - Parameters:
     ///   - name: The name of the notification to publish.
     /// - Returns: A publisher that emits events when broadcasting notifications.
-    public func publisher(for name: DarwinNotificationName) -> DarwinNotificationCenter.Publisher {
+    public func publisher(for name: String) -> DarwinNotificationCenter.Publisher {
         Publisher(center: self, name: name)
     }
 }
@@ -160,8 +144,8 @@ extension DarwinNotificationCenter {
         public typealias Output = Void
         public typealias Failure = Never
         public let center: DarwinNotificationCenter
-        public let name: DarwinNotificationName
-        public init(center: DarwinNotificationCenter, name: DarwinNotificationName) {
+        public let name: String
+        public init(center: DarwinNotificationCenter, name: String) {
             self.center = center
             self.name = name
         }
