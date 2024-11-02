@@ -154,7 +154,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
     }
 
     @MainActor
-    func test_invalidateVaultItemDetailCache_removesItemsMatchingIDFromCache() async {
+    func test_vaultItemCacheClear_removesItemsMatchingIDFromCache() async {
         let sut = makeSUT()
 
         let id1 = Identifier<VaultItem>()
@@ -171,7 +171,7 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
         XCTAssertEqual(sut.cachedPeriodStateCount, 2)
         XCTAssertEqual(sut.cachedTimerControllerCount, 2)
 
-        await sut.invalidateVaultItemDetailCache(forVaultItemWithID: id1)
+        await sut.vaultItemCacheClear(forVaultItemWithID: id1)
 
         XCTAssertEqual(sut.cachedViewsCount, 1)
         XCTAssertEqual(sut.cachedPeriodStateCount, 2, "Period-based state is not invalidated")

@@ -6,5 +6,5 @@ import FoundationExtensions
 ///
 /// @mockable
 public protocol VaultItemCache: Sendable {
-    func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) async
+    func vaultItemCacheClear(forVaultItemWithID id: Identifier<VaultItem>) async
 }

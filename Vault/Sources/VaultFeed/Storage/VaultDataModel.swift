@@ -166,7 +166,7 @@ public final class VaultDataModel: Sendable {
 extension VaultDataModel {
     private func invalidateCaches(itemID: Identifier<VaultItem>) async {
         for itemCache in itemCaches {
-            await itemCache.invalidateVaultItemDetailCache(forVaultItemWithID: itemID)
+            await itemCache.vaultItemCacheClear(forVaultItemWithID: itemID)
         }
     }
 

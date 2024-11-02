@@ -89,7 +89,7 @@ extension TOTPPreviewViewRepositoryImpl: VaultItemCopyActionHandler {
 // MARK: - Caching
 
 extension TOTPPreviewViewRepositoryImpl: VaultItemCache {
-    public nonisolated func invalidateVaultItemDetailCache(forVaultItemWithID id: Identifier<VaultItem>) async {
+    public nonisolated func vaultItemCacheClear(forVaultItemWithID id: Identifier<VaultItem>) async {
         // don't invalidate period caches, as they are independant of the code detail
         await MainActor.run {
             viewModelCache.remove(key: id)

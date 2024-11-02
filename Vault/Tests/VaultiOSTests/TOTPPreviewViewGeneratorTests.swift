@@ -22,7 +22,7 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
         XCTAssertEqual(repository.stopAllTimersCallCount, 0)
         XCTAssertEqual(repository.restartAllTimersCallCount, 0)
         XCTAssertEqual(repository.textToCopyForVaultItemCallCount, 0)
-        XCTAssertEqual(repository.invalidateVaultItemDetailCacheCallCount, 0)
+        XCTAssertEqual(repository.vaultItemCacheClearCallCount, 0)
     }
 
     @MainActor

@@ -281,8 +281,8 @@ final class VaultDataModelTests: XCTestCase {
         try await sut.update(itemID: .new(), data: item)
 
         XCTAssertEqual(store.calledMethods, [.update, .retrieve, .export])
-        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
-        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
+        XCTAssertEqual(cache1.vaultItemCacheClearCallCount, 1)
+        XCTAssertEqual(cache2.vaultItemCacheClearCallCount, 1)
     }
 
     @MainActor
@@ -295,8 +295,8 @@ final class VaultDataModelTests: XCTestCase {
         try await sut.delete(itemID: .new())
 
         XCTAssertEqual(store.calledMethods, [.delete, .retrieve, .export])
-        XCTAssertEqual(cache1.invalidateVaultItemDetailCacheCallCount, 1)
-        XCTAssertEqual(cache2.invalidateVaultItemDetailCacheCallCount, 1)
+        XCTAssertEqual(cache1.vaultItemCacheClearCallCount, 1)
+        XCTAssertEqual(cache2.vaultItemCacheClearCallCount, 1)
     }
 
     @MainActor
