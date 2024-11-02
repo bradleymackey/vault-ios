@@ -23,10 +23,7 @@ struct PlaceholderView: View {
         }
         .textCase(.none)
         .multilineTextAlignment(.center)
-        // list row seperator is as wide as the content
-        // (ideally it would be as wide as the list row, but we can't size based on parent at the moment easily)
-        .alignmentGuide(.listRowSeparatorLeading, computeValue: { _ in 0 })
-        .alignmentGuide(.listRowSeparatorTrailing, computeValue: { $0.width })
+        .listRowSeparator(.hidden)
     }
 }
 
