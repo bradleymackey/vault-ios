@@ -177,6 +177,28 @@ final class TOTPPreviewViewRepositoryImplTests: XCTestCase {
         XCTAssertEqual(sut.cachedPeriodStateCount, 2, "Period-based state is not invalidated")
         XCTAssertEqual(sut.cachedTimerControllerCount, 2, "Period-based state is not invalidated")
     }
+
+    @MainActor
+    func test_vaultItemCacheClearAll_removesItemsAllItemsFromCache() async {
+        let sut = makeSUT()
+
+        _ = sut.previewViewModel(metadata: anyVaultItemMetadata(id: .new()), code: anyTOTPCode(period: 100))
+        _ = sut.previewViewModel(metadata: anyVaultItemMetadata(id: .new()), code: anyTOTPCode(period: 100))
+        _ = sut.timerPeriodState(period: 100)
+        _ = sut.timerPeriodState(period: 101)
+        _ = sut.timerUpdater(period: 100)
+        _ = sut.timerUpdater(period: 101)
+
+        XCTAssertEqual(sut.cachedViewsCount, 2)
+        XCTAssertEqual(sut.cachedPeriodStateCount, 2)
+        XCTAssertEqual(sut.cachedTimerControllerCount, 2)
+
+        await sut.vaultItemCacheClearAll()
+
+        XCTAssertEqual(sut.cachedViewsCount, 0)
+        XCTAssertEqual(sut.cachedPeriodStateCount, 0)
+        XCTAssertEqual(sut.cachedTimerControllerCount, 0)
+    }
 }
 
 // MARK: - Helpers
