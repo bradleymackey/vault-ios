@@ -9,7 +9,6 @@ struct VaultDetailLockEditView: View {
     var body: some View {
         Form {
             titleSection
-            optionSection
         }
     }
 
@@ -22,37 +21,19 @@ struct VaultDetailLockEditView: View {
             )
             .padding()
             .containerRelativeFrame(.horizontal)
-        }
-    }
 
-    private var optionSection: some View {
-        Section {
-            FormRow(
-                image: Image(systemName: lockState.isLocked ? "lock.fill" : "lock.open.fill"),
-                color: lockState.isLocked ? .red : .green,
-                style: .standard,
-                alignment: .firstTextBaseline
-            ) {
-                VStack(alignment: .leading) {
-                    Text(lockState.localizedTitle)
-                        .font(.body)
-                    Text(lockState.localizedSubtitle)
-                        .font(.footnote)
-                        .foregroundStyle(.secondary)
-                }
-            }
-
-            Button {
-                lockState.isLocked.toggle()
-            } label: {
+            Toggle(isOn: $lockState.isLocked) {
                 FormRow(
-                    image: Image(systemName: "key.horizontal.fill"),
-                    color: .accentColor,
+                    image: Image(systemName: lockState.isLocked ? "checkmark.circle.fill" : "xmark.circle.fill"),
+                    color: lockState.isLocked ? .green : .secondary,
                     style: .standard
                 ) {
-                    Text(lockState.isLocked ? "Unlock" : "Lock")
+                    Text("Lock item")
+                        .font(.body)
                 }
             }
+        } footer: {
+            Text(lockState.localizedSubtitle)
         }
     }
 }

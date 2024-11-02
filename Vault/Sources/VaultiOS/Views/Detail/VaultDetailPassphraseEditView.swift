@@ -27,6 +27,7 @@ struct VaultDetailPassphraseEditView: View {
             )
             .padding()
             .containerRelativeFrame(.horizontal)
+
             Toggle(isOn: $viewConfig.isEnabled) {
                 FormRow(
                     image: Image(systemName: viewConfig.isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill"),
