@@ -476,6 +476,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),

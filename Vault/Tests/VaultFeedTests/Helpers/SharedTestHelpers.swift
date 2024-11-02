@@ -23,6 +23,7 @@ func anyVaultDataModel(
     vaultTagStore: some VaultTagStore = VaultTagStoreStub(),
     vaultImporter: some VaultStoreImporter = VaultStoreImporterMock(),
     vaultDeleter: some VaultStoreDeleter = VaultStoreDeleterMock(),
+    vaultKillphraseDeleter: some VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
     backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock(),
     backupEventLogger: some BackupEventLogger = BackupEventLoggerMock()
 ) -> VaultDataModel {
@@ -31,6 +32,7 @@ func anyVaultDataModel(
         vaultTagStore: vaultTagStore,
         vaultImporter: vaultImporter,
         vaultDeleter: vaultDeleter,
+        vaultKillphraseDeleter: vaultKillphraseDeleter,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger
     )
@@ -127,6 +129,7 @@ func uniqueVaultItem(
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
     tags: Set<Identifier<VaultItemTag>> = [],
+    killphrase: String? = nil,
     lockState: VaultItemLockState = .notLocked
 ) -> VaultItem {
     VaultItem(
@@ -137,6 +140,7 @@ func uniqueVaultItem(
             userDescription: userDescription,
             visibility: visibility,
             tags: tags,
+            killphrase: killphrase,
             lockState: lockState
         ),
         item: item

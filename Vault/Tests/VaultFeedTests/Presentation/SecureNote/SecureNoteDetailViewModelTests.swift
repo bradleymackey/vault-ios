@@ -390,6 +390,7 @@ extension SecureNoteDetailViewModelTests {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
@@ -415,6 +416,7 @@ extension SecureNoteDetailViewModelTests {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
@@ -436,6 +438,7 @@ extension SecureNoteDetailViewModelTests {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),

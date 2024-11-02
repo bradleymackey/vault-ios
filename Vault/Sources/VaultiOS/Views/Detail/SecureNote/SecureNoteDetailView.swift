@@ -359,6 +359,7 @@ struct SecureNoteDetailView: View {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
@@ -391,6 +392,7 @@ struct SecureNoteDetailView: View {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         )

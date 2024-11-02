@@ -465,6 +465,7 @@ extension OTPCodeDetailViewModelTests {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
@@ -493,6 +494,7 @@ extension OTPCodeDetailViewModelTests {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),
@@ -520,6 +522,7 @@ extension OTPCodeDetailViewModelTests {
             vaultTagStore: VaultTagStoreStub(),
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         ),

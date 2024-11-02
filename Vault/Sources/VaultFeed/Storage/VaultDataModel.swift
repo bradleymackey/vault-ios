@@ -114,6 +114,7 @@ public final class VaultDataModel: Sendable {
     private let vaultTagStore: any VaultTagStore
     private let vaultImporter: any VaultStoreImporter
     private let vaultDeleter: any VaultStoreDeleter
+    private let vaultKillphraseDeleter: any VaultStoreKillphraseDeleter
     private let backupPasswordStore: any BackupPasswordStore
     private let backupEventLogger: any BackupEventLogger
     private var observationBag = Set<AnyCancellable>()
@@ -123,6 +124,7 @@ public final class VaultDataModel: Sendable {
         vaultTagStore: any VaultTagStore,
         vaultImporter: any VaultStoreImporter,
         vaultDeleter: any VaultStoreDeleter,
+        vaultKillphraseDeleter: any VaultStoreKillphraseDeleter,
         backupPasswordStore: any BackupPasswordStore,
         backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = []
@@ -131,6 +133,7 @@ public final class VaultDataModel: Sendable {
         self.vaultTagStore = vaultTagStore
         self.vaultImporter = vaultImporter
         self.vaultDeleter = vaultDeleter
+        self.vaultKillphraseDeleter = vaultKillphraseDeleter
         self.backupPasswordStore = backupPasswordStore
         self.backupEventLogger = backupEventLogger
         self.itemCaches = itemCaches
@@ -234,6 +237,7 @@ extension VaultDataModel {
                 filterText: itemsSanitizedQuery,
                 filterTags: itemsFilteringByTags
             )
+            await vaultKillphraseDeleter.deleteItems(matchingKillphrase: itemsSearchQuery)
             let result = try await vaultStore.retrieve(query: query)
             items = result.items
             itemErrors = result.errors

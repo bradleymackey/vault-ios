@@ -44,6 +44,7 @@ extension VaultTagFeedViewSnapshotTests {
             vaultTagStore: vaultTagStore,
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         )
