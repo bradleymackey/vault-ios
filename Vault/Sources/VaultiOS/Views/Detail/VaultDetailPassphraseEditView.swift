@@ -12,43 +12,55 @@ struct VaultDetailPassphraseEditView: View {
     var body: some View {
         Form {
             titleSection
-            optionSection
+            if viewConfig.isEnabled {
+                optionSection
+            }
         }
     }
 
     private var titleSection: some View {
         Section {
-            PlaceholderView(systemIcon: "eye.fill", title: title, subtitle: description)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-        }
-    }
-
-    private var optionSection: some View {
-        Section {
+            PlaceholderView(
+                systemIcon: viewConfig.isEnabled ? "eye.slash" : "eye.fill",
+                title: title,
+                subtitle: description
+            )
+            .padding()
+            .containerRelativeFrame(.horizontal)
             Toggle(isOn: $viewConfig.isEnabled) {
                 FormRow(
-                    image: Image(systemName: viewConfig.isEnabled ? "eye.slash" : "eye.fill"),
-                    color: viewConfig.isEnabled ? .red : .green,
+                    image: Image(systemName: viewConfig.isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill"),
+                    color: viewConfig.isEnabled ? .green : .secondary,
                     style: .standard
                 ) {
                     Text("Hide with passphrase")
                         .font(.body)
                 }
             }
-            if viewConfig.isEnabled {
-                FormRow(image: Image(systemName: "entry.lever.keypad.fill"), color: .blue, style: .standard) {
-                    TextField("Enter passphrase...", text: $passphrase)
-                        .keyboardType(.default)
-                        .autocorrectionDisabled()
-                        .submitLabel(.done)
-                        .textInputAutocapitalization(.never)
-                }
-            }
-        } footer: {
-            if viewConfig.isEnabled {
-                Text(hiddenWithPassphraseTitle)
-            }
         }
     }
+
+    private var optionSection: some View {
+        Section {
+            FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
+                TextField("Enter passphrase...", text: $passphrase)
+                    .keyboardType(.default)
+                    .autocorrectionDisabled()
+                    .submitLabel(.done)
+                    .textInputAutocapitalization(.never)
+            }
+        } footer: {
+            Text(hiddenWithPassphraseTitle)
+        }
+    }
+}
+
+#Preview {
+    VaultDetailPassphraseEditView(
+        title: "Test",
+        description: "Test",
+        hiddenWithPassphraseTitle: "nice",
+        viewConfig: .constant(.requiresSearchPassphrase),
+        passphrase: .constant("nice")
+    )
 }
