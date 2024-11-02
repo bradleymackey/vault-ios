@@ -6,7 +6,7 @@ public struct ProminentButtonModifier: ViewModifier {
     public init() {}
     public func body(content: Content) -> some View {
         content
-            .font(.callout)
+            .font(.headline)
             .foregroundStyle(.white)
             .buttonStyle(.borderless)
             .padding(.horizontal, 16)

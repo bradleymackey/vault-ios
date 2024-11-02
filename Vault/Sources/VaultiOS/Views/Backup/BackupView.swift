@@ -159,25 +159,22 @@ struct BackupView: View {
                 title: isError ? viewModel.strings.backupPasswordErrorTitle : viewModel.strings
                     .backupPasswordLoadingTitle,
                 subtitle: isError ? viewModel.strings
-                    .backupPasswordErrorDetail : "Authenticate to access backup settings"
+                    .backupPasswordErrorDetail : "Authenticate to access backup settings."
             )
-            .foregroundStyle(.secondary)
             .padding()
             .containerRelativeFrame(.horizontal)
 
-            authenticateButton
+        } footer: {
+            AsyncButton(progressAlignment: .center) {
+                await dataModel.loadBackupPassword()
+            } label: {
+                Label("Authenticate", systemImage: "key.horizontal.fill")
+            }
+            .modifier(ProminentButtonModifier())
+            .containerRelativeFrame(.horizontal)
+            .padding()
         }
         .transition(.slide)
-    }
-
-    private var authenticateButton: some View {
-        AsyncButton(progressAlignment: .center) {
-            await dataModel.loadBackupPassword()
-        } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .standard) {
-                Text("Authenticate")
-            }
-        }
     }
 
     private var createButton: some View {

@@ -86,9 +86,10 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
         }
     }
 
+    @ViewBuilder
     private var lockedSection: some View {
-        Section {
-            if authenticationService.canAuthenticate {
+        if authenticationService.canAuthenticate {
+            Section {
                 PlaceholderView(
                     systemIcon: "lock.fill",
                     title: "Item Locked",
@@ -96,16 +97,19 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                 )
                 .padding()
                 .containerRelativeFrame(.horizontal)
-
+            } footer: {
                 AsyncButton {
                     try await authenticationService.validateAuthentication(reason: "Unlock item")
                     viewModel.isLocked = false
                 } label: {
-                    FormRow(image: Image(systemName: "key.horizontal.fill"), color: .blue, style: .standard) {
-                        Text("Unlock")
-                    }
+                    Label("Unlock", systemImage: "key.horizontal.fill")
                 }
-            } else {
+                .modifier(ProminentButtonModifier())
+                .containerRelativeFrame(.horizontal)
+                .padding()
+            }
+        } else {
+            Section {
                 FormRow(
                     image: Image(systemName: "lock.trianglebadge.exclamationmark.fill"),
                     color: .red,
@@ -121,12 +125,15 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                         .foregroundStyle(.secondary)
                     }
                 }
-
+            } footer: {
                 Button {
                     viewModel.isLocked = false
                 } label: {
                     Text("Dismiss")
                 }
+                .modifier(ProminentButtonModifier())
+                .containerRelativeFrame(.horizontal)
+                .padding()
             }
         }
     }

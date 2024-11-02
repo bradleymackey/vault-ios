@@ -11,9 +11,11 @@ struct PlaceholderView: View {
         VStack(alignment: .center, spacing: 12) {
             Image(systemName: systemIcon)
                 .font(.largeTitle)
+                .foregroundStyle(.primary)
             VStack(alignment: .center, spacing: 4) {
                 Text(title)
                     .font(.headline.bold())
+                    .foregroundStyle(.primary)
                 if let subtitle {
                     Text(subtitle)
                         .font(.subheadline)
@@ -23,10 +25,7 @@ struct PlaceholderView: View {
         }
         .textCase(.none)
         .multilineTextAlignment(.center)
-        // list row seperator is as wide as the content
-        // (ideally it would be as wide as the list row, but we can't size based on parent at the moment easily)
-        .alignmentGuide(.listRowSeparatorLeading, computeValue: { _ in 0 })
-        .alignmentGuide(.listRowSeparatorTrailing, computeValue: { $0.width })
+        .listRowSeparator(.hidden)
     }
 }
 
