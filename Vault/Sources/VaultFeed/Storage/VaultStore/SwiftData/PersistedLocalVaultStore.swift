@@ -473,6 +473,24 @@ extension PersistedLocalVaultStore: VaultStoreDeleter {
     }
 }
 
+// MARK: - VaultStoreKillphraseDeleter
+
+extension PersistedLocalVaultStore: VaultStoreKillphraseDeleter {
+    public func deleteItems(matchingKillphrase: String) async {
+        do {
+            guard matchingKillphrase.isNotBlank else { return }
+            try modelContext.delete(model: PersistedVaultItem.self, where: #Predicate {
+                // must match EXACTLY
+                $0.killphrase == matchingKillphrase
+            })
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            fatalError("Crashing to protect data privacy – unable to delete killphrase item")
+        }
+    }
+}
+
 // MARK: - Helpers
 
 extension PersistedLocalVaultStore {

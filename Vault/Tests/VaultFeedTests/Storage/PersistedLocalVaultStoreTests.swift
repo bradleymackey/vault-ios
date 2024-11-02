@@ -1489,6 +1489,101 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         try await assertStoreContains(exactlyItems: items2)
         try await assertStoreContains(exactlyTags: tags2)
     }
+
+    func test_deleteItemsMatchingKillphrase_hasNoEffectIfVaultEmpty() async throws {
+        await sut.deleteItems(matchingKillphrase: "a")
+
+        try await assertStoreContains(exactlyItems: [])
+    }
+
+    func test_deleteItemsMatchingKillphrase_deletesSingleItem() async throws {
+        let item1 = uniqueVaultItem(killphrase: "a")
+        let item2 = uniqueVaultItem(killphrase: "b")
+        let item3 = uniqueVaultItem(killphrase: "c")
+        let items = [item1, item2, item3]
+        let payload = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: []
+        )
+        try await sut.importAndOverrideVault(payload: payload)
+
+        await sut.deleteItems(matchingKillphrase: "a")
+
+        try await assertStoreContains(exactlyItems: [item2, item3])
+    }
+
+    func test_deleteItemsMatchingKillphrase_deletesMultipleItems() async throws {
+        let item1 = uniqueVaultItem(killphrase: "a")
+        let item2 = uniqueVaultItem(killphrase: "a")
+        let item3 = uniqueVaultItem(killphrase: "b")
+        let items = [item1, item2, item3]
+        let payload = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: []
+        )
+        try await sut.importAndOverrideVault(payload: payload)
+
+        await sut.deleteItems(matchingKillphrase: "a")
+
+        try await assertStoreContains(exactlyItems: [item3])
+    }
+
+    func test_deleteItemsMatchingKillphrase_deletesExactMatchOnly() async throws {
+        let item1 = uniqueVaultItem(killphrase: "a")
+        let item2 = uniqueVaultItem(killphrase: "aa")
+        let item3 = uniqueVaultItem(killphrase: "aaa")
+        let items = [item1, item2, item3]
+        let payload = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: []
+        )
+        try await sut.importAndOverrideVault(payload: payload)
+
+        await sut.deleteItems(matchingKillphrase: "a")
+
+        try await assertStoreContains(exactlyItems: [item2, item3])
+    }
+
+    func test_deleteItemsMatchingKillphrase_doesNotDeleteEmptyKillphraseItems() async throws {
+        let item1 = uniqueVaultItem(killphrase: nil)
+        let item2 = uniqueVaultItem(killphrase: "a")
+        let item3 = uniqueVaultItem(killphrase: "")
+        let items = [item1, item2, item3]
+        let payload = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: []
+        )
+        try await sut.importAndOverrideVault(payload: payload)
+
+        await sut.deleteItems(matchingKillphrase: "a")
+
+        try await assertStoreContains(exactlyItems: [item1, item3])
+    }
+
+    func test_deleteItemsMatchingKillphrase_doesNotDeleteAnyItemsIfPhraseIsBlank() async throws {
+        let item1 = uniqueVaultItem(killphrase: nil)
+        let item2 = uniqueVaultItem(killphrase: "a")
+        let item3 = uniqueVaultItem(killphrase: "")
+        let items = [item1, item2, item3]
+        let payload = VaultApplicationPayload(
+            userDescription: "Hello world",
+            items: items,
+            tags: []
+        )
+
+        try await sut.importAndOverrideVault(payload: payload)
+
+        await sut.deleteItems(matchingKillphrase: "")
+        await sut.deleteItems(matchingKillphrase: " ")
+        await sut.deleteItems(matchingKillphrase: "       ")
+        await sut.deleteItems(matchingKillphrase: "\n")
+
+        try await assertStoreContains(exactlyItems: [item1, item2, item3])
+    }
 }
 
 // MARK: - Helpers

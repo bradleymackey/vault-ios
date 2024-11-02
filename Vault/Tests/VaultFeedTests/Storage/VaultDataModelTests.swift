@@ -260,6 +260,29 @@ final class VaultDataModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_reloadItems_deletesKillphraseItemsBeforeReturningResults() async throws {
+        let expDelete = expectation(description: "Wait for delete")
+        let expRetrieve = expectation(description: "Wait for retrieve")
+        let store = VaultStoreStub()
+        store.retrieveHandler = { query in
+            XCTAssertEqual(query.filterText, "hello world")
+            expRetrieve.fulfill()
+            return .empty()
+        }
+        let killphraseDeleter = VaultStoreKillphraseDeleterMock()
+        killphraseDeleter.deleteItemsHandler = { query in
+            XCTAssertEqual(query, "hello world")
+            expDelete.fulfill()
+        }
+        let sut = makeSUT(vaultStore: store, vaultKillphraseDeleter: killphraseDeleter)
+        sut.itemsSearchQuery = "hello world"
+
+        await sut.reloadItems()
+
+        await fulfillment(of: [expDelete, expRetrieve], timeout: 1, enforceOrder: true)
+    }
+
+    @MainActor
     func test_insert_createsItemInStoreAndReloads() async throws {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
@@ -585,6 +608,7 @@ extension VaultDataModelTests {
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
         vaultImporter: any VaultStoreImporter = VaultStoreImporterMock(),
         vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
+        vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = []
@@ -594,6 +618,7 @@ extension VaultDataModelTests {
             vaultTagStore: vaultTagStore,
             vaultImporter: vaultImporter,
             vaultDeleter: vaultDeleter,
+            vaultKillphraseDeleter: vaultKillphraseDeleter,
             backupPasswordStore: backupPasswordStore,
             backupEventLogger: backupEventLogger,
             itemCaches: itemCaches

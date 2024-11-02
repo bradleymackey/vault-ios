@@ -71,3 +71,8 @@ public protocol VaultStoreDeleter: Sendable {
     /// - note: This operation is atomic and will either complete fully or not at all.
     func deleteVault() async throws
 }
+
+/// @mockable
+public protocol VaultStoreKillphraseDeleter: Sendable {
+    func deleteItems(matchingKillphrase: String) async
+}

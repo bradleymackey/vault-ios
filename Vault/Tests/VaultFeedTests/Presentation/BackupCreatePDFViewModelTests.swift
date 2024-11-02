@@ -89,6 +89,7 @@ extension BackupCreatePDFViewModelTests {
                 vaultTagStore: vaultTagStore,
                 vaultImporter: VaultStoreImporterMock(),
                 vaultDeleter: VaultStoreDeleterMock(),
+                vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
                 backupPasswordStore: backupPasswordStore,
                 backupEventLogger: BackupEventLoggerMock()
             ),

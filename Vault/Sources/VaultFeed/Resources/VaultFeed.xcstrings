@@ -609,6 +609,17 @@
         }
       }
     },
+    "itemDetail.killphrase.subtitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "This item will be immediately deleted when this text is entered exactly in the search bar. Be careful not to search for this text unless you intend to delete this item."
+          }
+        }
+      }
+    },
     "itemDetail.passphrase.prompt" : {
       "extractionState" : "manual",
       "localizations" : {

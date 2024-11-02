@@ -55,6 +55,7 @@ public enum VaultRoot {
         vaultTagStore: vaultStore,
         vaultImporter: vaultStore,
         vaultDeleter: vaultStore,
+        vaultKillphraseDeleter: vaultStore,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger
     )

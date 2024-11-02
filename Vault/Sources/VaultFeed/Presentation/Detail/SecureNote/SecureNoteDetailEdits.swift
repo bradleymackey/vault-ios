@@ -59,6 +59,22 @@ public struct SecureNoteDetailEdits: EditableState {
         }
     }
 
+    public var isKillphraseValid: Bool {
+        killphrase.isEmpty || killphrase.isNotBlank
+    }
+
+    public var killphraseIsEnabled: Bool {
+        killphrase.isNotEmpty
+    }
+
+    public var killphraseEnabledText: String {
+        if killphraseIsEnabled {
+            "Enabled"
+        } else {
+            "Disabled"
+        }
+    }
+
     /// The description of this note, which is just the first non-empty line of content.
     public var title: String {
         let firstLine = contents

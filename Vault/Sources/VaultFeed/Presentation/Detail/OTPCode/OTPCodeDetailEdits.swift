@@ -146,6 +146,22 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         default: true
         }
     }
+
+    public var isKillphraseValid: Bool {
+        killphrase.isEmpty || killphrase.isNotBlank
+    }
+
+    public var killphraseIsEnabled: Bool {
+        killphrase.isNotEmpty
+    }
+
+    public var killphraseEnabledText: String {
+        if killphraseIsEnabled {
+            "Enabled"
+        } else {
+            "Disabled"
+        }
+    }
 }
 
 // MARK: - Helpers

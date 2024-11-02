@@ -33,6 +33,7 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
             vaultTagStore: tagStore,
             vaultImporter: VaultStoreImporterMock(),
             vaultDeleter: VaultStoreDeleterMock(),
+            vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
         )
