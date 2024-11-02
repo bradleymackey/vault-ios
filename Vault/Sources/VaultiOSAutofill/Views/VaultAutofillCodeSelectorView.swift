@@ -55,6 +55,9 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
         .task {
             await dataModel.reloadData()
         }
+        .onAppear {
+            viewGenerator.didAppear()
+        }
     }
 
     func interactableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<Generator> {
