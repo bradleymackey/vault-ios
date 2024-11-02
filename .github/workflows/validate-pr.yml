@@ -4,17 +4,19 @@ on:
   pull_request:
     branches: [main]
 
-env:
-  XCODE_VERSION: "15.3"
+# env:
+#   XCODE_VERSION: "15.3"
 
 jobs:
   lint:
     name: Lint
     timeout-minutes: 2
-    runs-on: macos-14
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./Vault
 
     steps:
       - uses: actions/checkout@v4
-      - run: sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
       - name: Lint Sources
         run: make lint
