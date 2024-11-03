@@ -2,6 +2,10 @@ import Foundation
 
 /// Vault-scoped identifiers for specific pieces of data.
 public enum VaultIdentifiers {
+    public enum SecureStorageKey {
+        public static let backupPassword = "vault.secure-storage.backup-password.v1"
+    }
+
     public enum Backup {
         public static let encryptedVaultData = "vault.backup.encrypted-vault"
         public static let lastBackupEvent = "vault.backup.last-event"
