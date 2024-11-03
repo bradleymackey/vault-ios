@@ -2,12 +2,12 @@ import Foundation
 import VaultCore
 
 /// A view model for content that is loaded from a resource file.
-public protocol FileBackedContentViewModel {
+public protocol FileBackedContent {
     var fileName: String { get }
     var fileExtension: String { get }
 }
 
-extension FileBackedContentViewModel {
+extension FileBackedContent {
     /// Load the content from this file.
     public func loadContent() -> FormattedString? {
         guard let path = Bundle.module.path(forResource: fileName, ofType: fileExtension) else {
