@@ -31,7 +31,19 @@ struct VaultSettingsView: View {
             switch item {
             case .danger:
                 NavigationStack {
-                    SettingsDangerView()
+                    SettingsDangerView(viewModel: .init(
+                        dataModel: dataModel,
+                        authenticationService: authenticationService
+                    ))
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
                 }
             }
         }

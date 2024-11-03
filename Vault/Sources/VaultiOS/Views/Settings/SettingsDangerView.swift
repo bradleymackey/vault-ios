@@ -1,12 +1,15 @@
 import Foundation
 import SwiftUI
 import VaultFeed
+import VaultSettings
 
 struct SettingsDangerView: View {
-    @Environment(VaultDataModel.self) private var dataModel
-    @Environment(DeviceAuthenticationService.self) private var authenticationService
+    private var viewModel: SettingsDangerViewModel
     @State private var deleteError: PresentationError?
-    @State private var isDeleting = false
+
+    init(viewModel: SettingsDangerViewModel) {
+        self.viewModel = viewModel
+    }
 
     var body: some View {
         Form {
@@ -14,7 +17,7 @@ struct SettingsDangerView: View {
             actionSection
         }
         .navigationBarTitleDisplayMode(.inline)
-        .interactiveDismissDisabled(isDeleting)
+        .interactiveDismissDisabled(viewModel.isDeleting)
     }
 
     private var headerSection: some View {
@@ -34,21 +37,13 @@ struct SettingsDangerView: View {
         Section {
             AsyncButton {
                 do {
-                    isDeleting = true
-                    defer { isDeleting = false }
                     withAnimation {
                         deleteError = nil
                     }
-                    try await authenticationService.validateAuthentication(reason: "Delete Vault")
-                    try await dataModel.deleteVault()
-                    try await Task.sleep(for: .seconds(2)) // might be really fast, make it noticable
-                } catch {
+                    try await viewModel.deleteEntireVault()
+                } catch let error as PresentationError {
                     withAnimation {
-                        deleteError = .init(
-                            userTitle: "Can't delete Vault",
-                            userDescription: "Unable to delete Vault data right now. Please try again. \(error.localizedDescription)",
-                            debugDescription: error.localizedDescription
-                        )
+                        deleteError = error
                     }
                 }
             } label: {
