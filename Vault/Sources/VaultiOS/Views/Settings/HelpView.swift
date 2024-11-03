@@ -2,7 +2,7 @@ import Foundation
 import SwiftUI
 import VaultSettings
 
-struct AboutView: View {
+struct HelpView: View {
     var viewModel: SettingsViewModel
 
     var body: some View {
@@ -25,6 +25,6 @@ struct AboutView: View {
                 Label("Security", systemImage: "lock.fill")
             }
         }
-        .navigationTitle(Text(viewModel.aboutTitle))
+        .navigationTitle(Text(viewModel.helpTitle))
     }
 }

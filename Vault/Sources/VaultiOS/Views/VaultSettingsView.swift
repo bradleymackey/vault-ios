@@ -18,12 +18,26 @@ struct VaultSettingsView: View {
 
     var body: some View {
         Form {
-            viewOptionsSection
             aboutSection
-            policySection
+            viewOptionsSection
             dangerSection
         }
         .navigationTitle(viewModel.title)
+    }
+
+    private var aboutSection: some View {
+        Section {
+            NavigationLink {
+                VaultAboutView(viewModel: viewModel)
+            } label: {
+                FormRow(
+                    image: Image(systemName: "key.fill"),
+                    color: .blue
+                ) {
+                    Text(viewModel.aboutTitle)
+                }
+            }
+        }
     }
 
     private var viewOptionsSection: some View {
@@ -36,69 +50,6 @@ struct VaultSettingsView: View {
             } label: {
                 FormRow(image: Image(systemName: "clock.fill"), color: .red) {
                     Text(viewModel.pasteTTLTitle)
-                }
-            }
-        }
-    }
-
-    private var aboutSection: some View {
-        Section {
-            NavigationLink {
-                AboutView(viewModel: viewModel)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "key.fill"),
-                    color: .blue
-                ) {
-                    Text(viewModel.aboutTitle)
-                }
-            }
-
-            NavigationLink {
-                OpenSourceView()
-            } label: {
-                FormRow(
-                    image: Image(systemName: "figure.2.arms.open"),
-                    color: .purple
-                ) {
-                    Text(viewModel.openSourceTitle)
-                }
-            }
-        }
-    }
-
-    private var policySection: some View {
-        Section {
-            NavigationLink {
-                SettingsDocumentView(title: viewModel.termsOfUseTitle, viewModel: TermsOfServiceViewModel())
-            } label: {
-                FormRow(
-                    image: Image(systemName: "person.fill.checkmark"),
-                    color: .green
-                ) {
-                    Text(viewModel.termsOfUseTitle)
-                }
-            }
-
-            NavigationLink {
-                SettingsDocumentView(title: viewModel.privacyPolicyTitle, viewModel: PrivacyPolicyViewModel())
-            } label: {
-                FormRow(
-                    image: Image(systemName: "lock.fill"),
-                    color: .red
-                ) {
-                    Text(viewModel.privacyPolicyTitle)
-                }
-            }
-
-            NavigationLink {
-                ThirdPartyView()
-            } label: {
-                FormRow(
-                    image: Image(systemName: "text.book.closed.fill"),
-                    color: .blue
-                ) {
-                    Text(viewModel.thirdPartyTitle)
                 }
             }
         }
