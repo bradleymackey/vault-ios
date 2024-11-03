@@ -15,7 +15,7 @@ struct VaultKeyDeriverTests {
         let fast = VaultKeyDeriver.Backup.Fast.v1
 
         #expect(fast.signature == .backupFastV1)
-        #expect(fast.signature.userVisibleDescription == "Vault Default – FAST v1")
+        #expect(fast.signature.userVisibleDescription == "Vault Backup (Fast, v1)")
         #expect(fast.uniqueAlgorithmIdentifier == """
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=2000;variant=sha384>|\
@@ -30,7 +30,7 @@ struct VaultKeyDeriverTests {
         let secure = VaultKeyDeriver.Backup.Secure.v1
 
         #expect(secure.signature == .backupSecureV1)
-        #expect(secure.signature.userVisibleDescription == "Vault Default – SECURE v1")
+        #expect(secure.signature.userVisibleDescription == "Vault Backup (Secure, v1)")
         #expect(secure.uniqueAlgorithmIdentifier == """
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=5452351;variant=sha384>|\

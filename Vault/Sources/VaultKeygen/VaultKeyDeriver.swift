@@ -60,8 +60,8 @@ extension VaultKeyDeriver {
             switch self {
             case .testing: "Vault Testing"
             case .failing: "Vault Failing"
-            case .backupFastV1: "Vault Backup – FAST v1"
-            case .backupSecureV1: "Vault Backup – SECURE v1"
+            case .backupFastV1: "Vault Backup (Fast, v1)"
+            case .backupSecureV1: "Vault Backup (Secure, v1)"
             }
         }
 
