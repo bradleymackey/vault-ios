@@ -122,9 +122,22 @@ extension VaultKeyDeriver {
             /// This should be used in places where security is not required or for testing.
             public static let v1: VaultKeyDeriver = {
                 var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(PBKDF2_fast)
-                derivers.append(HKDF_sha3_512_single)
-                derivers.append(scrypt_fast)
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 2000,
+                        variant: .sha384
+                    )
+                ))
+                derivers.append(HKDFKeyDeriver<Bits256>(
+                    parameters: .init(variant: .sha3_sha512)
+                ))
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 6,
+                        blockSizeFactor: 4,
+                        parallelizationFactor: 1
+                    )
+                ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver(derivers: derivers),
                     signature: .backupFastV1
@@ -146,10 +159,25 @@ extension VaultKeyDeriver {
             public static let v1: VaultKeyDeriver = {
                 var derivers = [any KeyDeriver<Bits256>]()
                 // Initial PBKDF2 for strong password hashing
-                derivers.append(PBKDF2_secure)
-                derivers.append(HKDF_sha3_512_single)
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 5_452_351,
+                        variant: .sha384
+                    )
+                ))
+                derivers.append(HKDFKeyDeriver<Bits256>(
+                    parameters: .init(variant: .sha3_sha512)
+                ))
                 // Scrypt for memory-hard key derivation
-                derivers.append(scrypt_secure)
+                // Requires ~250MB of memory at peak with these current parameters.
+                // This should be fine for most iOS devices to perform locally.
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 18,
+                        blockSizeFactor: 8,
+                        parallelizationFactor: 1
+                    )
+                ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
                     signature: .backupSecureV1
@@ -163,8 +191,19 @@ extension VaultKeyDeriver {
         public enum Fast {
             public static let v1: VaultKeyDeriver = {
                 var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(scrypt_fast)
-                derivers.append(PBKDF2_fast)
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 6,
+                        blockSizeFactor: 4,
+                        parallelizationFactor: 1
+                    )
+                ))
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 1001,
+                        variant: .sha384
+                    )
+                ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
                     signature: .itemFastV1
@@ -175,8 +214,19 @@ extension VaultKeyDeriver {
         public enum Secure {
             public static let v1: VaultKeyDeriver = {
                 var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(scrypt_secure)
-                derivers.append(PBKDF2_secure)
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 8,
+                        blockSizeFactor: 4,
+                        parallelizationFactor: 1
+                    )
+                ))
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 372_002,
+                        variant: .sha384
+                    )
+                ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
                     signature: .itemSecureV1
@@ -184,87 +234,4 @@ extension VaultKeyDeriver {
             }()
         }
     }
-}
-
-// MARK: - Atoms
-
-extension VaultKeyDeriver.Backup.Fast {
-    private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(
-        parameters: .init(
-            iterations: 2000,
-            variant: .sha384
-        )
-    )
-
-    private static let scrypt_fast = ScryptKeyDeriver<Bits256>(
-        parameters: .init(
-            costFactor: 1 << 6,
-            blockSizeFactor: 4,
-            parallelizationFactor: 1
-        )
-    )
-}
-
-/// A single round of HKDF, using SHA3's SHA512.
-private let HKDF_sha3_512_single = HKDFKeyDeriver<Bits256>(
-    parameters: .init(variant: .sha3_sha512)
-)
-
-extension VaultKeyDeriver.Backup.Secure {
-    /// Uses a large, non-standard number of iterations with a variant that is not susceptible to
-    /// length-extension attacks.
-    private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(
-        parameters: .init(
-            iterations: 5_452_351,
-            variant: .sha384
-        )
-    )
-
-    /// Requires ~250MB of memory at peak with these current parameters.
-    /// This should be fine for most iOS devices to perform locally.
-    private static let scrypt_secure = ScryptKeyDeriver<Bits256>(
-        parameters: .init(
-            costFactor: 1 << 18,
-            blockSizeFactor: 8,
-            parallelizationFactor: 1
-        )
-    )
-}
-
-extension VaultKeyDeriver.Item.Fast {
-    private static let scrypt_fast = ScryptKeyDeriver<Bits256>(
-        parameters: .init(
-            costFactor: 1 << 6,
-            blockSizeFactor: 4,
-            parallelizationFactor: 1
-        )
-    )
-
-    /// Uses a non-standard number of iterations with a variant that is not susceptible to
-    /// length-extension attacks.
-    private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(
-        parameters: .init(
-            iterations: 1001,
-            variant: .sha384
-        )
-    )
-}
-
-extension VaultKeyDeriver.Item.Secure {
-    private static let scrypt_secure = ScryptKeyDeriver<Bits256>(
-        parameters: .init(
-            costFactor: 1 << 8,
-            blockSizeFactor: 4,
-            parallelizationFactor: 1
-        )
-    )
-
-    /// Uses a non-standard number of iterations with a variant that is not susceptible to
-    /// length-extension attacks.
-    private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(
-        parameters: .init(
-            iterations: 372_002,
-            variant: .sha384
-        )
-    )
 }
