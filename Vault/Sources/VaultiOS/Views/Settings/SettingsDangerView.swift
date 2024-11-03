@@ -1,7 +1,6 @@
 import Foundation
 import SwiftUI
 import VaultFeed
-import VaultSettings
 
 struct SettingsDangerView: View {
     private var viewModel: SettingsDangerViewModel
