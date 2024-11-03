@@ -3,14 +3,14 @@ import SwiftUI
 import VaultFeed
 import VaultSettings
 
-/// A settings screen where the content is populated by a `FileBackedContentViewModel`
+/// A settings screen where the content is populated by a `FileBackedContent`
 struct SettingsDocumentView: View {
     var title: String
     var bodyText: FormattedString
 
-    init(title: String, viewModel: some FileBackedContentViewModel) {
+    init(title: String, content: some FileBackedContent) {
         self.title = title
-        bodyText = viewModel.loadContent() ?? .raw(viewModel.errorLoadingMessage)
+        bodyText = content.loadContent() ?? .raw(content.errorLoadingMessage)
     }
 
     var body: some View {

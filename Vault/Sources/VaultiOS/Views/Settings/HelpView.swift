@@ -16,7 +16,7 @@ struct HelpView: View {
     private var generalSection: some View {
         Section {
             NavigationLink {
-                SettingsDocumentView(title: "About Codes", viewModel: AboutCodesViewModel())
+                SettingsDocumentView(title: "About Codes", content: FAQCodesFileContent())
             } label: {
                 Label("What is a 'code'?", systemImage: "questionmark.circle.fill")
             }
@@ -28,13 +28,13 @@ struct HelpView: View {
     private var backupsSection: some View {
         Section {
             NavigationLink {
-                SettingsDocumentView(title: "About Backups", viewModel: AboutBackupsGeneralViewModel())
+                SettingsDocumentView(title: "About Backups", content: FAQBackupsGeneralFileContent())
             } label: {
                 Label("Why should I make backups?", systemImage: "questionmark.circle.fill")
             }
 
             NavigationLink {
-                SettingsDocumentView(title: "Backup Security", viewModel: AboutBackupsSecurityViewModel())
+                SettingsDocumentView(title: "Backup Security", content: FAQBackupsSecurityFileContent())
             } label: {
                 Label("Are backups secure?", systemImage: "lock.fill")
             }

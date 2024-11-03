@@ -67,7 +67,7 @@ struct VaultAboutView: View {
     private var policySection: some View {
         Section {
             NavigationLink {
-                SettingsDocumentView(title: viewModel.termsOfUseTitle, viewModel: TermsOfServiceViewModel())
+                SettingsDocumentView(title: viewModel.termsOfUseTitle, content: TermsOfServiceContent())
             } label: {
                 FormRow(
                     image: Image(systemName: "person.fill.checkmark"),
@@ -78,7 +78,7 @@ struct VaultAboutView: View {
             }
 
             NavigationLink {
-                SettingsDocumentView(title: viewModel.privacyPolicyTitle, viewModel: PrivacyPolicyViewModel())
+                SettingsDocumentView(title: viewModel.privacyPolicyTitle, content: PrivacyPolicyContent())
             } label: {
                 FormRow(
                     image: Image(systemName: "lock.fill"),
