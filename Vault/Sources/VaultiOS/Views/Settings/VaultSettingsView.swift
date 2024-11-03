@@ -82,7 +82,7 @@ struct VaultSettingsView: View {
                         .tag(option)
                 }
             } label: {
-                FormRow(image: Image(systemName: "clock.fill"), color: .blue, style: .standard) {
+                FormRow(image: Image(systemName: "clock.fill"), color: .blue, style: .prominent) {
                     Text(viewModel.pasteTTLTitle)
                 }
             }
@@ -90,7 +90,11 @@ struct VaultSettingsView: View {
             Button {
                 modal = .danger
             } label: {
-                FormRow(image: Image(systemName: "exclamationmark.triangle.fill"), color: .red, style: .standard) {
+                FormRow(
+                    image: Image(systemName: "exclamationmark.triangle.fill"),
+                    color: .red,
+                    style: .prominent
+                ) {
                     Text("Danger Zone")
                 }
             }
