@@ -30,7 +30,7 @@ struct HelpView: View {
             NavigationLink {
                 SettingsDocumentView(title: "About Backups", viewModel: AboutBackupsGeneralViewModel())
             } label: {
-                Label("Why should I make backups?", systemImage: "info.circle.fill")
+                Label("Why should I make backups?", systemImage: "questionmark.circle.fill")
             }
 
             NavigationLink {
