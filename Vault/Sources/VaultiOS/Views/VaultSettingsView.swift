@@ -9,7 +9,11 @@ struct VaultSettingsView: View {
     @State private var viewModel: SettingsViewModel
     @Bindable private var localSettings: LocalSettings
 
-    @State private var deleteError: PresentationError?
+    @State private var modal: Modal?
+
+    private enum Modal: IdentifiableSelf {
+        case danger
+    }
 
     init(viewModel: SettingsViewModel, localSettings: LocalSettings) {
         _viewModel = State(wrappedValue: viewModel)
@@ -21,9 +25,16 @@ struct VaultSettingsView: View {
             headerSection
             aboutSection
             viewOptionsSection
-            dangerSection
         }
         .navigationTitle(viewModel.title)
+        .sheet(item: $modal, onDismiss: nil) { item in
+            switch item {
+            case .danger:
+                NavigationStack {
+                    SettingsDangerView()
+                }
+            }
+        }
     }
 
     private var headerSection: some View {
@@ -59,47 +70,19 @@ struct VaultSettingsView: View {
                         .tag(option)
                 }
             } label: {
-                FormRow(image: Image(systemName: "clock.fill"), color: .red) {
+                FormRow(image: Image(systemName: "clock.fill"), color: .blue, style: .standard) {
                     Text(viewModel.pasteTTLTitle)
                 }
             }
-        }
-    }
 
-    private var dangerSection: some View {
-        Section {
-            AsyncButton {
-                do {
-                    withAnimation {
-                        deleteError = nil
-                    }
-                    try await authenticationService.validateAuthentication(reason: "Delete Vault")
-                    try await dataModel.deleteVault()
-                    try await Task.sleep(for: .seconds(3)) // might be really fast, make it noticable
-                } catch {
-                    withAnimation {
-                        deleteError = .init(
-                            userTitle: "Can't delete Vault",
-                            userDescription: "Unable to delete Vault data right now. Please try again. \(error.localizedDescription)",
-                            debugDescription: error.localizedDescription
-                        )
-                    }
-                }
+            Button {
+                modal = .danger
             } label: {
-                let desc = deleteError?.userDescription
-                FormRow(
-                    image: Image(systemName: "xmark.app.fill"),
-                    color: .red,
-                    style: .prominent,
-                    alignment: desc == nil ? .center : .firstTextBaseline
-                ) {
-                    TextAndSubtitle(title: "Delete All Data", subtitle: desc)
+                FormRow(image: Image(systemName: "exclamationmark.triangle.fill"), color: .red, style: .standard) {
+                    Text("Danger Zone")
                 }
             }
-            .foregroundStyle(.red)
-        } header: {
-            Label("Danger", systemImage: "exclamationmark.circle.fill")
-                .foregroundStyle(.red)
+            .tint(.red)
         }
     }
 }
