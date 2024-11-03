@@ -24,6 +24,10 @@ extension SettingsViewModel {
         localized(key: "about.title")
     }
 
+    public var helpTitle: String {
+        "FAQs"
+    }
+
     public var previewSizeTitle: String {
         localized(key: "previewSize.title")
     }
