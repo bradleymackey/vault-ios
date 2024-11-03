@@ -2,8 +2,7 @@ import CryptoEngine
 import Foundation
 import FoundationExtensions
 
-/// A `KeyDeriver` that can actually be used for vault encryption.
-///
+/// A `KeyDeriver` that can actually be used in the context of the Vault app.
 /// It contains a resilient `signature`, such that we can lookup the exact
 /// algorithm and all parameters when we decrypt.
 ///
