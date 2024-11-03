@@ -8,16 +8,20 @@ import VaultKeygen
 // This is tested by this command: `make benchmark-keygen`
 
 // Latest results (M1 Pro MacBook Pro - Firestorm Core):
-//   - Fast = ~0.01s
-//   - Secure = ~30s
+//   - Backup Fast = ~0.01s
+//   - Backup Secure = ~30s
+//   - Item Fast = ~0.01s
+//   - Item Secure = ~2s
 
 @main
 struct KeygenSpeedtest {
     public static func main() throws {
         print("🚧 Build configuration:", buildConfigString())
 
-        try benchmark(keyDeriver: VaultKeyDeriver.Backup.Fast.v1, description: "Fast")
-        try benchmark(keyDeriver: VaultKeyDeriver.Backup.Secure.v1, description: "Secure")
+        try benchmark(keyDeriver: VaultKeyDeriver.Item.Fast.v1, description: "Item Fast")
+        try benchmark(keyDeriver: VaultKeyDeriver.Item.Secure.v1, description: "Item Secure")
+        try benchmark(keyDeriver: VaultKeyDeriver.Backup.Fast.v1, description: "Backup Fast")
+        try benchmark(keyDeriver: VaultKeyDeriver.Backup.Secure.v1, description: "Backup Secure")
     }
 }
 

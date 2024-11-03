@@ -2,8 +2,7 @@ import CryptoEngine
 import Foundation
 import FoundationExtensions
 
-/// A `KeyDeriver` that can actually be used for vault encryption.
-///
+/// A `KeyDeriver` that can actually be used in the context of the Vault app.
 /// It contains a resilient `signature`, such that we can lookup the exact
 /// algorithm and all parameters when we decrypt.
 ///
@@ -51,6 +50,8 @@ extension VaultKeyDeriver {
         case failing = "vault.keygen.failing"
         case backupFastV1 = "vault.keygen.backup.fast.v1"
         case backupSecureV1 = "vault.keygen.backup.secure.v1"
+        case itemFastV1 = "vault.keygen.item.fast.v1"
+        case itemSecureV1 = "vault.keygen.item.secure.v1"
 
         public var id: String {
             rawValue
@@ -62,6 +63,8 @@ extension VaultKeyDeriver {
             case .failing: "Vault Failing"
             case .backupFastV1: "Vault Backup (Fast, v1)"
             case .backupSecureV1: "Vault Backup (Secure, v1)"
+            case .itemFastV1: "Vault Item (Fast, v1)"
+            case .itemSecureV1: "Vault Item (Secure, v1)"
             }
         }
 
@@ -89,6 +92,8 @@ extension VaultKeyDeriver {
         case .failing: .failing
         case .backupFastV1: .Backup.Fast.v1
         case .backupSecureV1: .Backup.Secure.v1
+        case .itemFastV1: .Item.Fast.v1
+        case .itemSecureV1: .Item.Secure.v1
         }
     }
 
@@ -117,9 +122,22 @@ extension VaultKeyDeriver {
             /// This should be used in places where security is not required or for testing.
             public static let v1: VaultKeyDeriver = {
                 var derivers = [any KeyDeriver<Bits256>]()
-                derivers.append(PBKDF2_fast)
-                derivers.append(HKDF_sha3_512_single)
-                derivers.append(scrypt_fast)
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 2000,
+                        variant: .sha384
+                    )
+                ))
+                derivers.append(HKDFKeyDeriver<Bits256>(
+                    parameters: .init(variant: .sha3_sha512)
+                ))
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 6,
+                        blockSizeFactor: 4,
+                        parallelizationFactor: 1
+                    )
+                ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver(derivers: derivers),
                     signature: .backupFastV1
@@ -141,10 +159,25 @@ extension VaultKeyDeriver {
             public static let v1: VaultKeyDeriver = {
                 var derivers = [any KeyDeriver<Bits256>]()
                 // Initial PBKDF2 for strong password hashing
-                derivers.append(PBKDF2_secure)
-                derivers.append(HKDF_sha3_512_single)
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 5_452_351,
+                        variant: .sha384
+                    )
+                ))
+                derivers.append(HKDFKeyDeriver<Bits256>(
+                    parameters: .init(variant: .sha3_sha512)
+                ))
                 // Scrypt for memory-hard key derivation
-                derivers.append(scrypt_secure)
+                // Requires ~250MB of memory at peak with these current parameters.
+                // This should be fine for most iOS devices to perform locally.
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 18,
+                        blockSizeFactor: 8,
+                        parallelizationFactor: 1
+                    )
+                ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
                     signature: .backupSecureV1
@@ -152,49 +185,53 @@ extension VaultKeyDeriver {
             }()
         }
     }
-}
 
-// MARK: - Atoms
+    /// Keyderivers that are used for individual items within a vault.
+    public enum Item {
+        public enum Fast {
+            public static let v1: VaultKeyDeriver = {
+                var derivers = [any KeyDeriver<Bits256>]()
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 6,
+                        blockSizeFactor: 4,
+                        parallelizationFactor: 1
+                    )
+                ))
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 1001,
+                        variant: .sha384
+                    )
+                ))
+                return VaultKeyDeriver(
+                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    signature: .itemFastV1
+                )
+            }()
+        }
 
-extension VaultKeyDeriver.Backup.Fast {
-    private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(
-        parameters: .init(
-            iterations: 2000,
-            variant: .sha384
-        )
-    )
-
-    private static let scrypt_fast = ScryptKeyDeriver<Bits256>(
-        parameters: .init(
-            costFactor: 1 << 6,
-            blockSizeFactor: 4,
-            parallelizationFactor: 1
-        )
-    )
-}
-
-/// A single round of HKDF, using SHA3's SHA512.
-private let HKDF_sha3_512_single = HKDFKeyDeriver<Bits256>(
-    parameters: .init(variant: .sha3_sha512)
-)
-
-extension VaultKeyDeriver.Backup.Secure {
-    /// Uses a large, non-standard number of iterations with a variant that is not susceptible to
-    /// length-extension attacks.
-    private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(
-        parameters: .init(
-            iterations: 5_452_351,
-            variant: .sha384
-        )
-    )
-
-    /// Requires ~250MB of memory at peak with these current parameters.
-    /// This should be fine for most iOS devices to perform locally.
-    private static let scrypt_secure = ScryptKeyDeriver<Bits256>(
-        parameters: .init(
-            costFactor: 1 << 18,
-            blockSizeFactor: 8,
-            parallelizationFactor: 1
-        )
-    )
+        public enum Secure {
+            public static let v1: VaultKeyDeriver = {
+                var derivers = [any KeyDeriver<Bits256>]()
+                derivers.append(ScryptKeyDeriver<Bits256>(
+                    parameters: .init(
+                        costFactor: 1 << 8,
+                        blockSizeFactor: 4,
+                        parallelizationFactor: 1
+                    )
+                ))
+                derivers.append(PBKDF2KeyDeriver<Bits256>(
+                    parameters: .init(
+                        iterations: 372_002,
+                        variant: .sha384
+                    )
+                ))
+                return VaultKeyDeriver(
+                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    signature: .itemSecureV1
+                )
+            }()
+        }
+    }
 }

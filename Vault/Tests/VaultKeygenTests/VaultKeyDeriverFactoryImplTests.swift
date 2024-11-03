@@ -13,6 +13,15 @@ struct VaultKeyDeriverFactoryImplTests {
         #expect(result.signature == .backupFastV1, "We assume tests are run in DEBUG")
     }
 
+    @Test
+    func makeVaultItemKeyDeriver_debugGeneratesFast() {
+        let sut = VaultKeyDeriverFactoryImpl()
+
+        let result = sut.makeVaultItemKeyDeriver()
+
+        #expect(result.signature == .itemFastV1, "We assume tests are run in DEBUG")
+    }
+
     @Test(arguments: VaultKeyDeriver.Signature.allCases)
     func lookupVaultKeyDeriver_looksUpCorrect(signature: VaultKeyDeriver.Signature) {
         let sut = VaultKeyDeriverFactoryImpl()

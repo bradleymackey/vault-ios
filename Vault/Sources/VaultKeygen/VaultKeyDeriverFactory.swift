@@ -5,6 +5,8 @@ import FoundationExtensions
 public protocol VaultKeyDeriverFactory {
     /// Create the key deriver that should be used to encrypt a vault backup.
     func makeVaultBackupKeyDeriver() -> VaultKeyDeriver
+    /// Create the key deriver that should be used for encrypting individual items within a vault
+    func makeVaultItemKeyDeriver() -> VaultKeyDeriver
     func lookupVaultKeyDeriver(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver
 }
 
@@ -20,6 +22,15 @@ public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
         #endif
     }
 
+    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver {
+        #if DEBUG
+        return VaultKeyDeriver.Item.Fast.v1
+        #else
+        // Very slow in DEBUG
+        return VaultKeyDeriver.Item.Secure.v1
+        #endif
+    }
+
     public func lookupVaultKeyDeriver(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver {
         VaultKeyDeriver.lookup(signature: signature)
     }
@@ -29,6 +40,7 @@ public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
 public struct VaultKeyDeriverFactoryTesting: VaultKeyDeriverFactory {
     public init() {}
     public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver { .testing }
+    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver { .testing }
     public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver { .testing }
 }
 
@@ -40,6 +52,7 @@ extension VaultKeyDeriverFactory where Self == VaultKeyDeriverFactoryTesting {
 public struct VaultKeyDeriverFactoryFailing: VaultKeyDeriverFactory {
     public init() {}
     public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver { .failing }
+    public func makeVaultItemKeyDeriver() -> VaultKeyDeriver { .failing }
     public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver { .failing }
 }
 
