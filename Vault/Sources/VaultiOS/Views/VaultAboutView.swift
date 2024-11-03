@@ -12,12 +12,23 @@ struct VaultAboutView: View {
 
     var body: some View {
         Form {
+            headerSection
             helpSection
             tenetsSection
             policySection
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
+    }
+
+    private var headerSection: some View {
+        PlaceholderView(
+            systemIcon: "info.bubble.fill",
+            title: "Vault",
+            subtitle: "Vault has been designed from scratch to store your highly sensitive data that you cannot afford either lose or leak. It's developed in the open and is completely free to use."
+        )
+        .padding()
+        .containerRelativeFrame(.horizontal)
     }
 
     private var helpSection: some View {
