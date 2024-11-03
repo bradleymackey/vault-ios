@@ -7,24 +7,39 @@ struct HelpView: View {
 
     var body: some View {
         Form {
+            generalSection
+            backupsSection
+        }
+        .navigationTitle(Text(viewModel.helpTitle))
+    }
+
+    private var generalSection: some View {
+        Section {
             NavigationLink {
                 SettingsDocumentView(title: "About Codes", viewModel: AboutCodesViewModel())
             } label: {
-                Label("What are 2FA codes?", systemImage: "questionmark.circle.fill")
+                Label("What is a 'code'?", systemImage: "questionmark.circle.fill")
             }
-
-            NavigationLink {
-                SettingsDocumentView(title: "About Backups", viewModel: AboutBackupsViewModel())
-            } label: {
-                Label("Backups", systemImage: "doc.on.doc.fill")
-            }
-
-            NavigationLink {
-                SettingsDocumentView(title: "About Security", viewModel: AboutSecurityViewModel())
-            } label: {
-                Label("Security", systemImage: "lock.fill")
-            }
+        } header: {
+            Label("General", systemImage: "info.circle.fill")
         }
-        .navigationTitle(Text(viewModel.helpTitle))
+    }
+
+    private var backupsSection: some View {
+        Section {
+            NavigationLink {
+                SettingsDocumentView(title: "About Backups", viewModel: AboutBackupsGeneralViewModel())
+            } label: {
+                Label("Why should I make backups?", systemImage: "info.circle.fill")
+            }
+
+            NavigationLink {
+                SettingsDocumentView(title: "Backup Security", viewModel: AboutBackupsSecurityViewModel())
+            } label: {
+                Label("Are backups secure?", systemImage: "lock.fill")
+            }
+        } header: {
+            Label("Backups", systemImage: "doc.on.doc.fill")
+        }
     }
 }

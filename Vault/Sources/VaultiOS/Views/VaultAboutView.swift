@@ -44,8 +44,6 @@ struct VaultAboutView: View {
                     Text(viewModel.helpTitle)
                 }
             }
-        } header: {
-            Text("Help")
         }
     }
 
