@@ -40,6 +40,34 @@ struct VaultKeyDeriverTests {
         """)
     }
 
+    @Test
+    func Item_Fast_v1() {
+        let fast = VaultKeyDeriver.Item.Fast.v1
+
+        #expect(fast.signature == .itemFastV1)
+        #expect(fast.signature.userVisibleDescription == "Vault Item (Fast, v1)")
+        #expect(fast.uniqueAlgorithmIdentifier == """
+        COMBINATION<\
+        SCRYPT<keyLength=32;costFactor=64;blockSizeFactor=4;parallelizationFactor=1>|\
+        PBKDF2<keyLength=32;iterations=1001;variant=sha384>\
+        >
+        """)
+    }
+
+    @Test
+    func Item_Secure_v1() {
+        let secure = VaultKeyDeriver.Item.Secure.v1
+
+        #expect(secure.signature == .itemSecureV1)
+        #expect(secure.signature.userVisibleDescription == "Vault Item (Secure, v1)")
+        #expect(secure.uniqueAlgorithmIdentifier == """
+        COMBINATION<\
+        SCRYPT<keyLength=32;costFactor=256;blockSizeFactor=4;parallelizationFactor=1>|\
+        PBKDF2<keyLength=32;iterations=372002;variant=sha384>\
+        >
+        """)
+    }
+
     @Test(arguments: VaultKeyDeriver.Signature.allCases)
     func lookupSignature_looksUpCorrect(signature: VaultKeyDeriver.Signature) {
         let result = VaultKeyDeriver.lookup(signature: signature)

@@ -50,6 +50,8 @@ extension VaultKeyDeriver {
         case failing = "vault.keygen.failing"
         case backupFastV1 = "vault.keygen.backup.fast.v1"
         case backupSecureV1 = "vault.keygen.backup.secure.v1"
+        case itemFastV1 = "vault.keygen.item.fast.v1"
+        case itemSecureV1 = "vault.keygen.item.secure.v1"
 
         public var id: String {
             rawValue
@@ -61,6 +63,8 @@ extension VaultKeyDeriver {
             case .failing: "Vault Failing"
             case .backupFastV1: "Vault Backup (Fast, v1)"
             case .backupSecureV1: "Vault Backup (Secure, v1)"
+            case .itemFastV1: "Vault Item (Fast, v1)"
+            case .itemSecureV1: "Vault Item (Secure, v1)"
             }
         }
 
@@ -88,6 +92,8 @@ extension VaultKeyDeriver {
         case .failing: .failing
         case .backupFastV1: .Backup.Fast.v1
         case .backupSecureV1: .Backup.Secure.v1
+        case .itemFastV1: .Item.Fast.v1
+        case .itemSecureV1: .Item.Secure.v1
         }
     }
 
@@ -151,6 +157,33 @@ extension VaultKeyDeriver {
             }()
         }
     }
+
+    /// Keyderivers that are used for individual items within a vault.
+    public enum Item {
+        public enum Fast {
+            public static let v1: VaultKeyDeriver = {
+                var derivers = [any KeyDeriver<Bits256>]()
+                derivers.append(scrypt_fast)
+                derivers.append(PBKDF2_fast)
+                return VaultKeyDeriver(
+                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    signature: .itemFastV1
+                )
+            }()
+        }
+
+        public enum Secure {
+            public static let v1: VaultKeyDeriver = {
+                var derivers = [any KeyDeriver<Bits256>]()
+                derivers.append(scrypt_secure)
+                derivers.append(PBKDF2_secure)
+                return VaultKeyDeriver(
+                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    signature: .itemSecureV1
+                )
+            }()
+        }
+    }
 }
 
 // MARK: - Atoms
@@ -194,6 +227,44 @@ extension VaultKeyDeriver.Backup.Secure {
             costFactor: 1 << 18,
             blockSizeFactor: 8,
             parallelizationFactor: 1
+        )
+    )
+}
+
+extension VaultKeyDeriver.Item.Fast {
+    private static let scrypt_fast = ScryptKeyDeriver<Bits256>(
+        parameters: .init(
+            costFactor: 1 << 6,
+            blockSizeFactor: 4,
+            parallelizationFactor: 1
+        )
+    )
+
+    /// Uses a non-standard number of iterations with a variant that is not susceptible to
+    /// length-extension attacks.
+    private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(
+        parameters: .init(
+            iterations: 1001,
+            variant: .sha384
+        )
+    )
+}
+
+extension VaultKeyDeriver.Item.Secure {
+    private static let scrypt_secure = ScryptKeyDeriver<Bits256>(
+        parameters: .init(
+            costFactor: 1 << 8,
+            blockSizeFactor: 4,
+            parallelizationFactor: 1
+        )
+    )
+
+    /// Uses a non-standard number of iterations with a variant that is not susceptible to
+    /// length-extension attacks.
+    private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(
+        parameters: .init(
+            iterations: 372_002,
+            variant: .sha384
         )
     )
 }

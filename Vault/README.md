@@ -40,10 +40,12 @@ In the case of a composition key deriver: the output at each step is directed as
 
 These derivers are benchmarked via `make benchmark-keygen`, so you can see their performance on your machine.
 
-| Key Deriver Namespace | Purpose |
-| ----------- | -------------------------------- |
-| `vault.keygen.backup.fast` | Derivation for vault export backups in non-optimized binary builds. Scaled-down parameters for all key derivation algorithms so they are a lot faster to compute. Still technically secure, but not for sustained offline attacks. |
+| Key Deriver Namespace        | Purpose                                                                                                                                                                                                                                                                                                                 |
+| ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `vault.keygen.backup.fast`   | Derivation for vault export backups in non-optimized binary builds. Scaled-down parameters for all key derivation algorithms so they are a lot faster to compute. Still technically secure, but not for sustained offline attacks.                                                                                      |
 | `vault.keygen.backup.secure` | Derivation for backups in optimized binary builds. Relatively slow to compute, even on an optimized build. Uses a variety of compute-hard and memory-hard key derivation algorithms. Designed to be resilient to sustained, long-term offline attacks to protect data in the event of the theft of an encrypted backup. |
+| `vault.keygen.item.fast`     | Derivation for individual vault items in non-optimized binary builds. Scaled-down parameters for all derivations.                                                                                                                                                                                                       |
+| `vault.keygen.item.secure`   | Derivation for individual vault items in optimized binary builds. Designed to be relatively resilient to attacks, but much faster to keygen that the secure backup key, as this operation is preformed much more often.                                                                                                 |
 
 ### `vault.keygen.backup.fast.v1`
 
@@ -61,14 +63,28 @@ A composition key deriver, using the same salt at each step, in this order:
 2. HKDF, 256 bit key length, SHA3 (SHA512)
 3. scrypt, 256 bit key length, N = 1 << 18, r = 8, p = 1
 
+### `vault.keygen.item.fast.v1`
+
+A composition key deriver, using the same salt at each step, in this order:
+
+1. scrypt, 256 bit key length, N = 1 << 6, r = 4, p = 1
+2. PBKDF2, 256 bit key length, SHA2 (SHA384), 1001 iterations
+
+### `vault.keygen.item.secure.v1`
+
+A composition key deriver, using the same salt at each step, in this order:
+
+1. scrypt, 256 bit key length, N = 1 << 8, r = 4, p = 1
+2. PBKDF2, 256 bit key length, SHA2 (SHA384), 372002 iterations
+
 ### `vault.keygen.testing`
 
-Only for use during testing. 
+Only for use during testing.
 Algorithm is liable to change.
 
 ### `vault.keygen.failing`
 
-Only for use during testing. 
+Only for use during testing.
 Designed to cause an internal error during key generation.
 
 ## Testing Configuration
