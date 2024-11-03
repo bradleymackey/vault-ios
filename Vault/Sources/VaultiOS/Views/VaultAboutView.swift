@@ -16,6 +16,7 @@ struct VaultAboutView: View {
             helpSection
             tenetsSection
             policySection
+            mastheadSection
         }
         .navigationTitle("About")
         .navigationBarTitleDisplayMode(.inline)
@@ -24,8 +25,8 @@ struct VaultAboutView: View {
     private var headerSection: some View {
         PlaceholderView(
             systemIcon: "info.bubble.fill",
-            title: "Vault",
-            subtitle: "Vault has been designed from scratch to store your highly sensitive data that you cannot afford either lose or leak. It's developed in the open and is completely free to use."
+            title: "About Vault",
+            subtitle: "Vault has been designed from scratch to store your highly sensitive data that you cannot afford to either lose or leak. It's developed in the open and is completely free to use."
         )
         .padding()
         .containerRelativeFrame(.horizontal)
@@ -43,6 +44,8 @@ struct VaultAboutView: View {
                     Text(viewModel.helpTitle)
                 }
             }
+        } header: {
+            Text("Help")
         }
     }
 
@@ -58,6 +61,8 @@ struct VaultAboutView: View {
                     Text(viewModel.openSourceTitle)
                 }
             }
+        } header: {
+            Text("Proud to be...")
         }
     }
 
@@ -95,6 +100,20 @@ struct VaultAboutView: View {
                     Text(viewModel.thirdPartyTitle)
                 }
             }
+        } header: {
+            Text("Legal")
+        }
+    }
+
+    private var mastheadSection: some View {
+        Section {
+            VStack(alignment: .center, spacing: 2) {
+                Text("Free and open since 2024 ✌️")
+            }
+            .containerRelativeFrame(.horizontal)
+            .foregroundStyle(.secondary)
+            .font(.footnote)
+            .noListBackground()
         }
     }
 }

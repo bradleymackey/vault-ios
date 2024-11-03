@@ -25,7 +25,7 @@ extension SettingsViewModel {
     }
 
     public var helpTitle: String {
-        "Help"
+        "FAQs"
     }
 
     public var previewSizeTitle: String {
