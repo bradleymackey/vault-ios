@@ -71,6 +71,6 @@ extension BackupPasswordStoreImpl {
     }
 
     private enum KeychainKey {
-        static let backupPassword = "vault-backup-password-v1"
+        static let backupPassword = "vault.backup.password.v1"
     }
 }
