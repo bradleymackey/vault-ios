@@ -60,7 +60,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
 
         XCTAssertEqual(
             storage.storeArgValues.map(\.1),
-            ["vault-backup-password-v1"]
+            ["vault.secure-storage.backup-password.v1"]
         )
     }
 }
