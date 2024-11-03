@@ -1,9 +1,9 @@
 import Foundation
 import FoundationExtensions
 
-/// A key used to encrypt or decrypt a vault.
+/// A symmetric key used for encryption and decryption.
 public struct VaultKey {
-    /// The key data for a vault.
+    /// The key.
     public var key: KeyData<Bits256>
     /// Initialization vector.
     public var iv: KeyData<Bits256>

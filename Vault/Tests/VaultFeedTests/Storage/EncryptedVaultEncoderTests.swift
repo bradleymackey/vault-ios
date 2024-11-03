@@ -33,7 +33,7 @@ final class EncryptedVaultEncoderTests: XCTestCase {
 
         XCTAssertEqual(backup.encryptionIV.count, 32)
         XCTAssertEqual(backup.keygenSalt, salt)
-        XCTAssertEqual(backup.keygenSignature, "vault.keygen.default.testing")
+        XCTAssertEqual(backup.keygenSignature, "vault.keygen.testing")
         XCTAssertEqual(backup.version, "1.0.0")
     }
 
@@ -51,7 +51,7 @@ final class EncryptedVaultEncoderTests: XCTestCase {
 
         XCTAssertEqual(backup.encryptionIV.count, 32)
         XCTAssertEqual(backup.keygenSalt, salt)
-        XCTAssertEqual(backup.keygenSignature, "vault.keygen.default.testing")
+        XCTAssertEqual(backup.keygenSignature, "vault.keygen.testing")
         XCTAssertEqual(backup.version, "1.0.0")
     }
 }

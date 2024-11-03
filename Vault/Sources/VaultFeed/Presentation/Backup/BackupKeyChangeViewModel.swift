@@ -37,7 +37,7 @@ public final class BackupKeyChangeViewModel {
     ) {
         self.authenticationService = authenticationService
         self.dataModel = dataModel
-        encryptionKeyDeriver = deriverFactory.makeVaultKeyDeriver()
+        encryptionKeyDeriver = deriverFactory.makeVaultBackupKeyDeriver()
     }
 
     public var passwordConfirmMatches: Bool {

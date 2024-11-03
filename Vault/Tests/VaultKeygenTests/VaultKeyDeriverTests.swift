@@ -11,11 +11,11 @@ import Testing
 /// Each respective version of each algorithm should never change, so it's always backwards compatible.
 struct VaultKeyDeriverTests {
     @Test
-    func V1_fast() {
-        let fast = VaultKeyDeriver.V1.fast
+    func Backup_Fast_v1() {
+        let fast = VaultKeyDeriver.Backup.Fast.v1
 
-        #expect(fast.signature == .fastV1)
-        #expect(fast.signature.userVisibleDescription == "Vault Default – FAST v1")
+        #expect(fast.signature == .backupFastV1)
+        #expect(fast.signature.userVisibleDescription == "Vault Backup (Fast, v1)")
         #expect(fast.uniqueAlgorithmIdentifier == """
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=2000;variant=sha384>|\
@@ -26,11 +26,11 @@ struct VaultKeyDeriverTests {
     }
 
     @Test
-    func V1_secure() {
-        let secure = VaultKeyDeriver.V1.secure
+    func Backup_Secure_v1() {
+        let secure = VaultKeyDeriver.Backup.Secure.v1
 
-        #expect(secure.signature == .secureV1)
-        #expect(secure.signature.userVisibleDescription == "Vault Default – SECURE v1")
+        #expect(secure.signature == .backupSecureV1)
+        #expect(secure.signature.userVisibleDescription == "Vault Backup (Secure, v1)")
         #expect(secure.uniqueAlgorithmIdentifier == """
         COMBINATION<\
         PBKDF2<keyLength=32;iterations=5452351;variant=sha384>|\

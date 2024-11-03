@@ -53,7 +53,7 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         let newPassword = DerivedEncryptionKey(
             key: .random(),
             salt: Data.random(count: 45),
-            keyDervier: .fastV1
+            keyDervier: .backupFastV1
         )
 
         try await sut.set(password: newPassword)

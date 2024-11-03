@@ -10,7 +10,7 @@ final class BackupPasswordDecoderTests: XCTestCase {
         let str = """
         {
           "KEY" : "aGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGg=",
-          "KEY_DERIVER" : "vault.keygen.default.testing",
+          "KEY_DERIVER" : "vault.keygen.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "0.0.0"
         }
@@ -27,7 +27,7 @@ final class BackupPasswordDecoderTests: XCTestCase {
         let str = """
         {
           "KEY" : "aGhoaGhoaGhoaA==",
-          "KEY_DERIVER" : "vault.keygen.default.testing",
+          "KEY_DERIVER" : "vault.keygen.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "1.0.0"
         }
@@ -44,7 +44,7 @@ final class BackupPasswordDecoderTests: XCTestCase {
         let str = """
         {
           "KEY" : "aGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGg=",
-          "KEY_DERIVER" : "vault.keygen.default.testing",
+          "KEY_DERIVER" : "vault.keygen.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "1.0.0"
         }

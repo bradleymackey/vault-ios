@@ -18,7 +18,7 @@ final class BackupPasswordExporterTests: XCTestCase {
         XCTAssertEqual(str, """
         {
           "KEY" : "aGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGhoaGg=",
-          "KEY_DERIVER" : "vault.keygen.default.testing",
+          "KEY_DERIVER" : "vault.keygen.testing",
           "SALT" : "aWlpaWlpaWlpaWlpaWlpaWlpaWk=",
           "VERSION" : "1.0.0"
         }

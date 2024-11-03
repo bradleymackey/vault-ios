@@ -47,10 +47,10 @@ extension VaultKeyDeriver {
     /// Resilient signature that is used to identify the algorithm that was used for a given keygen,
     /// so a given key can be recreated.
     public enum Signature: String, Equatable, Codable, Identifiable, CaseIterable, Sendable {
-        case testing = "vault.keygen.default.testing"
-        case failing = "vault.keygen.default.testing-failing"
-        case fastV1 = "vault.keygen.default.fast-v1"
-        case secureV1 = "vault.keygen.default.secure-v1"
+        case testing = "vault.keygen.testing"
+        case failing = "vault.keygen.failing"
+        case backupFastV1 = "vault.keygen.backup.fast.v1"
+        case backupSecureV1 = "vault.keygen.backup.secure.v1"
 
         public var id: String {
             rawValue
@@ -60,8 +60,8 @@ extension VaultKeyDeriver {
             switch self {
             case .testing: "Vault Testing"
             case .failing: "Vault Failing"
-            case .fastV1: "Vault Default – FAST v1"
-            case .secureV1: "Vault Default – SECURE v1"
+            case .backupFastV1: "Vault Backup (Fast, v1)"
+            case .backupSecureV1: "Vault Backup (Secure, v1)"
             }
         }
 
@@ -87,8 +87,8 @@ extension VaultKeyDeriver {
         switch signature {
         case .testing: .testing
         case .failing: .failing
-        case .fastV1: .V1.fast
-        case .secureV1: .V1.secure
+        case .backupFastV1: .Backup.Fast.v1
+        case .backupSecureV1: .Backup.Secure.v1
         }
     }
 
@@ -105,52 +105,58 @@ extension VaultKeyDeriver {
         deriver: FailingKeyDeriver(), signature: .failing
     )
 
-    public enum V1 {
-        /// V1 fast key deriver.
-        ///
-        /// It's fast to run and to bruteforce (especially for a weak password), but not trivial.
-        /// It still uses a combination of key derivation functions for increased security.
-        ///
-        /// This should be used in places where security is not required or for testing.
-        public static let fast: VaultKeyDeriver = {
-            var derivers = [any KeyDeriver<Bits256>]()
-            derivers.append(PBKDF2_fast)
-            derivers.append(HKDF_sha3_512_single)
-            derivers.append(scrypt_fast)
-            return VaultKeyDeriver(
-                deriver: CombinationKeyDeriver(derivers: derivers),
-                signature: .fastV1
-            )
-        }()
+    /// Keyderivers that are used for backups.
+    public enum Backup {
+        /// Fast backup key derivers.
+        public enum Fast {
+            /// V1 fast key deriver for backups.
+            ///
+            /// It's fast to run and to bruteforce (especially for a weak password), but not trivial.
+            /// It still uses a combination of key derivation functions for increased security.
+            ///
+            /// This should be used in places where security is not required or for testing.
+            public static let v1: VaultKeyDeriver = {
+                var derivers = [any KeyDeriver<Bits256>]()
+                derivers.append(PBKDF2_fast)
+                derivers.append(HKDF_sha3_512_single)
+                derivers.append(scrypt_fast)
+                return VaultKeyDeriver(
+                    deriver: CombinationKeyDeriver(derivers: derivers),
+                    signature: .backupFastV1
+                )
+            }()
+        }
 
-        /// V1 secure key deriver.
-        ///
-        /// This takes a significant amount of time to compute on general computing hardware, increasing
-        /// the cost of a bruteforce attack significantly. It's still feasible for a user that knows a
-        /// password (should take no more than a minute to compute on a standard iPhone for example).
-        ///
-        /// This uses a chain of different KDF algorithms to increase the cost of a bruteforce attack
-        /// in the event that an offline encrypted vault is obtained by a bad actor.
-        ///
-        /// This is intended to be the initial production version of the KDF for the Vault app.
-        public static let secure: VaultKeyDeriver = {
-            var derivers = [any KeyDeriver<Bits256>]()
-            // Initial PBKDF2 for strong password hashing
-            derivers.append(PBKDF2_secure)
-            derivers.append(HKDF_sha3_512_single)
-            // Scrypt for memory-hard key derivation
-            derivers.append(scrypt_secure)
-            return VaultKeyDeriver(
-                deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
-                signature: .secureV1
-            )
-        }()
+        public enum Secure {
+            /// V1 secure key deriver for backups.
+            ///
+            /// This takes a significant amount of time to compute on general computing hardware, increasing
+            /// the cost of a bruteforce attack significantly. It's still feasible for a user that knows a
+            /// password (should take no more than a minute to compute on a standard iPhone for example).
+            ///
+            /// This uses a chain of different KDF algorithms to increase the cost of a bruteforce attack
+            /// in the event that an offline encrypted vault is obtained by a bad actor.
+            ///
+            /// This is intended to be the initial production version of the KDF for the Vault app.
+            public static let v1: VaultKeyDeriver = {
+                var derivers = [any KeyDeriver<Bits256>]()
+                // Initial PBKDF2 for strong password hashing
+                derivers.append(PBKDF2_secure)
+                derivers.append(HKDF_sha3_512_single)
+                // Scrypt for memory-hard key derivation
+                derivers.append(scrypt_secure)
+                return VaultKeyDeriver(
+                    deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
+                    signature: .backupSecureV1
+                )
+            }()
+        }
     }
 }
 
 // MARK: - Atoms
 
-extension VaultKeyDeriver.V1 {
+extension VaultKeyDeriver.Backup.Fast {
     private static let PBKDF2_fast = PBKDF2KeyDeriver<Bits256>(
         parameters: .init(
             iterations: 2000,
@@ -165,12 +171,14 @@ extension VaultKeyDeriver.V1 {
             parallelizationFactor: 1
         )
     )
+}
 
-    /// A single round of HKDF, using SHA3's SHA512.
-    private static let HKDF_sha3_512_single = HKDFKeyDeriver<Bits256>(
-        parameters: .init(variant: .sha3_sha512)
-    )
+/// A single round of HKDF, using SHA3's SHA512.
+private let HKDF_sha3_512_single = HKDFKeyDeriver<Bits256>(
+    parameters: .init(variant: .sha3_sha512)
+)
 
+extension VaultKeyDeriver.Backup.Secure {
     /// Uses a large, non-standard number of iterations with a variant that is not susceptible to
     /// length-extension attacks.
     private static let PBKDF2_secure = PBKDF2KeyDeriver<Bits256>(
