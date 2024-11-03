@@ -26,7 +26,7 @@ struct OpenSourceView: View {
         VStack(alignment: .center, spacing: 8) {
             Image(systemName: "figure.2.arms.open")
                 .font(.largeTitle.bold())
-            Text(OpenSourceViewModel.title)
+            Text(OpenSourceStrings.title)
                 .font(.largeTitle.bold())
         }
         .multilineTextAlignment(.center)
@@ -34,11 +34,11 @@ struct OpenSourceView: View {
 
     private var paragraphContent: some View {
         VStack(alignment: .leading, spacing: 8) {
-            Text(OpenSourceViewModel.aboutOpenSource)
-            Text(OpenSourceViewModel.aboutPrivacy)
+            Text(OpenSourceStrings.aboutOpenSource)
+            Text(OpenSourceStrings.aboutPrivacy)
 
             Link(destination: URL(string: "https://google.com")!) {
-                Text(OpenSourceViewModel.aboutLink)
+                Text(OpenSourceStrings.aboutLink)
             }
             .foregroundStyle(.tint)
         }

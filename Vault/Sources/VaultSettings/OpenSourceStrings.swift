@@ -1,6 +1,6 @@
 import Foundation
 
-public enum OpenSourceViewModel {
+public enum OpenSourceStrings {
     public static var title: String {
         localized(key: "openSource.title")
     }
