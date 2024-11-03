@@ -16,8 +16,8 @@ struct KeygenSpeedtest {
     public static func main() throws {
         print("🚧 Build configuration:", buildConfigString())
 
-        try benchmark(keyDeriver: VaultKeyDeriver.V1.fast, description: "Fast")
-        try benchmark(keyDeriver: VaultKeyDeriver.V1.secure, description: "Secure")
+        try benchmark(keyDeriver: VaultKeyDeriver.Backup.Fast.v1, description: "Fast")
+        try benchmark(keyDeriver: VaultKeyDeriver.Backup.Secure.v1, description: "Secure")
     }
 }
 

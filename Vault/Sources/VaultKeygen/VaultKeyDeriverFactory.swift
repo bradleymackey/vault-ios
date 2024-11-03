@@ -3,19 +3,20 @@ import FoundationExtensions
 
 /// @mockable
 public protocol VaultKeyDeriverFactory {
-    func makeVaultKeyDeriver() -> VaultKeyDeriver
+    /// Create the key deriver that should be used to encrypt a vault backup.
+    func makeVaultBackupKeyDeriver() -> VaultKeyDeriver
     func lookupVaultKeyDeriver(signature: VaultKeyDeriver.Signature) -> VaultKeyDeriver
 }
 
 public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
     public init() {}
-    public func makeVaultKeyDeriver() -> VaultKeyDeriver {
+    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver {
         #if DEBUG
         // A fast key dervier that is relatively insecure, but runs in <5s in DEBUG on any reasonable hardware.
-        return VaultKeyDeriver.V1.fast
+        return VaultKeyDeriver.Backup.Fast.v1
         #else
         // This is very slow to run in DEBUG, due to lack of optimizations.
-        return VaultKeyDeriver.V1.secure
+        return VaultKeyDeriver.Backup.Secure.v1
         #endif
     }
 
@@ -27,7 +28,7 @@ public struct VaultKeyDeriverFactoryImpl: VaultKeyDeriverFactory {
 /// Always uses and looks up the testing deriver, to ensure that tests run fast.
 public struct VaultKeyDeriverFactoryTesting: VaultKeyDeriverFactory {
     public init() {}
-    public func makeVaultKeyDeriver() -> VaultKeyDeriver { .testing }
+    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver { .testing }
     public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver { .testing }
 }
 
@@ -38,7 +39,7 @@ extension VaultKeyDeriverFactory where Self == VaultKeyDeriverFactoryTesting {
 /// Always uses the key deriver that generates a key generation error.
 public struct VaultKeyDeriverFactoryFailing: VaultKeyDeriverFactory {
     public init() {}
-    public func makeVaultKeyDeriver() -> VaultKeyDeriver { .failing }
+    public func makeVaultBackupKeyDeriver() -> VaultKeyDeriver { .failing }
     public func lookupVaultKeyDeriver(signature _: VaultKeyDeriver.Signature) -> VaultKeyDeriver { .failing }
 }
 

@@ -72,7 +72,7 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
     @MainActor
     func test_saveEnteredPassword_isKeygenErrorIfGenerationError() async {
         let deriverFactory = VaultKeyDeriverFactoryMock()
-        deriverFactory.makeVaultKeyDeriverHandler = {
+        deriverFactory.makeVaultBackupKeyDeriverHandler = {
             VaultKeyDeriver(deriver: KeyDeriverErroring(), signature: .testing)
         }
         let sut = makeSUT(deriverFactory: deriverFactory)

@@ -5,12 +5,12 @@ import Testing
 
 struct VaultKeyDeriverFactoryImplTests {
     @Test
-    func makeVaultKeyDeriver_debugGeneratesFast() {
+    func makeVaultBackupKeyDeriver_debugGeneratesFast() {
         let sut = VaultKeyDeriverFactoryImpl()
 
-        let result = sut.makeVaultKeyDeriver()
+        let result = sut.makeVaultBackupKeyDeriver()
 
-        #expect(result.signature == .fastV1, "We assume tests are run in DEBUG")
+        #expect(result.signature == .backupFastV1, "We assume tests are run in DEBUG")
     }
 
     @Test(arguments: VaultKeyDeriver.Signature.allCases)
