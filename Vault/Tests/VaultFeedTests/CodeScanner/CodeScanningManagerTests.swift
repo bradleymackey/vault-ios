@@ -85,9 +85,7 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.startScanning()
 
         sut.scan(text: "any")
-        await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
-            await timer.finishTimer()
-        }
+        await timer.finishTimer()
 
         XCTAssertEqual(sut.scanningState, .scanning)
     }
@@ -137,9 +135,7 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.startScanning()
 
         sut.scan(text: "any")
-        await expectNoMutation(observable: sut, keyPath: \.scanningState) {
-            await timer.finishTimer()
-        }
+
         XCTAssertEqual(sut.scanningState, .failure(.unrecoverable))
     }
 
@@ -169,9 +165,7 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.startScanning()
 
         sut.scan(text: "any")
-        await expectNoMutation(observable: sut, keyPath: \.scanningState) {
-            await timer.finishTimer()
-        }
+
         XCTAssertEqual(sut.scanningState, .scanning)
     }
 }

@@ -1,13 +1,15 @@
 import Foundation
 
 /// Asynchronously return a value when a signal is triggered.
-public actor Pending<Value: Sendable> {
+public actor Pending<Value: Sendable>: Identifiable {
     /// The stream that outputs the value internally within `wait`.
     private var streamContinuation: AsyncThrowingStream<Value, any Swift.Error>.Continuation?
 
     /// Last remembered value, used if the value is fulfilled before
     /// we await the given value.
     private var lastValue: Result<Value, any Swift.Error>?
+
+    public nonisolated let id = UUID()
 
     public init() {}
 }

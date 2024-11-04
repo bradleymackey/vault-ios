@@ -10,25 +10,24 @@ public protocol IntervalTimer: Sendable {
     ///
     /// Responds to cancellation, throwing a `CancellationError`.
     func wait(for time: Double, tolerance: Double) async throws
+
+    /// Schedules a task to run after the specified delay.
+    func schedule<T>(
+        priority: TaskPriority,
+        wait time: Double,
+        tolerance: Double?,
+        work: @Sendable @escaping () async throws -> T
+    ) -> Task<T, any Error>
 }
 
 extension IntervalTimer {
     /// Schedules a task to run after the specified delay.
-    @discardableResult
-    public func schedule<T>(
+    public func schedule<T: Sendable>(
         priority: TaskPriority = .medium,
         wait time: Double,
-        tolerance: Double? = nil,
         work: @Sendable @escaping () async throws -> T
     ) -> Task<T, any Error> {
-        Task(priority: priority) {
-            if let tolerance {
-                try await wait(for: time, tolerance: tolerance)
-            } else {
-                try await wait(for: time)
-            }
-            return try await work()
-        }
+        schedule(priority: priority, wait: time, tolerance: nil, work: work)
     }
 }
 
@@ -37,7 +36,11 @@ extension IntervalTimer {
 public final class IntervalTimerMock: IntervalTimer {
     /// Mock: the intervals that were waited for.
     private let waitArgValuesData = SharedMutex<[Double]>([])
-    private let pendingTimer = SharedMutex<Pending<Void>?>(nil)
+    /// Mock: the scheduled actions that will wait for `finishTimer` to be called.
+    /// This allows the mock timer to just suspend until the test wants the timer to finish.
+    private let waits = SharedMutex<[Pending<Void>]>([])
+    /// Mock: optional for each wait. If we want to wait for
+    private let completions = SharedMutex<[UUID: Pending<Void>]>([:])
 
     public var waitArgValues: [Double] {
         waitArgValuesData.get { $0 }
@@ -45,21 +48,78 @@ public final class IntervalTimerMock: IntervalTimer {
 
     public init() {}
 
-    public func finishTimer() async {
-        await pendingTimer.value?.fulfill()
-        await Task.yield()
+    /// Finishes the timer at the specified index.
+    /// Waits for the work scheduled by the timer to fully complete before returning.
+    ///
+    /// The index corresponds to the relative order that the 'wait' or 'schedule' was requested.
+    public func finishTimer(at index: Int = 0) async {
+        // Finishing a timer runs at a low priority, so timer scheduling and work execution always takes priority
+        let finishTask = Task.detached(priority: .low) {
+            await Task.yield() // give time for any `schedule` blocks to be created
+            precondition(
+                self.waits.value.indices.contains(index),
+                "Cannot finishTimer, there is no wait handler at index \(index)!"
+            )
+            let waiter = self.waits.get { $0[index] }
+            await waiter.fulfill()
+            await self.mockTriggerCompletionIfNeeded(id: waiter.id)
+            await Task.yield() // allow time for a bit of cleanup
+        }
+        await finishTask.value
+    }
+
+    private func mockTriggerCompletionIfNeeded(id: UUID) async {
+        defer { completions.modify { $0[id] = nil } }
+        // If there is an assocaiated completion action, wait for it to finish.
+        try? await completions.get { $0[id] }?.wait()
     }
 
     public func wait(for time: Double) async throws {
         waitArgValuesData.modify { $0.append(time) }
-        pendingTimer.modify { $0 = Pending() }
-        try await pendingTimer.value?.wait()
+        let newPending = Pending.signal()
+        waits.modify { $0.append(newPending) }
+        try await newPending.wait()
     }
 
     public func wait(for time: Double, tolerance _: Double) async throws {
         waitArgValuesData.modify { $0.append(time) }
-        pendingTimer.modify { $0 = Pending() }
-        try await pendingTimer.value?.wait()
+        let newPending = Pending.signal()
+        waits.modify { $0.append(newPending) }
+        try await newPending.wait()
+    }
+
+    public func schedule<T: Sendable>(
+        wait time: Double,
+        work: @Sendable @escaping () async throws -> T
+    ) -> Task<T, any Error> {
+        schedule(priority: .medium, wait: time, tolerance: nil, work: work)
+    }
+
+    public func schedule<T: Sendable>(
+        priority: TaskPriority,
+        wait _: Double,
+        tolerance _: Double?,
+        work: @Sendable @escaping () async throws -> T
+    ) -> Task<T, any Error> {
+        let newPending = Pending.signal()
+        waits.modify { $0.append(newPending) }
+        let completion = Pending.signal()
+        completions.modify { $0[newPending.id] = completion }
+        return Task.detached(priority: priority) {
+            defer {
+                // After the work is complete, let the completion signal know we are done.
+                // This allows finishTimer to know it can unsuspend, as this scheduled work is now fully done.
+                Task { await completion.fulfill() }
+            }
+
+            // Wait for `finishTimer` to trigger this scheduled work,
+            // then execute it at the user-specified priority.
+            try await newPending.wait()
+            let work = Task(priority: priority) {
+                try await work()
+            }
+            return try await work.value
+        }
     }
 }
 
@@ -75,5 +135,33 @@ public final class IntervalTimerImpl: IntervalTimer {
 
     public func wait(for time: Double, tolerance: Double) async throws {
         try await Task.sleep(for: .seconds(time), tolerance: .seconds(tolerance), clock: .continuous)
+    }
+
+    public func schedule<T>(
+        priority: TaskPriority,
+        wait time: Double,
+        tolerance: Double?,
+        work: @Sendable @escaping () async throws -> T
+    ) -> Task<T, any Error> {
+        // Performing the waiting is high priority, so we are sure this is scheduled ASAP.
+        Task.detached(priority: .high) {
+            if let tolerance {
+                try await self.wait(for: time, tolerance: tolerance)
+            } else {
+                try await self.wait(for: time)
+            }
+            // The actual work runs with the user-specified priority.
+            let work = Task(priority: priority) {
+                try await work()
+            }
+            return try await work.value
+        }
+    }
+
+    public func schedule<T: Sendable>(
+        wait time: Double,
+        work: @Sendable @escaping () async throws -> T
+    ) -> Task<T, any Error> {
+        schedule(priority: .medium, wait: time, tolerance: nil, work: work)
     }
 }
