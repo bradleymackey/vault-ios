@@ -72,7 +72,7 @@ extension OTPCodeTimerUpdaterImpl {
         // Wait with some additional tolerance (it's OK if we're a little late)
         // This can help system performance
         timerTask.modify {
-            $0 = timer.schedule(wait: timeUntilTarget, tolerance: 0.2) { @MainActor [weak self] in
+            $0 = timer.schedule(priority: .medium, wait: timeUntilTarget, tolerance: 0.2) { @MainActor [weak self] in
                 self?.scheduleNextUpdate()
                 self?.timerStateSubject.send(targetState)
                 self?.timerFiredSubject.send()
