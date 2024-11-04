@@ -36,8 +36,11 @@ extension IntervalTimer {
 public final class IntervalTimerMock: IntervalTimer {
     /// Mock: the intervals that were waited for.
     private let waitArgValuesData = SharedMutex<[Double]>([])
-    private let pendingTimer = SharedMutex<Pending<Void>?>(nil)
-    private let pendingSchedules = SharedMutex<Int>(0)
+    /// Mock: the scheduled actions that will wait for `finishTimer` to be called.
+    /// This allows the mock timer to just suspend until the test wants the timer to finish.
+    private let waits = SharedMutex<[Pending<Void>]>([])
+    /// Mock: optional for each wait. If we want to wait for
+    private let completions = SharedMutex<[UUID: Pending<Void>]>([:])
 
     public var waitArgValues: [Double] {
         waitArgValuesData.get { $0 }
@@ -45,30 +48,39 @@ public final class IntervalTimerMock: IntervalTimer {
 
     public init() {}
 
-    public func finishTimer() async {
+    /// Finishes the timer at the specified index.
+    ///
+    /// The index corresponds to the relative order that the 'wait' or 'schedule' was requested.
+    public func finishTimer(at index: Int = 0) async {
         // Finishing a timer runs at a low priority, so timer scheduling and work execution always takes priority
         let finishTask = Task.detached(priority: .low) {
             await Task.yield() // give time for any `schedule` blocks to be created
-            await self.pendingTimer.value?.fulfill()
-            while self.pendingSchedules.value > 0 {
-                await Task.yield() // allow time for scheduled blocks to complete
-            }
+            precondition(
+                self.waits.value.indices.contains(index),
+                "Cannot finishTimer, there was no wait at index \(index)!"
+            )
+            let waiter = self.waits.get { $0[index] }
+            await waiter.fulfill()
+            // Now, if there is an assocaiated completion action, wait for it to finish.
+            let associatedCompletion = self.completions.get { $0[waiter.id] }
+            try? await associatedCompletion?.wait()
+            await Task.yield() // allow time for a bit of cleanup
         }
         await finishTask.value
     }
 
     public func wait(for time: Double) async throws {
         waitArgValuesData.modify { $0.append(time) }
-        pendingTimer.modify { $0 = Pending() }
-        defer { pendingTimer.modify { $0 = nil } }
-        try await pendingTimer.value?.wait()
+        let newPending = Pending.signal()
+        waits.modify { $0.append(newPending) }
+        try await newPending.wait()
     }
 
     public func wait(for time: Double, tolerance _: Double) async throws {
         waitArgValuesData.modify { $0.append(time) }
-        pendingTimer.modify { $0 = Pending() }
-        defer { pendingTimer.modify { $0 = nil } }
-        try await pendingTimer.value?.wait()
+        let newPending = Pending.signal()
+        waits.modify { $0.append(newPending) }
+        try await newPending.wait()
     }
 
     public func schedule<T: Sendable>(
@@ -84,10 +96,16 @@ public final class IntervalTimerMock: IntervalTimer {
         tolerance _: Double?,
         work: @Sendable @escaping () async throws -> T
     ) -> Task<T, any Error> {
-        pendingSchedules.modify { $0 += 1 }
-        return Task.detached(priority: .high) {
-            defer { self.pendingSchedules.modify { $0 -= 1 } }
-            await self.pendingTimer.value?.fulfill()
+        let newPending = Pending.signal()
+        waits.modify { $0.append(newPending) }
+        let completion = Pending.signal()
+        completions.modify { $0[newPending.id] = completion }
+        return Task.detached(priority: priority) {
+            defer {
+                Task { await completion.fulfill() }
+            }
+
+            try await newPending.wait()
             let work = Task(priority: priority) {
                 try await work()
             }
