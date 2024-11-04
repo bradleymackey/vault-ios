@@ -15,18 +15,34 @@ struct TagPillView: View {
         .padding(.vertical, 8)
         .background(
             Capsule(style: .circular)
-                .fill(isSelected ? tagColor : .clear)
-                .stroke(isSelected ? contrastingColor : tagColor, lineWidth: 1)
+                .fill(fillColor)
+                .stroke(strokeColor, lineWidth: 1)
         )
-        .foregroundColor(isSelected ? contrastingColor : tagColor)
+        .foregroundColor(strokeColor)
+    }
+
+    private var isLight: Bool {
+        tag.color.color.isPercievedLight
+    }
+
+    private var fillColor: Color {
+        if isLight {
+            isSelected ? tagColor.contrastingBackgroudColor : .clear
+        } else {
+            isSelected ? tagColor : .clear
+        }
+    }
+
+    private var strokeColor: Color {
+        if isLight {
+            isSelected ? tagColor : tagColor.contrastingBackgroudColor
+        } else {
+            isSelected ? tagColor.contrastingForegroundColor : tagColor
+        }
     }
 
     private var tagColor: Color {
         tag.color.color.opacity(isSelected ? 1 : 0.8)
-    }
-
-    private var contrastingColor: Color {
-        tagColor.contrastingForegroundColor
     }
 }
 
