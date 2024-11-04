@@ -64,6 +64,7 @@ struct VaultTagDetailView: View {
                     ),
                     isSelected: true
                 )
+                .font(.title3)
 
                 ColorPicker("Tag Color", selection: $selectedColor)
                     .labelsHidden()
