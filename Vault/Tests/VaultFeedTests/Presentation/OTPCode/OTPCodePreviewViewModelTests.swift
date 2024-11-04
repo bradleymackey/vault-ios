@@ -9,12 +9,12 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     func test_code_updatesWithCodes() async throws {
         let (codePublisher, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("hello")
         }
         XCTAssertEqual(sut.code, .visible("hello"))
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("world")
         }
         XCTAssertEqual(sut.code, .visible("world"))
@@ -24,12 +24,12 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     func test_code_lockedUpdatesWithObfuscatedCodes() async throws {
         let (codePublisher, sut) = makeSUT(isLocked: true)
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("hello")
         }
         XCTAssertEqual(sut.code, .locked(code: "hello"))
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("world")
         }
         XCTAssertEqual(sut.code, .locked(code: "world"))
@@ -39,12 +39,12 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     func test_code_goesToNoMoreCodesWhenFinished() async throws {
         let (codePublisher, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("hi")
         }
         XCTAssertEqual(sut.code, .visible("hi"))
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send(completion: .finished)
         }
         XCTAssertEqual(sut.code, .finished)
@@ -54,7 +54,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
     func test_code_goesToErrorWhenErrors() async throws {
         let (codePublisher, sut) = makeSUT()
 
-        await expectSingleMutation(observable: sut, keyPath: \.code) {
+        try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send(completion: .failure(TestError()))
         }
 
