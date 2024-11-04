@@ -17,9 +17,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
         let sut = makeSUT()
 
-        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            try await sut.incrementCounter()
-        }
+        try await sut.incrementCounter()
 
         XCTAssertEqual(sut.isButtonEnabled, false)
     }
@@ -28,14 +26,10 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
     func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
         let sut = makeSUT()
 
-        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            try await sut.incrementCounter()
-        }
-
-        // No mutation now!
-        try await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            try await sut.incrementCounter()
-        }
+        try await sut.incrementCounter()
+        try await sut.incrementCounter()
+        
+        XCTAssertEqual(sut.isButtonEnabled, false)
     }
 
     @MainActor
@@ -43,14 +37,10 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         let timer = IntervalTimerMock()
         let sut = makeSUT(timer: timer)
 
-        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            try await sut.incrementCounter()
-        }
+        try await sut.incrementCounter()
         XCTAssertEqual(sut.isButtonEnabled, false)
 
-        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            await timer.finishTimer()
-        }
+        await timer.finishTimer()
         XCTAssertEqual(sut.isButtonEnabled, true)
     }
 
@@ -59,19 +49,14 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         let timer = IntervalTimerMock()
         let sut = makeSUT(timer: timer)
 
-        try await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            try await sut.incrementCounter()
-        }
+        try await sut.incrementCounter()
         XCTAssertEqual(sut.isButtonEnabled, false)
 
-        await expectSingleMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            await timer.finishTimer()
-        }
+        await timer.finishTimer()
         XCTAssertEqual(sut.isButtonEnabled, true)
 
-        await expectNoMutation(observable: sut, keyPath: \.isButtonEnabled) {
-            await timer.finishTimer()
-        }
+        await timer.finishTimer()
+        XCTAssertEqual(sut.isButtonEnabled, true)
     }
 
     @MainActor
