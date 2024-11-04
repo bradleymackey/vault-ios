@@ -61,12 +61,16 @@ public final class IntervalTimerMock: IntervalTimer {
             )
             let waiter = self.waits.get { $0[index] }
             await waiter.fulfill()
-            // Now, if there is an assocaiated completion action, wait for it to finish.
-            let associatedCompletion = self.completions.get { $0[waiter.id] }
-            try? await associatedCompletion?.wait()
+            await self.mockTriggerCompletionIfNeeded(id: waiter.id)
             await Task.yield() // allow time for a bit of cleanup
         }
         await finishTask.value
+    }
+
+    private func mockTriggerCompletionIfNeeded(id: UUID) async {
+        defer { completions.modify { $0[id] = nil } }
+        // If there is an assocaiated completion action, wait for it to finish.
+        try? await completions.get { $0[id] }?.wait()
     }
 
     public func wait(for time: Double) async throws {

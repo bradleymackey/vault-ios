@@ -65,12 +65,54 @@ enum IntervalTimerTests {
         }
 
         @Test
+        func wait_multipleWaitsCanCompleteIndependently() async throws {
+            await confirmation(expectedCount: 2 + 3 + 5) { confirmation in
+                Task {
+                    try await sut.wait(for: 10)
+                    confirmation.confirm(count: 2)
+                }
+
+                Task {
+                    try await sut.wait(for: 10)
+                    confirmation.confirm(count: 3)
+                }
+
+                Task {
+                    try await sut.wait(for: 10)
+                    confirmation.confirm(count: 5)
+                }
+
+                await sut.finishTimer(at: 0)
+                await sut.finishTimer(at: 1)
+                await sut.finishTimer(at: 2)
+            }
+        }
+
+        @Test
         func schedule_completingTimerFinishesDuringAwait() async throws {
             try await confirmation(timeout: .seconds(1)) { confirmation in
                 _ = sut.schedule(wait: 10) {
                     confirmation.confirm()
                 }
                 await sut.finishTimer()
+            }
+        }
+
+        @Test
+        func schedule_multipleSchedulesCanCompleteIndependently() async throws {
+            try await confirmation(timeout: .seconds(1), expectedCount: 2 + 3 + 5) { confirmation in
+                _ = sut.schedule(wait: 10) {
+                    confirmation.confirm(count: 2)
+                }
+                _ = sut.schedule(wait: 10) {
+                    confirmation.confirm(count: 3)
+                }
+                _ = sut.schedule(wait: 10) {
+                    confirmation.confirm(count: 5)
+                }
+                await sut.finishTimer(at: 0)
+                await sut.finishTimer(at: 1)
+                await sut.finishTimer(at: 2)
             }
         }
     }
