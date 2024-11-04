@@ -63,6 +63,16 @@ enum IntervalTimerTests {
 
             try await completed.wait(timeout: .seconds(1))
         }
+
+        @Test
+        func schedule_completingTimerFinishesDuringAwait() async throws {
+            try await confirmation(timeout: .seconds(1)) { confirmation in
+                _ = sut.schedule(wait: 10) {
+                    confirmation.confirm()
+                }
+                await sut.finishTimer()
+            }
+        }
     }
 
     struct ImplTests {
@@ -120,7 +130,7 @@ enum IntervalTimerTests {
 
         @Test(arguments: [101, 102, 103])
         func schedule_publishesAfterWaitWithTolerance(expectedValue: Int) async throws {
-            let task = sut.schedule(wait: 0.5, tolerance: 0.5) {
+            let task = sut.schedule(priority: .medium, wait: 0.5, tolerance: 0.5) {
                 expectedValue
             }
 
@@ -139,7 +149,7 @@ enum IntervalTimerTests {
             await withCheckedContinuation { continuation in
                 Task.detached(priority: .background) {
                     dispatchPrecondition(condition: .notOnQueue(.main))
-                    sut.schedule(wait: 0.5) { @MainActor in
+                    _ = sut.schedule(wait: 0.5) { @MainActor in
                         dispatchPrecondition(condition: .onQueue(.main))
                         thing.time = 200
                         continuation.resume()
