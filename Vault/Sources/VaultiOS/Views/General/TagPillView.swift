@@ -9,7 +9,7 @@ struct TagPillView: View {
     var body: some View {
         HStack(alignment: .center, spacing: 12) {
             TagIconView(iconName: tag.iconName)
-            Text(tag.name)
+            Text(tag.name.isBlank ? "Tag" : tag.name)
         }
         .padding(.horizontal, 12)
         .padding(.vertical, 8)
