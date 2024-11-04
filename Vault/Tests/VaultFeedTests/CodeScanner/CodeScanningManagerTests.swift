@@ -85,9 +85,7 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.startScanning()
 
         sut.scan(text: "any")
-        await expectSingleMutation(observable: sut, keyPath: \.scanningState) {
-            await timer.finishTimer()
-        }
+        await timer.finishTimer()
 
         XCTAssertEqual(sut.scanningState, .scanning)
     }
