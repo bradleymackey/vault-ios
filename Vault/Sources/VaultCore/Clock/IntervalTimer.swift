@@ -49,6 +49,7 @@ public final class IntervalTimerMock: IntervalTimer {
     public init() {}
 
     /// Finishes the timer at the specified index.
+    /// Waits for the work scheduled by the timer to fully complete before returning.
     ///
     /// The index corresponds to the relative order that the 'wait' or 'schedule' was requested.
     public func finishTimer(at index: Int = 0) async {
@@ -57,7 +58,7 @@ public final class IntervalTimerMock: IntervalTimer {
             await Task.yield() // give time for any `schedule` blocks to be created
             precondition(
                 self.waits.value.indices.contains(index),
-                "Cannot finishTimer, there was no wait at index \(index)!"
+                "Cannot finishTimer, there is no wait handler at index \(index)!"
             )
             let waiter = self.waits.get { $0[index] }
             await waiter.fulfill()
@@ -106,9 +107,13 @@ public final class IntervalTimerMock: IntervalTimer {
         completions.modify { $0[newPending.id] = completion }
         return Task.detached(priority: priority) {
             defer {
+                // After the work is complete, let the completion signal know we are done.
+                // This allows finishTimer to know it can unsuspend, as this scheduled work is now fully done.
                 Task { await completion.fulfill() }
             }
 
+            // Wait for `finishTimer` to trigger this scheduled work,
+            // then execute it at the user-specified priority.
             try await newPending.wait()
             let work = Task(priority: priority) {
                 try await work()
