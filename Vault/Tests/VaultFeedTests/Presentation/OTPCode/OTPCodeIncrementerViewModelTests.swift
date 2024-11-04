@@ -28,7 +28,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
 
         try await sut.incrementCounter()
         try await sut.incrementCounter()
-        
+
         XCTAssertEqual(sut.isButtonEnabled, false)
     }
 
