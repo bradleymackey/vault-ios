@@ -26,12 +26,7 @@ struct VaultTagFeedView: View {
                 // Initially empty view before loaded so we don't flash the noTagsView
                 EmptyView()
             case .loaded:
-                if dataModel.allTags.isEmpty {
-                    noTagsView
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    list
-                }
+                list
             }
         }
         .navigationTitle(viewModel.strings.title)
@@ -64,32 +59,35 @@ struct VaultTagFeedView: View {
     }
 
     private var list: some View {
-        List {
+        Form {
             Section {
-                ForEach(dataModel.allTags) { tag in
-                    Button {
-                        modal = .editingTag(tag)
-                    } label: {
-                        FormRow(
-                            image: Image(systemName: tag.iconName),
-                            color: tag.color.color,
-                            style: .standard
-                        ) {
-                            Text(tag.name)
+                if dataModel.allTags.isEmpty {
+                    noTagsView
+                } else {
+                    ForEach(dataModel.allTags) { tag in
+                        Button {
+                            modal = .editingTag(tag)
+                        } label: {
+                            FormRow(
+                                image: Image(systemName: tag.iconName),
+                                color: tag.color.color,
+                                style: .standard
+                            ) {
+                                Text(tag.name)
+                            }
                         }
                     }
-                }
-                .onDelete { indexSet in
-                    let ids = indexSet.map { dataModel.allTags[$0].id }
-                    Task {
-                        for id in ids {
-                            try await dataModel.delete(tagID: id)
+                    .onDelete { indexSet in
+                        let ids = indexSet.map { dataModel.allTags[$0].id }
+                        Task {
+                            for id in ids {
+                                try await dataModel.delete(tagID: id)
+                            }
                         }
                     }
                 }
             }
         }
-        .listStyle(.plain)
     }
 
     private var noTagsView: some View {
@@ -99,7 +97,6 @@ struct VaultTagFeedView: View {
             subtitle: viewModel.strings.noTagsDescription
         )
         .containerRelativeFrame(.horizontal)
-        .modifier(VerticallyCenterUpperThird(alignment: .center))
-        .padding(24)
+        .padding()
     }
 }
