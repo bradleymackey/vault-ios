@@ -68,13 +68,7 @@ struct VaultTagFeedView: View {
                         Button {
                             modal = .editingTag(tag)
                         } label: {
-                            FormRow(
-                                image: Image(systemName: tag.iconName),
-                                color: tag.color.color,
-                                style: .standard
-                            ) {
-                                Text(tag.name)
-                            }
+                            TagPillView(tag: tag, isSelected: true)
                         }
                     }
                     .onDelete { indexSet in
