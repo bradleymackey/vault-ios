@@ -26,16 +26,12 @@ struct TagPillView: View {
     }
 
     private var fillColor: Color {
-        if isLight {
-            isSelected ? tagColor.contrastingBackgroudColor : .clear
-        } else {
-            isSelected ? tagColor : .clear
-        }
+        isSelected ? tagColor : .clear
     }
 
     private var strokeColor: Color {
         if isLight {
-            isSelected ? tagColor : tagColor.contrastingBackgroudColor
+            isSelected ? .gray : Color(UIColor.tertiaryLabel)
         } else {
             isSelected ? tagColor.contrastingForegroundColor : tagColor
         }
