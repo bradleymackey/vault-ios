@@ -31,7 +31,7 @@ struct TagPillView: View {
 
     private var strokeColor: Color {
         if isLight {
-            isSelected ? .gray : Color(UIColor.tertiaryLabel)
+            isSelected ? .black.opacity(0.8) : tag.color.brighten(amount: -0.4).color
         } else {
             isSelected ? tagColor.contrastingForegroundColor : tagColor
         }
