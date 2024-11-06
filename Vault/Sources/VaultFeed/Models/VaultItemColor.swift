@@ -1,5 +1,6 @@
 import CryptoEngine
 import Foundation
+import FoundationExtensions
 
 public struct VaultItemColor: Equatable, Hashable, Sendable {
     public var red: Double
