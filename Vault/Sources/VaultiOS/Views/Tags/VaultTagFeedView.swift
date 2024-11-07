@@ -21,18 +21,7 @@ struct VaultTagFeedView: View {
 
     var body: some View {
         VStack {
-            switch dataModel.allTagsState {
-            case .base, .loading:
-                // Initially empty view before loaded so we don't flash the noTagsView
-                EmptyView()
-            case .loaded:
-                if dataModel.allTags.isEmpty {
-                    noTagsView
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
-                } else {
-                    list
-                }
-            }
+            list
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -63,43 +52,80 @@ struct VaultTagFeedView: View {
         }
     }
 
+    private var columns: [GridItem] {
+        [GridItem(.adaptive(minimum: 150), spacing: 12, alignment: .top)]
+    }
+
+    private func tagViewPreview(tag: VaultItemTag) -> some View {
+        VStack(alignment: .center, spacing: 8) {
+            Spacer()
+            TagPillView(tag: tag, isSelected: true)
+                .font(.body)
+            Spacer()
+        }
+        .frame(maxWidth: .infinity)
+        .aspectRatio(1.8, contentMode: .fill)
+        .modifier(
+            VaultCardModifier(
+                configuration: .init(
+                    style: .secondary,
+                    border: tag.color.color,
+                    padding: .init(all: 8)
+                )
+            )
+        )
+    }
+
     private var list: some View {
-        List {
-            Section {
-                ForEach(dataModel.allTags) { tag in
-                    Button {
-                        modal = .editingTag(tag)
-                    } label: {
-                        FormRow(
-                            image: Image(systemName: tag.iconName),
-                            color: tag.color.color,
-                            style: .standard
-                        ) {
-                            Text(tag.name)
-                        }
-                    }
-                }
-                .onDelete { indexSet in
-                    let ids = indexSet.map { dataModel.allTags[$0].id }
-                    Task {
-                        for id in ids {
-                            try await dataModel.delete(tagID: id)
+        ScrollView(.vertical, showsIndicators: true) {
+            LazyVGrid(columns: columns) {
+                switch dataModel.allTagsState {
+                case .base, .loading:
+                    loadingTagsView
+                case .loaded:
+                    if dataModel.allTags.isEmpty {
+                        noTagsFoundView
+                    } else {
+                        ForEach(dataModel.allTags) { tag in
+                            Button {
+                                modal = .editingTag(tag)
+                            } label: {
+                                tagViewPreview(tag: tag)
+                            }
                         }
                     }
                 }
             }
+            .padding(.top, 4)
+            .padding(.horizontal)
+            .padding(.bottom)
         }
-        .listStyle(.plain)
     }
 
-    private var noTagsView: some View {
-        PlaceholderView(
-            systemIcon: "tag.fill",
-            title: viewModel.strings.noTagsTitle,
-            subtitle: viewModel.strings.noTagsDescription
-        )
-        .containerRelativeFrame(.horizontal)
-        .modifier(VerticallyCenterUpperThird(alignment: .center))
-        .padding(24)
+    private var loadingTagsView: some View {
+        VStack(alignment: .center, spacing: 12) {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1.8, contentMode: .fit)
+        .modifier(VaultCardModifier(configuration: .init(style: .secondary, border: .secondary)))
+    }
+
+    private var noTagsFoundView: some View {
+        VStack(alignment: .center, spacing: 12) {
+            Image(systemName: "tag.fill")
+                .font(.largeTitle)
+            Text(viewModel.strings.noTagsTitle)
+                .font(.callout.bold())
+        }
+        .textCase(.none)
+        .multilineTextAlignment(.center)
+        .foregroundStyle(.secondary)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1.8, contentMode: .fit)
+        .modifier(VaultCardModifier(configuration: .init(style: .secondary, border: .secondary)))
     }
 }

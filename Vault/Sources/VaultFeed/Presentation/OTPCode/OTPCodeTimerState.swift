@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 
 public struct OTPCodeTimerState: Equatable, Sendable {
     /// The number of epoch seconds when the timer started.
@@ -50,11 +51,5 @@ extension OTPCodeTimerState {
             startTime: startTime + offsetTime,
             endTime: endTime + offsetTime
         )
-    }
-}
-
-extension Comparable {
-    fileprivate func clamped(to limits: ClosedRange<Self>) -> Self {
-        min(max(self, limits.lowerBound), limits.upperBound)
     }
 }
