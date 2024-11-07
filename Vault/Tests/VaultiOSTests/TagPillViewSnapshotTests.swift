@@ -16,7 +16,7 @@ struct TagPillViewSnapshotTests {
 
     @Test
     func midColored() {
-        let tag = VaultItemTag(id: .new(), name: "Light Color", color: .init(red: 0.5, green: 0.5, blue: 0.5))
+        let tag = VaultItemTag(id: .new(), name: "Mid Color", color: .init(red: 0.5, green: 0.5, blue: 0.5))
 
         snapshotScenarios(tag: tag)
     }
