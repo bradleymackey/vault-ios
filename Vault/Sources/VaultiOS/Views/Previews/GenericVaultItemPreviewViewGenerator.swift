@@ -46,6 +46,11 @@ struct GenericVaultItemPreviewViewGenerator<
                 metadata: metadata,
                 behaviour: behaviour
             )
+        case let .encryptedItem(data):
+            VStack {
+                Text("Can't render encrypted items yet!")
+                Text(data.keygenSignature)
+            }
         }
     }
 

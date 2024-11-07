@@ -47,10 +47,12 @@ extension PersistedVaultItemEncoder {
         let noteDetails: PersistedNoteDetails? = switch newData.item {
         case let .secureNote(note): encodeSecureNoteDetails(newData: note)
         case .otpCode: nil
+        case .encryptedItem: nil
         }
         let otpDetails: PersistedOTPDetails? = switch newData.item {
         case let .otpCode(code): encodeOtpDetails(newData: code)
         case .secureNote: nil
+        case .encryptedItem: nil
         }
         let updatedDate = switch writeUpdateContext?.updated {
         case .updateUpdatedDate: now

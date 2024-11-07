@@ -48,6 +48,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.item.secureNote?.title, "title")
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "contents")
         XCTAssertEqual(decodedItem.item.secureNote?.format, .markdown)
+
+        XCTAssertNil(decodedItem.item.encryptedItem)
+        XCTAssertNil(decodedItem.item.otpCode)
     }
 
     func test_decodeNote_decodeswithNilContentsIntoEmptyString() throws {
@@ -57,6 +60,69 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         let decodedItem = try sut.decode(backupItem: item)
 
         XCTAssertEqual(decodedItem.item.secureNote?.contents, "")
+    }
+
+    // MARK: - Encrypted Item
+
+    func test_decodeEncryptedItem_decodesEncryptedItem() throws {
+        let id = UUID()
+        let createdDate = Date()
+        let updateDate = Date()
+        let description = "my user description"
+        let tag = UUID()
+        let itemData = Data.random(count: 12)
+        let itemAuthentication = Data.random(count: 12)
+        let itemEncryptionIV = Data.random(count: 12)
+        let itemKeygenSalt = Data.random(count: 12)
+        let itemSignature = "this is sig"
+        let encryptedItem = VaultBackupItem.Encrypted(
+            version: "1.0.7",
+            data: itemData,
+            authentication: itemAuthentication,
+            encryptionIV: itemEncryptionIV,
+            keygenSalt: itemKeygenSalt,
+            keygenSignature: itemSignature
+        )
+        let item = VaultBackupItem(
+            id: id,
+            createdDate: createdDate,
+            updatedDate: updateDate,
+            relativeOrder: 77777,
+            userDescription: description,
+            tags: [tag],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "hello",
+            killphrase: "killmenow",
+            lockState: .notLocked,
+            tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
+            item: .encrypted(data: encryptedItem)
+        )
+        let sut = makeSUT()
+
+        let decodedItem = try sut.decode(backupItem: item)
+
+        XCTAssertEqual(decodedItem.id.rawValue, id)
+        XCTAssertEqual(decodedItem.metadata.created, createdDate)
+        XCTAssertEqual(decodedItem.metadata.updated, updateDate)
+        XCTAssertEqual(decodedItem.metadata.userDescription, description)
+        XCTAssertEqual(decodedItem.metadata.visibility, .always)
+        XCTAssertEqual(decodedItem.metadata.searchableLevel, .full)
+        XCTAssertEqual(decodedItem.metadata.searchPassphrase, "hello")
+        XCTAssertEqual(decodedItem.metadata.killphrase, "killmenow")
+        XCTAssertEqual(decodedItem.metadata.color, .init(red: 0.1, green: 0.2, blue: 0.3))
+        XCTAssertEqual(decodedItem.metadata.tags, [.init(id: tag)])
+        XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
+        XCTAssertEqual(decodedItem.metadata.relativeOrder, 77777)
+        XCTAssertEqual(decodedItem.item.encryptedItem?.version, "1.0.7")
+        XCTAssertEqual(decodedItem.item.encryptedItem?.data, itemData)
+        XCTAssertEqual(decodedItem.item.encryptedItem?.authentication, itemAuthentication)
+        XCTAssertEqual(decodedItem.item.encryptedItem?.encryptionIV, itemEncryptionIV)
+        XCTAssertEqual(decodedItem.item.encryptedItem?.keygenSalt, itemKeygenSalt)
+        XCTAssertEqual(decodedItem.item.encryptedItem?.keygenSignature, itemSignature)
+
+        XCTAssertNil(decodedItem.item.secureNote)
+        XCTAssertNil(decodedItem.item.otpCode)
     }
 
     // MARK: - OTP Code
@@ -113,6 +179,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.item.otpCode?.data.issuer, "my iss")
         XCTAssertEqual(decodedItem.item.otpCode?.data.digits, OTPAuthDigits(value: 5))
         XCTAssertEqual(decodedItem.item.otpCode?.data.algorithm, .sha1)
+
+        XCTAssertNil(decodedItem.item.encryptedItem)
+        XCTAssertNil(decodedItem.item.secureNote)
     }
 
     func test_decodeOTP_decodesHOTPCode() throws {
@@ -167,6 +236,9 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.item.otpCode?.data.issuer, "my iss a")
         XCTAssertEqual(decodedItem.item.otpCode?.data.digits, OTPAuthDigits(value: 7))
         XCTAssertEqual(decodedItem.item.otpCode?.data.algorithm, .sha1)
+
+        XCTAssertNil(decodedItem.item.encryptedItem)
+        XCTAssertNil(decodedItem.item.secureNote)
     }
 
     func test_decodeOTP_succeedsForAnyOTPItem() throws {

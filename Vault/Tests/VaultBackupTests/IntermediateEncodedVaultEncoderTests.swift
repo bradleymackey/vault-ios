@@ -84,6 +84,46 @@ struct IntermediateEncodedVaultEncoderTests {
     }
 
     @Test
+    func encodeVault_encodesToJSONFormat_encryptedItem() throws {
+        let date = Date(timeIntervalSince1970: 12345)
+        let uuid1 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid2 = try #require(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
+        let item = VaultBackupItem(
+            id: uuid1,
+            createdDate: date,
+            updatedDate: date.addingTimeInterval(7000),
+            relativeOrder: 1000,
+            userDescription: "",
+            tags: [uuid2],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "passphrase",
+            killphrase: "kill",
+            lockState: .notLocked,
+            tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
+            item: .encrypted(data: .init(
+                version: "2.0.3",
+                data: Data(repeating: 0xFE, count: 300),
+                authentication: Data(repeating: 0x02, count: 17),
+                encryptionIV: Data(repeating: 0x04, count: 24),
+                keygenSalt: Data(repeating: 0x05, count: 30),
+                keygenSignature: "this is test sig"
+            ))
+        )
+        let backup = anyBackupPayload(
+            created: date,
+            userDescription: "Example vault with a single encrypted item",
+            items: [item]
+        )
+
+        let encodedVault = try sut.encode(vaultBackup: backup)
+
+        let decompressedData = try (encodedVault.data as NSData).decompressed(using: .lzma) as Data
+        let encoded = try #require(String(data: decompressedData, encoding: .utf8))
+        assertSnapshot(of: encoded, as: .lines)
+    }
+
+    @Test
     func encodeVault_encodesToJSONFormat_otpCode() throws {
         let date = Date(timeIntervalSince1970: 12345)
         let uuid = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
@@ -189,10 +229,35 @@ struct IntermediateEncodedVaultEncoderTests {
                 issuer: "iss"
             ))
         )
+        let uuid9 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
+        let uuid10 = try #require(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
+        let date4 = Date(timeIntervalSince1970: 375_652_348)
+        let item4 = VaultBackupItem(
+            id: uuid9,
+            createdDate: date4,
+            updatedDate: date4.addingTimeInterval(7000),
+            relativeOrder: 1000,
+            userDescription: "",
+            tags: [uuid10],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: "passphrase",
+            killphrase: "kill",
+            lockState: .notLocked,
+            tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
+            item: .encrypted(data: .init(
+                version: "2.0.3",
+                data: Data(repeating: 0xEE, count: 300),
+                authentication: Data(repeating: 0x09, count: 17),
+                encryptionIV: Data(repeating: 0x94, count: 24),
+                keygenSalt: Data(repeating: 0x65, count: 30),
+                keygenSignature: "this is test sig"
+            ))
+        )
         let backup = anyBackupPayload(
             created: date1,
             userDescription: "my description again",
-            items: [item1, item2, item3]
+            items: [item1, item2, item3, item4]
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)

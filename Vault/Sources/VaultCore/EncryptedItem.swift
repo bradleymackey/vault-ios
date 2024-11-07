@@ -1,11 +1,13 @@
 import Foundation
 import FoundationExtensions
 
-/// Some data that has been encrypted with a password via keygen.
-public struct SecureNoteEncrypted: Equatable, Hashable, Codable, Sendable {
+/// A vault item that has been encrypted.
+///
+/// Internally, this will contain another vault item, but the type of this is only known after decryption.
+public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
     /// The version of this encryption payload.
     /// This is to allow for backwards-incompatible changes in the future.
-    public var version: SemVer = "1.0.0"
+    public var version: SemVer
     /// The encrypted payload.
     public var data: Data
     /// Additional data that represents authentication.
@@ -25,12 +27,14 @@ public struct SecureNoteEncrypted: Equatable, Hashable, Codable, Sendable {
     public var keygenSignature: String
 
     public init(
+        version: SemVer = "1.0.0",
         data: Data,
         authentication: Data,
         encryptionIV: Data,
         keygenSalt: Data,
         keygenSignature: String
     ) {
+        self.version = version
         self.data = data
         self.authentication = authentication
         self.encryptionIV = encryptionIV

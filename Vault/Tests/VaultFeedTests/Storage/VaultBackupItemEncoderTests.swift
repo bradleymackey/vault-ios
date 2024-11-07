@@ -45,13 +45,79 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.relativeOrder, 999_995)
         XCTAssertEqual(encodedItem.item.noteData?.title, "title")
         XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
+        XCTAssertEqual(encodedItem.item.noteData?.format, .markdown)
         XCTAssertEqual(encodedItem.visibility, .always)
         XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
         XCTAssertEqual(encodedItem.searchPassphrase, "searchme")
         XCTAssertEqual(encodedItem.killphrase, "killme")
         XCTAssertEqual(encodedItem.lockState, .notLocked)
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
-        XCTAssertEqual(encodedItem.item.noteData?.format, .markdown)
+
+        XCTAssertNil(encodedItem.item.encryptedData)
+        XCTAssertNil(encodedItem.item.codeData)
+    }
+
+    func test_encode_encodesEncryptedItem() {
+        let id = Identifier<VaultItem>()
+        let createdDate = Date(timeIntervalSince1970: 123_456)
+        let updateDate = Date(timeIntervalSince1970: 456_789)
+        let description = "my user description"
+        let itemData = Data.random(count: 12)
+        let itemAuthentication = Data.random(count: 12)
+        let itemEncryptionIV = Data.random(count: 12)
+        let itemKeygenSalt = Data.random(count: 12)
+        let itemSignature = "this is sig"
+        let encryptedItem = EncryptedItem(
+            version: "1.0.2",
+            data: itemData,
+            authentication: itemAuthentication,
+            encryptionIV: itemEncryptionIV,
+            keygenSalt: itemKeygenSalt,
+            keygenSignature: itemSignature
+        )
+        let tags: Set<Identifier<VaultItemTag>> = [.init(id: UUID())]
+        let item = VaultItem(
+            metadata: .init(
+                id: id,
+                created: createdDate,
+                updated: updateDate,
+                relativeOrder: 999_995,
+                userDescription: description,
+                tags: tags,
+                visibility: .always,
+                searchableLevel: .onlyTitle,
+                searchPassphrase: "searchme",
+                killphrase: "killmenow",
+                lockState: .notLocked,
+                color: .init(red: 0.1, green: 0.2, blue: 0.3)
+            ),
+            item: .encryptedItem(encryptedItem)
+        )
+        let sut = makeSUT()
+
+        let encodedItem = sut.encode(storedItem: item)
+
+        XCTAssertEqual(encodedItem.id, id.rawValue)
+        XCTAssertEqual(encodedItem.createdDate, createdDate)
+        XCTAssertEqual(encodedItem.updatedDate, updateDate)
+        XCTAssertEqual(encodedItem.userDescription, description)
+        XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
+        XCTAssertEqual(encodedItem.relativeOrder, 999_995)
+        XCTAssertEqual(encodedItem.item.encryptedData?.version, "1.0.2")
+        XCTAssertEqual(encodedItem.item.encryptedData?.data, itemData)
+        XCTAssertEqual(encodedItem.item.encryptedData?.authentication, itemAuthentication)
+        XCTAssertEqual(encodedItem.item.encryptedData?.encryptionIV, itemEncryptionIV)
+        XCTAssertEqual(encodedItem.item.encryptedData?.keygenSalt, itemKeygenSalt)
+        XCTAssertEqual(encodedItem.item.encryptedData?.keygenSignature, itemSignature)
+        XCTAssertEqual(encodedItem.visibility, .always)
+        XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
+        XCTAssertEqual(encodedItem.searchPassphrase, "searchme")
+        XCTAssertEqual(encodedItem.killphrase, "killmenow")
+        XCTAssertEqual(encodedItem.lockState, .notLocked)
+        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+
+        XCTAssertNil(encodedItem.item.noteData)
+        XCTAssertNil(encodedItem.item.codeData)
     }
 
     func test_encode_encodesTOTPCode() {
@@ -112,6 +178,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.item.codeData?.secretData, Data(hex: "ababa"))
         XCTAssertEqual(encodedItem.item.codeData?.secretFormat, "BASE_32")
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+
+        XCTAssertNil(encodedItem.item.encryptedData)
+        XCTAssertNil(encodedItem.item.noteData)
     }
 
     func test_encode_encodesHOTPCode() {
@@ -172,6 +241,9 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.item.codeData?.secretData, Data(hex: "ababa"))
         XCTAssertEqual(encodedItem.item.codeData?.secretFormat, "BASE_32")
         XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+
+        XCTAssertNil(encodedItem.item.encryptedData)
+        XCTAssertNil(encodedItem.item.noteData)
     }
 
     // MARK: Cases
@@ -213,6 +285,13 @@ extension VaultBackupItem.Item {
     fileprivate var noteData: VaultBackupItem.Note? {
         switch self {
         case let .note(note): note
+        default: nil
+        }
+    }
+
+    fileprivate var encryptedData: VaultBackupItem.Encrypted? {
+        switch self {
+        case let .encrypted(data): data
         default: nil
         }
     }

@@ -11,6 +11,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
     public enum Payload: Equatable, Hashable, Sendable {
         case otpCode(OTPAuthCode)
         case secureNote(SecureNote)
+        case encryptedItem(EncryptedItem)
     }
 
     /// Information about the stored item.
@@ -87,6 +88,13 @@ extension VaultItem.Payload {
             note
         default:
             nil
+        }
+    }
+
+    public var encryptedItem: EncryptedItem? {
+        switch self {
+        case let .encryptedItem(data): data
+        default: nil
         }
     }
 }
