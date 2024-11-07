@@ -25,13 +25,25 @@ struct TagPillView: View {
         tag.color.color.isPercievedLight
     }
 
+    private var isDark: Bool {
+        tag.color.color.isPercievedDark
+    }
+
     private var fillColor: Color {
-        isSelected ? tagColor : .clear
+        if isLight {
+            isSelected ? tag.color.brighten(amount: -0.2).color : .clear
+        } else if isDark {
+            isSelected ? tag.color.brighten(amount: 0.2).color : .clear
+        } else {
+            isSelected ? tagColor : .clear
+        }
     }
 
     private var strokeColor: Color {
         if isLight {
             isSelected ? .black.opacity(0.8) : tag.color.brighten(amount: -0.4).color
+        } else if isDark {
+            isSelected ? .white : .primary.opacity(0.9)
         } else {
             isSelected ? tagColor.contrastingForegroundColor : tagColor
         }

@@ -29,4 +29,8 @@ extension Color {
     var isPercievedLight: Bool {
         percievedBrightness > 0.9
     }
+
+    var isPercievedDark: Bool {
+        percievedBrightness < 0.1
+    }
 }
