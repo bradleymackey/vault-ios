@@ -12,6 +12,7 @@ final class VaultBackupItemEncoder {
         let itemDetail: VaultBackupItem.Item = switch storedItem.item {
         case let .otpCode(code): .otp(data: encodeOTPCode(code: code))
         case let .secureNote(note): .note(data: encodeNote(note: note))
+        case let .encryptedItem(item): .encrypted(data: encodeEncryptedItem(item: item))
         }
         return VaultBackupItem(
             id: storedItem.id.rawValue,
@@ -132,5 +133,21 @@ extension VaultBackupItemEncoder {
         case .plain: .plain
         case .markdown: .markdown
         }
+    }
+}
+
+// MARK: - Encrypted
+
+extension VaultBackupItemEncoder {
+    private func encodeEncryptedItem(item: EncryptedItem) -> VaultBackupItem.Encrypted {
+        .init(
+            version: item.version.stringValue,
+            title: item.title,
+            data: item.data,
+            authentication: item.authentication,
+            encryptionIV: item.encryptionIV,
+            keygenSalt: item.keygenSalt,
+            keygenSignature: item.keygenSignature
+        )
     }
 }

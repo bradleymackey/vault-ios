@@ -108,6 +108,7 @@ extension VaultBackupItem {
     public enum Item: Codable, Equatable {
         case otp(data: OTP)
         case note(data: Note)
+        case encrypted(data: Encrypted)
     }
 
     public enum SearchableLevel: String, Codable {
@@ -130,6 +131,35 @@ extension VaultBackupItem {
     public enum TextFormat: String, Codable {
         case plain = "PLAIN"
         case markdown = "MARKDOWN"
+    }
+
+    /// An encrypted item.
+    public struct Encrypted: Codable, Equatable {
+        public var version: String
+        public var title: String
+        public var data: Data
+        public var authentication: Data
+        public var encryptionIV: Data
+        public var keygenSalt: Data
+        public var keygenSignature: String
+
+        public init(
+            version: String,
+            title: String,
+            data: Data,
+            authentication: Data,
+            encryptionIV: Data,
+            keygenSalt: Data,
+            keygenSignature: String
+        ) {
+            self.version = version
+            self.title = title
+            self.data = data
+            self.authentication = authentication
+            self.encryptionIV = encryptionIV
+            self.keygenSalt = keygenSalt
+            self.keygenSignature = keygenSignature
+        }
     }
 
     /// A backed up OTP code.

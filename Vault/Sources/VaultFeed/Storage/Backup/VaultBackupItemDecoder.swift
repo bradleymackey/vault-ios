@@ -47,6 +47,7 @@ extension VaultBackupItemDecoder {
         switch backupItem.item {
         case let .note(data): .secureNote(decodeSecureNote(data: data))
         case let .otp(data): try .otpCode(decodeOTPCode(data: data))
+        case let .encrypted(data): try .encryptedItem(decodeEncrypted(item: data))
         }
     }
 
@@ -150,5 +151,21 @@ extension VaultBackupItemDecoder {
         case .plain: .plain
         case .markdown: .markdown
         }
+    }
+}
+
+// MARK: - Encrypted
+
+extension VaultBackupItemDecoder {
+    private func decodeEncrypted(item: VaultBackupItem.Encrypted) throws -> EncryptedItem {
+        try .init(
+            version: SemVer(string: item.version),
+            title: item.title,
+            data: item.data,
+            authentication: item.authentication,
+            encryptionIV: item.encryptionIV,
+            keygenSalt: item.keygenSalt,
+            keygenSignature: item.keygenSignature
+        )
     }
 }

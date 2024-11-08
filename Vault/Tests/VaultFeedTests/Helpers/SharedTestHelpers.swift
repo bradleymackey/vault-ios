@@ -213,6 +213,31 @@ extension SecureNote {
     }
 }
 
+extension EncryptedItem {
+    func wrapInAnyVaultItem(
+        userDescription: String = "",
+        visibility: VaultItemVisibility = .always,
+        tags: Set<Identifier<VaultItemTag>> = [],
+        searchableLevel: VaultItemSearchableLevel = .full,
+        searchPassphrase: String? = nil,
+        killphrase: String? = nil,
+        lockState: VaultItemLockState = .notLocked
+    ) -> VaultItem {
+        VaultItem(
+            metadata: anyVaultItemMetadata(
+                userDescription: userDescription,
+                visibility: visibility,
+                tags: tags,
+                searchableLevel: searchableLevel,
+                searchPassphrase: searchPassphrase,
+                killphrase: killphrase,
+                lockState: lockState
+            ),
+            item: .encryptedItem(self)
+        )
+    }
+}
+
 extension OTPAuthCode {
     func wrapInAnyVaultItem(
         userDescription: String = "",

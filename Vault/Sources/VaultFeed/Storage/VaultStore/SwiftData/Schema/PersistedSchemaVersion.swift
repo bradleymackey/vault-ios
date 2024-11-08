@@ -12,3 +12,5 @@ typealias PersistedOTPDetails = PersistedSchemaLatestVersion.PersistedOTPDetails
 typealias PersistedNoteDetails = PersistedSchemaLatestVersion.PersistedNoteDetails
 /// The most recent schema version for `PersistedVaultTag`.
 typealias PersistedVaultTag = PersistedSchemaLatestVersion.PersistedVaultTag
+/// The most recent schema version for `PersistedEncryptedItemDetails`.
+typealias PersistedEncryptedItemDetails = PersistedSchemaLatestVersion.PersistedEncryptedItemDetails

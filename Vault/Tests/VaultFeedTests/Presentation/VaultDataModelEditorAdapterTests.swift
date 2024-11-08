@@ -111,7 +111,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             case let .otpCode(otpCode):
                 XCTAssertEqual(otpCode.data.accountName, "new account name")
                 XCTAssertEqual(otpCode.data.issuer, "new issuer name")
-            case .secureNote:
+            case .secureNote, .encryptedItem:
                 XCTFail("invalid kind")
             }
             exp.fulfill()

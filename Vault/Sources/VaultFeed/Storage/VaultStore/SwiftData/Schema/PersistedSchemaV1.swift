@@ -33,9 +33,10 @@ extension PersistedSchemaV1 {
 
         @Relationship(deleteRule: .cascade)
         var noteDetails: PersistedNoteDetails?
-
         @Relationship(deleteRule: .cascade)
         var otpDetails: PersistedOTPDetails?
+        @Relationship(deleteRule: .cascade)
+        var encryptedItemDetails: PersistedEncryptedItemDetails?
 
         init(
             id: UUID,
@@ -51,7 +52,8 @@ extension PersistedSchemaV1 {
             color: PersistedColor?,
             tags: [PersistedVaultTag],
             noteDetails: PersistedNoteDetails?,
-            otpDetails: PersistedOTPDetails?
+            otpDetails: PersistedOTPDetails?,
+            encryptedItemDetails: PersistedEncryptedItemDetails?
         ) {
             self.id = id
             self.relativeOrder = relativeOrder
@@ -67,6 +69,7 @@ extension PersistedSchemaV1 {
             self.tags = tags
             self.noteDetails = noteDetails
             self.otpDetails = otpDetails
+            self.encryptedItemDetails = encryptedItemDetails
         }
     }
 
@@ -121,6 +124,38 @@ extension PersistedSchemaV1 {
             self.title = title
             self.contents = contents
             self.format = format
+        }
+    }
+
+    @Model
+    final class PersistedEncryptedItemDetails {
+        var version: String
+        var title: String
+        var data: Data
+        var authentication: Data
+        var encryptionIV: Data
+        var keygenSalt: Data
+        var keygenSignature: String
+
+        @Relationship(deleteRule: .cascade, inverse: \PersistedVaultItem.encryptedItemDetails)
+        var vaultItem: PersistedVaultItem?
+
+        init(
+            version: String,
+            title: String,
+            data: Data,
+            authentication: Data,
+            encryptionIV: Data,
+            keygenSalt: Data,
+            keygenSignature: String
+        ) {
+            self.version = version
+            self.title = title
+            self.data = data
+            self.authentication = authentication
+            self.encryptionIV = encryptionIV
+            self.keygenSalt = keygenSalt
+            self.keygenSignature = keygenSignature
         }
     }
 

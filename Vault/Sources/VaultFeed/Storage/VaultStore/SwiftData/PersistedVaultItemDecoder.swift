@@ -28,6 +28,9 @@ struct PersistedVaultItemDecoder {
                 format: decodeTextFormat(value: note.format)
             )
             return VaultItem(metadata: metadata, item: .secureNote(note))
+        } else if let encryptedItem = item.encryptedItemDetails {
+            let item = try decodeEncryptedItem(item: encryptedItem)
+            return VaultItem(metadata: metadata, item: .encryptedItem(item))
         } else {
             throw VaultItemDecodingError.missingItemDetail
         }
@@ -137,5 +140,17 @@ extension PersistedVaultItemDecoder {
         case VaultEncodingConstants.TextFormat.markdown: .markdown
         default: throw VaultItemDecodingError.invalidTextFormat
         }
+    }
+
+    private func decodeEncryptedItem(item: PersistedEncryptedItemDetails) throws -> EncryptedItem {
+        try .init(
+            version: SemVer(string: item.version),
+            title: item.title,
+            data: item.data,
+            authentication: item.authentication,
+            encryptionIV: item.encryptionIV,
+            keygenSalt: item.keygenSalt,
+            keygenSignature: item.keygenSignature
+        )
     }
 }

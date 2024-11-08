@@ -397,6 +397,40 @@ extension PersistedVaultItemDecoderTests {
     }
 }
 
+// MARK: - EncryptedItem
+
+extension PersistedVaultItemDecoderTests {
+    func test_decodeEncryptedItem_correctly() throws {
+        let sut = makeSUT()
+
+        let itemData = Data.random(count: 16)
+        let itemAuth = Data.random(count: 16)
+        let itemEncryptionIV = Data.random(count: 16)
+        let itemKeygenSalt = Data.random(count: 16)
+        let itemKeygenSignature = "my sig"
+        let encryptedItem = PersistedEncryptedItemDetails(
+            version: "1.0.3",
+            title: "cool title",
+            data: itemData,
+            authentication: itemAuth,
+            encryptionIV: itemEncryptionIV,
+            keygenSalt: itemKeygenSalt,
+            keygenSignature: itemKeygenSignature
+        )
+        let item = makePersistedItem(otpDetails: nil, encryptedItemDetails: encryptedItem)
+
+        let decoded = try sut.decode(item: item)
+
+        XCTAssertEqual(decoded.item.encryptedItem?.version, "1.0.3")
+        XCTAssertEqual(decoded.item.encryptedItem?.title, "cool title")
+        XCTAssertEqual(decoded.item.encryptedItem?.data, itemData)
+        XCTAssertEqual(decoded.item.encryptedItem?.authentication, itemAuth)
+        XCTAssertEqual(decoded.item.encryptedItem?.encryptionIV, itemEncryptionIV)
+        XCTAssertEqual(decoded.item.encryptedItem?.keygenSalt, itemKeygenSalt)
+        XCTAssertEqual(decoded.item.encryptedItem?.keygenSignature, itemKeygenSignature)
+    }
+}
+
 // MARK: - Helpers
 
 extension PersistedVaultItemDecoderTests {
@@ -437,7 +471,8 @@ extension PersistedVaultItemDecoderTests {
             period: 0,
             secretData: Data(),
             secretFormat: VaultEncodingConstants.OTPAuthSecret.Format.base32
-        )
+        ),
+        encryptedItemDetails: PersistedEncryptedItemDetails? = nil
     ) -> PersistedVaultItem {
         let item = PersistedVaultItem(
             id: id,
@@ -453,7 +488,8 @@ extension PersistedVaultItemDecoderTests {
             color: color,
             tags: tags,
             noteDetails: noteDetails,
-            otpDetails: otpDetails
+            otpDetails: otpDetails,
+            encryptedItemDetails: encryptedItemDetails
         )
         context.insert(item)
         return item

@@ -47,10 +47,17 @@ extension PersistedVaultItemEncoder {
         let noteDetails: PersistedNoteDetails? = switch newData.item {
         case let .secureNote(note): encodeSecureNoteDetails(newData: note)
         case .otpCode: nil
+        case .encryptedItem: nil
         }
         let otpDetails: PersistedOTPDetails? = switch newData.item {
         case let .otpCode(code): encodeOtpDetails(newData: code)
         case .secureNote: nil
+        case .encryptedItem: nil
+        }
+        let encryptedItemDetails: PersistedEncryptedItemDetails? = switch newData.item {
+        case let .encryptedItem(data): encodeEncryptedItemDetails(newData: data)
+        case .secureNote: nil
+        case .otpCode: nil
         }
         let updatedDate = switch writeUpdateContext?.updated {
         case .updateUpdatedDate: now
@@ -73,7 +80,8 @@ extension PersistedVaultItemEncoder {
             },
             tags: fetchTagsForItem(newData: newData),
             noteDetails: noteDetails,
-            otpDetails: otpDetails
+            otpDetails: otpDetails,
+            encryptedItemDetails: encryptedItemDetails
         )
     }
 
@@ -174,5 +182,21 @@ extension PersistedVaultItemEncoder {
         case .plain: VaultEncodingConstants.TextFormat.plain
         case .markdown: VaultEncodingConstants.TextFormat.markdown
         }
+    }
+}
+
+// MARK: - Encrypted
+
+extension PersistedVaultItemEncoder {
+    private func encodeEncryptedItemDetails(newData: EncryptedItem) -> PersistedEncryptedItemDetails {
+        PersistedEncryptedItemDetails(
+            version: newData.version.stringValue,
+            title: newData.title,
+            data: newData.data,
+            authentication: newData.authentication,
+            encryptionIV: newData.encryptionIV,
+            keygenSalt: newData.keygenSalt,
+            keygenSignature: newData.keygenSignature
+        )
     }
 }

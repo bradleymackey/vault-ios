@@ -81,6 +81,39 @@
       "updated_date" : 345652448000,
       "user_description" : "",
       "visibility" : "ONLY_SEARCH"
+    },
+    {
+      "created_date" : 375652348000,
+      "id" : "A5950174-2106-4251-BD73-58B8D39F77F3",
+      "item" : {
+        "encrypted" : {
+          "data" : {
+            "authentication" : "CQkJCQkJCQkJCQkJCQkJCQk=",
+            "data" : "7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u7u",
+            "encryption_iv" : "lJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSU",
+            "keygen_salt" : "ZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl",
+            "keygen_signature" : "this is test sig",
+            "title" : "this is my title",
+            "version" : "2.0.3"
+          }
+        }
+      },
+      "killphrase" : "kill",
+      "lock_state" : "NOT_LOCKED",
+      "relative_order" : 1000,
+      "search_passphrase" : "passphrase",
+      "searchable_level" : "FULL",
+      "tags" : [
+        "DCABE94A-C194-49AA-B709-7221DAD253AB"
+      ],
+      "tint_color" : {
+        "blue" : 0.3,
+        "green" : 0.2,
+        "red" : 0.1
+      },
+      "updated_date" : 375659348000,
+      "user_description" : "",
+      "visibility" : "ALWAYS"
     }
   ],
   "obfuscation_padding" : "q6urCg==",

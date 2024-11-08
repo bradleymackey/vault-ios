@@ -37,6 +37,8 @@ struct VaultDetailEditView<
                 editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 openInEditMode: openInEditMode
             )
+        case .encryptedItem:
+            Text("Coming soon...")
         }
     }
 }
