@@ -20,7 +20,7 @@ public struct SecureNotePreviewViewModel {
 
     /// The title that is displayed in the preview.
     public var visibleTitle: String {
-        if title.isEmpty {
+        if title.isBlank {
             localized(key: "noteDetail.field.noteTitleEmpty.title")
         } else {
             title
