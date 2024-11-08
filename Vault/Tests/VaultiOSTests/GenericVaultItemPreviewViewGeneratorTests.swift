@@ -165,7 +165,7 @@ extension GenericVaultItemPreviewViewGeneratorTests {
 
 // MARK: - Mocks
 
-private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+private class HOTPGeneratorMock: VaultItemPreviewViewGenerator {
     typealias PreviewItem = HOTPAuthCode
     private(set) var calledMethods = [String]()
 
@@ -191,15 +191,9 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
     func didAppear() {
         calledMethods.append(#function)
     }
-
-    var previewActionForVaultItemValue: VaultItemPreviewAction?
-    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        calledMethods.append(#function)
-        return previewActionForVaultItemValue
-    }
 }
 
-private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+private class TOTPGeneratorMock: VaultItemPreviewViewGenerator {
     typealias PreviewItem = TOTPAuthCode
     private(set) var calledMethods = [String]()
 
@@ -225,15 +219,9 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
     func didAppear() {
         calledMethods.append(#function)
     }
-
-    var previewActionForVaultItemValue: VaultItemPreviewAction?
-    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        calledMethods.append(#function)
-        return previewActionForVaultItemValue
-    }
 }
 
-private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator {
     typealias PreviewItem = SecureNote
     private(set) var calledMethods = [String]()
 
@@ -258,12 +246,6 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemP
 
     func didAppear() {
         calledMethods.append(#function)
-    }
-
-    var previewActionForVaultItemValue: VaultItemPreviewAction?
-    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        calledMethods.append(#function)
-        return previewActionForVaultItemValue
     }
 }
 
