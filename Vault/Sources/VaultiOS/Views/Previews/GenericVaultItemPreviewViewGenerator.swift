@@ -5,17 +5,20 @@ import VaultFeed
 struct GenericVaultItemPreviewViewGenerator<
     TOTP: VaultItemPreviewViewGenerator<TOTPAuthCode>,
     HOTP: VaultItemPreviewViewGenerator<HOTPAuthCode>,
-    Note: VaultItemPreviewViewGenerator<SecureNote>
+    Note: VaultItemPreviewViewGenerator<SecureNote>,
+    Encrypted: VaultItemPreviewViewGenerator<EncryptedItem>
 >: VaultItemPreviewViewGenerator {
     typealias PreviewItem = VaultItem.Payload
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note
+    private let encryptedGenerator: Encrypted
 
-    init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note) {
+    init(totpGenerator: TOTP, hotpGenerator: HOTP, noteGenerator: Note, encryptedGenerator: Encrypted) {
         self.totpGenerator = totpGenerator
         self.hotpGenerator = hotpGenerator
         self.noteGenerator = noteGenerator
+        self.encryptedGenerator = encryptedGenerator
     }
 
     @ViewBuilder
@@ -47,10 +50,7 @@ struct GenericVaultItemPreviewViewGenerator<
                 behaviour: behaviour
             )
         case let .encryptedItem(data):
-            VStack {
-                Text("Can't render encrypted items yet!")
-                Text(data.keygenSignature)
-            }
+            encryptedGenerator.makeVaultPreviewView(item: data, metadata: metadata, behaviour: behaviour)
         }
     }
 
@@ -58,17 +58,20 @@ struct GenericVaultItemPreviewViewGenerator<
         await totpGenerator.clearViewCache()
         await hotpGenerator.clearViewCache()
         await noteGenerator.clearViewCache()
+        await encryptedGenerator.clearViewCache()
     }
 
     func scenePhaseDidChange(to scenePhase: ScenePhase) {
         totpGenerator.scenePhaseDidChange(to: scenePhase)
         hotpGenerator.scenePhaseDidChange(to: scenePhase)
         noteGenerator.scenePhaseDidChange(to: scenePhase)
+        encryptedGenerator.scenePhaseDidChange(to: scenePhase)
     }
 
     func didAppear() {
         totpGenerator.didAppear()
         hotpGenerator.didAppear()
         noteGenerator.didAppear()
+        encryptedGenerator.didAppear()
     }
 }
