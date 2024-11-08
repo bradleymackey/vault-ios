@@ -13,11 +13,13 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        _ = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        _ = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         XCTAssertEqual(totp.calledMethods, [])
         XCTAssertEqual(hotp.calledMethods, [])
         XCTAssertEqual(note.calledMethods, [])
+        XCTAssertEqual(encrypted.calledMethods, [])
     }
 
     @MainActor
@@ -25,7 +27,8 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         let code = OTPAuthCode(type: .totp(), data: .init(secret: .empty(), accountName: "Any"))
         let view = sut.makeVaultPreviewView(item: .otpCode(code), metadata: uniqueMetadata(), behaviour: .normal)
@@ -38,7 +41,8 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         let code = OTPAuthCode(type: .hotp(), data: .init(secret: .empty(), accountName: "Any"))
         let view = sut.makeVaultPreviewView(item: .otpCode(code), metadata: uniqueMetadata(), behaviour: .normal)
@@ -51,10 +55,36 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         let noteItem = SecureNote(title: "Title", contents: "Contents", format: .markdown)
         let view = sut.makeVaultPreviewView(item: .secureNote(noteItem), metadata: uniqueMetadata(), behaviour: .normal)
+
+        assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
+    }
+
+    @MainActor
+    func test_makeVaultPreviewView_makesEncryptedItemView() throws {
+        let totp = TOTPGeneratorMock()
+        let hotp = HOTPGeneratorMock()
+        let note = SecureNoteGeneratorMock()
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
+
+        let encryptedItem = EncryptedItem(
+            title: "Hello, there!",
+            data: .random(count: 10),
+            authentication: .random(count: 10),
+            encryptionIV: .random(count: 10),
+            keygenSalt: .random(count: 10),
+            keygenSignature: "any"
+        )
+        let view = sut.makeVaultPreviewView(
+            item: .encryptedItem(encryptedItem),
+            metadata: uniqueMetadata(),
+            behaviour: .normal
+        )
 
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
@@ -64,13 +94,15 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         sut.scenePhaseDidChange(to: .active)
 
         XCTAssertEqual(totp.calledMethods, ["scenePhaseDidChange(to:)"])
         XCTAssertEqual(hotp.calledMethods, ["scenePhaseDidChange(to:)"])
         XCTAssertEqual(note.calledMethods, ["scenePhaseDidChange(to:)"])
+        XCTAssertEqual(encrypted.calledMethods, ["scenePhaseDidChange(to:)"])
     }
 
     @MainActor
@@ -78,13 +110,15 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         await sut.clearViewCache()
 
         XCTAssertEqual(totp.calledMethods, ["clearViewCache()"])
         XCTAssertEqual(hotp.calledMethods, ["clearViewCache()"])
         XCTAssertEqual(note.calledMethods, ["clearViewCache()"])
+        XCTAssertEqual(encrypted.calledMethods, ["clearViewCache()"])
     }
 
     @MainActor
@@ -92,13 +126,15 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
-        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note)
+        let encrypted = EncryptedItemGeneratorMock()
+        let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         sut.didAppear()
 
         XCTAssertEqual(totp.calledMethods, ["didAppear()"])
         XCTAssertEqual(hotp.calledMethods, ["didAppear()"])
         XCTAssertEqual(note.calledMethods, ["didAppear()"])
+        XCTAssertEqual(encrypted.calledMethods, ["didAppear()"])
     }
 }
 
@@ -108,25 +144,28 @@ extension GenericVaultItemPreviewViewGeneratorTests {
     private typealias SUT = GenericVaultItemPreviewViewGenerator<
         TOTPGeneratorMock,
         HOTPGeneratorMock,
-        SecureNoteGeneratorMock
+        SecureNoteGeneratorMock,
+        EncryptedItemGeneratorMock
     >
     @MainActor
     private func makeSUT(
         totp: TOTPGeneratorMock,
         hotp: HOTPGeneratorMock,
-        secureNote: SecureNoteGeneratorMock
+        secureNote: SecureNoteGeneratorMock,
+        encryptedItem: EncryptedItemGeneratorMock
     ) -> SUT {
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totp,
             hotpGenerator: hotp,
-            noteGenerator: secureNote
+            noteGenerator: secureNote,
+            encryptedGenerator: encryptedItem
         )
     }
 }
 
 // MARK: - Mocks
 
-private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+private class HOTPGeneratorMock: VaultItemPreviewViewGenerator {
     typealias PreviewItem = HOTPAuthCode
     private(set) var calledMethods = [String]()
 
@@ -152,15 +191,9 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
     func didAppear() {
         calledMethods.append(#function)
     }
-
-    var previewActionForVaultItemValue: VaultItemPreviewAction?
-    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        calledMethods.append(#function)
-        return previewActionForVaultItemValue
-    }
 }
 
-private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+private class TOTPGeneratorMock: VaultItemPreviewViewGenerator {
     typealias PreviewItem = TOTPAuthCode
     private(set) var calledMethods = [String]()
 
@@ -186,15 +219,9 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreview
     func didAppear() {
         calledMethods.append(#function)
     }
-
-    var previewActionForVaultItemValue: VaultItemPreviewAction?
-    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
-        calledMethods.append(#function)
-        return previewActionForVaultItemValue
-    }
 }
 
-private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemPreviewActionHandler {
+private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator {
     typealias PreviewItem = SecureNote
     private(set) var calledMethods = [String]()
 
@@ -220,10 +247,32 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator, VaultItemP
     func didAppear() {
         calledMethods.append(#function)
     }
+}
 
-    var previewActionForVaultItemValue: VaultItemPreviewAction?
-    func previewActionForVaultItem(id _: Identifier<VaultItem>) -> VaultItemPreviewAction? {
+private class EncryptedItemGeneratorMock: VaultItemPreviewViewGenerator {
+    typealias PreviewItem = EncryptedItem
+    private(set) var calledMethods = [String]()
+
+    @MainActor
+    init() {}
+
+    func makeVaultPreviewView(
+        item _: EncryptedItem,
+        metadata _: VaultItem.Metadata,
+        behaviour _: VaultItemViewBehaviour
+    ) -> some View {
+        Text("Encrypted Item")
+    }
+
+    func clearViewCache() async {
         calledMethods.append(#function)
-        return previewActionForVaultItemValue
+    }
+
+    func scenePhaseDidChange(to _: ScenePhase) {
+        calledMethods.append(#function)
+    }
+
+    func didAppear() {
+        calledMethods.append(#function)
     }
 }

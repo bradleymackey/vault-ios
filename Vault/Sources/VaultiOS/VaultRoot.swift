@@ -84,6 +84,10 @@ public enum VaultRoot {
         SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
 
     @MainActor
+    static let encryptedItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<EncryptedItem> =
+        EncryptedItemPreviewViewGenerator(viewFactory: EncryptedItemPreviewViewFactoryImpl())
+
+    @MainActor
     static let otpCodeTimerUpdaterFactory: some OTPCodeTimerUpdaterFactory = OTPCodeTimerUpdaterFactoryImpl(
         timer: timer,
         clock: clock
@@ -105,7 +109,8 @@ public enum VaultRoot {
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totpPreviewViewGenerator,
             hotpGenerator: hotpPreviewViewGenerator,
-            noteGenerator: secureNotePreviewViewGenerator
+            noteGenerator: secureNotePreviewViewGenerator,
+            encryptedGenerator: encryptedItemPreviewViewGenerator
         )
 
     @MainActor

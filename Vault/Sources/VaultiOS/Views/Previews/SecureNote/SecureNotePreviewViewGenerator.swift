@@ -30,14 +30,14 @@ final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory
     }
 
     func clearViewCache() async {
-        // noop, cache is not used for secure note preview views
+        // noop, cache is not used for secure note preview views atm
     }
 
     func scenePhaseDidChange(to _: ScenePhase) {
-        // noop
+        // noop, nothing to do at the generator-level at the moment
     }
 
     func didAppear() {
-        // noop
+        // noop, nothing to do at the generator-level at the moment
     }
 }

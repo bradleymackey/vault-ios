@@ -139,6 +139,17 @@ func anySecureNote() -> SecureNote {
     .init(title: "Hello World", contents: "This is my note", format: .markdown)
 }
 
+func anyEncryptedItem() -> EncryptedItem {
+    .init(
+        title: "Hello World",
+        data: Data(repeating: 0x03, count: 10),
+        authentication: Data(repeating: 0x03, count: 10),
+        encryptionIV: Data(repeating: 0x03, count: 10),
+        keygenSalt: Data(repeating: 0x03, count: 10),
+        keygenSignature: "my sig"
+    )
+}
+
 func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> VaultItem.Metadata {
     .init(
         id: id,
