@@ -77,6 +77,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         let itemSignature = "this is sig"
         let encryptedItem = VaultBackupItem.Encrypted(
             version: "1.0.7",
+            title: "this is my title",
             data: itemData,
             authentication: itemAuthentication,
             encryptionIV: itemEncryptionIV,
@@ -115,6 +116,7 @@ final class VaultBackupItemDecoderTests: XCTestCase {
         XCTAssertEqual(decodedItem.metadata.lockState, .notLocked)
         XCTAssertEqual(decodedItem.metadata.relativeOrder, 77777)
         XCTAssertEqual(decodedItem.item.encryptedItem?.version, "1.0.7")
+        XCTAssertEqual(decodedItem.item.encryptedItem?.title, "this is my title")
         XCTAssertEqual(decodedItem.item.encryptedItem?.data, itemData)
         XCTAssertEqual(decodedItem.item.encryptedItem?.authentication, itemAuthentication)
         XCTAssertEqual(decodedItem.item.encryptedItem?.encryptionIV, itemEncryptionIV)

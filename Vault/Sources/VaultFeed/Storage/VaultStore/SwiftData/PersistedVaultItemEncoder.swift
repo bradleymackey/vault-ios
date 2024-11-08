@@ -191,6 +191,7 @@ extension PersistedVaultItemEncoder {
     private func encodeEncryptedItemDetails(newData: EncryptedItem) -> PersistedEncryptedItemDetails {
         PersistedEncryptedItemDetails(
             version: newData.version.stringValue,
+            title: newData.title,
             data: newData.data,
             authentication: newData.authentication,
             encryptionIV: newData.encryptionIV,

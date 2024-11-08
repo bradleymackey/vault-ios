@@ -160,6 +160,7 @@ extension VaultBackupItemDecoder {
     private func decodeEncrypted(item: VaultBackupItem.Encrypted) throws -> EncryptedItem {
         try .init(
             version: SemVer(string: item.version),
+            title: item.title,
             data: item.data,
             authentication: item.authentication,
             encryptionIV: item.encryptionIV,

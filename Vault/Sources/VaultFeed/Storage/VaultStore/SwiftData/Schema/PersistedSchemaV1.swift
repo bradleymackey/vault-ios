@@ -130,6 +130,7 @@ extension PersistedSchemaV1 {
     @Model
     final class PersistedEncryptedItemDetails {
         var version: String
+        var title: String
         var data: Data
         var authentication: Data
         var encryptionIV: Data
@@ -141,6 +142,7 @@ extension PersistedSchemaV1 {
 
         init(
             version: String,
+            title: String,
             data: Data,
             authentication: Data,
             encryptionIV: Data,
@@ -148,6 +150,7 @@ extension PersistedSchemaV1 {
             keygenSignature: String
         ) {
             self.version = version
+            self.title = title
             self.data = data
             self.authentication = authentication
             self.encryptionIV = encryptionIV

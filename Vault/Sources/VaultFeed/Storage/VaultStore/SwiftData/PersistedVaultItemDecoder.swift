@@ -145,6 +145,7 @@ extension PersistedVaultItemDecoder {
     private func decodeEncryptedItem(item: PersistedEncryptedItemDetails) throws -> EncryptedItem {
         try .init(
             version: SemVer(string: item.version),
+            title: item.title,
             data: item.data,
             authentication: item.authentication,
             encryptionIV: item.encryptionIV,

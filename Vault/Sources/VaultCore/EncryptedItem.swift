@@ -8,6 +8,8 @@ public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
     /// The version of this encryption payload.
     /// This is to allow for backwards-incompatible changes in the future.
     public var version: SemVer
+    /// User-visible title while the payload is still encrypted.
+    public var title: String
     /// The encrypted payload.
     public var data: Data
     /// Additional data that represents authentication.
@@ -28,6 +30,7 @@ public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
 
     public init(
         version: SemVer = "1.0.0",
+        title: String,
         data: Data,
         authentication: Data,
         encryptionIV: Data,
@@ -35,6 +38,7 @@ public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
         keygenSignature: String
     ) {
         self.version = version
+        self.title = title
         self.data = data
         self.authentication = authentication
         self.encryptionIV = encryptionIV
@@ -44,6 +48,7 @@ public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
 
     public enum CodingKeys: String, CodingKey {
         case version = "ENCRYPTION_VERSION"
+        case title = "TITLE"
         case data = "ENCRYPTION_DATA"
         case authentication = "ENCRYPTION_AUTH_TAG"
         case encryptionIV = "ENCRYPTION_IV"

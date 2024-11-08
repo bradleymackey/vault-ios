@@ -136,6 +136,7 @@ extension VaultBackupItem {
     /// An encrypted item.
     public struct Encrypted: Codable, Equatable {
         public var version: String
+        public var title: String
         public var data: Data
         public var authentication: Data
         public var encryptionIV: Data
@@ -144,6 +145,7 @@ extension VaultBackupItem {
 
         public init(
             version: String,
+            title: String,
             data: Data,
             authentication: Data,
             encryptionIV: Data,
@@ -151,6 +153,7 @@ extension VaultBackupItem {
             keygenSignature: String
         ) {
             self.version = version
+            self.title = title
             self.data = data
             self.authentication = authentication
             self.encryptionIV = encryptionIV

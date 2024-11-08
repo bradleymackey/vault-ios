@@ -103,6 +103,7 @@ struct IntermediateEncodedVaultEncoderTests {
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .encrypted(data: .init(
                 version: "2.0.3",
+                title: "this is my title",
                 data: Data(repeating: 0xFE, count: 300),
                 authentication: Data(repeating: 0x02, count: 17),
                 encryptionIV: Data(repeating: 0x04, count: 24),
@@ -247,6 +248,7 @@ struct IntermediateEncodedVaultEncoderTests {
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .encrypted(data: .init(
                 version: "2.0.3",
+                title: "this is my title",
                 data: Data(repeating: 0xEE, count: 300),
                 authentication: Data(repeating: 0x09, count: 17),
                 encryptionIV: Data(repeating: 0x94, count: 24),

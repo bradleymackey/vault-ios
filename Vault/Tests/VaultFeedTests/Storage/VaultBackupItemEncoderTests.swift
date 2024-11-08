@@ -69,6 +69,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         let itemSignature = "this is sig"
         let encryptedItem = EncryptedItem(
             version: "1.0.2",
+            title: "this nice",
             data: itemData,
             authentication: itemAuthentication,
             encryptionIV: itemEncryptionIV,
@@ -104,6 +105,7 @@ final class VaultBackupItemEncoderTests: XCTestCase {
         XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
         XCTAssertEqual(encodedItem.relativeOrder, 999_995)
         XCTAssertEqual(encodedItem.item.encryptedData?.version, "1.0.2")
+        XCTAssertEqual(encodedItem.item.encryptedData?.title, "this nice")
         XCTAssertEqual(encodedItem.item.encryptedData?.data, itemData)
         XCTAssertEqual(encodedItem.item.encryptedData?.authentication, itemAuthentication)
         XCTAssertEqual(encodedItem.item.encryptedData?.encryptionIV, itemEncryptionIV)

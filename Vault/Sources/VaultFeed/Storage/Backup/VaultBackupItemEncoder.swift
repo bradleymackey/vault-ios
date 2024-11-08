@@ -142,6 +142,7 @@ extension VaultBackupItemEncoder {
     private func encodeEncryptedItem(item: EncryptedItem) -> VaultBackupItem.Encrypted {
         .init(
             version: item.version.stringValue,
+            title: item.title,
             data: item.data,
             authentication: item.authentication,
             encryptionIV: item.encryptionIV,

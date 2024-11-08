@@ -410,6 +410,7 @@ extension PersistedVaultItemDecoderTests {
         let itemKeygenSignature = "my sig"
         let encryptedItem = PersistedEncryptedItemDetails(
             version: "1.0.3",
+            title: "cool title",
             data: itemData,
             authentication: itemAuth,
             encryptionIV: itemEncryptionIV,
@@ -421,6 +422,7 @@ extension PersistedVaultItemDecoderTests {
         let decoded = try sut.decode(item: item)
 
         XCTAssertEqual(decoded.item.encryptedItem?.version, "1.0.3")
+        XCTAssertEqual(decoded.item.encryptedItem?.title, "cool title")
         XCTAssertEqual(decoded.item.encryptedItem?.data, itemData)
         XCTAssertEqual(decoded.item.encryptedItem?.authentication, itemAuth)
         XCTAssertEqual(decoded.item.encryptedItem?.encryptionIV, itemEncryptionIV)

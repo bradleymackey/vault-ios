@@ -93,6 +93,7 @@
             "encryption_iv" : "lJSUlJSUlJSUlJSUlJSUlJSUlJSUlJSU",
             "keygen_salt" : "ZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVlZWVl",
             "keygen_signature" : "this is test sig",
+            "title" : "this is my title",
             "version" : "2.0.3"
           }
         }
