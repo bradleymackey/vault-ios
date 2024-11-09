@@ -1,8 +1,9 @@
 import SwiftUI
 
-struct DemoViewHome: View {
+struct DeveloperToolsHomeView: View {
     enum Destination: Hashable {
         case otpAutofill
+        case createItems
     }
 
     var body: some View {
@@ -10,12 +11,17 @@ struct DemoViewHome: View {
             NavigationLink(value: Destination.otpAutofill) {
                 Text("OTP Autofill")
             }
+            NavigationLink(value: Destination.createItems) {
+                Text("Create Items")
+            }
         }
-        .navigationTitle("Demos")
+        .navigationTitle("Developer")
         .navigationDestination(for: Destination.self) { item in
             switch item {
             case .otpAutofill:
                 OTPAutofillDemoView()
+            case .createItems:
+                DeveloperCreateItemsView()
             }
         }
     }

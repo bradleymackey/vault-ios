@@ -57,10 +57,9 @@ public struct VaultMainScene: Scene {
                     #if DEBUG
                     Section {
                         NavigationLink(value: SidebarItem.demos) {
-                            Label("Demos", systemImage: "hammer.fill")
+                            Label("Developer", systemImage: "hammer.fill")
                         }
-                    } header: {
-                        Text("Demos")
+                        .tint(.purple)
                     }
                     #endif
                 }
@@ -93,7 +92,7 @@ public struct VaultMainScene: Scene {
                     .navigationBarTitleDisplayMode(.inline)
                 case .demos:
                     NavigationStack {
-                        DemoViewHome()
+                        DeveloperToolsHomeView()
                     }
                     .navigationBarTitleDisplayMode(.inline)
                 case .none:
