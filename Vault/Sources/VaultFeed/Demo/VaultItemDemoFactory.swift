@@ -57,4 +57,27 @@ public struct VaultItemDemoFactory {
             lockState: .notLocked
         )
     }
+
+    public func makeEncryptedSecureNote() throws -> VaultItem.Write {
+        let note = SecureNote(
+            title: "Hi there",
+            contents: "This is a test \(UUID().uuidString.prefix(12))",
+            format: .plain
+        )
+        let derived = try VaultKeyDeriver.Item.Fast.v1.createEncryptionKey(password: "hello")
+        let encryptor = VaultItemEncryptor(key: derived)
+        let encrypted = try encryptor.encrypt(item: note)
+        return VaultItem.Write(
+            relativeOrder: 0,
+            userDescription: "This is a demo encrypted note",
+            color: nil,
+            item: .encryptedItem(encrypted),
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked
+        )
+    }
 }
