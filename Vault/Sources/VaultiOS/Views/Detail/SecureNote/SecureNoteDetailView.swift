@@ -15,6 +15,7 @@ struct SecureNoteDetailView: View {
         case editLock
         case editPassphrase
         case editKillphrase
+        case editEncryption
         case editTags
     }
 
@@ -137,6 +138,22 @@ struct SecureNoteDetailView: View {
                                 Text("Done")
                             }
                             .disabled(!viewModel.editingModel.detail.isKillphraseValid)
+                        }
+                    }
+                }
+            case .editEncryption:
+                NavigationStack {
+                    VaultDetailEncryptionEditView(
+                        title: "Encryption",
+                        description: "Add full at-rest encryption for the note. Password is required on every view."
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
                         }
                     }
                 }
@@ -295,6 +312,19 @@ struct SecureNoteDetailView: View {
                     style: .standard
                 ) {
                     LabeledContent("Killphrase", value: viewModel.editingModel.detail.killphraseEnabledText)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editEncryption
+            } label: {
+                FormRow(
+                    image: Image(systemName: "lock.iphone"),
+                    color: .accentColor,
+                    style: .standard
+                ) {
+                    LabeledContent("Encryption", value: "?")
                         .font(.body)
                 }
             }

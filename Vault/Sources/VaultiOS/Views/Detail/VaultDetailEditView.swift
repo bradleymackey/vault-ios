@@ -37,8 +37,11 @@ struct VaultDetailEditView<
                 editor: VaultDataModelEditorAdapter(dataModel: dataModel),
                 openInEditMode: openInEditMode
             )
-        case .encryptedItem:
-            Text("Coming soon...")
+        case let .encryptedItem(item):
+            EncryptedItemDetailView(
+                item: item,
+                presentationMode: presentationMode
+            )
         }
     }
 }
