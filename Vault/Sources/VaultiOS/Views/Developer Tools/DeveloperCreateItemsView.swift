@@ -31,8 +31,10 @@ struct DeveloperCreateItemsView: View {
                 Text("Create note")
             }
 
-            Button {
-                print("TODO: create encrypted note in DB")
+            AsyncButton {
+                let factory = VaultItemDemoFactory()
+                let item = try factory.makeEncryptedSecureNote()
+                try await dataModel.insert(item: item)
             } label: {
                 Text("Create encrypted note")
             }
