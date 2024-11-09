@@ -312,3 +312,26 @@ extension UserDefaults {
         dictionaryRepresentation().keys.reducedToSet()
     }
 }
+
+struct VaultItemEncryptedContainerMock: VaultItemEncryptedContainer {
+    var id: UUID
+    var exampleKey: String = "exampleValue"
+    var title: String = "hello"
+}
+
+struct VaultItemEncryptableMock: Equatable, VaultItemEncryptable {
+    typealias EncryptedContainer = VaultItemEncryptedContainerMock
+    var id: UUID
+
+    init(id: UUID) {
+        self.id = id
+    }
+
+    init(encryptedContainer: VaultItemEncryptedContainerMock) {
+        self = .init(id: encryptedContainer.id)
+    }
+
+    func makeEncryptedContainer() throws -> VaultItemEncryptedContainerMock {
+        .init(id: id)
+    }
+}

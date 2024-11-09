@@ -5,7 +5,12 @@ import VaultKeygen
 ///
 /// Allows encoding and decoding to a resilient format.
 public protocol VaultItemEncryptable {
-    associatedtype EncryptedContainer: Codable
+    associatedtype EncryptedContainer: VaultItemEncryptedContainer
     init(encryptedContainer: EncryptedContainer)
     func makeEncryptedContainer() throws -> EncryptedContainer
+}
+
+public protocol VaultItemEncryptedContainer: Codable {
+    /// The title that is shown externally and is not encrypted.
+    var title: String { get }
 }
