@@ -1,17 +1,32 @@
 import Foundation
 import SwiftUI
+import VaultFeed
 
 struct DeveloperCreateItemsView: View {
+    @Environment(VaultDataModel.self) var dataModel
+
     var body: some View {
         Form {
-            Button {
-                print("TODO: create code in DB")
+            AsyncButton {
+                let factory = VaultItemDemoFactory()
+                let hotpItem = factory.makeHOTPCode()
+                try await dataModel.insert(item: hotpItem)
             } label: {
-                Text("Create code")
+                Text("Create HOTP")
             }
 
-            Button {
-                print("TODO: create note in DB")
+            AsyncButton {
+                let factory = VaultItemDemoFactory()
+                let item = factory.makeTOTPCode()
+                try await dataModel.insert(item: item)
+            } label: {
+                Text("Create TOTP")
+            }
+
+            AsyncButton {
+                let factory = VaultItemDemoFactory()
+                let item = factory.makeSecureNote()
+                try await dataModel.insert(item: item)
             } label: {
                 Text("Create note")
             }
