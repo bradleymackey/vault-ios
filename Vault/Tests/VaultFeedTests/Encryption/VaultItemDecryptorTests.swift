@@ -13,7 +13,10 @@ struct VaultItemDecryptorTests {
         let encryptor = VaultItemEncryptor(key: key)
         let encryptedItem = try encryptor.encrypt(item: item)
         let decryptor = VaultItemDecryptor(key: key)
-        let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(item: encryptedItem)
+        let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
+            item: encryptedItem,
+            expectedItemIdentifier: "test"
+        )
 
         #expect(decryptedItem == item)
     }
@@ -29,7 +32,10 @@ struct VaultItemDecryptorTests {
         let decryptor = VaultItemDecryptor(key: invalidKey)
 
         do {
-            let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(item: encryptedItem)
+            let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
+                item: encryptedItem,
+                expectedItemIdentifier: "test"
+            )
             _ = decryptedItem
         } catch VaultItemDecryptor.Error.decryptionFailed {
             // expected error type
@@ -40,8 +46,6 @@ struct VaultItemDecryptorTests {
 
     @Test
     func decodingFailed_returnsDecodingFailedError() throws {
-        let id = UUID()
-        let item = VaultItemEncryptableMock(id: id)
         let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptor = AESGCMEncryptor(key: key.key.data)
         let iv = Data.random(count: 32)
@@ -57,12 +61,38 @@ struct VaultItemDecryptorTests {
         )
 
         do {
-            let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(item: encryptedItem)
+            let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
+                item: encryptedItem,
+                expectedItemIdentifier: "test"
+            )
             _ = decryptedItem
         } catch VaultItemDecryptor.Error.decodingFailed {
             // expected error type
         } catch {
             Issue.record("Unexpected error type, expected decoding failure")
+        }
+    }
+
+    @Test
+    func decodingFailed_mismatchedItemIdentifier() throws {
+        let id = UUID()
+        let item = VaultItemEncryptableMock(id: id)
+        let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let encryptor = VaultItemEncryptor(key: key)
+        let encryptedItem = try encryptor.encrypt(item: item)
+        let decryptor = VaultItemDecryptor(key: key)
+
+        do {
+            let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
+                item: encryptedItem,
+                expectedItemIdentifier: "invalid"
+            )
+            _ = decryptedItem
+        } catch let VaultItemDecryptor.Error.mismatchedItemIdentifier(expected, actual) {
+            #expect(expected == "invalid")
+            #expect(actual == "test")
+        } catch {
+            Issue.record("Unexpected error type, expected type mismatch")
         }
     }
 }
