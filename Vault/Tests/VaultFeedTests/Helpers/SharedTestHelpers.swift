@@ -314,6 +314,7 @@ extension UserDefaults {
 }
 
 struct VaultItemEncryptedContainerMock: VaultItemEncryptedContainer {
+    var itemIdentifier: String = "test"
     var id: UUID
     var exampleKey: String = "exampleValue"
     var title: String = "hello"

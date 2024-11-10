@@ -27,6 +27,7 @@ extension SecureNote: VaultItemEncryptable {
 
     /// Resilient format that is used during encryption/decryption.
     public struct EncryptedContainer: VaultItemEncryptedContainer {
+        public var itemIdentifier: String = VaultIdentifiers.Item.secureNote
         public var title: String
         var contents: String
         var format: Format

@@ -1,5 +1,6 @@
 {
   "contents" : "This is my contents",
   "format" : "MARKDOWN",
+  "item_identifier" : "vault.item.secure-note.v1",
   "title" : "Hello world"
 }
