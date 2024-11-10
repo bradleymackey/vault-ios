@@ -12,6 +12,7 @@ struct VaultDetailEditView<
     @Binding var navigationPath: NavigationPath
 
     @Environment(VaultDataModel.self) private var dataModel
+    @Environment(VaultInjector.self) private var injector
     @Environment(\.presentationMode) private var presentationMode
 
     var body: some View {
@@ -39,7 +40,10 @@ struct VaultDetailEditView<
             )
         case let .encryptedItem(item):
             EncryptedItemDetailView(
-                item: item,
+                viewModel: .init(
+                    item: item,
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                ),
                 presentationMode: presentationMode
             )
         }

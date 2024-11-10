@@ -6,8 +6,8 @@ struct EncryptedItemDetailView: View {
     @State private var viewModel: EncryptedItemDetailViewModel
     var presentationMode: Binding<PresentationMode>?
 
-    init(item: EncryptedItem, presentationMode: Binding<PresentationMode>? = nil) {
-        viewModel = EncryptedItemDetailViewModel(item: item)
+    init(viewModel: EncryptedItemDetailViewModel, presentationMode: Binding<PresentationMode>? = nil) {
+        self.viewModel = viewModel
         self.presentationMode = presentationMode
     }
 
@@ -22,17 +22,38 @@ struct EncryptedItemDetailView: View {
         }
         .navigationTitle("Item")
         .navigationBarTitleDisplayMode(.inline)
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button {
+                    dismiss()
+                } label: {
+                    Text("Cancel")
+                }
+                .tint(.red)
+            }
+        }
     }
 
     private var titleSection: some View {
         Section {
-            PlaceholderView(
-                systemIcon: "lock.iphone",
-                title: "Encrypted",
-                subtitle: "A password is required to decrypt this item."
-            )
-            .padding()
-            .containerRelativeFrame(.horizontal)
+            if let error = viewModel.state.presentationError {
+                PlaceholderView(
+                    systemIcon: "exclamationmark.triangle.fill",
+                    title: error.userTitle,
+                    subtitle: error.userDescription
+                )
+                .padding()
+                .containerRelativeFrame(.horizontal)
+                .foregroundStyle(.red)
+            } else {
+                PlaceholderView(
+                    systemIcon: "lock.iphone",
+                    title: "Encrypted",
+                    subtitle: "A password is required to decrypt this item."
+                )
+                .padding()
+                .containerRelativeFrame(.horizontal)
+            }
         }
     }
 
@@ -42,15 +63,19 @@ struct EncryptedItemDetailView: View {
                 SecureField("Password...", text: $viewModel.enteredEncryptionPassword)
             }
         } footer: {
-            Button {
-                print("start decryption...")
+            AsyncButton {
+                await viewModel.startDecryption()
             } label: {
                 Label("Decrypt", systemImage: "key.horizontal.fill")
             }
             .modifier(ProminentButtonModifier())
             .padding()
             .modifier(HorizontallyCenter())
-            .disabled(!viewModel.shouldAllowDecryptionToStart)
+            .disabled(!viewModel.canStartDecryption)
+        }
+        .onChange(of: viewModel.enteredEncryptionPassword) { _, _ in
+            // When the text changes, reset the state.
+            viewModel.resetState()
         }
     }
 }
