@@ -18,6 +18,27 @@ struct VaultItemDecryptor {
         case mismatchedItemIdentifier(expected: String, actual: String)
     }
 
+    /// Decrypts the identifier for this item, so we know what kind of item it is.
+    func decryptItemIdentifier(item: EncryptedItem) throws -> String {
+        let decryptor = AESGCMDecryptor(key: key.key.data)
+        let item = try withMappedError {
+            try decryptor.decrypt(
+                message: .init(ciphertext: item.data, authenticationTag: item.authentication),
+                iv: item.encryptionIV
+            )
+        } error: {
+            Error.decryptionFailed($0)
+        }
+
+        let basicFormatDecoded = try withMappedError {
+            try makeDecoder().decode(BasicVaultItemEncryptedContainer.self, from: item)
+        } error: {
+            Error.decodingFailed($0)
+        }
+
+        return basicFormatDecoded.itemIdentifier
+    }
+
     /// Decodes and decrypts an encryptable item from the vault.
     func decrypt<T: VaultItemEncryptable>(item: EncryptedItem, expectedItemIdentifier: String) throws -> T {
         let decryptor = AESGCMDecryptor(key: key.key.data)
