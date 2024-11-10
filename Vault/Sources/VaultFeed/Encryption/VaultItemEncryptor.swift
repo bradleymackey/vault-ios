@@ -3,6 +3,9 @@ import Foundation
 import VaultCore
 import VaultKeygen
 
+/// Use for encoding and encrypting encrypted vault items, so they are ready for storage.
+///
+/// Counterpart to `VaultItemDecryptor`.
 struct VaultItemEncryptor {
     private let key: DerivedEncryptionKey
 
@@ -27,17 +30,6 @@ struct VaultItemEncryptor {
         )
     }
 
-    /// Decodes and decrypts an encryptable item from the vault.
-    func decrypt<T: VaultItemEncryptable>(item: EncryptedItem) throws -> T {
-        let decryptor = AESGCMDecryptor(key: key.key.data)
-        let item = try decryptor.decrypt(
-            message: .init(ciphertext: item.data, authenticationTag: item.authentication),
-            iv: item.encryptionIV
-        )
-        let decoded = try makeDecoder().decode(T.EncryptedContainer.self, from: item)
-        return T(encryptedContainer: decoded)
-    }
-
     /// The encoder for the intermediate format before it is encrypted.
     private func makeEncoder() -> JSONEncoder {
         let encoder = JSONEncoder()
@@ -46,13 +38,5 @@ struct VaultItemEncryptor {
         encoder.dateEncodingStrategy = .millisecondsSince1970
         encoder.dataEncodingStrategy = .base64
         return encoder
-    }
-
-    private func makeDecoder() -> JSONDecoder {
-        let decoder = JSONDecoder()
-        decoder.keyDecodingStrategy = .convertFromSnakeCase
-        decoder.dateDecodingStrategy = .millisecondsSince1970
-        decoder.dataDecodingStrategy = .base64
-        return decoder
     }
 }
