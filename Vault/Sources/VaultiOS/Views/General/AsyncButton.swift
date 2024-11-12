@@ -26,7 +26,7 @@ struct AsyncButton<Label: View>: View {
 
                     if actionOptions.contains(.showProgressView) {
                         progressViewTask = Task {
-                            try await Task.sleep(for: .milliseconds(150))
+                            try await Task.sleep(for: .milliseconds(300))
                             try Task.checkCancellation()
                             showProgressView = true
                         }
