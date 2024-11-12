@@ -132,8 +132,9 @@ extension EncryptedItemDetailViewModelTests {
     @MainActor
     private func makeSUT(
         item: EncryptedItem,
+        metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock()
     ) -> EncryptedItemDetailViewModel {
-        EncryptedItemDetailViewModel(item: item, keyDeriverFactory: keyDeriverFactory)
+        EncryptedItemDetailViewModel(item: item, metadata: metadata, keyDeriverFactory: keyDeriverFactory)
     }
 }

@@ -1,13 +1,22 @@
+import Combine
 import Foundation
 import SwiftUI
 import VaultFeed
 
 struct EncryptedItemDetailView: View {
     @State private var viewModel: EncryptedItemDetailViewModel
+    /// Signaled when the given `VaultItem` should be opened in place of this detail view.
+    var openDetailSubject: PassthroughSubject<VaultItem, Never>
+    /// Required to know the presentation context, so we know how this view should be dismissed.
     var presentationMode: Binding<PresentationMode>?
 
-    init(viewModel: EncryptedItemDetailViewModel, presentationMode: Binding<PresentationMode>? = nil) {
+    init(
+        viewModel: EncryptedItemDetailViewModel,
+        openDetailSubject: PassthroughSubject<VaultItem, Never>,
+        presentationMode: Binding<PresentationMode>? = nil
+    ) {
         self.viewModel = viewModel
+        self.openDetailSubject = openDetailSubject
         self.presentationMode = presentationMode
     }
 
@@ -26,8 +35,11 @@ struct EncryptedItemDetailView: View {
         .onChange(of: viewModel.state) { _, newValue in
             switch newValue {
             case let .decrypted(item):
-                // TODO: send item detail so parent knows to present it
-                dismiss()
+                // An item was just decrypted, open it.
+                // Create a quasi-item that uses the metadata of the encrypted item, but with the contents
+                // of the note.
+                let quasiItem = VaultItem(metadata: viewModel.metadata, item: item)
+                openDetailSubject.send(quasiItem)
             default:
                 break
             }

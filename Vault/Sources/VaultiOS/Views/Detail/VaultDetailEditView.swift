@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import SwiftUI
 import VaultFeed
@@ -9,6 +10,7 @@ struct VaultDetailEditView<
     var previewGenerator: PreviewGenerator
     var copyActionHandler: any VaultItemCopyActionHandler
     var openInEditMode: Bool
+    var openDetailSubject: PassthroughSubject<VaultItem, Never>
     @Binding var navigationPath: NavigationPath
 
     @Environment(VaultDataModel.self) private var dataModel
@@ -42,8 +44,10 @@ struct VaultDetailEditView<
             EncryptedItemDetailView(
                 viewModel: .init(
                     item: item,
+                    metadata: storedItem.metadata,
                     keyDeriverFactory: injector.vaultKeyDeriverFactory
                 ),
+                openDetailSubject: openDetailSubject,
                 presentationMode: presentationMode
             )
         }

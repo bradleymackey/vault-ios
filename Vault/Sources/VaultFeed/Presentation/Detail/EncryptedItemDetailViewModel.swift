@@ -6,6 +6,7 @@ import VaultKeygen
 @Observable
 public final class EncryptedItemDetailViewModel {
     public let item: EncryptedItem
+    public let metadata: VaultItem.Metadata
     private let keyDeriverFactory: any VaultKeyDeriverFactory
     public var enteredEncryptionPassword = ""
     public private(set) var state: State = .base
@@ -31,8 +32,9 @@ public final class EncryptedItemDetailViewModel {
         }
     }
 
-    public init(item: EncryptedItem, keyDeriverFactory: any VaultKeyDeriverFactory) {
+    public init(item: EncryptedItem, metadata: VaultItem.Metadata, keyDeriverFactory: any VaultKeyDeriverFactory) {
         self.item = item
+        self.metadata = metadata
         self.keyDeriverFactory = keyDeriverFactory
     }
 
