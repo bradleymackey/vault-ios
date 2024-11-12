@@ -11,6 +11,10 @@ public protocol VaultItemEncryptable {
 }
 
 public protocol VaultItemEncryptedContainer: Codable {
+    /// Identifies the type of item that this is.
+    ///
+    /// Definitions are in `VaultIdentifiers.Item`
+    var itemIdentifier: String { get }
     /// The title that is shown externally and is not encrypted.
     var title: String { get }
 }

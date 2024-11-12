@@ -29,3 +29,26 @@ public struct FailingKeyDeriver<Length: KeyLength>: KeyDeriver {
         "failing"
     }
 }
+
+/// A key deriver that is able to signal when derivation started.
+public struct SuspendingKeyDeriver<Length: KeyLength>: KeyDeriver {
+    public var uniqueAlgorithmIdentifier: String { "suspending" }
+    public var startedKeyDerivationHandler: (@Sendable () throws -> KeyData<Length>) = {
+        .random()
+    }
+
+    private let waiter = DispatchSemaphore(value: 0)
+
+    public init() {}
+
+    /// Derive key. Does not return until signaled via `signalDerivationComplete`.
+    public func key(password _: Data, salt _: Data) throws -> KeyData<Length> {
+        let result = try startedKeyDerivationHandler()
+        waiter.wait()
+        return result
+    }
+
+    public func signalDerivationComplete() {
+        waiter.signal()
+    }
+}

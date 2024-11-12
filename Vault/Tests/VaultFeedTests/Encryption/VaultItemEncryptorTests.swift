@@ -11,7 +11,11 @@ struct VaultItemEncryptorTests {
         let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptor = VaultItemEncryptor(key: key)
         let encryptedItem = try encryptor.encrypt(item: item)
-        let decryptedItem: VaultItemEncryptableMock = try encryptor.decrypt(item: encryptedItem)
+        let decryptor = VaultItemDecryptor(key: key)
+        let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
+            item: encryptedItem,
+            expectedItemIdentifier: "test"
+        )
 
         #expect(decryptedItem == item)
     }

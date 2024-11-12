@@ -99,6 +99,18 @@ func anySecureNote(
     SecureNote(title: title, contents: contents, format: format)
 }
 
+func anyEncryptedItem() -> EncryptedItem {
+    EncryptedItem(
+        version: "1.0.0",
+        title: "Hello",
+        data: Data.random(count: 10),
+        authentication: Data.random(count: 10),
+        encryptionIV: Data.random(count: 10),
+        keygenSalt: Data.random(count: 10),
+        keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
+    )
+}
+
 func anyOTPAuthCode(
     type: OTPAuthType = .totp(),
     algorithm: OTPAuthAlgorithm = .default,
@@ -314,6 +326,7 @@ extension UserDefaults {
 }
 
 struct VaultItemEncryptedContainerMock: VaultItemEncryptedContainer {
+    var itemIdentifier: String = "test"
     var id: UUID
     var exampleKey: String = "exampleValue"
     var title: String = "hello"
@@ -322,16 +335,37 @@ struct VaultItemEncryptedContainerMock: VaultItemEncryptedContainer {
 struct VaultItemEncryptableMock: Equatable, VaultItemEncryptable {
     typealias EncryptedContainer = VaultItemEncryptedContainerMock
     var id: UUID
+    var itemIdentifier: String
+    let exampleKey: String
+    let title: String
 
-    init(id: UUID) {
+    init(
+        itemIdentifier: String = "test",
+        id: UUID = UUID(),
+        exampleKey: String = "exampleValue",
+        title: String = "hello"
+    ) {
+        self.itemIdentifier = itemIdentifier
         self.id = id
+        self.exampleKey = exampleKey
+        self.title = title
     }
 
     init(encryptedContainer: VaultItemEncryptedContainerMock) {
-        self = .init(id: encryptedContainer.id)
+        self = .init(
+            itemIdentifier: encryptedContainer.itemIdentifier,
+            id: encryptedContainer.id,
+            exampleKey: encryptedContainer.exampleKey,
+            title: encryptedContainer.title
+        )
     }
 
     func makeEncryptedContainer() throws -> VaultItemEncryptedContainerMock {
-        .init(id: id)
+        .init(
+            itemIdentifier: itemIdentifier,
+            id: id,
+            exampleKey: exampleKey,
+            title: title
+        )
     }
 }
