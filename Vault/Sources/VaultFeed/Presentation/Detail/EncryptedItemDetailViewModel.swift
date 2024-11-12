@@ -49,7 +49,6 @@ public final class EncryptedItemDetailViewModel {
             guard canStartDecryption else { return }
             state = .decrypting
 
-            let flowState = EncryptedItemViewFlowState(encryptedItem: item)
             let signature = try VaultKeyDeriver.Signature(tryFromString: item.keygenSignature)
             let keyDeriver = keyDeriverFactory.lookupVaultKeyDeriver(signature: signature)
             let password = enteredEncryptionPassword
@@ -57,7 +56,7 @@ public final class EncryptedItemDetailViewModel {
             let generatedPassword = try await Task.continuation {
                 try keyDeriver.recreateEncryptionKey(password: password, salt: salt)
             }
-            let action = flowState.passwordProvided(password: generatedPassword)
+            let action = attemptDecryption(password: generatedPassword)
             switch action {
             case .unknownItemError:
                 throw PresentationError(
@@ -85,5 +84,41 @@ public final class EncryptedItemDetailViewModel {
                 debugDescription: error.localizedDescription
             ))
         }
+    }
+
+    private enum Action {
+        /// The item is of a kind that we cannot identify.
+        case unknownItemError
+        /// Decryption was successful, but the data is corrupt.
+        case itemDataError(any Error)
+        case promptForDifferentPassword
+        case decryptedSecureNote(SecureNote)
+    }
+
+    private func attemptDecryption(password: DerivedEncryptionKey?) -> Action {
+        guard let password else { return .promptForDifferentPassword }
+        let decryptor = VaultItemDecryptor(key: password)
+        do {
+            let itemIdentifier = try decryptor.decryptItemIdentifier(item: item)
+            switch itemIdentifier {
+            case VaultIdentifiers.Item.secureNote:
+                let decryptedNote: SecureNote = try decryptor.decrypt(
+                    item: item,
+                    expectedItemIdentifier: VaultIdentifiers.Item.secureNote
+                )
+                return .decryptedSecureNote(decryptedNote)
+            default:
+                throw UnsupportedItemError(identifier: itemIdentifier)
+            }
+        } catch VaultItemDecryptor.Error.decryptionFailed {
+            return .promptForDifferentPassword
+        } catch {
+            return .itemDataError(error)
+        }
+    }
+
+    /// Item is not supported in an encrypted container.
+    private struct UnsupportedItemError: Error {
+        var identifier: String
     }
 }
