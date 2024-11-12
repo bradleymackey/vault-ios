@@ -33,6 +33,8 @@ struct VaultTagDetailView: View {
                         dismiss()
                     } label: {
                         Text("Save")
+                    } loading: {
+                        ProgressView()
                     }
                     .disabled(!viewModel.isValidToSave)
                 }
@@ -113,6 +115,8 @@ struct VaultTagDetailView: View {
                     Text("Delete Tag")
                 }
                 .foregroundStyle(.red)
+            } loading: {
+                ProgressView()
             }
         }
     }

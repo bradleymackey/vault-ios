@@ -1,3 +1,4 @@
+import Combine
 import SwiftUI
 import VaultFeed
 import VaultSettings
@@ -10,6 +11,7 @@ struct VaultListView<
     var viewGenerator: Generator
     var copyActionHandler: any VaultItemCopyActionHandler
     var previewActionHandler: any VaultItemPreviewActionHandler
+    let openDetailSubject = PassthroughSubject<VaultItem, Never>()
 
     init(
         localSettings: LocalSettings,
@@ -110,6 +112,7 @@ struct VaultListView<
                         previewGenerator: viewGenerator,
                         copyActionHandler: copyActionHandler,
                         openInEditMode: vaultItemFeedState.isEditing,
+                        openDetailSubject: openDetailSubject,
                         navigationPath: $navigationPath
                     )
                 }
@@ -124,6 +127,9 @@ struct VaultListView<
                 }
             }
         }
+        .onReceive(openDetailSubject, perform: { item in
+            modal = .detail(item.id, item)
+        })
         .onChange(of: modal) { _, newValue in
             // When the detail modal is dismissed, exit editing mode.
             if newValue == nil { vaultItemFeedState.isEditing = false }

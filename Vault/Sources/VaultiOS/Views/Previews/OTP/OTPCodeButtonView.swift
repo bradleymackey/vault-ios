@@ -13,6 +13,8 @@ struct OTPCodeButtonView: View {
         } label: {
             OTPCodeButtonIcon(isError: viewModel.incrementError != nil)
                 .font(.system(size: 24, weight: isDisabled ? .light : .bold))
+        } loading: {
+            ProgressView()
         }
         .foregroundStyle(viewModel.incrementError != nil ? .red : .accentColor)
         .disabled(isDisabled)

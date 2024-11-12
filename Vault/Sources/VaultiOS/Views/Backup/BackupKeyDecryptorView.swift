@@ -62,6 +62,8 @@ struct BackupKeyDecryptorView: View {
                     await viewModel.attemptDecryption()
                 } label: {
                     Label("Decrypt", systemImage: "checkmark.circle.fill")
+                } loading: {
+                    ProgressView()
                 }
                 .modifier(ProminentButtonModifier())
                 .transition(.opacity)

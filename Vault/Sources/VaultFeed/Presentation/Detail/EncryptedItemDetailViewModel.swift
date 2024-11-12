@@ -6,6 +6,7 @@ import VaultKeygen
 @Observable
 public final class EncryptedItemDetailViewModel {
     public let item: EncryptedItem
+    public let metadata: VaultItem.Metadata
     private let keyDeriverFactory: any VaultKeyDeriverFactory
     public var enteredEncryptionPassword = ""
     public private(set) var state: State = .base
@@ -13,7 +14,7 @@ public final class EncryptedItemDetailViewModel {
     public enum State: Equatable {
         case base
         case decrypting
-        case decryptedSecureNote(SecureNote)
+        case decrypted(VaultItem.Payload)
         case decryptionError(PresentationError)
 
         public var preventsUserInteraction: Bool {
@@ -31,13 +32,18 @@ public final class EncryptedItemDetailViewModel {
         }
     }
 
-    public init(item: EncryptedItem, keyDeriverFactory: any VaultKeyDeriverFactory) {
+    public init(item: EncryptedItem, metadata: VaultItem.Metadata, keyDeriverFactory: any VaultKeyDeriverFactory) {
         self.item = item
+        self.metadata = metadata
         self.keyDeriverFactory = keyDeriverFactory
     }
 
     public var canStartDecryption: Bool {
         state != .decrypting && enteredEncryptionPassword.isNotBlank
+    }
+
+    public var isLoading: Bool {
+        state == .decrypting
     }
 
     public func resetState() {
@@ -72,8 +78,8 @@ public final class EncryptedItemDetailViewModel {
                     userDescription: "Your password was not recognized, please try again.",
                     debugDescription: "promptForDifferentPassword"
                 )
-            case let .decryptedSecureNote(secureNote):
-                state = .decryptedSecureNote(secureNote)
+            case let .decrypted(item):
+                state = .decrypted(item)
             }
         } catch let localized as LocalizedError {
             state = .decryptionError(PresentationError(localizedError: localized))
@@ -92,7 +98,7 @@ public final class EncryptedItemDetailViewModel {
         /// Decryption was successful, but the data is corrupt.
         case itemDataError(any Error)
         case promptForDifferentPassword
-        case decryptedSecureNote(SecureNote)
+        case decrypted(VaultItem.Payload)
     }
 
     private func attemptDecryption(password: DerivedEncryptionKey?) -> Action {
@@ -106,7 +112,7 @@ public final class EncryptedItemDetailViewModel {
                     item: item,
                     expectedItemIdentifier: VaultIdentifiers.Item.secureNote
                 )
-                return .decryptedSecureNote(decryptedNote)
+                return .decrypted(.secureNote(decryptedNote))
             default:
                 return .unsupportedItemError(identifier: itemIdentifier)
             }

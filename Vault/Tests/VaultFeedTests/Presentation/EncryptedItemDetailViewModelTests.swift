@@ -65,7 +65,7 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
         await sut.startDecryption()
 
         switch sut.state {
-        case let .decryptedSecureNote(decryptedNote):
+        case let .decrypted(.secureNote(decryptedNote)):
             XCTAssertEqual(decryptedNote, note)
         default:
             XCTFail("Unexpected state \(sut.state)")
@@ -132,8 +132,9 @@ extension EncryptedItemDetailViewModelTests {
     @MainActor
     private func makeSUT(
         item: EncryptedItem,
+        metadata: VaultItem.Metadata = anyVaultItemMetadata(),
         keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock()
     ) -> EncryptedItemDetailViewModel {
-        EncryptedItemDetailViewModel(item: item, keyDeriverFactory: keyDeriverFactory)
+        EncryptedItemDetailViewModel(item: item, metadata: metadata, keyDeriverFactory: keyDeriverFactory)
     }
 }

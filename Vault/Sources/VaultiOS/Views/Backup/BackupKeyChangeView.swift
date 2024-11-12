@@ -173,6 +173,8 @@ struct BackupKeyChangeView: View {
                     await viewModel.loadExistingPassword()
                 } label: {
                     Text("Fetch existing password")
+                } loading: {
+                    ProgressView()
                 }
             } label: {
                 Text("DEBUG: Keygen Information")

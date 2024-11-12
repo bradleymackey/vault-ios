@@ -103,6 +103,8 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                     viewModel.isLocked = false
                 } label: {
                     Label("Unlock", systemImage: "key.horizontal.fill")
+                } loading: {
+                    ProgressView()
                 }
                 .modifier(ProminentButtonModifier())
                 .containerRelativeFrame(.horizontal)
@@ -180,6 +182,8 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
             } label: {
                 Text(viewModel.strings.saveEditsTitle)
                     .tint(.accentColor)
+            } loading: {
+                ProgressView()
             }
             .disabled(!viewModel.editingModel.isValid)
         }

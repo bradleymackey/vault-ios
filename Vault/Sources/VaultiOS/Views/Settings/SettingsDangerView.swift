@@ -55,6 +55,9 @@ struct SettingsDangerView: View {
                 ) {
                     TextAndSubtitle(title: "Delete All Data", subtitle: desc)
                 }
+            } loading: {
+                ProgressView()
+                    .tint(.red)
             }
             .tint(.red)
         }
