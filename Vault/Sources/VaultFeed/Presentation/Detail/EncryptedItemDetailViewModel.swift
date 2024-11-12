@@ -58,11 +58,11 @@ public final class EncryptedItemDetailViewModel {
             }
             let action = attemptDecryption(password: generatedPassword)
             switch action {
-            case .unknownItemError:
+            case let .unsupportedItemError(identifier):
                 throw PresentationError(
                     userTitle: "Error",
                     userDescription: "Your password was correct, but the item that was encrypted is not known to Vault. We can't display it.",
-                    debugDescription: "unknownItemError"
+                    debugDescription: "Unknown item error. Item identifier was '\(identifier)'."
                 )
             case let .itemDataError(error):
                 throw error // rethrow so state is set below
@@ -88,7 +88,7 @@ public final class EncryptedItemDetailViewModel {
 
     private enum Action {
         /// The item is of a kind that we cannot identify.
-        case unknownItemError
+        case unsupportedItemError(identifier: String)
         /// Decryption was successful, but the data is corrupt.
         case itemDataError(any Error)
         case promptForDifferentPassword
@@ -108,17 +108,14 @@ public final class EncryptedItemDetailViewModel {
                 )
                 return .decryptedSecureNote(decryptedNote)
             default:
-                throw UnsupportedItemError(identifier: itemIdentifier)
+                return .unsupportedItemError(identifier: itemIdentifier)
             }
         } catch VaultItemDecryptor.Error.decryptionFailed {
             return .promptForDifferentPassword
+        } catch let VaultItemDecryptor.Error.mismatchedItemIdentifier(_, actual) {
+            return .unsupportedItemError(identifier: actual)
         } catch {
             return .itemDataError(error)
         }
-    }
-
-    /// Item is not supported in an encrypted container.
-    private struct UnsupportedItemError: Error {
-        var identifier: String
     }
 }
