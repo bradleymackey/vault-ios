@@ -22,6 +22,7 @@ struct EncryptedItemDetailView: View {
         }
         .navigationTitle("Item")
         .navigationBarTitleDisplayMode(.inline)
+        .interactiveDismissDisabled(viewModel.isLoading)
         .onChange(of: viewModel.state) { _, newValue in
             switch newValue {
             case let .decrypted(item):
@@ -39,6 +40,7 @@ struct EncryptedItemDetailView: View {
                     Text("Cancel")
                 }
                 .tint(.red)
+                .disabled(viewModel.isLoading)
             }
         }
     }

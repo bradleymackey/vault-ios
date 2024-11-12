@@ -40,6 +40,10 @@ public final class EncryptedItemDetailViewModel {
         state != .decrypting && enteredEncryptionPassword.isNotBlank
     }
 
+    public var isLoading: Bool {
+        state == .decrypting
+    }
+
     public func resetState() {
         state = .base
     }
