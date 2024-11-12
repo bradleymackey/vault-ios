@@ -22,6 +22,15 @@ struct EncryptedItemDetailView: View {
         }
         .navigationTitle("Item")
         .navigationBarTitleDisplayMode(.inline)
+        .onChange(of: viewModel.state) { _, newValue in
+            switch newValue {
+            case let .decrypted(item):
+                // TODO: send item detail so parent knows to present it
+                dismiss()
+            default:
+                break
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
                 Button {

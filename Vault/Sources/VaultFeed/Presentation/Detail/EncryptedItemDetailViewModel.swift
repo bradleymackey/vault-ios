@@ -13,7 +13,7 @@ public final class EncryptedItemDetailViewModel {
     public enum State: Equatable {
         case base
         case decrypting
-        case decryptedSecureNote(SecureNote)
+        case decrypted(VaultItem.Payload)
         case decryptionError(PresentationError)
 
         public var preventsUserInteraction: Bool {
@@ -72,8 +72,8 @@ public final class EncryptedItemDetailViewModel {
                     userDescription: "Your password was not recognized, please try again.",
                     debugDescription: "promptForDifferentPassword"
                 )
-            case let .decryptedSecureNote(secureNote):
-                state = .decryptedSecureNote(secureNote)
+            case let .decrypted(item):
+                state = .decrypted(item)
             }
         } catch let localized as LocalizedError {
             state = .decryptionError(PresentationError(localizedError: localized))
@@ -92,7 +92,7 @@ public final class EncryptedItemDetailViewModel {
         /// Decryption was successful, but the data is corrupt.
         case itemDataError(any Error)
         case promptForDifferentPassword
-        case decryptedSecureNote(SecureNote)
+        case decrypted(VaultItem.Payload)
     }
 
     private func attemptDecryption(password: DerivedEncryptionKey?) -> Action {
@@ -106,7 +106,7 @@ public final class EncryptedItemDetailViewModel {
                     item: item,
                     expectedItemIdentifier: VaultIdentifiers.Item.secureNote
                 )
-                return .decryptedSecureNote(decryptedNote)
+                return .decrypted(.secureNote(decryptedNote))
             default:
                 return .unsupportedItemError(identifier: itemIdentifier)
             }
