@@ -86,10 +86,13 @@ struct EncryptedItemDetailView: View {
                 SecureField("Password...", text: $viewModel.enteredEncryptionPassword)
             }
         } footer: {
-            AsyncButton(progressTint: .white) {
+            AsyncButton {
                 await viewModel.startDecryption()
             } label: {
                 Label("Decrypt", systemImage: "key.horizontal.fill")
+            } loading: {
+                ProgressView()
+                    .tint(.white)
             }
             .modifier(ProminentButtonModifier())
             .animation(.easeOut, value: viewModel.state)

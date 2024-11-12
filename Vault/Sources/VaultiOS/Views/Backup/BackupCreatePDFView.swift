@@ -55,6 +55,8 @@ struct BackupCreatePDFView: View {
                 FormRow(image: Image(systemName: "checkmark.circle.fill"), color: .accentColor, style: .standard) {
                     Text("Make PDF")
                 }
+            } loading: {
+                ProgressView()
             }
         } footer: {
             if case let .error(presentationError) = viewModel.state {

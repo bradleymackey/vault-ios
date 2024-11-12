@@ -169,6 +169,8 @@ struct BackupView: View {
                 await dataModel.loadBackupPassword()
             } label: {
                 Label("Authenticate", systemImage: "key.horizontal.fill")
+            } loading: {
+                ProgressView()
             }
             .modifier(ProminentButtonModifier())
             .containerRelativeFrame(.horizontal)
@@ -214,6 +216,8 @@ struct BackupView: View {
                         subtitle: "Using a Vault PDF backup file, import data to your device locally."
                     )
                 }
+            } loading: {
+                ProgressView()
             }
         }
     }
@@ -235,6 +239,8 @@ struct BackupView: View {
                         subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device."
                     )
                 }
+            } loading: {
+                ProgressView()
             }
 
             AsyncButton {
@@ -253,6 +259,8 @@ struct BackupView: View {
                     )
                 }
                 .foregroundStyle(.red)
+            } loading: {
+                ProgressView()
             }
         } header: {
             Text("Import from a backup")

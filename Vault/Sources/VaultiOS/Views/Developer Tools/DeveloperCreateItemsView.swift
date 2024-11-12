@@ -13,6 +13,8 @@ struct DeveloperCreateItemsView: View {
                 try await dataModel.insert(item: hotpItem)
             } label: {
                 Text("Create HOTP")
+            } loading: {
+                ProgressView()
             }
 
             AsyncButton {
@@ -21,6 +23,8 @@ struct DeveloperCreateItemsView: View {
                 try await dataModel.insert(item: item)
             } label: {
                 Text("Create TOTP")
+            } loading: {
+                ProgressView()
             }
 
             AsyncButton {
@@ -29,6 +33,8 @@ struct DeveloperCreateItemsView: View {
                 try await dataModel.insert(item: item)
             } label: {
                 Text("Create note")
+            } loading: {
+                ProgressView()
             }
 
             AsyncButton {
@@ -37,6 +43,8 @@ struct DeveloperCreateItemsView: View {
                 try await dataModel.insert(item: item)
             } label: {
                 Text("Create encrypted note")
+            } loading: {
+                ProgressView()
             }
         }
     }

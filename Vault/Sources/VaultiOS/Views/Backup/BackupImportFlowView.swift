@@ -231,6 +231,8 @@ struct BackupImportFlowView: View {
             FormRow(image: Image(systemName: "checkmark.circle.fill"), color: .accentColor, style: .standard) {
                 Text("Import Now")
             }
+        } loading: {
+            ProgressView()
         }
     }
 }
