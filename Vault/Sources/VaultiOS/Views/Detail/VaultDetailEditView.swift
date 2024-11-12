@@ -17,9 +17,9 @@ struct VaultDetailEditView<
 
     var body: some View {
         switch storedItem.item {
-        case let .otpCode(storedCode):
+        case let .otpCode(code):
             OTPCodeDetailView(
-                editingExistingCode: storedCode,
+                editingExistingCode: code,
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
@@ -29,9 +29,9 @@ struct VaultDetailEditView<
                 openInEditMode: openInEditMode,
                 presentationMode: presentationMode
             )
-        case let .secureNote(storedNote):
+        case let .secureNote(note):
             SecureNoteDetailView(
-                editingExistingNote: storedNote,
+                editingExistingNote: note,
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
