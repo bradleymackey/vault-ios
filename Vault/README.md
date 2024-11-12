@@ -92,7 +92,7 @@ Designed to cause an internal error during key generation.
 <table>
   <tr>
 	<td>Simulator for snapshot tests</td>
-	<td><b>iPhone 16 on iOS 18.0</b></td>
+	<td><b>iPhone 16 on iOS 18.1</b></td>
   </tr>
 </table>
 
