@@ -25,7 +25,10 @@ struct VaultDetailEditView<
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
-                editor: VaultDataModelEditorAdapter(dataModel: dataModel),
+                editor: VaultDataModelEditorAdapter(
+                    dataModel: dataModel,
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                ),
                 previewGenerator: previewGenerator,
                 copyActionHandler: copyActionHandler,
                 openInEditMode: openInEditMode,
@@ -37,7 +40,10 @@ struct VaultDetailEditView<
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,
-                editor: VaultDataModelEditorAdapter(dataModel: dataModel),
+                editor: VaultDataModelEditorAdapter(
+                    dataModel: dataModel,
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                ),
                 openInEditMode: openInEditMode
             )
         case let .encryptedItem(item):

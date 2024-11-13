@@ -1,6 +1,7 @@
 import Foundation
 import FoundationExtensions
 import VaultCore
+import VaultKeygen
 
 /// Encapsulates editing state for a given note.
 ///
@@ -17,6 +18,12 @@ public struct SecureNoteDetailEdits: EditableState {
     public var searchPassphrase: String = ""
 
     public var killphrase: String = ""
+
+    /// This will only be set if the user is updating the encryption password for the item.
+    public var newEncryptionPassword: String = ""
+
+    /// This will only be set if the item is encrypted and already has an existing key set.
+    public var existingEncryptionKey: DerivedEncryptionKey?
 
     public var color: VaultItemColor?
 

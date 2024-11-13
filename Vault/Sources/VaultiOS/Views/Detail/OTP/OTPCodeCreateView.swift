@@ -11,6 +11,7 @@ struct OTPCodeCreateView<
     var copyActionHandler: any VaultItemCopyActionHandler
     @Binding var navigationPath: NavigationPath
     @State private var scanner: CodeScanningManager<OTPCodeScanningHandler>
+    @Environment(VaultInjector.self) var injector
 
     init(
         previewGenerator: PreviewGenerator,
@@ -76,7 +77,10 @@ struct OTPCodeCreateView<
                     newCodeWithContext: nil,
                     navigationPath: $navigationPath,
                     dataModel: dataModel,
-                    editor: VaultDataModelEditorAdapter(dataModel: dataModel),
+                    editor: VaultDataModelEditorAdapter(
+                        dataModel: dataModel,
+                        keyDeriverFactory: injector.vaultKeyDeriverFactory
+                    ),
                     previewGenerator: previewGenerator,
                     copyActionHandler: copyActionHandler,
                     presentationMode: presentationMode
@@ -86,7 +90,10 @@ struct OTPCodeCreateView<
                     newCodeWithContext: scannedCode,
                     navigationPath: $navigationPath,
                     dataModel: dataModel,
-                    editor: VaultDataModelEditorAdapter(dataModel: dataModel),
+                    editor: VaultDataModelEditorAdapter(
+                        dataModel: dataModel,
+                        keyDeriverFactory: injector.vaultKeyDeriverFactory
+                    ),
                     previewGenerator: previewGenerator,
                     copyActionHandler: copyActionHandler,
                     presentationMode: presentationMode

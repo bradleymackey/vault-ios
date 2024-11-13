@@ -2,7 +2,7 @@ import Foundation
 import FoundationExtensions
 
 /// @mockable
-public protocol VaultKeyDeriverFactory {
+public protocol VaultKeyDeriverFactory: Sendable {
     /// Create the key deriver that should be used to encrypt a vault backup.
     func makeVaultBackupKeyDeriver() -> VaultKeyDeriver
     /// Create the key deriver that should be used for encrypting individual items within a vault
