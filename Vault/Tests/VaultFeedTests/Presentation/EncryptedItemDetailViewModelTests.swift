@@ -35,7 +35,7 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
         sut.enteredEncryptionPassword = "hello"
 
         let exp = expectation(description: "test")
-        keyDeriver.startedKeyDerivationHandler = {
+        keyDeriver.startedKeyDerivationHandler = { _, _ in
             exp.fulfill()
             return .random()
         }

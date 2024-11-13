@@ -209,8 +209,11 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let deriverMock = KeyDeriverMock<Bits256>()
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
-        keyDeriverFactory.makeVaultItemKeyDeriverHandler = { .testing }
+        keyDeriverFactory.makeVaultItemKeyDeriverHandler = {
+            VaultKeyDeriver(deriver: deriverMock, signature: .testing)
+        }
         let sut = makeSUT(dataModel: dataModel, keyDeriverFactory: keyDeriverFactory)
 
         var initialEdits = SecureNoteDetailEdits.new()
@@ -241,6 +244,13 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
                 XCTFail("invalid kind")
             }
             return .new()
+        }
+
+        deriverMock.keyHandler.modify {
+            $0 = { password, _ in
+                XCTAssertEqual(String(data: password, encoding: .utf8), "new password")
+                return .random()
+            }
         }
 
         try await sut.createNote(initialEdits: initialEdits)
