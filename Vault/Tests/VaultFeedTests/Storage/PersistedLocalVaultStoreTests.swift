@@ -352,6 +352,24 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(result.errors, [])
     }
 
+    func test_retrieveMatchingQuery_skipsNonSearchableNoteTitle() async throws {
+        let codes: [VaultItem.Write] = [
+            anySecureNote().wrapInAnyVaultItem().makeWritable(),
+            anySecureNote(title: "a").wrapInAnyVaultItem(searchableLevel: .none).makeWritable(), // skipped
+            anySecureNote(title: "x").wrapInAnyVaultItem().makeWritable(),
+            anySecureNote(title: "----A----").wrapInAnyVaultItem().makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(filterText: "a")
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 1)
+        XCTAssertEqual(result.items.compactMap(\.item.secureNote?.title), ["----A----"])
+        XCTAssertEqual(result.errors, [])
+    }
+
     func test_retrieveMatchingQuery_matchesNoteDetailsContents() async throws {
         let codes: [VaultItem.Write] = [
             anySecureNote().wrapInAnyVaultItem().makeWritable(),
@@ -367,6 +385,60 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let result = try await sut.retrieve(query: query)
         XCTAssertEqual(result.items.count, 2)
         XCTAssertEqual(result.items.compactMap(\.item.secureNote?.contents), ["a", "----A----"])
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingQuery_skipsNonSearchableNoteContents() async throws {
+        let codes: [VaultItem.Write] = [
+            anySecureNote().wrapInAnyVaultItem().makeWritable(),
+            anySecureNote(contents: "a").wrapInAnyVaultItem(searchableLevel: .none).makeWritable(), // skipped
+            anySecureNote(contents: "x").wrapInAnyVaultItem().makeWritable(),
+            anySecureNote(contents: "----A----").wrapInAnyVaultItem().makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(filterText: "a")
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 1)
+        XCTAssertEqual(result.items.compactMap(\.item.secureNote?.contents), ["----A----"])
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingQuery_matchesEncryptedItemTitle() async throws {
+        let codes: [VaultItem.Write] = [
+            anyEncryptedItem(title: "a").wrapInAnyVaultItem().makeWritable(),
+            anyEncryptedItem(title: "b").wrapInAnyVaultItem().makeWritable(),
+            anyEncryptedItem(title: "----A----").wrapInAnyVaultItem().makeWritable(),
+            anyEncryptedItem(title: "x").wrapInAnyVaultItem().makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(filterText: "a")
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 2)
+        XCTAssertEqual(result.items.compactMap(\.item.encryptedItem?.title), ["a", "----A----"])
+        XCTAssertEqual(result.errors, [])
+    }
+
+    func test_retrieveMatchingQuery_skipsNonSearchableEncryptedItemTitles() async throws {
+        let codes: [VaultItem.Write] = [
+            anyEncryptedItem(title: "a").wrapInAnyVaultItem(searchableLevel: .none).makeWritable(), // skipped
+            anyEncryptedItem(title: "b").wrapInAnyVaultItem().makeWritable(),
+            anyEncryptedItem(title: "----A----").wrapInAnyVaultItem().makeWritable(),
+            anyEncryptedItem(title: "x").wrapInAnyVaultItem().makeWritable(),
+        ]
+        for code in codes {
+            try await sut.insert(item: code)
+        }
+
+        let query = VaultStoreQuery(filterText: "a")
+        let result = try await sut.retrieve(query: query)
+        XCTAssertEqual(result.items.count, 1)
+        XCTAssertEqual(result.items.compactMap(\.item.encryptedItem?.title), ["----A----"])
         XCTAssertEqual(result.errors, [])
     }
 
@@ -651,6 +723,8 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let codes: [VaultItem.Write] = [
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
             anyOTPAuthCode().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
+            anySecureNote().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
+            anyEncryptedItem().wrapInAnyVaultItem(tags: [tag1]).makeWritable(),
         ]
         var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
@@ -660,7 +734,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         let query = VaultStoreQuery(filterTags: [tag1])
         let result = try await sut.retrieve(query: query)
-        XCTAssertEqual(result.items.map(\.metadata.id), [insertedIDs[0], insertedIDs[1]], "Matches both")
+        XCTAssertEqual(result.items.map(\.metadata.id), insertedIDs, "Matches all")
         XCTAssertEqual(result.errors, [])
     }
 

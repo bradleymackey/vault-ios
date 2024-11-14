@@ -99,10 +99,10 @@ func anySecureNote(
     SecureNote(title: title, contents: contents, format: format)
 }
 
-func anyEncryptedItem() -> EncryptedItem {
+func anyEncryptedItem(title: String = "Hello") -> EncryptedItem {
     EncryptedItem(
         version: "1.0.0",
-        title: "Hello",
+        title: title,
         data: Data.random(count: 10),
         authentication: Data.random(count: 10),
         encryptionIV: Data.random(count: 10),

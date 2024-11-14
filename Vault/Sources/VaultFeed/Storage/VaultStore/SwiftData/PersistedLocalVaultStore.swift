@@ -151,6 +151,12 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             } ?? false
         }
 
+        let encryptedNoteTitlePredicate = #Predicate<PersistedVaultItem> { item in
+            item.encryptedItemDetails.flatMap {
+                $0.title.localizedStandardContains(query) && titleSearchable.evaluate(item)
+            } ?? false
+        }
+
         let matchesMetadata = #Predicate<PersistedVaultItem> {
             passphrasePredicate.evaluate($0) ||
                 userDescriptionPredicate.evaluate($0)
@@ -166,12 +172,16 @@ extension PersistedLocalVaultStore: VaultStoreReader {
                 codeIssuerPredicate.evaluate($0)
         }
 
-        let matchesItem = #Predicate<PersistedVaultItem> {
+        let matchesUnencryptedItem = #Predicate<PersistedVaultItem> {
             matchesCode.evaluate($0) || matchesNote.evaluate($0)
         }
 
+        let matchesAnyItem = #Predicate<PersistedVaultItem> {
+            matchesUnencryptedItem.evaluate($0) || encryptedNoteTitlePredicate.evaluate($0)
+        }
+
         return #Predicate<PersistedVaultItem> {
-            matchesMetadata.evaluate($0) || matchesItem.evaluate($0)
+            matchesMetadata.evaluate($0) || matchesAnyItem.evaluate($0)
         }
     }
 }
