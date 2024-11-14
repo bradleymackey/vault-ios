@@ -102,6 +102,18 @@ public struct SecureNoteDetailEdits: EditableState {
             .first
         return String(firstLine ?? "")
     }
+
+    /// The second line of the note, used to preview the content.
+    public var contentPreviewLine: String {
+        guard !encrypted else { return "" }
+        let secondLine = contents
+            .split(separator: "\n")
+            .lazy
+            .filter(\.isNotBlank)
+            .dropFirst()
+            .first
+        return String(secondLine ?? "")
+    }
 }
 
 // MARK: - Helpers
