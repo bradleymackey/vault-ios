@@ -159,7 +159,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         if killphraseIsEnabled {
             "Enabled"
         } else {
-            "Disabled"
+            "None"
         }
     }
 }

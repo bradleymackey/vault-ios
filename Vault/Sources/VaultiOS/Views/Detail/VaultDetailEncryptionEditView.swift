@@ -9,13 +9,10 @@ struct VaultDetailEncryptionEditView: View {
 
     @State private var newEncryptionPassword = ""
     @State private var newEncryptionPasswordConfirm = ""
+    var didSetNewEncryptionPassword: (String) -> Void
+    var didRemoveEncryption: () -> Void
 
-    enum EncryptionState {
-        case notEncrypted
-        case encrypted
-    }
-
-    @State private var encryptionState: EncryptionState = .notEncrypted
+    @Environment(\.dismiss) private var dismiss
 
     var doPasswordsMatch: Bool {
         newEncryptionPassword == newEncryptionPasswordConfirm
@@ -23,20 +20,25 @@ struct VaultDetailEncryptionEditView: View {
 
     init(
         title: String,
-        description: String
+        description: String,
+        encryptionInitiallyEnabled: Bool,
+        didSetNewEncryptionPassword: @escaping (String) -> Void,
+        didRemoveEncryption: @escaping () -> Void
     ) {
         self.title = title
         self.description = description
+        encryptionIsEnabled = encryptionInitiallyEnabled
+        self.didSetNewEncryptionPassword = didSetNewEncryptionPassword
+        self.didRemoveEncryption = didRemoveEncryption
     }
 
     var body: some View {
         Form {
             titleSection
-            switch encryptionState {
-            case .notEncrypted:
-                createEncryptionSection
-            case .encrypted:
+            if encryptionIsEnabled {
                 removeEncryptionSection
+            } else {
+                createEncryptionSection
             }
         }
     }
@@ -69,8 +71,8 @@ struct VaultDetailEncryptionEditView: View {
         } footer: {
             if newEncryptionPassword.isNotBlank {
                 Button {
-                    encryptionState = .encrypted
-                    print("add encryption with password")
+                    didSetNewEncryptionPassword(newEncryptionPassword)
+                    dismiss()
                 } label: {
                     Label("Encrypt", systemImage: "checkmark.circle.fill")
                 }
@@ -84,20 +86,23 @@ struct VaultDetailEncryptionEditView: View {
 
     private var removeEncryptionSection: some View {
         Section {
-            FormRow(image: Image(systemName: "checkmark"), color: .primary) {
-                Text("Encryption Enabled")
-            }
+            Text("""
+            Encryption is currently enabled for this item. \
+            This means the data, on your device, is cryptographically inaccessible without your password. \
+            The stronger your password, the stronger the encryption.
+            """)
+            .foregroundStyle(.secondary)
+            .font(.caption)
         } footer: {
             Button {
-                encryptionState = .notEncrypted
-                print("Remove encrpytion from item")
+                didRemoveEncryption()
+                dismiss()
             } label: {
-                Label("Remove Encryption", systemImage: "checkmark.circle.fill")
+                Label("Remove Encryption", systemImage: "xmark.circle.fill")
             }
-            .modifier(ProminentButtonModifier())
+            .modifier(ProminentButtonModifier(color: .red))
             .padding()
             .modifier(HorizontallyCenter())
-            .tint(.red)
         }
     }
 }

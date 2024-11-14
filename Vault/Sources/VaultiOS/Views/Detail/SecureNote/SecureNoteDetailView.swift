@@ -146,7 +146,15 @@ struct SecureNoteDetailView: View {
                 NavigationStack {
                     VaultDetailEncryptionEditView(
                         title: "Encryption",
-                        description: "Add full at-rest encryption for the note. Password is required on every view."
+                        description: "Locks this note cryptographically on your device. Password is required on every view.",
+                        encryptionInitiallyEnabled: viewModel.editingModel.detail.encrypted,
+                        didSetNewEncryptionPassword: { newPassword in
+                            viewModel.editingModel.detail.newEncryptionPassword = newPassword
+                        },
+                        didRemoveEncryption: {
+                            viewModel.editingModel.detail.newEncryptionPassword = ""
+                            viewModel.editingModel.detail.existingEncryptionKey = nil
+                        }
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -281,19 +289,6 @@ struct SecureNoteDetailView: View {
             }
 
             Button {
-                modal = .editLock
-            } label: {
-                FormRow(
-                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
-                    color: .accentColor,
-                    style: .standard
-                ) {
-                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
-                        .font(.body)
-                }
-            }
-
-            Button {
                 modal = .editPassphrase
             } label: {
                 FormRow(
@@ -302,6 +297,19 @@ struct SecureNoteDetailView: View {
                     style: .standard
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editLock
+            } label: {
+                FormRow(
+                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
+                    color: .accentColor,
+                    style: .standard
+                ) {
+                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
                         .font(.body)
                 }
             }
@@ -327,7 +335,7 @@ struct SecureNoteDetailView: View {
                     color: .accentColor,
                     style: .standard
                 ) {
-                    LabeledContent("Encryption", value: "?")
+                    LabeledContent("Encryption", value: viewModel.editingModel.detail.encryptionEnabledText)
                         .font(.body)
                 }
             }

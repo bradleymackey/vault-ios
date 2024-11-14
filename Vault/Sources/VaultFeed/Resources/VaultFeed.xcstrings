@@ -1070,7 +1070,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Not locked"
+            "value" : "None"
           }
         }
       }

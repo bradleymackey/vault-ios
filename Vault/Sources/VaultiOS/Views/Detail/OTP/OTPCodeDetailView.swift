@@ -367,19 +367,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     private var passphraseEditingSection: some View {
         Section {
             Button {
-                modal = .editLock
-            } label: {
-                FormRow(
-                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
-                    color: .accentColor,
-                    style: .standard
-                ) {
-                    LabeledContent("Security", value: viewModel.editingModel.detail.lockState.localizedTitle)
-                        .font(.body)
-                }
-            }
-
-            Button {
                 modal = .editPassphrase
             } label: {
                 FormRow(
@@ -388,6 +375,19 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     style: .standard
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editLock
+            } label: {
+                FormRow(
+                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
+                    color: .accentColor,
+                    style: .standard
+                ) {
+                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
                         .font(.body)
                 }
             }
