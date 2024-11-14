@@ -43,7 +43,7 @@ struct BackupCreatePDFView: View {
                 .font(.callout)
                 .frame(minHeight: 150)
                 .keyboardType(.default)
-                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
+                .listRowInsets(EdgeInsets())
         }
     }
 
