@@ -9,7 +9,10 @@ struct VaultDetailLockEditView: View {
     var body: some View {
         Form {
             titleSection
+            optionSection
         }
+        .animation(.easeOut, value: lockState)
+        .transition(.move(edge: .top))
     }
 
     private var titleSection: some View {
@@ -21,16 +24,15 @@ struct VaultDetailLockEditView: View {
             )
             .padding()
             .containerRelativeFrame(.horizontal)
+            .contentTransition(.symbolEffect(.replace))
+        }
+    }
 
+    private var optionSection: some View {
+        Section {
             Toggle(isOn: $lockState.isLocked) {
-                FormRow(
-                    image: Image(systemName: lockState.isLocked ? "checkmark.circle.fill" : "xmark.circle.fill"),
-                    color: lockState.isLocked ? .green : .secondary,
-                    style: .standard
-                ) {
-                    Text("Lock item")
-                        .font(.body)
-                }
+                Text("Lock item")
+                    .font(.body)
             }
         } footer: {
             Text(lockState.localizedSubtitle)
