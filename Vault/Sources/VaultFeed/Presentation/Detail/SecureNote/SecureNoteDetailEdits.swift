@@ -20,9 +20,14 @@ public struct SecureNoteDetailEdits: EditableState {
     public var killphrase: String = ""
 
     /// This will only be set if the user is updating the encryption password for the item.
+    ///
+    /// A non-empty string implies that the encryption key should be recreated by deriving a key from this password.
+    /// This will override any existing key set via `existingEncryptionKey`.
     public var newEncryptionPassword: String = ""
 
     /// This will only be set if the item is encrypted and already has an existing key set.
+    ///
+    /// If there is no password in `newEncryptionPassword`, this will be used to re-encrypt the item.
     public var existingEncryptionKey: DerivedEncryptionKey?
 
     public var color: VaultItemColor?
@@ -42,7 +47,8 @@ public struct SecureNoteDetailEdits: EditableState {
         killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
-        relativeOrder: UInt64
+        relativeOrder: UInt64,
+        existingEncryptionKey: DerivedEncryptionKey?
     ) {
         self.contents = contents
         self.textFormat = textFormat
@@ -53,6 +59,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.tags = tags
         self.lockState = lockState
         self.relativeOrder = relativeOrder
+        self.existingEncryptionKey = existingEncryptionKey
     }
 
     public var isValid: Bool {
@@ -119,7 +126,8 @@ extension SecureNoteDetailEdits {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
-            relativeOrder: .min
+            relativeOrder: .min,
+            existingEncryptionKey: nil
         )
     }
 }

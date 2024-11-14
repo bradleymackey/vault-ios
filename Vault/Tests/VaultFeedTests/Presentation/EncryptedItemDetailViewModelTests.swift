@@ -65,8 +65,9 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
         await sut.startDecryption()
 
         switch sut.state {
-        case let .decrypted(.secureNote(decryptedNote)):
+        case let .decrypted(.secureNote(decryptedNote), key):
             XCTAssertEqual(decryptedNote, note)
+            XCTAssertEqual(key, derivedKey)
         default:
             XCTFail("Unexpected state \(sut.state)")
         }

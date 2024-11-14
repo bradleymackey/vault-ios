@@ -10,7 +10,8 @@ struct VaultDetailEditView<
     var previewGenerator: PreviewGenerator
     var copyActionHandler: any VaultItemCopyActionHandler
     var openInEditMode: Bool
-    var openDetailSubject: PassthroughSubject<VaultItem, Never>
+    var openDetailSubject: PassthroughSubject<VaultItemEncryptionPayload, Never>
+    var encryptionKey: DerivedEncryptionKey?
     @Binding var navigationPath: NavigationPath
 
     @Environment(VaultDataModel.self) private var dataModel
@@ -37,6 +38,7 @@ struct VaultDetailEditView<
         case let .secureNote(note):
             SecureNoteDetailView(
                 editingExistingNote: note,
+                encryptionKey: encryptionKey,
                 navigationPath: $navigationPath,
                 dataModel: dataModel,
                 storedMetadata: storedItem.metadata,

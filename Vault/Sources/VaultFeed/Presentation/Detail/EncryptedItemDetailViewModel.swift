@@ -14,7 +14,7 @@ public final class EncryptedItemDetailViewModel {
     public enum State: Equatable {
         case base
         case decrypting
-        case decrypted(VaultItem.Payload)
+        case decrypted(VaultItem.Payload, DerivedEncryptionKey)
         case decryptionError(PresentationError)
 
         public var preventsUserInteraction: Bool {
@@ -79,7 +79,7 @@ public final class EncryptedItemDetailViewModel {
                     debugDescription: "promptForDifferentPassword"
                 )
             case let .decrypted(item):
-                state = .decrypted(item)
+                state = .decrypted(item, generatedPassword)
             }
         } catch let localized as LocalizedError {
             state = .decryptionError(PresentationError(localizedError: localized))

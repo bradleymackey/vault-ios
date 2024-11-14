@@ -34,6 +34,14 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     }
 
     @MainActor
+    func test_init_editingModelUsesInitialEncryptionKey() {
+        let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let sut = makeSUTEditing(existingKey: key)
+
+        XCTAssertEqual(sut.editingModel.detail.existingEncryptionKey, key)
+    }
+
+    @MainActor
     func test_init_creatingSetsBlankInitialData() {
         let sut = makeSUTCreating()
 
@@ -41,6 +49,8 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         XCTAssertEqual(sut.editingModel.detail.contents, "")
         XCTAssertEqual(sut.editingModel.detail.description, "")
         XCTAssertEqual(sut.editingModel.detail.textFormat, .markdown)
+        XCTAssertEqual(sut.editingModel.detail.newEncryptionPassword, "")
+        XCTAssertNil(sut.editingModel.detail.existingEncryptionKey, "There should be no initial encryption key")
     }
 
     @MainActor
@@ -384,6 +394,7 @@ extension SecureNoteDetailViewModelTests {
     private func makeSUTEditing(
         storedNote: SecureNote = anySecureNote(),
         storedMetadata: VaultItem.Metadata = anyVaultItemMetadata(),
+        existingKey: DerivedEncryptionKey? = nil,
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
@@ -398,7 +409,7 @@ extension SecureNoteDetailViewModelTests {
         line: UInt = #line
     ) -> SecureNoteDetailViewModel {
         let sut = SecureNoteDetailViewModel(
-            mode: .editing(note: storedNote, metadata: storedMetadata),
+            mode: .editing(note: storedNote, metadata: storedMetadata, existingKey: existingKey),
             dataModel: dataModel,
             editor: editor
         )
