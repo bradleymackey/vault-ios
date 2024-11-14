@@ -64,7 +64,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
         let newItem = try await makeNoteItem(edits: initialEdits)
         let newVaultItem = VaultItem.Write(
             relativeOrder: initialEdits.relativeOrder,
-            userDescription: initialEdits.titleLine,
+            userDescription: initialEdits.contentPreviewLine,
             color: initialEdits.color,
             item: newItem,
             tags: initialEdits.tags,
@@ -82,7 +82,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
         let updatedItem = try await makeNoteItem(edits: edits)
         let updatedVaultItem = VaultItem.Write(
             relativeOrder: edits.relativeOrder,
-            userDescription: edits.titleLine,
+            userDescription: edits.contentPreviewLine,
             color: edits.color,
             item: updatedItem,
             tags: edits.tags,
