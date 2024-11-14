@@ -6,7 +6,7 @@ struct VaultDetailKillphraseEditView: View {
     var title: String
     var description: String
     var hiddenWithKillphraseTitle: String
-    @State private var killphraseIsEnabled: Bool = false
+    @State private var killphraseIsEnabled: Bool
     @Binding var killphrase: String
 
     init(
@@ -29,6 +29,9 @@ struct VaultDetailKillphraseEditView: View {
         }
         .animation(.easeOut, value: killphraseIsEnabled)
         .transition(.move(edge: .top))
+        .onChange(of: killphraseIsEnabled) { _, newValue in
+            if !newValue { killphrase = "" }
+        }
     }
 
     private var titleSection: some View {
