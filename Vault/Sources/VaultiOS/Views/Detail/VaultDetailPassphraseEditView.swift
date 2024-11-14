@@ -12,10 +12,10 @@ struct VaultDetailPassphraseEditView: View {
     var body: some View {
         Form {
             titleSection
-            if viewConfig.isEnabled {
-                optionSection
-            }
+            optionSection
         }
+        .animation(.easeOut, value: viewConfig.isEnabled)
+        .transition(.move(edge: .top))
     }
 
     private var titleSection: some View {
@@ -27,31 +27,29 @@ struct VaultDetailPassphraseEditView: View {
             )
             .padding()
             .containerRelativeFrame(.horizontal)
-
-            Toggle(isOn: $viewConfig.isEnabled) {
-                FormRow(
-                    image: Image(systemName: viewConfig.isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill"),
-                    color: viewConfig.isEnabled ? .green : .secondary,
-                    style: .standard
-                ) {
-                    Text("Hide with passphrase")
-                        .font(.body)
-                }
-            }
+            .contentTransition(.symbolEffect(.replace))
         }
     }
 
     private var optionSection: some View {
         Section {
-            FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
-                TextField("Enter passphrase...", text: $passphrase)
-                    .keyboardType(.default)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .textInputAutocapitalization(.never)
+            Toggle(isOn: $viewConfig.isEnabled) {
+                Text("Hide with passphrase")
+                    .font(.body)
+            }
+            if viewConfig.isEnabled {
+                FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
+                    TextField("Enter passphrase...", text: $passphrase)
+                        .keyboardType(.default)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .textInputAutocapitalization(.never)
+                }
             }
         } footer: {
-            Text(hiddenWithPassphraseTitle)
+            if viewConfig.isEnabled {
+                Text(hiddenWithPassphraseTitle)
+            }
         }
     }
 }
