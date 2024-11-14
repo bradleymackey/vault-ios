@@ -27,20 +27,28 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
-        XCTAssertEqual(sut.editingModel.detail.title, "first line")
+        XCTAssertEqual(sut.editingModel.detail.titleLine, "first line")
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
-        XCTAssertEqual(sut.editingModel.detail.description, "second line")
         XCTAssertEqual(sut.editingModel.detail.textFormat, .plain)
+    }
+
+    @MainActor
+    func test_init_editingModelUsesInitialEncryptionKey() {
+        let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+        let sut = makeSUTEditing(existingKey: key)
+
+        XCTAssertEqual(sut.editingModel.detail.existingEncryptionKey, key)
     }
 
     @MainActor
     func test_init_creatingSetsBlankInitialData() {
         let sut = makeSUTCreating()
 
-        XCTAssertEqual(sut.editingModel.detail.title, "")
+        XCTAssertEqual(sut.editingModel.detail.titleLine, "")
         XCTAssertEqual(sut.editingModel.detail.contents, "")
-        XCTAssertEqual(sut.editingModel.detail.description, "")
         XCTAssertEqual(sut.editingModel.detail.textFormat, .markdown)
+        XCTAssertEqual(sut.editingModel.detail.newEncryptionPassword, "")
+        XCTAssertNil(sut.editingModel.detail.existingEncryptionKey, "There should be no initial encryption key")
     }
 
     @MainActor
@@ -288,8 +296,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.initialDetail.contents, note.contents)
-        XCTAssertEqual(editing.initialDetail.title, "first line")
-        XCTAssertEqual(editing.initialDetail.description, "second line")
+        XCTAssertEqual(editing.initialDetail.titleLine, "first line")
     }
 
     @MainActor
@@ -304,8 +311,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.detail.contents, note.contents)
-        XCTAssertEqual(editing.detail.title, "first line")
-        XCTAssertEqual(editing.detail.description, "second line")
+        XCTAssertEqual(editing.detail.titleLine, "first line")
     }
 
     @MainActor
@@ -384,6 +390,7 @@ extension SecureNoteDetailViewModelTests {
     private func makeSUTEditing(
         storedNote: SecureNote = anySecureNote(),
         storedMetadata: VaultItem.Metadata = anyVaultItemMetadata(),
+        existingKey: DerivedEncryptionKey? = nil,
         editor: SecureNoteDetailEditorMock = SecureNoteDetailEditorMock(),
         dataModel: VaultDataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
@@ -398,7 +405,7 @@ extension SecureNoteDetailViewModelTests {
         line: UInt = #line
     ) -> SecureNoteDetailViewModel {
         let sut = SecureNoteDetailViewModel(
-            mode: .editing(note: storedNote, metadata: storedMetadata),
+            mode: .editing(note: storedNote, metadata: storedMetadata, existingKey: existingKey),
             dataModel: dataModel,
             editor: editor
         )

@@ -1,6 +1,7 @@
 import Combine
 import Foundation
 import VaultCore
+import VaultKeygen
 
 @MainActor
 @Observable
@@ -9,7 +10,11 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
 
     public enum Mode {
         case creating
-        case editing(note: SecureNote, metadata: VaultItem.Metadata)
+        case editing(
+            note: SecureNote,
+            metadata: VaultItem.Metadata,
+            existingKey: DerivedEncryptionKey?
+        )
     }
 
     private let mode: Mode
@@ -27,12 +32,12 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         self.editor = editor
         isLocked = switch mode {
         case .creating: false
-        case let .editing(_, metadata): metadata.lockState.isLocked
+        case let .editing(_, metadata, _): metadata.lockState.isLocked
         }
         editingModel = switch mode {
         case .creating:
             .init(detail: .new())
-        case let .editing(note, metadata):
+        case let .editing(note, metadata, encryptionKey):
             .init(detail: .init(
                 contents: note.contents,
                 textFormat: note.format,
@@ -42,7 +47,8 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 killphrase: metadata.killphrase ?? "",
                 tags: metadata.tags,
                 lockState: metadata.lockState,
-                relativeOrder: metadata.relativeOrder
+                relativeOrder: metadata.relativeOrder,
+                existingEncryptionKey: encryptionKey
             ))
         }
     }
@@ -95,7 +101,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 case .creating:
                     try await editor.createNote(initialEdits: editingModel.detail)
                     isFinishedSubject.send()
-                case let .editing(note, metadata):
+                case let .editing(note, metadata, _):
                     try await editor.updateNote(id: metadata.id, item: note, edits: editingModel.detail)
                     editingModel.didPersist()
                 }
@@ -113,7 +119,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         switch mode {
         case .creating:
             break // noop
-        case let .editing(_, metadata):
+        case let .editing(_, metadata, _):
             do {
                 try await detailEditState.deleteItem {
                     try await editor.deleteNote(id: metadata.id)
@@ -178,7 +184,7 @@ extension SecureNoteDetailViewModel {
 
     public var createdDateValue: String? {
         switch mode {
-        case let .editing(_, metadata):
+        case let .editing(_, metadata, _):
             metadata.created.formatted(date: .abbreviated, time: .shortened)
         default:
             nil
@@ -187,7 +193,7 @@ extension SecureNoteDetailViewModel {
 
     public var updatedDateValue: String? {
         switch mode {
-        case let .editing(_, metadata) where metadata.updated > metadata.created.addingTimeInterval(5):
+        case let .editing(_, metadata, _) where metadata.updated > metadata.created.addingTimeInterval(5):
             metadata.updated.formatted(date: .abbreviated, time: .shortened)
         default:
             nil

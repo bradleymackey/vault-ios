@@ -21,6 +21,7 @@ struct SecureNoteDetailView: View {
 
     init(
         editingExistingNote note: SecureNote,
+        encryptionKey: DerivedEncryptionKey?,
         navigationPath: Binding<NavigationPath>,
         dataModel: VaultDataModel,
         storedMetadata: VaultItem.Metadata,
@@ -29,7 +30,7 @@ struct SecureNoteDetailView: View {
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
-            mode: .editing(note: note, metadata: storedMetadata),
+            mode: .editing(note: note, metadata: storedMetadata, existingKey: encryptionKey),
             dataModel: dataModel,
             editor: editor
         ))
@@ -383,6 +384,7 @@ struct SecureNoteDetailView: View {
             contents: "This is the contents, it is long \n\n## Nice title",
             format: .markdown
         ),
+        encryptionKey: nil,
         navigationPath: .constant(.init()),
         dataModel: .init(
             vaultStore: VaultStoreStub(),

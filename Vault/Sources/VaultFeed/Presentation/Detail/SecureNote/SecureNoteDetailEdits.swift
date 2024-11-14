@@ -1,6 +1,7 @@
 import Foundation
 import FoundationExtensions
 import VaultCore
+import VaultKeygen
 
 /// Encapsulates editing state for a given note.
 ///
@@ -17,6 +18,17 @@ public struct SecureNoteDetailEdits: EditableState {
     public var searchPassphrase: String = ""
 
     public var killphrase: String = ""
+
+    /// This will only be set if the user is updating the encryption password for the item.
+    ///
+    /// A non-empty string implies that the encryption key should be recreated by deriving a key from this password.
+    /// This will override any existing key set via `existingEncryptionKey`.
+    public var newEncryptionPassword: String = ""
+
+    /// This will only be set if the item is encrypted and already has an existing key set.
+    ///
+    /// If there is no password in `newEncryptionPassword`, this will be used to re-encrypt the item.
+    public var existingEncryptionKey: DerivedEncryptionKey?
 
     public var color: VaultItemColor?
 
@@ -35,7 +47,8 @@ public struct SecureNoteDetailEdits: EditableState {
         killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
-        relativeOrder: UInt64
+        relativeOrder: UInt64,
+        existingEncryptionKey: DerivedEncryptionKey?
     ) {
         self.contents = contents
         self.textFormat = textFormat
@@ -46,6 +59,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.tags = tags
         self.lockState = lockState
         self.relativeOrder = relativeOrder
+        self.existingEncryptionKey = existingEncryptionKey
     }
 
     public var isValid: Bool {
@@ -75,25 +89,18 @@ public struct SecureNoteDetailEdits: EditableState {
         }
     }
 
-    /// The description of this note, which is just the first non-empty line of content.
-    public var title: String {
+    private var encrypted: Bool {
+        newEncryptionPassword.isNotBlank || existingEncryptionKey.isNotNil
+    }
+
+    /// The first line of the note, which is shown as the title
+    public var titleLine: String {
         let firstLine = contents
             .split(separator: "\n")
             .lazy
             .filter(\.isNotBlank)
             .first
         return String(firstLine ?? "")
-    }
-
-    /// The description of this note, which is just the second non-empty line of content.
-    public var description: String {
-        let secondLine = contents
-            .split(separator: "\n")
-            .lazy
-            .filter(\.isNotBlank)
-            .dropFirst()
-            .first
-        return String(secondLine ?? "")
     }
 }
 
@@ -112,7 +119,8 @@ extension SecureNoteDetailEdits {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
-            relativeOrder: .min
+            relativeOrder: .min,
+            existingEncryptionKey: nil
         )
     }
 }

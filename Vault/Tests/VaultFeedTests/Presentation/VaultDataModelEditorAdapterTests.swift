@@ -168,7 +168,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
     }
 
     @MainActor
-    func test_createNote_createsNoteInFeed() async throws {
+    func test_createNote_createsNote() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -184,7 +184,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for creation")
         store.insertHandler = { data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
             XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
             XCTAssertEqual(data.searchPassphrase, "pass")
@@ -193,6 +193,105 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             case let .secureNote(note):
                 XCTAssertEqual(note.title, "first line")
                 XCTAssertEqual(note.contents, "first line\nsecond line")
+            default:
+                XCTFail("invalid kind")
+            }
+            return .new()
+        }
+
+        try await sut.createNote(initialEdits: initialEdits)
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
+    func test_createNote_createsEncryptedNoteWithNewPassword() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let deriverMock = KeyDeriverMock<Bits256>()
+        let keyDeriverFactory = VaultKeyDeriverFactoryMock()
+        keyDeriverFactory.makeVaultItemKeyDeriverHandler = {
+            VaultKeyDeriver(deriver: deriverMock, signature: .testing)
+        }
+        let sut = makeSUT(dataModel: dataModel, keyDeriverFactory: keyDeriverFactory)
+
+        var initialEdits = SecureNoteDetailEdits.new()
+        initialEdits.contents = "first line\nsecond line"
+        initialEdits.viewConfig = .requiresSearchPassphrase
+        initialEdits.searchPassphrase = "pass"
+        initialEdits.killphrase = "this is kill"
+        initialEdits.lockState = .lockedWithNativeSecurity
+        initialEdits.newEncryptionPassword = "new password"
+
+        let exp = expectation(description: "Wait for creation")
+        store.insertHandler = { data in
+            defer { exp.fulfill() }
+            XCTAssertEqual(data.userDescription, "first line")
+            XCTAssertEqual(data.visibility, .onlySearch)
+            XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
+            XCTAssertEqual(data.searchPassphrase, "pass")
+            XCTAssertEqual(data.killphrase, "this is kill")
+            switch data.item {
+            case let .encryptedItem(item):
+                XCTAssertEqual(item.title, "first line")
+                XCTAssertEqual(item.keygenSignature, "vault.keygen.testing")
+                XCTAssertTrue(item.data.isNotEmpty)
+                XCTAssertTrue(item.authentication.isNotEmpty)
+                XCTAssertTrue(item.keygenSalt.isNotEmpty)
+                XCTAssertTrue(item.encryptionIV.isNotEmpty)
+            default:
+                XCTFail("invalid kind")
+            }
+            return .new()
+        }
+
+        deriverMock.keyHandler.modify {
+            $0 = { password, _ in
+                XCTAssertEqual(String(data: password, encoding: .utf8), "new password")
+                return .random()
+            }
+        }
+
+        try await sut.createNote(initialEdits: initialEdits)
+
+        await fulfillment(of: [exp])
+    }
+
+    @MainActor
+    func test_createNote_createsEncryptedNoteWithExistingEncryptionKey() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        let keyDeriverFactory = VaultKeyDeriverFactoryMock()
+        keyDeriverFactory.makeVaultItemKeyDeriverHandler = { .testing }
+        let sut = makeSUT(dataModel: dataModel, keyDeriverFactory: keyDeriverFactory)
+
+        var initialEdits = SecureNoteDetailEdits.new()
+        initialEdits.contents = "first line\nsecond line"
+        initialEdits.viewConfig = .requiresSearchPassphrase
+        initialEdits.searchPassphrase = "pass"
+        initialEdits.killphrase = "this is kill"
+        initialEdits.lockState = .lockedWithNativeSecurity
+        initialEdits.newEncryptionPassword = ""
+        initialEdits.existingEncryptionKey = .init(key: .random(), salt: .random(count: 32), keyDervier: .testing)
+
+        let exp = expectation(description: "Wait for creation")
+        store.insertHandler = { data in
+            defer { exp.fulfill() }
+            XCTAssertEqual(data.userDescription, "first line")
+            XCTAssertEqual(data.visibility, .onlySearch)
+            XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
+            XCTAssertEqual(data.searchPassphrase, "pass")
+            XCTAssertEqual(data.killphrase, "this is kill")
+            switch data.item {
+            case let .encryptedItem(item):
+                XCTAssertEqual(item.title, "first line")
+                XCTAssertEqual(item.keygenSignature, "vault.keygen.testing")
+                XCTAssertTrue(item.data.isNotEmpty)
+                XCTAssertTrue(item.authentication.isNotEmpty)
+                XCTAssertTrue(item.keygenSalt.isNotEmpty)
+                XCTAssertTrue(item.encryptionIV.isNotEmpty)
             default:
                 XCTFail("invalid kind")
             }
@@ -238,7 +337,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for update")
         store.updateHandler = { _, data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .always)
             XCTAssertEqual(data.searchableLevel, .full)
             XCTAssertEqual(data.searchPassphrase, "new pass")
@@ -308,9 +407,10 @@ extension VaultDataModelEditorAdapterTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock()
-        )
+        ),
+        keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock()
     ) -> VaultDataModelEditorAdapter {
-        VaultDataModelEditorAdapter(dataModel: dataModel)
+        VaultDataModelEditorAdapter(dataModel: dataModel, keyDeriverFactory: keyDeriverFactory)
     }
 
     private func anyOTPCodeDetailEdits() -> OTPCodeDetailEdits {

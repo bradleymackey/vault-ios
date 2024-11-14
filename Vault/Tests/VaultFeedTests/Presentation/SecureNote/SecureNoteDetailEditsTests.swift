@@ -31,27 +31,13 @@ final class SecureNoteDetailEditsTests: XCTestCase {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First\nSecond\nThird"
 
-        XCTAssertEqual(sut.title, "First")
+        XCTAssertEqual(sut.titleLine, "First")
     }
 
     func test_title_skipsEmptyLines() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "\n\nFirst\n\nSecond\nThird"
 
-        XCTAssertEqual(sut.title, "First")
-    }
-
-    func test_description_isSecondLineOfContent() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.contents = "First\nSecond\nThird"
-
-        XCTAssertEqual(sut.description, "Second")
-    }
-
-    func test_description_skipsEmptyLines() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.contents = "\n\n\nFirst\n\n\nSecond\nThird"
-
-        XCTAssertEqual(sut.description, "Second")
+        XCTAssertEqual(sut.titleLine, "First")
     }
 }

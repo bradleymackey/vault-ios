@@ -10,6 +10,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_emptyState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -37,6 +38,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_lockedState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -64,6 +66,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_lockedStateNoAuthentication() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -91,6 +94,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_titleOnly() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -118,6 +122,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_titleDescriptionAndShortContent() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -146,6 +151,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let longContent = Array(repeating: "My content is cool.", count: 100).joined(separator: " ")
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: longContent, format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -174,6 +180,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -201,6 +208,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
     func test_editMode_emptyState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(
@@ -229,6 +237,7 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
+            encryptionKey: nil,
             navigationPath: .constant(NavigationPath()),
             dataModel: anyVaultDataModel(),
             storedMetadata: .init(

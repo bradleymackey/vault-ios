@@ -11,7 +11,7 @@ struct VaultListView<
     var viewGenerator: Generator
     var copyActionHandler: any VaultItemCopyActionHandler
     var previewActionHandler: any VaultItemPreviewActionHandler
-    let openDetailSubject = PassthroughSubject<VaultItem, Never>()
+    let openDetailSubject = PassthroughSubject<VaultItemEncryptionPayload, Never>()
 
     init(
         localSettings: LocalSettings,
@@ -35,7 +35,7 @@ struct VaultListView<
     @Environment(\.scenePhase) private var scenePhase
 
     enum Modal: Hashable, IdentifiableSelf {
-        case detail(Identifier<VaultItem>, VaultItem)
+        case detail(Identifier<VaultItem>, VaultItem, DerivedEncryptionKey?)
         case creatingItem(CreatingItem)
     }
 
@@ -105,7 +105,7 @@ struct VaultListView<
         }
         .sheet(item: $modal, onDismiss: nil) { visible in
             switch visible {
-            case let .detail(_, storedCode):
+            case let .detail(_, storedCode, encryptionKey):
                 NavigationStack(path: $navigationPath) {
                     VaultDetailEditView(
                         storedItem: storedCode,
@@ -113,6 +113,7 @@ struct VaultListView<
                         copyActionHandler: copyActionHandler,
                         openInEditMode: vaultItemFeedState.isEditing,
                         openDetailSubject: openDetailSubject,
+                        encryptionKey: encryptionKey,
                         navigationPath: $navigationPath
                     )
                 }
@@ -127,8 +128,9 @@ struct VaultListView<
                 }
             }
         }
-        .onReceive(openDetailSubject, perform: { item in
-            modal = .detail(item.id, item)
+        .onReceive(openDetailSubject, perform: { vaultItemEncryptedPayload in
+            let item = vaultItemEncryptedPayload.decryptedItem
+            modal = .detail(item.id, item, vaultItemEncryptedPayload.encryptionKey)
         })
         .onChange(of: modal) { _, newValue in
             // When the detail modal is dismissed, exit editing mode.
@@ -148,7 +150,7 @@ struct VaultListView<
         VaultItemOnTapDecoratorViewGenerator(generator: viewGenerator) { id in
             if vaultItemFeedState.isEditing {
                 guard let item = dataModel.code(id: id) else { return }
-                modal = .detail(id, item)
+                modal = .detail(id, item, nil)
             } else if let previewAction = previewActionHandler.previewActionForVaultItem(id: id) {
                 switch previewAction {
                 case let .copyText(copyAction):
@@ -160,7 +162,7 @@ struct VaultListView<
                     pasteboard.copy(copyAction.text)
                 case let .openItemDetail(id):
                     guard let item = dataModel.code(id: id) else { return }
-                    modal = .detail(id, item)
+                    modal = .detail(id, item, nil)
                 }
             }
         }
