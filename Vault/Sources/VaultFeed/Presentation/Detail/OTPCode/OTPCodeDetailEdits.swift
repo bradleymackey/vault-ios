@@ -162,6 +162,14 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
             "None"
         }
     }
+
+    public var killphraseEnabledIcon: String {
+        if killphraseIsEnabled {
+            "bolt.badge.checkmark.fill"
+        } else {
+            "bolt"
+        }
+    }
 }
 
 // MARK: - Helpers

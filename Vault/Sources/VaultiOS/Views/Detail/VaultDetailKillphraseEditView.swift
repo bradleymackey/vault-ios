@@ -6,7 +6,7 @@ struct VaultDetailKillphraseEditView: View {
     var title: String
     var description: String
     var hiddenWithKillphraseTitle: String
-    @State private var killphraseIsEnabled: Bool = false
+    @State private var killphraseIsEnabled: Bool
     @Binding var killphrase: String
 
     init(
@@ -25,42 +25,48 @@ struct VaultDetailKillphraseEditView: View {
     var body: some View {
         Form {
             titleSection
-            if killphraseIsEnabled {
-                optionSection
-            }
+            optionSection
+        }
+        .animation(.easeOut, value: killphraseIsEnabled)
+        .transition(.move(edge: .top))
+        .onChange(of: killphraseIsEnabled) { _, newValue in
+            if !newValue { killphrase = "" }
         }
     }
 
     private var titleSection: some View {
         Section {
-            PlaceholderView(systemIcon: "delete.backward.fill", title: title, subtitle: description)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-
-            Toggle(isOn: $killphraseIsEnabled) {
-                FormRow(
-                    image: Image(systemName: killphraseIsEnabled ? "checkmark.circle.fill" : "xmark.circle.fill"),
-                    color: killphraseIsEnabled ? .green : .secondary,
-                    style: .standard
-                ) {
-                    Text("Enable killphrase")
-                        .font(.body)
-                }
-            }
+            PlaceholderView(
+                systemIcon: killphraseIsEnabled ? "bolt.badge.checkmark.fill" : "bolt",
+                title: title,
+                subtitle: description
+            )
+            .padding()
+            .containerRelativeFrame(.horizontal)
+            .contentTransition(.symbolEffect(.replace))
         }
     }
 
     private var optionSection: some View {
         Section {
-            FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
-                TextField("Enter killphrase...", text: $killphrase)
-                    .keyboardType(.default)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .textInputAutocapitalization(.never)
+            Toggle(isOn: $killphraseIsEnabled) {
+                Text("Enable killphrase")
+                    .font(.body)
+            }
+
+            if killphraseIsEnabled {
+                FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
+                    TextField("Enter killphrase...", text: $killphrase)
+                        .keyboardType(.default)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .textInputAutocapitalization(.never)
+                }
             }
         } footer: {
-            Text(hiddenWithKillphraseTitle)
+            if killphraseIsEnabled {
+                Text(hiddenWithKillphraseTitle)
+            }
         }
     }
 }

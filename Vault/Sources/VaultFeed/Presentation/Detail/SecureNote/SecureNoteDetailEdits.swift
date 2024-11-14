@@ -101,6 +101,14 @@ public struct SecureNoteDetailEdits: EditableState {
         }
     }
 
+    public var killphraseEnabledIcon: String {
+        if killphraseIsEnabled {
+            "bolt.badge.checkmark.fill"
+        } else {
+            "bolt"
+        }
+    }
+
     /// The first line of the note, which is shown as the title
     public var titleLine: String {
         let firstLine = contents

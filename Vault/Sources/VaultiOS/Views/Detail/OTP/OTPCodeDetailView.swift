@@ -396,7 +396,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 modal = .editKillphrase
             } label: {
                 FormRow(
-                    image: Image(systemName: "delete.backward"),
+                    image: Image(systemName: viewModel.editingModel.detail.killphraseEnabledIcon),
                     color: .accentColor,
                     style: .standard
                 ) {
