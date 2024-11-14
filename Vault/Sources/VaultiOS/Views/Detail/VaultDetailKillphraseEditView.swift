@@ -25,10 +25,10 @@ struct VaultDetailKillphraseEditView: View {
     var body: some View {
         Form {
             titleSection
-            if killphraseIsEnabled {
-                optionSection
-            }
+            optionSection
         }
+        .animation(.easeOut, value: killphraseIsEnabled)
+        .transition(.move(edge: .top))
     }
 
     private var titleSection: some View {
@@ -36,31 +36,30 @@ struct VaultDetailKillphraseEditView: View {
             PlaceholderView(systemIcon: "delete.backward.fill", title: title, subtitle: description)
                 .padding()
                 .containerRelativeFrame(.horizontal)
-
-            Toggle(isOn: $killphraseIsEnabled) {
-                FormRow(
-                    image: Image(systemName: killphraseIsEnabled ? "checkmark.circle.fill" : "xmark.circle.fill"),
-                    color: killphraseIsEnabled ? .green : .secondary,
-                    style: .standard
-                ) {
-                    Text("Enable killphrase")
-                        .font(.body)
-                }
-            }
+                .contentTransition(.symbolEffect(.replace))
         }
     }
 
     private var optionSection: some View {
         Section {
-            FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
-                TextField("Enter killphrase...", text: $killphrase)
-                    .keyboardType(.default)
-                    .autocorrectionDisabled()
-                    .submitLabel(.done)
-                    .textInputAutocapitalization(.never)
+            Toggle(isOn: $killphraseIsEnabled) {
+                Text("Enable killphrase")
+                    .font(.body)
+            }
+
+            if killphraseIsEnabled {
+                FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
+                    TextField("Enter killphrase...", text: $killphrase)
+                        .keyboardType(.default)
+                        .autocorrectionDisabled()
+                        .submitLabel(.done)
+                        .textInputAutocapitalization(.never)
+                }
             }
         } footer: {
-            Text(hiddenWithKillphraseTitle)
+            if killphraseIsEnabled {
+                Text(hiddenWithKillphraseTitle)
+            }
         }
     }
 }
