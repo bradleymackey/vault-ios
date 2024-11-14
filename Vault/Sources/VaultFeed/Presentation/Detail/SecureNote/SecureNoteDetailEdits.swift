@@ -89,6 +89,10 @@ public struct SecureNoteDetailEdits: EditableState {
         }
     }
 
+    private var encrypted: Bool {
+        newEncryptionPassword.isNotBlank || existingEncryptionKey.isNotNil
+    }
+
     /// The description of this note, which is just the first non-empty line of content.
     public var title: String {
         let firstLine = contents
@@ -101,6 +105,7 @@ public struct SecureNoteDetailEdits: EditableState {
 
     /// The description of this note, which is just the second non-empty line of content.
     public var description: String {
+        if encrypted { return "" }
         let secondLine = contents
             .split(separator: "\n")
             .lazy

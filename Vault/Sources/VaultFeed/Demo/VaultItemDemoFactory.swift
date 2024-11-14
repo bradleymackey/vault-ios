@@ -69,7 +69,7 @@ public struct VaultItemDemoFactory {
         let encrypted = try encryptor.encrypt(item: note)
         return VaultItem.Write(
             relativeOrder: 0,
-            userDescription: "This is a demo encrypted note",
+            userDescription: "",
             color: nil,
             item: .encryptedItem(encrypted),
             tags: [],

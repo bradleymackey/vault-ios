@@ -54,4 +54,20 @@ final class SecureNoteDetailEditsTests: XCTestCase {
 
         XCTAssertEqual(sut.description, "Second")
     }
+
+    func test_description_isBlankIfWillEncrypt() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.newEncryptionPassword = "anything"
+        sut.contents = "First\nSecond\nThird"
+
+        XCTAssertEqual(sut.description, "")
+    }
+
+    func test_description_isBlankIfCurrentlyEncrypted() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.existingEncryptionKey = .init(key: .random(), salt: .random(count: 20), keyDervier: .testing)
+        sut.contents = "First\nSecond\nThird"
+
+        XCTAssertEqual(sut.description, "")
+    }
 }
