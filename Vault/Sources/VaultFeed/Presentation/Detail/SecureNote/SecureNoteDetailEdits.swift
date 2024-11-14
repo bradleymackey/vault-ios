@@ -85,12 +85,20 @@ public struct SecureNoteDetailEdits: EditableState {
         if killphraseIsEnabled {
             "Enabled"
         } else {
-            "Disabled"
+            "None"
         }
     }
 
     private var encrypted: Bool {
         newEncryptionPassword.isNotBlank || existingEncryptionKey.isNotNil
+    }
+
+    public var encryptionEnabledText: String {
+        if encrypted {
+            "Enabled"
+        } else {
+            "None"
+        }
     }
 
     /// The first line of the note, which is shown as the title

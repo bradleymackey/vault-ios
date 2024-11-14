@@ -327,7 +327,7 @@ struct SecureNoteDetailView: View {
                     color: .accentColor,
                     style: .standard
                 ) {
-                    LabeledContent("Encryption", value: "?")
+                    LabeledContent("Encryption", value: viewModel.editingModel.detail.encryptionEnabledText)
                         .font(.body)
                 }
             }
