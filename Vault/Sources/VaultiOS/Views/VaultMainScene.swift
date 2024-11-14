@@ -30,7 +30,9 @@ public struct VaultMainScene: Scene {
         modifierType: .slide
     )
 
-    public init() {}
+    public init() {
+        UITextView.appearance().textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+    }
 
     public var body: some Scene {
         WindowGroup {

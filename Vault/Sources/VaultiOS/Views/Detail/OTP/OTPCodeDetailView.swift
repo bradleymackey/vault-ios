@@ -241,9 +241,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     private var descriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
-                .frame(height: 100)
+                .frame(minHeight: 200)
                 .keyboardType(.default)
-                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
+                .listRowInsets(EdgeInsets())
         } header: {
             Text(viewModel.strings.descriptionTitle)
         }

@@ -213,10 +213,12 @@ struct SecureNoteDetailView: View {
                     textStyle: .callout
                 )
                 .frame(minHeight: 450, alignment: .top)
+                .listRowInsets(EdgeInsets())
             case .markdown:
                 Markdown(.init(viewModel.editingModel.detail.contents))
                     .textSelection(.enabled)
                     .frame(minHeight: 450, alignment: .top)
+                    .listRowInsets(EdgeInsets(vertical: 12, horizontal: 16))
             }
         } header: {
             noteIconHeader
@@ -256,7 +258,7 @@ struct SecureNoteDetailView: View {
                 .fontDesign(.monospaced)
                 .frame(minHeight: 350)
                 .keyboardType(.default)
-                .listRowInsets(EdgeInsets(top: 32, leading: 16, bottom: 32, trailing: 16))
+                .listRowInsets(EdgeInsets())
         } header: {
             noteIconEditingHeader
                 .containerRelativeFrame(.horizontal)
