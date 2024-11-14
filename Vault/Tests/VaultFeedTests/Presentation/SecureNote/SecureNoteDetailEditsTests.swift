@@ -31,43 +31,13 @@ final class SecureNoteDetailEditsTests: XCTestCase {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First\nSecond\nThird"
 
-        XCTAssertEqual(sut.title, "First")
+        XCTAssertEqual(sut.titleLine, "First")
     }
 
     func test_title_skipsEmptyLines() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "\n\nFirst\n\nSecond\nThird"
 
-        XCTAssertEqual(sut.title, "First")
-    }
-
-    func test_description_isSecondLineOfContent() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.contents = "First\nSecond\nThird"
-
-        XCTAssertEqual(sut.description, "Second")
-    }
-
-    func test_description_skipsEmptyLines() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.contents = "\n\n\nFirst\n\n\nSecond\nThird"
-
-        XCTAssertEqual(sut.description, "Second")
-    }
-
-    func test_description_isBlankIfWillEncrypt() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.newEncryptionPassword = "anything"
-        sut.contents = "First\nSecond\nThird"
-
-        XCTAssertEqual(sut.description, "")
-    }
-
-    func test_description_isBlankIfCurrentlyEncrypted() {
-        var sut = SecureNoteDetailEdits.new()
-        sut.existingEncryptionKey = .init(key: .random(), salt: .random(count: 20), keyDervier: .testing)
-        sut.contents = "First\nSecond\nThird"
-
-        XCTAssertEqual(sut.description, "")
+        XCTAssertEqual(sut.titleLine, "First")
     }
 }

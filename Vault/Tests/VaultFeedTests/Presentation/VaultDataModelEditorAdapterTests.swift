@@ -184,7 +184,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for creation")
         store.insertHandler = { data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
             XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
             XCTAssertEqual(data.searchPassphrase, "pass")
@@ -227,7 +227,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for creation")
         store.insertHandler = { data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
             XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
             XCTAssertEqual(data.searchPassphrase, "pass")
@@ -279,7 +279,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for creation")
         store.insertHandler = { data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .onlySearch)
             XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
             XCTAssertEqual(data.searchPassphrase, "pass")
@@ -337,7 +337,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let exp = expectation(description: "Wait for update")
         store.updateHandler = { _, data in
             defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
+            XCTAssertEqual(data.userDescription, "first line")
             XCTAssertEqual(data.visibility, .always)
             XCTAssertEqual(data.searchableLevel, .full)
             XCTAssertEqual(data.searchPassphrase, "new pass")

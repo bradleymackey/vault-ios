@@ -27,9 +27,8 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
-        XCTAssertEqual(sut.editingModel.detail.title, "first line")
+        XCTAssertEqual(sut.editingModel.detail.titleLine, "first line")
         XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
-        XCTAssertEqual(sut.editingModel.detail.description, "second line")
         XCTAssertEqual(sut.editingModel.detail.textFormat, .plain)
     }
 
@@ -45,9 +44,8 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
     func test_init_creatingSetsBlankInitialData() {
         let sut = makeSUTCreating()
 
-        XCTAssertEqual(sut.editingModel.detail.title, "")
+        XCTAssertEqual(sut.editingModel.detail.titleLine, "")
         XCTAssertEqual(sut.editingModel.detail.contents, "")
-        XCTAssertEqual(sut.editingModel.detail.description, "")
         XCTAssertEqual(sut.editingModel.detail.textFormat, .markdown)
         XCTAssertEqual(sut.editingModel.detail.newEncryptionPassword, "")
         XCTAssertNil(sut.editingModel.detail.existingEncryptionKey, "There should be no initial encryption key")
@@ -298,8 +296,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.initialDetail.contents, note.contents)
-        XCTAssertEqual(editing.initialDetail.title, "first line")
-        XCTAssertEqual(editing.initialDetail.description, "second line")
+        XCTAssertEqual(editing.initialDetail.titleLine, "first line")
     }
 
     @MainActor
@@ -314,8 +311,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let editing = sut.editingModel
 
         XCTAssertEqual(editing.detail.contents, note.contents)
-        XCTAssertEqual(editing.detail.title, "first line")
-        XCTAssertEqual(editing.detail.description, "second line")
+        XCTAssertEqual(editing.detail.titleLine, "first line")
     }
 
     @MainActor
