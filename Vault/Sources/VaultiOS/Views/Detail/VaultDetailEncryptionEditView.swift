@@ -12,6 +12,8 @@ struct VaultDetailEncryptionEditView: View {
     var didSetNewEncryptionPassword: (String) -> Void
     var didRemoveEncryption: () -> Void
 
+    @Environment(\.dismiss) private var dismiss
+
     var doPasswordsMatch: Bool {
         newEncryptionPassword == newEncryptionPasswordConfirm
     }
@@ -88,8 +90,8 @@ struct VaultDetailEncryptionEditView: View {
             }
         } footer: {
             Button {
-                encryptionIsEnabled = false
                 didRemoveEncryption()
+                dismiss()
             } label: {
                 Label("Remove Encryption", systemImage: "xmark.circle.fill")
             }
