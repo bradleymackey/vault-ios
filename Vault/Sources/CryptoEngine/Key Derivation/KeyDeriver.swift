@@ -15,6 +15,7 @@ public protocol KeyDeriver<Length>: Sendable {
 
 // MARK: - Helpers
 
+// TODO(#417) - use mockolo
 public final class KeyDeriverMock<Length: KeyLength>: KeyDeriver {
     public init() {}
 
