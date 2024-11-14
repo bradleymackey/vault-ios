@@ -89,7 +89,7 @@ public struct SecureNoteDetailEdits: EditableState {
         }
     }
 
-    private var encrypted: Bool {
+    public var encrypted: Bool {
         newEncryptionPassword.isNotBlank || existingEncryptionKey.isNotNil
     }
 

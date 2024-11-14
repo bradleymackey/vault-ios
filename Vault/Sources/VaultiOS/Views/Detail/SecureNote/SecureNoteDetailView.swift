@@ -146,7 +146,15 @@ struct SecureNoteDetailView: View {
                 NavigationStack {
                     VaultDetailEncryptionEditView(
                         title: "Encryption",
-                        description: "Add full at-rest encryption for the note. Password is required on every view."
+                        description: "Add full at-rest encryption for the note. Password is required on every view.",
+                        encryptionInitiallyEnabled: viewModel.editingModel.detail.encrypted,
+                        didSetNewEncryptionPassword: { newPassword in
+                            viewModel.editingModel.detail.newEncryptionPassword = newPassword
+                        },
+                        didRemoveEncryption: {
+                            viewModel.editingModel.detail.newEncryptionPassword = ""
+                            viewModel.editingModel.detail.existingEncryptionKey = nil
+                        }
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
