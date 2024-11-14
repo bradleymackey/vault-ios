@@ -71,7 +71,8 @@ struct VaultDetailEncryptionEditView: View {
         } footer: {
             if newEncryptionPassword.isNotBlank {
                 Button {
-                    print("add encryption with password")
+                    didSetNewEncryptionPassword(newEncryptionPassword)
+                    dismiss()
                 } label: {
                     Label("Encrypt", systemImage: "checkmark.circle.fill")
                 }
@@ -85,9 +86,13 @@ struct VaultDetailEncryptionEditView: View {
 
     private var removeEncryptionSection: some View {
         Section {
-            FormRow(image: Image(systemName: "checkmark"), color: .primary) {
-                Text("Encryption Enabled")
-            }
+            Text("""
+            Encryption is currently enabled for this item. \
+            This means the data, on your device, is cryptographically inaccessible without your password. \
+            The stronger your password, the stronger the encryption.
+            """)
+            .foregroundStyle(.secondary)
+            .font(.caption)
         } footer: {
             Button {
                 didRemoveEncryption()
