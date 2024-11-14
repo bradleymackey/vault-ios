@@ -281,19 +281,6 @@ struct SecureNoteDetailView: View {
             }
 
             Button {
-                modal = .editLock
-            } label: {
-                FormRow(
-                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
-                    color: .accentColor,
-                    style: .standard
-                ) {
-                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
-                        .font(.body)
-                }
-            }
-
-            Button {
                 modal = .editPassphrase
             } label: {
                 FormRow(
@@ -302,6 +289,19 @@ struct SecureNoteDetailView: View {
                     style: .standard
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editLock
+            } label: {
+                FormRow(
+                    image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
+                    color: .accentColor,
+                    style: .standard
+                ) {
+                    LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
                         .font(.body)
                 }
             }
