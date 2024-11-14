@@ -33,10 +33,14 @@ struct VaultDetailKillphraseEditView: View {
 
     private var titleSection: some View {
         Section {
-            PlaceholderView(systemIcon: "delete.backward.fill", title: title, subtitle: description)
-                .padding()
-                .containerRelativeFrame(.horizontal)
-                .contentTransition(.symbolEffect(.replace))
+            PlaceholderView(
+                systemIcon: killphraseIsEnabled ? "bolt.badge.checkmark.fill" : "bolt",
+                title: title,
+                subtitle: description
+            )
+            .padding()
+            .containerRelativeFrame(.horizontal)
+            .contentTransition(.symbolEffect(.replace))
         }
     }
 
