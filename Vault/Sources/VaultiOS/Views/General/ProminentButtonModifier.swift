@@ -3,7 +3,11 @@ import SwiftUI
 
 /// Makes a button prominent with a standard background color and border.
 public struct ProminentButtonModifier: ViewModifier {
-    public init() {}
+    var color: Color
+    public init(color: Color = Color.accentColor) {
+        self.color = color
+    }
+
     public func body(content: Content) -> some View {
         content
             .font(.headline)
@@ -11,7 +15,7 @@ public struct ProminentButtonModifier: ViewModifier {
             .buttonStyle(.borderless)
             .padding(.horizontal, 16)
             .padding(.vertical, 12)
-            .background(Color.accentColor)
+            .background(color)
             .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 }
