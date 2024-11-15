@@ -31,7 +31,7 @@ enum IntervalTimerTests {
             try await pendingStart.wait(timeout: .seconds(1))
             await Task.yield()
 
-            await sut.finishTimer()
+            try await sut.finishTimer()
 
             try await completed.wait(timeout: .seconds(1))
         }
@@ -59,27 +59,24 @@ enum IntervalTimerTests {
             try await pendingStart.wait(timeout: .seconds(1))
             await Task.yield()
 
-            await sut.finishTimer()
+            try await sut.finishTimer()
 
             try await completed.wait(timeout: .seconds(1))
         }
 
         @Test
         func wait_multipleWaitsCanCompleteIndependently() async throws {
-            try await confirmation { confirmation in
-                let started = Pending.signal()
-                Task {
-                    await started.fulfill()
-                    try await sut.wait(for: 10)
-                    try await sut.wait(for: 10)
-                    try await sut.wait(for: 10)
-                    confirmation.confirm()
+            try await confirmation(expectedCount: 3) { confirmation in
+                for _ in 0 ..< 3 {
+                    Task(priority: .high) {
+                        try await sut.wait(for: 10)
+                        confirmation.confirm()
+                    }
                 }
 
-                try await started.wait()
-                await sut.finishTimer(at: 0)
-                await sut.finishTimer(at: 1)
-                await sut.finishTimer(at: 2)
+                try await sut.finishTimer(at: 0)
+                try await sut.finishTimer(at: 1)
+                try await sut.finishTimer(at: 2)
             }
         }
 
@@ -89,7 +86,7 @@ enum IntervalTimerTests {
                 _ = sut.schedule(wait: 10) {
                     confirmation.confirm()
                 }
-                await sut.finishTimer()
+                try await sut.finishTimer()
             }
         }
 
@@ -105,10 +102,17 @@ enum IntervalTimerTests {
                 _ = sut.schedule(wait: 10) {
                     confirmation.confirm(count: 5)
                 }
-                await sut.finishTimer(at: 0)
-                await sut.finishTimer(at: 1)
-                await sut.finishTimer(at: 2)
+                try await sut.finishTimer(at: 0)
+                try await sut.finishTimer(at: 1)
+                try await sut.finishTimer(at: 2)
             }
+        }
+
+        @Test
+        func finishTimer_timesOutAfter5SecondsIfThereIsNoWait() async throws {
+            await #expect(throws: TimeoutError.self, performing: {
+                try await sut.finishTimer(at: 0)
+            })
         }
     }
 

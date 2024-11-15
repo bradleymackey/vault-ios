@@ -52,20 +52,39 @@ public final class IntervalTimerMock: IntervalTimer {
     /// Waits for the work scheduled by the timer to fully complete before returning.
     ///
     /// The index corresponds to the relative order that the 'wait' or 'schedule' was requested.
-    public func finishTimer(at index: Int = 0) async {
-        // Finishing a timer runs at a low priority, so timer scheduling and work execution always takes priority
-        let finishTask = Task.detached(priority: .low) {
-            await Task.yield() // give time for any `schedule` blocks to be created
+    ///
+    /// - Throws: `TimeoutError` in the case that there is no wait registered either before or shortly after calling
+    /// this method.
+    public func finishTimer(at index: Int = 0) async throws {
+        // This continuously yields at points while it waits for certain conditions.
+        // To prevent infinite loops in the case that expectations are not met, a short
+        // timeout is sufficient here.
+        //
+        // Finishing a timer runs at a low priority, so timer scheduling and work execution always takes priority over
+        // just finishing the timer.
+        try await Task.withTimeout(delay: .seconds(5), priority: .low) {
+            // Wait for the wait to actually exist, in the case that "finishTimer" is
+            // called just before the wait is registered.
+            while !self.waits.value.indices.contains(index) {
+                try Task.checkCancellation()
+                await Task.yield()
+            }
+            try Task.checkCancellation()
             precondition(
                 self.waits.value.indices.contains(index),
                 "Cannot finishTimer, there is no wait handler at index \(index)!"
             )
             let waiter = self.waits.get { $0[index] }
+            while await !waiter.isWaiting {
+                try Task.checkCancellation()
+                await Task.yield()
+            }
+            try Task.checkCancellation()
             await waiter.fulfill()
+            try Task.checkCancellation()
             await self.mockTriggerCompletionIfNeeded(id: waiter.id)
             await Task.yield() // allow time for a bit of cleanup
         }
-        await finishTask.value
     }
 
     private func mockTriggerCompletionIfNeeded(id: UUID) async {
