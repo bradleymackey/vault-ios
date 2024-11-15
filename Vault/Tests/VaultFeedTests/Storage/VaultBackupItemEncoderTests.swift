@@ -1,15 +1,16 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultBackup
 import VaultCore
-import XCTest
 @testable import VaultFeed
 
-final class VaultBackupItemEncoderTests: XCTestCase {
+final class VaultBackupItemEncoderTests {
     // MARK: Full items
 
-    func test_encode_encodesNote() {
+    @Test
+    func encode_encodesNote() {
         let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
@@ -37,27 +38,28 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id.rawValue)
-        XCTAssertEqual(encodedItem.createdDate, createdDate)
-        XCTAssertEqual(encodedItem.updatedDate, updateDate)
-        XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
-        XCTAssertEqual(encodedItem.relativeOrder, 999_995)
-        XCTAssertEqual(encodedItem.item.noteData?.title, "title")
-        XCTAssertEqual(encodedItem.item.noteData?.rawContents, "contents")
-        XCTAssertEqual(encodedItem.item.noteData?.format, .markdown)
-        XCTAssertEqual(encodedItem.visibility, .always)
-        XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
-        XCTAssertEqual(encodedItem.searchPassphrase, "searchme")
-        XCTAssertEqual(encodedItem.killphrase, "killme")
-        XCTAssertEqual(encodedItem.lockState, .notLocked)
-        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+        #expect(encodedItem.id == id.rawValue)
+        #expect(encodedItem.createdDate == createdDate)
+        #expect(encodedItem.updatedDate == updateDate)
+        #expect(encodedItem.userDescription == description)
+        #expect(encodedItem.tags == tags.reducedToSet(\.id))
+        #expect(encodedItem.relativeOrder == 999_995)
+        #expect(encodedItem.item.noteData?.title == "title")
+        #expect(encodedItem.item.noteData?.rawContents == "contents")
+        #expect(encodedItem.item.noteData?.format == .markdown)
+        #expect(encodedItem.visibility == .always)
+        #expect(encodedItem.searchableLevel == .onlyTitle)
+        #expect(encodedItem.searchPassphrase == "searchme")
+        #expect(encodedItem.killphrase == "killme")
+        #expect(encodedItem.lockState == .notLocked)
+        #expect(encodedItem.tintColor == .init(red: 0.1, green: 0.2, blue: 0.3))
 
-        XCTAssertNil(encodedItem.item.encryptedData)
-        XCTAssertNil(encodedItem.item.codeData)
+        #expect(encodedItem.item.encryptedData == nil)
+        #expect(encodedItem.item.codeData == nil)
     }
 
-    func test_encode_encodesEncryptedItem() {
+    @Test
+    func encode_encodesEncryptedItem() {
         let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
@@ -98,31 +100,32 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id.rawValue)
-        XCTAssertEqual(encodedItem.createdDate, createdDate)
-        XCTAssertEqual(encodedItem.updatedDate, updateDate)
-        XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.tags, tags.reducedToSet(\.id))
-        XCTAssertEqual(encodedItem.relativeOrder, 999_995)
-        XCTAssertEqual(encodedItem.item.encryptedData?.version, "1.0.2")
-        XCTAssertEqual(encodedItem.item.encryptedData?.title, "this nice")
-        XCTAssertEqual(encodedItem.item.encryptedData?.data, itemData)
-        XCTAssertEqual(encodedItem.item.encryptedData?.authentication, itemAuthentication)
-        XCTAssertEqual(encodedItem.item.encryptedData?.encryptionIV, itemEncryptionIV)
-        XCTAssertEqual(encodedItem.item.encryptedData?.keygenSalt, itemKeygenSalt)
-        XCTAssertEqual(encodedItem.item.encryptedData?.keygenSignature, itemSignature)
-        XCTAssertEqual(encodedItem.visibility, .always)
-        XCTAssertEqual(encodedItem.searchableLevel, .onlyTitle)
-        XCTAssertEqual(encodedItem.searchPassphrase, "searchme")
-        XCTAssertEqual(encodedItem.killphrase, "killmenow")
-        XCTAssertEqual(encodedItem.lockState, .notLocked)
-        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+        #expect(encodedItem.id == id.rawValue)
+        #expect(encodedItem.createdDate == createdDate)
+        #expect(encodedItem.updatedDate == updateDate)
+        #expect(encodedItem.userDescription == description)
+        #expect(encodedItem.tags == tags.reducedToSet(\.id))
+        #expect(encodedItem.relativeOrder == 999_995)
+        #expect(encodedItem.item.encryptedData?.version == "1.0.2")
+        #expect(encodedItem.item.encryptedData?.title == "this nice")
+        #expect(encodedItem.item.encryptedData?.data == itemData)
+        #expect(encodedItem.item.encryptedData?.authentication == itemAuthentication)
+        #expect(encodedItem.item.encryptedData?.encryptionIV == itemEncryptionIV)
+        #expect(encodedItem.item.encryptedData?.keygenSalt == itemKeygenSalt)
+        #expect(encodedItem.item.encryptedData?.keygenSignature == itemSignature)
+        #expect(encodedItem.visibility == .always)
+        #expect(encodedItem.searchableLevel == .onlyTitle)
+        #expect(encodedItem.searchPassphrase == "searchme")
+        #expect(encodedItem.killphrase == "killmenow")
+        #expect(encodedItem.lockState == .notLocked)
+        #expect(encodedItem.tintColor == .init(red: 0.1, green: 0.2, blue: 0.3))
 
-        XCTAssertNil(encodedItem.item.noteData)
-        XCTAssertNil(encodedItem.item.codeData)
+        #expect(encodedItem.item.noteData == nil)
+        #expect(encodedItem.item.codeData == nil)
     }
 
-    func test_encode_encodesTOTPCode() {
+    @Test
+    func encode_encodesTOTPCode() {
         let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
@@ -159,33 +162,34 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id.rawValue)
-        XCTAssertEqual(encodedItem.createdDate, createdDate)
-        XCTAssertEqual(encodedItem.updatedDate, updateDate)
-        XCTAssertEqual(encodedItem.relativeOrder, 1234)
-        XCTAssertEqual(encodedItem.visibility, .always)
-        XCTAssertEqual(encodedItem.searchableLevel, .full)
-        XCTAssertEqual(encodedItem.searchPassphrase, "hello")
-        XCTAssertEqual(encodedItem.killphrase, "killme")
-        XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.lockState, .lockedWithNativeSecurity)
-        XCTAssertEqual(encodedItem.tags, [])
-        XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
-        XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
-        XCTAssertEqual(encodedItem.item.codeData?.algorithm, "SHA256")
-        XCTAssertEqual(encodedItem.item.codeData?.authType, "totp")
-        XCTAssertEqual(encodedItem.item.codeData?.period, 36)
-        XCTAssertNil(encodedItem.item.codeData?.counter, "No counter for TOTP")
-        XCTAssertEqual(encodedItem.item.codeData?.digits, 8)
-        XCTAssertEqual(encodedItem.item.codeData?.secretData, Data(hex: "ababa"))
-        XCTAssertEqual(encodedItem.item.codeData?.secretFormat, "BASE_32")
-        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+        #expect(encodedItem.id == id.rawValue)
+        #expect(encodedItem.createdDate == createdDate)
+        #expect(encodedItem.updatedDate == updateDate)
+        #expect(encodedItem.relativeOrder == 1234)
+        #expect(encodedItem.visibility == .always)
+        #expect(encodedItem.searchableLevel == .full)
+        #expect(encodedItem.searchPassphrase == "hello")
+        #expect(encodedItem.killphrase == "killme")
+        #expect(encodedItem.userDescription == description)
+        #expect(encodedItem.lockState == .lockedWithNativeSecurity)
+        #expect(encodedItem.tags == [])
+        #expect(encodedItem.item.codeData?.accountName == "my account name")
+        #expect(encodedItem.item.codeData?.issuer == "my issuer")
+        #expect(encodedItem.item.codeData?.algorithm == "SHA256")
+        #expect(encodedItem.item.codeData?.authType == "totp")
+        #expect(encodedItem.item.codeData?.period == 36)
+        #expect(encodedItem.item.codeData?.counter == nil, "No counter for TOTP")
+        #expect(encodedItem.item.codeData?.digits == 8)
+        #expect(encodedItem.item.codeData?.secretData == Data(hex: "ababa"))
+        #expect(encodedItem.item.codeData?.secretFormat == "BASE_32")
+        #expect(encodedItem.tintColor == .init(red: 0.1, green: 0.2, blue: 0.3))
 
-        XCTAssertNil(encodedItem.item.encryptedData)
-        XCTAssertNil(encodedItem.item.noteData)
+        #expect(encodedItem.item.encryptedData == nil)
+        #expect(encodedItem.item.noteData == nil)
     }
 
-    func test_encode_encodesHOTPCode() {
+    @Test
+    func encode_encodesHOTPCode() {
         let id = Identifier<VaultItem>()
         let createdDate = Date(timeIntervalSince1970: 123_456)
         let updateDate = Date(timeIntervalSince1970: 456_789)
@@ -222,56 +226,58 @@ final class VaultBackupItemEncoderTests: XCTestCase {
 
         let encodedItem = sut.encode(storedItem: item)
 
-        XCTAssertEqual(encodedItem.id, id.rawValue)
-        XCTAssertEqual(encodedItem.createdDate, createdDate)
-        XCTAssertEqual(encodedItem.updatedDate, updateDate)
-        XCTAssertEqual(encodedItem.userDescription, description)
-        XCTAssertEqual(encodedItem.visibility, .always)
-        XCTAssertEqual(encodedItem.searchableLevel, .full)
-        XCTAssertEqual(encodedItem.searchPassphrase, "test")
-        XCTAssertEqual(encodedItem.killphrase, "killme")
-        XCTAssertEqual(encodedItem.relativeOrder, .min)
-        XCTAssertEqual(encodedItem.lockState, .notLocked)
-        XCTAssertEqual(encodedItem.tags, [])
-        XCTAssertEqual(encodedItem.item.codeData?.accountName, "my account name")
-        XCTAssertEqual(encodedItem.item.codeData?.issuer, "my issuer")
-        XCTAssertEqual(encodedItem.item.codeData?.algorithm, "SHA256")
-        XCTAssertEqual(encodedItem.item.codeData?.authType, "hotp")
-        XCTAssertEqual(encodedItem.item.codeData?.counter, 69)
-        XCTAssertNil(encodedItem.item.codeData?.period, "No period for HOTP")
-        XCTAssertEqual(encodedItem.item.codeData?.digits, 8)
-        XCTAssertEqual(encodedItem.item.codeData?.secretData, Data(hex: "ababa"))
-        XCTAssertEqual(encodedItem.item.codeData?.secretFormat, "BASE_32")
-        XCTAssertEqual(encodedItem.tintColor, .init(red: 0.1, green: 0.2, blue: 0.3))
+        #expect(encodedItem.id == id.rawValue)
+        #expect(encodedItem.createdDate == createdDate)
+        #expect(encodedItem.updatedDate == updateDate)
+        #expect(encodedItem.userDescription == description)
+        #expect(encodedItem.visibility == .always)
+        #expect(encodedItem.searchableLevel == .full)
+        #expect(encodedItem.searchPassphrase == "test")
+        #expect(encodedItem.killphrase == "killme")
+        #expect(encodedItem.relativeOrder == .min)
+        #expect(encodedItem.lockState == .notLocked)
+        #expect(encodedItem.tags == [])
+        #expect(encodedItem.item.codeData?.accountName == "my account name")
+        #expect(encodedItem.item.codeData?.issuer == "my issuer")
+        #expect(encodedItem.item.codeData?.algorithm == "SHA256")
+        #expect(encodedItem.item.codeData?.authType == "hotp")
+        #expect(encodedItem.item.codeData?.counter == 69)
+        #expect(encodedItem.item.codeData?.period == nil, "No period for HOTP")
+        #expect(encodedItem.item.codeData?.digits == 8)
+        #expect(encodedItem.item.codeData?.secretData == Data(hex: "ababa"))
+        #expect(encodedItem.item.codeData?.secretFormat == "BASE_32")
+        #expect(encodedItem.tintColor == .init(red: 0.1, green: 0.2, blue: 0.3))
 
-        XCTAssertNil(encodedItem.item.encryptedData)
-        XCTAssertNil(encodedItem.item.noteData)
+        #expect(encodedItem.item.encryptedData == nil)
+        #expect(encodedItem.item.noteData == nil)
     }
 
     // MARK: Cases
 
-    func test_encode_missingColor() {
+    @Test
+    func encode_missingColor() {
         let sut = makeSUT()
 
         let code1 = anyOTPAuthCode().wrapInAnyVaultItem(color: nil)
         let encoded1 = sut.encode(storedItem: code1)
-        XCTAssertNil(encoded1.tintColor, "No encoded color, it should be nil")
+        #expect(encoded1.tintColor == nil, "No encoded color, it should be nil")
     }
 
-    func test_encode_otpAlgorithmTypes() {
+    @Test
+    func encode_otpAlgorithmTypes() {
         let sut = makeSUT()
 
         let code1 = anyOTPAuthCode(algorithm: .sha1).wrapInAnyVaultItem()
         let encoded1 = sut.encode(storedItem: code1)
-        XCTAssertEqual(encoded1.item.codeData?.algorithm, "SHA1")
+        #expect(encoded1.item.codeData?.algorithm == "SHA1")
 
         let code2 = anyOTPAuthCode(algorithm: .sha256).wrapInAnyVaultItem()
         let encoded2 = sut.encode(storedItem: code2)
-        XCTAssertEqual(encoded2.item.codeData?.algorithm, "SHA256")
+        #expect(encoded2.item.codeData?.algorithm == "SHA256")
 
         let code3 = anyOTPAuthCode(algorithm: .sha512).wrapInAnyVaultItem()
         let encoded3 = sut.encode(storedItem: code3)
-        XCTAssertEqual(encoded3.item.codeData?.algorithm, "SHA512")
+        #expect(encoded3.item.codeData?.algorithm == "SHA512")
     }
 }
 
