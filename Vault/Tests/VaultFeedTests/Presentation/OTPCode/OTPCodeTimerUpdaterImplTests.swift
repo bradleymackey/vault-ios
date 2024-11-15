@@ -30,7 +30,7 @@ struct OTPCodeTimerUpdaterImplTests {
         ]
         try await sut.timerUpdatedPublisher.expect(firstValues: expected) { @MainActor in
             clock.currentTime = 62
-            await timer.finishTimer()
+            try await timer.finishTimer()
         }
     }
 

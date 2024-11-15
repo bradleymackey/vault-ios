@@ -77,7 +77,7 @@ final class CodeScanningManagerTests: XCTestCase {
     }
 
     @MainActor
-    func test_scan_returnsToScanningAfterInvalidCodeFailure() async {
+    func test_scan_returnsToScanningAfterInvalidCodeFailure() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
@@ -85,7 +85,7 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.startScanning()
 
         sut.scan(text: "any")
-        await timer.finishTimer()
+        try await timer.finishTimer()
 
         XCTAssertEqual(sut.scanningState, .scanning)
     }
@@ -118,7 +118,7 @@ final class CodeScanningManagerTests: XCTestCase {
             exp.fulfill()
         }
 
-        await timer.finishTimer()
+        try await timer.finishTimer()
 
         await fulfillment(of: [exp], timeout: 1.0)
         results.cancel()
@@ -150,7 +150,7 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.scan(text: "any")
         XCTAssertEqual(sut.scanningState, .success(.temporary))
 
-        await timer.finishTimer()
+        try await timer.finishTimer()
         XCTAssertEqual(sut.scanningState, .scanning)
     }
 

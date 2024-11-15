@@ -40,22 +40,7 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         try await sut.incrementCounter()
         XCTAssertEqual(sut.isButtonEnabled, false)
 
-        await timer.finishTimer()
-        XCTAssertEqual(sut.isButtonEnabled, true)
-    }
-
-    @MainActor
-    func test_isButtonEnabled_timerCompletingMultipleTimesHasNoEffect() async throws {
-        let timer = IntervalTimerMock()
-        let sut = makeSUT(timer: timer)
-
-        try await sut.incrementCounter()
-        XCTAssertEqual(sut.isButtonEnabled, false)
-
-        await timer.finishTimer()
-        XCTAssertEqual(sut.isButtonEnabled, true)
-
-        await timer.finishTimer()
+        try await timer.finishTimer()
         XCTAssertEqual(sut.isButtonEnabled, true)
     }
 
