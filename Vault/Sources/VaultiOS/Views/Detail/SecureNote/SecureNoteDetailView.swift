@@ -371,6 +371,8 @@ struct SecureNoteDetailView: View {
         } footer: {
             if viewModel.shouldShowDeleteButton {
                 deleteButton
+                    .padding()
+                    .modifier(HorizontallyCenter())
                     .padding(.vertical, 16)
             }
         }
@@ -383,8 +385,6 @@ struct SecureNoteDetailView: View {
             Label(localized(key: "action.delete.title"), systemImage: "trash.fill")
         }
         .modifier(ProminentButtonModifier(color: .red))
-        .padding()
-        .modifier(HorizontallyCenter())
     }
 }
 

@@ -434,6 +434,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         } footer: {
             if viewModel.shouldShowDeleteButton {
                 deleteButton
+                    .padding()
+                    .modifier(HorizontallyCenter())
                     .padding(.vertical, 16)
             }
         }
@@ -446,8 +448,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             Label(localized(key: "action.delete.title"), systemImage: "trash.fill")
         }
         .modifier(ProminentButtonModifier(color: .red))
-        .padding()
-        .modifier(HorizontallyCenter())
     }
 
     func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {
