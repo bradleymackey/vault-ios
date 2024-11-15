@@ -71,7 +71,7 @@ struct SecureNoteDetailView: View {
             ) {
                 if viewModel.isInEditMode {
                     noteContentsEditingSection
-                    passphraseEditingSection
+                    editingActionsSection
                     if viewModel.shouldShowDeleteButton {
                         deleteSection
                     }
@@ -277,7 +277,7 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    private var passphraseEditingSection: some View {
+    private var editingActionsSection: some View {
         Section {
             Picker(selection: $viewModel.editingModel.detail.textFormat) {
                 ForEach(TextFormat.allCases, id: \.self) { format in
