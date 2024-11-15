@@ -72,9 +72,6 @@ struct SecureNoteDetailView: View {
                 if viewModel.isInEditMode {
                     noteContentsEditingSection
                     editingActionsSection
-                    if viewModel.shouldShowDeleteButton {
-                        deleteSection
-                    }
                 } else {
                     noteContentsSection(size: reader.size)
                 }
@@ -371,21 +368,23 @@ struct SecureNoteDetailView: View {
                     }
                 }
             }
+        } footer: {
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var deleteSection: some View {
-        Section {
-            Button {
-                isShowingDeleteConfirmation = true
-            } label: {
-                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
-                    Text(localized(key: "action.delete.title"))
-                        .fontWeight(.medium)
-                }
-            }
-            .foregroundStyle(.red)
+    private var deleteButton: some View {
+        Button {
+            isShowingDeleteConfirmation = true
+        } label: {
+            Label(localized(key: "action.delete.title"), systemImage: "trash.fill")
         }
+        .modifier(ProminentButtonModifier(color: .red))
+        .padding()
+        .modifier(HorizontallyCenter())
     }
 }
 
