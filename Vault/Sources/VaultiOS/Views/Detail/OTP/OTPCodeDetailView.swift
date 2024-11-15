@@ -96,9 +96,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 nameEditingSection
                 descriptionEditingSection
                 editingActionsSection
-                if viewModel.shouldShowDeleteButton {
-                    deleteSection
-                }
             } else {
                 if case let .editing(code, metadata) = viewModel.mode {
                     codeInformationSection(code: code, metadata: metadata)
@@ -434,21 +431,23 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     }
                 }
             }
+        } footer: {
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var deleteSection: some View {
-        Section {
-            Button {
-                isShowingDeleteConfirmation = true
-            } label: {
-                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
-                    Text(localized(key: "action.delete.title"))
-                        .fontWeight(.medium)
-                }
-            }
-            .foregroundStyle(.red)
+    private var deleteButton: some View {
+        Button {
+            isShowingDeleteConfirmation = true
+        } label: {
+            Label(localized(key: "action.delete.title"), systemImage: "trash.fill")
         }
+        .modifier(ProminentButtonModifier(color: .red))
+        .padding()
+        .modifier(HorizontallyCenter())
     }
 
     func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {
