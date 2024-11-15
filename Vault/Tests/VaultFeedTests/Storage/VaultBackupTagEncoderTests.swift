@@ -1,41 +1,45 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultBackup
-import XCTest
 @testable import VaultFeed
 
-final class VaultBackupTagEncoderTests: XCTestCase {
-    func test_encode_id() {
+struct VaultBackupTagEncoderTests {
+    @Test
+    func encode_id() {
         let sut = makeSUT()
         let id = UUID()
         let tag = VaultItemTag(id: .init(id: id), name: "my-name")
 
         let encoded = sut.encode(tag: tag)
 
-        XCTAssertEqual(encoded.id, id)
+        #expect(encoded.id == id)
     }
 
-    func test_encode_title() {
+    @Test
+    func encode_title() {
         let sut = makeSUT()
         let tag = VaultItemTag(id: .init(id: UUID()), name: "This is my Title")
 
         let encoded = sut.encode(tag: tag)
 
-        XCTAssertEqual(encoded.title, "This is my Title")
+        #expect(encoded.title == "This is my Title")
     }
 
-    func test_encode_color() {
+    @Test
+    func encode_color() {
         let sut = makeSUT()
         let tag = VaultItemTag(id: .init(id: UUID()), name: "any", color: .init(red: 0.4, green: 0.5, blue: 0.6))
 
         let encoded = sut.encode(tag: tag)
 
-        XCTAssertEqual(encoded.color?.red, 0.4)
-        XCTAssertEqual(encoded.color?.green, 0.5)
-        XCTAssertEqual(encoded.color?.blue, 0.6)
+        #expect(encoded.color?.red == 0.4)
+        #expect(encoded.color?.green == 0.5)
+        #expect(encoded.color?.blue == 0.6)
     }
 
-    func test_encode_iconName() {
+    @Test
+    func encode_iconName() {
         let sut = makeSUT()
         let tag = VaultItemTag(
             id: .init(id: UUID()),
@@ -46,7 +50,7 @@ final class VaultBackupTagEncoderTests: XCTestCase {
 
         let encoded = sut.encode(tag: tag)
 
-        XCTAssertEqual(encoded.iconName, "icon-name")
+        #expect(encoded.iconName == "icon-name")
     }
 }
 

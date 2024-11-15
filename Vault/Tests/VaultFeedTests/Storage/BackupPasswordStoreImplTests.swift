@@ -1,41 +1,43 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class BackupPasswordStoreImplTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSecureStorageSideEffects() {
+struct BackupPasswordStoreImplTests {
+    @Test
+    func init_hasNoSecureStorageSideEffects() {
         let storage = SecureStorageMock()
         _ = makeSUT(secureStorage: storage)
 
-        XCTAssertEqual(storage.retrieveCallCount, 0)
-        XCTAssertEqual(storage.storeCallCount, 0)
+        #expect(storage.retrieveCallCount == 0)
+        #expect(storage.storeCallCount == 0)
     }
 
-    @MainActor
-    func test_fetchPassword_fetchErrorRethrowsError() async throws {
+    @Test
+    func fetchPassword_fetchErrorRethrowsError() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.retrieveHandler = { _ in throw TestError() }
 
-        await XCTAssertThrowsError(try await sut.fetchPassword())
+        await #expect(throws: (any Error).self) {
+            try await sut.fetchPassword()
+        }
     }
 
-    @MainActor
-    func test_fetchPassword_notFoundAnyReturnsNil() async throws {
+    @Test
+    func fetchPassword_notFoundAnyReturnsNil() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.retrieveHandler = { _ in nil }
 
         let password = try await sut.fetchPassword()
 
-        XCTAssertNil(password)
+        #expect(password == nil)
     }
 
-    @MainActor
-    func test_setPassword_errorInServiceIsRethrown() async throws {
+    @Test
+    func setPassword_errorInServiceIsRethrown() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         storage.storeHandler = { _, _ in
@@ -43,11 +45,13 @@ final class BackupPasswordStoreImplTests: XCTestCase {
         }
 
         let password = anyBackupPassword()
-        await XCTAssertThrowsError(try await sut.set(password: password))
+        await #expect(throws: (any Error).self) {
+            try await sut.set(password: password)
+        }
     }
 
-    @MainActor
-    func test_setPassword_setsDataEncodedCorrectly() async throws {
+    @Test
+    func setPassword_setsDataEncodedCorrectly() async throws {
         let storage = SecureStorageMock()
         let sut = makeSUT(secureStorage: storage)
         let newPassword = DerivedEncryptionKey(
@@ -58,9 +62,9 @@ final class BackupPasswordStoreImplTests: XCTestCase {
 
         try await sut.set(password: newPassword)
 
-        XCTAssertEqual(
-            storage.storeArgValues.map(\.1),
-            ["vault.secure-storage.backup-password.v1"]
+        #expect(
+            storage.storeArgValues.map(\.1) ==
+                ["vault.secure-storage.backup-password.v1"]
         )
     }
 }
@@ -68,7 +72,6 @@ final class BackupPasswordStoreImplTests: XCTestCase {
 // MARK: - Helpers
 
 extension BackupPasswordStoreImplTests {
-    @MainActor
     private func makeSUT(
         secureStorage: SecureStorageMock = SecureStorageMock()
     ) -> BackupPasswordStoreImpl {
