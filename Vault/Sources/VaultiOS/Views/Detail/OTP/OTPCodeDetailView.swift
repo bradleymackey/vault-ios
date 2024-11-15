@@ -95,7 +95,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 }
                 nameEditingSection
                 descriptionEditingSection
-                passphraseEditingSection
+                editingActionsSection
                 if viewModel.shouldShowDeleteButton {
                     deleteSection
                 }
@@ -364,7 +364,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         }
     }
 
-    private var passphraseEditingSection: some View {
+    private var editingActionsSection: some View {
         Section {
             Button {
                 modal = .editPassphrase
