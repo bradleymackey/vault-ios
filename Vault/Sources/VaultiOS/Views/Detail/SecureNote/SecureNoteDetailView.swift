@@ -61,21 +61,23 @@ struct SecureNoteDetailView: View {
     @State private var isShowingDeleteConfirmation = false
 
     var body: some View {
-        VaultItemDetailView(
-            viewModel: viewModel,
-            currentError: $currentError,
-            isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
-            navigationPath: $navigationPath,
-            presentationMode: presentationMode
-        ) {
-            if viewModel.isInEditMode {
-                noteContentsEditingSection
-                passphraseEditingSection
-                if viewModel.shouldShowDeleteButton {
-                    deleteSection
+        GeometryReader { reader in
+            VaultItemDetailView(
+                viewModel: viewModel,
+                currentError: $currentError,
+                isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
+                navigationPath: $navigationPath,
+                presentationMode: presentationMode
+            ) {
+                if viewModel.isInEditMode {
+                    noteContentsEditingSection
+                    passphraseEditingSection
+                    if viewModel.shouldShowDeleteButton {
+                        deleteSection
+                    }
+                } else {
+                    noteContentsSection(size: reader.size)
                 }
-            } else {
-                noteContentsSection
             }
         }
         .animation(.easeOut, value: viewModel.editingModel.detail.viewConfig)
@@ -211,21 +213,21 @@ struct SecureNoteDetailView: View {
 
     // MARK: Contents
 
-    private var noteContentsSection: some View {
+    private func noteContentsSection(size: CGSize) -> some View {
         Section {
             switch viewModel.editingModel.detail.textFormat {
             case .plain:
                 SelectableText(
                     viewModel.editingModel.detail.contents,
                     fontStyle: .monospace,
-                    textStyle: .callout
+                    textStyle: .subheadline
                 )
-                .frame(minHeight: 450, alignment: .top)
+                .frame(minHeight: size.height - 100, alignment: .top)
                 .listRowInsets(EdgeInsets())
             case .markdown:
                 Markdown(.init(viewModel.editingModel.detail.contents))
                     .textSelection(.enabled)
-                    .frame(minHeight: 450, alignment: .top)
+                    .frame(minHeight: size.height - 100, alignment: .top)
                     .listRowInsets(EdgeInsets(vertical: 12, horizontal: 16))
             }
         } header: {
@@ -262,9 +264,9 @@ struct SecureNoteDetailView: View {
     private var noteContentsEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.contents)
-                .font(.callout)
+                .font(.subheadline)
                 .fontDesign(.monospaced)
-                .frame(minHeight: 350)
+                .frame(minHeight: 600)
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets())
         } header: {
