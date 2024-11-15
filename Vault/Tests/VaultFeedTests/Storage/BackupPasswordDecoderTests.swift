@@ -1,10 +1,11 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class BackupPasswordDecoderTests: XCTestCase {
-    func test_decode_throwsErrorIfVersionImcompatible() {
+struct BackupPasswordDecoderTests {
+    @Test
+    func decode_throwsErrorIfVersionIncompatible() {
         let sut = makeSUT()
 
         let str = """
@@ -17,11 +18,16 @@ final class BackupPasswordDecoderTests: XCTestCase {
         """
         let data = Data(str.utf8)
 
-        XCTAssertThrowsError(try sut.decode(data: data))
-        XCTAssertThrowsError(try sut.decode(qrCode: str))
+        #expect(throws: (any Error).self) {
+            try sut.decode(data: data)
+        }
+        #expect(throws: (any Error).self) {
+            try sut.decode(qrCode: str)
+        }
     }
 
-    func test_decode_throwsErrorIfKeyLengthIncorrect() {
+    @Test
+    func decode_throwsErrorIfKeyLengthIncorrect() {
         let sut = makeSUT()
 
         let str = """
@@ -34,11 +40,16 @@ final class BackupPasswordDecoderTests: XCTestCase {
         """
         let data = Data(str.utf8)
 
-        XCTAssertThrowsError(try sut.decode(data: data))
-        XCTAssertThrowsError(try sut.decode(qrCode: str))
+        #expect(throws: (any Error).self) {
+            try sut.decode(data: data)
+        }
+        #expect(throws: (any Error).self) {
+            try sut.decode(qrCode: str)
+        }
     }
 
-    func test_decode_decodesCorrectly() throws {
+    @Test
+    func decode_decodesCorrectly() throws {
         let sut = makeSUT()
 
         let str = """
@@ -53,10 +64,10 @@ final class BackupPasswordDecoderTests: XCTestCase {
         let resultData = try sut.decode(data: data)
         let resultQR = try sut.decode(qrCode: str)
 
-        XCTAssertEqual(resultData.key, .repeating(byte: 0x68))
-        XCTAssertEqual(resultData.salt, Data(repeating: 0x69, count: 20))
-        XCTAssertEqual(resultQR.key, .repeating(byte: 0x68))
-        XCTAssertEqual(resultQR.salt, Data(repeating: 0x69, count: 20))
+        #expect(resultData.key == .repeating(byte: 0x68))
+        #expect(resultData.salt == Data(repeating: 0x69, count: 20))
+        #expect(resultQR.key == .repeating(byte: 0x68))
+        #expect(resultQR.salt == Data(repeating: 0x69, count: 20))
     }
 }
 
