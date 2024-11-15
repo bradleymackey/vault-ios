@@ -1,12 +1,13 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class PersistedSchemaMigrationPlanTests: XCTestCase {
-    func test_stages_none() {
+struct PersistedSchemaMigrationPlanTests {
+    @Test
+    func stages_none() {
         let stages = PersistedSchemaMigrationPlan.stages
 
-        XCTAssertEqual(stages.count, 0)
+        #expect(stages.isEmpty)
     }
 }
