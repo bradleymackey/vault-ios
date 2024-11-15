@@ -116,7 +116,7 @@ struct VaultTagFeedView: View {
 
     private var noTagsFoundView: some View {
         VStack(alignment: .center, spacing: 12) {
-            Label(viewModel.strings.noTagsTitle, systemImage: "tag.fill")
+            Label(viewModel.strings.noTagsTitle, systemImage: "tag")
                 .font(.callout.bold())
         }
         .textCase(.none)
