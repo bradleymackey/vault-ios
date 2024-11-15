@@ -140,7 +140,7 @@ struct BackupKeyChangeView: View {
                         "For security, this key generation process may take up to 3 minutes, even on a very fast device."
                     )
                     Text(
-                        "The encryption key is not automatically synced between devices, it must be shared manually. This is also for security."
+                        "Your encryption key is not shared between devices."
                     )
                 }
                 .font(.callout)
