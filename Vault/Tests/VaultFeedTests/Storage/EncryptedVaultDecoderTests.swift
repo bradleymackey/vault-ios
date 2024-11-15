@@ -1,12 +1,13 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultBackup
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class EncryptedVaultDecoderTests: XCTestCase {
-    func test_verifyCanDecrypt_successIfDecryptionSuccess() throws {
+struct EncryptedVaultDecoderTests {
+    @Test
+    func verifyCanDecrypt_successIfDecryptionSuccess() throws {
         let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT()
@@ -14,30 +15,32 @@ final class EncryptedVaultDecoderTests: XCTestCase {
         try sut.verifyCanDecrypt(key: password.key, encryptedVault: encryptedBackup)
     }
 
-    func test_verifyCanDecrypt_throwsDecryptionErrorIfFailed() throws {
+    @Test
+    func verifyCanDecrypt_throwsDecryptionErrorIfFailed() throws {
         let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT()
 
-        let error: EncryptedVaultDecoderError? = try withCatchingSomeError {
+        #expect(throws: EncryptedVaultDecoderError.decryption) {
             try sut.verifyCanDecrypt(key: .random(), encryptedVault: encryptedBackup)
         }
-        XCTAssertEqual(error, .decryption)
     }
 
-    func test_decryptAndDecode_decodesWithNoItems() throws {
+    @Test
+    func decryptAndDecode_decodesWithNoItems() throws {
         let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT()
 
         let decoded = try sut.decryptAndDecode(key: password.key, encryptedVault: encryptedBackup)
 
-        XCTAssertEqual(decoded.items, [])
-        XCTAssertEqual(decoded.tags, [])
-        XCTAssertEqual(decoded.userDescription, "my backup")
+        #expect(decoded.items == [])
+        #expect(decoded.tags == [])
+        #expect(decoded.userDescription == "my backup")
     }
 
-    func test_decryptAndDecode_decodesWithItems() throws {
+    @Test
+    func decryptAndDecode_decodesWithItems() throws {
         let item1 = uniqueVaultItem()
         let tag1 = VaultItemTag(id: .init(id: UUID()), name: "tag1")
         let tag2 = VaultItemTag(id: .init(id: UUID()), name: "tag2")
@@ -52,20 +55,20 @@ final class EncryptedVaultDecoderTests: XCTestCase {
 
         let decoded = try sut.decryptAndDecode(key: password.key, encryptedVault: encryptedBackup)
 
-        XCTAssertEqual(decoded.items.map(\.id), [item1].map(\.id))
-        XCTAssertEqual(decoded.tags, [tag1, tag2])
-        XCTAssertEqual(decoded.userDescription, "my backup description")
+        #expect(decoded.items.map(\.id) == [item1].map(\.id))
+        #expect(decoded.tags == [tag1, tag2])
+        #expect(decoded.userDescription == "my backup description")
     }
 
-    func test_decryptAndDecode_throwsDecryptionErrorIfFailed() throws {
+    @Test
+    func decryptAndDecode_throwsDecryptionErrorIfFailed() throws {
         let password = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let encryptedBackup = try makeEncryptedVault(password: password, description: "my backup", items: [], tags: [])
         let sut = makeSUT()
 
-        let error: EncryptedVaultDecoderError? = try withCatchingSomeError {
+        #expect(throws: EncryptedVaultDecoderError.decryption) {
             _ = try sut.decryptAndDecode(key: .random(), encryptedVault: encryptedBackup)
         }
-        XCTAssertEqual(error, .decryption)
     }
 }
 
