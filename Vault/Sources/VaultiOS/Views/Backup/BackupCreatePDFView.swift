@@ -17,7 +17,6 @@ struct BackupCreatePDFView: View {
     var body: some View {
         Form {
             optionsSection
-            createSection
         }
         .navigationTitle(Text("Create PDF"))
         .navigationBarTitleDisplayMode(.inline)
@@ -44,28 +43,32 @@ struct BackupCreatePDFView: View {
                 .frame(minHeight: 150)
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets())
+        } footer: {
+            VStack(alignment: .center, spacing: 8) {
+                createPDFButton
+                if case let .error(presentationError) = viewModel.state {
+                    Label(
+                        presentationError.userDescription ?? presentationError.userTitle,
+                        systemImage: "exclamationmark.triangle.fill"
+                    )
+                    .foregroundStyle(.red)
+                    .font(.caption)
+                }
+            }
+            .padding(16)
+            .frame(maxWidth: .infinity)
         }
     }
 
-    private var createSection: some View {
-        Section {
-            AsyncButton {
-                await viewModel.createPDF()
-            } label: {
-                FormRow(image: Image(systemName: "checkmark.circle.fill"), color: .accentColor, style: .standard) {
-                    Text("Make PDF")
-                }
-            } loading: {
-                ProgressView()
-            }
-        } footer: {
-            if case let .error(presentationError) = viewModel.state {
-                Label(
-                    presentationError.userDescription ?? presentationError.userTitle,
-                    systemImage: "exclamationmark.triangle.fill"
-                )
-                .foregroundStyle(.red)
-            }
+    private var createPDFButton: some View {
+        AsyncButton {
+            await viewModel.createPDF()
+        } label: {
+            Label("Make PDF", systemImage: "checkmark.circle.fill")
+        } loading: {
+            ProgressView()
+                .tint(.white)
         }
+        .modifier(ProminentButtonModifier())
     }
 }
