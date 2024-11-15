@@ -25,6 +25,7 @@ struct VaultSettingsView: View {
             headerSection
             aboutSection
             viewOptionsSection
+            dangerSection
         }
         .navigationTitle(viewModel.title)
         .sheet(item: $modal, onDismiss: nil) { item in
@@ -86,7 +87,11 @@ struct VaultSettingsView: View {
                     Text(viewModel.pasteTTLTitle)
                 }
             }
+        }
+    }
 
+    private var dangerSection: some View {
+        Section {
             Button {
                 modal = .danger
             } label: {
