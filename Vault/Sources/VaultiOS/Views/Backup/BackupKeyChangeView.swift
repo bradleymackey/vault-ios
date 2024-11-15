@@ -98,31 +98,36 @@ struct BackupKeyChangeView: View {
                         await viewModel.saveEnteredPassword()
                     }
                 } label: {
-                    Text("Generate Encryption Key")
+                    Label("Generate Key", systemImage: "key.2.on.ring.fill")
                 }
                 .modifier(ProminentButtonModifier())
                 .animation(.none, value: viewModel.newPassword)
                 .disabled(!viewModel.canGenerateNewPassword)
                 .opacity(viewModel.canGenerateNewPassword ? 1 : 0.5)
 
-                switch viewModel.newPassword {
-                case .success:
-                    Label("Vault encryption key updated successfully", systemImage: "checkmark.circle.fill")
-                        .foregroundStyle(.green)
-                case .keygenError, .keygenCancelled:
-                    Label("Error generating encryption key", systemImage: "xmark.octagon.fill")
-                        .foregroundStyle(.red)
-                case .creating:
-                    HStack(alignment: .center, spacing: 4) {
-                        ProgressView()
-                        Text("Generating encryption key")
+                Group {
+                    switch viewModel.newPassword {
+                    case .success:
+                        Label("Vault encryption key updated successfully", systemImage: "checkmark.circle.fill")
+                            .foregroundStyle(.green)
+                    case .keygenError, .keygenCancelled:
+                        Label("Error generating encryption key", systemImage: "xmark.octagon.fill")
+                            .foregroundStyle(.red)
+                    case .creating:
+                        HStack(alignment: .center, spacing: 4) {
+                            ProgressView()
+                            Text("Generating encryption key")
+                        }
+                        .foregroundStyle(.secondary)
+                    case .passwordConfirmError:
+                        Label("Passwords do not match", systemImage: "xmark")
+                            .foregroundStyle(.red)
+                    case .initial:
+                        EmptyView()
                     }
-                case .passwordConfirmError:
-                    Label("Passwords do not match", systemImage: "xmark")
-                        .foregroundStyle(.red)
-                case .initial:
-                    EmptyView()
                 }
+                .font(.caption)
+                .animation(.none, value: viewModel.newlyEnteredPassword)
             }
             .padding()
             .modifier(HorizontallyCenter())
@@ -140,7 +145,7 @@ struct BackupKeyChangeView: View {
                         "For security, this key generation process may take up to 3 minutes, even on a very fast device."
                     )
                     Text(
-                        "The encryption key is not automatically synced between devices, it must be shared manually. This is also for security."
+                        "Your encryption key is not shared between devices."
                     )
                 }
                 .font(.callout)

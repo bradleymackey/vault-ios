@@ -19,9 +19,6 @@ struct VaultTagDetailView: View {
             previewSection
             tagNameSection
             iconSection
-            if viewModel.isExistingItem {
-                deleteSection
-            }
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -102,22 +99,26 @@ struct VaultTagDetailView: View {
             }
         } header: {
             Text("Icon")
+        } footer: {
+            if viewModel.isExistingItem {
+                deleteButton
+                    .padding()
+                    .modifier(HorizontallyCenter())
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var deleteSection: some View {
-        Section {
-            AsyncButton {
-                await viewModel.delete()
-                dismiss()
-            } label: {
-                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
-                    Text("Delete Tag")
-                }
-                .foregroundStyle(.red)
-            } loading: {
-                ProgressView()
-            }
+    private var deleteButton: some View {
+        AsyncButton {
+            await viewModel.delete()
+            dismiss()
+        } label: {
+            Label("Delete Tag", systemImage: "trash.fill")
+        } loading: {
+            ProgressView()
+                .tint(.white)
         }
+        .modifier(ProminentButtonModifier(color: .red))
     }
 }

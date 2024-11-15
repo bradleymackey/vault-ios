@@ -95,10 +95,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 }
                 nameEditingSection
                 descriptionEditingSection
-                passphraseEditingSection
-                if viewModel.shouldShowDeleteButton {
-                    deleteSection
-                }
+                editingActionsSection
             } else {
                 if case let .editing(code, metadata) = viewModel.mode {
                     codeInformationSection(code: code, metadata: metadata)
@@ -364,7 +361,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         }
     }
 
-    private var passphraseEditingSection: some View {
+    private var editingActionsSection: some View {
         Section {
             Button {
                 modal = .editPassphrase
@@ -434,21 +431,23 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     }
                 }
             }
+        } footer: {
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .padding()
+                    .modifier(HorizontallyCenter())
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var deleteSection: some View {
-        Section {
-            Button {
-                isShowingDeleteConfirmation = true
-            } label: {
-                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
-                    Text(localized(key: "action.delete.title"))
-                        .fontWeight(.medium)
-                }
-            }
-            .foregroundStyle(.red)
+    private var deleteButton: some View {
+        Button {
+            isShowingDeleteConfirmation = true
+        } label: {
+            Label(localized(key: "action.delete.title"), systemImage: "trash.fill")
         }
+        .modifier(ProminentButtonModifier(color: .red))
     }
 
     func copyableViewGenerator() -> VaultItemOnTapDecoratorViewGenerator<PreviewGenerator> {

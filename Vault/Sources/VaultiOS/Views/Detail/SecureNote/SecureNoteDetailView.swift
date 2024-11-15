@@ -71,10 +71,7 @@ struct SecureNoteDetailView: View {
             ) {
                 if viewModel.isInEditMode {
                     noteContentsEditingSection
-                    passphraseEditingSection
-                    if viewModel.shouldShowDeleteButton {
-                        deleteSection
-                    }
+                    editingActionsSection
                 } else {
                     noteContentsSection(size: reader.size)
                 }
@@ -277,7 +274,7 @@ struct SecureNoteDetailView: View {
         }
     }
 
-    private var passphraseEditingSection: some View {
+    private var editingActionsSection: some View {
         Section {
             Picker(selection: $viewModel.editingModel.detail.textFormat) {
                 ForEach(TextFormat.allCases, id: \.self) { format in
@@ -371,21 +368,23 @@ struct SecureNoteDetailView: View {
                     }
                 }
             }
+        } footer: {
+            if viewModel.shouldShowDeleteButton {
+                deleteButton
+                    .padding()
+                    .modifier(HorizontallyCenter())
+                    .padding(.vertical, 16)
+            }
         }
     }
 
-    private var deleteSection: some View {
-        Section {
-            Button {
-                isShowingDeleteConfirmation = true
-            } label: {
-                FormRow(image: .init(systemName: "trash.fill"), color: .red, style: .standard) {
-                    Text(localized(key: "action.delete.title"))
-                        .fontWeight(.medium)
-                }
-            }
-            .foregroundStyle(.red)
+    private var deleteButton: some View {
+        Button {
+            isShowingDeleteConfirmation = true
+        } label: {
+            Label(localized(key: "action.delete.title"), systemImage: "trash.fill")
         }
+        .modifier(ProminentButtonModifier(color: .red))
     }
 }
 

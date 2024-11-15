@@ -51,10 +51,8 @@ public struct VaultItemFeedView<
 
     private var noCodesFoundView: some View {
         VStack(alignment: .center, spacing: 12) {
-            Image(systemName: "key.viewfinder")
-                .font(.largeTitle)
-            Text(localized(key: "codeFeed.noCodes.title"))
-                .font(.callout.bold())
+            Label(localized(key: "codeFeed.noCodes.title"), systemImage: "key.horizontal")
+                .font(.callout)
         }
         .textCase(.none)
         .multilineTextAlignment(.center)

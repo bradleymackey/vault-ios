@@ -5,6 +5,7 @@ import VaultFeed
 struct SettingsDangerView: View {
     private var viewModel: SettingsDangerViewModel
     @State private var deleteError: PresentationError?
+    @State private var deleteAllSuccess = false
 
     init(viewModel: SettingsDangerViewModel) {
         self.viewModel = viewModel
@@ -13,7 +14,6 @@ struct SettingsDangerView: View {
     var body: some View {
         Form {
             headerSection
-            actionSection
         }
         .navigationBarTitleDisplayMode(.inline)
         .interactiveDismissDisabled(viewModel.isDeleting)
@@ -29,37 +29,47 @@ struct SettingsDangerView: View {
             .padding()
             .containerRelativeFrame(.horizontal)
             .foregroundStyle(.red)
+        } footer: {
+            VStack(alignment: .center, spacing: 16) {
+                deleteAllButton
+            }
+            .padding(16)
         }
     }
 
-    private var actionSection: some View {
-        Section {
+    private var deleteAllButton: some View {
+        VStack(alignment: .center, spacing: 8) {
             AsyncButton {
                 do {
+                    deleteAllSuccess = false
                     withAnimation {
                         deleteError = nil
                     }
                     try await viewModel.deleteEntireVault()
+                    deleteAllSuccess = true
                 } catch let error as PresentationError {
                     withAnimation {
                         deleteError = error
                     }
                 }
             } label: {
-                let desc = deleteError?.userDescription
-                FormRow(
-                    image: Image(systemName: "trash.fill"),
-                    color: .red,
-                    style: .standard,
-                    alignment: desc == nil ? .center : .firstTextBaseline
-                ) {
-                    TextAndSubtitle(title: "Delete All Data", subtitle: desc)
-                }
+                Label("Delete All Data", systemImage: "trash.fill")
             } loading: {
                 ProgressView()
-                    .tint(.red)
+                    .tint(.white)
             }
-            .tint(.red)
+            .modifier(ProminentButtonModifier(color: .red))
+
+            Group {
+                if deleteAllSuccess {
+                    Label("Vault deleted successfully", systemImage: "checkmark")
+                } else if let deleteError {
+                    Text(deleteError.userDescription ?? "Error deleting data.")
+                }
+            }
+            .font(.caption)
+            .foregroundStyle(.secondary)
         }
+        .frame(maxWidth: .infinity)
     }
 }
