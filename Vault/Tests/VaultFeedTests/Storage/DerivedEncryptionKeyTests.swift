@@ -1,11 +1,12 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class DerivedEncryptionKeyTests: XCTestCase {
-    func test_newVaultKeyWithRandomIV_usesSameKeyEachTime() throws {
+struct DerivedEncryptionKeyTests {
+    @Test
+    func newVaultKeyWithRandomIV_usesSameKeyEachTime() throws {
         let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
 
         var seenKeys = Set<KeyData<Bits256>>()
@@ -14,10 +15,11 @@ final class DerivedEncryptionKeyTests: XCTestCase {
             seenKeys.insert(newKey.key)
         }
 
-        XCTAssertEqual(seenKeys.count, 1)
+        #expect(seenKeys.count == 1)
     }
 
-    func test_newVaultKeyWithRandomIV_usesRandomIVEachTime() throws {
+    @Test
+    func newVaultKeyWithRandomIV_usesRandomIVEachTime() throws {
         let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
 
         var seenIVs = Set<KeyData<Bits256>>()
@@ -26,6 +28,6 @@ final class DerivedEncryptionKeyTests: XCTestCase {
             seenIVs.insert(newKey.iv)
         }
 
-        XCTAssertEqual(seenIVs.count, 10)
+        #expect(seenIVs.count == 10)
     }
 }
