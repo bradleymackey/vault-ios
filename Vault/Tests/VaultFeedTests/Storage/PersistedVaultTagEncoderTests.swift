@@ -1,32 +1,24 @@
 import Foundation
 import SwiftData
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class PersistedVaultTagEncoderTests: XCTestCase {
-    // swiftlint:disable:next implicitly_unwrapped_optional
-    private var context: ModelContext!
+final class PersistedVaultTagEncoderTests {
+    private let context: ModelContext
 
-    override func setUp() async throws {
-        try await super.setUp()
-
+    init() throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: PersistedVaultItem.self, configurations: config)
         context = ModelContext(container)
-    }
-
-    override func tearDown() async throws {
-        try await super.tearDown()
-
-        context = nil
     }
 }
 
 // MARK: - Encoding
 
 extension PersistedVaultTagEncoderTests {
-    func test_encode_newItemCreatedUUID() throws {
+    @Test
+    func encode_newItemCreatedUUID() throws {
         let sut = makeSUT()
 
         var seenIds = Set<UUID>()
@@ -35,39 +27,42 @@ extension PersistedVaultTagEncoderTests {
             let encoded = encode(sut: sut, tag: item)
             seenIds.insert(encoded.id)
         }
-        XCTAssertEqual(seenIds.count, 100)
+        #expect(seenIds.count == 100)
     }
 
-    func test_encode_name() throws {
+    @Test
+    func encode_name() throws {
         let name = "my tag name"
         let sut = makeSUT()
         let item = makeWritableVaultItemTag(name: name)
 
         let encoded = encode(sut: sut, tag: item)
 
-        XCTAssertEqual(encoded.title, name)
+        #expect(encoded.title == name)
     }
 
-    func test_encode_colorWithValues() throws {
+    @Test
+    func encode_colorWithValues() throws {
         let sut = makeSUT()
         let color = VaultItemColor(red: 0.5, green: 0.6, blue: 0.7)
         let item = makeWritableVaultItemTag(color: color)
 
         let encoded = encode(sut: sut, tag: item)
 
-        XCTAssertEqual(encoded.color?.red, 0.5)
-        XCTAssertEqual(encoded.color?.green, 0.6)
-        XCTAssertEqual(encoded.color?.blue, 0.7)
+        #expect(encoded.color?.red == 0.5)
+        #expect(encoded.color?.green == 0.6)
+        #expect(encoded.color?.blue == 0.7)
     }
 
-    func test_encode_iconName() throws {
+    @Test
+    func encode_iconName() throws {
         let name = "my icon name"
         let sut = makeSUT()
         let item = makeWritableVaultItemTag(iconName: name)
 
         let encoded = encode(sut: sut, tag: item)
 
-        XCTAssertEqual(encoded.iconName, name)
+        #expect(encoded.iconName == name)
     }
 }
 
@@ -94,20 +89,6 @@ extension PersistedVaultTagEncoderTests {
         iconName: String = VaultItemTag.defaultIconName
     ) -> VaultItemTag.Write {
         .init(
-            name: name,
-            color: color,
-            iconName: iconName
-        )
-    }
-
-    private func makeVaultItemTag(
-        id: UUID = UUID(),
-        name: String = "Any",
-        color: VaultItemColor = .tagDefault,
-        iconName: String = VaultItemTag.defaultIconName
-    ) -> VaultItemTag {
-        .init(
-            id: .init(id: id),
             name: name,
             color: color,
             iconName: iconName
