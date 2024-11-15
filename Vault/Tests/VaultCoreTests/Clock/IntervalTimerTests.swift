@@ -66,20 +66,28 @@ enum IntervalTimerTests {
 
         @Test
         func wait_multipleWaitsCanCompleteIndependently() async throws {
-            try await confirmation { confirmation in
-                let started = Pending.signal()
-                Task {
-                    await started.fulfill()
-                    try await sut.wait(for: 10)
-                    try await sut.wait(for: 10)
-                    try await sut.wait(for: 10)
-                    confirmation.confirm()
+            try await confirmation(expectedCount: 3) { confirmation in
+                for _ in 0 ..< 3 {
+                    let started = Pending.signal()
+                    Task(priority: .high) {
+                        await started.fulfill()
+                        try await sut.wait(for: 10)
+                        confirmation.confirm()
+                    }
+                    try await started.wait()
+                    // Let the wait actually start, this should be enough time for this to register.
+                    // It's not ideal explicitly waiting for some random time, but it's the best we can instrument this
+                    // for now to make sure the 'wait' is actually settled and waiting.
+                    try await Task.sleep(for: .milliseconds(200))
+                    await Task.yield()
                 }
 
-                try await started.wait()
                 await sut.finishTimer(at: 0)
+                await Task.yield()
                 await sut.finishTimer(at: 1)
+                await Task.yield()
                 await sut.finishTimer(at: 2)
+                await Task.yield()
             }
         }
 
