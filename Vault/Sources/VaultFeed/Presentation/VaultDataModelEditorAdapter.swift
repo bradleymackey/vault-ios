@@ -106,18 +106,18 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             // An explicit new encryption password has been specified.
             // Derive the key and encrypt the item.
             let keyDervier = keyDeriverFactory.makeVaultItemKeyDeriver()
-            let encryptionKey = try await Task.continuation {
+            let encryptionKey = try await Task.background {
                 try keyDervier.createEncryptionKey(password: edits.newEncryptionPassword)
             }
             let encryptor = VaultItemEncryptor(key: encryptionKey)
-            let encryptedNote = try await Task.continuation {
+            let encryptedNote = try await Task.background {
                 try encryptor.encrypt(item: note)
             }
             return .encryptedItem(encryptedNote)
         } else if let encryptionKey = edits.existingEncryptionKey {
             // Use the existing encryption key, as the user does not want to override the existing one.
             let encryptor = VaultItemEncryptor(key: encryptionKey)
-            let encryptedNote = try await Task.continuation {
+            let encryptedNote = try await Task.background {
                 try encryptor.encrypt(item: note)
             }
             return .encryptedItem(encryptedNote)

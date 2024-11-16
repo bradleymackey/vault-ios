@@ -1,40 +1,39 @@
 import Foundation
 import FoundationExtensions
-import os
 import TestHelpers
 import Testing
 
-@Suite("Task Continuation Tests", .timeLimit(.minutes(1)))
-struct TaskContinuationTests {
+@Suite("Task Background Tests", .timeLimit(.minutes(1)))
+struct TaskBackgroundTests {
     @Test
     func runsTaskToCompletion() async throws {
         try await confirmation(expectedCount: 1) { confirmation in
-            try await Task.continuation {
+            try await Task.background {
                 confirmation.confirm()
             }
         }
     }
 
     @Test
-    func cancelsBeforeTaskRuns() async throws {
+    func rethrowsCancellation() async throws {
         let pending1 = Pending.signal()
         let waiter = TaskCancellationWaiter()
         let outer = Task.detached {
-            await pending1.fulfill()
-            await waiter.waitForTaskCancellation()
-            let result = try await Task.continuation {
-                Issue.record("Should not reach here, task should never start.")
+            let result = try await Task.background {
+                await pending1.fulfill()
+                try await waiter.wait()
                 return 100
             }
-            Issue.record("Cancellation error should be thrown from continuation")
+            Issue.record("Should not reach here: Task.background should throw CancellationError")
             return result
         }
+
         try await pending1.wait() // wait for task to start
 
         outer.cancel()
 
-        await #expect(throws: CancellationError.self, performing: {
+        await #expect(throws: CancellationError.self) {
             try await outer.result.get()
-        })
+        }
     }
 }
