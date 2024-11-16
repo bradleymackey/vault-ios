@@ -17,15 +17,12 @@ struct TaskBackgroundTests {
     @Test
     func rethrowsCancellation() async throws {
         let pending1 = Pending.signal()
-        let waiter = TaskCancellationWaiter()
         let outer = Task.detached {
-            let result = try await Task.background {
+            try await Task.background {
                 await pending1.fulfill()
-                try await waiter.wait()
-                return 100
+                try await suspendForever()
             }
             Issue.record("Should not reach here: Task.background should throw CancellationError")
-            return result
         }
 
         try await pending1.wait() // wait for task to start
