@@ -50,6 +50,8 @@ extension Pending {
     /// - throws: `CancellationError` if cancelled, `AlreadyWaitingError` if already waiting, `TimeoutError` if the
     /// given `timeout` is reached before a value is produced.
     public func wait(timeout: Duration? = nil) async throws -> Value {
+        try Task.checkCancellation()
+
         if isWaiting {
             throw Error.alreadyWaiting
         }
@@ -81,6 +83,8 @@ extension Pending {
                 throw CancellationError()
             }
         }
+
+        try Task.checkCancellation()
 
         if let timeout {
             return try await Task.withTimeout(delay: timeout) {
