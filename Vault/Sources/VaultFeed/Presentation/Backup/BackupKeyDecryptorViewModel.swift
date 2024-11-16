@@ -82,7 +82,7 @@ public final class BackupKeyDecryptorViewModel {
             let keyDeriver = keyDeriverFactory.lookupVaultKeyDeriver(signature: signature)
             let password = enteredPassword
             let salt = encryptedVault.keygenSalt
-            let generatedKey = try await Task.continuation {
+            let generatedKey = try await Task.background {
                 try keyDeriver.recreateEncryptionKey(password: password, salt: salt)
             }
             let vaultApplicationPayload = try encryptedVaultDecoder.decryptAndDecode(

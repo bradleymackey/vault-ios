@@ -59,7 +59,7 @@ public final class EncryptedItemDetailViewModel {
             let keyDeriver = keyDeriverFactory.lookupVaultKeyDeriver(signature: signature)
             let password = enteredEncryptionPassword
             let salt = item.keygenSalt
-            let generatedPassword = try await Task.continuation {
+            let generatedPassword = try await Task.background {
                 try keyDeriver.recreateEncryptionKey(password: password, salt: salt)
             }
             let action = attemptDecryption(password: generatedPassword)
