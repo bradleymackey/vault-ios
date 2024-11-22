@@ -71,10 +71,10 @@ public struct VaultItemFeedView<
     }
 
     private var listOfCodesView: some View {
-        VStack(alignment: .leading) {
-            listOfCodesHeader
+        ZStack(alignment: .top) {
+            @Bindable var dataModel = dataModel
             ScrollView(.vertical, showsIndicators: true) {
-                Spacer(minLength: 8)
+                Spacer(minLength: 64)
                 LazyVGrid(columns: columns) {
                     Section {
                         if dataModel.items.isNotEmpty {
@@ -90,36 +90,40 @@ public struct VaultItemFeedView<
                 .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
             }
             .scrollTargetBehavior(.viewAligned)
+            .searchable(text: $dataModel.itemsSearchQuery, placement: .automatic)
+
+            if dataModel.allTags.isNotEmpty {
+                filteringByTagsSection
+                    .padding(.vertical, 2)
+                    .padding(.horizontal)
+                    .background(Color(UIColor.systemBackground))
+                    .animation(.easeOut, value: dataModel.itemsFilteringByTags)
+            }
         }
     }
 
-    private var listOfCodesHeader: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            @Bindable var dataModel = dataModel
-            SearchTextField(title: "Search", text: $dataModel.itemsSearchQuery)
-            if dataModel.allTags.isNotEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(dataModel.allTags) { tag in
-                            TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
-                                .id(tag)
-                                .onTapGesture {
-                                    dataModel.toggleFiltering(tag: tag.id)
-                                }
-                        }
+    private var filteringByTagsSection: some View {
+        VStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(dataModel.allTags) { tag in
+                        TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
+                            .id(tag)
+                            .onTapGesture {
+                                dataModel.toggleFiltering(tag: tag.id)
+                            }
                     }
-                    .font(.callout)
                 }
-                .scrollClipDisabled()
-                if dataModel.itemsFilteringByTags.isNotEmpty {
-                    filteringByTagsInfoSection
-                }
+                .font(.callout)
+                .padding(.vertical, 4)
+            }
+            .scrollClipDisabled()
+
+            if dataModel.itemsFilteringByTags.isNotEmpty {
+                filteringByTagsInfoSection
+                    .padding(.horizontal, 8)
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal)
-        .background(Color(UIColor.systemBackground))
-        .animation(.easeOut, value: dataModel.itemsFilteringByTags)
     }
 
     /// Small informational section when we are filtering by tags
