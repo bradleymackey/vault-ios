@@ -70,49 +70,32 @@ public struct VaultItemFeedView<
         }
     }
 
-    @State private var filteringByTagsHeight: CGFloat = 0
-
     private var listOfCodesView: some View {
-        ZStack(alignment: .top) {
-            @Bindable var dataModel = dataModel
-            ScrollView(.vertical, showsIndicators: true) {
-                LazyVGrid(columns: columns) {
-                    Section {
-                        if dataModel.items.isNotEmpty {
-                            vaultItemsList
-                        } else {
-                            noCodesFoundView
-                        }
-                    }
-                }
-                .scrollTargetLayout()
-                .padding(.horizontal)
-                .padding(.bottom)
-                .padding(.top, filteringByTagsHeight + 8)
-                .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
-            }
-            .scrollTargetBehavior(.viewAligned)
-            .searchable(text: $dataModel.itemsSearchQuery, placement: .automatic)
-
+        @Bindable var dataModel = dataModel
+        return ScrollView(.vertical, showsIndicators: true) {
             if dataModel.allTags.isNotEmpty {
                 filteringByTagsSection
                     .padding(.top, 1)
+                    .padding(.bottom, 4)
                     .padding(.horizontal)
-                    .background(Color(UIColor.systemBackground))
                     .animation(.easeOut, value: dataModel.itemsFilteringByTags)
-                    .background(
-                        GeometryReader { geometry in
-                            Color.clear
-                                .onAppear {
-                                    filteringByTagsHeight = geometry.size.height
-                                }
-                                .onChange(of: dataModel.itemsFilteringByTags) { _, _ in
-                                    filteringByTagsHeight = geometry.size.height
-                                }
-                        }
-                    )
             }
+
+            LazyVGrid(columns: columns) {
+                Section {
+                    if dataModel.items.isNotEmpty {
+                        vaultItemsList
+                    } else {
+                        noCodesFoundView
+                    }
+                }
+            }
+            .scrollTargetLayout()
+            .padding(.horizontal)
+            .padding(.bottom)
+            .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
         }
+        .searchable(text: $dataModel.itemsSearchQuery)
     }
 
     private var filteringByTagsSection: some View {
@@ -128,7 +111,6 @@ public struct VaultItemFeedView<
                     }
                 }
                 .font(.callout)
-                .padding(.vertical, 4)
             }
             .scrollClipDisabled()
 
