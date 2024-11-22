@@ -70,11 +70,12 @@ public struct VaultItemFeedView<
         }
     }
 
+    @State private var filteringByTagsHeight: CGFloat = 0
+
     private var listOfCodesView: some View {
         ZStack(alignment: .top) {
             @Bindable var dataModel = dataModel
             ScrollView(.vertical, showsIndicators: true) {
-                Spacer(minLength: 64)
                 LazyVGrid(columns: columns) {
                     Section {
                         if dataModel.items.isNotEmpty {
@@ -87,6 +88,7 @@ public struct VaultItemFeedView<
                 .scrollTargetLayout()
                 .padding(.horizontal)
                 .padding(.bottom)
+                .padding(.top, filteringByTagsHeight + 8)
                 .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
             }
             .scrollTargetBehavior(.viewAligned)
@@ -94,10 +96,21 @@ public struct VaultItemFeedView<
 
             if dataModel.allTags.isNotEmpty {
                 filteringByTagsSection
-                    .padding(.vertical, 2)
+                    .padding(.top, 1)
                     .padding(.horizontal)
                     .background(Color(UIColor.systemBackground))
                     .animation(.easeOut, value: dataModel.itemsFilteringByTags)
+                    .background(
+                        GeometryReader { geometry in
+                            Color.clear
+                                .onAppear {
+                                    filteringByTagsHeight = geometry.size.height
+                                }
+                                .onChange(of: dataModel.itemsFilteringByTags) { _, _ in
+                                    filteringByTagsHeight = geometry.size.height
+                                }
+                        }
+                    )
             }
         }
     }
