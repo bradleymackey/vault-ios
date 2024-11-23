@@ -71,55 +71,54 @@ public struct VaultItemFeedView<
     }
 
     private var listOfCodesView: some View {
-        VStack(alignment: .leading) {
-            listOfCodesHeader
-            ScrollView(.vertical, showsIndicators: true) {
-                Spacer(minLength: 8)
-                LazyVGrid(columns: columns) {
-                    Section {
-                        if dataModel.items.isNotEmpty {
-                            vaultItemsList
-                        } else {
-                            noCodesFoundView
-                        }
+        @Bindable var dataModel = dataModel
+        return ScrollView(.vertical, showsIndicators: true) {
+            if dataModel.allTags.isNotEmpty {
+                filteringByTagsSection
+                    .padding(.top, 1)
+                    .padding(.bottom, 4)
+                    .padding(.horizontal)
+                    .animation(.easeOut, value: dataModel.itemsFilteringByTags)
+            }
+
+            LazyVGrid(columns: columns) {
+                Section {
+                    if dataModel.items.isNotEmpty {
+                        vaultItemsList
+                    } else {
+                        noCodesFoundView
                     }
                 }
-                .scrollTargetLayout()
-                .padding(.horizontal)
-                .padding(.bottom)
-                .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
             }
-            .scrollTargetBehavior(.viewAligned)
+            .scrollTargetLayout()
+            .padding(.horizontal)
+            .padding(.bottom)
+            .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
         }
+        .searchable(text: $dataModel.itemsSearchQuery)
     }
 
-    private var listOfCodesHeader: some View {
-        VStack(alignment: .leading, spacing: 12) {
-            @Bindable var dataModel = dataModel
-            SearchTextField(title: "Search", text: $dataModel.itemsSearchQuery)
-            if dataModel.allTags.isNotEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack {
-                        ForEach(dataModel.allTags) { tag in
-                            TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
-                                .id(tag)
-                                .onTapGesture {
-                                    dataModel.toggleFiltering(tag: tag.id)
-                                }
-                        }
+    private var filteringByTagsSection: some View {
+        VStack {
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack {
+                    ForEach(dataModel.allTags) { tag in
+                        TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
+                            .id(tag)
+                            .onTapGesture {
+                                dataModel.toggleFiltering(tag: tag.id)
+                            }
                     }
-                    .font(.callout)
                 }
-                .scrollClipDisabled()
-                if dataModel.itemsFilteringByTags.isNotEmpty {
-                    filteringByTagsInfoSection
-                }
+                .font(.callout)
+            }
+            .scrollClipDisabled()
+
+            if dataModel.itemsFilteringByTags.isNotEmpty {
+                filteringByTagsInfoSection
+                    .padding(.horizontal, 8)
             }
         }
-        .padding(.vertical, 8)
-        .padding(.horizontal)
-        .background(Color(UIColor.systemBackground))
-        .animation(.easeOut, value: dataModel.itemsFilteringByTags)
     }
 
     /// Small informational section when we are filtering by tags
@@ -133,10 +132,15 @@ public struct VaultItemFeedView<
             Button {
                 dataModel.itemsFilteringByTags.removeAll()
             } label: {
-                Label("Clear tags", systemImage: "xmark")
+                Label("Clear Tags", systemImage: "xmark")
             }
-            .fontWeight(.medium)
-            .foregroundStyle(Color.accentColor, .secondary)
+            .fontWeight(.semibold)
+            .font(.caption2)
+            .foregroundStyle(.white)
+            .padding(.vertical, 2)
+            .padding(.horizontal, 8)
+            .background(Color.accentColor)
+            .clipShape(Capsule())
         }
         .font(.caption)
     }
