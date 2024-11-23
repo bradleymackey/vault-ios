@@ -50,7 +50,7 @@ let package = Package(
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.5.0"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.0"),
-        .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.2.1"),
+        .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.4.0"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.0"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: swiftLintVersion),
     ],
