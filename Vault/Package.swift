@@ -4,8 +4,8 @@ import PackageDescription
 
 let swiftLintVersion: Version = "0.57.0"
 let swiftLintChecksum: String = "a1bbafe57538077f3abe4cfb004b0464dcd87e8c23611a2153c675574b858b3a"
-let swiftFormatVersion: Version = "0.54.6"
-let swiftFormatChecksum: String = "c3779e2b05ac0b980ab9fbd291821bc435ce82576ba2c68e8ae9cdc22c0c9648"
+let swiftFormatVersion: Version = "0.55.1"
+let swiftFormatChecksum: String = "fdff5ec7bbd5f4d7e0a0f2d83bbe7e06ef92c063aa414ebefcfab4d746d60189"
 
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
