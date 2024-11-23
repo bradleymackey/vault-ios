@@ -45,7 +45,7 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/pointfreeco/swift-snapshot-testing", exact: "1.17.4"),
-        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.4.1"),
+        .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.5.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.3"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.5.0"),
