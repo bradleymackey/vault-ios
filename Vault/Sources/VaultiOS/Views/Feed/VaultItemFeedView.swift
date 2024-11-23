@@ -132,10 +132,15 @@ public struct VaultItemFeedView<
             Button {
                 dataModel.itemsFilteringByTags.removeAll()
             } label: {
-                Label("Clear tags", systemImage: "xmark")
+                Label("Clear Tags", systemImage: "xmark")
             }
-            .fontWeight(.medium)
-            .foregroundStyle(Color.accentColor, .secondary)
+            .fontWeight(.semibold)
+            .font(.caption2)
+            .foregroundStyle(.white)
+            .padding(.vertical, 2)
+            .padding(.horizontal, 8)
+            .background(Color.accentColor)
+            .clipShape(Capsule())
         }
         .font(.caption)
     }
