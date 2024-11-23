@@ -31,6 +31,10 @@ This gives us a common format and source of truth for fields that should be pres
 └─────────────────────────┘                             └────────────────────┘
 ```
 
+Encrypted items use a custom encoding format, codified by `VaultItemEncryptedContainer`.
+This allow their contents to be fully encrypted within every layer, using a consistent format for each.
+The model type has an identifier associated with it, so if we need to upgrade the format, we can do so without breaking old clients.
+
 ## Key Derivation
 
 Once defined, a key deriver's composition can never be changed for backwards compatibility.
