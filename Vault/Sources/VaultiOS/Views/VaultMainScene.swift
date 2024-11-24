@@ -117,15 +117,15 @@ public struct VaultMainScene: Scene {
             .environment(deviceAuthenticationService)
             .environment(vaultDataModel)
             .environment(injector)
-        }
-        .onChange(of: scenePhase) { _, newValue in
-            switch newValue {
-            case .background:
-                vaultDataModel.purgeSensitiveData()
-            case .active, .inactive:
-                break
-            @unknown default:
-                break
+            .onChange(of: scenePhase) { _, newValue in
+                switch newValue {
+                case .background:
+                    vaultDataModel.purgeSensitiveData()
+                case .active, .inactive:
+                    break
+                @unknown default:
+                    break
+                }
             }
         }
     }
