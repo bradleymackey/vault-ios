@@ -1,11 +1,13 @@
 import Foundation
 import SwiftUI
+import Toasts
 import VaultFeed
 
 struct SettingsDangerView: View {
     private var viewModel: SettingsDangerViewModel
     @State private var deleteError: PresentationError?
-    @State private var deleteAllSuccess = false
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.presentToast) private var presentToast
 
     init(viewModel: SettingsDangerViewModel) {
         self.viewModel = viewModel
@@ -41,12 +43,13 @@ struct SettingsDangerView: View {
         VStack(alignment: .center, spacing: 8) {
             AsyncButton {
                 do {
-                    deleteAllSuccess = false
                     withAnimation {
                         deleteError = nil
                     }
                     try await viewModel.deleteEntireVault()
-                    deleteAllSuccess = true
+                    let deletedToast = ToastValue(icon: Image(systemName: "checkmark"), message: "Vault Deleted")
+                    presentToast(deletedToast)
+                    dismiss()
                 } catch let error as PresentationError {
                     withAnimation {
                         deleteError = error
@@ -60,15 +63,13 @@ struct SettingsDangerView: View {
             }
             .modifier(ProminentButtonModifier(color: .red))
 
-            Group {
-                if deleteAllSuccess {
-                    Label("Vault deleted successfully", systemImage: "checkmark")
-                } else if let deleteError {
+            if let deleteError {
+                Group {
                     Text(deleteError.userDescription ?? "Error deleting data.")
                 }
+                .font(.caption)
+                .foregroundStyle(.secondary)
             }
-            .font(.caption)
-            .foregroundStyle(.secondary)
         }
         .frame(maxWidth: .infinity)
     }

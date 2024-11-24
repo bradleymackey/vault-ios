@@ -15,7 +15,7 @@ struct ThirdPartyLibrariesLoaderTests {
             "SwiftUI-Shimmer",
             "CryptoSwift",
             "SnapshotTesting",
-            "SimpleToast",
+            "swiftui-toasts",
             "Defaults",
             "CodeScanner",
             "swift-security",
