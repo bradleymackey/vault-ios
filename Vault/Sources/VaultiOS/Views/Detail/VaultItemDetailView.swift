@@ -105,6 +105,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                     Label("Unlock", systemImage: "key.horizontal.fill")
                 } loading: {
                     ProgressView()
+                        .tint(.white)
                 }
                 .modifier(ProminentButtonModifier())
                 .containerRelativeFrame(.horizontal)

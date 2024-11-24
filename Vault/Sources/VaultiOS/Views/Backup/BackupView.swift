@@ -43,7 +43,6 @@ struct BackupView: View {
                 }
             }
         }
-        .animation(.default, value: dataModel.backupPassword)
         .navigationTitle(Text(viewModel.strings.homeTitle))
         .task {
             await dataModel.reloadItems()
