@@ -39,6 +39,8 @@ func anyVaultInjector() -> VaultInjector {
     )
 }
 
+struct TestError: Error {}
+
 func anyVaultItemTag(
     id: UUID = UUID(),
     name: String = "name",
