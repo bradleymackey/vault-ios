@@ -1,4 +1,3 @@
-import SimpleToast
 import SwiftUI
 import VaultFeed
 
@@ -15,7 +14,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     @State private var selectedColor: Color
     @State private var currentError: (any Error)?
     @State private var isShowingDeleteConfirmation = false
-    @State private var isShowingCopyPaste = false
     @State private var modal: Modal?
 
     private enum Modal: IdentifiableSelf {
@@ -74,12 +72,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
 
         viewModel.startEditing()
     }
-
-    private let toastOptions = SimpleToastOptions(
-        hideAfter: 1.5,
-        animation: .spring,
-        modifierType: .slide
-    )
 
     var body: some View {
         VaultItemDetailView(
@@ -194,13 +186,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             //
             // Some weird cache issue or something, but this fixes it.
             navigationPath.removeLast(navigationPath.count)
-        }
-        .onReceive(pasteboard.didPaste()) {
-            isShowingCopyPaste = true
-        }
-        .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
-            ToastAlertMessageView.copiedToClipboard()
-                .padding(.top, 24)
         }
     }
 

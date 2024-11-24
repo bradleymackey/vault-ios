@@ -48,6 +48,7 @@ let package = Package(
         .package(url: "https://github.com/attaswift/BigInt.git", exact: "5.5.0"),
         .package(url: "https://github.com/krzyzanowskim/CryptoSwift", exact: "1.8.3"),
         .package(url: "https://github.com/sanzaru/SimpleToast.git", exact: "0.8.1"),
+        .package(url: "https://github.com/sunghyun-k/swiftui-toasts.git", exact: "0.2.0"),
         .package(url: "https://github.com/apple/swift-argument-parser", exact: "1.5.0"),
         .package(url: "https://github.com/twostraws/CodeScanner", exact: "2.5.1"),
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.4.0"),
@@ -64,6 +65,7 @@ let package = Package(
                 "CodeScanner",
                 "FoundationExtensions",
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
+                .product(name: "Toasts", package: "swiftui-toasts"),
             ],
             resources: [
                 .process("Resources/Feed.xcstrings"),

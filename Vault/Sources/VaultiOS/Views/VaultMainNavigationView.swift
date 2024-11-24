@@ -1,5 +1,5 @@
-import SimpleToast
 import SwiftUI
+import Toasts
 import VaultFeed
 import VaultSettings
 
@@ -9,6 +9,7 @@ struct VaultMainNavigationView: View {
     @State var deviceAuthenticationService: DeviceAuthenticationService
     @State var vaultDataModel: VaultDataModel
     @State var injector: VaultInjector
+    @Environment(\.presentToast) private var presentToast
 
     @Environment(\.scenePhase) private var scenePhase
     @State private var isShowingCopyPaste = false
@@ -21,12 +22,6 @@ struct VaultMainNavigationView: View {
         case settings
         case demos
     }
-
-    private let toastOptions = SimpleToastOptions(
-        hideAfter: 1.5,
-        animation: .spring,
-        modifierType: .slide
-    )
 
     var body: some View {
         NavigationSplitView {
@@ -97,11 +92,11 @@ struct VaultMainNavigationView: View {
             }
         }
         .onReceive(pasteboard.didPaste()) {
-            isShowingCopyPaste = true
-        }
-        .simpleToast(isPresented: $isShowingCopyPaste, options: toastOptions, onDismiss: nil) {
-            ToastAlertMessageView.copiedToClipboard()
-                .padding(.top, 24)
+            let toast = ToastValue(
+                icon: Image(systemName: "doc.on.doc.fill"),
+                message: localized(key: "code.copyied")
+            )
+            presentToast(toast)
         }
         .task {
             await vaultDataModel.setup()

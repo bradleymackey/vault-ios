@@ -1,5 +1,5 @@
-import SimpleToast
 import SwiftUI
+import Toasts
 import VaultFeed
 import VaultSettings
 
@@ -25,6 +25,7 @@ public struct VaultMainScene: Scene {
                 vaultDataModel: vaultDataModel,
                 injector: injector
             )
+            .installToast(position: .top)
         }
     }
 }
