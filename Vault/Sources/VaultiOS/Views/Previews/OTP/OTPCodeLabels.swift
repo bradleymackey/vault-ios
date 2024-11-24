@@ -19,6 +19,7 @@ struct OTPCodeLabels: View {
                 .lineLimit(2)
                 .minimumScaleFactor(0.8)
         }
+        .multilineTextAlignment(.leading)
     }
 
     private var issuerNameFormatted: String {
