@@ -29,7 +29,7 @@ public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
     public var keygenSignature: String
 
     public init(
-        version: SemVer = "1.0.0",
+        version: SemVer,
         title: String,
         data: Data,
         authentication: Data,

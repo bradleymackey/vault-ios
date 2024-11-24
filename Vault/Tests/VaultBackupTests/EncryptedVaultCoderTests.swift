@@ -7,6 +7,7 @@ struct EncryptedVaultCoderTests {
     @Test
     func encodeVault_encodesToExpectedFormat() throws {
         let vault = EncryptedVault(
+            version: "1.2.3",
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
@@ -23,7 +24,7 @@ struct EncryptedVaultCoderTests {
               "ENCRYPTION_AUTH_TAG" : "YXV0aA==",
               "ENCRYPTION_DATA" : "ZGF0YQ==",
               "ENCRYPTION_IV" : "aXY=",
-              "ENCRYPTION_VERSION" : "1.0.0",
+              "ENCRYPTION_VERSION" : "1.2.3",
               "KEYGEN_SALT" : "a2V5U2FsdA==",
               "KEYGEN_SIGNATURE" : "signature"
             }
@@ -38,7 +39,7 @@ struct EncryptedVaultCoderTests {
           "ENCRYPTION_AUTH_TAG" : "YXV0aA==",
           "ENCRYPTION_DATA" : "ZGF0YQ==",
           "ENCRYPTION_IV" : "aXY=",
-          "ENCRYPTION_VERSION" : "1.0.0",
+          "ENCRYPTION_VERSION" : "1.3.2",
           "KEYGEN_SALT" : "a2V5U2FsdA==",
           "KEYGEN_SIGNATURE" : "signature"
         }
@@ -48,6 +49,7 @@ struct EncryptedVaultCoderTests {
         let result = try sut.decode(vaultData: vaultData)
 
         #expect(result == EncryptedVault(
+            version: "1.3.2",
             data: Data("data".utf8),
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),

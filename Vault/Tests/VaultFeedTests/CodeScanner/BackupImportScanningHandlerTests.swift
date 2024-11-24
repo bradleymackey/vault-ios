@@ -62,6 +62,7 @@ struct BackupImportScanningHandlerTests {
     @Test
     func decode_fullShardSequenceCompletes() throws {
         let expectedVault = EncryptedVault(
+            version: "1.0.0",
             data: Data(repeating: 0x34, count: 1000),
             authentication: Data(),
             encryptionIV: Data(repeating: 0x46, count: 500),

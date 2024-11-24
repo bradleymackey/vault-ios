@@ -79,6 +79,7 @@ extension VaultBackupPDFGeneratorSnapshotTests {
         let createdDate = Date(timeIntervalSince1970: 1_706_462_841)
         return VaultExportPayload(
             encryptedVault: .init(
+                version: "1.0.0",
                 data: encryptedData,
                 authentication: authData,
                 encryptionIV: ivData,

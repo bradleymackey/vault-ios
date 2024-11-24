@@ -52,6 +52,7 @@ struct VaultItemDecryptorTests {
         let encrypted = try encryptor.encrypt(plaintext: Data("{}".utf8), iv: iv)
         let decryptor = VaultItemDecryptor(key: key)
         let encryptedItem = EncryptedItem(
+            version: "1.0.0",
             title: "ANy",
             data: encrypted.ciphertext,
             authentication: encrypted.authenticationTag,
@@ -137,6 +138,7 @@ struct VaultItemDecryptorTests {
         let encrypted = try encryptor.encrypt(plaintext: Data("{}".utf8), iv: iv)
         let decryptor = VaultItemDecryptor(key: key)
         let encryptedItem = EncryptedItem(
+            version: "1.0.0",
             title: "ANy",
             data: encrypted.ciphertext,
             authentication: encrypted.authenticationTag,

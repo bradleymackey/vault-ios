@@ -8,6 +8,7 @@ struct VaultDecryptorTests {
     func decrypt_emptyDataDecryptsToEmpty() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let vault = EncryptedVault(
+            version: "1.0.0",
             data: Data(),
             authentication: Data(),
             encryptionIV: Data(),
@@ -24,6 +25,7 @@ struct VaultDecryptorTests {
     func decrypt_invalidDataFails() throws {
         let sut = try makeSUT(key: anyVaultKey())
         let vault = EncryptedVault(
+            version: "1.0.0",
             data: Data(hex: "0x1234"),
             authentication: Data(hex: "0x1234"),
             encryptionIV: Data(hex: "0x1234"),
@@ -45,6 +47,7 @@ struct VaultDecryptorTests {
         let encryptedData = Data(hex: "0x4126987aceb598")
         let authentication = Data(hex: "0x4343890cb716dfb9915f8f7c050829ca")
         let vault = EncryptedVault(
+            version: "1.0.0",
             data: encryptedData,
             authentication: authentication,
             encryptionIV: iv,

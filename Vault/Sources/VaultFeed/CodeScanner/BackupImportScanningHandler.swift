@@ -101,6 +101,7 @@ public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHa
             return try encoder.encryptAndEncode(payload: application)
         } catch {
             return EncryptedVault(
+                version: "1.0.0",
                 data: Data(),
                 authentication: Data(),
                 encryptionIV: Data(),

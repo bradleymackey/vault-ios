@@ -68,6 +68,7 @@ func anyEncryptedVault(
     salt: Data = .random(count: 32)
 ) -> EncryptedVault {
     EncryptedVault(
+        version: "1.0.0",
         data: data,
         authentication: Data(),
         encryptionIV: Data(),

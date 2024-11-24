@@ -19,6 +19,7 @@ struct VaultExportPDFDocumentRendererTests {
     func render_rendersVaultParsedToDocument() throws {
         let exportPayload = VaultExportPayload(
             encryptedVault: EncryptedVault(
+                version: "1.0.0",
                 data: Data(),
                 authentication: Data(),
                 encryptionIV: Data(),
@@ -46,6 +47,7 @@ struct VaultExportPDFDocumentRendererTests {
     func render_attachesBackupPayload() throws {
         let exportPayload = VaultExportPayload(
             encryptedVault: EncryptedVault(
+                version: "1.0.0",
                 data: Data(),
                 authentication: Data(),
                 encryptionIV: Data(),
