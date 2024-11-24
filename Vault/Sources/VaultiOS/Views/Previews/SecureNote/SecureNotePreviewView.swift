@@ -11,10 +11,10 @@ struct SecureNotePreviewView: View {
         VStack(alignment: .center, spacing: 8) {
             HStack(alignment: .firstTextBaseline, spacing: 4) {
                 Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")
-                    .font(.headline)
+                    .font(.subheadline.bold())
                     .foregroundStyle(isEditing ? .white : viewModel.color.color)
                 Text(title)
-                    .font(.headline)
+                    .font(.subheadline.bold())
             }
             .foregroundStyle(isEditing ? .white : .primary)
             .tint(.primary)
@@ -25,7 +25,7 @@ struct SecureNotePreviewView: View {
                 Spacer()
 
                 Text(description)
-                    .font(.callout)
+                    .font(.footnote)
                     .foregroundStyle(isEditing ? .white : .secondary)
                     .tint(.secondary)
                     .layoutPriority(99)
