@@ -47,4 +47,54 @@ struct KeyDataTests {
             #expect(seen.contains(key) == false)
         }
     }
+
+    @Test
+    func repeating_createsRepeatingBytes() throws {
+        let key = KeyData<Bits256>.repeating(byte: 0x32)
+
+        #expect(key.data.map { $0 } == Array(repeating: 0x32, count: 32))
+    }
+
+    @Test
+    func zero_createsZeroedKey() throws {
+        let zero = KeyData<Bits256>.zero()
+
+        #expect(zero.data.map { $0 } == Array(repeating: 0, count: 32))
+    }
+
+    struct Coding {
+        @Test
+        func encodesToString() throws {
+            let encoder = JSONEncoder()
+            let key = KeyData<Bits64>.repeating(byte: 0x41)
+            let encoded = try encoder.encode(key)
+            let str = try #require(String(data: encoded, encoding: .utf8))
+
+            #expect(str == #""QUFBQUFBQUE=""#)
+        }
+
+        @Test
+        func decodesFromString() throws {
+            let encoder = JSONEncoder()
+            let key = KeyData<Bits64>.repeating(byte: 0x41)
+            let encoded = try encoder.encode(key)
+
+            let decoder = JSONDecoder()
+            let decoded = try decoder.decode(KeyData<Bits64>.self, from: encoded)
+
+            #expect(decoded == key)
+        }
+    }
+
+    struct KeyLength {
+        @Test
+        func bits64() throws {
+            #expect(KeyData<Bits64>.random().data.count == 8)
+        }
+
+        @Test
+        func bits256() throws {
+            #expect(KeyData<Bits256>.random().data.count == 32)
+        }
+    }
 }

@@ -50,7 +50,7 @@ extension Identifier {
 
 extension Identifier {
     /// Convert the type of this identifier into another type.
-    func map<U>() -> Identifier<U> {
+    public func map<U>() -> Identifier<U> {
         .init(id: id)
     }
 }

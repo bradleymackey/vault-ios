@@ -51,8 +51,7 @@ extension SemVer: Comparable {
     public static func < (lhs: SemVer, rhs: SemVer) -> Bool {
         if lhs.major < rhs.major { return true }
         if lhs.major == rhs.major, lhs.minor < rhs.minor { return true }
-        if lhs.major == rhs.major, lhs.minor == rhs.minor, lhs.patch < rhs.patch { return true }
-        return false
+        return lhs.major == rhs.major && lhs.minor == rhs.minor && lhs.patch < rhs.patch
     }
 
     public func isCompatible(with other: SemVer) -> Bool {
