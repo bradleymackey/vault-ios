@@ -18,7 +18,7 @@ struct SecureNotePreviewView: View {
             }
             .foregroundStyle(isEditing ? .white : .primary)
             .tint(.primary)
-            .multilineTextAlignment(.center)
+            .multilineTextAlignment(.leading)
             .layoutPriority(100)
 
             if let description {
@@ -29,7 +29,7 @@ struct SecureNotePreviewView: View {
                     .foregroundStyle(isEditing ? .white : .secondary)
                     .tint(.secondary)
                     .layoutPriority(99)
-                    .multilineTextAlignment(.center)
+                    .multilineTextAlignment(.leading)
 
                 Spacer()
             }
