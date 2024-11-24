@@ -9,7 +9,7 @@ struct VaultAutofillConfigurationViewSnapshotTests {
     func layout() {
         let viewModel = VaultAutofillConfigurationViewModel(dismissSubject: .init())
         let sut = VaultAutofillConfigurationView(viewModel: viewModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }

@@ -13,7 +13,7 @@ struct VaultDetailLockEditViewSnapshotTests {
             description: "My description",
             lockState: .constant(.lockedWithNativeSecurity)
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -25,7 +25,7 @@ struct VaultDetailLockEditViewSnapshotTests {
             description: "My description",
             lockState: .constant(.notLocked)
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }

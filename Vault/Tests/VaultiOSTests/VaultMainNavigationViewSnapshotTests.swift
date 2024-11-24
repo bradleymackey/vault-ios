@@ -22,7 +22,7 @@ struct VaultMainNavigationViewSnapshotTests {
             vaultDataModel: vaultDataModel,
             injector: injector
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: view, as: .image)
     }

@@ -16,7 +16,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -30,7 +30,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -50,7 +50,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -65,7 +65,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel, state: state)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         state.isEditing = true
         assertSnapshot(of: sut, as: .image, named: "editing")
@@ -88,7 +88,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -108,7 +108,7 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         dataModel.itemsFilteringByTags = [tag1Id]
 

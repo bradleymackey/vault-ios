@@ -9,7 +9,7 @@ final class VaultTagFeedViewSnapshotTests: XCTestCase {
     @MainActor
     func test_layout_noTags() async {
         let sut = await makeSUT()
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -26,7 +26,7 @@ final class VaultTagFeedViewSnapshotTests: XCTestCase {
             ]
         }
         let sut = await makeSUT(vaultTagStore: vaultTagStore)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }

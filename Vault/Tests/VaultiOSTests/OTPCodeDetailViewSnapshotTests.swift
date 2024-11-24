@@ -174,7 +174,7 @@ extension OTPCodeDetailViewSnapshotTests {
                 let snapshottingView = view
                     .dynamicTypeSize(dynamicTypeSize)
                     .preferredColorScheme(colorScheme)
-                    .framedToTestDeviceSize()
+                    .framedForTest()
                     .environment(makePasteboard())
                     .environment(DeviceAuthenticationService(policy: deviceAuthenticationPolicy))
                 let named = "\(colorScheme)_\(dynamicTypeSize)"

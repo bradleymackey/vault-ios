@@ -278,7 +278,7 @@ extension SecureNoteDetailViewSnapshotTests {
                 let snapshottingView = view
                     .dynamicTypeSize(dynamicTypeSize)
                     .preferredColorScheme(colorScheme)
-                    .framedToTestDeviceSize()
+                    .framedForTest()
                     .environment(DeviceAuthenticationService(policy: deviceAuthenticationPolicy))
                 let named = "\(colorScheme)_\(dynamicTypeSize)"
 

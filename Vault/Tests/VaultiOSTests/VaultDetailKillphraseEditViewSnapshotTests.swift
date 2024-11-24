@@ -14,7 +14,7 @@ struct VaultDetailKillphraseEditViewSnapshotTests {
             hiddenWithKillphraseTitle: "This is hidden with passphrase",
             killphrase: .constant("")
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -27,7 +27,7 @@ struct VaultDetailKillphraseEditViewSnapshotTests {
             hiddenWithKillphraseTitle: "This is hidden with passphrase",
             killphrase: .constant("this is kill")
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }

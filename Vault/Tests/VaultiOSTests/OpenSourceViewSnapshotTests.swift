@@ -7,7 +7,7 @@ final class OpenSourceViewSnapshotTests: XCTestCase {
     @MainActor
     func test_deviceSize() {
         let view = OpenSourceView()
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: view, as: .image)
     }

@@ -8,7 +8,7 @@ struct VaultAboutViewSnapshotTests {
     @Test
     func layout() {
         let sut = VaultAboutView(viewModel: .init())
-            .framedToTestDeviceSize()
+            .framedForTest(height: 1200)
 
         assertSnapshot(of: sut, as: .image)
     }

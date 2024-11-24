@@ -10,7 +10,7 @@ struct BackupViewSnapshotTests {
     @Test
     func backupPasswordNotFetched() async throws {
         let sut = makeSUT(dataModel: anyVaultDataModel())
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -24,7 +24,7 @@ struct BackupViewSnapshotTests {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -40,7 +40,7 @@ struct BackupViewSnapshotTests {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -56,7 +56,7 @@ struct BackupViewSnapshotTests {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -76,7 +76,7 @@ struct BackupViewSnapshotTests {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -96,7 +96,7 @@ struct BackupViewSnapshotTests {
         await dataModel.reloadData()
 
         let sut = makeSUT(dataModel: dataModel)
-            .framedToTestDeviceSize()
+            .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
