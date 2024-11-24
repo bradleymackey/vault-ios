@@ -9,7 +9,7 @@ final class LiteratureViewSnapshotTests: XCTestCase {
         let view = NavigationStack {
             LiteratureView(title: "Title", bodyText: .markdown(.init("Body\n\nText\nTest")), bodyColor: .secondary)
         }
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: view, as: .image)
     }
@@ -19,7 +19,7 @@ final class LiteratureViewSnapshotTests: XCTestCase {
         let view = NavigationStack {
             LiteratureView(title: "Title", bodyText: .raw("Body\n\nText\nTest"), bodyColor: .secondary)
         }
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: view, as: .image)
     }

@@ -14,7 +14,7 @@ struct VaultSettingsViewSnapshotTests {
         let view = VaultSettingsView(viewModel: .init(), localSettings: localSettings)
             .environment(dataModel)
             .environment(DeviceAuthenticationService(policy: .alwaysDeny))
-            .framedToTestDeviceSize()
+            .framedForTest(height: 600)
 
         assertSnapshot(of: view, as: .image)
     }

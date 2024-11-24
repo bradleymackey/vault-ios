@@ -48,7 +48,7 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
         .environment(injector)
         .environment(dataModel)
         .environment(DeviceAuthenticationService(policy: .alwaysAllow))
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }

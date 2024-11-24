@@ -15,7 +15,7 @@ struct VaultDetailPassphraseEditViewSnapshotTests {
             viewConfig: .constant(.alwaysVisible),
             passphrase: .constant("this is passphrase")
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
@@ -29,7 +29,7 @@ struct VaultDetailPassphraseEditViewSnapshotTests {
             viewConfig: .constant(.requiresSearchPassphrase),
             passphrase: .constant("this is passphrase")
         )
-        .framedToTestDeviceSize()
+        .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
