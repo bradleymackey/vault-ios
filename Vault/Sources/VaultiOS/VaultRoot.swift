@@ -34,7 +34,7 @@ public enum VaultRoot {
 
     @MainActor
     static let vaultStorageDirectory: URL = {
-        let groupID = "group.dev.mcky.vault.group"
+        let groupID = "group.com.badbundle.vault-group"
         guard let url = fileManager.containerURL(forSecurityApplicationGroupIdentifier: groupID) else {
             fatalError("Unable to access the provided directory")
         }
