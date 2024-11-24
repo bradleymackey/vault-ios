@@ -21,6 +21,7 @@ struct VaultItemEncryptor {
         let iv = KeyData<Bits256>.random()
         let encrypted = try encryptor.encrypt(plaintext: encodedFormat, iv: iv.data)
         return EncryptedItem(
+            version: "1.0.0",
             title: containerEncoding.title,
             data: encrypted.ciphertext,
             authentication: encrypted.authenticationTag,

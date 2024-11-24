@@ -11,14 +11,14 @@ struct VaultBackupDecryptorTests {
         let key = KeyData<Bits256>.repeating(byte: 0xAA)
         let sut = makeSUT(key: key)
 
-        var encryptedVault = EncryptedVault(
+        let encryptedVault = EncryptedVault(
+            version: "2.0.0",
             data: Data(),
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
             keygenSignature: "my-signature"
         )
-        encryptedVault.version = "2.0.0"
 
         #expect(throws: (any Error).self) {
             try sut.decryptBackupPayload(from: encryptedVault)
@@ -31,6 +31,7 @@ struct VaultBackupDecryptorTests {
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
+            version: "1.0.0",
             data: Data(hex: """
             866de95d08a6b24751cdc4e9ab793585614c2062ba690a77762735d1abc866835ad0b54d1e3f29e9ffc4ad1d26a55e3a198ca9f685225042d331df50d64ad495f2a75c30000c6929c6e38a1bbfa16f0d3b81581c0d8f18ffc1df7ec773cfaa16068eb9b00c2de1268a459b3a6ae081dcdf81fe06d80ee23c8c44cb8ae6c61f519ffd7b1ce50efdbcd35e2a1e1eebd0571c924e0ad55f3f85a07b203005aea9e1314e85d36d065de2
             """),
@@ -58,6 +59,7 @@ struct VaultBackupDecryptorTests {
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
+            version: "1.0.0",
             data: Data(hex: """
             866de95d08a6b24751cdc4e9ab793585614c2062ba690a77762735d1abc866835ad0b54d1e3f29e9ffc4ad1d26a55e3a198ca9f685225042d331df50d64ad495f2a75c30000c6929c6e38a1bbfa16f0d3b81581c0d8f18ffc1df7ec773cfaa16068eb9b00c2de1268a459b3a6ae081dcdf81fe06d80ee23c8c44cb8ae6c61f519ffd7b1ce50efdbcd35e2a1e1eebd0571c924e0ad55f3f85a07b203005aea9e1314e85d36d065de2
             """),
@@ -82,6 +84,7 @@ struct VaultBackupDecryptorTests {
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
+            version: "1.0.0",
             data: Data(hex: """
             866de95d08a6b24751cdc4e9ab793585614c2062ba690a77762735d1abc866835ad0b54d1e3f29e9ffc4ad1d26a55e3a198ca9f685225042d331df50d64ad495f2a75c30000c6929c6e38a1bbfa16f0d3b81581c0d8f18ffc1df7ec773cfaa16068eb9b00c2de1268a459b3a6ae081dcdf81fe06d80ee23c8c44cb8ae6c61f519ffd7b1ce50efdbcd35e2a1e1eebd0571c924e0ad55f3f85a07b203005aea9e1314e85d36d065de2
             """),
@@ -107,6 +110,7 @@ struct VaultBackupDecryptorTests {
         let sut = makeSUT(key: key)
 
         let encryptedVault = EncryptedVault(
+            version: "1.0.0",
             data: Data(hex: """
             866de95d08a6b24751cdc4e9ab793585614c2062ba690a77762735d1abc866835ad0b54d1e3f29e9ffc4ad1d26a55e3a198ca9f685225042d331df50d64ad495f2a75c30000c6929c6e38a1bbfa16f0d3b81581c0d8f18ffc1df7ec773cfaa16068eb9b00c2de1268a459b3a6ae081dcdf81fe06d80ee23c8c44cb8ae6c61f519ffd7b1ce50efdbcd35e2a1e1eebd0571c924e0ad55f3f85a07b203005aea9e1314e85d36d065de2
             """),

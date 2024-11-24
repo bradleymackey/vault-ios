@@ -73,6 +73,7 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         let sut = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
         let encryptedItem = EncryptedItem(
+            version: "1.0.0",
             title: "Hello, there!",
             data: .random(count: 10),
             authentication: .random(count: 10),

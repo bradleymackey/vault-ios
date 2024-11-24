@@ -19,6 +19,7 @@ final class VaultEncryptor {
     func encrypt(encodedVault: IntermediateEncodedVault) throws -> EncryptedVault {
         let encrypted = try encryptor.encrypt(plaintext: encodedVault.data, iv: iv)
         return EncryptedVault(
+            version: "1.0.0",
             data: encrypted.ciphertext,
             authentication: encrypted.authenticationTag,
             encryptionIV: iv,

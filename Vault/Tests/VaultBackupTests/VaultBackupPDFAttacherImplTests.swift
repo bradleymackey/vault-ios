@@ -40,6 +40,7 @@ struct VaultBackupPDFAttacherImplTests {
 extension VaultBackupPDFAttacherImplTests {
     private func anyEncryptedVault() -> EncryptedVault {
         EncryptedVault(
+            version: "1.0.0",
             data: Data(),
             authentication: Data(),
             encryptionIV: Data(),

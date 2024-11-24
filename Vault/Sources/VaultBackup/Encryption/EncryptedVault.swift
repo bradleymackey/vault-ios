@@ -12,7 +12,7 @@ public struct EncryptedVault: Equatable, Hashable, Codable, Sendable {
     /// than the vault, as it essentially only needs to store a big block of encrypted data.
     /// Changes to the schema of the Vault, such as new vault items (or new fields on new items) do not need to change
     /// this version number.
-    public var version: SemVer = "1.0.0"
+    public var version: SemVer
     /// The encrypted payload after encryption.
     public var data: Data
     /// Additional data that represents authentication.
@@ -31,12 +31,14 @@ public struct EncryptedVault: Equatable, Hashable, Codable, Sendable {
     public var keygenSignature: String
 
     public init(
+        version: SemVer,
         data: Data,
         authentication: Data,
         encryptionIV: Data,
         keygenSalt: Data,
         keygenSignature: String
     ) {
+        self.version = version
         self.data = data
         self.authentication = authentication
         self.encryptionIV = encryptionIV

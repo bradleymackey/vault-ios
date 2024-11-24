@@ -8,6 +8,7 @@ struct VaultExportDataBlockGeneratorTests {
     func makeDocument_createsExpectedContent() throws {
         let sut = VaultExportDataBlockGenerator(payload: .init(
             encryptedVault: .init(
+                version: "1.0.0",
                 data: Data(),
                 authentication: Data(),
                 encryptionIV: Data(),
@@ -42,6 +43,7 @@ struct VaultExportDataBlockGeneratorTests {
         """
         let sut = VaultExportDataBlockGenerator(payload: .init(
             encryptedVault: .init(
+                version: "1.0.0",
                 data: Data(),
                 authentication: Data(),
                 encryptionIV: Data(),

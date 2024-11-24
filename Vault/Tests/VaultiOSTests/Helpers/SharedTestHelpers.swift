@@ -155,6 +155,7 @@ func anySecureNote() -> SecureNote {
 
 func anyEncryptedItem() -> EncryptedItem {
     .init(
+        version: "1.0.0",
         title: "Hello World",
         data: Data(repeating: 0x03, count: 10),
         authentication: Data(repeating: 0x03, count: 10),
