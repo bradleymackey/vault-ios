@@ -11,10 +11,10 @@ struct EncryptedItemPreviewView: View {
         VStack(alignment: .center, spacing: 4) {
             Spacer()
             Image(systemName: "lock.fill")
-                .font(.headline)
+                .font(.subheadline.bold())
                 .foregroundStyle(isEditing ? .white : viewModel.color.color)
             Text(viewModel.visibleTitle)
-                .font(.headline)
+                .font(.subheadline.bold())
 
             Spacer()
 

@@ -7,18 +7,19 @@ struct OTPCodeLabels: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(issuerNameFormatted)
-                .font(.headline.bold())
+                .font(.footnote.bold())
                 .foregroundStyle(.primary)
                 .lineLimit(2)
                 .multilineTextAlignment(.leading)
                 .truncationMode(.tail)
                 .minimumScaleFactor(0.8)
             Text(accountNameFormatted)
-                .font(.footnote)
+                .font(.caption)
                 .foregroundStyle(.secondary)
-                .lineLimit(2)
-                .minimumScaleFactor(0.8)
+                .lineLimit(1)
+                .minimumScaleFactor(0.5)
         }
+        .multilineTextAlignment(.leading)
     }
 
     private var issuerNameFormatted: String {
