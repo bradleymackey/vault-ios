@@ -1,8 +1,5 @@
 # Vault
 
-> WARNING: Version 1.0 has been used during initial development and is considered unstable.
-> We will increment to 2.0 when the app is storage-resilient.
-
 A secret storage manager (2FA codes, secret notes) with built-in encrypted backup.
 It can create encrypted backups to a portable PDF document that you can print (as a hard copy) or save anywhere to restore from later.
 

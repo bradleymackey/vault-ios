@@ -91,6 +91,12 @@ Algorithm is liable to change.
 Only for use during testing.
 Designed to cause an internal error during key generation.
 
+## Storage Resilience
+
+- Throughout the development of the application, version `1.0` was used as the marketing version of the app.
+- During development, many breaking changes were made to the storage format that makes this version unsafe and unresilient.
+- To respect SemVer, we bumped the marketing version to `2.0` to indicate that the app is now storage resilient.
+
 ## Testing Configuration
 
 <table>
