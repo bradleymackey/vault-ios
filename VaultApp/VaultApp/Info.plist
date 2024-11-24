@@ -15,9 +15,5 @@
 			<dict/>
 		</dict>
 	</array>
-	<key>NSCameraUsageDescription</key>
-	<string>Vault uses the camera to allow importing data visually, such as scanning QR codes.</string>
-	<key>NSFaceIDUsageDescription</key>
-	<string>Vault uses biometrics to locally protect access to your data.</string>
 </dict>
 </plist>

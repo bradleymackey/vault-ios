@@ -10,7 +10,7 @@
 	<true/>
 	<key>com.apple.security.application-groups</key>
 	<array>
-		<string>group.dev.mcky.vault.group</string>
+		<string>group.com.badbundle.vault-group</string>
 	</array>
 </dict>
 </plist>
