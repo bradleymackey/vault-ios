@@ -117,22 +117,25 @@ struct BackupView: View {
 
     private func currentBackupsSection(password: DerivedEncryptionKey?) -> some View {
         Section {
-            if let password {
+            if password != nil {
                 LastBackupSummaryView(
                     lastBackup: dataModel.lastBackupEvent
                 )
 
-                Button {
-                    modal = .pdfBackup(password)
-                } label: {
-                    FormRow(image: Image(systemName: "printer.filled.and.paper"), color: .blue, style: .standard) {
-                        Text("Create PDF Backup")
-                    }
-                }
-
                 updateButton
             } else {
                 createButton
+            }
+        } footer: {
+            if let password {
+                Button {
+                    modal = .pdfBackup(password)
+                } label: {
+                    Label("Create Backup", systemImage: "printer.filled.and.paper")
+                }
+                .modifier(ProminentButtonModifier())
+                .padding()
+                .frame(maxWidth: .infinity)
             }
         }
         .transition(.slide)
