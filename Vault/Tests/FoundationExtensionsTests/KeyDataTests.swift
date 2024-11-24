@@ -81,7 +81,6 @@ struct KeyDataTests {
 
             let decoder = JSONDecoder()
             let decoded = try decoder.decode(KeyData<Bits64>.self, from: encoded)
-            let str = try #require(String(data: encoded, encoding: .utf8))
 
             #expect(decoded == key)
         }
