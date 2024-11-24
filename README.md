@@ -1,8 +1,5 @@
 # Vault
 
-> WARNING: Version 1.0 has been used during initial development and is considered unstable.
-> We will increment to 2.0 when the app is storage-resilient.
-
 A secret storage manager (2FA codes, secret notes) with built-in encrypted backup.
 It can create encrypted backups to a portable PDF document that you can print (as a hard copy) or save anywhere to restore from later.
 
@@ -46,7 +43,7 @@ There's a few ways that you can use Vault to store your data:
 - [x] **Modern**: iOS 18, SwiftUI, Structured Concurrency
 - [x] **Availability**: iPhone & iPad Support
 - [x] **Modular**: Swift Package w/ multiple targets
-- [x] **Resilient**: everything should be versioned, we never need to break old clients, old backups should always be able to be restored
+- [x] **Resilient**: everything should be versioned, we never need to break old clients, old backups should always be able to be restored (>= version 2.0)
 
 ## Contributing
 
