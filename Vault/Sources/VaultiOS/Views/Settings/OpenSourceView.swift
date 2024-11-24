@@ -37,7 +37,7 @@ struct OpenSourceView: View {
             Text(OpenSourceStrings.aboutOpenSource)
             Text(OpenSourceStrings.aboutPrivacy)
 
-            Link(destination: URL(string: "https://google.com")!) {
+            Link(destination: OpenSourceStrings.openSourceLink) {
                 Text(OpenSourceStrings.aboutLink)
             }
             .foregroundStyle(.tint)
