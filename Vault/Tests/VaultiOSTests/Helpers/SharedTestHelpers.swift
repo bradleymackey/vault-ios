@@ -27,6 +27,18 @@ func anyVaultDataModel(
     )
 }
 
+func anyVaultInjector() -> VaultInjector {
+    VaultInjector(
+        clock: EpochClockMock(currentTime: 100),
+        intervalTimer: IntervalTimerMock(),
+        backupEventLogger: BackupEventLoggerMock(),
+        vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
+        encryptedVaultDecoder: EncryptedVaultDecoderMock(),
+        defaults: Defaults(userDefaults: .standard),
+        fileManager: .default
+    )
+}
+
 func anyVaultItemTag(
     id: UUID = UUID(),
     name: String = "name",

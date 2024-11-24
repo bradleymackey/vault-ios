@@ -28,6 +28,7 @@ struct QRCodeImage: View {
                 .interpolation(.none)
                 .resizable()
                 .aspectRatio(1, contentMode: .fit)
+                .scaledToFit()
         case .renderingError:
             Image(systemName: "exclamationmark.triangle.fill")
                 .font(.headline)
