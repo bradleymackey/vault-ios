@@ -96,6 +96,8 @@ public struct VaultItemFeedView<
             .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
         }
         .searchable(text: $dataModel.itemsSearchQuery)
+        .autocorrectionDisabled()
+        .textInputAutocapitalization(.never)
     }
 
     private var filteringByTagsSection: some View {
