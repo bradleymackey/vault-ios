@@ -20,6 +20,7 @@ struct ThirdPartyLibrariesLoaderTests {
             "CodeScanner",
             "swift-security",
             "swift-markdown-ui",
+            "Lucide",
         ])
     }
 
