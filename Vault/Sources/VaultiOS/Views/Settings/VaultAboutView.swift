@@ -106,8 +106,10 @@ struct VaultAboutView: View {
     private var mastheadSection: some View {
         Section {
             VStack(alignment: .center, spacing: 4) {
-                Text("😈 A Bad Bundle product 😈")
-                    .font(.footnote)
+                Image("bad-bundle-logo", bundle: VaultFeedAssets.bundle)
+                    .resizable(resizingMode: .stretch)
+                    .scaledToFit()
+                    .frame(height: 30)
                 Text("free and open since 2024 ✌️")
                     .font(.caption2.bold())
             }
