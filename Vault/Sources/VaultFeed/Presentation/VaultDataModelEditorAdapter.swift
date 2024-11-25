@@ -78,7 +78,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
         try await dataModel.insert(item: newVaultItem)
     }
 
-    public func updateNote(id: Identifier<VaultItem>, item: SecureNote, edits: SecureNoteDetailEdits) async throws {
+    public func updateNote(id: Identifier<VaultItem>, item _: SecureNote, edits: SecureNoteDetailEdits) async throws {
         let updatedItem = try await makeNoteItem(edits: edits)
         let updatedVaultItem = VaultItem.Write(
             relativeOrder: edits.relativeOrder,

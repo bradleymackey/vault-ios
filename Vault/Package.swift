@@ -2,8 +2,8 @@
 
 import PackageDescription
 
-let swiftLintVersion: Version = "0.57.0"
-let swiftLintChecksum: String = "a1bbafe57538077f3abe4cfb004b0464dcd87e8c23611a2153c675574b858b3a"
+let swiftLintVersion: Version = "0.57.1"
+let swiftLintChecksum: String = "c88bf3e5bc1326d8ca66bc3f9eae786f2094c5172cd70b26b5f07686bb883899"
 let swiftFormatVersion: Version = "0.55.1"
 let swiftFormatChecksum: String = "fdff5ec7bbd5f4d7e0a0f2d83bbe7e06ef92c063aa414ebefcfab4d746d60189"
 
