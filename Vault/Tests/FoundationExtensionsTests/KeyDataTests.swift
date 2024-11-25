@@ -52,14 +52,14 @@ struct KeyDataTests {
     func repeating_createsRepeatingBytes() throws {
         let key = KeyData<Bits256>.repeating(byte: 0x32)
 
-        #expect(key.data.map { $0 } == Array(repeating: 0x32, count: 32))
+        #expect(key.data.map(\.self) == Array(repeating: 0x32, count: 32))
     }
 
     @Test
     func zero_createsZeroedKey() throws {
         let zero = KeyData<Bits256>.zero()
 
-        #expect(zero.data.map { $0 } == Array(repeating: 0, count: 32))
+        #expect(zero.data.map(\.self) == Array(repeating: 0, count: 32))
     }
 
     struct Coding {

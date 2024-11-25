@@ -35,6 +35,6 @@ extension LocalSettingsTests {
 
 extension UserDefaults {
     private var allStoredKeys: [String] {
-        dictionaryRepresentation().keys.map { $0 }
+        dictionaryRepresentation().keys.map(\.self)
     }
 }
