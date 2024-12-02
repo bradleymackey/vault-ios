@@ -13,6 +13,17 @@ For _fastlane_ installation instructions, see [Installing _fastlane_](https://do
 
 # Available Actions
 
+### increment_build
+
+```sh
+[bundle exec] fastlane increment_build
+```
+
+Increments the build number and commits this change
+
+----
+
+
 ## iOS
 
 ### ios release

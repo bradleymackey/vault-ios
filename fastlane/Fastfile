@@ -15,12 +15,24 @@
 
 default_platform(:ios)
 
+desc "Increments the build number and commits this change"
+lane :increment_build do
+  ensure_git_status_clean
+  increment_build_number
+  commit_version_bump(
+    force: true
+  )
+end
+
 platform :ios do
   desc "Push a new release build to the App Store"
+
+
   lane :release do
     get_certificates
     get_provisioning_profile(app_identifier: "com.badbundle.vault")
     get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAppAutofill")
+    increment_build
     build_app(
       workspace: "Vault.xcworkspace",
       scheme: "VaultApp",
