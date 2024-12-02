@@ -18,7 +18,9 @@ default_platform(:ios)
 desc "Increments the build number and commits this change"
 lane :increment_build do
   ensure_git_status_clean
-  increment_build_number
+  increment_build_number(
+    xcodeproj: "VaultApp/VaultApp.xcodeproj"
+  )
   commit_version_bump(
     force: true
   )
