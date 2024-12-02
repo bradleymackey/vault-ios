@@ -1,1 +1,1 @@
-copyright("#{Time.now.year} Bad Bundle Limited")
+2024 Bad Bundle Limited
