@@ -2,3 +2,4 @@
 *.certSigningRequest
 *.p12
 *.mobileprovision
+*.ipa
