@@ -1,1 +1,3 @@
+Secure storage for 2FA codes and secret notes.
 
+Backup to a PDF document which you can print or save to your online storage.
