@@ -4,13 +4,13 @@ import VaultFeed
 
 /// @mockable(typealias: ItemView = AnyView)
 @MainActor
-protocol EncryptedItemPreviewViewFactory {
+public protocol EncryptedItemPreviewViewFactory {
     associatedtype ItemView: View
     func makeEncryptedItemView(viewModel: EncryptedItemPreviewViewModel, behaviour: VaultItemViewBehaviour) -> ItemView
 }
 
-struct EncryptedItemPreviewViewFactoryImpl: EncryptedItemPreviewViewFactory {
-    func makeEncryptedItemView(
+public struct EncryptedItemPreviewViewFactoryImpl: EncryptedItemPreviewViewFactory {
+    public func makeEncryptedItemView(
         viewModel: EncryptedItemPreviewViewModel,
         behaviour: VaultItemViewBehaviour
     ) -> some View {

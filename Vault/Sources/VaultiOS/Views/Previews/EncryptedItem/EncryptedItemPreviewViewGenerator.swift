@@ -3,8 +3,10 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-final class EncryptedItemPreviewViewGenerator<Factory: EncryptedItemPreviewViewFactory>: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = EncryptedItem
+public final class EncryptedItemPreviewViewGenerator<
+    Factory: EncryptedItemPreviewViewFactory
+>: VaultItemPreviewViewGenerator {
+    public typealias PreviewItem = EncryptedItem
 
     private let viewFactory: Factory
 
@@ -12,7 +14,7 @@ final class EncryptedItemPreviewViewGenerator<Factory: EncryptedItemPreviewViewF
         self.viewFactory = viewFactory
     }
 
-    func makeVaultPreviewView(
+    public func makeVaultPreviewView(
         item: EncryptedItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -24,15 +26,15 @@ final class EncryptedItemPreviewViewGenerator<Factory: EncryptedItemPreviewViewF
         return viewFactory.makeEncryptedItemView(viewModel: viewModel, behaviour: behaviour)
     }
 
-    func clearViewCache() async {
+    public func clearViewCache() async {
         // noop, cache is not used for encrypted item preview views atm
     }
 
-    func scenePhaseDidChange(to _: ScenePhase) {
+    public func scenePhaseDidChange(to _: ScenePhase) {
         // noop, nothing to do at the generator-level at the moment
     }
 
-    func didAppear() {
+    public func didAppear() {
         // noop, nothing to do at the generator-level at the moment
     }
 }

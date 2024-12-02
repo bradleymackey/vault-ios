@@ -80,11 +80,11 @@ public enum VaultRoot {
         ])
 
     @MainActor
-    static let secureNotePreviewViewGenerator: some VaultItemPreviewViewGenerator<SecureNote> =
+    static let secureNotePreviewViewGenerator =
         SecureNotePreviewViewGenerator(viewFactory: SecureNotePreviewViewFactoryImpl())
 
     @MainActor
-    static let encryptedItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<EncryptedItem> =
+    static let encryptedItemPreviewViewGenerator =
         EncryptedItemPreviewViewGenerator(viewFactory: EncryptedItemPreviewViewFactoryImpl())
 
     @MainActor
@@ -104,8 +104,11 @@ public enum VaultRoot {
         return repo
     }()
 
+    // Ideally this would just vend the generic `some VaultItemPreviewViewGenerator<VaultItem.Payload>`
+    // But that currently gives us a compiler error (only while archiving?!) so let's vend the full (massive) concrete
+    // type for now :(
     @MainActor
-    public static let genericVaultItemPreviewViewGenerator: some VaultItemPreviewViewGenerator<VaultItem.Payload> =
+    public static let genericVaultItemPreviewViewGenerator =
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totpPreviewViewGenerator,
             hotpGenerator: hotpPreviewViewGenerator,
@@ -114,7 +117,7 @@ public enum VaultRoot {
         )
 
     @MainActor
-    static let totpPreviewViewGenerator: some VaultItemPreviewViewGenerator<TOTPAuthCode> =
+    static let totpPreviewViewGenerator =
         TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
             repository: totpPreviewRepository
@@ -131,11 +134,10 @@ public enum VaultRoot {
     }()
 
     @MainActor
-    static let hotpPreviewViewGenerator: some VaultItemPreviewViewGenerator<HOTPAuthCode> =
-        HOTPPreviewViewGenerator(
-            viewFactory: HOTPPreviewViewFactoryImpl(),
-            repository: hotpPreviewRepository
-        )
+    static let hotpPreviewViewGenerator = HOTPPreviewViewGenerator(
+        viewFactory: HOTPPreviewViewFactoryImpl(),
+        repository: hotpPreviewRepository
+    )
 
     // MARK: - Misc
 

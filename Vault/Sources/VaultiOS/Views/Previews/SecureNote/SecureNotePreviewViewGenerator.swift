@@ -3,8 +3,8 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory>: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = SecureNote
+public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory>: VaultItemPreviewViewGenerator {
+    public typealias PreviewItem = SecureNote
 
     private let viewFactory: Factory
 
@@ -14,7 +14,7 @@ final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory
         self.viewFactory = viewFactory
     }
 
-    func makeVaultPreviewView(
+    public func makeVaultPreviewView(
         item: SecureNote,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -29,15 +29,15 @@ final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewViewFactory
         return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }
 
-    func clearViewCache() async {
+    public func clearViewCache() async {
         // noop, cache is not used for secure note preview views atm
     }
 
-    func scenePhaseDidChange(to _: ScenePhase) {
+    public func scenePhaseDidChange(to _: ScenePhase) {
         // noop, nothing to do at the generator-level at the moment
     }
 
-    func didAppear() {
+    public func didAppear() {
         // noop, nothing to do at the generator-level at the moment
     }
 }
