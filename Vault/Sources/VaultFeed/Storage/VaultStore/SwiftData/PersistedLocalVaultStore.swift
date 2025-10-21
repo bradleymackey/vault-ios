@@ -73,9 +73,9 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             let searchingTagIds = tags.map(\.id).reducedToSet()
             // Returns the number of tags matched by this item.
             let tagsMatchingSearch = #Expression<PersistedVaultItem, Int> { item in
-                item.tags.filter { tag in
+                item.tags.count(where: { tag in
                     searchingTagIds.contains(tag.id)
-                }.count
+                })
             }
             // Performs an "AND" query by checking if the number of tags matched equals
             // the number of tags we are searching for.

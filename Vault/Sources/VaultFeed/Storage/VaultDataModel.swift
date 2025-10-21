@@ -12,7 +12,7 @@ import VaultKeygen
 /// This is isolated to the main actor for the purposes of UI interop.
 @MainActor
 @Observable
-public final class VaultDataModel: Sendable {
+public final class VaultDataModel {
     public enum State {
         case base, loaded, loading
     }

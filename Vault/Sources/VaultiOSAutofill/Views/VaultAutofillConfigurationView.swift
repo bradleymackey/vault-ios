@@ -4,11 +4,11 @@ import VaultiOS
 
 struct VaultAutofillConfigurationView: View {
     @State private var viewModel: VaultAutofillConfigurationViewModel
-    public init(viewModel: VaultAutofillConfigurationViewModel) {
+    init(viewModel: VaultAutofillConfigurationViewModel) {
         self.viewModel = viewModel
     }
 
-    public var body: some View {
+    var body: some View {
         ScrollView {
             container
                 .padding(.vertical, 16)
