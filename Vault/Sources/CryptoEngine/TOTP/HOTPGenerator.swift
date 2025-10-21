@@ -58,7 +58,8 @@ extension HOTPGenerator {
     }
 
     private func hmacCode(counter: UInt64) throws -> Data {
-        let counterBytes = counter.bigEndian.data.bytes
+        let counterData = counter.bigEndian.data
+        let counterBytes = Array(counterData)
         let bytes = try hmac.authenticate(counterBytes)
         return Data(bytes)
     }
