@@ -276,20 +276,18 @@ let package = Package(
             capability: .command(
                 intent: .custom(
                     verb: "format",
-                    description: "Formats Swift source files using swiftformat and swiftlint"
+                    description: "Formats Swift source files using swiftformat only"
                 ),
                 permissions: [.writeToPackageDirectory(reason: "Format source code")]
-            )
+            ),
+            dependencies: [
+                "swiftformat",
+            ]
         ),
         .binaryTarget(
             name: "swiftformat",
             url: "https://github.com/nicklockwood/SwiftFormat/releases/download/\(swiftFormatVersion)/swiftformat.artifactbundle.zip",
             checksum: swiftFormatChecksum
-        ),
-        .binaryTarget(
-            name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: swiftLintChecksum
         ),
     ]
 )

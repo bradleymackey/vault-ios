@@ -28,12 +28,12 @@ struct DataHelpersTests {
     @Test
     func int64ToData_interpretsAsLittleEndian() {
         let number: UInt64 = 1
-        #expect(number.data.bytes == [1, 0, 0, 0, 0, 0, 0, 0])
+        #expect(Array(number.data) == [1, 0, 0, 0, 0, 0, 0, 0])
     }
 
     @Test
     func byteString_interpretsUTF8StringValues() {
         let value = Data(byteString: "1234")
-        #expect(value.bytes == [49, 50, 51, 52])
+        #expect(Array(value) == [49, 50, 51, 52])
     }
 }

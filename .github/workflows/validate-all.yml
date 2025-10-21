@@ -8,48 +8,54 @@ on:
     branches: [main]
 
 env:
-  IOS_PLATFORM: iOS Simulator
-  IOS_DEVICE: iPhone 15
-  IOS_VERSION: 17.4
+  XCODE_VERSION: "26.0"
 
 jobs:
-  # TODO: enable when swiftlint supports a linux binary in its artifact bundle
-  # lint:
-  #   name: Lint
-  #   timeout-minutes: 2
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./Vault
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Lint Sources
-  #       run: make lint
+  lint:
+    name: Lint
+    timeout-minutes: 2
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ./Vault
 
-  # build:
-  #   name: Build
-  #   timeout-minutes: 5
-  #   runs-on: macos-14
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
-  #     - name: Build App
-  #       run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet build
-  #
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+
+      - name: Cache SPM Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm/repositories
+            Vault/.build
+          key: ${{ runner.os }}-spm-lint-${{ hashFiles('Vault/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-lint-
+
+      - name: Check Linting & Formatting
+        run: make lint
+
+  # Don't test for now to save CI time
   # test:
   #   name: Test
-  #   timeout-minutes: 30
-  #   runs-on: ubuntu-latest
-  #   # runs-on: macos-14
+  #   timeout-minutes: 10
+  #   runs-on: macos-26
   #
   #   steps:
-  #     # We currently don't run tests in CI due to cost.
-  #     # This can be re-enabled when the repo is made public!
-  #     - name: Skip Testing
-  #       run: true
   #     - uses: actions/checkout@v4
-  #      - run: sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
-  #      - name: Run all Tests
-  #        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet test
+  #     - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+  #
+  #     - name: Cache SPM Dependencies
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ~/Library/Caches/org.swift.swiftpm/repositories
+  #         key: ${{ runner.os }}-spm-${{ hashFiles('Vault/Package.resolved') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-spm-
+  #
+  #     - name: Clear SPM Artifacts
+  #       run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+  #
+  #     - name: Test CI_macOS
+  #       run: xcodebuild test -workspace Vault.xcworkspace -scheme CI_macOS -skipMacroValidation -skipPackagePluginValidation

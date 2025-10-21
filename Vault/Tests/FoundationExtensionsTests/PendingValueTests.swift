@@ -218,14 +218,14 @@ extension PendingValueTests {
     /// Without this, you might acidentally call `fulfill`/`reject` before await, and thus the value will be cached.
     private func awaitValueInBackground(
         on sut: SUT,
-        action: () async -> Void
+        action: @Sendable () async -> Void
     ) async throws -> Result<Int, any Error> {
         let startedWaiting = Pending.signal()
         let finishedWaiting = Pending.signal()
 
-        var result: Result<Int, any Error>?
         let task = Task.detached(priority: .high) {
             await startedWaiting.fulfill()
+            let result: Result<Int, any Error>
             do {
                 let value = try await sut.wait()
                 result = .success(value)
@@ -233,6 +233,7 @@ extension PendingValueTests {
                 result = .failure(error)
             }
             await finishedWaiting.fulfill()
+            return result
         }
 
         try await startedWaiting.wait(timeout: .seconds(1))
@@ -242,8 +243,8 @@ extension PendingValueTests {
 
         try await finishedWaiting.wait(timeout: .seconds(1))
 
-        task.cancel()
-        return try #require(result)
+        defer { task.cancel() }
+        return await task.value
     }
 
     private func awaitNoValueProduced(on sut: SUT) async {

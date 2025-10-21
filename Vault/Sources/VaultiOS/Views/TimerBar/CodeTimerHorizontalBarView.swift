@@ -49,21 +49,19 @@ struct CodeTimerHorizontalBarView: View {
         resetTimerBarAnimation = .init(qos: .userInteractive) {
             withAnimation(
                 .linear(duration: animateReset ? 0.15 : 0),
-                completionCriteria: .removed,
-                {
-                    currentFractionCompleted = timerState.animationState.initialFraction(currentTime: clock.currentTime)
-                },
-                completion: {
-                    if case let .animate(state) = timerState.animationState {
-                        timerAnimation = .init(qos: .userInteractive) {
-                            withAnimation(.linear(duration: state.remainingTime(at: clock.currentTime))) {
-                                currentFractionCompleted = 0
-                            }
+                completionCriteria: .removed
+            ) {
+                currentFractionCompleted = timerState.animationState.initialFraction(currentTime: clock.currentTime)
+            } completion: {
+                if case let .animate(state) = timerState.animationState {
+                    timerAnimation = .init(qos: .userInteractive) {
+                        withAnimation(.linear(duration: state.remainingTime(at: clock.currentTime))) {
+                            currentFractionCompleted = 0
                         }
-                        timerAnimation?.perform()
                     }
+                    timerAnimation?.perform()
                 }
-            )
+            }
         }
         resetTimerBarAnimation?.perform()
     }

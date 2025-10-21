@@ -9,8 +9,6 @@ struct FormatLintPlugin: CommandPlugin {
         let formatLintContext = try makeFormatLintContext(context: context, arguments: arguments)
 
         let start = Date()
-        // Lint before formatting so any formatting that results in lint errors is surfaced and we can address it.
-        try formatLintContext.runSwiftLint()
         try formatLintContext.runSwiftFormat()
         let end = Date()
         let elapsed = end.timeIntervalSince(start)
@@ -32,7 +30,6 @@ struct FormatLintPlugin: CommandPlugin {
             .format
         }
         return try FormatLintContext(
-            swiftlint: context.tool(named: "swiftlint"),
             swiftformat: context.tool(named: "swiftformat"),
             workDirectory: context.pluginWorkDirectoryURL,
             swiftSourcesDirectory: swiftSources,
@@ -42,39 +39,11 @@ struct FormatLintPlugin: CommandPlugin {
 }
 
 struct FormatLintContext {
-    var swiftlint: PluginContext.Tool
     var swiftformat: PluginContext.Tool
     var workDirectory: URL
     var swiftSourcesDirectory: String
     var action: Action
 }
-
-extension FormatLintContext {
-    func makeSwiftLintArgs() -> [String] {
-        var swiftLintArguments = [String]()
-        swiftLintArguments += ["--cache-path", workDirectory.appending(path: "swiftlint.cache").path()]
-        swiftLintArguments += ["--quiet"]
-        switch action {
-        case .format:
-            swiftLintArguments += ["--fix"]
-        case .lint:
-            swiftLintArguments += ["--strict"]
-        }
-        swiftLintArguments += [swiftSourcesDirectory]
-        return swiftLintArguments
-    }
-
-    func runSwiftLint() throws {
-        print("🔍 swiftlint: \(action.swiftLintVerb.lowercased())")
-        try runProcess(
-            url: swiftlint.url,
-            arguments: makeSwiftLintArgs(),
-            exitCodeHandler: swiftLintExitCodeHandler(code:)
-        )
-    }
-}
-
-// MARK: - swiftformat
 
 extension FormatLintContext {
     func makeSwiftFormatArgs() -> [String] {
@@ -110,13 +79,6 @@ enum Action {
         case .lint: "Checking"
         }
     }
-
-    var swiftLintVerb: String {
-        switch self {
-        case .format: "Fixing"
-        case .lint: "Linting"
-        }
-    }
 }
 
 enum CommandError: Error {
@@ -147,15 +109,5 @@ func swiftFormatExitCodeHandler(code: Int32) throws {
     default:
         print("❌ swiftformat unknown failure")
         throw CommandError.unknownError(exitCode: code)
-    }
-}
-
-func swiftLintExitCodeHandler(code: Int32) throws {
-    switch code {
-    case 0:
-        print("☑️ swiftlint done")
-    default:
-        print("❌ swiftlint failure")
-        throw CommandError.exitWithError
     }
 }

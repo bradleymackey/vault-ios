@@ -15,7 +15,7 @@ import VaultKeygen
 
 @main
 struct KeygenSpeedtest {
-    public static func main() throws {
+    static func main() throws {
         print("🚧 Build configuration:", buildConfigString())
 
         try benchmark(keyDeriver: VaultKeyDeriver.Item.Fast.v1, description: "Item Fast")

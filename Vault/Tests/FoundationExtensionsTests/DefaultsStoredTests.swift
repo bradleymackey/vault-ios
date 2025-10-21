@@ -33,7 +33,7 @@ final class DefaultsStoredTests {
     }
 
     @Test
-    func test_wrappedValue_setsValueInDefaults() throws {
+    func wrappedValue_setsValueInDefaults() throws {
         let key: Key<Int> = .init("test3")
         let coolNumberInitial = 4567
         try defaults.set(coolNumberInitial, for: key)

@@ -14,7 +14,7 @@ public protocol OTPCodeTimerUpdater: AnyObject {
 
 /// Controller for producing timers for a given code, according to a clock.
 @MainActor
-public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater, Sendable {
+public final class OTPCodeTimerUpdaterImpl: OTPCodeTimerUpdater {
     private let timerStateSubject: CurrentValueSubject<OTPCodeTimerState, Never>
     private let period: UInt64
     private let timerTask = SharedMutex<Task<Void, any Error>?>(nil)

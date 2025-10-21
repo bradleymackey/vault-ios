@@ -81,7 +81,7 @@ public final class EncryptedItemDetailViewModel {
             case let .decrypted(item):
                 state = .decrypted(item, generatedPassword)
             }
-        } catch let localized as LocalizedError {
+        } catch let localized as any LocalizedError {
             state = .decryptionError(PresentationError(localizedError: localized))
         } catch {
             state = .decryptionError(PresentationError(

@@ -6,7 +6,7 @@ struct OTPAuthURIEncoderTests {
     let sut = OTPAuthURIEncoder()
 
     @Test
-    func test_encodeScheme_isOtpauth() throws {
+    func encodeScheme_isOtpauth() throws {
         let code = makeCode(type: .totp())
         let encoded = try sut.encode(code: code)
 

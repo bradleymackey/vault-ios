@@ -94,7 +94,7 @@ struct BackupImportScanningHandlerTests {
     }
 
     @Test
-    func test_decodeInvalidFullDataEndsWithUnrecoverableError() throws {
+    func decodeInvalidFullDataEndsWithUnrecoverableError() throws {
         let result1 = sut.decode(data: """
         {
             "G":{"ID":10,"N":2,"I":0},
