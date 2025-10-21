@@ -36,8 +36,8 @@ jobs:
       - name: Check Linting & Formatting
         run: make lint
 
-  build:
-    name: Build
+  test:
+    name: Test
     timeout-minutes: 10
     runs-on: macos-26
 
@@ -53,5 +53,8 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-
 
-      - name: Build CI_macOS
-        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_macOS -skipMacroValidation -skipPackagePluginValidation build
+      - name: Clear SPM Artifacts
+        run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+
+      - name: Test CI_macOS
+        run: xcodebuild test -workspace Vault.xcworkspace -scheme CI_macOS -skipMacroValidation -skipPackagePluginValidation
