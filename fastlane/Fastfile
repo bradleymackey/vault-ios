@@ -22,6 +22,7 @@ lane :increment_build do
     xcodeproj: "VaultApp/VaultApp.xcodeproj"
   )
   commit_version_bump(
+    xcodeproj: "VaultApp/VaultApp.xcodeproj",
     force: true
   )
 end
