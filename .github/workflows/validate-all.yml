@@ -54,4 +54,4 @@ jobs:
             ${{ runner.os }}-spm-
 
       - name: Build CI_macOS
-        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_macOS -destination 'platform=macOS' -skipMacroValidation -skipPackagePluginValidation build
+        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_macOS -skipMacroValidation -skipPackagePluginValidation build
