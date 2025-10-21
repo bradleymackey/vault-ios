@@ -25,6 +25,9 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      - name: Clear SPM Cache
+        run: rm -rf ~/Library/Caches/org.swift.swiftpm
+        working-directory: .
       - name: Check Linting & Formatting
         run: make lint
 
@@ -36,6 +39,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      - name: Clear SPM Cache
+        run: rm -rf ~/Library/Caches/org.swift.swiftpm
       - name: Build CI_iOS
         run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -skipPackagePluginValidation build
 
