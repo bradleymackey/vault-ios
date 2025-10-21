@@ -10,8 +10,8 @@ on:
 env:
   IOS_PLATFORM: iOS Simulator
   IOS_DEVICE: iPhone 17 Pro
-  IOS_VERSION: 26.0
-  XCODE_VERSION: 26.0
+  IOS_VERSION: "26.0"
+  XCODE_VERSION: "26.0"
 
 jobs:
   lint:
