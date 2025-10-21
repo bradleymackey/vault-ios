@@ -6,10 +6,12 @@ benchmark-keygen:
 
 .PHONY: format
 format:
+	swift package plugin --allow-writing-to-package-directory swiftlint --fix --quiet ./Sources
 	swift package --allow-writing-to-package-directory format --sources=./
 
 .PHONY: lint
 lint:
+	swift package plugin swiftlint --strict --quiet ./Sources
 	swift package --allow-writing-to-package-directory format --lint --sources=./
 
 .PHONY: clean
