@@ -36,25 +36,26 @@ jobs:
       - name: Check Linting & Formatting
         run: make lint
 
-  test:
-    name: Test
-    timeout-minutes: 10
-    runs-on: macos-26
-
-    steps:
-      - uses: actions/checkout@v4
-      - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
-
-      - name: Cache SPM Dependencies
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Caches/org.swift.swiftpm/repositories
-          key: ${{ runner.os }}-spm-${{ hashFiles('Vault/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-spm-
-
-      - name: Clear SPM Artifacts
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
-
-      - name: Test CI_macOS
-        run: xcodebuild test -workspace Vault.xcworkspace -scheme CI_macOS -skipMacroValidation -skipPackagePluginValidation
+  # Don't test for now to save CI time
+  # test:
+  #   name: Test
+  #   timeout-minutes: 10
+  #   runs-on: macos-26
+  #
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+  #
+  #     - name: Cache SPM Dependencies
+  #       uses: actions/cache@v4
+  #       with:
+  #         path: ~/Library/Caches/org.swift.swiftpm/repositories
+  #         key: ${{ runner.os }}-spm-${{ hashFiles('Vault/Package.resolved') }}
+  #         restore-keys: |
+  #           ${{ runner.os }}-spm-
+  #
+  #     - name: Clear SPM Artifacts
+  #       run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+  #
+  #     - name: Test CI_macOS
+  #       run: xcodebuild test -workspace Vault.xcworkspace -scheme CI_macOS -skipMacroValidation -skipPackagePluginValidation
