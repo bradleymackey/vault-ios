@@ -9,35 +9,36 @@ on:
 
 env:
   IOS_PLATFORM: iOS Simulator
-  IOS_DEVICE: iPhone 15
-  IOS_VERSION: 17.4
+  IOS_DEVICE: iPhone 17 Pro
+  IOS_VERSION: 26.0
+  XCODE_VERSION: 26
 
 jobs:
-  # TODO: enable when swiftlint supports a linux binary in its artifact bundle
-  # lint:
-  #   name: Lint
-  #   timeout-minutes: 2
-  #   runs-on: ubuntu-latest
-  #   defaults:
-  #     run:
-  #       working-directory: ./Vault
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - name: Lint Sources
-  #       run: make lint
+  lint:
+    name: Lint
+    timeout-minutes: 2
+    runs-on: macos-26
+    defaults:
+      run:
+        working-directory: ./Vault
 
-  # build:
-  #   name: Build
-  #   timeout-minutes: 5
-  #   runs-on: macos-14
-  #
-  #   steps:
-  #     - uses: actions/checkout@v4
-  #     - run: sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
-  #     - name: Build App
-  #       run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet build
-  #
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      - name: Lint Sources
+        run: make lint
+
+  build:
+    name: Build
+    timeout-minutes: 5
+    runs-on: macos-26
+
+    steps:
+      - uses: actions/checkout@v4
+      - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      - name: Build App
+        run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet build
+
   # test:
   #   name: Test
   #   timeout-minutes: 30
