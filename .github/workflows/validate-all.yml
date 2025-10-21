@@ -8,9 +8,6 @@ on:
     branches: [main]
 
 env:
-  IOS_PLATFORM: iOS Simulator
-  IOS_DEVICE: iPhone 17 Pro
-  IOS_VERSION: "26.0"
   XCODE_VERSION: "26.0"
 
 jobs:
@@ -25,9 +22,17 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
-      - name: Clear SPM Cache
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm
-        working-directory: .
+
+      - name: Cache SPM Dependencies
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/Library/Caches/org.swift.swiftpm/repositories
+            Vault/.build
+          key: ${{ runner.os }}-spm-lint-${{ hashFiles('Vault/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-lint-
+
       - name: Check Linting & Formatting
         run: make lint
 
@@ -39,35 +44,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
-      
-      - name: Cache iOS Runtime
-        uses: actions/cache@v4
-        id: runtime-cache
-        with:
-          path: ~/Library/Caches/com.apple.dt.Xcode/Downloads
-          key: ${{ runner.os }}-ios-runtime-${{ env.IOS_VERSION }}
-      
-      - name: Download iOS Runtime
-        if: steps.runtime-cache.outputs.cache-hit != 'true'
-        run: sudo xcodebuild -downloadPlatform iOS -buildVersion ${{ env.IOS_VERSION }}
-      
-      - name: Clear SPM Cache
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm
-      - name: Build CI_iOS
-        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -skipPackagePluginValidation build
 
-  # test:
-  #   name: Test
-  #   timeout-minutes: 30
-  #   runs-on: ubuntu-latest
-  #   # runs-on: macos-14
-  #
-  #   steps:
-  #     # We currently don't run tests in CI due to cost.
-  #     # This can be re-enabled when the repo is made public!
-  #     - name: Skip Testing
-  #       run: true
-  #     - uses: actions/checkout@v4
-  #      - run: sudo xcode-select -s /Applications/Xcode_15.3.app/Contents/Developer
-  #      - name: Run all Tests
-  #        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet test
+      - name: Cache SPM Dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/org.swift.swiftpm/repositories
+          key: ${{ runner.os }}-spm-${{ hashFiles('Vault/Package.resolved') }}
+          restore-keys: |
+            ${{ runner.os }}-spm-
+
+      - name: Build CI_macOS
+        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_macOS -destination 'platform=macOS' -skipMacroValidation -skipPackagePluginValidation build

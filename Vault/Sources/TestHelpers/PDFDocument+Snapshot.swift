@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import Foundation
 import PDFKit
 import SnapshotTesting
@@ -36,3 +37,5 @@ extension PDFDocument {
         }
     }
 }
+
+#endif

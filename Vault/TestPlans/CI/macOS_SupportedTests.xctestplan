@@ -1,0 +1,52 @@
+{
+  "configurations" : [
+    {
+      "id" : "D213A255-37DA-4E13-8AB8-3AD0E9C299FE",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultCoreTests",
+        "name" : "VaultCoreTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "FoundationExtensionsTests",
+        "name" : "FoundationExtensionsTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "CryptoEngineTests",
+        "name" : "CryptoEngineTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultKeygenTests",
+        "name" : "VaultKeygenTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:",
+        "identifier" : "VaultKeygenSpeedtestCompileTests",
+        "name" : "VaultKeygenSpeedtestCompileTests"
+      }
+    }
+  ],
+  "version" : 1
+}
