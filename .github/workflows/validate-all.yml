@@ -33,12 +33,24 @@ jobs:
 
   build:
     name: Build
-    timeout-minutes: 5
+    timeout-minutes: 10
     runs-on: macos-26
 
     steps:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
+      
+      - name: Cache iOS Runtime
+        uses: actions/cache@v4
+        id: runtime-cache
+        with:
+          path: ~/Library/Caches/com.apple.dt.Xcode/Downloads
+          key: ${{ runner.os }}-ios-runtime-${{ env.IOS_VERSION }}
+      
+      - name: Download iOS Runtime
+        if: steps.runtime-cache.outputs.cache-hit != 'true'
+        run: sudo xcodebuild -downloadPlatform iOS -buildVersion ${{ env.IOS_VERSION }}
+      
       - name: Clear SPM Cache
         run: rm -rf ~/Library/Caches/org.swift.swiftpm
       - name: Build CI_iOS
