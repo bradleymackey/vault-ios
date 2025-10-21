@@ -1,6 +1,10 @@
 # Agents
 .cursor/.agent-tools
 
+# Bundler
+.bundle/
+vendor/
+
 # Build/upload
 *.cer
 *.certSigningRequest
