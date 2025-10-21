@@ -26,6 +26,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
+      - name: Clear Binary Artifacts Cache
+        run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+
       - name: Cache SPM Dependencies
         uses: actions/cache@v4
         with:
@@ -36,9 +39,6 @@ jobs:
           key: ${{ runner.os }}-spm-lint-${{ hashFiles('Vault/Package.resolved') }}
           restore-keys: |
             ${{ runner.os }}-spm-lint-
-
-      - name: Clear Binary Artifacts Cache
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
 
       - name: Check Linting & Formatting
         run: make lint
@@ -52,6 +52,9 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
+      - name: Clear Binary Artifacts Cache
+        run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+
       - name: Cache SPM Dependencies
         uses: actions/cache@v4
         with:
@@ -62,9 +65,6 @@ jobs:
           key: ${{ runner.os }}-xcode-build-${{ hashFiles('Vault/Package.resolved', '**/*.xcodeproj/project.pbxproj') }}
           restore-keys: |
             ${{ runner.os }}-xcode-build-
-
-      - name: Clear Binary Artifacts Cache
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
 
       - name: Build CI_iOS
         run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet build
