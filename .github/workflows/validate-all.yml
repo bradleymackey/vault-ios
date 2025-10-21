@@ -37,7 +37,7 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
       - name: Build App
-        run: xcodebuild -workspace Vault.xcworkspace -scheme VaultApp -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet build
+        run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -quiet build
 
   # test:
   #   name: Test
