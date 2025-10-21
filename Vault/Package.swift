@@ -279,17 +279,21 @@ let package = Package(
                     description: "Formats Swift source files using swiftformat and swiftlint"
                 ),
                 permissions: [.writeToPackageDirectory(reason: "Format source code")]
-            )
+            ),
+            dependencies: [
+                "swiftformat",
+                "SwiftLintBinaryForFormatting",
+            ]
+        ),
+        .binaryTarget(
+            name: "SwiftLintBinaryForFormatting",
+            url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
+            checksum: swiftLintChecksum
         ),
         .binaryTarget(
             name: "swiftformat",
             url: "https://github.com/nicklockwood/SwiftFormat/releases/download/\(swiftFormatVersion)/swiftformat.artifactbundle.zip",
             checksum: swiftFormatChecksum
-        ),
-        .binaryTarget(
-            name: "swiftlint",
-            url: "https://github.com/realm/SwiftLint/releases/download/\(swiftLintVersion)/SwiftLintBinary-macos.artifactbundle.zip",
-            checksum: swiftLintChecksum
         ),
     ]
 )
