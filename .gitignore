@@ -1,3 +1,7 @@
+# Agents
+.cursor/.agent-tools
+
+# Build/upload
 *.cer
 *.certSigningRequest
 *.p12
