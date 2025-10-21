@@ -26,8 +26,10 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
-      - name: Clear SPM Cache
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm
+      - name: Clear SPM Cache Completely
+        run: |
+          rm -rf ~/Library/Caches/org.swift.swiftpm
+          mkdir -p ~/Library/Caches/org.swift.swiftpm/repositories
 
       - name: Cache SPM Repositories Only
         uses: actions/cache@v4
@@ -37,13 +39,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-repos-
 
-      - name: Cache Vault Build
-        uses: actions/cache@v4
-        with:
-          path: Vault/.build
-          key: ${{ runner.os }}-vault-build-${{ hashFiles('Vault/Package.resolved') }}
-          restore-keys: |
-            ${{ runner.os }}-vault-build-
+      - name: Verify No Artifacts
+        run: |
+          ls -la ~/Library/Caches/org.swift.swiftpm/ || true
+          if [ -d ~/Library/Caches/org.swift.swiftpm/artifacts ]; then
+            echo "ERROR: artifacts directory exists!"
+            rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+          fi
 
       - name: Check Linting & Formatting
         run: make lint
@@ -57,8 +59,10 @@ jobs:
       - uses: actions/checkout@v4
       - run: sudo xcode-select -s /Applications/Xcode_${{ env.XCODE_VERSION }}.app/Contents/Developer
 
-      - name: Clear SPM Cache
-        run: rm -rf ~/Library/Caches/org.swift.swiftpm
+      - name: Clear SPM Cache Completely
+        run: |
+          rm -rf ~/Library/Caches/org.swift.swiftpm
+          mkdir -p ~/Library/Caches/org.swift.swiftpm/repositories
 
       - name: Cache SPM Repositories Only
         uses: actions/cache@v4
@@ -68,13 +72,13 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-spm-repos-
 
-      - name: Cache Xcode DerivedData
-        uses: actions/cache@v4
-        with:
-          path: ~/Library/Developer/Xcode/DerivedData
-          key: ${{ runner.os }}-xcode-derived-${{ hashFiles('Vault/Package.resolved', '**/*.xcodeproj/project.pbxproj') }}
-          restore-keys: |
-            ${{ runner.os }}-xcode-derived-
+      - name: Verify No Artifacts
+        run: |
+          ls -la ~/Library/Caches/org.swift.swiftpm/ || true
+          if [ -d ~/Library/Caches/org.swift.swiftpm/artifacts ]; then
+            echo "ERROR: artifacts directory exists!"
+            rm -rf ~/Library/Caches/org.swift.swiftpm/artifacts
+          fi
 
       - name: Build CI_iOS
         run: xcodebuild -workspace Vault.xcworkspace -scheme CI_iOS -destination 'platform=${{ env.IOS_PLATFORM }},name=${{ env.IOS_DEVICE }},OS=${{ env.IOS_VERSION }}' -skipMacroValidation -skipPackagePluginValidation build
