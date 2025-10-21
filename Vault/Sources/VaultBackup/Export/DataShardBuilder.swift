@@ -12,7 +12,7 @@ public struct DataShardBuilder {
 
     public func makeShards(from data: Data) -> [DataShard] {
         let groupID = groupIDGenerator()
-        let content = data.bytes.chunked(into: maxDataBlockSize).map { Data($0) }
+        let content = Array(data).chunked(into: maxDataBlockSize).map { Data($0) }
 
         if content.isEmpty {
             return [
