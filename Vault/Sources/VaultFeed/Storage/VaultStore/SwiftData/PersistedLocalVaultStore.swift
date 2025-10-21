@@ -71,17 +71,14 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             return .true
         } else {
             let searchingTagIds = tags.map(\.id).reducedToSet()
-            // Returns the number of tags matched by this item.
-            let tagsMatchingSearch = #Expression<PersistedVaultItem, Int> { item in
-                item.tags.count(where: { tag in
-                    searchingTagIds.contains(tag.id)
-                })
-            }
-            // Performs an "AND" query by checking if the number of tags matched equals
-            // the number of tags we are searching for.
-            let searchingTagsCount = searchingTagIds.count
+            // Performs an "AND" query by checking if all searched tags are present in the item's tags.
+            // We convert the set to an array to use filter, which is supported in SwiftData predicates.
+            // An item matches if the count of its tags that match our search equals the search count.
+            let searchingTagsArray = Array(searchingTagIds)
             return #Predicate<PersistedVaultItem> { item in
-                tagsMatchingSearch.evaluate(item) == searchingTagsCount
+                item.tags.count(where: { tag in
+                    searchingTagsArray.contains(tag.id)
+                }) == searchingTagsArray.count
             }
         }
     }
