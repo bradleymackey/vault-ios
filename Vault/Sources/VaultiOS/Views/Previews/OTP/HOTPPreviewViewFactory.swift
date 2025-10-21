@@ -4,7 +4,7 @@ import VaultFeed
 
 /// @mockable(typealias: HOTPView = AnyView)
 @MainActor
-protocol HOTPPreviewViewFactory {
+public protocol HOTPPreviewViewFactory {
     associatedtype HOTPView: View
     func makeHOTPView(
         viewModel: OTPCodePreviewViewModel,
@@ -14,8 +14,8 @@ protocol HOTPPreviewViewFactory {
         -> HOTPView
 }
 
-struct HOTPPreviewViewFactoryImpl: HOTPPreviewViewFactory {
-    func makeHOTPView(
+public struct HOTPPreviewViewFactoryImpl: HOTPPreviewViewFactory {
+    public func makeHOTPView(
         viewModel: OTPCodePreviewViewModel,
         incrementer: OTPCodeIncrementerViewModel,
         behaviour: VaultItemViewBehaviour

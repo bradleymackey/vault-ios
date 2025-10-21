@@ -7,8 +7,8 @@ import VaultFeed
 ///
 /// Internal caching and sharing of models and timers makes this very efficient.
 @MainActor
-final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = TOTPAuthCode
+public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
+    public typealias PreviewItem = TOTPAuthCode
 
     private let viewFactory: Factory
     private let repository: any TOTPPreviewViewRepository
@@ -21,7 +21,7 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
         self.repository = repository
     }
 
-    func makeVaultPreviewView(
+    public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -34,11 +34,11 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
         )
     }
 
-    func clearViewCache() async {
+    public func clearViewCache() async {
         await repository.vaultItemCacheClearAll()
     }
 
-    func scenePhaseDidChange(to scene: ScenePhase) {
+    public func scenePhaseDidChange(to scene: ScenePhase) {
         switch scene {
         case .background, .inactive:
             repository.obfuscateForPrivacy()
@@ -50,7 +50,7 @@ final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: VaultItem
         }
     }
 
-    func didAppear() {
+    public func didAppear() {
         repository.restartAllTimers()
     }
 }

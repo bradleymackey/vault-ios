@@ -1,0 +1,67 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:ios)
+
+desc "Increments the build number and commits this change"
+lane :increment_build do
+  ensure_git_status_clean
+  increment_build_number(
+    xcodeproj: "VaultApp/VaultApp.xcodeproj"
+  )
+  commit_version_bump(
+    xcodeproj: "VaultApp/VaultApp.xcodeproj",
+    force: true
+  )
+end
+
+platform :ios do
+  desc "Push a new release build to the App Store"
+
+
+  lane :release do
+    get_certificates
+    get_provisioning_profile(app_identifier: "com.badbundle.vault")
+    get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAppAutofill")
+    increment_build
+    
+    # Build and export - skip validation during export to avoid auth issues
+    gym(
+      workspace: "Vault.xcworkspace",
+      scheme: "VaultApp",
+      export_method: "app-store",
+      export_options: {
+        provisioningProfiles: {
+          "com.badbundle.vault" => "vault.mobileprovision",
+          "com.badbundle.vault.VaultAppAutofill" => "vault-autofill.mobileprovision"
+        },
+        uploadSymbols: true,
+        uploadBitcode: false,
+        # This is the key - skip the Apple validation during export
+        manageAppVersionAndBuildNumber: false
+      },
+      clean: true,
+      export_team_id: "442P244AFS",
+      # Use xcargs to pass additional options
+      xcargs: "-allowProvisioningUpdates"
+    )
+    
+    # Upload to App Store using the correct Apple ID
+    upload_to_app_store(
+      username: "badbundlelimited@gmail.com",
+      team_id: "442P244AFS"
+    )
+  end
+end

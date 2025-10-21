@@ -3,8 +3,8 @@ import SwiftUI
 import VaultFeed
 
 @MainActor
-final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = HOTPAuthCode
+public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItemPreviewViewGenerator {
+    public typealias PreviewItem = HOTPAuthCode
 
     private let viewFactory: Factory
     private let repository: any HOTPPreviewViewRepository
@@ -14,7 +14,7 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
         self.repository = repository
     }
 
-    func makeVaultPreviewView(
+    public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -26,11 +26,11 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
         )
     }
 
-    func clearViewCache() async {
+    public func clearViewCache() async {
         await repository.vaultItemCacheClearAll()
     }
 
-    func scenePhaseDidChange(to scene: ScenePhase) {
+    public func scenePhaseDidChange(to scene: ScenePhase) {
         switch scene {
         case .active:
             repository.unobfuscateForPrivacy()
@@ -43,7 +43,7 @@ final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: VaultItem
         }
     }
 
-    func didAppear() {
+    public func didAppear() {
         // noop
     }
 }

@@ -1,0 +1,13 @@
+# Agents
+.cursor/.agent-tools
+
+# Bundler
+.bundle/
+vendor/
+
+# Build/upload
+*.cer
+*.certSigningRequest
+*.p12
+*.mobileprovision
+*.ipa

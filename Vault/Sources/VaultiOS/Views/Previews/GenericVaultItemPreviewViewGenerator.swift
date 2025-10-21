@@ -2,13 +2,13 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
-struct GenericVaultItemPreviewViewGenerator<
+public struct GenericVaultItemPreviewViewGenerator<
     TOTP: VaultItemPreviewViewGenerator<TOTPAuthCode>,
     HOTP: VaultItemPreviewViewGenerator<HOTPAuthCode>,
     Note: VaultItemPreviewViewGenerator<SecureNote>,
     Encrypted: VaultItemPreviewViewGenerator<EncryptedItem>
 >: VaultItemPreviewViewGenerator {
-    typealias PreviewItem = VaultItem.Payload
+    public typealias PreviewItem = VaultItem.Payload
     private let totpGenerator: TOTP
     private let hotpGenerator: HOTP
     private let noteGenerator: Note
@@ -22,7 +22,7 @@ struct GenericVaultItemPreviewViewGenerator<
     }
 
     @ViewBuilder
-    func makeVaultPreviewView(
+    public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
         behaviour: VaultItemViewBehaviour
@@ -54,21 +54,21 @@ struct GenericVaultItemPreviewViewGenerator<
         }
     }
 
-    func clearViewCache() async {
+    public func clearViewCache() async {
         await totpGenerator.clearViewCache()
         await hotpGenerator.clearViewCache()
         await noteGenerator.clearViewCache()
         await encryptedGenerator.clearViewCache()
     }
 
-    func scenePhaseDidChange(to scenePhase: ScenePhase) {
+    public func scenePhaseDidChange(to scenePhase: ScenePhase) {
         totpGenerator.scenePhaseDidChange(to: scenePhase)
         hotpGenerator.scenePhaseDidChange(to: scenePhase)
         noteGenerator.scenePhaseDidChange(to: scenePhase)
         encryptedGenerator.scenePhaseDidChange(to: scenePhase)
     }
 
-    func didAppear() {
+    public func didAppear() {
         totpGenerator.didAppear()
         hotpGenerator.didAppear()
         noteGenerator.didAppear()
