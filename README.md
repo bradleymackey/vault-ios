@@ -11,7 +11,6 @@ There is purposely no automatic or online backup, so you never need to worry abo
 There's a few ways that you can use Vault to store your data:
 
 1. Super secret data
-
    - Store data you really don't want to be accessed in encrypted notes, like cryptocurrency private keys. Hide them and add a killcode so, if under duress, you can wipe them with plausible deniability. Restore from a backup when you get home.
 
 2. Store OTP codes
