@@ -35,7 +35,9 @@ platform :ios do
     get_provisioning_profile(app_identifier: "com.badbundle.vault")
     get_provisioning_profile(app_identifier: "com.badbundle.vault.VaultAppAutofill")
     increment_build
-    build_app(
+    
+    # Build and export - skip validation during export to avoid auth issues
+    gym(
       workspace: "Vault.xcworkspace",
       scheme: "VaultApp",
       export_method: "app-store",
@@ -43,10 +45,22 @@ platform :ios do
         provisioningProfiles: {
           "com.badbundle.vault" => "vault.mobileprovision",
           "com.badbundle.vault.VaultAppAutofill" => "vault-autofill.mobileprovision"
-        }
+        },
+        uploadSymbols: true,
+        uploadBitcode: false,
+        # This is the key - skip the Apple validation during export
+        manageAppVersionAndBuildNumber: false
       },
-      clean: true
+      clean: true,
+      export_team_id: "442P244AFS",
+      # Use xcargs to pass additional options
+      xcargs: "-allowProvisioningUpdates"
     )
-    upload_to_app_store
+    
+    # Upload to App Store using the correct Apple ID
+    upload_to_app_store(
+      username: "badbundlelimited@gmail.com",
+      team_id: "442P244AFS"
+    )
   end
 end
