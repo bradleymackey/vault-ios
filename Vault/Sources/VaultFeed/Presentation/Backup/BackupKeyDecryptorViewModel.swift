@@ -91,7 +91,7 @@ public final class BackupKeyDecryptorViewModel {
             )
             decryptionKeyState = .validDecryptionKey
             decryptedVaultSubject.send(vaultApplicationPayload)
-        } catch let error as LocalizedError {
+        } catch let error as any LocalizedError {
             decryptionKeyState = .error(.init(localizedError: error))
         } catch {
             decryptionKeyState = .error(PresentationError(

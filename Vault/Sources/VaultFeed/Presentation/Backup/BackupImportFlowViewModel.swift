@@ -105,7 +105,7 @@ public final class BackupImportFlowViewModel {
             case let .readyToImport(applicationPayload):
                 payloadState = .ready(applicationPayload, UUID())
             }
-        } catch let error as LocalizedError {
+        } catch let error as any LocalizedError {
             payloadState = .error(.init(localizedError: error))
         } catch {
             payloadState = .error(PresentationError(
@@ -140,7 +140,7 @@ public final class BackupImportFlowViewModel {
                 try await dataModel.importOverride(payload: payload)
             }
             importState = .success
-        } catch let error as LocalizedError {
+        } catch let error as any LocalizedError {
             importState = .error(.init(localizedError: error))
         } catch {
             importState = .error(PresentationError(
