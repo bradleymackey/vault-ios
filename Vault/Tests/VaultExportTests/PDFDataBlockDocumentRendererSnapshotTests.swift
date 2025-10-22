@@ -8,7 +8,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
     @Test
     func render_drawsEmptyPDFDocument() throws {
         let sut = makeSUT(tilesPerRow: 3)
-        let pdf = try #require(try sut.render(document: emptyDocument()))
+        let pdf = try sut.render(document: emptyDocument())
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -17,7 +17,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
     func render_drawsSingleImage() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockDocument(content: [.dataBlock([anyData()])])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -26,7 +26,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
     func render_drawsRowOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 3))])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -60,7 +60,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 padding: .zero
             )),
         ])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -76,7 +76,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
             .dataBlock(Array(repeating: anyData(), count: 2)),
             .title(longSubtitle(padding: .zero)),
         ])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -99,7 +99,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
             .title(longSubtitle(padding: .zero)),
             .title(longSubtitle(padding: .zero)),
         ])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf(page: 1), named: "page1")
         assertSnapshot(of: pdf, as: .pdf(page: 2), named: "page2")
@@ -109,7 +109,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
     func render_drawsGridRowOfImagesWith10TilesPerRow() throws {
         let sut = makeSUT(tilesPerRow: 10)
         let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 24))])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -118,7 +118,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
     func render_drawsMultiplePagesOfImages() throws {
         let sut = makeSUT(tilesPerRow: 3)
         let document = DataBlockDocument(content: [.dataBlock(Array(repeating: anyData(), count: 14))])
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf(page: 1), named: "page1")
         assertSnapshot(of: pdf, as: .pdf(page: 2), named: "page2")
@@ -138,7 +138,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf(page: 1), named: "page1")
         assertSnapshot(of: pdf, as: .pdf(page: 2), named: "page2")
@@ -158,7 +158,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -178,7 +178,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -198,7 +198,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -218,7 +218,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -234,7 +234,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf(page: 1))
     }
@@ -250,7 +250,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 14)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf(page: 1))
     }
@@ -267,7 +267,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: 0)),
             ]
         )
-        let pdf = try #require(try sut.render(document: document))
+        let pdf = try sut.render(document: document)
 
         assertSnapshot(of: pdf, as: .pdf())
     }
@@ -383,7 +383,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .dataBlock(Array(repeating: anyData(), count: numberOfImages)),
             ]
         )
-        return try #require(try sut.render(document: document))
+        return try sut.render(document: document)
     }
 }
 
