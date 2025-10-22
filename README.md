@@ -39,10 +39,10 @@ There's a few ways that you can use Vault to store your data:
 
 - [x] **Tested**: high level of test coverage, mockolo for mocking, adopting Swift Testing whereever possible, snapshot tests
 - [x] **Safe**: Swift 6 concurrency
-- [x] **Modern**: iOS 18, SwiftUI, Structured Concurrency
+- [x] **Modern**: iOS 26, SwiftUI, Structured Concurrency
 - [x] **Availability**: iPhone & iPad Support
 - [x] **Modular**: Swift Package w/ multiple targets
-- [x] **Resilient**: everything should be versioned, we never need to break old clients, old backups should always be able to be restored (>= version 2.0)
+- [x] **Resilient**: everything should be versioned, we never need to break old clients, old backups should always be able to be restored
 
 ## Contributing
 

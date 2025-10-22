@@ -3,6 +3,11 @@
 Vault package that contains the library for the Vault app.
 It's a Swift package that defines several targets, ultimately vended via `VaultiOS` to the application wrapper.
 
+## Platform Support
+
+Due to general capacity constraints and to make Vault work the best for all users, we only aim to support the latest major iOS release.
+It's just not feasible to support multiple iOS versions without sufficient testing capacity.
+
 ## Architecture
 
 There's essentially 3 storage representations, which we encode and decode from.
