@@ -76,9 +76,9 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             // An item matches if the count of its tags that match our search equals the search count.
             let searchingTagsArray = Array(searchingTagIds)
             return #Predicate<PersistedVaultItem> { item in
-                item.tags.count(where: { tag in
+                item.tags.filter { tag in
                     searchingTagsArray.contains(tag.id)
-                }) == searchingTagsArray.count
+                }.count == searchingTagsArray.count
             }
         }
     }
