@@ -720,9 +720,6 @@
         }
       }
     },
-    "Key" : {
-      "extractionState" : "manual"
-    },
     "noteDetail.action.delete.confirm.subtitle" : {
       "extractionState" : "migrated",
       "localizations" : {
