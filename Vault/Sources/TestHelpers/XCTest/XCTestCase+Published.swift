@@ -14,7 +14,7 @@ extension XCTestCase {
         timeout: TimeInterval = 1,
         when perform: @MainActor () async throws -> Void,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) async throws -> T.Output {
         var result: Result<T.Output, any Error>?
         let expectation = expectation(description: "Awaiting publisher")
@@ -32,7 +32,7 @@ extension XCTestCase {
             },
             receiveValue: { value in
                 result = .success(value)
-            }
+            },
         )
 
         try await perform()
@@ -44,7 +44,7 @@ extension XCTestCase {
             result,
             "Awaited publisher did not produce any output",
             file: file,
-            line: line
+            line: line,
         )
 
         return try unwrappedResult.get()
@@ -58,7 +58,7 @@ extension XCTestCase {
     public func awaitNoPublish(
         publisher: some Publisher,
         timeout: Double = 1.0,
-        when perform: @MainActor () async throws -> Void
+        when perform: @MainActor () async throws -> Void,
     ) async rethrows {
         var isFulfilled = false
         let expectation = expectation(description: "Wait for no publish")
@@ -88,7 +88,7 @@ extension XCTestCase {
     public func expect(
         publisher: some Publisher,
         valueCount: Int,
-        when actions: sending @isolated(any) @escaping () async throws -> Void
+        when actions: sending @isolated(any) @escaping () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }

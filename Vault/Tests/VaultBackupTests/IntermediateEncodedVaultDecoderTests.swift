@@ -33,7 +33,7 @@ struct IntermediateEncodedVaultDecoderTests {
             userDescription: "my description",
             tags: [],
             items: [],
-            obfuscationPadding: Data()
+            obfuscationPadding: Data(),
         )
         let encoder = IntermediateEncodedVaultEncoder()
 
@@ -58,7 +58,7 @@ struct IntermediateEncodedVaultDecoderTests {
             searchPassphrase: "hello",
             killphrase: "killme",
             lockState: .lockedWithNativeSecurity,
-            item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
+            item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain)),
         )
         let date2 = Date(timeIntervalSince1970: 45658)
         let uuid2 = try #require(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
@@ -74,7 +74,7 @@ struct IntermediateEncodedVaultDecoderTests {
             searchPassphrase: nil,
             killphrase: "kill",
             lockState: .notLocked,
-            item: .note(data: .init(title: "Hello world again", rawContents: nil, format: .markdown))
+            item: .note(data: .init(title: "Hello world again", rawContents: nil, format: .markdown)),
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
         let uuid3 = try #require(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))
@@ -99,13 +99,13 @@ struct IntermediateEncodedVaultDecoderTests {
                 algorithm: "algo",
                 digits: 789,
                 accountName: "acc",
-                issuer: "iss"
-            ))
+                issuer: "iss",
+            )),
         )
         let input = anyBackupPayload(
             created: date1,
             userDescription: "my description again",
-            items: [item1, item2, item3]
+            items: [item1, item2, item3],
         )
         let encoder = IntermediateEncodedVaultEncoder()
 
@@ -122,7 +122,7 @@ extension IntermediateEncodedVaultDecoderTests {
         created: Date = Date(),
         userDescription: String = "my description",
         tags: [VaultBackupTag] = [],
-        items: [VaultBackupItem] = []
+        items: [VaultBackupItem] = [],
     ) -> VaultBackupPayload {
         VaultBackupPayload(
             version: "1.0.0",
@@ -130,7 +130,7 @@ extension IntermediateEncodedVaultDecoderTests {
             userDescription: userDescription,
             tags: tags,
             items: items,
-            obfuscationPadding: Data()
+            obfuscationPadding: Data(),
         )
     }
 }

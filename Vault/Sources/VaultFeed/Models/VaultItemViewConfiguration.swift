@@ -63,7 +63,7 @@ extension VaultItemViewConfiguration {
         switch self {
         case .alwaysVisible: localized(key: "vaultItemViewConfiguration.alwaysVisible.title")
         case .requiresSearchPassphrase: localized(
-                key: "vaultItemViewConfiguration.requiresSearchPassphrase.title"
+                key: "vaultItemViewConfiguration.requiresSearchPassphrase.title",
             )
         }
     }
@@ -72,7 +72,7 @@ extension VaultItemViewConfiguration {
         switch self {
         case .alwaysVisible: localized(key: "vaultItemViewConfiguration.alwaysVisible.subtitle")
         case .requiresSearchPassphrase: localized(
-                key: "vaultItemViewConfiguration.requiresSearchPassphrase.subtitle"
+                key: "vaultItemViewConfiguration.requiresSearchPassphrase.subtitle",
             )
         }
     }

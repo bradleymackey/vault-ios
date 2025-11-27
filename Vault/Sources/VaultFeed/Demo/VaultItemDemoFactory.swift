@@ -17,7 +17,7 @@ public struct VaultItemDemoFactory {
             searchableLevel: .full,
             searchPassphrase: nil,
             killphrase: nil,
-            lockState: .notLocked
+            lockState: .notLocked,
         )
     }
 
@@ -34,7 +34,7 @@ public struct VaultItemDemoFactory {
             searchableLevel: .full,
             searchPassphrase: nil,
             killphrase: nil,
-            lockState: .notLocked
+            lockState: .notLocked,
         )
     }
 
@@ -42,7 +42,7 @@ public struct VaultItemDemoFactory {
         let note = SecureNote(
             title: "Hi there",
             contents: "This is a test \(UUID().uuidString.prefix(12))",
-            format: .plain
+            format: .plain,
         )
         return VaultItem.Write(
             relativeOrder: 0,
@@ -54,7 +54,7 @@ public struct VaultItemDemoFactory {
             searchableLevel: .full,
             searchPassphrase: nil,
             killphrase: nil,
-            lockState: .notLocked
+            lockState: .notLocked,
         )
     }
 
@@ -62,7 +62,7 @@ public struct VaultItemDemoFactory {
         let note = SecureNote(
             title: "Hi there",
             contents: "This is a test \(UUID().uuidString.prefix(12))",
-            format: .plain
+            format: .plain,
         )
         let derived = try VaultKeyDeriver.Item.Fast.v1.createEncryptionKey(password: "hello")
         let encryptor = VaultItemEncryptor(key: derived)
@@ -77,7 +77,7 @@ public struct VaultItemDemoFactory {
             searchableLevel: .full,
             searchPassphrase: nil,
             killphrase: nil,
-            lockState: .notLocked
+            lockState: .notLocked,
         )
     }
 }

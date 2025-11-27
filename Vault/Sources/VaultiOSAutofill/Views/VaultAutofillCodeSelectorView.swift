@@ -18,7 +18,7 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
         viewGenerator: Generator,
         copyActionHandler: any VaultItemCopyActionHandler,
         textToInsertSubject: PassthroughSubject<String, Never>,
-        cancelSubject: PassthroughSubject<VaultAutofillViewModel.RequestCancelReason, Never>
+        cancelSubject: PassthroughSubject<VaultAutofillViewModel.RequestCancelReason, Never>,
     ) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
@@ -36,7 +36,7 @@ struct VaultAutofillCodeSelectorView<Generator: VaultItemPreviewViewGenerator<Va
             localSettings: localSettings,
             viewGenerator: interactableViewGenerator(),
             state: VaultItemFeedState(),
-            gridSpacing: 12
+            gridSpacing: 12,
         )
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {

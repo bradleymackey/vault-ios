@@ -189,7 +189,7 @@ struct OTPAuthURIEncoderTests {
             issuer: "Issuer",
             algorithm: .sha512,
             digits: .init(value: 8),
-            secret: secret
+            secret: secret,
         )
 
         let encoded = try sut.encode(code: code)
@@ -215,7 +215,7 @@ extension OTPAuthURIEncoderTests {
         issuer: String = "",
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
-        secret: OTPAuthSecret = .init(data: Data(), format: .base32)
+        secret: OTPAuthSecret = .init(data: Data(), format: .base32),
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,
@@ -224,15 +224,15 @@ extension OTPAuthURIEncoderTests {
                 algorithm: algorithm,
                 digits: digits,
                 accountName: accountName,
-                issuer: issuer
-            )
+                issuer: issuer,
+            ),
         )
     }
 
     private func expect(
         _ uri: OTPAuthURI,
         hasScheme scheme: String,
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         let actual = uri.scheme
         #expect(actual == scheme, sourceLocation: sourceLocation)
@@ -246,7 +246,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         hasPathComponents pathComponents: [String],
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         #expect(uri.pathComponents == pathComponents, sourceLocation: sourceLocation)
     }
@@ -254,7 +254,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         hasAllQueryParameters queryParamters: [String: String],
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         #expect(uri.queryParameters == queryParamters, sourceLocation: sourceLocation)
     }
@@ -262,7 +262,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         containsQueryParameter parameter: (key: String, value: String),
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         let actualValue = uri.queryParameters[parameter.key]
         #expect(actualValue == parameter.value, sourceLocation: sourceLocation)
@@ -271,7 +271,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         doesNotContainQueryParameter parameter: String,
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         let keys = uri.queryParameters.keys
         #expect(keys.contains(where: { $0 == parameter }) == false, sourceLocation: sourceLocation)

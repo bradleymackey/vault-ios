@@ -15,7 +15,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
 
         let container = try ModelContainer(
             for: PersistedVaultItem.self,
-            configurations: .init(isStoredInMemoryOnly: true)
+            configurations: .init(isStoredInMemoryOnly: true),
         )
         sut = PersistedLocalVaultStore(modelContainer: container)
         await sut.updateSortOrder(.createdDate)
@@ -620,7 +620,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(
             result.items.map(\.metadata.id),
             [insertedIDs[0], insertedIDs[1]],
-            "Only the first item is an exact match"
+            "Only the first item is an exact match",
         )
         XCTAssertEqual(result.errors, [])
     }
@@ -646,7 +646,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertEqual(
             result.items.map(\.metadata.id),
             [insertedIDs[0], insertedIDs[1]],
-            "Matches first on text, second on passphrase"
+            "Matches first on text, second on passphrase",
         )
         XCTAssertEqual(result.errors, [])
     }
@@ -955,7 +955,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         XCTAssertNotEqual(
             result.items.map(\.item.otpCode),
             [initialCode.item.otpCode],
-            "Should be different from old code."
+            "Should be different from old code.",
         )
         XCTAssertEqual(result.items.map(\.item.otpCode), [newCode.item.otpCode], "Should be the same as the new code.")
         XCTAssertEqual(result.errors, [])
@@ -996,7 +996,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let sut = try XCTUnwrap(sut)
         await XCTAssertThrowsError(try await sut.reorder(
             items: [id],
-            to: .after(.init(id: UUID()))
+            to: .after(.init(id: UUID())),
         ))
     }
 
@@ -1350,7 +1350,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: tags
+            tags: tags,
         )
 
         try await sut.importAndMergeVault(payload: payload1)
@@ -1373,7 +1373,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: tags
+            tags: tags,
         )
 
         try await sut.importAndMergeVault(payload: payload)
@@ -1393,7 +1393,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items1,
-            tags: tags1
+            tags: tags1,
         )
 
         try await sut.importAndMergeVault(payload: payload1)
@@ -1408,7 +1408,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload2 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items2,
-            tags: tags2
+            tags: tags2,
         )
 
         try await sut.importAndMergeVault(payload: payload2)
@@ -1427,7 +1427,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: [item1, itemX],
-            tags: [tag1, tagX]
+            tags: [tag1, tagX],
         )
 
         try await sut.importAndMergeVault(payload: payload1)
@@ -1437,7 +1437,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload2 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: [item2],
-            tags: [tag2]
+            tags: [tag2],
         )
 
         try await sut.importAndMergeVault(payload: payload2)
@@ -1456,7 +1456,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: [item1, itemX],
-            tags: [tag1, tagX]
+            tags: [tag1, tagX],
         )
 
         try await sut.importAndMergeVault(payload: payload1)
@@ -1466,7 +1466,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload2 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: [item2],
-            tags: [tag2]
+            tags: [tag2],
         )
 
         try await sut.importAndMergeVault(payload: payload2)
@@ -1474,7 +1474,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         try await assertStoreContains(exactlyItems: [item1, itemX])
         try await assertStoreContains(
             exactlyTags: [tag2, tagX],
-            message: "Tag is always updated, there is no date there."
+            message: "Tag is always updated, there is no date there.",
         )
     }
 
@@ -1497,7 +1497,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: tags
+            tags: tags,
         )
 
         try await sut.importAndMergeVault(payload: payload1)
@@ -1520,7 +1520,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: tags
+            tags: tags,
         )
 
         try await sut.importAndOverrideVault(payload: payload1)
@@ -1540,7 +1540,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload1 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: tags
+            tags: tags,
         )
 
         try await sut.importAndOverrideVault(payload: payload1)
@@ -1555,7 +1555,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload2 = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items2,
-            tags: tags2
+            tags: tags2,
         )
 
         try await sut.importAndOverrideVault(payload: payload2)
@@ -1578,7 +1578,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: []
+            tags: [],
         )
         try await sut.importAndOverrideVault(payload: payload)
 
@@ -1595,7 +1595,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: []
+            tags: [],
         )
         try await sut.importAndOverrideVault(payload: payload)
 
@@ -1612,7 +1612,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: []
+            tags: [],
         )
         try await sut.importAndOverrideVault(payload: payload)
 
@@ -1629,7 +1629,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: []
+            tags: [],
         )
         try await sut.importAndOverrideVault(payload: payload)
 
@@ -1646,7 +1646,7 @@ final class PersistedLocalVaultStoreTests: XCTestCase {
         let payload = VaultApplicationPayload(
             userDescription: "Hello world",
             items: items,
-            tags: []
+            tags: [],
         )
 
         try await sut.importAndOverrideVault(payload: payload)
@@ -1672,7 +1672,7 @@ extension PersistedLocalVaultStoreTests {
     private func assertStoreContains(
         exactlyItems: [VaultItem],
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) async throws {
         let allItems = try await sut.allVaultItems()
         XCTAssertEqual(
@@ -1680,7 +1680,7 @@ extension PersistedLocalVaultStoreTests {
             exactlyItems.sorted(by: { $0.metadata.updated < $1.metadata.updated }),
             "Store does not contain exactly the specified items.",
             file: file,
-            line: line
+            line: line,
         )
     }
 
@@ -1688,7 +1688,7 @@ extension PersistedLocalVaultStoreTests {
         exactlyTags: [VaultItemTag],
         message: String? = nil,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) async throws {
         let allItems = try await sut.allVaultTags()
         XCTAssertEqual(
@@ -1696,14 +1696,14 @@ extension PersistedLocalVaultStoreTests {
             exactlyTags.sorted(by: { $0.name < $1.name }),
             message ?? "Tags not equal",
             file: file,
-            line: line
+            line: line,
         )
     }
 
     private func assertStoreContains(
         tag: VaultItemTag,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) async throws {
         let allItems = try await sut.allVaultTags()
         let found = try XCTUnwrap(allItems.first(where: { $0.id == tag.id }), "Tag not in store")

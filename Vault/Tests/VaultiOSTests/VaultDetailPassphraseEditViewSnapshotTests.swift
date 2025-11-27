@@ -13,7 +13,7 @@ struct VaultDetailPassphraseEditViewSnapshotTests {
             description: "This is my description",
             hiddenWithPassphraseTitle: "This is hidden title",
             viewConfig: .constant(.alwaysVisible),
-            passphrase: .constant("this is passphrase")
+            passphrase: .constant("this is passphrase"),
         )
         .framedForTest()
 
@@ -27,7 +27,7 @@ struct VaultDetailPassphraseEditViewSnapshotTests {
             description: "This is my description",
             hiddenWithPassphraseTitle: "This is hidden title",
             viewConfig: .constant(.requiresSearchPassphrase),
-            passphrase: .constant("this is passphrase")
+            passphrase: .constant("this is passphrase"),
         )
         .framedForTest()
 

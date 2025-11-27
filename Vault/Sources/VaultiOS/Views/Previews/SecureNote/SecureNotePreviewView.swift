@@ -41,8 +41,8 @@ struct SecureNotePreviewView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color)
-            )
+                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color),
+            ),
         )
     }
 
@@ -76,9 +76,9 @@ struct SecureNotePreviewView: View {
             description: "desc",
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: true,
-            textFormat: .markdown
+            textFormat: .markdown,
         ),
-        behaviour: .normal
+        behaviour: .normal,
     )
     .frame(width: 200, height: 200)
     .padding()
@@ -91,9 +91,9 @@ struct SecureNotePreviewView: View {
             description: "",
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: false,
-            textFormat: .plain
+            textFormat: .plain,
         ),
-        behaviour: .normal
+        behaviour: .normal,
     )
     .frame(width: 200, height: 200)
     .padding()

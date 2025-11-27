@@ -52,7 +52,7 @@ struct PBKDF2KeyDeriverTests {
     func uniqueAlgorithmIdentifier_matchesParameters() {
         let sut = PBKDF2KeyDeriver<Bits64>(parameters: .init(
             iterations: 456,
-            variant: .sha384
+            variant: .sha384,
         ))
 
         #expect(sut.uniqueAlgorithmIdentifier == "PBKDF2<keyLength=8;iterations=456;variant=sha384>")

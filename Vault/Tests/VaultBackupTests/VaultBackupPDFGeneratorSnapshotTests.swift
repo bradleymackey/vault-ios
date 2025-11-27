@@ -66,7 +66,7 @@ extension VaultBackupPDFGeneratorSnapshotTests {
             size: size,
             documentTitle: "my document",
             applicationName: "my app",
-            authorName: "my author"
+            authorName: "my author",
         )
     }
 
@@ -84,10 +84,10 @@ extension VaultBackupPDFGeneratorSnapshotTests {
                 authentication: authData,
                 encryptionIV: ivData,
                 keygenSalt: keySalt,
-                keygenSignature: "signature"
+                keygenSignature: "signature",
             ),
             userDescription: userDescription,
-            created: createdDate
+            created: createdDate,
         )
     }
 }

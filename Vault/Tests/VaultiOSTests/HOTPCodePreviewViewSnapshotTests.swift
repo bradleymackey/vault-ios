@@ -88,19 +88,19 @@ final class HOTPCodePreviewViewSnapshotTests: XCTestCase {
         accountName: String = "Test",
         issuer: String = "Issuer",
         state: OTPCodeState = .visible("123456"),
-        behaviour: VaultItemViewBehaviour = .normal
+        behaviour: VaultItemViewBehaviour = .normal,
     ) -> some View {
         let preview = OTPCodePreviewViewModel(
             accountName: accountName,
             issuer: issuer,
             color: .default,
             isLocked: false,
-            fixedCodeState: state
+            fixedCodeState: state,
         )
         return HOTPCodePreviewView(
             buttonView: OTPCodeButtonIcon(isError: false),
             previewViewModel: preview,
-            behaviour: behaviour
+            behaviour: behaviour,
         )
         .frame(width: 250)
     }

@@ -45,7 +45,7 @@ extension VaultBackupPDFAttacherImplTests {
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
     }
 }

@@ -7,7 +7,7 @@ public struct TOTPAuthCode: Sendable {
 
     public init(
         period: UInt64 = 30,
-        data: OTPAuthCodeData
+        data: OTPAuthCodeData,
     ) {
         self.period = period
         self.data = data
@@ -16,7 +16,7 @@ public struct TOTPAuthCode: Sendable {
     public func toGenericCode() -> OTPAuthCode {
         OTPAuthCode(
             type: .totp(period: period),
-            data: data
+            data: data,
         )
     }
 

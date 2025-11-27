@@ -76,7 +76,7 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
     @MainActor
     func test_startDecryption_unknownItem() async throws {
         let encryptable = VaultItemEncryptableMock(
-            itemIdentifier: "this is invalid"
+            itemIdentifier: "this is invalid",
         )
         let derivedKey = try VaultKeyDeriver.testing.createEncryptionKey(password: "hello")
         let encryptor = VaultItemEncryptor(key: derivedKey)
@@ -94,7 +94,7 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
             XCTAssertEqual(error.userTitle, "Error")
             XCTAssertEqual(
                 error.userDescription,
-                "Your password was correct, but the item that was encrypted is not known to Vault. We can't display it."
+                "Your password was correct, but the item that was encrypted is not known to Vault. We can't display it.",
             )
         default:
             XCTFail("Unexpected state \(sut.state)")
@@ -104,7 +104,7 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
     @MainActor
     func test_startDecryption_invalidPassword() async throws {
         let encryptable = VaultItemEncryptableMock(
-            itemIdentifier: "any"
+            itemIdentifier: "any",
         )
         let derivedKey = try VaultKeyDeriver.testing.createEncryptionKey(password: "hello")
         let encryptor = VaultItemEncryptor(key: derivedKey)
@@ -134,7 +134,7 @@ extension EncryptedItemDetailViewModelTests {
     private func makeSUT(
         item: EncryptedItem,
         metadata: VaultItem.Metadata = anyVaultItemMetadata(),
-        keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock()
+        keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock(),
     ) -> EncryptedItemDetailViewModel {
         EncryptedItemDetailViewModel(item: item, metadata: metadata, keyDeriverFactory: keyDeriverFactory)
     }

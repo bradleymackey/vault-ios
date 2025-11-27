@@ -23,7 +23,7 @@ public struct VaultMainScene: Scene {
                 localSettings: localSettings,
                 deviceAuthenticationService: deviceAuthenticationService,
                 vaultDataModel: vaultDataModel,
-                injector: injector
+                injector: injector,
             )
             .installToast(position: .top)
         }

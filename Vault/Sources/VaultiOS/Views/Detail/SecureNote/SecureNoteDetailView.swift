@@ -26,13 +26,13 @@ struct SecureNoteDetailView: View {
         dataModel: VaultDataModel,
         storedMetadata: VaultItem.Metadata,
         editor: any SecureNoteDetailEditor,
-        openInEditMode: Bool
+        openInEditMode: Bool,
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .editing(note: note, metadata: storedMetadata, existingKey: encryptionKey),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         ))
         _selectedColor = State(initialValue: storedMetadata.color?.color ?? VaultItemColor.default.color)
 
@@ -44,13 +44,13 @@ struct SecureNoteDetailView: View {
     init(
         newNoteWithEditor editor: any SecureNoteDetailEditor,
         navigationPath: Binding<NavigationPath>,
-        dataModel: VaultDataModel
+        dataModel: VaultDataModel,
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .creating,
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         ))
         _selectedColor = .init(initialValue: VaultItemColor.default.color)
 
@@ -67,7 +67,7 @@ struct SecureNoteDetailView: View {
                 currentError: $currentError,
                 isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
                 navigationPath: $navigationPath,
-                presentationMode: presentationMode
+                presentationMode: presentationMode,
             ) {
                 if viewModel.isInEditMode {
                     noteContentsEditingSection
@@ -89,7 +89,7 @@ struct SecureNoteDetailView: View {
                     VaultDetailLockEditView(
                         title: "Lock",
                         description: "Locked notes require authentication to view or edit. The title and first line of the note will be visible in the preview.",
-                        lockState: $viewModel.editingModel.detail.lockState
+                        lockState: $viewModel.editingModel.detail.lockState,
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -108,7 +108,7 @@ struct SecureNoteDetailView: View {
                         description: "Notes that require a passphrase are hidden from the main feed. You need to search exactly for your chosen passphrase each time to view this note.",
                         hiddenWithPassphraseTitle: viewModel.strings.passphraseSubtitle,
                         viewConfig: $viewModel.editingModel.detail.viewConfig,
-                        passphrase: $viewModel.editingModel.detail.searchPassphrase
+                        passphrase: $viewModel.editingModel.detail.searchPassphrase,
                     )
                     .interactiveDismissDisabled(!viewModel.editingModel.detail.isPassphraseValid)
                     .toolbar {
@@ -128,7 +128,7 @@ struct SecureNoteDetailView: View {
                         title: "Killphrase",
                         description: "A killphrase is a secret phrase that is used to immediately delete this note. In the search bar, search exactly for this text and the note will be immediately and quitely deleted. Combined with a search passphrase, you can delete an item without it being made visible.",
                         hiddenWithKillphraseTitle: viewModel.strings.killphraseSubtitle,
-                        killphrase: $viewModel.editingModel.detail.killphrase
+                        killphrase: $viewModel.editingModel.detail.killphrase,
                     )
                     .interactiveDismissDisabled(!viewModel.editingModel.detail.isKillphraseValid)
                     .toolbar {
@@ -154,7 +154,7 @@ struct SecureNoteDetailView: View {
                         didRemoveEncryption: {
                             viewModel.editingModel.detail.newEncryptionPassword = ""
                             viewModel.editingModel.detail.existingEncryptionKey = nil
-                        }
+                        },
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -172,7 +172,7 @@ struct SecureNoteDetailView: View {
                         tagsThatAreSelected: viewModel.tagsThatAreSelected,
                         remainingTags: viewModel.remainingTags,
                         didAdd: { viewModel.editingModel.detail.tags.insert($0.id) },
-                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) }
+                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) },
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -218,7 +218,7 @@ struct SecureNoteDetailView: View {
                 SelectableText(
                     viewModel.editingModel.detail.contents,
                     fontStyle: .monospace,
-                    textStyle: .subheadline
+                    textStyle: .subheadline,
                 )
                 .frame(minHeight: size.height - 100, alignment: .top)
                 .listRowInsets(EdgeInsets())
@@ -294,7 +294,7 @@ struct SecureNoteDetailView: View {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
                         .font(.body)
@@ -307,7 +307,7 @@ struct SecureNoteDetailView: View {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
                         .font(.body)
@@ -320,7 +320,7 @@ struct SecureNoteDetailView: View {
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.killphraseEnabledIcon),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Killphrase", value: viewModel.editingModel.detail.killphraseEnabledText)
                         .font(.body)
@@ -333,7 +333,7 @@ struct SecureNoteDetailView: View {
                 FormRow(
                     image: Image(systemName: "lock.iphone"),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Encryption", value: viewModel.editingModel.detail.encryptionEnabledText)
                         .font(.body)
@@ -347,11 +347,11 @@ struct SecureNoteDetailView: View {
                     FormRow(
                         image: Image(systemName: "tag"),
                         color: .accentColor,
-                        style: .standard
+                        style: .standard,
                     ) {
                         LabeledContent(
                             "Tags",
-                            value: viewModel.strings.tagCount(tags: viewModel.editingModel.detail.tags.count)
+                            value: viewModel.strings.tagCount(tags: viewModel.editingModel.detail.tags.count),
                         )
                         .font(.body)
                     }
@@ -394,7 +394,7 @@ struct SecureNoteDetailView: View {
         editingExistingNote: .init(
             title: "Hello",
             contents: "This is the contents, it is long \n\n## Nice title",
-            format: .markdown
+            format: .markdown,
         ),
         encryptionKey: nil,
         navigationPath: .constant(.init()),
@@ -405,7 +405,7 @@ struct SecureNoteDetailView: View {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         storedMetadata: .init(
             id: .init(),
@@ -419,10 +419,10 @@ struct SecureNoteDetailView: View {
             searchPassphrase: "",
             killphrase: "",
             lockState: .notLocked,
-            color: nil
+            color: nil,
         ),
         editor: SecureNoteDetailEditorMock(),
-        openInEditMode: false
+        openInEditMode: false,
     )
     .environment(DeviceAuthenticationService(policy: .alwaysAllow))
 }
@@ -438,8 +438,8 @@ struct SecureNoteDetailView: View {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
-        )
+            backupEventLogger: BackupEventLoggerMock(),
+        ),
     )
     .environment(DeviceAuthenticationService(policy: .alwaysAllow))
 }

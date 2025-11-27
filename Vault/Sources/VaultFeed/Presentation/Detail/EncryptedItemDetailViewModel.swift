@@ -68,7 +68,7 @@ public final class EncryptedItemDetailViewModel {
                 throw PresentationError(
                     userTitle: "Error",
                     userDescription: "Your password was correct, but the item that was encrypted is not known to Vault. We can't display it.",
-                    debugDescription: "Unknown item error. Item identifier was '\(identifier)'."
+                    debugDescription: "Unknown item error. Item identifier was '\(identifier)'.",
                 )
             case let .itemDataError(error):
                 throw error // rethrow so state is set below
@@ -76,7 +76,7 @@ public final class EncryptedItemDetailViewModel {
                 throw PresentationError(
                     userTitle: "Incorrect Password",
                     userDescription: "Your password was not recognized, please try again.",
-                    debugDescription: "promptForDifferentPassword"
+                    debugDescription: "promptForDifferentPassword",
                 )
             case let .decrypted(item):
                 state = .decrypted(item, generatedPassword)
@@ -87,7 +87,7 @@ public final class EncryptedItemDetailViewModel {
             state = .decryptionError(PresentationError(
                 userTitle: "Error",
                 userDescription: "Unable to decrypt this item. Please try again.",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             ))
         }
     }
@@ -110,7 +110,7 @@ public final class EncryptedItemDetailViewModel {
             case VaultIdentifiers.Item.secureNote:
                 let decryptedNote: SecureNote = try decryptor.decrypt(
                     item: item,
-                    expectedItemIdentifier: VaultIdentifiers.Item.secureNote
+                    expectedItemIdentifier: VaultIdentifiers.Item.secureNote,
                 )
                 return .decrypted(.secureNote(decryptedNote))
             default:

@@ -63,7 +63,7 @@ struct VaultMainNavigationView: View {
                     localSettings: localSettings,
                     viewGenerator: VaultRoot.genericVaultItemPreviewViewGenerator,
                     copyActionHandler: VaultRoot.vaultItemCopyHandler,
-                    previewActionHandler: VaultRoot.vaultItemPreviewActionHandler
+                    previewActionHandler: VaultRoot.vaultItemPreviewActionHandler,
                 )
                 .navigationBarTitleDisplayMode(.inline)
             case .tags:
@@ -94,7 +94,7 @@ struct VaultMainNavigationView: View {
         .onReceive(pasteboard.didPaste()) {
             let toast = ToastValue(
                 icon: Image(systemName: "doc.on.doc.fill"),
-                message: localized(key: "code.copyied")
+                message: localized(key: "code.copyied"),
             )
             presentToast(toast)
         }

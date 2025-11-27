@@ -19,7 +19,7 @@ public final class BackupImportScanningHandler: CodeScanningHandler {
             State(
                 totalNumberOfShards: state.total,
                 collectedShardIndexes: state.collectedIndexes,
-                remainingShardIndexes: state.remainingIndexes
+                remainingShardIndexes: state.remainingIndexes,
             )
         } else {
             nil
@@ -86,15 +86,15 @@ public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHa
                         searchPassphrase: nil,
                         killphrase: nil,
                         lockState: .notLocked,
-                        color: nil
+                        color: nil,
                     ),
                     item: .secureNote(.init(
                         title: "My example secure note",
                         contents: "This is contents",
-                        format: .markdown
-                    ))
+                        format: .markdown,
+                    )),
                 )],
-                tags: []
+                tags: [],
             )
             let derived = try VaultKeyDeriver.testing.createEncryptionKey(password: "hello")
             let encoder = EncryptedVaultEncoder(clock: EpochClockImpl(), backupPassword: derived)
@@ -106,7 +106,7 @@ public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHa
                 authentication: Data(),
                 encryptionIV: Data(),
                 keygenSalt: Data(),
-                keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
+                keygenSignature: VaultKeyDeriver.Signature.testing.rawValue,
             )
         }
     }

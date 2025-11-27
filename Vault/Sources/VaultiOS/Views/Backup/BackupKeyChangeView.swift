@@ -27,7 +27,7 @@ struct BackupKeyChangeView: View {
                 PlaceholderView(
                     systemIcon: "lock.slash.fill",
                     title: "Authentication Failed",
-                    subtitle: "Please try again"
+                    subtitle: "Please try again",
                 )
                 .containerRelativeFrame(.horizontal)
                 .padding()
@@ -80,10 +80,10 @@ struct BackupKeyChangeView: View {
                 FormRow(
                     image: Image(
                         systemName: viewModel
-                            .passwordConfirmMatches ? "checkmark.circle.fill" : "xmark.circle.fill"
+                            .passwordConfirmMatches ? "checkmark.circle.fill" : "xmark.circle.fill",
                     ),
                     color: viewModel.passwordConfirmMatches ? .green : .red,
-                    style: .standard
+                    style: .standard,
                 ) {
                     SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
                 }
@@ -142,10 +142,10 @@ struct BackupKeyChangeView: View {
                 Group {
                     Text("Your password is used to generate an encryption key that is used to secure your vault.")
                     Text(
-                        "For security, this key generation process may take up to 3 minutes, even on a very fast device."
+                        "For security, this key generation process may take up to 3 minutes, even on a very fast device.",
                     )
                     Text(
-                        "Your encryption key is not shared between devices."
+                        "Your encryption key is not shared between devices.",
                     )
                 }
                 .font(.callout)

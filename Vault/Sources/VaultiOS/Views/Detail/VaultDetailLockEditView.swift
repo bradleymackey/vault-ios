@@ -20,7 +20,7 @@ struct VaultDetailLockEditView: View {
             PlaceholderView(
                 systemIcon: lockState.isLocked ? "lock.fill" : "lock.open.fill",
                 title: title,
-                subtitle: description
+                subtitle: description,
             )
             .padding()
             .containerRelativeFrame(.horizontal)

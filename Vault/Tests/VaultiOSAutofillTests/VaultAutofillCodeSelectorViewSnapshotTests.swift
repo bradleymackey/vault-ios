@@ -22,7 +22,7 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
             encryptedVaultDecoder: EncryptedVaultDecoderMock(),
             defaults: .nonPersistent(),
-            fileManager: .default
+            fileManager: .default,
         )
 
         let store = VaultStoreStub()
@@ -35,7 +35,7 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         )
         await dataModel.reloadData()
         let sut = VaultAutofillCodeSelectorView(
@@ -43,7 +43,7 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
             viewGenerator: generator,
             copyActionHandler: VaultItemCopyActionHandlerMock(),
             textToInsertSubject: .init(),
-            cancelSubject: .init()
+            cancelSubject: .init(),
         )
         .environment(injector)
         .environment(dataModel)

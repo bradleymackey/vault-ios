@@ -48,7 +48,7 @@ extension FloatingPoint {
     ///   `false`.
     public func isAlmostEqual(
         to other: Self,
-        tolerance: Self = Self.ulpOfOne.squareRoot()
+        tolerance: Self = Self.ulpOfOne.squareRoot(),
     ) -> Bool {
         // tolerances outside of [.ulpOfOne,1) yield well-defined but useless results,
         // so this is enforced by an assert rathern than a precondition.
@@ -81,12 +81,12 @@ extension FloatingPoint {
             let scaledSelf = Self(
                 sign: sign,
                 exponent: Self.greatestFiniteMagnitude.exponent,
-                significand: 1
+                significand: 1,
             )
             let scaledOther = Self(
                 sign: .plus,
                 exponent: -1,
-                significand: other
+                significand: other,
             )
             // Now both values are finite, so re-run the naive comparison.
             return scaledSelf.isAlmostEqual(to: scaledOther, tolerance: tolerance)

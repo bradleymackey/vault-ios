@@ -28,7 +28,7 @@ public final class OTPCodePreviewViewModel {
         issuer: String,
         color: VaultItemColor,
         isLocked: Bool,
-        fixedCodeState: OTPCodeState
+        fixedCodeState: OTPCodeState,
     ) {
         self.accountName = accountName
         self.issuer = issuer
@@ -42,7 +42,7 @@ public final class OTPCodePreviewViewModel {
         issuer: String,
         color: VaultItemColor,
         isLocked: Bool,
-        codePublisher: some OTPCodePublisher
+        codePublisher: some OTPCodePublisher,
     ) {
         self.accountName = accountName
         self.color = color
@@ -60,9 +60,9 @@ public final class OTPCodePreviewViewModel {
                         PresentationError(
                             userTitle: localized(key: "codePreview.codeGenerationError.title"),
                             userDescription: localized(key: "codePreview.codeGenerationError.description"),
-                            debugDescription: error.localizedDescription
+                            debugDescription: error.localizedDescription,
                         ),
-                        digits: 6
+                        digits: 6,
                     )
                 }
             } receiveValue: { [weak self] code in

@@ -497,7 +497,7 @@ extension PersistedVaultItemEncoderTests {
             authentication: itemAuth,
             encryptionIV: itemEncryptionIV,
             keygenSalt: itemKeygenSalt,
-            keygenSignature: itemKeygenSignature
+            keygenSignature: itemKeygenSignature,
         ).wrapInAnyVaultItem().makeWritable()
 
         let encoded = try encode(sut: sut, item: item)
@@ -523,7 +523,7 @@ extension PersistedVaultItemEncoderTests {
     private func encode(
         sut: PersistedVaultItemEncoder,
         item: VaultItem.Write,
-        existing: PersistedVaultItem? = nil
+        existing: PersistedVaultItem? = nil,
     ) throws -> PersistedVaultItem {
         let encoded = try sut.encode(item: item, existing: existing)
         context.insert(encoded)
@@ -546,7 +546,7 @@ extension PersistedVaultItemEncoderTests {
         tags: Set<Identifier<VaultItemTag>> = [],
         searchPassphrase: String = "",
         killphrase: String? = nil,
-        lockState: VaultItemLockState = .notLocked
+        lockState: VaultItemLockState = .notLocked,
     ) -> VaultItem.Write {
         VaultItem.Write(
             relativeOrder: relativeOrder,
@@ -558,7 +558,7 @@ extension PersistedVaultItemEncoderTests {
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
             killphrase: killphrase,
-            lockState: lockState
+            lockState: lockState,
         )
     }
 
@@ -568,7 +568,7 @@ extension PersistedVaultItemEncoderTests {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String = "any",
-        issuer: String = ""
+        issuer: String = "",
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: type,
@@ -577,8 +577,8 @@ extension PersistedVaultItemEncoderTests {
                 algorithm: algorithm,
                 digits: digits,
                 accountName: accountName,
-                issuer: issuer
-            )
+                issuer: issuer,
+            ),
         )
     }
 }

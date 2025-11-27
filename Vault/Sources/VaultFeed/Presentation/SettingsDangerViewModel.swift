@@ -23,7 +23,7 @@ public final class SettingsDangerViewModel {
             throw .init(
                 userTitle: "Can't delete Vault",
                 userDescription: "Unable to delete Vault data right now. Please try again. \(error.localizedDescription)",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             )
         }
     }

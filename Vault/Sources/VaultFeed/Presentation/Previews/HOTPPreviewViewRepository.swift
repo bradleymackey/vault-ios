@@ -36,7 +36,7 @@ public final class HOTPPreviewViewRepositoryImpl: HOTPPreviewViewRepository {
                 issuer: code.data.issuer,
                 color: metadata.color ?? .default,
                 isLocked: metadata.lockState.isLocked,
-                codePublisher: makeCodePublisher(id: metadata.id, code: code)
+                codePublisher: makeCodePublisher(id: metadata.id, code: code),
             )
             viewModel.update(.obfuscated(.expiry))
             return viewModel
@@ -50,7 +50,7 @@ public final class HOTPPreviewViewRepositoryImpl: HOTPPreviewViewRepository {
                 codePublisher: makeCodePublisher(id: id, code: code),
                 timer: timer,
                 initialCounter: code.counter,
-                incrementerStore: store
+                incrementerStore: store,
             )
         }
     }

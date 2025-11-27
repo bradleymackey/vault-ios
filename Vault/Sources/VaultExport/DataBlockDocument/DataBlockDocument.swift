@@ -24,7 +24,7 @@ public struct DataBlockDocument {
 
     public init(
         headerGenerator: any DataBlockHeaderGenerator = NoHeaderDataBlockHeaderGenerator(),
-        content: [Content]
+        content: [Content],
     ) {
         self.headerGenerator = headerGenerator
         self.content = content

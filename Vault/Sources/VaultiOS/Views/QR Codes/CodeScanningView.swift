@@ -147,7 +147,7 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
             simulatedData: VaultIdentifiers.CodeScanning.simulatedCode,
             shouldVibrateOnSuccess: false,
             isPaused: scanner.scanningState.pausesCamera,
-            isGalleryPresented: $isImagePickerVisible
+            isGalleryPresented: $isImagePickerVisible,
         ) { response in
             do {
                 let result = try response.get()
@@ -164,7 +164,7 @@ struct CodeScanningView<Handler: CodeScanningHandler>: View {
         .background(
             LinearGradient(colors: [.red, .blue, .green], startPoint: .topLeading, endPoint: .bottomTrailing)
                 .saturation(0.8)
-                .opacity(0.4)
+                .opacity(0.4),
         )
         #endif
     }

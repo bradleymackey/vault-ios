@@ -11,7 +11,7 @@ struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payl
     init(
         viewModel: VaultAutofillViewModel,
         copyActionHandler: any VaultItemCopyActionHandler,
-        generator: Generator
+        generator: Generator,
     ) {
         self.viewModel = viewModel
         self.generator = generator
@@ -25,7 +25,7 @@ struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payl
                 NavigationStack {
                     VaultAutofillConfigurationView(viewModel: .init(
                         dismissSubject: viewModel
-                            .configurationDismissSubject
+                            .configurationDismissSubject,
                     ))
                 }
             case .showAllCodesSelector:
@@ -35,7 +35,7 @@ struct VaultAutofillView<Generator: VaultItemPreviewViewGenerator<VaultItem.Payl
                         viewGenerator: generator,
                         copyActionHandler: copyActionHandler,
                         textToInsertSubject: viewModel.textToInsertSubject,
-                        cancelSubject: viewModel.cancelRequestSubject
+                        cancelSubject: viewModel.cancelRequestSubject,
                     )
                 }
             case let .unimplemented(name):

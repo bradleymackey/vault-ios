@@ -32,13 +32,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         previewGenerator: PreviewGenerator,
         copyActionHandler: any VaultItemCopyActionHandler,
         openInEditMode: Bool,
-        presentationMode: Binding<PresentationMode>?
+        presentationMode: Binding<PresentationMode>?,
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .editing(code: code, metadata: storedMetadata),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         ))
         self.previewGenerator = previewGenerator
         self.copyActionHandler = copyActionHandler
@@ -57,13 +57,13 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         editor: any OTPCodeDetailEditor,
         previewGenerator: PreviewGenerator,
         copyActionHandler: any VaultItemCopyActionHandler,
-        presentationMode: Binding<PresentationMode>?
+        presentationMode: Binding<PresentationMode>?,
     ) {
         _navigationPath = navigationPath
         _viewModel = .init(initialValue: .init(
             mode: .creating(initialCode: initialCode),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         ))
         self.previewGenerator = previewGenerator
         self.copyActionHandler = copyActionHandler
@@ -79,7 +79,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             currentError: $currentError,
             isShowingDeleteConfirmation: $isShowingDeleteConfirmation,
             navigationPath: $navigationPath,
-            presentationMode: presentationMode
+            presentationMode: presentationMode,
         ) {
             if viewModel.isInEditMode {
                 if viewModel.showsKeyEditingFields {
@@ -102,7 +102,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     VaultDetailLockEditView(
                         title: "Lock",
                         description: "Locked codes require authentication to view or edit. You will need to authenticate every time before you can view or copy the code.",
-                        lockState: $viewModel.editingModel.detail.lockState
+                        lockState: $viewModel.editingModel.detail.lockState,
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -121,7 +121,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                         description: "Codes that require a passphrase are hidden from the main feed. You need to search exactly for your chosen passphrase each time to view this code.",
                         hiddenWithPassphraseTitle: viewModel.strings.passphraseSubtitle,
                         viewConfig: $viewModel.editingModel.detail.viewConfig,
-                        passphrase: $viewModel.editingModel.detail.searchPassphrase
+                        passphrase: $viewModel.editingModel.detail.searchPassphrase,
                     )
                     .interactiveDismissDisabled(!viewModel.editingModel.detail.isPassphraseValid)
                     .toolbar {
@@ -141,7 +141,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                         title: "Killphrase",
                         description: "A killphrase is a secret phrase that is used to immediately delete this code. In the search bar, search exactly for this text and the code will be immediately and quitely deleted. Combined with a search passphrase, you can delete an item without it being made visible.",
                         hiddenWithKillphraseTitle: viewModel.strings.killphraseSubtitle,
-                        killphrase: $viewModel.editingModel.detail.killphrase
+                        killphrase: $viewModel.editingModel.detail.killphrase,
                     )
                     .interactiveDismissDisabled(!viewModel.editingModel.detail.isKillphraseValid)
                     .toolbar {
@@ -161,7 +161,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                         tagsThatAreSelected: viewModel.tagsThatAreSelected,
                         remainingTags: viewModel.remainingTags,
                         didAdd: { viewModel.editingModel.detail.tags.insert($0.id) },
-                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) }
+                        didRemove: { viewModel.editingModel.detail.tags.remove($0.id) },
                     )
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -193,7 +193,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         VStack(spacing: 8) {
             OTPCodeIconPlaceholderView(
                 iconFontSize: viewModel.isInEditMode ? 44 : 22,
-                backgroundColor: selectedColor
+                backgroundColor: selectedColor,
             )
             .clipShape(Circle())
 
@@ -209,7 +209,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         Section {
             TextField(
                 viewModel.strings.siteNameTitle,
-                text: $viewModel.editingModel.detail.issuerTitle
+                text: $viewModel.editingModel.detail.issuerTitle,
             )
             TextField(text: $viewModel.editingModel.detail.accountNameTitle) {
                 Text(viewModel.strings.accountNameExample)
@@ -250,14 +250,14 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     Stepper(value: $viewModel.editingModel.detail.totpPeriodLength, in: 1 ... UInt64(Int.max)) {
                         LabeledContent(
                             viewModel.strings.inputTotpPeriodTitle,
-                            value: "\(viewModel.editingModel.detail.totpPeriodLength)"
+                            value: "\(viewModel.editingModel.detail.totpPeriodLength)",
                         )
                     }
                 case .hotp:
                     Stepper(value: $viewModel.editingModel.detail.hotpCounterValue, in: 0 ... UInt64(Int.max)) {
                         LabeledContent(
                             viewModel.strings.inputHotpCounterTitle,
-                            value: "\(viewModel.editingModel.detail.hotpCounterValue)"
+                            value: "\(viewModel.editingModel.detail.hotpCounterValue)",
                         )
                     }
                 }
@@ -274,7 +274,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 Stepper(value: $viewModel.editingModel.detail.numberOfDigits, in: 1 ... UInt16.max) {
                     LabeledContent(
                         viewModel.strings.inputNumberOfDigitsTitle,
-                        value: "\(viewModel.editingModel.detail.numberOfDigits)"
+                        value: "\(viewModel.editingModel.detail.numberOfDigits)",
                     )
                 }
             } label: {
@@ -285,7 +285,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 validationState: viewModel.editingModel.detail.$secretBase32String,
                 validTitle: viewModel.strings.inputKeyValidTitle,
                 invalidTitle: viewModel.strings.inputKeyEmptyTitle,
-                errorTitle: viewModel.strings.inputKeyErrorTitle
+                errorTitle: viewModel.strings.inputKeyErrorTitle,
             )
             .padding()
             .modifier(HorizontallyCenter())
@@ -297,7 +297,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             copyableViewGenerator().makeVaultPreviewView(
                 item: .otpCode(code),
                 metadata: metadata,
-                behaviour: .normal
+                behaviour: .normal,
             )
             .frame(maxWidth: 200)
             .padding()
@@ -335,7 +335,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                             FooterInfoLabel(
                                 title: entry.title,
                                 detail: entry.detail,
-                                systemImageName: entry.systemIconName
+                                systemImageName: entry.systemIconName,
                             )
                         }
                     }
@@ -354,7 +354,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.viewConfig.systemIconName),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
                         .font(.body)
@@ -367,7 +367,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.lockState.systemIconName),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Lock", value: viewModel.editingModel.detail.lockState.localizedTitle)
                         .font(.body)
@@ -380,7 +380,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 FormRow(
                     image: Image(systemName: viewModel.editingModel.detail.killphraseEnabledIcon),
                     color: .accentColor,
-                    style: .standard
+                    style: .standard,
                 ) {
                     LabeledContent("Killphrase", value: viewModel.editingModel.detail.killphraseEnabledText)
                         .font(.body)
@@ -394,11 +394,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     FormRow(
                         image: Image(systemName: "tag"),
                         color: .accentColor,
-                        style: .standard
+                        style: .standard,
                     ) {
                         LabeledContent(
                             "Tags",
-                            value: viewModel.strings.tagCount(tags: viewModel.editingModel.detail.tags.count)
+                            value: viewModel.strings.tagCount(tags: viewModel.editingModel.detail.tags.count),
                         )
                         .font(.body)
                     }
@@ -452,7 +452,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     OTPCodeDetailView(
         editingExistingCode: .init(
             type: .totp(),
-            data: .init(secret: .empty(), accountName: "Test")
+            data: .init(secret: .empty(), accountName: "Test"),
         ),
         navigationPath: .constant(.init()),
         dataModel: VaultDataModel(
@@ -462,7 +462,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         storedMetadata: .init(
             id: .new(),
@@ -476,16 +476,16 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             searchPassphrase: "",
             killphrase: "",
             lockState: .notLocked,
-            color: VaultItemColor(color: .green)
+            color: VaultItemColor(color: .green),
         ),
         editor: OTPCodeDetailEditorMock(),
         previewGenerator: VaultItemPreviewViewGeneratorMock(),
         copyActionHandler: VaultItemCopyActionHandlerMock(),
         openInEditMode: false,
-        presentationMode: nil
+        presentationMode: nil,
     )
     .environment(Pasteboard(
         SystemPasteboardImpl(clock: EpochClockImpl()),
-        localSettings: .init(defaults: .init(userDefaults: .standard))
+        localSettings: .init(defaults: .init(userDefaults: .standard)),
     ))
 }

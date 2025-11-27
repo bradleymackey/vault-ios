@@ -20,9 +20,9 @@ public struct DataShardBuilder {
                     group: .init(
                         id: groupID,
                         number: 0,
-                        totalNumber: 1
+                        totalNumber: 1,
                     ),
-                    data: Data()
+                    data: Data(),
                 ),
             ]
         } else {
@@ -32,9 +32,9 @@ public struct DataShardBuilder {
                     group: .init(
                         id: groupID,
                         number: chunkIndex,
-                        totalNumber: blocksRequired
+                        totalNumber: blocksRequired,
                     ),
-                    data: chunkData
+                    data: chunkData,
                 )
             }
         }

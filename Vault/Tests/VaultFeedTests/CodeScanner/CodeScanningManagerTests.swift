@@ -174,7 +174,7 @@ extension CodeScanningManagerTests {
         intervalTimer: IntervalTimerMock = IntervalTimerMock(),
         handler: CodeScanningHandlerMock = .defaultCompletedScanning,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> CodeScanningManager<CodeScanningHandlerMock> {
         let sut = CodeScanningManager(intervalTimer: intervalTimer, handler: handler)
         trackForMemoryLeaks(sut, file: file, line: line)

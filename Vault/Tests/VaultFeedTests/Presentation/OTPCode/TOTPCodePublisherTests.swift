@@ -16,15 +16,15 @@ final class TOTPCodePublisherTests: XCTestCase {
         let values = try await awaitPublisher(publisher, when: {
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 1_111_111_109,
-                endTime: 1_111_111_109 + 1
+                endTime: 1_111_111_109 + 1,
             ))
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 1_111_111_111,
-                endTime: 1_111_111_111 + 1
+                endTime: 1_111_111_111 + 1,
             ))
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 2_000_000_000,
-                endTime: 2_000_000_000 + 1
+                endTime: 2_000_000_000 + 1,
             ))
         })
         XCTAssertEqual(values, [
@@ -43,11 +43,11 @@ final class TOTPCodePublisherTests: XCTestCase {
         let values = try await awaitPublisher(publisher, when: {
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 1_111_111_109,
-                endTime: 1_111_111_109 + 1
+                endTime: 1_111_111_109 + 1,
             ))
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 1_111_111_111,
-                endTime: 1_111_111_111 + 1
+                endTime: 1_111_111_111 + 1,
             ))
         })
         XCTAssertEqual(values, [
@@ -65,11 +65,11 @@ final class TOTPCodePublisherTests: XCTestCase {
         let values = try await awaitPublisher(publisher, when: {
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 1_111_111_109,
-                endTime: 1_111_111_109 + 1
+                endTime: 1_111_111_109 + 1,
             ))
             timer.timerUpdatedPublisherSubject.send(OTPCodeTimerState(
                 startTime: 1_111_111_111,
-                endTime: 1_111_111_111 + 1
+                endTime: 1_111_111_111 + 1,
             ))
         })
         XCTAssertEqual(values, [
@@ -84,7 +84,7 @@ final class TOTPCodePublisherTests: XCTestCase {
     private func makeSUT(
         digits: UInt16,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> (OTPCodeTimerUpdaterMock, some OTPCodePublisher) {
         let timer = OTPCodeTimerUpdaterMock()
         let sut = TOTPCodePublisher(timer: timer, totpGenerator: fixedGenerator(timeInterval: 30, digits: digits))

@@ -46,7 +46,7 @@ struct AsyncButton<Label: View, Loading: View>: View {
                 } else {
                     label()
                 }
-            }
+            },
         )
         .disabled(isDisabled || !isEnabled)
     }

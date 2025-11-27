@@ -13,7 +13,7 @@ public actor BackupPasswordExporter {
         let backupExport = BackupPasswordExport.createV1Export(
             key: backupPassword.key,
             salt: backupPassword.salt,
-            keyDeriver: backupPassword.keyDervier
+            keyDeriver: backupPassword.keyDervier,
         )
         return try makeExportEncoder().encode(backupExport)
     }

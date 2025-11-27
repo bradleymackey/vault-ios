@@ -16,7 +16,7 @@ extension Task where Failure == any Error {
     /// - returns: The value for the first resolved result, throws if it's an error.
     public static func race(
         priority: TaskPriority? = nil,
-        firstResolved tasks: [TaskRace<Success>]
+        firstResolved tasks: [TaskRace<Success>],
     ) async throws -> Success {
         try await withThrowingTaskGroup(of: Success.self) { group -> Success in
             for task in tasks {
@@ -44,7 +44,7 @@ extension Task where Failure == any Error {
     /// - returns: The first successful value yielded by any of the child tasks.
     public static func race(
         priority: TaskPriority? = nil,
-        firstValue tasks: [TaskRace<Success>]
+        firstValue tasks: [TaskRace<Success>],
     ) async throws -> Success? {
         try await withThrowingTaskGroup(of: Success.self) { group -> Success? in
             try Task<Never, Never>.checkCancellation()

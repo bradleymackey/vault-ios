@@ -37,7 +37,7 @@ final class VaultTagFeedViewSnapshotTests: XCTestCase {
 extension VaultTagFeedViewSnapshotTests {
     @MainActor
     private func makeSUT(
-        vaultTagStore: any VaultTagStore = VaultTagStoreStub()
+        vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
     ) async -> some View {
         let dataModel = VaultDataModel(
             vaultStore: VaultStoreStub(),
@@ -46,7 +46,7 @@ extension VaultTagFeedViewSnapshotTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         )
         await dataModel.reloadData()
         return VaultTagFeedView(viewModel: .init())

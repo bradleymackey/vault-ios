@@ -53,7 +53,7 @@ extension PersistedSchemaV1 {
             tags: [PersistedVaultTag],
             noteDetails: PersistedNoteDetails?,
             otpDetails: PersistedOTPDetails?,
-            encryptedItemDetails: PersistedEncryptedItemDetails?
+            encryptedItemDetails: PersistedEncryptedItemDetails?,
         ) {
             self.id = id
             self.relativeOrder = relativeOrder
@@ -97,7 +97,7 @@ extension PersistedSchemaV1 {
             digits: Int32,
             period: Int64? = 0,
             secretData: Data,
-            secretFormat: String
+            secretFormat: String,
         ) {
             self.accountName = accountName
             self.issuer = issuer
@@ -147,7 +147,7 @@ extension PersistedSchemaV1 {
             authentication: Data,
             encryptionIV: Data,
             keygenSalt: Data,
-            keygenSignature: String
+            keygenSignature: String,
         ) {
             self.version = version
             self.title = title

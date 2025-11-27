@@ -59,9 +59,9 @@ struct VaultTagDetailView: View {
                         id: .init(),
                         name: viewModel.currentTag.name,
                         color: viewModel.currentTag.color,
-                        iconName: viewModel.currentTag.iconName
+                        iconName: viewModel.currentTag.iconName,
                     ),
-                    isSelected: true
+                    isSelected: true,
                 )
                 .font(.title3)
 
@@ -90,7 +90,7 @@ struct VaultTagDetailView: View {
                         .padding(8)
                         .foregroundStyle(
                             viewModel.currentTag.iconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)
-                                .opacity(0.5)
+                                .opacity(0.5),
                         )
                         .onTapGesture {
                             viewModel.currentTag.iconName = icon

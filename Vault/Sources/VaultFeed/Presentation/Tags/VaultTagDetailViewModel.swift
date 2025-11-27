@@ -120,7 +120,7 @@ public final class VaultTagDetailViewModel {
             saveError = .init(
                 userTitle: strings.saveErrorTitle,
                 userDescription: strings.genericErrorDetail,
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             )
         }
     }
@@ -134,7 +134,7 @@ public final class VaultTagDetailViewModel {
             deleteError = .init(
                 userTitle: strings.deleteErrorTitle,
                 userDescription: strings.genericErrorDetail,
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             )
         }
     }

@@ -60,7 +60,7 @@ final class HOTPCodePublisherTests: XCTestCase {
     private func makeSUT(
         digits: UInt16,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> HOTPCodePublisher {
         let sut = HOTPCodePublisher(hotpGenerator: fixedGenerator(digits: digits))
         trackForMemoryLeaks(sut, file: file, line: line)

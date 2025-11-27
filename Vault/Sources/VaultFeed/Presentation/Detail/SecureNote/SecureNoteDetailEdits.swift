@@ -48,7 +48,7 @@ public struct SecureNoteDetailEdits: EditableState {
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         relativeOrder: UInt64,
-        existingEncryptionKey: DerivedEncryptionKey?
+        existingEncryptionKey: DerivedEncryptionKey?,
     ) {
         self.contents = contents
         self.textFormat = textFormat
@@ -148,7 +148,7 @@ extension SecureNoteDetailEdits {
             tags: [],
             lockState: .notLocked,
             relativeOrder: .min,
-            existingEncryptionKey: nil
+            existingEncryptionKey: nil,
         )
     }
 }

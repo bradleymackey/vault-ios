@@ -39,7 +39,7 @@ struct BackupImportFlowView: View {
                         encryptedVault: encryptedVault,
                         keyDeriverFactory: injector.vaultKeyDeriverFactory,
                         encryptedVaultDecoder: injector.encryptedVaultDecoder,
-                        decryptedVaultSubject: decryptedVaultSubject
+                        decryptedVaultSubject: decryptedVaultSubject,
                     ))
                     .navigationBarTitleDisplayMode(.inline)
                 }
@@ -50,7 +50,7 @@ struct BackupImportFlowView: View {
                         loadedEncryptedVault: {
                             modal = nil
                             await viewModel.handleImport(fromEncryptedVault: $0)
-                        }
+                        },
                     )
                     .navigationBarTitleDisplayMode(.inline)
                 }
@@ -79,7 +79,7 @@ struct BackupImportFlowView: View {
                     PlaceholderView(
                         systemIcon: "lock.badge.clock.fill",
                         title: "Decryption Password Needed",
-                        subtitle: "You need to enter the password that was used to encrypt this export."
+                        subtitle: "You need to enter the password that was used to encrypt this export.",
                     )
                     .padding()
                     .containerRelativeFrame(.horizontal)
@@ -97,7 +97,7 @@ struct BackupImportFlowView: View {
                     PlaceholderView(
                         systemIcon: "exclamationmark.triangle.fill",
                         title: presentationError.userTitle,
-                        subtitle: presentationError.userDescription
+                        subtitle: presentationError.userDescription,
                     )
                     .padding()
                     .containerRelativeFrame(.horizontal)
@@ -135,11 +135,11 @@ struct BackupImportFlowView: View {
                     image: Image(systemName: "arrow.down.document.fill"),
                     color: .accentColor,
                     style: .standard,
-                    alignment: .firstTextBaseline
+                    alignment: .firstTextBaseline,
                 ) {
                     TextAndSubtitle(
                         title: "Automatic Import",
-                        subtitle: "Select your Vault Export PDF from your files"
+                        subtitle: "Select your Vault Export PDF from your files",
                     )
                 }
             }
@@ -161,11 +161,11 @@ struct BackupImportFlowView: View {
                     image: Image(systemName: "qrcode.viewfinder"),
                     color: .accentColor,
                     style: .standard,
-                    alignment: .firstTextBaseline
+                    alignment: .firstTextBaseline,
                 ) {
                     TextAndSubtitle(
                         title: "Manual Import",
-                        subtitle: "Use your camera to scan all the QR codes on your Vault Export document"
+                        subtitle: "Use your camera to scan all the QR codes on your Vault Export document",
                     )
                 }
             }
@@ -181,7 +181,7 @@ struct BackupImportFlowView: View {
                 PlaceholderView(
                     systemIcon: "square.and.arrow.down.fill",
                     title: viewModel.importContext.readyToImportTitle,
-                    subtitle: viewModel.importContext.readyToImportDescription
+                    subtitle: viewModel.importContext.readyToImportDescription,
                 )
                 .padding()
                 .containerRelativeFrame(.horizontal)
@@ -191,7 +191,7 @@ struct BackupImportFlowView: View {
                 PlaceholderView(
                     systemIcon: "exclamationmark.triangle.fill",
                     title: error.userTitle,
-                    subtitle: error.userDescription
+                    subtitle: error.userDescription,
                 )
                 .foregroundStyle(.red)
                 .padding()
@@ -202,7 +202,7 @@ struct BackupImportFlowView: View {
                 PlaceholderView(
                     systemIcon: "checkmark.circle.fill",
                     title: "Imported",
-                    subtitle: "Your vault has been updated with the items from this backup."
+                    subtitle: "Your vault has been updated with the items from this backup.",
                 )
                 .foregroundStyle(.green)
                 .padding()

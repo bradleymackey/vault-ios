@@ -29,7 +29,7 @@ final class DetailEditState<T: Equatable> {
 
     func deleteItem(
         performDeletion: @MainActor @Sendable () async throws -> Void,
-        finished: @MainActor @Sendable () -> Void
+        finished: @MainActor @Sendable () -> Void,
     ) async throws {
         guard !isSaving else { return }
         isSaving = true
@@ -44,7 +44,7 @@ final class DetailEditState<T: Equatable> {
 
     func exitCurrentModeClearingDirtyState(
         clearDirtyState: @MainActor @Sendable () -> Void,
-        finished: @MainActor @Sendable () -> Void
+        finished: @MainActor @Sendable () -> Void,
     ) {
         if isInEditMode {
             clearDirtyState()

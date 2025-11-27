@@ -104,7 +104,7 @@ struct DataShardDecoderTests {
         for i in 0 ..< 6 {
             let shard = try makeShardData(
                 group: .init(id: 10, number: i, totalNumber: 6),
-                data: Data([UInt8(i + 20)])
+                data: Data([UInt8(i + 20)]),
             )
             try sut.add(shardData: shard)
         }
@@ -118,7 +118,7 @@ struct DataShardDecoderTests {
         for i in order {
             let shard = try makeShardData(
                 group: .init(id: 10, number: i, totalNumber: 6),
-                data: Data([UInt8(i + 30)])
+                data: Data([UInt8(i + 30)]),
             )
             try sut.add(shardData: shard)
         }
@@ -131,7 +131,7 @@ struct DataShardDecoderTests {
 extension DataShardDecoderTests {
     private func makeShardData(
         group: DataShard.GroupInfo = .init(id: 0, number: 0, totalNumber: 1),
-        data: Data = Data([0xAA])
+        data: Data = Data([0xAA]),
     ) throws -> Data {
         try EncryptedVaultCoder().encode(shard: .init(group: group, data: data))
     }

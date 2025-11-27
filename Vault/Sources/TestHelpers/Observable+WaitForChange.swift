@@ -6,7 +6,7 @@ extension Observable {
     public func waitForChange(
         to property: KeyPath<Self, some Any>,
         timeout: Duration? = nil,
-        when action: @MainActor () async throws -> Void
+        when action: @MainActor () async throws -> Void,
     ) async throws {
         let pending = Pending.signal()
         withObservationTracking {

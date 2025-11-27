@@ -49,7 +49,7 @@ extension OTPCodeTimerState {
     public func offset(time offsetTime: Double) -> Self {
         .init(
             startTime: startTime + offsetTime,
-            endTime: endTime + offsetTime
+            endTime: endTime + offsetTime,
         )
     }
 }

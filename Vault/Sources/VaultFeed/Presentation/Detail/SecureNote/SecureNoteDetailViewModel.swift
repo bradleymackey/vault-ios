@@ -13,7 +13,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
         case editing(
             note: SecureNote,
             metadata: VaultItem.Metadata,
-            existingKey: DerivedEncryptionKey?
+            existingKey: DerivedEncryptionKey?,
         )
     }
 
@@ -48,7 +48,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 tags: metadata.tags,
                 lockState: metadata.lockState,
                 relativeOrder: metadata.relativeOrder,
-                existingEncryptionKey: encryptionKey
+                existingEncryptionKey: encryptionKey,
             ))
         }
     }
@@ -210,7 +210,7 @@ extension SecureNoteDetailViewModel {
             items.append(.init(
                 title: strings.updatedDateTitle,
                 detail: updatedDateValue,
-                systemIconName: "clock.arrow.2.circlepath"
+                systemIconName: "clock.arrow.2.circlepath",
             ))
         }
 
@@ -218,8 +218,8 @@ extension SecureNoteDetailViewModel {
             .init(
                 title: strings.visibilityTitle,
                 detail: editingModel.detail.viewConfig.localizedTitle,
-                systemIconName: editingModel.detail.viewConfig.systemIconName
-            )
+                systemIconName: editingModel.detail.viewConfig.systemIconName,
+            ),
         )
 
         return items

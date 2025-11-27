@@ -25,10 +25,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut)
@@ -53,10 +53,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .lockedWithNativeSecurity,
-                color: nil
+                color: nil,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut)
@@ -81,10 +81,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .lockedWithNativeSecurity,
-                color: nil
+                color: nil,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
@@ -109,10 +109,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut)
@@ -137,10 +137,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut)
@@ -166,10 +166,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .notLocked,
-                color: .gray
+                color: .gray,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut)
@@ -195,10 +195,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .notLocked,
-                color: .black
+                color: .black,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: false
+            openInEditMode: false,
         )
 
         await snapshotScenarios(view: sut)
@@ -223,10 +223,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: true
+            openInEditMode: true,
         )
 
         await snapshotScenarios(view: sut)
@@ -252,10 +252,10 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: nil,
                 lockState: .notLocked,
-                color: .black
+                color: .black,
             ),
             editor: SecureNoteDetailEditorMock(),
-            openInEditMode: true
+            openInEditMode: true,
         )
 
         await snapshotScenarios(view: sut)
@@ -269,7 +269,7 @@ extension SecureNoteDetailViewSnapshotTests {
     private func snapshotScenarios(
         view: some View,
         deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
-        testName: String = #function
+        testName: String = #function,
     ) async {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
@@ -286,7 +286,7 @@ extension SecureNoteDetailViewSnapshotTests {
                     of: snapshottingView,
                     as: .image,
                     named: named,
-                    testName: testName
+                    testName: testName,
                 )
             }
         }

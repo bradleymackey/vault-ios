@@ -25,7 +25,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let sut = makeSUT(
             existingBackupPassword: anyBackupPassword(),
-            encryptedVaultDecoder: encryptedVaultDecoder
+            encryptedVaultDecoder: encryptedVaultDecoder,
         )
 
         await sut.handleImport(fromEncryptedVault: anyEncryptedVault())
@@ -47,7 +47,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let sut = makeSUT(
             existingBackupPassword: anyBackupPassword(),
-            encryptedVaultDecoder: encryptedVaultDecoder
+            encryptedVaultDecoder: encryptedVaultDecoder,
         )
 
         await sut.handleImport(fromEncryptedVault: anyEncryptedVault())
@@ -64,7 +64,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let sut = makeSUT(
             existingBackupPassword: nil,
-            encryptedVaultDecoder: encryptedVaultDecoder
+            encryptedVaultDecoder: encryptedVaultDecoder,
         )
         let encryptedVault = anyEncryptedVault()
 
@@ -82,7 +82,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         }
         let sut = makeSUT(
             existingBackupPassword: anyBackupPassword(),
-            encryptedVaultDecoder: encryptedVaultDecoder
+            encryptedVaultDecoder: encryptedVaultDecoder,
         )
         let encryptedVault = anyEncryptedVault()
 
@@ -123,7 +123,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         let sut = makeSUT(
             existingBackupPassword: anyBackupPassword(),
             encryptedVaultDecoder: encryptedVaultDecoder,
-            backupPDFDetatcher: backupPDFDetatcher
+            backupPDFDetatcher: backupPDFDetatcher,
         )
         backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
             anyEncryptedVault()
@@ -151,7 +151,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         let sut = makeSUT(
             existingBackupPassword: anyBackupPassword(),
             encryptedVaultDecoder: encryptedVaultDecoder,
-            backupPDFDetatcher: backupPDFDetatcher
+            backupPDFDetatcher: backupPDFDetatcher,
         )
         backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
             anyEncryptedVault()
@@ -174,7 +174,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         let sut = makeSUT(
             existingBackupPassword: nil,
             encryptedVaultDecoder: encryptedVaultDecoder,
-            backupPDFDetatcher: backupPDFDetatcher
+            backupPDFDetatcher: backupPDFDetatcher,
         )
         let encryptedVault = anyEncryptedVault()
         backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
@@ -198,7 +198,7 @@ final class BackupImportFlowViewModelTests: XCTestCase {
         let sut = makeSUT(
             existingBackupPassword: anyBackupPassword(),
             encryptedVaultDecoder: encryptedVaultDecoder,
-            backupPDFDetatcher: backupPDFDetatcher
+            backupPDFDetatcher: backupPDFDetatcher,
         )
         let encryptedVault = anyEncryptedVault()
         backupPDFDetatcher.detachEncryptedVaultHandler = { _ in
@@ -280,18 +280,18 @@ extension BackupImportFlowViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         existingBackupPassword: DerivedEncryptionKey? = nil,
         encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock(),
-        backupPDFDetatcher: VaultBackupPDFDetatcherMock = VaultBackupPDFDetatcherMock()
+        backupPDFDetatcher: VaultBackupPDFDetatcherMock = VaultBackupPDFDetatcherMock(),
     ) -> BackupImportFlowViewModel {
         BackupImportFlowViewModel(
             importContext: importContext,
             dataModel: dataModel,
             existingBackupPassword: existingBackupPassword,
             encryptedVaultDecoder: encryptedVaultDecoder,
-            backupPDFDetatcher: backupPDFDetatcher
+            backupPDFDetatcher: backupPDFDetatcher,
         )
     }
 }

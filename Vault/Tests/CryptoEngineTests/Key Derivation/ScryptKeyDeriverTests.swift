@@ -11,7 +11,7 @@ struct ScryptKeyDeriverTests {
         let params = ScryptKeyDeriver<Bits64>.Parameters(
             costFactor: 1 << 4,
             blockSizeFactor: 2,
-            parallelizationFactor: 1
+            parallelizationFactor: 1,
         )
         let sut = ScryptKeyDeriver(parameters: params)
 
@@ -25,7 +25,7 @@ struct ScryptKeyDeriverTests {
         let params = ScryptKeyDeriver<Bits64>.Parameters(
             costFactor: 16385,
             blockSizeFactor: 8,
-            parallelizationFactor: 1
+            parallelizationFactor: 1,
         )
         let sut = ScryptKeyDeriver<Bits64>(parameters: params)
 
@@ -83,7 +83,7 @@ struct ScryptKeyDeriverTests {
         let sut = makeSUT(parameters: .init(
             costFactor: 998,
             blockSizeFactor: 432,
-            parallelizationFactor: 555
+            parallelizationFactor: 555,
         ))
 
         let expected = "SCRYPT<keyLength=8;costFactor=998;blockSizeFactor=432;parallelizationFactor=555>"
@@ -96,7 +96,7 @@ struct ScryptKeyDeriverTests {
 extension ScryptKeyDeriverTests {
     private func makeSUT(
         parameters: ScryptKeyDeriver<Bits64>
-            .Parameters = .fastForTesting
+            .Parameters = .fastForTesting,
     ) -> ScryptKeyDeriver<Bits64> {
         ScryptKeyDeriver(parameters: parameters)
     }
@@ -107,7 +107,7 @@ extension ScryptKeyDeriver.Parameters {
         .init(
             costFactor: 16,
             blockSizeFactor: 2,
-            parallelizationFactor: 1
+            parallelizationFactor: 1,
         )
     }
 }

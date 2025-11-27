@@ -29,12 +29,12 @@ struct VerticalTilingDataBlockLayoutTests {
         expectFirstRow(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
-            origins: [.zero, CGPoint(x: 30, y: 0), CGPoint(x: 60, y: 0)]
+            origins: [.zero, CGPoint(x: 30, y: 0), CGPoint(x: 60, y: 0)],
         )
         expectFirstColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
-            origins: [.zero, CGPoint(x: 0, y: 30), CGPoint(x: 0, y: 60)]
+            origins: [.zero, CGPoint(x: 0, y: 30), CGPoint(x: 0, y: 60)],
         )
     }
 
@@ -45,12 +45,12 @@ struct VerticalTilingDataBlockLayoutTests {
         expectFirstRow(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
-            origins: [.zero, CGPoint(x: 40, y: 0), CGPoint(x: 80, y: 0)]
+            origins: [.zero, CGPoint(x: 40, y: 0), CGPoint(x: 80, y: 0)],
         )
         expectFirstColumn(
             for: sut,
             sizes: [.square(30), .square(30), .square(30)],
-            origins: [.zero, CGPoint(x: 0, y: 40), CGPoint(x: 0, y: 80)]
+            origins: [.zero, CGPoint(x: 0, y: 40), CGPoint(x: 0, y: 80)],
         )
     }
 
@@ -59,18 +59,18 @@ struct VerticalTilingDataBlockLayoutTests {
         let sut = makeSUT(
             origin: .init(x: 20, y: 20),
             size: .square(100),
-            tilesPerRow: 4
+            tilesPerRow: 4,
         )
 
         expectFirstRow(
             for: sut,
             sizes: [.square(25), .square(25), .square(25), .square(25)],
-            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 45, y: 20), CGPoint(x: 70, y: 20), CGPoint(x: 95, y: 20)]
+            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 45, y: 20), CGPoint(x: 70, y: 20), CGPoint(x: 95, y: 20)],
         )
         expectFirstColumn(
             for: sut,
             sizes: [.square(25), .square(25), .square(25), .square(25)],
-            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 20, y: 45), CGPoint(x: 20, y: 70), CGPoint(x: 20, y: 95)]
+            origins: [CGPoint(x: 20, y: 20), CGPoint(x: 20, y: 45), CGPoint(x: 20, y: 70), CGPoint(x: 20, y: 95)],
         )
     }
 
@@ -117,12 +117,12 @@ struct VerticalTilingDataBlockLayoutTests {
         origin: CGPoint = .zero,
         size: CGSize,
         tilesPerRow: UInt,
-        spacing: CGFloat = 0
+        spacing: CGFloat = 0,
     ) -> VerticalTilingDataBlockLayout {
         VerticalTilingDataBlockLayout(
             bounds: CGRect(origin: origin, size: size),
             tilesPerRow: tilesPerRow,
-            spacing: spacing
+            spacing: spacing,
         )
     }
 
@@ -130,7 +130,7 @@ struct VerticalTilingDataBlockLayoutTests {
         for sut: VerticalTilingDataBlockLayout,
         sizes: [CGSize],
         origins: [CGPoint],
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         let rowIndexes: [UInt] = Array(0 ..< sut.tilesPerRow)
         for (index, rowIndex) in rowIndexes.enumerated() {
@@ -139,7 +139,7 @@ struct VerticalTilingDataBlockLayoutTests {
             #expect(
                 point?.origin == origins[index],
                 "Unexpected origin at index \(index)",
-                sourceLocation: sourceLocation
+                sourceLocation: sourceLocation,
             )
         }
     }
@@ -148,7 +148,7 @@ struct VerticalTilingDataBlockLayoutTests {
         for sut: VerticalTilingDataBlockLayout,
         sizes: [CGSize],
         origins: [CGPoint],
-        sourceLocation: SourceLocation = .__here()
+        sourceLocation: SourceLocation = .__here(),
     ) {
         let columnIndexes: [UInt] = Array(0 ..< sut.tilesPerRow).map { $0 * sut.tilesPerRow }
         for (index, columnIndex) in columnIndexes.enumerated() {
@@ -157,7 +157,7 @@ struct VerticalTilingDataBlockLayoutTests {
             #expect(
                 point?.origin == origins[index],
                 "Unexpected origin at index \(index)",
-                sourceLocation: sourceLocation
+                sourceLocation: sourceLocation,
             )
         }
     }

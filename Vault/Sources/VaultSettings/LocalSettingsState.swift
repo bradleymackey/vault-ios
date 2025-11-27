@@ -10,7 +10,7 @@ public struct LocalSettingsState {
         _pasteTimeToLive = DefaultsStored(
             defaults: defaults,
             defaultsKey: .init(VaultIdentifiers.Preferences.General.settingsPasteTTL),
-            defaultValue: .default
+            defaultValue: .default,
         )
     }
 }

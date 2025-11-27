@@ -75,7 +75,7 @@ extension VaultBackupPDFDetatcherImplTests {
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
     }
 
@@ -83,7 +83,7 @@ extension VaultBackupPDFDetatcherImplTests {
         let annotation = PDFAnnotation(
             bounds: CGRect(x: -100, y: -100, width: 100, height: 100),
             forType: .circle,
-            withProperties: nil
+            withProperties: nil,
         )
         let encoded = try makeEncodedVault(vault: vault)
         annotation.contents = "\(VaultIdentifiers.Backup.encryptedVaultData):" + encoded
@@ -94,7 +94,7 @@ extension VaultBackupPDFDetatcherImplTests {
         let annotation = PDFAnnotation(
             bounds: CGRect(x: -100, y: -100, width: 100, height: 100),
             forType: .circle,
-            withProperties: nil
+            withProperties: nil,
         )
         annotation.contents = "\(VaultIdentifiers.Backup.encryptedVaultData):"
         return annotation
@@ -104,7 +104,7 @@ extension VaultBackupPDFDetatcherImplTests {
         let annotation = PDFAnnotation(
             bounds: CGRect(x: -100, y: -100, width: 100, height: 100),
             forType: .circle,
-            withProperties: nil
+            withProperties: nil,
         )
         annotation.contents = "\(VaultIdentifiers.Backup.encryptedVaultData):AAAAA"
         return annotation

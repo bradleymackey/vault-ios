@@ -9,7 +9,7 @@ final class VaultBackupTagEncoder {
             id: tag.id.id,
             title: tag.name,
             color: encodeColor(tag: tag),
-            iconName: tag.iconName
+            iconName: tag.iconName,
         )
     }
 }

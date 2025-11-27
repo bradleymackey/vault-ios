@@ -14,7 +14,7 @@ func anyVaultDataModel(
     vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
     vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
     backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
-    backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
+    backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
     VaultDataModel(
         vaultStore: vaultStore,
@@ -23,7 +23,7 @@ func anyVaultDataModel(
         vaultDeleter: vaultDeleter,
         vaultKillphraseDeleter: vaultKillphraseDeleter,
         backupPasswordStore: backupPasswordStore,
-        backupEventLogger: backupEventLogger
+        backupEventLogger: backupEventLogger,
     )
 }
 
@@ -35,7 +35,7 @@ func anyVaultInjector() -> VaultInjector {
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock(),
         defaults: Defaults(userDefaults: .standard),
-        fileManager: .default
+        fileManager: .default,
     )
 }
 
@@ -45,7 +45,7 @@ func anyVaultItemTag(
     id: UUID = UUID(),
     name: String = "name",
     color: VaultItemColor = .tagDefault,
-    iconName: String = VaultItemTag.defaultIconName
+    iconName: String = VaultItemTag.defaultIconName,
 ) -> VaultItemTag {
     VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
 }
@@ -55,7 +55,7 @@ func anySecureNote(title: String = "any") -> SecureNote {
 }
 
 func anyVaultItemMetadata(
-    lockState: VaultItemLockState = .notLocked
+    lockState: VaultItemLockState = .notLocked,
 ) -> VaultItem.Metadata {
     .init(
         id: Identifier<VaultItem>(),
@@ -69,7 +69,7 @@ func anyVaultItemMetadata(
         searchPassphrase: "",
         killphrase: "",
         lockState: lockState,
-        color: .black
+        color: .black,
     )
 }
 
@@ -78,7 +78,7 @@ func anyOTPVaultItem(
     secret: OTPAuthSecret = .empty(),
     algorithm: OTPAuthAlgorithm = .sha256,
     digits: OTPAuthDigits = .init(value: 6),
-    color: VaultItemColor? = nil
+    color: VaultItemColor? = nil,
 ) -> VaultItem {
     let code = OTPAuthCode(
         type: type,
@@ -87,8 +87,8 @@ func anyOTPVaultItem(
             algorithm: algorithm,
             digits: digits,
             accountName: "my account name",
-            issuer: "my issuer"
-        )
+            issuer: "my issuer",
+        ),
     )
     return VaultItem(
         metadata: .init(
@@ -103,9 +103,9 @@ func anyOTPVaultItem(
             searchPassphrase: "",
             killphrase: "",
             lockState: .notLocked,
-            color: color
+            color: color,
         ),
-        item: .otpCode(code)
+        item: .otpCode(code),
     )
 }
 
@@ -119,12 +119,12 @@ extension VaultItemPreviewViewGeneratorMock {
     /// The preview view will be generated with the provided view.
     static func mockGenerating(
         @ViewBuilder view: @escaping (PreviewItem, VaultItem.Metadata, VaultItemViewBehaviour)
-            -> some View
+            -> some View,
     ) -> VaultItemPreviewViewGeneratorMock {
         let s = VaultItemPreviewViewGeneratorMock()
         s.makeVaultPreviewViewHandler = { item, metadata, behaviour in
             AnyView(
-                view(item, metadata, behaviour)
+                view(item, metadata, behaviour),
             )
         }
         return s
@@ -137,15 +137,15 @@ func uniqueCode() -> OTPAuthCode {
         type: .totp(),
         data: .init(
             secret: .init(data: randomData, format: .base32),
-            accountName: "Some Account"
-        )
+            accountName: "Some Account",
+        ),
     )
 }
 
 func uniqueVaultItem() -> VaultItem {
     VaultItem(
         metadata: uniqueMetadata(),
-        item: .otpCode(uniqueCode())
+        item: .otpCode(uniqueCode()),
     )
 }
 
@@ -161,7 +161,7 @@ func anyEncryptedItem() -> EncryptedItem {
         authentication: Data(repeating: 0x03, count: 10),
         encryptionIV: Data(repeating: 0x03, count: 10),
         keygenSalt: Data(repeating: 0x03, count: 10),
-        keygenSignature: "my sig"
+        keygenSignature: "my sig",
     )
 }
 
@@ -178,7 +178,7 @@ func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> Vaul
         searchPassphrase: nil,
         killphrase: nil,
         lockState: .notLocked,
-        color: nil
+        color: nil,
     )
 }
 

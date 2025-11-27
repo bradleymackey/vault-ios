@@ -21,7 +21,7 @@ struct PersistedVaultItemEncoder {
             let writeUpdateContext = VaultItem.WriteUpdateContext(
                 id: .init(id: existing.id),
                 created: existing.createdDate,
-                updated: .updateUpdatedDate
+                updated: .updateUpdatedDate,
             )
             return try encode(newData: item, writeUpdateContext: writeUpdateContext)
         } else {
@@ -41,7 +41,7 @@ extension PersistedVaultItemEncoder {
 
     private func encode(
         newData: VaultItem.Write,
-        writeUpdateContext: VaultItem.WriteUpdateContext?
+        writeUpdateContext: VaultItem.WriteUpdateContext?,
     ) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
@@ -81,7 +81,7 @@ extension PersistedVaultItemEncoder {
             tags: fetchTagsForItem(newData: newData),
             noteDetails: noteDetails,
             otpDetails: otpDetails,
-            encryptedItemDetails: encryptedItemDetails
+            encryptedItemDetails: encryptedItemDetails,
         )
     }
 
@@ -113,7 +113,7 @@ extension PersistedVaultItemEncoder {
 
 extension PersistedVaultItemEncoder {
     private func encodeOtpDetails(
-        newData: OTPAuthCode
+        newData: OTPAuthCode,
     ) -> PersistedOTPDetails {
         PersistedOTPDetails(
             accountName: newData.data.accountName,
@@ -124,7 +124,7 @@ extension PersistedVaultItemEncoder {
             digits: Int32(newData.data.digits.value),
             period: encodedOTPPeriod(newData.type),
             secretData: newData.data.secret.data,
-            secretFormat: encodedOTPSecretFormat(newData.data.secret.format)
+            secretFormat: encodedOTPSecretFormat(newData.data.secret.format),
         )
     }
 
@@ -168,12 +168,12 @@ extension PersistedVaultItemEncoder {
 
 extension PersistedVaultItemEncoder {
     private func encodeSecureNoteDetails(
-        newData: SecureNote
+        newData: SecureNote,
     ) -> PersistedNoteDetails {
         PersistedNoteDetails(
             title: newData.title,
             contents: newData.contents,
-            format: encodeTextFormat(newData.format)
+            format: encodeTextFormat(newData.format),
         )
     }
 
@@ -196,7 +196,7 @@ extension PersistedVaultItemEncoder {
             authentication: newData.authentication,
             encryptionIV: newData.encryptionIV,
             keygenSalt: newData.keygenSalt,
-            keygenSignature: newData.keygenSignature
+            keygenSignature: newData.keygenSignature,
         )
     }
 }

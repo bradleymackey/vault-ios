@@ -13,7 +13,7 @@ struct IntermediateEncodedVaultEncoderTests {
         let backup = anyBackupPayload(
             created: date,
             userDescription: "my description",
-            items: []
+            items: [],
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)
@@ -37,10 +37,10 @@ struct IntermediateEncodedVaultEncoderTests {
                     id: uuid2,
                     title: "my second tag",
                     color: .init(red: 0.3, green: 0.4, blue: 0.5),
-                    iconName: "some_name"
+                    iconName: "some_name",
                 ),
             ],
-            items: []
+            items: [],
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)
@@ -68,12 +68,12 @@ struct IntermediateEncodedVaultEncoderTests {
             killphrase: "kill",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .note(data: .init(title: "Example Note", rawContents: "Example note", format: .markdown))
+            item: .note(data: .init(title: "Example Note", rawContents: "Example note", format: .markdown)),
         )
         let backup = anyBackupPayload(
             created: date,
             userDescription: "Example vault with a single note",
-            items: [item]
+            items: [item],
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)
@@ -108,13 +108,13 @@ struct IntermediateEncodedVaultEncoderTests {
                 authentication: Data(repeating: 0x02, count: 17),
                 encryptionIV: Data(repeating: 0x04, count: 24),
                 keygenSalt: Data(repeating: 0x05, count: 30),
-                keygenSignature: "this is test sig"
-            ))
+                keygenSignature: "this is test sig",
+            )),
         )
         let backup = anyBackupPayload(
             created: date,
             userDescription: "Example vault with a single encrypted item",
-            items: [item]
+            items: [item],
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)
@@ -151,14 +151,14 @@ struct IntermediateEncodedVaultEncoderTests {
                 algorithm: "algo",
                 digits: 789,
                 accountName: "acc",
-                issuer: "iss"
-            ))
+                issuer: "iss",
+            )),
         )
 
         let backup = anyBackupPayload(
             created: date,
             userDescription: "Example vault with a single otp code",
-            items: [item]
+            items: [item],
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)
@@ -184,7 +184,7 @@ struct IntermediateEncodedVaultEncoderTests {
             searchPassphrase: "searchphrase",
             killphrase: "killme",
             lockState: .notLocked,
-            item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain))
+            item: .note(data: .init(title: "Hello world", rawContents: "contents of note", format: .plain)),
         )
         let date2 = Date(timeIntervalSince1970: 45658)
         let uuid2 = try #require(UUID(uuidString: "29808EAD-3727-4FF6-9B01-C5506BBDC409"))
@@ -201,7 +201,7 @@ struct IntermediateEncodedVaultEncoderTests {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .lockedWithNativeSecurity,
-            item: .note(data: .init(title: "Hello world again", rawContents: "contents", format: .markdown))
+            item: .note(data: .init(title: "Hello world again", rawContents: "contents", format: .markdown)),
         )
         let date3 = Date(timeIntervalSince1970: 345_652_348)
         let uuid3 = try #require(UUID(uuidString: "EF0849B7-C070-491B-A31B-51A11AEA26F4"))
@@ -227,8 +227,8 @@ struct IntermediateEncodedVaultEncoderTests {
                 algorithm: "algo",
                 digits: 789,
                 accountName: "acc",
-                issuer: "iss"
-            ))
+                issuer: "iss",
+            )),
         )
         let uuid9 = try #require(UUID(uuidString: "A5950174-2106-4251-BD73-58B8D39F77F3"))
         let uuid10 = try #require(UUID(uuidString: "DCABE94A-C194-49AA-B709-7221DAD253AB"))
@@ -253,13 +253,13 @@ struct IntermediateEncodedVaultEncoderTests {
                 authentication: Data(repeating: 0x09, count: 17),
                 encryptionIV: Data(repeating: 0x94, count: 24),
                 keygenSalt: Data(repeating: 0x65, count: 30),
-                keygenSignature: "this is test sig"
-            ))
+                keygenSignature: "this is test sig",
+            )),
         )
         let backup = anyBackupPayload(
             created: date1,
             userDescription: "my description again",
-            items: [item1, item2, item3, item4]
+            items: [item1, item2, item3, item4],
         )
 
         let encodedVault = try sut.encode(vaultBackup: backup)
@@ -277,7 +277,7 @@ extension IntermediateEncodedVaultEncoderTests {
         created: Date = Date(),
         userDescription: String = "my description",
         tags: [VaultBackupTag] = [],
-        items: [VaultBackupItem] = []
+        items: [VaultBackupItem] = [],
     ) -> VaultBackupPayload {
         VaultBackupPayload(
             version: "1.0.0",
@@ -285,7 +285,7 @@ extension IntermediateEncodedVaultEncoderTests {
             userDescription: userDescription,
             tags: tags,
             items: items,
-            obfuscationPadding: Data(hex: "abababa")
+            obfuscationPadding: Data(hex: "abababa"),
         )
     }
 }

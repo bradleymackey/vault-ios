@@ -114,14 +114,14 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
         timer: IntervalTimerMock = IntervalTimerMock(),
         incrementerStore: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> OTPCodeIncrementerViewModel {
         let sut = OTPCodeIncrementerViewModel(
             id: .new(),
             codePublisher: codePublisher,
             timer: timer,
             initialCounter: 0,
-            incrementerStore: incrementerStore
+            incrementerStore: incrementerStore,
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         return sut

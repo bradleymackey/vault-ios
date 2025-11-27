@@ -20,7 +20,7 @@ public final class OTPCodeIncrementerViewModel {
         codePublisher: HOTPCodePublisher,
         timer: any IntervalTimer,
         initialCounter: UInt64,
-        incrementerStore: any VaultStoreHOTPIncrementer
+        incrementerStore: any VaultStoreHOTPIncrementer,
     ) {
         self.id = id
         self.timer = timer
@@ -41,7 +41,7 @@ public final class OTPCodeIncrementerViewModel {
             incrementError = PresentationError(
                 userTitle: "Error",
                 userDescription: "Unable to update HOTP counter",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             )
         }
     }

@@ -23,7 +23,7 @@ public final class VaultBackupEncryptor {
         key: VaultKey,
         keygenSalt: Data,
         keygenSignature: String,
-        paddingMode: PaddingMode = .random
+        paddingMode: PaddingMode = .random,
     ) {
         self.clock = clock
         self.key = key
@@ -36,7 +36,7 @@ public final class VaultBackupEncryptor {
     public func encryptBackupPayload(
         items: [VaultBackupItem],
         tags: [VaultBackupTag],
-        userDescription: String
+        userDescription: String,
     ) throws -> EncryptedVault {
         let payload = VaultBackupPayload(
             version: "1.0.0",
@@ -44,7 +44,7 @@ public final class VaultBackupEncryptor {
             userDescription: userDescription,
             tags: tags,
             items: items,
-            obfuscationPadding: makePadding(itemsCount: items.count)
+            obfuscationPadding: makePadding(itemsCount: items.count),
         )
         let intermediateEncoding = try IntermediateEncodedVaultEncoder().encode(vaultBackup: payload)
         let encryptor = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)

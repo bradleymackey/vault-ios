@@ -20,7 +20,7 @@ struct VaultMainNavigationViewSnapshotTests {
             localSettings: localSettings,
             deviceAuthenticationService: deviceAuthenticationService,
             vaultDataModel: vaultDataModel,
-            injector: injector
+            injector: injector,
         )
         .framedForTest()
 

@@ -37,7 +37,7 @@ extension SecureNotePreviewViewGeneratorTests {
 
     @MainActor
     private func makeSUT(
-        factory: SecureNotePreviewViewFactoryMock = SecureNotePreviewViewFactoryMock()
+        factory: SecureNotePreviewViewFactoryMock = SecureNotePreviewViewFactoryMock(),
     ) -> SUT {
         SecureNotePreviewViewGenerator(viewFactory: factory)
     }

@@ -45,7 +45,7 @@ struct VaultBackupTagEncoderTests {
             id: .init(id: UUID()),
             name: "any",
             color: .init(red: 0.4, green: 0.5, blue: 0.6),
-            iconName: "icon-name"
+            iconName: "icon-name",
         )
 
         let encoded = sut.encode(tag: tag)

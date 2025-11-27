@@ -61,7 +61,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
-        color: VaultItemColor?
+        color: VaultItemColor?,
     ) {
         self.codeType = codeType
         self.relativeOrder = relativeOrder
@@ -90,7 +90,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         searchPassphrase: String,
         killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
-        lockState: VaultItemLockState
+        lockState: VaultItemLockState,
     ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
@@ -128,11 +128,11 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
             algorithm: algorithm,
             digits: .init(value: numberOfDigits),
             accountName: accountNameTitle,
-            issuer: issuerTitle
+            issuer: issuerTitle,
         )
         return OTPAuthCode(
             type: otpAuthType,
-            data: otpAuthCodeData
+            data: otpAuthCodeData,
         )
     }
 
@@ -196,7 +196,7 @@ extension OTPCodeDetailEdits {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
-            color: nil
+            color: nil,
         )
     }
 
@@ -210,7 +210,7 @@ extension OTPCodeDetailEdits {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
     }
 }

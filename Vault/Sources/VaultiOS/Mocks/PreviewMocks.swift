@@ -22,7 +22,7 @@ struct CodeStoreFake: VaultStoreReader {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: VaultItemColor(color: .green)
+                color: VaultItemColor(color: .green),
             ),
             item: .otpCode(
                 .init(
@@ -30,10 +30,10 @@ struct CodeStoreFake: VaultStoreReader {
                     data: .init(
                         secret: .empty(),
                         accountName: "test@example.com",
-                        issuer: "Ebay"
-                    )
-                )
-            )
+                        issuer: "Ebay",
+                    ),
+                ),
+            ),
         ),
         .init(
             metadata: .init(
@@ -48,7 +48,7 @@ struct CodeStoreFake: VaultStoreReader {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: VaultItemColor(color: .green)
+                color: VaultItemColor(color: .green),
             ),
             item: .otpCode(
                 .init(
@@ -56,10 +56,10 @@ struct CodeStoreFake: VaultStoreReader {
                     data: .init(
                         secret: .empty(),
                         accountName: "test@example.com",
-                        issuer: "Ebay"
-                    )
-                )
-            )
+                        issuer: "Ebay",
+                    ),
+                ),
+            ),
         ),
         .init(
             metadata: .init(
@@ -74,7 +74,7 @@ struct CodeStoreFake: VaultStoreReader {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: VaultItemColor(color: .green)
+                color: VaultItemColor(color: .green),
             ),
             item: .otpCode(
                 .init(
@@ -82,10 +82,10 @@ struct CodeStoreFake: VaultStoreReader {
                     data: .init(
                         secret: .empty(),
                         accountName: "test@example.com",
-                        issuer: "Ebay"
-                    )
-                )
-            )
+                        issuer: "Ebay",
+                    ),
+                ),
+            ),
         ),
     ]
 

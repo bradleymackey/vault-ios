@@ -24,7 +24,7 @@ public final class TOTPPreviewViewRepositoryImpl: TOTPPreviewViewRepository {
     public init(
         clock: any EpochClock,
         timer: any IntervalTimer,
-        updaterFactory: any OTPCodeTimerUpdaterFactory
+        updaterFactory: any OTPCodeTimerUpdaterFactory,
     ) {
         self.clock = clock
         self.timer = timer
@@ -36,14 +36,14 @@ public final class TOTPPreviewViewRepositoryImpl: TOTPPreviewViewRepository {
             let totpGenerator = TOTPGenerator(generator: code.data.hotpGenerator(), timeInterval: code.period)
             let codePublisher = TOTPCodePublisher(
                 timer: timerUpdater(period: code.period),
-                totpGenerator: totpGenerator
+                totpGenerator: totpGenerator,
             )
             return OTPCodePreviewViewModel(
                 accountName: code.data.accountName,
                 issuer: code.data.issuer,
                 color: metadata.color ?? .default,
                 isLocked: metadata.lockState.isLocked,
-                codePublisher: codePublisher
+                codePublisher: codePublisher,
             )
         }
     }

@@ -27,7 +27,7 @@ struct BackupImportFlowState {
         do {
             let applicationPayload = try encryptedVaultDecoder.decryptAndDecode(
                 key: password.key,
-                encryptedVault: encryptedVault
+                encryptedVault: encryptedVault,
             )
             return .readyToImport(applicationPayload)
         } catch EncryptedVaultDecoderError.decryption {

@@ -8,7 +8,7 @@ extension Publisher {
     public func expect(
         valueCount: Int,
         sourceLocation _: SourceLocation = .__here(),
-        when actions: () async throws -> Void
+        when actions: () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
@@ -45,7 +45,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
         firstValues: [Output],
         timeout: Duration = .seconds(1),
         sourceLocation: SourceLocation = .__here(),
-        when actions: sending @isolated(any) @escaping () async throws -> Void
+        when actions: sending @isolated(any) @escaping () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }

@@ -30,14 +30,14 @@ struct VaultAutofillConfigurationView: View {
             VStack(alignment: .center, spacing: 8) {
                 Text("Autofill for your items is now enabled.")
                 Text(
-                    "To autofill in a text field, hold down on the text field, select 'Autofill' followed by 'Passwords'"
+                    "To autofill in a text field, hold down on the text field, select 'Autofill' followed by 'Passwords'",
                 )
             }
             .font(.body)
 
             VStack(alignment: .center, spacing: 8) {
                 Text(
-                    "Due to a bug in the latest release of iOS, OTP codes may not automatically offer to autofill currently. This feature will be added as soon as possible."
+                    "Due to a bug in the latest release of iOS, OTP codes may not automatically offer to autofill currently. This feature will be added as soon as possible.",
                 )
             }
             .font(.footnote)

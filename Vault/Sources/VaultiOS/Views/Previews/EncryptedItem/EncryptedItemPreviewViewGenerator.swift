@@ -4,7 +4,7 @@ import VaultFeed
 
 @MainActor
 public final class EncryptedItemPreviewViewGenerator<
-    Factory: EncryptedItemPreviewViewFactory
+    Factory: EncryptedItemPreviewViewFactory,
 >: VaultItemPreviewViewGenerator {
     public typealias PreviewItem = EncryptedItem
 
@@ -17,11 +17,11 @@ public final class EncryptedItemPreviewViewGenerator<
     public func makeVaultPreviewView(
         item: EncryptedItem,
         metadata: VaultItem.Metadata,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         let viewModel = EncryptedItemPreviewViewModel(
             title: item.title,
-            color: metadata.color ?? .default
+            color: metadata.color ?? .default,
         )
         return viewFactory.makeEncryptedItemView(viewModel: viewModel, behaviour: behaviour)
     }

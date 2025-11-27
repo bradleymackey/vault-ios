@@ -26,13 +26,13 @@ extension BackupPasswordExport {
     static func createV1Export(
         key: KeyData<Bits256>,
         salt: Data,
-        keyDeriver: VaultKeyDeriver.Signature
+        keyDeriver: VaultKeyDeriver.Signature,
     ) -> BackupPasswordExport {
         BackupPasswordExport(
             version: "1.0.0",
             key: key,
             salt: salt,
-            keyDeriver: keyDeriver
+            keyDeriver: keyDeriver,
         )
     }
 }

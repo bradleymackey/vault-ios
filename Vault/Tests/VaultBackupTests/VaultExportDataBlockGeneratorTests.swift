@@ -13,10 +13,10 @@ struct VaultExportDataBlockGeneratorTests {
                 authentication: Data(),
                 encryptionIV: Data(),
                 keygenSalt: Data(),
-                keygenSignature: "my-signature"
+                keygenSignature: "my-signature",
             ),
             userDescription: "my desc",
-            created: Date()
+            created: Date(),
         ))
 
         let document = try sut.makeDocument(knownPageCount: 2)
@@ -48,10 +48,10 @@ struct VaultExportDataBlockGeneratorTests {
                 authentication: Data(),
                 encryptionIV: Data(),
                 keygenSalt: Data(),
-                keygenSignature: "my-signature"
+                keygenSignature: "my-signature",
             ),
             userDescription: description,
-            created: Date()
+            created: Date(),
         ))
 
         let document = try sut.makeDocument(knownPageCount: 2)

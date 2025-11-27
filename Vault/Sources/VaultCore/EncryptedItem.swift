@@ -35,7 +35,7 @@ public struct EncryptedItem: Equatable, Hashable, Codable, Sendable {
         authentication: Data,
         encryptionIV: Data,
         keygenSalt: Data,
-        keygenSignature: String
+        keygenSignature: String,
     ) {
         self.version = version
         self.title = title

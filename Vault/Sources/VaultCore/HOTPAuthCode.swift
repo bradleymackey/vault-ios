@@ -6,7 +6,7 @@ public struct HOTPAuthCode: Sendable {
 
     public init(
         counter: UInt64 = 0,
-        data: OTPAuthCodeData
+        data: OTPAuthCodeData,
     ) {
         self.counter = counter
         self.data = data
@@ -15,7 +15,7 @@ public struct HOTPAuthCode: Sendable {
     public func toGenericCode() -> OTPAuthCode {
         OTPAuthCode(
             type: .hotp(counter: counter),
-            data: data
+            data: data,
         )
     }
 

@@ -23,7 +23,7 @@ final class VaultDataModelTests: XCTestCase {
             backupDate: Date(),
             eventDate: Date(),
             kind: .exportedToPDF,
-            payloadHash: .init(value: Data())
+            payloadHash: .init(value: Data()),
         ) }
         let sut = makeSUT(backupEventLogger: logger)
 
@@ -53,7 +53,7 @@ final class VaultDataModelTests: XCTestCase {
             backupDate: Date(),
             eventDate: Date(),
             kind: .exportedToPDF,
-            payloadHash: .init(value: Data())
+            payloadHash: .init(value: Data()),
         )
         logger.loggedEventPublisherSubject.send(event)
 
@@ -63,7 +63,7 @@ final class VaultDataModelTests: XCTestCase {
             backupDate: Date(),
             eventDate: Date(),
             kind: .exportedToPDF,
-            payloadHash: .init(value: .random(count: 32))
+            payloadHash: .init(value: .random(count: 32)),
         )
         logger.loggedEventPublisherSubject.send(event2)
 
@@ -611,7 +611,7 @@ extension VaultDataModelTests {
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
-        itemCaches: [any VaultItemCache] = []
+        itemCaches: [any VaultItemCache] = [],
     ) -> VaultDataModel {
         VaultDataModel(
             vaultStore: vaultStore,
@@ -621,7 +621,7 @@ extension VaultDataModelTests {
             vaultKillphraseDeleter: vaultKillphraseDeleter,
             backupPasswordStore: backupPasswordStore,
             backupEventLogger: backupEventLogger,
-            itemCaches: itemCaches
+            itemCaches: itemCaches,
         )
     }
 

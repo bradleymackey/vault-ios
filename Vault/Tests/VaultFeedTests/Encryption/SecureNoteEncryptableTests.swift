@@ -10,7 +10,7 @@ struct SecureNoteEncryptableTests {
         let container = SecureNote.EncryptedContainer(
             title: "This is a test",
             contents: "Test contents",
-            format: .markdown
+            format: .markdown,
         )
         let note = SecureNote(encryptedContainer: container)
 

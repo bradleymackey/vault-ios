@@ -22,7 +22,7 @@ public final class CodeScanningManager<Handler: CodeScanningHandler> {
 
     public init(
         intervalTimer: any IntervalTimer,
-        handler: Handler
+        handler: Handler,
     ) {
         self.intervalTimer = intervalTimer
         self.handler = handler

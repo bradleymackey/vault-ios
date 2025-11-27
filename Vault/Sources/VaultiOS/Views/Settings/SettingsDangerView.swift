@@ -26,7 +26,7 @@ struct SettingsDangerView: View {
             PlaceholderView(
                 systemIcon: "exclamationmark.triangle.fill",
                 title: "Danger Zone",
-                subtitle: "Be careful what you do here."
+                subtitle: "Be careful what you do here.",
             )
             .padding()
             .containerRelativeFrame(.horizontal)

@@ -20,7 +20,7 @@ struct CodeTimerHorizontalBarView: View {
             HorizontalTimerProgressBarView(
                 fractionCompleted: currentFractionCompleted,
                 color: color,
-                backgroundColor: backgroundColor
+                backgroundColor: backgroundColor,
             )
             .onChange(of: proxy.size) { _, _ in
                 // the size of the viewport has changed
@@ -49,7 +49,7 @@ struct CodeTimerHorizontalBarView: View {
         resetTimerBarAnimation = .init(qos: .userInteractive) {
             withAnimation(
                 .linear(duration: animateReset ? 0.15 : 0),
-                completionCriteria: .removed
+                completionCriteria: .removed,
             ) {
                 currentFractionCompleted = timerState.animationState.initialFraction(currentTime: clock.currentTime)
             } completion: {
@@ -70,7 +70,7 @@ struct CodeTimerHorizontalBarView: View {
 #Preview("View", traits: .sizeThatFitsLayout) {
     let subject: PassthroughSubject<OTPCodeTimerState, Never> = .init()
     return CodeTimerHorizontalBarView(
-        timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher())
+        timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
     )
     .frame(width: 250, height: 20)
     .onAppear {
@@ -83,6 +83,6 @@ struct CodeTimerHorizontalBarView: View {
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock(),
         defaults: Defaults(userDefaults: .standard),
-        fileManager: .default
+        fileManager: .default,
     ))
 }

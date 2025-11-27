@@ -10,7 +10,7 @@ final class SecureNotePreviewViewModelTests: XCTestCase {
             description: "description",
             color: .default,
             isLocked: false,
-            textFormat: .plain
+            textFormat: .plain,
         )
 
         XCTAssertEqual(sut.visibleTitle, "Untitled Note")
@@ -22,7 +22,7 @@ final class SecureNotePreviewViewModelTests: XCTestCase {
             description: "description",
             color: .default,
             isLocked: false,
-            textFormat: .plain
+            textFormat: .plain,
         )
 
         XCTAssertEqual(sut.visibleTitle, "title")

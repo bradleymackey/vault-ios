@@ -49,7 +49,7 @@ struct BackupCreatePDFView: View {
                 if case let .error(presentationError) = viewModel.state {
                     Label(
                         presentationError.userDescription ?? presentationError.userTitle,
-                        systemImage: "exclamationmark.triangle.fill"
+                        systemImage: "exclamationmark.triangle.fill",
                     )
                     .foregroundStyle(.red)
                     .font(.caption)

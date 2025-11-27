@@ -18,7 +18,7 @@ public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
     public func rect(atIndex index: UInt) -> CGRect? {
         let provisionalRect = CGRect(
             origin: origin(index: index),
-            size: CGSize(width: sideLength, height: sideLength)
+            size: CGSize(width: sideLength, height: sideLength),
         )
         return isFullyWithinBounds(rect: provisionalRect) ? provisionalRect : nil
     }
@@ -33,7 +33,7 @@ public struct VerticalTilingDataBlockLayout: PageLayout, RectSeriesLayout {
         let columnNumber = index / tilesPerRow
         return CGPoint(
             x: applyOffset(position: rowNumber, offset: bounds.origin.x),
-            y: applyOffset(position: columnNumber, offset: bounds.origin.y)
+            y: applyOffset(position: columnNumber, offset: bounds.origin.y),
         )
     }
 

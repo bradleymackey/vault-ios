@@ -97,7 +97,7 @@ struct Base32Tests {
             (
                 $0.dataUsingUTF8StringEncoding,
                 $1.dataUsingUTF8StringEncoding,
-                $2.dataUsingUTF8StringEncoding
+                $2.dataUsingUTF8StringEncoding,
             )
         }
         for (test, expect, expectHex) in dataVectors {
@@ -136,7 +136,7 @@ struct Base32Tests {
             (
                 $0.dataUsingUTF8StringEncoding,
                 $1.replacingOccurrences(of: "=", with: ""),
-                $2.replacingOccurrences(of: "=", with: "")
+                $2.replacingOccurrences(of: "=", with: ""),
             )
         }
         for (expect, test, testHex) in strippedVectors {
@@ -162,7 +162,7 @@ struct Base32Tests {
         let invalidVectorWithoutPaddings = invalidVectorWithPaddings.map {
             (
                 $0.replacingOccurrences(of: "=", with: ""),
-                $1.replacingOccurrences(of: "=", with: "")
+                $1.replacingOccurrences(of: "=", with: ""),
             )
         }
         for (test, testHex) in invalidVectorWithoutPaddings {

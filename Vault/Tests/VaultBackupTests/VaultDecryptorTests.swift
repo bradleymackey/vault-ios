@@ -13,7 +13,7 @@ struct VaultDecryptorTests {
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
-            keygenSignature: "signature"
+            keygenSignature: "signature",
         )
 
         let decrypted = try sut.decrypt(encryptedVault: vault)
@@ -30,7 +30,7 @@ struct VaultDecryptorTests {
             authentication: Data(hex: "0x1234"),
             encryptionIV: Data(hex: "0x1234"),
             keygenSalt: Data(hex: "0x11"),
-            keygenSignature: "signature"
+            keygenSignature: "signature",
         )
 
         #expect(throws: (any Error).self, performing: {
@@ -52,7 +52,7 @@ struct VaultDecryptorTests {
             authentication: authentication,
             encryptionIV: iv,
             keygenSalt: Data(),
-            keygenSignature: "signature"
+            keygenSignature: "signature",
         )
 
         let decrypted = try sut.decrypt(encryptedVault: vault)

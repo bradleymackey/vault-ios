@@ -98,7 +98,7 @@ public struct DeviceAuthenticationPolicyUsingDevice: DeviceAuthenticationPolicy 
         var error: NSError?
         return context.canEvaluatePolicy(
             .deviceOwnerAuthentication,
-            error: &error
+            error: &error,
         )
     }
 
@@ -107,7 +107,7 @@ public struct DeviceAuthenticationPolicyUsingDevice: DeviceAuthenticationPolicy 
         var error: NSError?
         return context.canEvaluatePolicy(
             .deviceOwnerAuthenticationWithBiometrics,
-            error: &error
+            error: &error,
         )
     }
 

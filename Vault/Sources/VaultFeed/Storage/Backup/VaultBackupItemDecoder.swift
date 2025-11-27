@@ -7,7 +7,7 @@ final class VaultBackupItemDecoder {
     func decode(backupItem: VaultBackupItem) throws -> VaultItem {
         try VaultItem(
             metadata: decodeMetadata(backupItem: backupItem),
-            item: decodeItem(backupItem: backupItem)
+            item: decodeItem(backupItem: backupItem),
         )
     }
 }
@@ -28,7 +28,7 @@ extension VaultBackupItemDecoder {
             searchPassphrase: backupItem.searchPassphrase,
             killphrase: backupItem.killphrase,
             lockState: decodeLockState(state: backupItem.lockState),
-            color: decodeColor(color: backupItem.tintColor)
+            color: decodeColor(color: backupItem.tintColor),
         )
     }
 
@@ -100,8 +100,8 @@ extension VaultBackupItemDecoder {
                 algorithm: decodeAlgorithm(data: data),
                 digits: OTPAuthDigits(value: data.digits),
                 accountName: data.accountName,
-                issuer: data.issuer
-            )
+                issuer: data.issuer,
+            ),
         )
     }
 
@@ -125,7 +125,7 @@ extension VaultBackupItemDecoder {
         }
         return OTPAuthSecret(
             data: data.secretData,
-            format: format
+            format: format,
         )
     }
 
@@ -165,7 +165,7 @@ extension VaultBackupItemDecoder {
             authentication: item.authentication,
             encryptionIV: item.encryptionIV,
             keygenSalt: item.keygenSalt,
-            keygenSignature: item.keygenSignature
+            keygenSignature: item.keygenSignature,
         )
     }
 }

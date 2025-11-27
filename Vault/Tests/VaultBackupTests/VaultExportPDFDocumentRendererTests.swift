@@ -24,10 +24,10 @@ struct VaultExportPDFDocumentRendererTests {
                 authentication: Data(),
                 encryptionIV: Data(),
                 keygenSalt: Data(),
-                keygenSignature: "my-signature"
+                keygenSignature: "my-signature",
             ),
             userDescription: "my vault",
-            created: Date(timeIntervalSince1970: 2000)
+            created: Date(timeIntervalSince1970: 2000),
         )
         let pdfDocument = PDFDocument()
         let renderer = makeRendererMock(pdfDocument: pdfDocument)
@@ -37,7 +37,7 @@ struct VaultExportPDFDocumentRendererTests {
 
         #expect(
             document === pdfDocument,
-            "Document should be returned from the block renderer"
+            "Document should be returned from the block renderer",
         )
         #expect(renderer.renderCallCount == 2, "Renders twice, first pass and final render")
         #expect(renderer.renderArgValues.last?.content.count == 4)
@@ -52,10 +52,10 @@ struct VaultExportPDFDocumentRendererTests {
                 authentication: Data(),
                 encryptionIV: Data(),
                 keygenSalt: Data(),
-                keygenSignature: "my-signature"
+                keygenSignature: "my-signature",
             ),
             userDescription: "my vault",
-            created: Date(timeIntervalSince1970: 2000)
+            created: Date(timeIntervalSince1970: 2000),
         )
         let attacher = VaultBackupPDFAttacherMock()
         let sut = makeSUT(attacher: attacher)
@@ -73,12 +73,12 @@ extension VaultExportPDFDocumentRendererTests {
         documentRenderer: PDFDocumentRendererMock = makeRendererMock(),
         attacher: VaultBackupPDFAttacherMock = VaultBackupPDFAttacherMock(),
         file _: StaticString = #filePath,
-        line _: UInt = #line
+        line _: UInt = #line,
     ) -> VaultExportPDFDocumentRenderer<PDFDocumentRendererMock> {
         let sut = VaultExportPDFDocumentRenderer(
             renderer: documentRenderer,
             dataShardBuilder: DataShardBuilder(),
-            attacher: attacher
+            attacher: attacher,
         )
         return sut
     }

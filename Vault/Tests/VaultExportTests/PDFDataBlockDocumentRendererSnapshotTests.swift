@@ -39,25 +39,25 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 text: "Test 1",
                 font: .systemFont(ofSize: 18, weight: .bold),
                 textColor: .red,
-                padding: .zero
+                padding: .zero,
             )),
             .title(.init(
                 text: "Test 2",
                 font: .systemFont(ofSize: 24, weight: .regular),
                 textColor: .darkGray,
-                padding: .zero
+                padding: .zero,
             )),
             .title(.init(
                 text: "Test 3",
                 font: .systemFont(ofSize: 12, weight: .heavy),
                 textColor: .lightGray,
-                padding: .zero
+                padding: .zero,
             )),
             .title(.init(
                 text: "Test 4",
                 font: .systemFont(ofSize: 34, weight: .thin),
                 textColor: .systemBlue,
-                padding: .zero
+                padding: .zero,
             )),
         ])
         let pdf = try sut.render(document: document)
@@ -130,13 +130,13 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         let titleLabel = DataBlockLabel(
             text: "Hello World",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10),
         )
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -150,13 +150,13 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         let titleLabel = DataBlockLabel(
             text: "Hello World",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10),
         )
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -170,13 +170,13 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         let titleLabel = DataBlockLabel(
             text: "<START> \(title) <END>",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10),
         )
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -190,13 +190,13 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         let titleLabel = DataBlockLabel(
             text: "<START> \(subtitleMain) <END>",
             font: UIFont.systemFont(ofSize: 14, weight: .regular),
-            padding: .init(top: 36, left: 10, bottom: 22, right: 10)
+            padding: .init(top: 36, left: 10, bottom: 22, right: 10),
         )
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -209,14 +209,14 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         let titleLabel = DataBlockLabel(
             text: "Hello World",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: .init(top: 36, left: 10, bottom: 0, right: 10)
+            padding: .init(top: 36, left: 10, bottom: 0, right: 10),
         )
         let document = DataBlockDocument(
             content: [
                 .title(titleLabel),
                 .title(longSubtitle()),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -232,7 +232,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
             content: [
                 .title(label),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -248,7 +248,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
             content: [
                 .title(label),
                 .dataBlock(Array(repeating: anyData(), count: 14)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -265,7 +265,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .title(title),
                 .title(subtitle),
                 .dataBlock(Array(repeating: anyData(), count: 0)),
-            ]
+            ],
         )
         let pdf = try sut.render(document: document)
 
@@ -313,7 +313,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
     private func makeSUT(
         tilesPerRow: UInt,
         documentSize: any PDFDocumentSize = USLetterDocumentSize(),
-        imageRenderer: RGBCyclingStubColorImageRenderer = RGBCyclingStubColorImageRenderer()
+        imageRenderer: RGBCyclingStubColorImageRenderer = RGBCyclingStubColorImageRenderer(),
     ) -> some PDFDocumentRenderer<DataBlockDocument> {
         PDFDataBlockDocumentRenderer(
             documentSize: documentSize,
@@ -321,7 +321,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
             imageRenderer: imageRenderer,
             blockLayout: { size in
                 VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: tilesPerRow, spacing: 5)
-            }
+            },
         )
     }
 
@@ -338,7 +338,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         return DataBlockLabel(
             text: "<START> \(title) <END>",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: padding
+            padding: padding,
         )
     }
 
@@ -349,13 +349,13 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
         return DataBlockLabel(
             text: "<START> \(subtitleMain) <END>",
             font: UIFont.systemFont(ofSize: 14, weight: .regular),
-            padding: padding
+            padding: padding,
         )
     }
 
     private func makeDocumentWithHeaderGenerator(
         headerGenerator: any DataBlockHeaderGenerator,
-        numberOfImages: Int = 10
+        numberOfImages: Int = 10,
     ) throws -> PDFDocument {
         let sut = PDFDataBlockDocumentRenderer(
             documentSize: USLetterDocumentSize(),
@@ -363,17 +363,17 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
             imageRenderer: PlainBlackColorImageRenderer(),
             blockLayout: { size in
                 VerticalTilingDataBlockLayout(bounds: size, tilesPerRow: 5, spacing: 5)
-            }
+            },
         )
         let title = DataBlockLabel(
             text: "My Title",
             font: UIFont.systemFont(ofSize: 50, weight: .bold),
-            padding: .zero
+            padding: .zero,
         )
         let subtitle = DataBlockLabel(
             text: "Testing headers only - no padding on these labels",
             font: UIFont.systemFont(ofSize: 18, weight: .regular),
-            padding: .zero
+            padding: .zero,
         )
         let document = DataBlockDocument(
             headerGenerator: headerGenerator,
@@ -381,7 +381,7 @@ struct PDFDataBlockDocumentRendererSnapshotTests {
                 .title(title),
                 .title(subtitle),
                 .dataBlock(Array(repeating: anyData(), count: numberOfImages)),
-            ]
+            ],
         )
         return try sut.render(document: document)
     }

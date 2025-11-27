@@ -30,7 +30,7 @@ struct BackupPasswordExporterTests {
 
 extension BackupPasswordExporterTests {
     private func makeSUT(
-        backupPassword: DerivedEncryptionKey
+        backupPassword: DerivedEncryptionKey,
     ) -> BackupPasswordExporter {
         BackupPasswordExporter(backupPassword: backupPassword)
     }

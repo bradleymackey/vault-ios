@@ -20,7 +20,7 @@ struct FormRow<Content: View>: View {
         color: Color,
         style: Style = .prominent,
         alignment: VerticalAlignment = .center,
-        @ViewBuilder content: @escaping () -> Content
+        @ViewBuilder content: @escaping () -> Content,
     ) {
         self.image = image
         self.color = color
@@ -74,7 +74,7 @@ struct FormRow<Content: View>: View {
             image: Image(systemName: "checkmark"),
             color: .accentColor,
             style: .prominent,
-            alignment: .firstTextBaseline
+            alignment: .firstTextBaseline,
         ) {
             TextAndSubtitle(title: "Hello", subtitle: "world\nwe\ngood")
         }

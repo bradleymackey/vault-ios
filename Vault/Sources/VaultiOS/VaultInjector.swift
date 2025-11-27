@@ -22,7 +22,7 @@ public final class VaultInjector {
         vaultKeyDeriverFactory: any VaultKeyDeriverFactory,
         encryptedVaultDecoder: any EncryptedVaultDecoder,
         defaults: Defaults,
-        fileManager: FileManager
+        fileManager: FileManager,
     ) {
         self.clock = clock
         self.intervalTimer = intervalTimer

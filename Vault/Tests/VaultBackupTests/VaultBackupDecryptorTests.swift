@@ -17,7 +17,7 @@ struct VaultBackupDecryptorTests {
             authentication: Data(),
             encryptionIV: Data(),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
 
         #expect(throws: (any Error).self) {
@@ -42,7 +42,7 @@ struct VaultBackupDecryptorTests {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
 
         let backup = try sut.decryptBackupPayload(from: encryptedVault)
@@ -70,7 +70,7 @@ struct VaultBackupDecryptorTests {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
 
         #expect(throws: (any Error).self) {
@@ -96,7 +96,7 @@ struct VaultBackupDecryptorTests {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
 
         #expect(throws: (any Error).self) {
@@ -121,7 +121,7 @@ struct VaultBackupDecryptorTests {
             abababababababababababababababababababababababababababababababab
             """),
             keygenSalt: Data(),
-            keygenSignature: "my-signature"
+            keygenSignature: "my-signature",
         )
 
         #expect(throws: (any Error).self) {

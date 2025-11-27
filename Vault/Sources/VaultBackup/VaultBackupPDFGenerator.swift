@@ -24,21 +24,21 @@ public struct VaultBackupPDFGenerator {
                 size: size,
                 applicationName: applicationName,
                 authorName: authorName,
-                documentTitle: documentTitle
+                documentTitle: documentTitle,
             ),
             imageRenderer: QRCodeImageRenderer(),
             blockLayout: { rect in
                 VerticalTilingDataBlockLayout(
                     bounds: rect,
                     tilesPerRow: size.idealNumberOfHorizontalSquaresForPaperSize,
-                    spacing: 5
+                    spacing: 5,
                 )
-            }
+            },
         )
         let documentRenderer = VaultExportPDFDocumentRenderer(
             renderer: blockDocumentRenderer,
             dataShardBuilder: dataShardBuilder,
-            attacher: VaultBackupPDFAttacherImpl()
+            attacher: VaultBackupPDFAttacherImpl(),
         )
         return try documentRenderer.render(document: payload)
     }

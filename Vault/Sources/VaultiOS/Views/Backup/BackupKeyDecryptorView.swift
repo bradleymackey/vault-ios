@@ -42,7 +42,7 @@ struct BackupKeyDecryptorView: View {
             PlaceholderView(
                 systemIcon: "lock.document.fill",
                 title: viewModel.decryptionKeyState.title,
-                subtitle: viewModel.decryptionKeyState.description
+                subtitle: viewModel.decryptionKeyState.description,
             )
             .padding()
             .containerRelativeFrame(.horizontal)

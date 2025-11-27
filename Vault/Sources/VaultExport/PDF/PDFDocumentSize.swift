@@ -32,7 +32,7 @@ extension PDFDocumentSize {
             top: inchMargins.top * pointsPerInch,
             left: inchMargins.left * pointsPerInch,
             bottom: inchMargins.bottom * pointsPerInch,
-            right: inchMargins.right * pointsPerInch
+            right: inchMargins.right * pointsPerInch,
         )
     }
 

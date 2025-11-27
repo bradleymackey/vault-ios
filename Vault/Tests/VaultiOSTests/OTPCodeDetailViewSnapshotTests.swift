@@ -25,13 +25,13 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
-            presentationMode: .none
+            presentationMode: .none,
         )
 
         await snapshotScenarios(view: sut)
@@ -55,13 +55,13 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .lockedWithNativeSecurity,
-                color: nil
+                color: nil,
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
-            presentationMode: .none
+            presentationMode: .none,
         )
 
         await snapshotScenarios(view: sut)
@@ -85,13 +85,13 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .lockedWithNativeSecurity,
-                color: nil
+                color: nil,
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
-            presentationMode: .none
+            presentationMode: .none,
         )
 
         await snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
@@ -115,13 +115,13 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: false,
-            presentationMode: .none
+            presentationMode: .none,
         )
 
         await snapshotScenarios(view: sut)
@@ -145,13 +145,13 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             editor: OTPCodeDetailEditorMock(),
             previewGenerator: VaultItemPreviewViewGeneratorMock.defaultMock(),
             copyActionHandler: VaultItemCopyActionHandlerMock(),
             openInEditMode: true,
-            presentationMode: .none
+            presentationMode: .none,
         )
 
         await snapshotScenarios(view: sut)
@@ -165,7 +165,7 @@ extension OTPCodeDetailViewSnapshotTests {
     private func snapshotScenarios(
         view: some View,
         deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
-        testName: String = #function
+        testName: String = #function,
     ) async {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
@@ -183,7 +183,7 @@ extension OTPCodeDetailViewSnapshotTests {
                     of: snapshottingView,
                     as: .image,
                     named: named,
-                    testName: testName
+                    testName: testName,
                 )
             }
         }

@@ -33,27 +33,27 @@ extension OTPAuthURIEncoder {
     private func makeQueryParameters(code: OTPAuthCode) -> [URLQueryItem] {
         var queryItems = [URLQueryItem]()
         queryItems.append(
-            .otpAuth(.secret, value: makeFormatted(secret: code.data.secret))
+            .otpAuth(.secret, value: makeFormatted(secret: code.data.secret)),
         )
         queryItems.append(
-            .otpAuth(.algorithm, value: formatted(algorithm: code.data.algorithm))
+            .otpAuth(.algorithm, value: formatted(algorithm: code.data.algorithm)),
         )
         queryItems.append(
-            .otpAuth(.digits, value: "\(code.data.digits.value)")
+            .otpAuth(.digits, value: "\(code.data.digits.value)"),
         )
         if code.data.issuer.isNotEmpty {
             queryItems.append(
-                .otpAuth(.issuer, value: code.data.issuer)
+                .otpAuth(.issuer, value: code.data.issuer),
             )
         }
         switch code.type {
         case let .totp(period):
             queryItems.append(
-                .otpAuth(.period, value: "\(period)")
+                .otpAuth(.period, value: "\(period)"),
             )
         case let .hotp(counter):
             queryItems.append(
-                .otpAuth(.counter, value: "\(counter)")
+                .otpAuth(.counter, value: "\(counter)"),
             )
         }
         return queryItems

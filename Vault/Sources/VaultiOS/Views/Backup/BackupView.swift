@@ -58,9 +58,9 @@ struct BackupView: View {
                             clock: injector.clock,
                             backupEventLogger: injector.backupEventLogger,
                             defaults: injector.defaults,
-                            fileManager: injector.fileManager
+                            fileManager: injector.fileManager,
                         ),
-                        navigationPath: $pdfNavigationPath
+                        navigationPath: $pdfNavigationPath,
                     )
                     .navigationDestination(for: BackupCreatePDFViewModel.GeneratedPDF.self, destination: { pdf in
                         BackupGeneratedPDFView(pdf: pdf) {
@@ -87,7 +87,7 @@ struct BackupView: View {
                     BackupKeyChangeView(viewModel: .init(
                         dataModel: dataModel,
                         authenticationService: authenticationService,
-                        deriverFactory: injector.vaultKeyDeriverFactory
+                        deriverFactory: injector.vaultKeyDeriverFactory,
                     ))
                 }
             case let .importToCurrentlyEmpty(backupPassword):
@@ -95,21 +95,21 @@ struct BackupView: View {
                     importContext: .toEmptyVault,
                     dataModel: dataModel,
                     existingBackupPassword: backupPassword,
-                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder,
                 ))
             case let .importAndMerge(backupPassword):
                 BackupImportFlowView(viewModel: .init(
                     importContext: .merge,
                     dataModel: dataModel,
                     existingBackupPassword: backupPassword,
-                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder,
                 ))
             case let .importAndOverride(backupPassword):
                 BackupImportFlowView(viewModel: .init(
                     importContext: .override,
                     dataModel: dataModel,
                     existingBackupPassword: backupPassword,
-                    encryptedVaultDecoder: injector.encryptedVaultDecoder
+                    encryptedVaultDecoder: injector.encryptedVaultDecoder,
                 ))
             }
         }
@@ -119,7 +119,7 @@ struct BackupView: View {
         Section {
             if password != nil {
                 LastBackupSummaryView(
-                    lastBackup: dataModel.lastBackupEvent
+                    lastBackup: dataModel.lastBackupEvent,
                 )
 
                 updateButton
@@ -161,7 +161,7 @@ struct BackupView: View {
                 title: isError ? viewModel.strings.backupPasswordErrorTitle : viewModel.strings
                     .backupPasswordLoadingTitle,
                 subtitle: isError ? viewModel.strings
-                    .backupPasswordErrorDetail : "Authenticate to access backup settings."
+                    .backupPasswordErrorDetail : "Authenticate to access backup settings.",
             )
             .padding()
             .containerRelativeFrame(.horizontal)
@@ -211,11 +211,11 @@ struct BackupView: View {
                     image: Image(systemName: "square.and.arrow.down.fill"),
                     color: .accentColor,
                     style: .standard,
-                    alignment: .firstTextBaseline
+                    alignment: .firstTextBaseline,
                 ) {
                     TextAndSubtitle(
                         title: "Import Backup",
-                        subtitle: "Using a Vault PDF backup file, import data to your device locally."
+                        subtitle: "Using a Vault PDF backup file, import data to your device locally.",
                     )
                 }
             } loading: {
@@ -234,11 +234,11 @@ struct BackupView: View {
                     image: Image(systemName: "square.and.arrow.down.on.square.fill"),
                     color: .accentColor,
                     style: .standard,
-                    alignment: .firstTextBaseline
+                    alignment: .firstTextBaseline,
                 ) {
                     TextAndSubtitle(
                         title: "Import & Merge",
-                        subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device."
+                        subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
                     )
                 }
             } loading: {
@@ -253,11 +253,11 @@ struct BackupView: View {
                     image: Image(systemName: "square.and.arrow.down.fill"),
                     color: .red,
                     style: .standard,
-                    alignment: .firstTextBaseline
+                    alignment: .firstTextBaseline,
                 ) {
                     TextAndSubtitle(
                         title: "Import & Override",
-                        subtitle: "Warning! Overrides your existing on-device data with the data from the backup. On device data will be replaced by the backup data. If an item exists on device but not in the backup, it will be lost."
+                        subtitle: "Warning! Overrides your existing on-device data with the data from the backup. On device data will be replaced by the backup data. If an item exists on device but not in the backup, it will be lost.",
                     )
                 }
                 .foregroundStyle(.red)

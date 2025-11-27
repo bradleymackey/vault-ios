@@ -11,7 +11,7 @@ final class VaultDecryptor {
     func decrypt(encryptedVault: EncryptedVault) throws -> IntermediateEncodedVault {
         let decrypted = try decryptor.decrypt(
             message: .init(ciphertext: encryptedVault.data, authenticationTag: encryptedVault.authentication),
-            iv: encryptedVault.encryptionIV
+            iv: encryptedVault.encryptionIV,
         )
         return IntermediateEncodedVault(data: decrypted)
     }

@@ -15,7 +15,7 @@ public struct PBKDF2KeyDeriver<Length: KeyLength>: KeyDeriver {
             salt: salt.bytes,
             iterations: parameters.iterations,
             keyLength: Length.bytes,
-            variant: parameters.variant.hmacVariant
+            variant: parameters.variant.hmacVariant,
         )
         let data = try Data(engine.calculate())
         return try KeyData(data: data)

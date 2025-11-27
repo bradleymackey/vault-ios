@@ -35,7 +35,7 @@ extension EncryptedItemPreviewViewGeneratorTests {
     private typealias SUT = EncryptedItemPreviewViewGenerator<EncryptedItemPreviewViewFactoryMock>
 
     private func makeSUT(
-        factory: EncryptedItemPreviewViewFactoryMock = EncryptedItemPreviewViewFactoryMock()
+        factory: EncryptedItemPreviewViewFactoryMock = EncryptedItemPreviewViewFactoryMock(),
     ) -> SUT {
         EncryptedItemPreviewViewGenerator(viewFactory: factory)
     }

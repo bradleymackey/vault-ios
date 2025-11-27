@@ -3,7 +3,7 @@ import SwiftUI
 import VaultFeed
 
 struct VaultDetailCreateView<
-    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>,
 >: View {
     var creatingItem: CreatingItem
     var previewGenerator: PreviewGenerator
@@ -19,16 +19,16 @@ struct VaultDetailCreateView<
                 previewGenerator: previewGenerator,
                 copyActionHandler: copyActionHandler,
                 navigationPath: $navigationPath,
-                intervalTimer: injector.intervalTimer
+                intervalTimer: injector.intervalTimer,
             )
         case .secureNote:
             SecureNoteDetailView(
                 newNoteWithEditor: VaultDataModelEditorAdapter(
                     dataModel: dataModel,
-                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory,
                 ),
                 navigationPath: $navigationPath,
-                dataModel: dataModel
+                dataModel: dataModel,
             )
         }
     }

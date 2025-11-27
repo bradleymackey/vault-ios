@@ -39,11 +39,11 @@ struct OTPAuthCodeTests {
 extension OTPAuthCodeTests {
     private func makeCode(
         algorithm: OTPAuthAlgorithm = .default,
-        digits: OTPAuthDigits = .default
+        digits: OTPAuthDigits = .default,
     ) -> OTPAuthCode {
         OTPAuthCode(
             type: .totp(),
-            data: .init(secret: rfcSecret, algorithm: algorithm, digits: digits, accountName: "any")
+            data: .init(secret: rfcSecret, algorithm: algorithm, digits: digits, accountName: "any"),
         )
     }
 

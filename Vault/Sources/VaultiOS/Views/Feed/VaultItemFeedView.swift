@@ -5,7 +5,7 @@ import VaultSettings
 
 @MainActor
 public struct VaultItemFeedView<
-    ViewGenerator: VaultItemPreviewViewGenerator
+    ViewGenerator: VaultItemPreviewViewGenerator,
 >: View where
     ViewGenerator.PreviewItem == VaultItem.Payload
 {
@@ -21,7 +21,7 @@ public struct VaultItemFeedView<
         localSettings: LocalSettings,
         viewGenerator: ViewGenerator,
         state: VaultItemFeedState,
-        gridSpacing: Double = 8
+        gridSpacing: Double = 8,
     ) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
@@ -154,7 +154,7 @@ public struct VaultItemFeedView<
             viewGenerator.makeVaultPreviewView(
                 item: storedItem.item,
                 metadata: storedItem.metadata,
-                behaviour: currentBehaviour
+                behaviour: currentBehaviour,
             )
             .opacity(targetedIds.contains(storedItem.id) ? 0.5 : 1)
             .id(storedItem.id)
@@ -211,7 +211,7 @@ public struct VaultItemFeedView<
         vaultDeleter: VaultStoreDeleterMock(),
         vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
         backupPasswordStore: BackupPasswordStoreMock(),
-        backupEventLogger: BackupEventLoggerMock()
+        backupEventLogger: BackupEventLoggerMock(),
     )
     store.retrieveHandler = { _ in .init(items: [
         .init(
@@ -227,23 +227,23 @@ public struct VaultItemFeedView<
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: VaultItemColor(color: .green)
+                color: VaultItemColor(color: .green),
             ),
             item: .otpCode(.init(
                 type: .totp(),
                 data: .init(
                     secret: .empty(),
                     accountName: "example@example.com",
-                    issuer: "i"
-                )
-            ))
+                    issuer: "i",
+                ),
+            )),
         ),
     ])
     }
     return VaultItemFeedView(
         localSettings: .init(defaults: .init(userDefaults: .standard)),
         viewGenerator: GenericGenerator(),
-        state: VaultItemFeedState()
+        state: VaultItemFeedState(),
     )
     .environment(dataModel)
 }
@@ -252,7 +252,7 @@ private struct GenericGenerator: VaultItemPreviewViewGenerator {
     func makeVaultPreviewView(
         item _: VaultItem.Payload,
         metadata _: VaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
+        behaviour _: VaultItemViewBehaviour,
     ) -> some View {
         Text("Code")
     }

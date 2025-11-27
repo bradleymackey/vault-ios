@@ -30,9 +30,9 @@ final class VaultBackupItemEncoderTests {
                 searchPassphrase: "searchme",
                 killphrase: "killme",
                 lockState: .notLocked,
-                color: .init(red: 0.1, green: 0.2, blue: 0.3)
+                color: .init(red: 0.1, green: 0.2, blue: 0.3),
             ),
-            item: .secureNote(note)
+            item: .secureNote(note),
         )
         let sut = makeSUT()
 
@@ -76,7 +76,7 @@ final class VaultBackupItemEncoderTests {
             authentication: itemAuthentication,
             encryptionIV: itemEncryptionIV,
             keygenSalt: itemKeygenSalt,
-            keygenSignature: itemSignature
+            keygenSignature: itemSignature,
         )
         let tags: Set<Identifier<VaultItemTag>> = [.init(id: UUID())]
         let item = VaultItem(
@@ -92,9 +92,9 @@ final class VaultBackupItemEncoderTests {
                 searchPassphrase: "searchme",
                 killphrase: "killmenow",
                 lockState: .notLocked,
-                color: .init(red: 0.1, green: 0.2, blue: 0.3)
+                color: .init(red: 0.1, green: 0.2, blue: 0.3),
             ),
-            item: .encryptedItem(encryptedItem)
+            item: .encryptedItem(encryptedItem),
         )
         let sut = makeSUT()
 
@@ -138,8 +138,8 @@ final class VaultBackupItemEncoderTests {
                 algorithm: .sha256,
                 digits: .init(value: 8),
                 accountName: "my account name",
-                issuer: "my issuer"
-            )
+                issuer: "my issuer",
+            ),
         )
         let item = VaultItem(
             metadata: .init(
@@ -154,9 +154,9 @@ final class VaultBackupItemEncoderTests {
                 searchPassphrase: "hello",
                 killphrase: "killme",
                 lockState: .lockedWithNativeSecurity,
-                color: .init(red: 0.1, green: 0.2, blue: 0.3)
+                color: .init(red: 0.1, green: 0.2, blue: 0.3),
             ),
-            item: .otpCode(code)
+            item: .otpCode(code),
         )
         let sut = makeSUT()
 
@@ -202,8 +202,8 @@ final class VaultBackupItemEncoderTests {
                 algorithm: .sha256,
                 digits: .init(value: 8),
                 accountName: "my account name",
-                issuer: "my issuer"
-            )
+                issuer: "my issuer",
+            ),
         )
         let item = VaultItem(
             metadata: .init(
@@ -218,9 +218,9 @@ final class VaultBackupItemEncoderTests {
                 searchPassphrase: "test",
                 killphrase: "killme",
                 lockState: .notLocked,
-                color: .init(red: 0.1, green: 0.2, blue: 0.3)
+                color: .init(red: 0.1, green: 0.2, blue: 0.3),
             ),
-            item: .otpCode(code)
+            item: .otpCode(code),
         )
         let sut = makeSUT()
 

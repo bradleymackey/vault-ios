@@ -47,19 +47,19 @@ struct LastBackupSummaryView: View {
             backupDate: Date(),
             eventDate: Date(),
             kind: .exportedToPDF,
-            payloadHash: .init(value: Data(hex: "ababa"))
+            payloadHash: .init(value: Data(hex: "ababa")),
         ))
         LastBackupSummaryView(lastBackup: VaultBackupEvent(
             backupDate: Date(),
             eventDate: Date(),
             kind: .exportedToPDF,
-            payloadHash: .init(value: Data(hex: "ababa"))
+            payloadHash: .init(value: Data(hex: "ababa")),
         ))
         LastBackupSummaryView(lastBackup: VaultBackupEvent(
             backupDate: Date(),
             eventDate: Date(),
             kind: .exportedToPDF,
-            payloadHash: .init(value: Data(hex: "ababa"))
+            payloadHash: .init(value: Data(hex: "ababa")),
         ))
     }
 }

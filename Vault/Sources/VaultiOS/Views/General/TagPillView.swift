@@ -16,7 +16,7 @@ struct TagPillView: View {
         .background(
             Capsule(style: .circular)
                 .fill(fillColor)
-                .stroke(strokeColor, lineWidth: 1)
+                .stroke(strokeColor, lineWidth: 1),
         )
         .foregroundColor(strokeColor)
     }
@@ -58,15 +58,15 @@ struct TagPillView: View {
     VStack {
         TagPillView(
             tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"),
-            isSelected: false
+            isSelected: false,
         )
         TagPillView(
             tag: .init(id: .init(), name: "Tag", color: .init(color: .white), iconName: "tag.fill"),
-            isSelected: false
+            isSelected: false,
         )
         TagPillView(
             tag: .init(id: .init(), name: "Tag", color: .init(color: .black), iconName: "tag.fill"),
-            isSelected: false
+            isSelected: false,
         )
     }
 }
@@ -75,15 +75,15 @@ struct TagPillView: View {
     VStack {
         TagPillView(
             tag: .init(id: .init(), name: "Tag", color: .init(color: .blue), iconName: "tag.fill"),
-            isSelected: true
+            isSelected: true,
         )
         TagPillView(
             tag: .init(id: .init(), name: "Tag", color: .init(color: .white), iconName: "tag.fill"),
-            isSelected: true
+            isSelected: true,
         )
         TagPillView(
             tag: .init(id: .init(), name: "Tag", color: .init(color: .black), iconName: "tag.fill"),
-            isSelected: true
+            isSelected: true,
         )
     }
 }

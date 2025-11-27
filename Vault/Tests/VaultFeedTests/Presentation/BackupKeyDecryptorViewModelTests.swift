@@ -44,7 +44,7 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
             encryptedVault: vault,
             keyDeriverFactory: .testing,
             encryptedVaultDecoder: decoder,
-            decryptedVaultSubject: subject
+            decryptedVaultSubject: subject,
         )
         sut.enteredPassword = "hello"
 
@@ -94,13 +94,13 @@ extension BackupKeyDecryptorViewModelTests {
         encryptedVault: EncryptedVault = anyEncryptedVault(),
         keyDeriverFactory: any VaultKeyDeriverFactory = VaultKeyDeriverFactoryTesting(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock(),
-        decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never> = .init()
+        decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never> = .init(),
     ) -> BackupKeyDecryptorViewModel {
         BackupKeyDecryptorViewModel(
             encryptedVault: encryptedVault,
             keyDeriverFactory: keyDeriverFactory,
             encryptedVaultDecoder: encryptedVaultDecoder,
-            decryptedVaultSubject: decryptedVaultSubject
+            decryptedVaultSubject: decryptedVaultSubject,
         )
     }
 }

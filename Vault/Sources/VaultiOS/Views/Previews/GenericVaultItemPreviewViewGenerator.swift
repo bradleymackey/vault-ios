@@ -6,7 +6,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     TOTP: VaultItemPreviewViewGenerator<TOTPAuthCode>,
     HOTP: VaultItemPreviewViewGenerator<HOTPAuthCode>,
     Note: VaultItemPreviewViewGenerator<SecureNote>,
-    Encrypted: VaultItemPreviewViewGenerator<EncryptedItem>
+    Encrypted: VaultItemPreviewViewGenerator<EncryptedItem>,
 >: VaultItemPreviewViewGenerator {
     public typealias PreviewItem = VaultItem.Payload
     private let totpGenerator: TOTP
@@ -25,7 +25,7 @@ public struct GenericVaultItemPreviewViewGenerator<
     public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         switch item {
         case let .otpCode(otpCode):
@@ -34,20 +34,20 @@ public struct GenericVaultItemPreviewViewGenerator<
                 totpGenerator.makeVaultPreviewView(
                     item: .init(period: period, data: otpCode.data),
                     metadata: metadata,
-                    behaviour: behaviour
+                    behaviour: behaviour,
                 )
             case let .hotp(counter):
                 hotpGenerator.makeVaultPreviewView(
                     item: .init(counter: counter, data: otpCode.data),
                     metadata: metadata,
-                    behaviour: behaviour
+                    behaviour: behaviour,
                 )
             }
         case let .secureNote(secureNote):
             noteGenerator.makeVaultPreviewView(
                 item: secureNote,
                 metadata: metadata,
-                behaviour: behaviour
+                behaviour: behaviour,
             )
         case let .encryptedItem(data):
             encryptedGenerator.makeVaultPreviewView(item: data, metadata: metadata, behaviour: behaviour)

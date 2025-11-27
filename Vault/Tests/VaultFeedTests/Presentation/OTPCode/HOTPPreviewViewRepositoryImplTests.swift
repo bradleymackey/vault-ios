@@ -191,7 +191,7 @@ extension HOTPPreviewViewRepositoryImplTests {
     @MainActor
     private func makeSUT(
         timer: IntervalTimerMock = IntervalTimerMock(),
-        store: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock()
+        store: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
     ) -> HOTPPreviewViewRepositoryImpl {
         HOTPPreviewViewRepositoryImpl(timer: timer, store: store)
     }

@@ -19,7 +19,7 @@ public struct ScryptKeyDeriver<Length: KeyLength>: KeyDeriver {
             dkLen: Length.bytes,
             N: parameters.costFactor,
             r: parameters.blockSizeFactor,
-            p: parameters.parallelizationFactor
+            p: parameters.parallelizationFactor,
         )
         let data = try Data(engine.calculate())
         return try KeyData(data: data)

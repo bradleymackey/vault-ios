@@ -19,7 +19,7 @@ struct EncryptedVaultEncoderTests {
 
             #expect(
                 seenData.contains(backup.data) == false,
-                "A random IV and/or padding should be used each time, resulting in different encrypted payloads"
+                "A random IV and/or padding should be used each time, resulting in different encrypted payloads",
             )
         }
     }
@@ -48,7 +48,7 @@ struct EncryptedVaultEncoderTests {
         let payload = VaultApplicationPayload(
             userDescription: "my backup",
             items: [uniqueVaultItem()],
-            tags: [VaultItemTag(id: .init(id: UUID()), name: "tag")]
+            tags: [VaultItemTag(id: .init(id: UUID()), name: "tag")],
         )
         let backup = try sut.encryptAndEncode(payload: payload)
 

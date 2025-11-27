@@ -67,7 +67,7 @@ struct BackupImportScanningHandlerTests {
             authentication: Data(),
             encryptionIV: Data(repeating: 0x46, count: 500),
             keygenSalt: Data(repeating: 0x21, count: 100),
-            keygenSignature: "34"
+            keygenSignature: "34",
         )
         let expectedVaultData = try EncryptedVaultCoder().encode(vault: expectedVault)
         let builder = DataShardBuilder()

@@ -16,7 +16,7 @@ struct PersistedVaultItemDecoder {
             searchPassphrase: item.searchPassphrase,
             killphrase: item.killphrase,
             lockState: decodeLockState(value: item.lockState),
-            color: decodeColor(item: item)
+            color: decodeColor(item: item),
         )
         if let otp = item.otpDetails {
             let otpCode = try decodeOTPCode(otp: otp)
@@ -25,7 +25,7 @@ struct PersistedVaultItemDecoder {
             let note = try SecureNote(
                 title: note.title,
                 contents: note.contents,
-                format: decodeTextFormat(value: note.format)
+                format: decodeTextFormat(value: note.format),
             )
             return VaultItem(metadata: metadata, item: .secureNote(note))
         } else if let encryptedItem = item.encryptedItemDetails {
@@ -80,8 +80,8 @@ extension PersistedVaultItemDecoder {
                 algorithm: decodeAlgorithm(value: otp.algorithm),
                 digits: decode(digits: otp.digits),
                 accountName: otp.accountName,
-                issuer: otp.issuer
-            )
+                issuer: otp.issuer,
+            ),
         )
     }
 
@@ -150,7 +150,7 @@ extension PersistedVaultItemDecoder {
             authentication: item.authentication,
             encryptionIV: item.encryptionIV,
             keygenSalt: item.keygenSalt,
-            keygenSignature: item.keygenSignature
+            keygenSignature: item.keygenSignature,
         )
     }
 }

@@ -80,7 +80,7 @@ public final class VaultStoreStub: VaultStore {
     public var reorderHandler: (Set<Identifier<VaultItem>>, VaultReorderingPosition) throws -> Void = { _, _ in }
     public func reorder(
         items: Set<Identifier<VaultItem>>,
-        to position: VaultReorderingPosition
+        to position: VaultReorderingPosition,
     ) async throws {
         calledMethods.append(.reorder)
         reorderCallCount += 1

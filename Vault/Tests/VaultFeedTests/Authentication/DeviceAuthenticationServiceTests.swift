@@ -8,7 +8,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_canAuthenticate_withNeither() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
-            canAuthenticateWithBiometrics: false
+            canAuthenticateWithBiometrics: false,
         )
         let sut = makeSUT(policy: policy)
 
@@ -19,7 +19,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_canAuthenticate_withBiometrics() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         let sut = makeSUT(policy: policy)
 
@@ -30,7 +30,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_canAuthenticate_withPasscode() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: false
+            canAuthenticateWithBiometrics: false,
         )
         let sut = makeSUT(policy: policy)
 
@@ -41,7 +41,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_canAuthenticate_withBoth() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         let sut = makeSUT(policy: policy)
 
@@ -52,7 +52,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_noneEnabledFails() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
-            canAuthenticateWithBiometrics: false
+            canAuthenticateWithBiometrics: false,
         )
         let sut = makeSUT(policy: policy)
 
@@ -66,7 +66,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_biometricsEnabledSuccess() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in true }
         let sut = makeSUT(policy: policy)
@@ -81,7 +81,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_biometricsEnabledFailure() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in false }
         let sut = makeSUT(policy: policy)
@@ -96,7 +96,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_biometricsInternalError() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
@@ -110,7 +110,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_passcodeEnabledSuccess() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: false
+            canAuthenticateWithBiometrics: false,
         )
         policy.authenticateWithPasscodeHandler = { _ in true }
         let sut = makeSUT(policy: policy)
@@ -125,7 +125,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_passcodeEnabledFailure() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: false
+            canAuthenticateWithBiometrics: false,
         )
         policy.authenticateWithPasscodeHandler = { _ in false }
         let sut = makeSUT(policy: policy)
@@ -140,7 +140,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_passcodeInternalError() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: false
+            canAuthenticateWithBiometrics: false,
         )
         policy.authenticateWithPasscodeHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
@@ -154,7 +154,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_authenticate_bothEnabledAuthenticatesWithBiometrics() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in true }
         let sut = makeSUT(policy: policy)
@@ -168,7 +168,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_validateAuthentication_doesNotThrowIfValid() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in true }
         let sut = makeSUT(policy: policy)
@@ -182,7 +182,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_validateAuthentication_throwsForNotAuthenticated() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in false }
         let sut = makeSUT(policy: policy)
@@ -194,7 +194,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
     func test_validateAuthentication_throwsForInternalError() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
-            canAuthenticateWithBiometrics: true
+            canAuthenticateWithBiometrics: true,
         )
         policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
@@ -208,7 +208,7 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
 extension DeviceAuthenticationServiceTests {
     @MainActor
     private func makeSUT(
-        policy: DeviceAuthenticationPolicyMock = DeviceAuthenticationPolicyMock()
+        policy: DeviceAuthenticationPolicyMock = DeviceAuthenticationPolicyMock(),
     ) -> DeviceAuthenticationService {
         DeviceAuthenticationService(policy: policy)
     }

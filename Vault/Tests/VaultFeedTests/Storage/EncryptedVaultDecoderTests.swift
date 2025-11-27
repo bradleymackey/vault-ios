@@ -49,7 +49,7 @@ struct EncryptedVaultDecoderTests {
             password: password,
             description: "my backup description",
             items: [item1],
-            tags: [tag1, tag2]
+            tags: [tag1, tag2],
         )
         let sut = makeSUT()
 
@@ -83,7 +83,7 @@ extension EncryptedVaultDecoderTests {
         password: DerivedEncryptionKey,
         description: String = "any",
         items: [VaultItem] = [],
-        tags: [VaultItemTag] = []
+        tags: [VaultItemTag] = [],
     ) throws -> EncryptedVault {
         let encoder = EncryptedVaultEncoder(clock: EpochClockMock(currentTime: 100), backupPassword: password)
         let payload = VaultApplicationPayload(userDescription: description, items: items, tags: tags)

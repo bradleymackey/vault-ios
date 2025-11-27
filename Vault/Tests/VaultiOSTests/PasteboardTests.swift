@@ -79,7 +79,7 @@ extension PasteboardTests {
         pasteboard: SystemPasteboardMock = SystemPasteboardMock(),
         localSettings: LocalSettings = LocalSettings(defaults: .init(userDefaults: .standard)),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> Pasteboard {
         let pasteboard = Pasteboard(pasteboard, localSettings: localSettings)
         trackForMemoryLeaks(pasteboard, file: file, line: line)

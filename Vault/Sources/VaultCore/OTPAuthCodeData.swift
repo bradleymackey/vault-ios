@@ -14,7 +14,7 @@ public struct OTPAuthCodeData: Equatable, Hashable, Sendable {
         algorithm: OTPAuthAlgorithm = .default,
         digits: OTPAuthDigits = .default,
         accountName: String,
-        issuer: String = ""
+        issuer: String = "",
     ) {
         self.secret = secret
         self.algorithm = algorithm

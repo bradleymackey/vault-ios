@@ -74,7 +74,7 @@ struct BackupEventLoggerImplTests {
 extension BackupEventLoggerImplTests {
     private func makeSUT(
         defaults: UserDefaults,
-        clock: EpochClockMock = EpochClockMock(currentTime: 100)
+        clock: EpochClockMock = EpochClockMock(currentTime: 100),
     ) -> BackupEventLoggerImpl {
         BackupEventLoggerImpl(defaults: .init(userDefaults: defaults), clock: clock)
     }

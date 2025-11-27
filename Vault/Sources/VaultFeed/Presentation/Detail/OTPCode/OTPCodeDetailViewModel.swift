@@ -24,7 +24,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
     public init(
         mode: Mode,
         dataModel: VaultDataModel,
-        editor: any OTPCodeDetailEditor
+        editor: any OTPCodeDetailEditor,
     ) {
         self.mode = mode
         self.dataModel = dataModel
@@ -39,7 +39,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
         case let .creating(.some(initialCode)):
             .init(
                 detail: .new(hydratedFromCode: initialCode),
-                isInitiallyDirty: true
+                isInitiallyDirty: true,
             )
         case let .editing(code, metadata):
             .init(detail: OTPCodeDetailEdits(
@@ -51,7 +51,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 searchPassphrase: metadata.searchPassphrase ?? "",
                 killphrase: metadata.killphrase ?? "",
                 tags: metadata.tags,
-                lockState: metadata.lockState
+                lockState: metadata.lockState,
             ))
         }
     }
@@ -110,14 +110,14 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
             entries.append(DetailEntry(
                 title: strings.updatedDateTitle,
                 detail: updateDate,
-                systemIconName: "clock.arrow.2.circlepath"
+                systemIconName: "clock.arrow.2.circlepath",
             ))
         }
 
         entries.append(.init(
             title: strings.visibilityTitle,
             detail: editingModel.detail.viewConfig.localizedTitle,
-            systemIconName: editingModel.detail.viewConfig.systemIconName
+            systemIconName: editingModel.detail.viewConfig.systemIconName,
         ))
 
         switch mode {
@@ -129,38 +129,38 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 DetailEntry(
                     title: localized(key: "codeDetail.listSection.type.title"),
                     detail: formatter.typeName,
-                    systemIconName: "tag.fill"
-                )
+                    systemIconName: "tag.fill",
+                ),
             )
             if let period = formatter.period {
                 entries.append(
                     DetailEntry(
                         title: localized(key: "codeDetail.listSection.period.title"),
                         detail: period,
-                        systemIconName: "clock.fill"
-                    )
+                        systemIconName: "clock.fill",
+                    ),
                 )
             }
             entries.append(
                 DetailEntry(
                     title: localized(key: "codeDetail.listSection.digits.title"),
                     detail: formatter.digits,
-                    systemIconName: "number"
-                )
+                    systemIconName: "number",
+                ),
             )
             entries.append(
                 DetailEntry(
                     title: localized(key: "codeDetail.listSection.algorithm.title"),
                     detail: formatter.algorithm,
-                    systemIconName: "lock.laptopcomputer"
-                )
+                    systemIconName: "lock.laptopcomputer",
+                ),
             )
             entries.append(
                 DetailEntry(
                     title: localized(key: "codeDetail.listSection.secretFormat.title"),
                     detail: formatter.secretType,
-                    systemIconName: "lock.fill"
-                )
+                    systemIconName: "lock.fill",
+                ),
             )
         }
 

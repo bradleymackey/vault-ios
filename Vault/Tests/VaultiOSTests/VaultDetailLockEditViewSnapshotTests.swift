@@ -11,7 +11,7 @@ struct VaultDetailLockEditViewSnapshotTests {
         let sut = VaultDetailLockEditView(
             title: "My title",
             description: "My description",
-            lockState: .constant(.lockedWithNativeSecurity)
+            lockState: .constant(.lockedWithNativeSecurity),
         )
         .framedForTest()
 
@@ -23,7 +23,7 @@ struct VaultDetailLockEditViewSnapshotTests {
         let sut = VaultDetailLockEditView(
             title: "My title",
             description: "My description",
-            lockState: .constant(.notLocked)
+            lockState: .constant(.notLocked),
         )
         .framedForTest()
 

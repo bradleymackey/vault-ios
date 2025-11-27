@@ -13,7 +13,7 @@ struct EncryptedItemDetailView: View {
     init(
         viewModel: EncryptedItemDetailViewModel,
         openDetailSubject: PassthroughSubject<VaultItemEncryptionPayload, Never>,
-        presentationMode: Binding<PresentationMode>? = nil
+        presentationMode: Binding<PresentationMode>? = nil,
     ) {
         self.viewModel = viewModel
         self.openDetailSubject = openDetailSubject
@@ -64,7 +64,7 @@ struct EncryptedItemDetailView: View {
                 PlaceholderView(
                     systemIcon: "exclamationmark.triangle.fill",
                     title: error.userTitle,
-                    subtitle: error.userDescription
+                    subtitle: error.userDescription,
                 )
                 .padding()
                 .containerRelativeFrame(.horizontal)
@@ -73,7 +73,7 @@ struct EncryptedItemDetailView: View {
                 PlaceholderView(
                     systemIcon: "lock.iphone",
                     title: "Encrypted",
-                    subtitle: "A password is required to decrypt this item."
+                    subtitle: "A password is required to decrypt this item.",
                 )
                 .padding()
                 .containerRelativeFrame(.horizontal)

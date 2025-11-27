@@ -40,6 +40,6 @@ struct LiteratureView: View {
     LiteratureView(
         title: "Testing",
         bodyText: .markdown(.init("Hi there, what's up\n\nSecond\nThird\nFourth\nFifth")),
-        bodyColor: .secondary
+        bodyColor: .secondary,
     )
 }

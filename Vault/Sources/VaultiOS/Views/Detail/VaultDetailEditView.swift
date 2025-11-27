@@ -4,7 +4,7 @@ import SwiftUI
 import VaultFeed
 
 struct VaultDetailEditView<
-    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>,
 >: View {
     var storedItem: VaultItem
     var previewGenerator: PreviewGenerator
@@ -28,12 +28,12 @@ struct VaultDetailEditView<
                 storedMetadata: storedItem.metadata,
                 editor: VaultDataModelEditorAdapter(
                     dataModel: dataModel,
-                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory,
                 ),
                 previewGenerator: previewGenerator,
                 copyActionHandler: copyActionHandler,
                 openInEditMode: openInEditMode,
-                presentationMode: presentationMode
+                presentationMode: presentationMode,
             )
         case let .secureNote(note):
             SecureNoteDetailView(
@@ -44,19 +44,19 @@ struct VaultDetailEditView<
                 storedMetadata: storedItem.metadata,
                 editor: VaultDataModelEditorAdapter(
                     dataModel: dataModel,
-                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory,
                 ),
-                openInEditMode: openInEditMode
+                openInEditMode: openInEditMode,
             )
         case let .encryptedItem(item):
             EncryptedItemDetailView(
                 viewModel: .init(
                     item: item,
                     metadata: storedItem.metadata,
-                    keyDeriverFactory: injector.vaultKeyDeriverFactory
+                    keyDeriverFactory: injector.vaultKeyDeriverFactory,
                 ),
                 openDetailSubject: openDetailSubject,
-                presentationMode: presentationMode
+                presentationMode: presentationMode,
             )
         }
     }

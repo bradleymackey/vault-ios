@@ -5,14 +5,14 @@ import Testing
 public func expectLocalizedKeyAndValuesExist(
     in presentationBundle: Bundle,
     _ table: String,
-    sourceLocation: SourceLocation = .__here()
+    sourceLocation: SourceLocation = .__here(),
 ) {
     guard Test.current != nil else { fatalError("This must be running within a test!") }
     let localizationBundles = allLocalizationBundles(in: presentationBundle, sourceLocation: sourceLocation)
     let localizedStringKeys = allLocalizedStringKeys(
         in: localizationBundles,
         table: table,
-        sourceLocation: sourceLocation
+        sourceLocation: sourceLocation,
     )
 
     for (bundle, localization) in localizationBundles {
@@ -23,12 +23,12 @@ public func expectLocalizedKeyAndValuesExist(
             if localizedString == key {
                 Issue.record(
                     "Missing \(language) (\(localization)) localized string for key: '\(key)' in table: '\(table)'",
-                    sourceLocation: sourceLocation
+                    sourceLocation: sourceLocation,
                 )
             } else if localizedString.isEmpty {
                 Issue.record(
                     "Empty string for '\(key)' in table: '\(table)' for \(language) (\(localization))",
-                    sourceLocation: sourceLocation
+                    sourceLocation: sourceLocation,
                 )
             }
         }
@@ -39,7 +39,7 @@ private typealias LocalizedBundle = (bundle: Bundle, localization: String)
 
 private func allLocalizationBundles(
     in bundle: Bundle,
-    sourceLocation: SourceLocation
+    sourceLocation: SourceLocation,
 ) -> [LocalizedBundle] {
     bundle.localizations.compactMap { localization in
         guard
@@ -57,7 +57,7 @@ private func allLocalizationBundles(
 private func allLocalizedStringKeys(
     in bundles: [LocalizedBundle],
     table: String,
-    sourceLocation: SourceLocation
+    sourceLocation: SourceLocation,
 ) -> Set<String> {
     bundles.reduce([]) { acc, current in
         guard
@@ -67,7 +67,7 @@ private func allLocalizedStringKeys(
         else {
             Issue.record(
                 "Couldn't load localized strings for localization: \(current.localization)",
-                sourceLocation: sourceLocation
+                sourceLocation: sourceLocation,
             )
             return acc
         }

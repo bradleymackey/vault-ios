@@ -7,7 +7,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     func test_layout_empty() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0,
-            color: .blue
+            color: .blue,
         ).frame(width: 150, height: 20)
 
         assertSnapshot(of: view, as: .image)
@@ -16,7 +16,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     func test_layout_halfFull() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0.5,
-            color: .blue
+            color: .blue,
         ).frame(width: 150, height: 20)
 
         assertSnapshot(of: view, as: .image)
@@ -25,7 +25,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
     func test_layout_full() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 1,
-            color: .blue
+            color: .blue,
         ).frame(width: 150, height: 20)
 
         assertSnapshot(of: view, as: .image)
@@ -35,7 +35,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0.5,
             color: .blue,
-            backgroundColor: .red
+            backgroundColor: .red,
         ).frame(width: 150, height: 20)
 
         assertSnapshot(of: view, as: .image)
@@ -45,7 +45,7 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0.5,
             color: .blue,
-            backgroundColor: .gray
+            backgroundColor: .gray,
         )
         .redacted(reason: .placeholder)
         .frame(width: 150, height: 20)

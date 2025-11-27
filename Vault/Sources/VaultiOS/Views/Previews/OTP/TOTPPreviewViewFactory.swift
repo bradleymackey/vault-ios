@@ -10,7 +10,7 @@ public protocol TOTPPreviewViewFactory {
         viewModel: OTPCodePreviewViewModel,
         periodState: OTPCodeTimerPeriodState,
         updater: any OTPCodeTimerUpdater,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     )
         -> TOTPView
 }
@@ -20,15 +20,15 @@ public struct TOTPPreviewViewFactoryImpl: TOTPPreviewViewFactory {
         viewModel: OTPCodePreviewViewModel,
         periodState: OTPCodeTimerPeriodState,
         updater _: any OTPCodeTimerUpdater,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         TOTPCodePreviewView(
             previewViewModel: viewModel,
             timerView: CodeTimerHorizontalBarView(
                 timerState: periodState,
-                color: .blue
+                color: .blue,
             ),
-            behaviour: behaviour
+            behaviour: behaviour,
         )
     }
 }

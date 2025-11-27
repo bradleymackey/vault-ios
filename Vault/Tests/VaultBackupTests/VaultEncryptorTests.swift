@@ -22,7 +22,7 @@ struct VaultEncryptorTests {
     func encrypt_expectedDataReturnedUsingAESGCM() throws {
         let knownKey = VaultKey(
             key: .repeating(byte: 0x31),
-            iv: .repeating(byte: 0x32)
+            iv: .repeating(byte: 0x32),
         )
         let sut = makeSUT(key: knownKey)
         let plainData = Data(hex: "0x41414141414141")
@@ -64,7 +64,7 @@ extension VaultEncryptorTests {
     private func makeSUT(
         key: VaultKey,
         keygenSalt: Data = Data(),
-        keygenSignature: String = "my-signature"
+        keygenSignature: String = "my-signature",
     ) -> VaultEncryptor {
         let sut = VaultEncryptor(key: key, keygenSalt: keygenSalt, keygenSignature: keygenSignature)
         return sut

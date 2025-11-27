@@ -42,7 +42,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             searchableLevel: metadata.searchableLevel,
             searchPassphrase: metadata.searchPassphrase,
             killphrase: metadata.killphrase,
-            lockState: metadata.lockState
+            lockState: metadata.lockState,
         )
     }
 
@@ -133,7 +133,7 @@ extension VaultItem {
             searchPassphrase: String?,
             killphrase: String?,
             lockState: VaultItemLockState,
-            color: VaultItemColor?
+            color: VaultItemColor?,
         ) {
             self.id = id
             self.created = created
@@ -175,7 +175,7 @@ extension VaultItem {
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
             killphrase: String?,
-            lockState: VaultItemLockState
+            lockState: VaultItemLockState,
         ) {
             self.relativeOrder = relativeOrder
             self.userDescription = userDescription
