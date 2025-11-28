@@ -11,8 +11,8 @@ public struct HKDFKeyDeriver<Length: KeyLength>: KeyDeriver {
 
     public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         let engine = try HKDF(
-            password: password.bytes,
-            salt: salt.bytes,
+            password: password.byteArray,
+            salt: salt.byteArray,
             info: nil,
             keyLength: Length.bytes,
             variant: parameters.variant.hmacVariant,

@@ -17,10 +17,10 @@ public struct AESGCMDecryptor: Decryptor {
     /// - Parameter ciphertext: The encrypted message.
     /// - Parameter tag: AES-GCM authentication tag that verifies the message
     public func decrypt(message: Message, iv: Data) throws -> Data {
-        let gcm = GCM(iv: iv.bytes, authenticationTag: message.authenticationTag.bytes, mode: .detached)
-        let aes = try AES(key: key.bytes, blockMode: gcm, padding: .noPadding)
+        let gcm = GCM(iv: iv.byteArray, authenticationTag: message.authenticationTag.byteArray, mode: .detached)
+        let aes = try AES(key: key.byteArray, blockMode: gcm, padding: .noPadding)
         if message.ciphertext.isEmpty { return Data() }
-        let plaintextBytes = try aes.decrypt(message.ciphertext.bytes)
+        let plaintextBytes = try aes.decrypt(message.ciphertext.byteArray)
         return Data(plaintextBytes)
     }
 }
