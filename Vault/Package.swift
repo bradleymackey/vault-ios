@@ -96,6 +96,7 @@ let package = Package(
         .target(
             name: "TestHelpers",
             dependencies: [
+                "FoundationExtensions",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings,
