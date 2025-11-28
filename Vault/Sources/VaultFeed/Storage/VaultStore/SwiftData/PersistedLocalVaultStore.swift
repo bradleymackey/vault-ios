@@ -2,6 +2,8 @@ import Foundation
 import FoundationExtensions
 import SwiftData
 
+// swiftformat:disable preferCountWhere
+
 /// Uses SwiftData with a CoreData backing layer to persist content.
 ///
 /// Conforms to SwiftData's `ModelActor` to ensure all database operations are thread-safe.
@@ -72,13 +74,14 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         } else {
             let searchingTagIds = tags.map(\.id).reducedToSet()
             // Performs an "AND" query by checking if all searched tags are present in the item's tags.
-            // We convert the set to an array to use filter, which is supported in SwiftData predicates.
+            // Since count(where:) is not supported, we use filter().count instead.
             // An item matches if the count of its tags that match our search equals the search count.
             let searchingTagsArray = Array(searchingTagIds)
+            let expectedCount = searchingTagsArray.count
             return #Predicate<PersistedVaultItem> { item in
-                item.tags.count(where: { tag in
+                item.tags.filter { tag in
                     searchingTagsArray.contains(tag.id)
-                }) == searchingTagsArray.count
+                }.count == expectedCount
             }
         }
     }
