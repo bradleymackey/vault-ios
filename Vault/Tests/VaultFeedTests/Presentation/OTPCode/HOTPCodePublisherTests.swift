@@ -1,69 +1,58 @@
 import Combine
 import CryptoEngine
 import Foundation
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class HOTPCodePublisherTests: XCTestCase {
-    @MainActor
-    func test_renderedCodePublisher_doesNotPublishesInitialCodeImmediately() async throws {
+@Suite
+@MainActor
+struct HOTPCodePublisherTests {
+    @Test
+    func renderedCodePublisher_doesNotPublishesInitialCodeImmediately() async throws {
         let sut = makeSUT(digits: 8)
-        let publisher = sut.renderedCodePublisher().collectFirst(1)
 
-        await awaitNoPublish(publisher: publisher, when: {
+        try await sut.renderedCodePublisher().expect(valueCount: 0) {
             // noop
-        })
+        }
     }
 
-    @MainActor
-    func test_renderedCodePublisher_publishesCodesOnCounterChangeOnly() async throws {
+    @Test
+    func renderedCodePublisher_publishesCodesOnCounterChangeOnly() async throws {
         let sut = makeSUT(digits: 8)
 
-        let publisher = sut.renderedCodePublisher().collectFirst(2)
-
-        let values = try await awaitPublisher(publisher, when: {
+        let expected = ["94287082", "37359152"]
+        try await sut.renderedCodePublisher().expect(firstValues: expected) { @MainActor in
             sut.set(counter: 1)
             sut.set(counter: 2)
-        })
-        XCTAssertEqual(values, ["94287082", "37359152"])
+        }
     }
 
-    @MainActor
-    func test_renderedCodePublisher_publishesZeroLengthCode() async throws {
+    @Test
+    func renderedCodePublisher_publishesZeroLengthCode() async throws {
         let sut = makeSUT(digits: 0)
 
-        let publisher = sut.renderedCodePublisher().collectFirst(2)
-
-        let values = try await awaitPublisher(publisher, when: {
+        let expected = ["", ""]
+        try await sut.renderedCodePublisher().expect(firstValues: expected) { @MainActor in
             sut.set(counter: 1)
             sut.set(counter: 2)
-        })
-        XCTAssertEqual(values, ["", ""])
+        }
     }
 
-    @MainActor
-    func test_renderedCodePublisher_publishesCodesWithLeadingZeros() async throws {
+    @Test
+    func renderedCodePublisher_publishesCodesWithLeadingZeros() async throws {
         let sut = makeSUT(digits: 20)
 
-        let publisher = sut.renderedCodePublisher().collectFirst(2)
-
-        let values = try await awaitPublisher(publisher, when: {
+        let expected = ["00000000001094287082", "00000000000137359152"]
+        try await sut.renderedCodePublisher().expect(firstValues: expected) { @MainActor in
             sut.set(counter: 1)
             sut.set(counter: 2)
-        })
-        XCTAssertEqual(values, ["00000000001094287082", "00000000000137359152"])
+        }
     }
 
     // MARK: - Helpers
 
-    @MainActor
-    private func makeSUT(
-        digits: UInt16,
-        file: StaticString = #filePath,
-        line: UInt = #line,
-    ) -> HOTPCodePublisher {
+    private func makeSUT(digits: UInt16) -> HOTPCodePublisher {
         let sut = HOTPCodePublisher(hotpGenerator: fixedGenerator(digits: digits))
-        trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
 
