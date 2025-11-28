@@ -50,18 +50,19 @@ public struct FailingKeyDeriver<Length: KeyLength>: KeyDeriver {
 
 /// A key deriver that is able to signal when derivation started.
 public struct SuspendingKeyDeriver<Length: KeyLength>: KeyDeriver {
+    public typealias Handler = @Sendable (Data, Data) throws -> KeyData<Length>
     public var uniqueAlgorithmIdentifier: String { "suspending" }
-    public var startedKeyDerivationHandler: (@Sendable (Data, Data) throws -> KeyData<Length>) = { _, _ in
-        .random()
-    }
+    public var handler: Handler
 
     private let waiter = DispatchSemaphore(value: 0)
 
-    public init() {}
+    public init(handler: @escaping Handler) {
+        self.handler = handler
+    }
 
     /// Derive key. Does not return until signaled via `signalDerivationComplete`.
     public func key(password: Data, salt: Data) throws -> KeyData<Length> {
-        let result = try startedKeyDerivationHandler(password, salt)
+        let result = try handler(password, salt)
         waiter.wait()
         return result
     }

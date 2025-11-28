@@ -29,16 +29,15 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
     @MainActor
     func test_startDecryption_setsStateToDecrypting() async {
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
-        var keyDeriver = SuspendingKeyDeriver<Bits256>()
+        let exp = expectation(description: "test")
+        let keyDeriver = SuspendingKeyDeriver<Bits256> { _, _ in
+            exp.fulfill()
+            return .random()
+        }
         keyDeriverFactory.lookupVaultKeyDeriverHandler = { _ in .init(deriver: keyDeriver, signature: .testing) }
         let sut = makeSUT(item: anyEncryptedItem(), keyDeriverFactory: keyDeriverFactory)
         sut.enteredEncryptionPassword = "hello"
 
-        let exp = expectation(description: "test")
-        keyDeriver.startedKeyDerivationHandler = { _, _ in
-            exp.fulfill()
-            return .random()
-        }
         Task.detached {
             await sut.startDecryption()
         }

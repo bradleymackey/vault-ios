@@ -29,22 +29,28 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
     func test_makeOTPView_generatesViews() throws {
         let repository = TOTPPreviewViewRepositoryMock()
         repository.previewViewModelHandler = { _, _ in
-            OTPCodePreviewViewModel(
-                accountName: "",
-                issuer: "",
-                color: .black,
-                isLocked: false,
-                fixedCodeState: .visible("12345"),
-            )
+            MainActor.assumeIsolated {
+                OTPCodePreviewViewModel(
+                    accountName: "",
+                    issuer: "",
+                    color: .black,
+                    isLocked: false,
+                    fixedCodeState: .visible("12345"),
+                )
+            }
         }
         repository.timerPeriodStateHandler = { _ in
-            OTPCodeTimerPeriodState(
-                statePublisher: Just(OTPCodeTimerState(currentTime: 100, period: 10))
-                    .setFailureType(to: Never.self).eraseToAnyPublisher(),
-            )
+            MainActor.assumeIsolated {
+                OTPCodeTimerPeriodState(
+                    statePublisher: Just(OTPCodeTimerState(currentTime: 100, period: 10))
+                        .setFailureType(to: Never.self).eraseToAnyPublisher(),
+                )
+            }
         }
         repository.timerUpdaterHandler = { _ in
-            OTPCodeTimerUpdaterMock()
+            MainActor.assumeIsolated {
+                OTPCodeTimerUpdaterMock()
+            }
         }
         let factory = TOTPPreviewViewFactoryMock()
         factory.makeTOTPViewHandler = { _, _, _, _ in AnyView(Color.green) }
