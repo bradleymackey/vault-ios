@@ -8,12 +8,12 @@ extension Publisher {
     @MainActor
     public func expect(
         valueCount: Int,
-        sourceLocation _: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
         when actions: () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
-        try await confirmation(expectedCount: valueCount) { confirmation in
+        try await confirmation(expectedCount: valueCount, sourceLocation: sourceLocation) { confirmation in
             cancellable = sink { _ in
                 // noop
             } receiveValue: { _ in
@@ -45,7 +45,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
     public func expect(
         firstValues: [Output],
         timeout: Duration = .seconds(1),
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
         when actions: sending @isolated(any) @escaping () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?

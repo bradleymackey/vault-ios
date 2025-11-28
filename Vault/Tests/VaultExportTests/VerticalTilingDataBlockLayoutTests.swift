@@ -130,7 +130,7 @@ struct VerticalTilingDataBlockLayoutTests {
         for sut: VerticalTilingDataBlockLayout,
         sizes: [CGSize],
         origins: [CGPoint],
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         let rowIndexes: [UInt] = Array(0 ..< sut.tilesPerRow)
         for (index, rowIndex) in rowIndexes.enumerated() {
@@ -148,7 +148,7 @@ struct VerticalTilingDataBlockLayoutTests {
         for sut: VerticalTilingDataBlockLayout,
         sizes: [CGSize],
         origins: [CGPoint],
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         let columnIndexes: [UInt] = Array(0 ..< sut.tilesPerRow).map { $0 * sut.tilesPerRow }
         for (index, columnIndex) in columnIndexes.enumerated() {
