@@ -1,11 +1,13 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultCore
-import XCTest
 @testable import VaultFeed
 
-final class OTPCodeDetailEditsTests: XCTestCase {
-    func test_initHydratedFromCode_assignsTOTPCodeType() {
+@Suite
+struct OTPCodeDetailEditsTests {
+    @Test
+    func initHydratedFromCode_assignsTOTPCodeType() {
         let code = OTPAuthCode(
             type: .totp(period: 1234),
             data: .init(
@@ -30,24 +32,25 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             lockState: .lockedWithNativeSecurity,
         )
 
-        XCTAssertEqual(sut.codeType, .totp)
-        XCTAssertEqual(sut.totpPeriodLength, 1234)
-        XCTAssertEqual(sut.hotpCounterValue, 0, "Defaults HOTP to default for TOTP code")
-        XCTAssertEqual(sut.algorithm, .sha1)
-        XCTAssertEqual(sut.numberOfDigits, 6)
-        XCTAssertEqual(sut.issuerTitle, "myiss")
-        XCTAssertEqual(sut.accountNameTitle, "myacc")
-        XCTAssertEqual(sut.description, "mydesc")
-        XCTAssertEqual(sut.color, color)
-        XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
-        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
-        XCTAssertEqual(sut.searchPassphrase, "search")
-        XCTAssertEqual(sut.killphrase, "killme")
-        XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
-        XCTAssertEqual(sut.relativeOrder, 1234)
+        #expect(sut.codeType == .totp)
+        #expect(sut.totpPeriodLength == 1234)
+        #expect(sut.hotpCounterValue == 0) // Defaults HOTP to default for TOTP code
+        #expect(sut.algorithm == .sha1)
+        #expect(sut.numberOfDigits == 6)
+        #expect(sut.issuerTitle == "myiss")
+        #expect(sut.accountNameTitle == "myacc")
+        #expect(sut.description == "mydesc")
+        #expect(sut.color == color)
+        #expect(sut.secretBase32String == "V6X27LY=")
+        #expect(sut.viewConfig == .alwaysVisible)
+        #expect(sut.searchPassphrase == "search")
+        #expect(sut.killphrase == "killme")
+        #expect(sut.lockState == .lockedWithNativeSecurity)
+        #expect(sut.relativeOrder == 1234)
     }
 
-    func test_initHydratedFromCode_assignsHOTPCodeType() {
+    @Test
+    func initHydratedFromCode_assignsHOTPCodeType() {
         let code = OTPAuthCode(
             type: .hotp(counter: 12345),
             data: .init(
@@ -72,24 +75,25 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             lockState: .lockedWithNativeSecurity,
         )
 
-        XCTAssertEqual(sut.codeType, .hotp)
-        XCTAssertEqual(sut.totpPeriodLength, 30, "Defaults TOTP to default for HOTP code")
-        XCTAssertEqual(sut.hotpCounterValue, 12345)
-        XCTAssertEqual(sut.algorithm, .sha256)
-        XCTAssertEqual(sut.numberOfDigits, 6)
-        XCTAssertEqual(sut.issuerTitle, "myiss2")
-        XCTAssertEqual(sut.accountNameTitle, "myacc2")
-        XCTAssertEqual(sut.description, "mydesc2")
-        XCTAssertEqual(sut.color, color)
-        XCTAssertEqual(sut.secretBase32String, "V6X27LY=")
-        XCTAssertEqual(sut.viewConfig, .alwaysVisible)
-        XCTAssertEqual(sut.searchPassphrase, "search")
-        XCTAssertEqual(sut.killphrase, "killme")
-        XCTAssertEqual(sut.lockState, .lockedWithNativeSecurity)
-        XCTAssertEqual(sut.relativeOrder, 4321)
+        #expect(sut.codeType == .hotp)
+        #expect(sut.totpPeriodLength == 30) // Defaults TOTP to default for HOTP code
+        #expect(sut.hotpCounterValue == 12345)
+        #expect(sut.algorithm == .sha256)
+        #expect(sut.numberOfDigits == 6)
+        #expect(sut.issuerTitle == "myiss2")
+        #expect(sut.accountNameTitle == "myacc2")
+        #expect(sut.description == "mydesc2")
+        #expect(sut.color == color)
+        #expect(sut.secretBase32String == "V6X27LY=")
+        #expect(sut.viewConfig == .alwaysVisible)
+        #expect(sut.searchPassphrase == "search")
+        #expect(sut.killphrase == "killme")
+        #expect(sut.lockState == .lockedWithNativeSecurity)
+        #expect(sut.relativeOrder == 4321)
     }
 
-    func test_init_emptySecretIsEmptySecretBase32String() {
+    @Test
+    func init_emptySecretIsEmptySecretBase32String() {
         let code = anyOTPAuthCode(secret: .empty())
 
         let sut = OTPCodeDetailEdits(
@@ -104,10 +108,11 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             lockState: .notLocked,
         )
 
-        XCTAssertEqual(sut.secretBase32String, "")
+        #expect(sut.secretBase32String == "")
     }
 
-    func test_isValid_validSecretIsValid() throws {
+    @Test
+    func isValid_validSecretIsValid() throws {
         let code = anyOTPAuthCode(secret: makeExampleSecret())
 
         let sut = OTPCodeDetailEdits(
@@ -122,49 +127,55 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             lockState: .notLocked,
         )
 
-        XCTAssertTrue(sut.isValid)
+        #expect(sut.isValid)
     }
 
-    func test_isValid_invalidForEmptySecret() throws {
+    @Test
+    func isValid_invalidForEmptySecret() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = ""
 
-        XCTAssertFalse(sut.isValid)
+        #expect(!sut.isValid)
     }
 
-    func test_isValid_invalidForEmptyIssuer() throws {
+    @Test
+    func isValid_invalidForEmptyIssuer() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.issuerTitle = ""
 
-        XCTAssertFalse(sut.isValid)
+        #expect(!sut.isValid)
     }
 
-    func test_isValid_invalidSecretIsInvalid() throws {
+    @Test
+    func isValid_invalidSecretIsInvalid() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = "A" // this is invalid
 
-        XCTAssertFalse(sut.isValid)
+        #expect(!sut.isValid)
     }
 
-    func test_isValid_invalidForEmptyPassphrase() throws {
+    @Test
+    func isValid_invalidForEmptyPassphrase() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.searchPassphrase = ""
         sut.viewConfig = .requiresSearchPassphrase
 
-        XCTAssertFalse(sut.isValid)
+        #expect(!sut.isValid)
     }
 
-    func test_isValid_validForNonEmptyPassphrase() throws {
+    @Test
+    func isValid_validForNonEmptyPassphrase() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = "AA"
         sut.issuerTitle = "any"
         sut.searchPassphrase = "passphrase"
         sut.viewConfig = .requiresSearchPassphrase
 
-        XCTAssertTrue(sut.isValid)
+        #expect(sut.isValid)
     }
 
-    func test_asOTPAuthCode_createsTOTPCode() throws {
+    @Test
+    func asOTPAuthCode_createsTOTPCode() throws {
         let code = anyTOTPAuthCode()
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
@@ -180,10 +191,11 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         let newCode = try sut.asOTPAuthCode()
 
-        XCTAssertEqual(code, newCode)
+        #expect(code == newCode)
     }
 
-    func test_asOTPAuthCode_createsHOTPCode() throws {
+    @Test
+    func asOTPAuthCode_createsHOTPCode() throws {
         let code = anyHOTPAuthCode()
         let sut = OTPCodeDetailEdits(
             hydratedFromCode: code,
@@ -199,14 +211,17 @@ final class OTPCodeDetailEditsTests: XCTestCase {
 
         let newCode = try sut.asOTPAuthCode()
 
-        XCTAssertEqual(code, newCode)
+        #expect(code == newCode)
     }
 
-    func test_asOTPAuthCode_throwsErrorIfBase32SecretIsInvalid() throws {
+    @Test
+    func asOTPAuthCode_throwsErrorIfBase32SecretIsInvalid() throws {
         var sut = OTPCodeDetailEdits.new()
         sut.secretBase32String = "e~~"
 
-        XCTAssertThrowsError(try sut.asOTPAuthCode())
+        #expect(throws: (any Error).self) {
+            try sut.asOTPAuthCode()
+        }
     }
 }
 

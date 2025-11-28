@@ -6,7 +6,7 @@ import Testing
 @MainActor
 struct HOTPPreviewViewRepositoryImplTests {
     @Test
-    func initHasNoSideEffects() {
+    func init_hasNoSideEffects() {
         let store = VaultStoreHOTPIncrementerMock()
         let sut = makeSUT(store: store)
 
@@ -17,7 +17,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func previewViewModelInitiallyExpired() {
+    func previewViewModel_initiallyExpired() {
         let sut = makeSUT()
 
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
@@ -26,7 +26,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func previewViewModelReturnsSameViewModelInstanceUsedCachedViewModels() {
+    func previewViewModel_returnsSameViewModelInstanceUsedCachedViewModels() {
         let sut = makeSUT()
 
         let sharedID = Identifier<VaultItem>.new()
@@ -43,7 +43,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func previewViewModelReturnsSameIncrementerInstanceUsedCachedViewModels() {
+    func previewViewModel_returnsSameIncrementerInstanceUsedCachedViewModels() {
         let sut = makeSUT()
 
         let sharedID = Identifier<VaultItem>.new()
@@ -60,7 +60,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func textToCopyForVaultItemIsNilIfCacheEmpty() {
+    func textToCopyForVaultItem_isNilIfCacheEmpty() {
         let sut = makeSUT()
 
         let copyAction = sut.textToCopyForVaultItem(id: .new())
@@ -69,7 +69,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func textToCopyForVaultItemIsNilWhenCodeIsObfuscated() {
+    func textToCopyForVaultItem_isNilWhenCodeIsObfuscated() {
         let sut = makeSUT()
 
         let id = Identifier<VaultItem>()
@@ -80,7 +80,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func textToCopyForVaultItemIsCopyTextIfCodeHasBeenGenerated() {
+    func textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
@@ -92,7 +92,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func textToCopyForVaultItemRequiresAuthenticationToCopyIfLocked() {
+    func textToCopyForVaultItem_requiresAuthenticationToCopyIfLocked() {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
@@ -104,7 +104,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func expireAllMarksAllCachedViewsAsExpired() {
+    func expireAll_marksAllCachedViewsAsExpired() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
@@ -116,7 +116,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func obfuscateForPrivacyObfuscatesVisibleCodesForPrivacy() {
+    func obfuscateForPrivacy_obfuscatesVisibleCodesForPrivacy() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
@@ -128,7 +128,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func unobfuscateForPrivacyUnobfuscatesCodesHiddenForPrivacy() {
+    func unobfuscateForPrivacy_unobfuscatesCodesHiddenForPrivacy() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
@@ -141,7 +141,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func vaultItemCacheClearRemovesItemsMatchingIDFromCache() async {
+    func vaultItemCacheClear_removesItemsMatchingIDFromCache() async {
         let sut = makeSUT()
 
         let id1 = Identifier<VaultItem>()
@@ -164,7 +164,7 @@ struct HOTPPreviewViewRepositoryImplTests {
     }
 
     @Test
-    func vaultItemCacheClearAllRemovesItemsMatchingIDFromCache() async {
+    func vaultItemCacheClearAll_removesItemsMatchingIDFromCache() async {
         let sut = makeSUT()
 
         let id1 = Identifier<VaultItem>()
