@@ -43,6 +43,7 @@ public struct Key<ValueType: Codable>: DefaultsKey {
 /// - Warning
 /// These should not be used to store sensitive information that could compromise
 /// the application or the user's security and privacy.
+@MainActor
 public final class Defaults {
     private var userDefaults: UserDefaults
     private let defaultsDidChangeSubject = PassthroughSubject<Void, Never>()

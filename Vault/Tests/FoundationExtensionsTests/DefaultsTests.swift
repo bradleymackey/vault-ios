@@ -28,15 +28,12 @@ import TestHelpers
 import Testing
 @testable import FoundationExtensions
 
+@MainActor
 final class DefaultTests {
     let defaults: Defaults
 
     init() throws {
         defaults = try .nonPersistent()
-    }
-
-    deinit {
-        defaults.removeAll()
     }
 
     @Test(arguments: [0, 123, 456])

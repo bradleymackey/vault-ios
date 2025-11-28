@@ -3,6 +3,7 @@ import FoundationExtensions
 import VaultCore
 
 /// Local settings for the codes.
+@MainActor
 public struct LocalSettingsState {
     @DefaultsStored public var pasteTimeToLive: PasteTTL
 

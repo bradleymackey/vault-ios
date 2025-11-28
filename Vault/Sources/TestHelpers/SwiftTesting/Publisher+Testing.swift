@@ -5,6 +5,7 @@ import Testing
 
 extension Publisher {
     /// Creates a testing `confirmation` that a publisher will produce the given number of elements.
+    @MainActor
     public func expect(
         valueCount: Int,
         sourceLocation _: SourceLocation = .__here(),

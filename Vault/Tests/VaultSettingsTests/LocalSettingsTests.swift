@@ -4,6 +4,7 @@ import TestHelpers
 import Testing
 import VaultSettings
 
+@MainActor
 struct LocalSettingsTests {
     @Test
     func pasteTimeToLive_defaultsToDefaultValue() throws {

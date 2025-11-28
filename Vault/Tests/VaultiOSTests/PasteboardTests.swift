@@ -87,6 +87,7 @@ extension PasteboardTests {
         return pasteboard
     }
 
+    @MainActor
     private func makeDefaults() throws -> Defaults {
         let userDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
         userDefaults.removePersistentDomain(forName: #file)

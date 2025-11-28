@@ -1,43 +1,45 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 
-final class OTPCodeDetailViewModelTests: XCTestCase {
-    @MainActor
-    func test_init_creatingHasNoSideEffects() {
+@Suite
+@MainActor
+struct OTPCodeDetailViewModelTests {
+    @Test
+    func init_creatingHasNoSideEffects() {
         let editor = OTPCodeDetailEditorMock()
         _ = makeSUTCreating(editor: editor)
 
         editor.assertNoOperations()
     }
 
-    @MainActor
-    func test_init_editingHasNoSideEffects() {
+    @Test
+    func init_editingHasNoSideEffects() {
         let editor = OTPCodeDetailEditorMock()
         _ = makeSUTEditing(editor: editor)
 
         editor.assertNoOperations()
     }
 
-    @MainActor
-    func test_init_creatingSetsPlaceholderInitialData() {
+    @Test
+    func init_creatingSetsPlaceholderInitialData() {
         let sut = makeSUTCreating()
 
-        XCTAssertEqual(sut.editingModel.detail.issuerTitle, "")
-        XCTAssertEqual(sut.editingModel.detail.accountNameTitle, "")
-        XCTAssertEqual(sut.editingModel.detail.description, "")
-        XCTAssertEqual(sut.editingModel.detail.algorithm, .sha1)
-        XCTAssertEqual(sut.editingModel.detail.codeType, .totp)
-        XCTAssertEqual(sut.editingModel.detail.hotpCounterValue, 0)
-        XCTAssertEqual(sut.editingModel.detail.totpPeriodLength, 30)
-        XCTAssertEqual(sut.editingModel.detail.secretBase32String, "")
+        #expect(sut.editingModel.detail.issuerTitle == "")
+        #expect(sut.editingModel.detail.accountNameTitle == "")
+        #expect(sut.editingModel.detail.description == "")
+        #expect(sut.editingModel.detail.algorithm == .sha1)
+        #expect(sut.editingModel.detail.codeType == .totp)
+        #expect(sut.editingModel.detail.hotpCounterValue == 0)
+        #expect(sut.editingModel.detail.totpPeriodLength == 30)
+        #expect(sut.editingModel.detail.secretBase32String == "")
     }
 
-    @MainActor
-    func test_init_creatingWithCodeUsesInitialData() {
+    @Test
+    func init_creatingWithCodeUsesInitialData() {
         let code = OTPAuthCode(
             type: .totp(),
             data: .init(
@@ -49,13 +51,13 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         let sut = makeSUTCreating(initialCode: code)
 
-        XCTAssertEqual(sut.editingModel.detail.accountNameTitle, "my account")
-        XCTAssertEqual(sut.editingModel.detail.issuerTitle, "my issuer")
-        XCTAssertEqual(sut.editingModel.detail.description, "")
+        #expect(sut.editingModel.detail.accountNameTitle == "my account")
+        #expect(sut.editingModel.detail.issuerTitle == "my issuer")
+        #expect(sut.editingModel.detail.description == "")
     }
 
-    @MainActor
-    func test_init_editingModelUsesInitialData() {
+    @Test
+    func init_editingModelUsesInitialData() {
         let code = OTPAuthCode(
             type: .totp(),
             data: .init(
@@ -68,113 +70,107 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         let sut = makeSUTEditing(code: code, metadata: metadata)
 
-        XCTAssertEqual(sut.editingModel.detail.accountNameTitle, "my account")
-        XCTAssertEqual(sut.editingModel.detail.issuerTitle, "my issuer")
-        XCTAssertEqual(sut.editingModel.detail.description, "my description")
+        #expect(sut.editingModel.detail.accountNameTitle == "my account")
+        #expect(sut.editingModel.detail.issuerTitle == "my issuer")
+        #expect(sut.editingModel.detail.description == "my description")
     }
 
-    @MainActor
-    func test_detailMenuItems_editingHasItems() {
+    @Test
+    func detailMenuItems_editingHasItems() {
         let sut = makeSUTEditing()
 
-        XCTAssertEqual(
-            sut.detailMenuItems.map(\.title),
-            ["Created", "Visibility", "Type", "Period", "Digits", "Algorithm", "Key Format"],
+        #expect(
+            sut.detailMenuItems.map(\.title) ==
+                ["Created", "Visibility", "Type", "Period", "Digits", "Algorithm", "Key Format"],
         )
     }
 
-    @MainActor
-    func test_detailMenuItems_creatingHasItems() {
+    @Test
+    func detailMenuItems_creatingHasItems() {
         let sut = makeSUTCreating()
 
-        XCTAssertEqual(sut.detailMenuItems.map(\.title), ["Visibility"])
+        #expect(sut.detailMenuItems.map(\.title) == ["Visibility"])
     }
 
-    @MainActor
-    func test_isInEditMode_creatingInitiallyFalse() {
+    @Test
+    func isInEditMode_creatingInitiallyFalse() {
         let sut = makeSUTCreating()
 
-        XCTAssertFalse(sut.isInEditMode, "Call startEditing manually!")
+        #expect(!sut.isInEditMode, "Call startEditing manually")
     }
 
-    @MainActor
-    func test_isInEditMode_editingInitiallyFalse() {
+    @Test
+    func isInEditMode_editingInitiallyFalse() {
         let sut = makeSUTEditing()
 
-        XCTAssertFalse(sut.isInEditMode)
+        #expect(!sut.isInEditMode)
     }
 
-    @MainActor
-    func test_startEditing_setsEditModeTrue() async throws {
+    @Test
+    func startEditing_setsEditModeTrue() async throws {
         let sut = makeSUTEditing()
 
         sut.startEditing()
 
-        XCTAssertTrue(sut.isInEditMode)
+        #expect(sut.isInEditMode)
     }
 
-    @MainActor
-    func test_isSaving_initiallyFalse() {
+    @Test
+    func isSaving_initiallyFalse() {
         let sut = makeSUT()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(!sut.isSaving)
     }
 
-    @MainActor
-    func test_saveChanges_creatingUpdatesEditor() async throws {
+    @Test
+    func saveChanges_creatingUpdatesEditor() async throws {
         let editor = OTPCodeDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
-        let exp = expectation(description: "Wait for code creation")
+        var handlerCalled = false
         editor.createCodeHandler = { _ in
-            exp.fulfill()
+            handlerCalled = true
         }
 
         await sut.saveChanges()
 
-        await fulfillment(of: [exp])
+        #expect(handlerCalled)
     }
 
-    @MainActor
-    func test_saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
+    @Test
+    func saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
         let sut = makeSUTCreating()
         makeDirty(sut: sut)
 
         await sut.saveChanges()
 
-        XCTAssertTrue(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_saveChanges_creatingFinishesAfterCreation() async throws {
+    @Test
+    func saveChanges_creatingFinishesAfterCreation() async throws {
         let sut = makeSUTCreating()
 
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
+        try await sut.isFinishedPublisher().expect(valueCount: 1) {
             await sut.saveChanges()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_saveChanges_creatingSendsErrorIfSaveError() async throws {
+    @Test
+    func saveChanges_creatingSendsErrorIfSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.createCodeHandler = { _ in
             throw TestError()
         }
         let sut = makeSUTCreating(editor: editor)
 
-        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
-        let output = try await awaitPublisher(publisher) {
+        try await sut.didEncounterErrorPublisher().expect(valueCount: 1) {
             await sut.saveChanges()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
+    @Test
+    func saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.createCodeHandler = { _ in
             throw TestError()
@@ -183,21 +179,21 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         await sut.saveChanges()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(!sut.isSaving)
     }
 
-    @MainActor
-    func test_saveChanges_editingPersistsEditingModelIfSuccessful() async throws {
+    @Test
+    func saveChanges_editingPersistsEditingModelIfSuccessful() async throws {
         let sut = makeSUTEditing()
         makeDirty(sut: sut)
 
         await sut.saveChanges()
 
-        XCTAssertFalse(sut.editingModel.isDirty)
+        #expect(!sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_saveChanges_editingSetsSavingToFalseAfterSaveError() async throws {
+    @Test
+    func saveChanges_editingSetsSavingToFalseAfterSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
             throw TestError()
@@ -206,11 +202,11 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         await sut.saveChanges()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(!sut.isSaving)
     }
 
-    @MainActor
-    func test_saveChanges_editingDoesNotPersistEditingModelIfSaveFailed() async throws {
+    @Test
+    func saveChanges_editingDoesNotPersistEditingModelIfSaveFailed() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
             throw TestError()
@@ -220,27 +216,24 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         await sut.saveChanges()
 
-        XCTAssertTrue(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_saveChanges_editingSendsErrorIfSaveError() async throws {
+    @Test
+    func saveChanges_editingSendsErrorIfSaveError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.updateCodeHandler = { _, _, _ in
             throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
-        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
-        let output = try await awaitPublisher(publisher) {
+        try await sut.didEncounterErrorPublisher().expect(valueCount: 1) {
             await sut.saveChanges()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_deleteCode_hasNoActionIfCreatingCode() async throws {
+    @Test
+    func deleteCode_hasNoActionIfCreatingCode() async throws {
         let editor = OTPCodeDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
@@ -249,68 +242,59 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         editor.assertNoOperations()
     }
 
-    @MainActor
-    func test_deleteCode_editingIsSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
+    @Test
+    func deleteCode_editingIsSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
         let sut = makeSUTEditing()
 
         await sut.deleteCode()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(!sut.isSaving)
     }
 
-    @MainActor
-    func test_deleteCode_editingSendsFinishSignalOnSuccessfulDeletion() async throws {
+    @Test
+    func deleteCode_editingSendsFinishSignalOnSuccessfulDeletion() async throws {
         let sut = makeSUTEditing()
 
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
+        try await sut.isFinishedPublisher().expect(valueCount: 1) {
             await sut.deleteCode()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_deleteCode_editingSendsErrorIfDeleteError() async throws {
+    @Test
+    func deleteCode_editingSendsErrorIfDeleteError() async throws {
         let editor = OTPCodeDetailEditorMock()
         editor.deleteCodeHandler = { _ in
             throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
-        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
-        let output = try await awaitPublisher(publisher) {
+        try await sut.didEncounterErrorPublisher().expect(valueCount: 1) {
             await sut.deleteCode()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_done_restoresInitialEditingStateIfInEditMode() async throws {
+    @Test
+    func done_restoresInitialEditingStateIfInEditMode() async throws {
         let sut = makeSUT()
         sut.startEditing()
         makeDirty(sut: sut)
 
         sut.done()
 
-        XCTAssertFalse(sut.editingModel.isDirty)
+        #expect(!sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_done_finishesIfNotInEditMode() async throws {
+    @Test
+    func done_finishesIfNotInEditMode() async throws {
         let sut = makeSUTEditing()
 
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
+        try await sut.isFinishedPublisher().expect(valueCount: 1) {
             sut.done()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_editingModel_initialStateUsesData() {
+    @Test
+    func editingModel_initialStateUsesData() {
         var code = uniqueCode()
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
@@ -320,13 +304,13 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         let editing = sut.editingModel
 
-        XCTAssertEqual(editing.initialDetail.accountNameTitle, "account name test")
-        XCTAssertEqual(editing.initialDetail.issuerTitle, "issuer test")
-        XCTAssertEqual(editing.initialDetail.description, "description test")
+        #expect(editing.initialDetail.accountNameTitle == "account name test")
+        #expect(editing.initialDetail.issuerTitle == "issuer test")
+        #expect(editing.initialDetail.description == "description test")
     }
 
-    @MainActor
-    func test_editingModel_editingStateUsesData() {
+    @Test
+    func editingModel_editingStateUsesData() {
         var code = uniqueCode()
         code.data.accountName = "account name test"
         code.data.issuer = "issuer test"
@@ -336,70 +320,70 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         let editing = sut.editingModel
 
-        XCTAssertEqual(editing.detail.accountNameTitle, "account name test")
-        XCTAssertEqual(editing.detail.issuerTitle, "issuer test")
-        XCTAssertEqual(editing.detail.description, "description test")
+        #expect(editing.detail.accountNameTitle == "account name test")
+        #expect(editing.detail.issuerTitle == "issuer test")
+        #expect(editing.detail.description == "description test")
     }
 
-    @MainActor
-    func test_editingModel_creatingWithoutCodeIsNotInitiallyDirty() {
+    @Test
+    func editingModel_creatingWithoutCodeIsNotInitiallyDirty() {
         let sut = makeSUTCreating(initialCode: nil)
 
-        XCTAssertFalse(
-            sut.editingModel.isDirty,
+        #expect(
+            !sut.editingModel.isDirty,
             "This is not initially dirty because we need the user to input data before we can save.",
         )
     }
 
-    @MainActor
-    func test_editingModel_creatingWithCodeIsInitiallyDirty() {
+    @Test
+    func editingModel_creatingWithCodeIsInitiallyDirty() {
         let sut = makeSUTCreating(initialCode: uniqueCode())
 
-        XCTAssertTrue(
+        #expect(
             sut.editingModel.isDirty,
             "This is initially dirty as the data has been input from elsewhere. The initial state is hydrated with dirty data.",
         )
     }
 
-    @MainActor
-    func test_editingModel_editingIsNotInitiallyDirty() {
+    @Test
+    func editingModel_editingIsNotInitiallyDirty() {
         let sut = makeSUTEditing()
 
-        XCTAssertFalse(sut.editingModel.isDirty)
+        #expect(!sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_shouldShowDeleteButton_falseForCreating() {
+    @Test
+    func shouldShowDeleteButton_falseForCreating() {
         let sut = makeSUTCreating()
 
-        XCTAssertFalse(sut.shouldShowDeleteButton)
+        #expect(!sut.shouldShowDeleteButton)
     }
 
-    @MainActor
-    func test_shouldShowDeleteButton_trueForEditing() {
+    @Test
+    func shouldShowDeleteButton_trueForEditing() {
         let sut = makeSUTEditing()
 
-        XCTAssertTrue(sut.shouldShowDeleteButton)
+        #expect(sut.shouldShowDeleteButton)
     }
 
-    @MainActor
-    func test_visibleIssuerTitle_isPlaceholderIfIssuerEmptyString() {
+    @Test
+    func visibleIssuerTitle_isPlaceholderIfIssuerEmptyString() {
         let sut = makeSUT()
         sut.editingModel.detail.issuerTitle = ""
 
-        XCTAssertEqual(sut.visibleIssuerTitle, "Unnamed")
+        #expect(sut.visibleIssuerTitle == "Unnamed")
     }
 
-    @MainActor
-    func test_visibleIssuerTitle_isUserDefinedTitleIfNotEmptyString() {
+    @Test
+    func visibleIssuerTitle_isUserDefinedTitleIfNotEmptyString() {
         let sut = makeSUT()
         sut.editingModel.detail.issuerTitle = "my issuer"
 
-        XCTAssertEqual(sut.visibleIssuerTitle, "my issuer")
+        #expect(sut.visibleIssuerTitle == "my issuer")
     }
 
-    @MainActor
-    func test_remainingTags_noTagsSelectedIsEqualToAllTags() {
+    @Test
+    func remainingTags_noTagsSelectedIsEqualToAllTags() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -409,11 +393,11 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = []
 
-        XCTAssertEqual(sut.remainingTags, [tag1, tag2, tag3])
+        #expect(sut.remainingTags == [tag1, tag2, tag3])
     }
 
-    @MainActor
-    func test_remainingTags_removesTagsThatHaveBeenSelected() {
+    @Test
+    func remainingTags_removesTagsThatHaveBeenSelected() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -423,11 +407,11 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = [tag1.id]
 
-        XCTAssertEqual(sut.remainingTags, [tag2, tag3])
+        #expect(sut.remainingTags == [tag2, tag3])
     }
 
-    @MainActor
-    func test_tagsThatAreSelected_isEmptyIfNoTagsSelected() {
+    @Test
+    func tagsThatAreSelected_isEmptyIfNoTagsSelected() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -437,11 +421,11 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = []
 
-        XCTAssertEqual(sut.tagsThatAreSelected, [])
+        #expect(sut.tagsThatAreSelected == [])
     }
 
-    @MainActor
-    func test_tagsThatAreSelected_matchesSelectedTags() {
+    @Test
+    func tagsThatAreSelected_matchesSelectedTags() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -451,12 +435,11 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = [tag1.id, tag3.id]
 
-        XCTAssertEqual(sut.tagsThatAreSelected, [tag1, tag3])
+        #expect(sut.tagsThatAreSelected == [tag1, tag3])
     }
 }
 
 extension OTPCodeDetailViewModelTests {
-    @MainActor
     private func makeSUTCreating(
         editor: OTPCodeDetailEditorMock = .defaultMock(),
         initialCode: OTPAuthCode? = nil,
@@ -470,17 +453,12 @@ extension OTPCodeDetailViewModelTests {
             backupEventLogger: BackupEventLoggerMock(),
         ),
         allTags _: [VaultItemTag] = [],
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> OTPCodeDetailViewModel {
         let sut = OTPCodeDetailViewModel(
             mode: .creating(initialCode: initialCode),
             dataModel: dataModel,
             editor: editor,
         )
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(editor, file: file, line: line)
-        trackForMemoryLeaks(dataModel, file: file, line: line)
         return sut
     }
 
@@ -498,17 +476,12 @@ extension OTPCodeDetailViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock(),
         ),
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> OTPCodeDetailViewModel {
         let sut = OTPCodeDetailViewModel(
             mode: .editing(code: code, metadata: metadata),
             dataModel: dataModel,
             editor: editor,
         )
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(editor, file: file, line: line)
-        trackForMemoryLeaks(dataModel, file: file, line: line)
         return sut
     }
 
@@ -526,24 +499,19 @@ extension OTPCodeDetailViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock(),
         ),
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> OTPCodeDetailViewModel {
         let sut = OTPCodeDetailViewModel(
             mode: .editing(code: code, metadata: metadata),
             dataModel: dataModel,
             editor: editor,
         )
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(editor, file: file, line: line)
-        trackForMemoryLeaks(dataModel, file: file, line: line)
         return sut
     }
 
     @MainActor
     func makeDirty(sut: OTPCodeDetailViewModel) {
         sut.editingModel.detail.accountNameTitle = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty)
     }
 }
 
@@ -554,8 +522,8 @@ extension OTPCodeDetailEditorMock {
     }
 
     func assertNoOperations() {
-        XCTAssertEqual(createCodeCallCount, 0)
-        XCTAssertEqual(updateCodeCallCount, 0)
-        XCTAssertEqual(deleteCodeCallCount, 0)
+        #expect(createCodeCallCount == 0)
+        #expect(updateCodeCallCount == 0)
+        #expect(deleteCodeCallCount == 0)
     }
 }
