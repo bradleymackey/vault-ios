@@ -96,6 +96,7 @@ let package = Package(
         .target(
             name: "TestHelpers",
             dependencies: [
+                "FoundationExtensions",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings,
@@ -266,8 +267,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "mockolo",
-            url: "https://github.com/uber/mockolo/releases/download/2.1.1/mockolo.artifactbundle.zip",
-            checksum: "e3aa6e3aacec6b75ee971d7ba1ed326ff22372a8dc60a581cec742441cdbd9db",
+            url: "https://github.com/uber/mockolo/releases/download/2.5.0/mockolo.artifactbundle.zip",
+            checksum: "107825279e5c7c2f8ef021320d8054e0b36fcb9e634d02d2ff1bde6d8b460722",
         ),
 
         .plugin(

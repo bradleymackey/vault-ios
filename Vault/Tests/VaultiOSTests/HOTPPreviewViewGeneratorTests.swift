@@ -27,20 +27,28 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
     @MainActor
     func test_makeOTPView_generatesViews() throws {
         let repository = HOTPPreviewViewRepositoryMock()
-        repository.previewViewModelHandler = { _, _ in OTPCodePreviewViewModel(
-            accountName: "any",
-            issuer: "any",
-            color: .black,
-            isLocked: false,
-            fixedCodeState: .visible("123456"),
-        ) }
-        repository.incrementerViewModelHandler = { _, _ in OTPCodeIncrementerViewModel(
-            id: .new(),
-            codePublisher: .init(hotpGenerator: .init(secret: .random(count: 123))),
-            timer: IntervalTimerMock(),
-            initialCounter: 0,
-            incrementerStore: VaultStoreHOTPIncrementerMock(),
-        ) }
+        repository.previewViewModelHandler = { _, _ in
+            MainActor.assumeIsolated {
+                OTPCodePreviewViewModel(
+                    accountName: "any",
+                    issuer: "any",
+                    color: .black,
+                    isLocked: false,
+                    fixedCodeState: .visible("123456"),
+                )
+            }
+        }
+        repository.incrementerViewModelHandler = { _, _ in
+            MainActor.assumeIsolated {
+                OTPCodeIncrementerViewModel(
+                    id: .new(),
+                    codePublisher: .init(hotpGenerator: .init(secret: .random(count: 123))),
+                    timer: IntervalTimerMock(),
+                    initialCounter: 0,
+                    incrementerStore: VaultStoreHOTPIncrementerMock(),
+                )
+            }
+        }
         let (sut, _) = makeSUT(repository: repository)
 
         let view = sut.makeVaultPreviewView(item: anyHOTPCode(), metadata: uniqueMetadata(), behaviour: .normal)
