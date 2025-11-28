@@ -81,14 +81,14 @@ extension SecureNotePreviewViewSnapshotTests {
         title: String = "Title",
         description: String? = "Short Description",
         isLocked: Bool = false,
-        textFormat: TextFormat = .plain
+        textFormat: TextFormat = .plain,
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: title,
             description: description,
             color: .default,
             isLocked: isLocked,
-            textFormat: textFormat
+            textFormat: textFormat,
         )
         return SecureNotePreviewView(viewModel: viewModel, behaviour: .normal)
             .frame(width: 250)

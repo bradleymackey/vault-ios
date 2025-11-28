@@ -16,7 +16,7 @@ struct MockoloPlugin: BuildToolPlugin {
                     "--mock-final",
                     "--enable-args-history",
                 ],
-                outputFilesDirectory: context.pluginWorkDirectoryURL
+                outputFilesDirectory: context.pluginWorkDirectoryURL,
             ),
         ]
     }

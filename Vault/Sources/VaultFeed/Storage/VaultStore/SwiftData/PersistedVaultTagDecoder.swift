@@ -6,7 +6,7 @@ struct PersistedVaultTagDecoder {
             id: .init(id: item.id),
             name: item.title,
             color: decodeColor(item.color),
-            iconName: item.iconName ?? VaultItemTag.defaultIconName
+            iconName: item.iconName ?? VaultItemTag.defaultIconName,
         )
     }
 }

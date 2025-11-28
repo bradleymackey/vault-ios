@@ -27,7 +27,7 @@ final class VaultBackupItemEncoder {
             killphrase: storedItem.metadata.killphrase,
             lockState: encodeLockState(metadata: storedItem.metadata),
             tintColor: encodeTintColor(meta: storedItem.metadata),
-            item: itemDetail
+            item: itemDetail,
         )
     }
 }
@@ -77,7 +77,7 @@ extension VaultBackupItemEncoder {
             algorithm: encodedAlgorithm(algorithm: code.data.algorithm),
             digits: encodedDigits(digits: code.data.digits),
             accountName: code.data.accountName,
-            issuer: code.data.issuer
+            issuer: code.data.issuer,
         )
     }
 
@@ -147,7 +147,7 @@ extension VaultBackupItemEncoder {
             authentication: item.authentication,
             encryptionIV: item.encryptionIV,
             keygenSalt: item.keygenSalt,
-            keygenSignature: item.keygenSignature
+            keygenSignature: item.keygenSignature,
         )
     }
 }

@@ -37,7 +37,7 @@ struct HKDFKeyDeriverTests {
     @Test
     func uniqueAlgorithmIdentifier_matchesParameters() {
         let sut = HKDFKeyDeriver<Bits256>(parameters: .init(
-            variant: .sha3_sha512
+            variant: .sha3_sha512,
         ))
 
         #expect(sut.uniqueAlgorithmIdentifier == "HKDF<keyLength=32;variant=sha3_sha512>")

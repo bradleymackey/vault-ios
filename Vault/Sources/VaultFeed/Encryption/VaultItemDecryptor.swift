@@ -24,7 +24,7 @@ struct VaultItemDecryptor {
         let item = try withMappedError {
             try decryptor.decrypt(
                 message: .init(ciphertext: item.data, authenticationTag: item.authentication),
-                iv: item.encryptionIV
+                iv: item.encryptionIV,
             )
         } error: {
             Error.decryptionFailed($0)
@@ -45,7 +45,7 @@ struct VaultItemDecryptor {
         let item = try withMappedError {
             try decryptor.decrypt(
                 message: .init(ciphertext: item.data, authenticationTag: item.authentication),
-                iv: item.encryptionIV
+                iv: item.encryptionIV,
             )
         } error: {
             Error.decryptionFailed($0)
@@ -59,7 +59,7 @@ struct VaultItemDecryptor {
         guard expectedItemIdentifier == basicFormatDecoded.itemIdentifier else {
             throw Error.mismatchedItemIdentifier(
                 expected: expectedItemIdentifier,
-                actual: basicFormatDecoded.itemIdentifier
+                actual: basicFormatDecoded.itemIdentifier,
             )
         }
 

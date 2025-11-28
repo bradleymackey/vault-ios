@@ -62,7 +62,7 @@ struct BackupGeneratedPDFView: View {
 
                 Label(
                     "Make sure you export and save the PDF, or your data will not be backed up.",
-                    systemImage: "exclamationmark.triangle.fill"
+                    systemImage: "exclamationmark.triangle.fill",
                 )
                 .foregroundStyle(.red)
                 .font(.footnote)

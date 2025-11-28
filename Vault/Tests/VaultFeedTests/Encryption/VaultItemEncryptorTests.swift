@@ -14,7 +14,7 @@ struct VaultItemEncryptorTests {
         let decryptor = VaultItemDecryptor(key: key)
         let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
             item: encryptedItem,
-            expectedItemIdentifier: "test"
+            expectedItemIdentifier: "test",
         )
 
         #expect(decryptedItem == item)

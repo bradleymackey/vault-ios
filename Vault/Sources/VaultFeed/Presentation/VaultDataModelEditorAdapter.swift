@@ -26,7 +26,7 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
             searchableLevel: initialEdits.viewConfig.searchableLevel,
             searchPassphrase: initialEdits.searchPassphrase,
             killphrase: initialEdits.killphrase,
-            lockState: initialEdits.lockState
+            lockState: initialEdits.lockState,
         )
 
         try await dataModel.insert(item: newCodeVaultItem)
@@ -49,8 +49,8 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
                 searchableLevel: edits.viewConfig.searchableLevel,
                 searchPassphrase: edits.searchPassphrase,
                 killphrase: edits.killphrase,
-                lockState: edits.lockState
-            )
+                lockState: edits.lockState,
+            ),
         )
     }
 
@@ -72,7 +72,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             searchableLevel: initialEdits.viewConfig.searchableLevel,
             searchPassphrase: initialEdits.searchPassphrase,
             killphrase: initialEdits.killphrase,
-            lockState: initialEdits.lockState
+            lockState: initialEdits.lockState,
         )
 
         try await dataModel.insert(item: newVaultItem)
@@ -90,7 +90,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             searchableLevel: edits.viewConfig.searchableLevel,
             searchPassphrase: edits.searchPassphrase,
             killphrase: edits.killphrase,
-            lockState: edits.lockState
+            lockState: edits.lockState,
         )
 
         try await dataModel.update(itemID: id, data: updatedVaultItem)
@@ -100,7 +100,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
         let note = SecureNote(
             title: edits.titleLine,
             contents: edits.contents,
-            format: edits.textFormat
+            format: edits.textFormat,
         )
         if edits.newEncryptionPassword.isNotBlank {
             // An explicit new encryption password has been specified.

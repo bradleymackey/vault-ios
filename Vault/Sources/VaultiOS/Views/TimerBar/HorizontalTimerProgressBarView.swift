@@ -17,7 +17,7 @@ struct HorizontalTimerProgressBarView: View {
                     .fill(color)
                     .frame(
                         width: isPlaceholder ? 0 : fractionCompleted * proxy.size.width,
-                        alignment: .leading
+                        alignment: .leading,
                     )
             }
         }
@@ -32,39 +32,39 @@ struct HorizontalTimerProgressBarView: View {
     VStack {
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.0,
-            color: .blue
+            color: .blue,
         )
         .frame(width: 250, height: 20)
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.4,
-            color: .blue
+            color: .blue,
         )
         .frame(width: 250, height: 20)
         .redacted(reason: .placeholder)
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.4,
-            color: .blue
+            color: .blue,
         )
         .frame(width: 250, height: 20)
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.6,
-            color: .red
+            color: .red,
         )
         .frame(width: 250, height: 20)
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 0.75,
             color: .yellow,
-            backgroundColor: .yellow
+            backgroundColor: .yellow,
         )
         .frame(width: 250, height: 20)
 
         HorizontalTimerProgressBarView(
             fractionCompleted: 1.0,
-            color: .blue
+            color: .blue,
         )
         .frame(width: 250, height: 20)
     }

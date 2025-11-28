@@ -12,7 +12,7 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-            deriverFactory: VaultKeyDeriverFactoryImpl()
+            deriverFactory: VaultKeyDeriverFactoryImpl(),
         )
         let sut = BackupKeyChangeView(viewModel: viewModel)
 
@@ -24,7 +24,7 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-            deriverFactory: VaultKeyDeriverFactoryImpl()
+            deriverFactory: VaultKeyDeriverFactoryImpl(),
         )
         viewModel.permissionState = .allowed
         let sut = BackupKeyChangeView(viewModel: viewModel)
@@ -40,7 +40,7 @@ extension BackupKeyChangeViewSnapshotTests {
     private func snapshotScenarios(
         view: some View,
         deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
-        testName: String = #function
+        testName: String = #function,
     ) async {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
@@ -58,7 +58,7 @@ extension BackupKeyChangeViewSnapshotTests {
                     of: snapshottingView,
                     as: .image,
                     named: named,
-                    testName: testName
+                    testName: testName,
                 )
             }
         }

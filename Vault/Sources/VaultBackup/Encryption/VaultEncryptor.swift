@@ -24,7 +24,7 @@ final class VaultEncryptor {
             authentication: encrypted.authenticationTag,
             encryptionIV: iv,
             keygenSalt: keygenSalt,
-            keygenSignature: keygenSignature
+            keygenSignature: keygenSignature,
         )
     }
 }

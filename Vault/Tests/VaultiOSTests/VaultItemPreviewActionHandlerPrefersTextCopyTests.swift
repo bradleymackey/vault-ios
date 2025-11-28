@@ -33,7 +33,7 @@ struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .copyText(.init(
             text: "hi",
-            requiresAuthenticationToCopy: false
+            requiresAuthenticationToCopy: false,
         )))
     }
 
@@ -48,7 +48,7 @@ struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .copyText(.init(
             text: "hi",
-            requiresAuthenticationToCopy: false
+            requiresAuthenticationToCopy: false,
         )))
     }
 
@@ -63,7 +63,7 @@ struct VaultItemPreviewActionHandlerPrefersTextCopyTests {
         let id = Identifier<VaultItem>.new()
         #expect(sut.previewActionForVaultItem(id: id) == .copyText(.init(
             text: "first",
-            requiresAuthenticationToCopy: false
+            requiresAuthenticationToCopy: false,
         )))
     }
 }

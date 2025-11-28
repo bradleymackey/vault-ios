@@ -9,7 +9,7 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
     private let viewFactory: Factory
 
     init(
-        viewFactory: Factory
+        viewFactory: Factory,
     ) {
         self.viewFactory = viewFactory
     }
@@ -17,14 +17,14 @@ public final class SecureNotePreviewViewGenerator<Factory: SecureNotePreviewView
     public func makeVaultPreviewView(
         item: SecureNote,
         metadata: VaultItem.Metadata,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: item.title,
             description: metadata.userDescription,
             color: metadata.color ?? .default,
             isLocked: metadata.lockState.isLocked,
-            textFormat: item.format
+            textFormat: item.format,
         )
         return viewFactory.makeSecureNoteView(viewModel: viewModel, behaviour: behaviour)
     }

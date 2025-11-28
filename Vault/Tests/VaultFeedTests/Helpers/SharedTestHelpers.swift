@@ -12,8 +12,8 @@ func uniqueCode() -> OTPAuthCode {
         type: .totp(),
         data: .init(
             secret: .init(data: randomData, format: .base32),
-            accountName: "Some Account"
-        )
+            accountName: "Some Account",
+        ),
     )
 }
 
@@ -25,7 +25,7 @@ func anyVaultDataModel(
     vaultDeleter: some VaultStoreDeleter = VaultStoreDeleterMock(),
     vaultKillphraseDeleter: some VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
     backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock(),
-    backupEventLogger: some BackupEventLogger = BackupEventLoggerMock()
+    backupEventLogger: some BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
     VaultDataModel(
         vaultStore: vaultStore,
@@ -34,7 +34,7 @@ func anyVaultDataModel(
         vaultDeleter: vaultDeleter,
         vaultKillphraseDeleter: vaultKillphraseDeleter,
         backupPasswordStore: backupPasswordStore,
-        backupEventLogger: backupEventLogger
+        backupEventLogger: backupEventLogger,
     )
 }
 
@@ -65,7 +65,7 @@ func randomTmpPath() -> URL {
 
 func anyEncryptedVault(
     data: Data = .random(count: 50),
-    salt: Data = .random(count: 32)
+    salt: Data = .random(count: 32),
 ) -> EncryptedVault {
     EncryptedVault(
         version: "1.0.0",
@@ -73,7 +73,7 @@ func anyEncryptedVault(
         authentication: Data(),
         encryptionIV: Data(),
         keygenSalt: salt,
-        keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
+        keygenSignature: VaultKeyDeriver.Signature.testing.rawValue,
     )
 }
 
@@ -95,7 +95,7 @@ func testUserDefaults() throws -> UserDefaults {
 func anySecureNote(
     title: String = "",
     contents: String = "",
-    format: TextFormat = .markdown
+    format: TextFormat = .markdown,
 ) -> SecureNote {
     SecureNote(title: title, contents: contents, format: format)
 }
@@ -108,7 +108,7 @@ func anyEncryptedItem(title: String = "Hello") -> EncryptedItem {
         authentication: Data.random(count: 10),
         encryptionIV: Data.random(count: 10),
         keygenSalt: Data.random(count: 10),
-        keygenSignature: VaultKeyDeriver.Signature.testing.rawValue
+        keygenSignature: VaultKeyDeriver.Signature.testing.rawValue,
     )
 }
 
@@ -117,7 +117,7 @@ func anyOTPAuthCode(
     algorithm: OTPAuthAlgorithm = .default,
     digits: OTPAuthDigits = .default,
     accountName: String = "",
-    issuerName: String = ""
+    issuerName: String = "",
 ) -> OTPAuthCode {
     let randomData = Data.random(count: 50)
     return OTPAuthCode(
@@ -127,8 +127,8 @@ func anyOTPAuthCode(
             algorithm: algorithm,
             digits: digits,
             accountName: accountName,
-            issuer: issuerName
-        )
+            issuer: issuerName,
+        ),
     )
 }
 
@@ -143,7 +143,7 @@ func uniqueVaultItem(
     visibility: VaultItemVisibility = .always,
     tags: Set<Identifier<VaultItemTag>> = [],
     killphrase: String? = nil,
-    lockState: VaultItemLockState = .notLocked
+    lockState: VaultItemLockState = .notLocked,
 ) -> VaultItem {
     VaultItem(
         metadata: anyVaultItemMetadata(
@@ -154,9 +154,9 @@ func uniqueVaultItem(
             visibility: visibility,
             tags: tags,
             killphrase: killphrase,
-            lockState: lockState
+            lockState: lockState,
         ),
-        item: item
+        item: item,
     )
 }
 
@@ -164,11 +164,11 @@ func uniqueVaultItem(
 /// The default payload is any OTPAuthCode.
 func uniqueVaultItem(
     metadata: VaultItem.Metadata,
-    item: VaultItem.Payload = .otpCode(anyOTPAuthCode())
+    item: VaultItem.Payload = .otpCode(anyOTPAuthCode()),
 ) -> VaultItem {
     VaultItem(
         metadata: metadata,
-        item: item
+        item: item,
     )
 }
 
@@ -183,7 +183,7 @@ func anyVaultItemMetadata(
     searchPassphrase: String? = nil,
     killphrase: String? = nil,
     lockState: VaultItemLockState = .notLocked,
-    color: VaultItemColor? = nil
+    color: VaultItemColor? = nil,
 ) -> VaultItem.Metadata {
     .init(
         id: id,
@@ -197,7 +197,7 @@ func anyVaultItemMetadata(
         searchPassphrase: searchPassphrase,
         killphrase: killphrase,
         lockState: lockState,
-        color: color
+        color: color,
     )
 }
 
@@ -209,7 +209,7 @@ extension SecureNote {
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
         killphrase: String? = nil,
-        lockState: VaultItemLockState = .notLocked
+        lockState: VaultItemLockState = .notLocked,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -219,9 +219,9 @@ extension SecureNote {
                 searchableLevel: searchableLevel,
                 searchPassphrase: searchPassphrase,
                 killphrase: killphrase,
-                lockState: lockState
+                lockState: lockState,
             ),
-            item: .secureNote(self)
+            item: .secureNote(self),
         )
     }
 }
@@ -234,7 +234,7 @@ extension EncryptedItem {
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
         killphrase: String? = nil,
-        lockState: VaultItemLockState = .notLocked
+        lockState: VaultItemLockState = .notLocked,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -244,9 +244,9 @@ extension EncryptedItem {
                 searchableLevel: searchableLevel,
                 searchPassphrase: searchPassphrase,
                 killphrase: killphrase,
-                lockState: lockState
+                lockState: lockState,
             ),
-            item: .encryptedItem(self)
+            item: .encryptedItem(self),
         )
     }
 }
@@ -260,7 +260,7 @@ extension OTPAuthCode {
         searchPassphrase: String? = nil,
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
-        color: VaultItemColor? = nil
+        color: VaultItemColor? = nil,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -271,9 +271,9 @@ extension OTPAuthCode {
                 searchPassphrase: searchPassphrase,
                 killphrase: killphrase,
                 lockState: lockState,
-                color: color
+                color: color,
             ),
-            item: .otpCode(self)
+            item: .otpCode(self),
         )
     }
 }
@@ -284,7 +284,7 @@ func anyVaultItemTag(
     id: UUID = UUID(),
     name: String = "name",
     color: VaultItemColor = .tagDefault,
-    iconName: String = VaultItemTag.defaultIconName
+    iconName: String = VaultItemTag.defaultIconName,
 ) -> VaultItemTag {
     VaultItemTag(id: .init(id: id), name: name, color: color, iconName: iconName)
 }
@@ -344,7 +344,7 @@ struct VaultItemEncryptableMock: Equatable, VaultItemEncryptable {
         itemIdentifier: String = "test",
         id: UUID = UUID(),
         exampleKey: String = "exampleValue",
-        title: String = "hello"
+        title: String = "hello",
     ) {
         self.itemIdentifier = itemIdentifier
         self.id = id
@@ -357,7 +357,7 @@ struct VaultItemEncryptableMock: Equatable, VaultItemEncryptable {
             itemIdentifier: encryptedContainer.itemIdentifier,
             id: encryptedContainer.id,
             exampleKey: encryptedContainer.exampleKey,
-            title: encryptedContainer.title
+            title: encryptedContainer.title,
         )
     }
 
@@ -366,7 +366,7 @@ struct VaultItemEncryptableMock: Equatable, VaultItemEncryptable {
             itemIdentifier: itemIdentifier,
             id: id,
             exampleKey: exampleKey,
-            title: title
+            title: title,
         )
     }
 }

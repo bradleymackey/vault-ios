@@ -13,7 +13,7 @@ public struct VaultItemTag: Identifiable, Sendable, Equatable, Hashable {
         id: Identifier<VaultItemTag>,
         name: String,
         color: VaultItemColor = .tagDefault,
-        iconName: String = Self.defaultIconName
+        iconName: String = Self.defaultIconName,
     ) {
         self.id = id
         self.name = name

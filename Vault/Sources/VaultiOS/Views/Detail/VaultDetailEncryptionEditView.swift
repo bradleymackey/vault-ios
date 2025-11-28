@@ -23,7 +23,7 @@ struct VaultDetailEncryptionEditView: View {
         description: String,
         encryptionInitiallyEnabled: Bool,
         didSetNewEncryptionPassword: @escaping (String) -> Void,
-        didRemoveEncryption: @escaping () -> Void
+        didRemoveEncryption: @escaping () -> Void,
     ) {
         self.title = title
         self.description = description
@@ -60,10 +60,10 @@ struct VaultDetailEncryptionEditView: View {
             if newEncryptionPassword.isNotBlank {
                 FormRow(
                     image: Image(
-                        systemName: doPasswordsMatch ? "checkmark.circle.fill" : "xmark.circle.fill"
+                        systemName: doPasswordsMatch ? "checkmark.circle.fill" : "xmark.circle.fill",
                     ),
                     color: doPasswordsMatch ? .green : .red,
-                    style: .standard
+                    style: .standard,
                 ) {
                     SecureField("Confirm Password", text: $newEncryptionPasswordConfirm)
                 }

@@ -13,8 +13,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
                 algorithm: .sha1,
                 digits: .default,
                 accountName: "myacc",
-                issuer: "myiss"
-            )
+                issuer: "myiss",
+            ),
         )
 
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
@@ -27,7 +27,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             searchPassphrase: "search",
             killphrase: "killme",
             tags: [],
-            lockState: .lockedWithNativeSecurity
+            lockState: .lockedWithNativeSecurity,
         )
 
         XCTAssertEqual(sut.codeType, .totp)
@@ -55,8 +55,8 @@ final class OTPCodeDetailEditsTests: XCTestCase {
                 algorithm: .sha256,
                 digits: .default,
                 accountName: "myacc2",
-                issuer: "myiss2"
-            )
+                issuer: "myiss2",
+            ),
         )
 
         let color = VaultItemColor(red: 0.1, green: 0.3, blue: 0.4)
@@ -69,7 +69,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             searchPassphrase: "search",
             killphrase: "killme",
             tags: [],
-            lockState: .lockedWithNativeSecurity
+            lockState: .lockedWithNativeSecurity,
         )
 
         XCTAssertEqual(sut.codeType, .hotp)
@@ -101,7 +101,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
 
         XCTAssertEqual(sut.secretBase32String, "")
@@ -119,7 +119,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
 
         XCTAssertTrue(sut.isValid)
@@ -175,7 +175,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
 
         let newCode = try sut.asOTPAuthCode()
@@ -194,7 +194,7 @@ final class OTPCodeDetailEditsTests: XCTestCase {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
 
         let newCode = try sut.asOTPAuthCode()
@@ -220,7 +220,7 @@ extension OTPCodeDetailEditsTests {
     private func anyOTPAuthCode(secret: OTPAuthSecret) -> OTPAuthCode {
         OTPAuthCode(
             type: .totp(period: 1234),
-            data: .init(secret: secret, algorithm: .sha1, digits: .default, accountName: "myacc", issuer: "myiss")
+            data: .init(secret: secret, algorithm: .sha1, digits: .default, accountName: "myacc", issuer: "myiss"),
         )
     }
 
@@ -232,8 +232,8 @@ extension OTPCodeDetailEditsTests {
                 algorithm: .sha1,
                 digits: .default,
                 accountName: "myacc",
-                issuer: "myiss"
-            )
+                issuer: "myiss",
+            ),
         )
     }
 
@@ -245,8 +245,8 @@ extension OTPCodeDetailEditsTests {
                 algorithm: .sha256,
                 digits: .default,
                 accountName: "myacc2",
-                issuer: "myiss2"
-            )
+                issuer: "myiss2",
+            ),
         )
     }
 }

@@ -102,12 +102,12 @@ extension VaultKeyDeriver {
         let deriver = HKDFKeyDeriver<Bits256>(parameters: .init(variant: .sha3_sha512))
         return VaultKeyDeriver(
             deriver: deriver,
-            signature: .testing
+            signature: .testing,
         )
     }()
 
     public static let failing: VaultKeyDeriver = .init(
-        deriver: FailingKeyDeriver(), signature: .failing
+        deriver: FailingKeyDeriver(), signature: .failing,
     )
 
     /// Keyderivers that are used for backups.
@@ -125,22 +125,22 @@ extension VaultKeyDeriver {
                 derivers.append(PBKDF2KeyDeriver<Bits256>(
                     parameters: .init(
                         iterations: 2000,
-                        variant: .sha384
-                    )
+                        variant: .sha384,
+                    ),
                 ))
                 derivers.append(HKDFKeyDeriver<Bits256>(
-                    parameters: .init(variant: .sha3_sha512)
+                    parameters: .init(variant: .sha3_sha512),
                 ))
                 derivers.append(ScryptKeyDeriver<Bits256>(
                     parameters: .init(
                         costFactor: 1 << 6,
                         blockSizeFactor: 4,
-                        parallelizationFactor: 1
-                    )
+                        parallelizationFactor: 1,
+                    ),
                 ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver(derivers: derivers),
-                    signature: .backupFastV1
+                    signature: .backupFastV1,
                 )
             }()
         }
@@ -162,11 +162,11 @@ extension VaultKeyDeriver {
                 derivers.append(PBKDF2KeyDeriver<Bits256>(
                     parameters: .init(
                         iterations: 5_452_351,
-                        variant: .sha384
-                    )
+                        variant: .sha384,
+                    ),
                 ))
                 derivers.append(HKDFKeyDeriver<Bits256>(
-                    parameters: .init(variant: .sha3_sha512)
+                    parameters: .init(variant: .sha3_sha512),
                 ))
                 // Scrypt for memory-hard key derivation
                 // Requires ~250MB of memory at peak with these current parameters.
@@ -175,12 +175,12 @@ extension VaultKeyDeriver {
                     parameters: .init(
                         costFactor: 1 << 18,
                         blockSizeFactor: 8,
-                        parallelizationFactor: 1
-                    )
+                        parallelizationFactor: 1,
+                    ),
                 ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
-                    signature: .backupSecureV1
+                    signature: .backupSecureV1,
                 )
             }()
         }
@@ -195,18 +195,18 @@ extension VaultKeyDeriver {
                     parameters: .init(
                         costFactor: 1 << 6,
                         blockSizeFactor: 4,
-                        parallelizationFactor: 1
-                    )
+                        parallelizationFactor: 1,
+                    ),
                 ))
                 derivers.append(PBKDF2KeyDeriver<Bits256>(
                     parameters: .init(
                         iterations: 1001,
-                        variant: .sha384
-                    )
+                        variant: .sha384,
+                    ),
                 ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
-                    signature: .itemFastV1
+                    signature: .itemFastV1,
                 )
             }()
         }
@@ -218,18 +218,18 @@ extension VaultKeyDeriver {
                     parameters: .init(
                         costFactor: 1 << 8,
                         blockSizeFactor: 4,
-                        parallelizationFactor: 1
-                    )
+                        parallelizationFactor: 1,
+                    ),
                 ))
                 derivers.append(PBKDF2KeyDeriver<Bits256>(
                     parameters: .init(
                         iterations: 372_002,
-                        variant: .sha384
-                    )
+                        variant: .sha384,
+                    ),
                 ))
                 return VaultKeyDeriver(
                     deriver: CombinationKeyDeriver<Bits256>(derivers: derivers),
-                    signature: .itemSecureV1
+                    signature: .itemSecureV1,
                 )
             }()
         }

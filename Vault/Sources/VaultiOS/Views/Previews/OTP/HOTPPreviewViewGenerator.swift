@@ -17,12 +17,12 @@ public final class HOTPPreviewViewGenerator<Factory: HOTPPreviewViewFactory>: Va
     public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         viewFactory.makeHOTPView(
             viewModel: repository.previewViewModel(metadata: metadata, code: item),
             incrementer: repository.incrementerViewModel(id: metadata.id, code: item),
-            behaviour: behaviour
+            behaviour: behaviour,
         )
     }
 

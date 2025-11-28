@@ -9,7 +9,7 @@ public protocol HOTPPreviewViewFactory {
     func makeHOTPView(
         viewModel: OTPCodePreviewViewModel,
         incrementer: OTPCodeIncrementerViewModel,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     )
         -> HOTPView
 }
@@ -18,12 +18,12 @@ public struct HOTPPreviewViewFactoryImpl: HOTPPreviewViewFactory {
     public func makeHOTPView(
         viewModel: OTPCodePreviewViewModel,
         incrementer: OTPCodeIncrementerViewModel,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         HOTPCodePreviewView(
             buttonView: OTPCodeButtonView(viewModel: incrementer),
             previewViewModel: viewModel,
-            behaviour: behaviour
+            behaviour: behaviour,
         )
     }
 }

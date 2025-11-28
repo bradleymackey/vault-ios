@@ -10,7 +10,7 @@ extension Task where Failure == any Error {
         delay: Duration,
         priority: TaskPriority? = nil,
         timeoutID: UUID = UUID(),
-        task: @escaping TaskRace<Success>
+        task: @escaping TaskRace<Success>,
     ) async throws -> Success {
         try await Task.race(priority: priority, firstResolved: [
             task,

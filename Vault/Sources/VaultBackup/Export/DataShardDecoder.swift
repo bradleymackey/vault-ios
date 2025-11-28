@@ -52,7 +52,7 @@ public struct DataShardDecoder {
             groupID: nextShard.group.id,
             remainingIndexes: remainingIndexes,
             collectedIndexes: collectedIndexes,
-            total: totalNumber
+            total: totalNumber,
         )
     }
 

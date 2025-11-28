@@ -6,7 +6,7 @@ extension SecureNote: VaultItemEncryptable {
         self = .init(
             title: encryptedContainer.title,
             contents: encryptedContainer.contents,
-            format: encryptedContainer.format.toTextFormat()
+            format: encryptedContainer.format.toTextFormat(),
         )
     }
 
@@ -14,7 +14,7 @@ extension SecureNote: VaultItemEncryptable {
         EncryptedContainer(
             title: title,
             contents: contents,
-            format: makeEncryptedContainerFormat()
+            format: makeEncryptedContainerFormat(),
         )
     }
 

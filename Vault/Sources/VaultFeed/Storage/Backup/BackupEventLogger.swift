@@ -36,7 +36,7 @@ public final class BackupEventLoggerImpl: BackupEventLogger {
             backupDate: clock.currentDate,
             eventDate: date,
             kind: .exportedToPDF,
-            payloadHash: hash
+            payloadHash: hash,
         )
         do {
             try defaults.set(event, for: backupEventKey)

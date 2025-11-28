@@ -39,7 +39,7 @@ final class SimulatedOTPCodeScanningHandler: SimulatedCodeScanningHandler {
     private func makeDemoCode() throws -> OTPAuthCode {
         try OTPAuthCode(
             type: .totp(period: 30),
-            data: .init(secret: .base32EncodedString("AA"), accountName: "Test Account", issuer: "Test Issuer")
+            data: .init(secret: .base32EncodedString("AA"), accountName: "Test Account", issuer: "Test Issuer"),
         )
     }
 }

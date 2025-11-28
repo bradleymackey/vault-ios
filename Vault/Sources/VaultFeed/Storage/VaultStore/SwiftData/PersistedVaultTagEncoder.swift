@@ -8,7 +8,7 @@ struct PersistedVaultTagEncoder {
             title: tag.name,
             color: encodeColor(tag.color),
             iconName: tag.iconName,
-            items: []
+            items: [],
         )
     }
 
@@ -31,7 +31,7 @@ extension PersistedVaultTagEncoder {
             title: newTag.name,
             color: encodeColor(newTag.color),
             iconName: newTag.iconName,
-            items: []
+            items: [],
         )
     }
 

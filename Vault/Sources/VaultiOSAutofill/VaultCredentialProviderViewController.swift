@@ -24,7 +24,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         let entrypointView = VaultAutofillView(
             viewModel: vaultAutofillViewModel,
             copyActionHandler: VaultRoot.vaultItemCopyHandler,
-            generator: VaultRoot.genericVaultItemPreviewViewGenerator
+            generator: VaultRoot.genericVaultItemPreviewViewGenerator,
         )
         .environment(VaultRoot.pasteboard)
         .environment(VaultRoot.deviceAuthenticationService)

@@ -26,8 +26,8 @@ public struct OTPAuthURIDecoder {
                 algorithm: decodeAlgorithm(uri: uri),
                 digits: decodeDigits(uri: uri),
                 accountName: label.accountName,
-                issuer: label.issuer
-            )
+                issuer: label.issuer,
+            ),
         )
     }
 }

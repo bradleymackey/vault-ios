@@ -172,7 +172,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
         issuer: String = "any",
         isLocked: Bool = false,
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> (OTPCodePublisherMock, OTPCodePreviewViewModel) {
         let codePublisher = OTPCodePublisherMock()
         let viewModel = OTPCodePreviewViewModel(
@@ -180,7 +180,7 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
             issuer: issuer,
             color: .default,
             isLocked: isLocked,
-            codePublisher: codePublisher
+            codePublisher: codePublisher,
         )
         trackForMemoryLeaks(viewModel, file: file, line: line)
         return (codePublisher, viewModel)

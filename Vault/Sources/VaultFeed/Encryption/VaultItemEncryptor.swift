@@ -27,7 +27,7 @@ struct VaultItemEncryptor {
             authentication: encrypted.authenticationTag,
             encryptionIV: iv.data,
             keygenSalt: key.salt,
-            keygenSignature: key.keyDervier.rawValue
+            keygenSignature: key.keyDervier.rawValue,
         )
     }
 

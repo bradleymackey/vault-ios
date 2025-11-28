@@ -3,7 +3,7 @@ import SwiftUI
 import VaultFeed
 
 public struct VaultItemOnTapDecoratorViewGenerator<
-    Generator: VaultItemPreviewViewGenerator
+    Generator: VaultItemPreviewViewGenerator,
 >: VaultItemPreviewViewGenerator {
     public typealias PreviewItem = Generator.PreviewItem
     let generator: Generator
@@ -17,7 +17,7 @@ public struct VaultItemOnTapDecoratorViewGenerator<
     public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         Button {
             Task { try await onTap(metadata.id) }

@@ -2,10 +2,9 @@
 
 import PackageDescription
 
-let swiftLintVersion: Version = "0.57.1"
-let swiftLintChecksum: String = "c88bf3e5bc1326d8ca66bc3f9eae786f2094c5172cd70b26b5f07686bb883899"
-let swiftFormatVersion: Version = "0.55.1"
-let swiftFormatChecksum: String = "fdff5ec7bbd5f4d7e0a0f2d83bbe7e06ef92c063aa414ebefcfab4d746d60189"
+let swiftLintVersion: Version = "0.62.2"
+let swiftFormatVersion: Version = "0.58.6"
+let swiftFormatChecksum: String = "d2ee571b3f15c173b1789b82b9fcf1e799cff66de0ae9f6839bd35aa8e9b9608"
 
 let swiftSettings: [SwiftSetting] = [
     .enableUpcomingFeature("ExistentialAny"),
@@ -34,12 +33,12 @@ let package = Package(
     products: [
         .library(
             name: "VaultiOS",
-            targets: ["VaultiOS"]
+            targets: ["VaultiOS"],
         ),
         .library(name: "VaultiOSAutofill", targets: ["VaultiOSAutofill"]),
         .executable(
             name: "vault-keygen-speedtest",
-            targets: ["VaultKeygenSpeedtest"]
+            targets: ["VaultKeygenSpeedtest"],
         ),
         .plugin(name: "FormatLint", targets: ["FormatLint"]),
     ],
@@ -69,7 +68,7 @@ let package = Package(
                 .process("Resources/Feed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultiOSTests",
@@ -79,20 +78,20 @@ let package = Package(
             ],
             exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "VaultBackup",
             dependencies: ["VaultCore", "VaultKeygen", "VaultExport", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultBackupTests",
             dependencies: ["VaultBackup", "TestHelpers", "CryptoEngine"],
             exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "TestHelpers",
@@ -100,19 +99,19 @@ let package = Package(
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .target(
             name: "VaultCore",
             dependencies: ["CryptoEngine", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultCoreTests",
             dependencies: ["VaultCore", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "VaultExport",
@@ -122,7 +121,7 @@ let package = Package(
                 "ImageTools",
             ],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultExportTests",
@@ -133,7 +132,7 @@ let package = Package(
             ],
             exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "ImageTools",
@@ -141,7 +140,7 @@ let package = Package(
                 "FoundationExtensions",
             ],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "ImageToolsTests",
@@ -150,24 +149,24 @@ let package = Package(
                 "TestHelpers",
                 .product(
                     name: "SnapshotTesting",
-                    package: "swift-snapshot-testing"
+                    package: "swift-snapshot-testing",
                 ),
             ],
             exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "CryptoEngine",
             dependencies: ["FoundationExtensions", "CryptoSwift", "BigInt"],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "CryptoEngineTests",
             dependencies: ["CryptoEngine", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "VaultSettings",
@@ -179,13 +178,13 @@ let package = Package(
                 .process("Resources/Settings.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultSettingsTests",
             dependencies: ["VaultSettings", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "VaultFeed",
@@ -200,36 +199,36 @@ let package = Package(
                 .process("Resources/VaultFeed.xcstrings"),
             ],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultFeedTests",
             dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "FoundationExtensions",
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "FoundationExtensionsTests",
             dependencies: ["FoundationExtensions", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .target(
             name: "VaultKeygen",
             dependencies: ["CryptoEngine", "FoundationExtensions"],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultKeygenTests",
             dependencies: ["VaultKeygen", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
         .executableTarget(
             name: "VaultKeygenSpeedtest",
@@ -238,24 +237,24 @@ let package = Package(
                 "CryptoEngine",
                 "VaultKeygen",
             ],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
         ),
         .testTarget(
             name: "VaultKeygenSpeedtestCompileTests",
             dependencies: ["VaultKeygenSpeedtest"],
-            swiftSettings: swiftSettings
+            swiftSettings: swiftSettings,
         ),
         .target(
             name: "VaultiOSAutofill",
             dependencies: ["VaultCore", "VaultiOS"],
             swiftSettings: swiftSettings,
-            plugins: targetPlugins
+            plugins: targetPlugins,
         ),
         .testTarget(
             name: "VaultiOSAutofillTests",
             dependencies: ["VaultiOSAutofill", "TestHelpers"],
             swiftSettings: swiftSettings,
-            plugins: testTargetPlugins
+            plugins: testTargetPlugins,
         ),
 
         // MARK: - TOOLING
@@ -263,12 +262,12 @@ let package = Package(
         .plugin(
             name: "RunMockolo",
             capability: .buildTool(),
-            dependencies: [.target(name: "mockolo")]
+            dependencies: [.target(name: "mockolo")],
         ),
         .binaryTarget(
             name: "mockolo",
             url: "https://github.com/uber/mockolo/releases/download/2.1.1/mockolo.artifactbundle.zip",
-            checksum: "e3aa6e3aacec6b75ee971d7ba1ed326ff22372a8dc60a581cec742441cdbd9db"
+            checksum: "e3aa6e3aacec6b75ee971d7ba1ed326ff22372a8dc60a581cec742441cdbd9db",
         ),
 
         .plugin(
@@ -276,18 +275,18 @@ let package = Package(
             capability: .command(
                 intent: .custom(
                     verb: "format",
-                    description: "Formats Swift source files using swiftformat only"
+                    description: "Formats Swift source files using swiftformat only",
                 ),
-                permissions: [.writeToPackageDirectory(reason: "Format source code")]
+                permissions: [.writeToPackageDirectory(reason: "Format source code")],
             ),
             dependencies: [
                 "swiftformat",
-            ]
+            ],
         ),
         .binaryTarget(
             name: "swiftformat",
             url: "https://github.com/nicklockwood/SwiftFormat/releases/download/\(swiftFormatVersion)/swiftformat.artifactbundle.zip",
-            checksum: swiftFormatChecksum
+            checksum: swiftFormatChecksum,
         ),
-    ]
+    ],
 )

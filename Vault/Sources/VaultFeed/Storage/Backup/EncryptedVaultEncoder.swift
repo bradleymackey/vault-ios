@@ -20,7 +20,7 @@ public final class EncryptedVaultEncoder {
             key: encryptionKey,
             keygenSalt: backupPassword.salt,
             keygenSignature: backupPassword.keyDervier.rawValue,
-            paddingMode: .random
+            paddingMode: .random,
         )
         let itemEncoder = VaultBackupItemEncoder()
         let tagEncoder = VaultBackupTagEncoder()
@@ -31,7 +31,7 @@ public final class EncryptedVaultEncoder {
             tags: payload.tags.map {
                 tagEncoder.encode(tag: $0)
             },
-            userDescription: payload.userDescription
+            userDescription: payload.userDescription,
         )
     }
 }

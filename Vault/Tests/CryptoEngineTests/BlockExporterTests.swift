@@ -69,7 +69,7 @@ struct BlockExporterTests {
             blockHeader: { context in
                 accumulatedNumbers.append(context.blockNumber)
                 return Data()
-            }
+            },
         )
         _ = sut.allElements()
 
@@ -82,7 +82,7 @@ struct BlockExporterTests {
         var sut = BlockExporter(
             payload: anyData(),
             maxBlockSize: 50,
-            blockHeader: { _ in header }
+            blockHeader: { _ in header },
         )
 
         #expect(throws: (any Error).self) {
@@ -96,7 +96,7 @@ struct BlockExporterTests {
         var sut = BlockExporter(
             payload: anyData(),
             maxBlockSize: 10,
-            blockHeader: { _ in header }
+            blockHeader: { _ in header },
         )
 
         #expect(throws: (any Error).self) {
@@ -111,7 +111,7 @@ struct BlockExporterTests {
         var sut = BlockExporter(
             payload: payload,
             maxBlockSize: header.count + payload.count,
-            blockHeader: { _ in header }
+            blockHeader: { _ in header },
         )
 
         #expect(sut.allElements() == [header + payload])
@@ -124,7 +124,7 @@ struct BlockExporterTests {
         var sut = BlockExporter(
             payload: block,
             maxBlockSize: header.count + 4,
-            blockHeader: { _ in header }
+            blockHeader: { _ in header },
         )
 
         #expect(sut.allElements() == [
@@ -141,7 +141,7 @@ struct BlockExporterTests {
         var sut = BlockExporter(
             payload: block,
             maxBlockSize: header.count + 4,
-            blockHeader: { _ in header }
+            blockHeader: { _ in header },
         )
 
         #expect(sut.allElements() == [

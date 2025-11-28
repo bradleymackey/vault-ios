@@ -43,8 +43,8 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
             data: .init(
                 secret: .init(data: Data(), format: .base32),
                 accountName: "my account",
-                issuer: "my issuer"
-            )
+                issuer: "my issuer",
+            ),
         )
 
         let sut = makeSUTCreating(initialCode: code)
@@ -61,8 +61,8 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
             data: .init(
                 secret: .init(data: Data(), format: .base32),
                 accountName: "my account",
-                issuer: "my issuer"
-            )
+                issuer: "my issuer",
+            ),
         )
         let metadata = anyVaultItemMetadata(userDescription: "my description")
 
@@ -79,7 +79,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         XCTAssertEqual(
             sut.detailMenuItems.map(\.title),
-            ["Created", "Visibility", "Type", "Period", "Digits", "Algorithm", "Key Format"]
+            ["Created", "Visibility", "Type", "Period", "Digits", "Algorithm", "Key Format"],
         )
     }
 
@@ -347,7 +347,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         XCTAssertFalse(
             sut.editingModel.isDirty,
-            "This is not initially dirty because we need the user to input data before we can save."
+            "This is not initially dirty because we need the user to input data before we can save.",
         )
     }
 
@@ -357,7 +357,7 @@ final class OTPCodeDetailViewModelTests: XCTestCase {
 
         XCTAssertTrue(
             sut.editingModel.isDirty,
-            "This is initially dirty as the data has been input from elsewhere. The initial state is hydrated with dirty data."
+            "This is initially dirty as the data has been input from elsewhere. The initial state is hydrated with dirty data.",
         )
     }
 
@@ -467,16 +467,16 @@ extension OTPCodeDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         allTags _: [VaultItemTag] = [],
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> OTPCodeDetailViewModel {
         let sut = OTPCodeDetailViewModel(
             mode: .creating(initialCode: initialCode),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
@@ -496,15 +496,15 @@ extension OTPCodeDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> OTPCodeDetailViewModel {
         let sut = OTPCodeDetailViewModel(
             mode: .editing(code: code, metadata: metadata),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
@@ -524,15 +524,15 @@ extension OTPCodeDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> OTPCodeDetailViewModel {
         let sut = OTPCodeDetailViewModel(
             mode: .editing(code: code, metadata: metadata),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)

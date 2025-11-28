@@ -22,7 +22,7 @@ struct StubLocalResourceFetcherTests {
         let response = try await sut.fetchLocalResource(
             fromBundle: bundle,
             fileName: "any",
-            fileExtension: "any"
+            fileExtension: "any",
         )
         #expect(response == stubData)
     }

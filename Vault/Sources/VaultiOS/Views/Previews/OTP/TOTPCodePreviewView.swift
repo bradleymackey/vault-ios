@@ -18,7 +18,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
             CodeStateTimerBarView(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
-                behaviour: behaviour
+                behaviour: behaviour,
             )
             .frame(height: 12)
             .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -31,9 +31,9 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
                 configuration: .init(
                     style: isEditing ? .prominent : .secondary,
                     border: previewViewModel.color.color,
-                    padding: .init(all: 8)
-                )
-            )
+                    padding: .init(all: 8),
+                ),
+            ),
         )
     }
 
@@ -106,7 +106,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock(),
         defaults: Defaults(userDefaults: .standard),
-        fileManager: .default
+        fileManager: .default,
     )
     let codePublisher = OTPCodePublisherMock()
     let errorPublisher = OTPCodePublisherMock()
@@ -117,22 +117,22 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
     func makePreview(
         issuer: String,
         codePublisher: OTPCodePublisherMock,
-        behaviour: VaultItemViewBehaviour = .normal
+        behaviour: VaultItemViewBehaviour = .normal,
     ) -> some View {
         let previewViewModel = OTPCodePreviewViewModel(
             accountName: "test@example.com",
             issuer: issuer,
             color: .default,
             isLocked: false,
-            codePublisher: codePublisher
+            codePublisher: codePublisher,
         )
         return TOTPCodePreviewView(
             previewViewModel: previewViewModel,
             timerView: CodeTimerHorizontalBarView(
                 timerState: OTPCodeTimerPeriodState(statePublisher: subject.eraseToAnyPublisher()),
-                color: .blue
+                color: .blue,
             ),
-            behaviour: behaviour
+            behaviour: behaviour,
         )
     }
 

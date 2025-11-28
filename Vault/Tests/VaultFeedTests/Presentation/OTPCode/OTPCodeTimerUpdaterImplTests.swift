@@ -74,7 +74,7 @@ struct OTPCodeTimerUpdaterImplTests {
     private func makeSUT(
         clock: EpochClockMock,
         timer: IntervalTimerMock = IntervalTimerMock(),
-        period: UInt64
+        period: UInt64,
     ) -> OTPCodeTimerUpdaterImpl {
         let sut = OTPCodeTimerUpdaterImpl(timer: timer, period: period, clock: clock)
         return sut

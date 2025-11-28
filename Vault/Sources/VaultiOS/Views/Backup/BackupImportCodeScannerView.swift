@@ -53,7 +53,7 @@ struct BackupImportCodeScannerView: View {
                 LabeledContent("Scanned Codes", value: "\(state.collectedShardIndexes.count)")
                 BackupImportCodeStateVisualizerView(
                     totalCount: state.totalNumberOfShards,
-                    selectedIndexes: state.collectedShardIndexes
+                    selectedIndexes: state.collectedShardIndexes,
                 )
                 .padding(.horizontal)
                 .containerRelativeFrame(.horizontal)
@@ -61,7 +61,7 @@ struct BackupImportCodeScannerView: View {
                 PlaceholderView(
                     systemIcon: "qrcode.viewfinder",
                     title: "Scan a QR code to start",
-                    subtitle: "Face your camera at the codes located on your Vault export document."
+                    subtitle: "Face your camera at the codes located on your Vault export document.",
                 )
                 .padding()
                 .containerRelativeFrame(.horizontal)
@@ -69,7 +69,7 @@ struct BackupImportCodeScannerView: View {
         } header: {
             CodeScanningView(
                 scanner: scanner,
-                isImagePickerVisible: $isCodeImagePickerGalleryVisible
+                isImagePickerVisible: $isCodeImagePickerGalleryVisible,
             )
             .padding()
             .modifier(HorizontallyCenter())

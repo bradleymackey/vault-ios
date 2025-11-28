@@ -14,12 +14,12 @@ public final class PersistedLocalVaultStoreFactory {
             let configuration = ModelConfiguration(
                 "PersistedLocalVaultStore",
                 schema: .init(versionedSchema: PersistedSchemaLatestVersion.self),
-                url: storeURL
+                url: storeURL,
             )
             let container = try ModelContainer(
                 for: PersistedVaultItem.self, PersistedVaultTag.self,
                 migrationPlan: PersistedSchemaMigrationPlan.self,
-                configurations: configuration
+                configurations: configuration,
             )
             return PersistedLocalVaultStore(modelContainer: container)
         } catch {

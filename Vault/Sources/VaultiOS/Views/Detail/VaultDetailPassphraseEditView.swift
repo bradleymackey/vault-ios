@@ -23,7 +23,7 @@ struct VaultDetailPassphraseEditView: View {
             PlaceholderView(
                 systemIcon: viewConfig.isEnabled ? "eye.slash" : "eye.fill",
                 title: title,
-                subtitle: description
+                subtitle: description,
             )
             .padding()
             .containerRelativeFrame(.horizontal)
@@ -60,6 +60,6 @@ struct VaultDetailPassphraseEditView: View {
         description: "Test",
         hiddenWithPassphraseTitle: "nice",
         viewConfig: .constant(.requiresSearchPassphrase),
-        passphrase: .constant("nice")
+        passphrase: .constant("nice"),
     )
 }

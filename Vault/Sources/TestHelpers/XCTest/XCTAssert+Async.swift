@@ -28,7 +28,7 @@ public func XCTAssertThrowsError(
     _ message: @Sendable @autoclosure () -> String = "",
     file: StaticString = #filePath,
     line: UInt = #line,
-    _ errorHandler: @Sendable (_ error: any Error) -> Void = { _ in }
+    _ errorHandler: @Sendable (_ error: any Error) -> Void = { _ in },
 ) async {
     do {
         _ = try await expression()
@@ -58,7 +58,7 @@ public func XCTAssertNoThrow(
     _ expression: @MainActor @Sendable @autoclosure () async throws -> some Any,
     _ message: @Sendable @autoclosure () -> String = "",
     file: StaticString = #filePath,
-    line: UInt = #line
+    line: UInt = #line,
 ) async {
     do {
         _ = try await expression()

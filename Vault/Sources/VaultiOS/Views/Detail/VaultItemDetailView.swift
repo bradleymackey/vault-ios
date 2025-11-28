@@ -41,7 +41,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
         .confirmationDialog(
             viewModel.strings.deleteConfirmTitle,
             isPresented: $isShowingDeleteConfirmation,
-            titleVisibility: .visible
+            titleVisibility: .visible,
         ) {
             Button(viewModel.strings.deleteItemTitle, role: .destructive) {
                 Task { await viewModel.delete() }
@@ -93,7 +93,7 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                 PlaceholderView(
                     systemIcon: "lock.fill",
                     title: "Item Locked",
-                    subtitle: "Unlock this item to view its contents."
+                    subtitle: "Unlock this item to view its contents.",
                 )
                 .padding()
                 .containerRelativeFrame(.horizontal)
@@ -116,14 +116,14 @@ struct VaultItemDetailView<ChildViewModel: DetailViewModel, ContentsView: View>:
                 FormRow(
                     image: Image(systemName: "lock.trianglebadge.exclamationmark.fill"),
                     color: .red,
-                    style: .standard
+                    style: .standard,
                 ) {
                     VStack(alignment: .leading) {
                         Text("No authentication")
                             .font(.headline)
                             .foregroundStyle(.red)
                         Text(
-                            "This item is not protected due to no authentication being available. Add a passcode to your device to protect this item."
+                            "This item is not protected due to no authentication being available. Add a passcode to your device to protect this item.",
                         )
                         .foregroundStyle(.secondary)
                     }

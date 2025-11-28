@@ -21,8 +21,8 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         .shimmering(active: isEditing)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color)
-            )
+                configuration: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color),
+            ),
         )
     }
 
@@ -82,7 +82,7 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
             CodeStateTimerBarView(
                 timerView: activeTimerView,
                 codeState: previewViewModel.code,
-                behaviour: behaviour
+                behaviour: behaviour,
             )
             .frame(height: 12)
             .clipShape(RoundedRectangle(cornerRadius: 6))
@@ -114,29 +114,29 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     func makePreviewView(
         accountName: String,
         codePublisher: OTPCodePublisherMock,
-        behaviour: VaultItemViewBehaviour = .normal
+        behaviour: VaultItemViewBehaviour = .normal,
     ) -> some View {
         let previewViewModel = OTPCodePreviewViewModel(
             accountName: accountName,
             issuer: "Authority",
             color: .default,
             isLocked: false,
-            codePublisher: codePublisher
+            codePublisher: codePublisher,
         )
         return HOTPCodePreviewView(
             buttonView: OTPCodeButtonView(
                 viewModel: .init(
                     id: .new(),
                     codePublisher: .init(
-                        hotpGenerator: .init(secret: Data())
+                        hotpGenerator: .init(secret: Data()),
                     ),
                     timer: IntervalTimerImpl(),
                     initialCounter: 0,
-                    incrementerStore: VaultStoreHOTPIncrementerMock()
-                )
+                    incrementerStore: VaultStoreHOTPIncrementerMock(),
+                ),
             ),
             previewViewModel: previewViewModel,
-            behaviour: behaviour
+            behaviour: behaviour,
         )
     }
 
@@ -159,13 +159,13 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
         makePreviewView(
             accountName: "Obfuscate",
             codePublisher: codePublisher,
-            behaviour: .editingState(message: "editing")
+            behaviour: .editingState(message: "editing"),
         )
 
         makePreviewView(
             accountName: "Obfuscate (no msg)",
             codePublisher: codePublisher,
-            behaviour: .editingState(message: nil)
+            behaviour: .editingState(message: nil),
         )
     }
     .padding(.horizontal, 32)

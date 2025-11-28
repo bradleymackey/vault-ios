@@ -93,14 +93,14 @@ extension VaultBackupEncryptorTests {
         key: VaultKey,
         keygenSalt: Data = Data(),
         keygenSignature: String = "my-signature",
-        paddingMode: VaultBackupEncryptor.PaddingMode = .none
+        paddingMode: VaultBackupEncryptor.PaddingMode = .none,
     ) -> VaultBackupEncryptor {
         VaultBackupEncryptor(
             clock: clock,
             key: key,
             keygenSalt: keygenSalt,
             keygenSignature: keygenSignature,
-            paddingMode: paddingMode
+            paddingMode: paddingMode,
         )
     }
 }

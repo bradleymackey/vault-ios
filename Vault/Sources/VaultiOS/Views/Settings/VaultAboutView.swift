@@ -26,7 +26,7 @@ struct VaultAboutView: View {
         PlaceholderView(
             systemIcon: "info.bubble.fill",
             title: "About Vault",
-            subtitle: "Vault has been designed from scratch to store your highly sensitive data that you cannot afford to either lose or leak. It's developed in the open and is completely free to use."
+            subtitle: "Vault has been designed from scratch to store your highly sensitive data that you cannot afford to either lose or leak. It's developed in the open and is completely free to use.",
         )
         .padding()
         .containerRelativeFrame(.horizontal)
@@ -39,7 +39,7 @@ struct VaultAboutView: View {
             } label: {
                 FormRow(
                     image: Image(systemName: "questionmark"),
-                    color: .blue
+                    color: .blue,
                 ) {
                     Text(viewModel.helpTitle)
                 }
@@ -54,7 +54,7 @@ struct VaultAboutView: View {
             } label: {
                 FormRow(
                     image: Image(systemName: "figure.2.arms.open"),
-                    color: .purple
+                    color: .purple,
                 ) {
                     Text(viewModel.openSourceTitle)
                 }
@@ -71,7 +71,7 @@ struct VaultAboutView: View {
             } label: {
                 FormRow(
                     image: Image(systemName: "person.fill.checkmark"),
-                    color: .green
+                    color: .green,
                 ) {
                     Text(viewModel.termsOfUseTitle)
                 }
@@ -82,7 +82,7 @@ struct VaultAboutView: View {
             } label: {
                 FormRow(
                     image: Image(systemName: "lock.fill"),
-                    color: .red
+                    color: .red,
                 ) {
                     Text(viewModel.privacyPolicyTitle)
                 }
@@ -93,7 +93,7 @@ struct VaultAboutView: View {
             } label: {
                 FormRow(
                     image: Image(systemName: "text.book.closed.fill"),
-                    color: .blue
+                    color: .blue,
                 ) {
                     Text(viewModel.thirdPartyTitle)
                 }

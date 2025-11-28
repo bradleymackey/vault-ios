@@ -57,7 +57,7 @@ public enum VaultRoot {
         vaultDeleter: vaultStore,
         vaultKillphraseDeleter: vaultStore,
         backupPasswordStore: backupPasswordStore,
-        backupEventLogger: backupEventLogger
+        backupEventLogger: backupEventLogger,
     )
 
     // MARK: - Previews
@@ -90,7 +90,7 @@ public enum VaultRoot {
     @MainActor
     static let otpCodeTimerUpdaterFactory: some OTPCodeTimerUpdaterFactory = OTPCodeTimerUpdaterFactoryImpl(
         timer: timer,
-        clock: clock
+        clock: clock,
     )
 
     @MainActor
@@ -98,7 +98,7 @@ public enum VaultRoot {
         let repo = TOTPPreviewViewRepositoryImpl(
             clock: clock,
             timer: timer,
-            updaterFactory: otpCodeTimerUpdaterFactory
+            updaterFactory: otpCodeTimerUpdaterFactory,
         )
         vaultDataModel.itemCaches.append(repo)
         return repo
@@ -113,21 +113,21 @@ public enum VaultRoot {
             totpGenerator: totpPreviewViewGenerator,
             hotpGenerator: hotpPreviewViewGenerator,
             noteGenerator: secureNotePreviewViewGenerator,
-            encryptedGenerator: encryptedItemPreviewViewGenerator
+            encryptedGenerator: encryptedItemPreviewViewGenerator,
         )
 
     @MainActor
     static let totpPreviewViewGenerator =
         TOTPPreviewViewGenerator(
             viewFactory: TOTPPreviewViewFactoryImpl(),
-            repository: totpPreviewRepository
+            repository: totpPreviewRepository,
         )
 
     @MainActor
     static let hotpPreviewRepository: some HOTPPreviewViewRepository = {
         let repo = HOTPPreviewViewRepositoryImpl(
             timer: timer,
-            store: vaultDataModel
+            store: vaultDataModel,
         )
         vaultDataModel.itemCaches.append(repo)
         return repo
@@ -136,7 +136,7 @@ public enum VaultRoot {
     @MainActor
     static let hotpPreviewViewGenerator = HOTPPreviewViewGenerator(
         viewFactory: HOTPPreviewViewFactoryImpl(),
-        repository: hotpPreviewRepository
+        repository: hotpPreviewRepository,
     )
 
     // MARK: - Misc
@@ -160,6 +160,6 @@ public enum VaultRoot {
         vaultKeyDeriverFactory: vaultKeyDeriverFactory,
         encryptedVaultDecoder: encryptedVaultDecoder,
         defaults: defaults,
-        fileManager: fileManager
+        fileManager: fileManager,
     )
 }

@@ -25,7 +25,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         let initialCode = OTPAuthCode(
             type: .totp(period: 40),
-            data: .init(secret: .empty(), algorithm: .sha256, digits: .default, accountName: "myacc", issuer: "myiss")
+            data: .init(secret: .empty(), algorithm: .sha256, digits: .default, accountName: "myacc", issuer: "myiss"),
         )
         let initialEdits = OTPCodeDetailEdits(
             hydratedFromCode: initialCode,
@@ -36,7 +36,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
 
         let exp = expectation(description: "Wait for creation")
@@ -47,7 +47,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
                 XCTAssertEqual(
                     code,
                     initialCode,
-                    "The code that is saved should be the same as the state from the edits"
+                    "The code that is saved should be the same as the state from the edits",
                 )
             default:
                 XCTFail("invalid kind")
@@ -94,7 +94,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             searchPassphrase: "",
             killphrase: "",
             tags: [],
-            lockState: .notLocked
+            lockState: .notLocked,
         )
         edits.issuerTitle = "new issuer name"
         edits.accountNameTitle = "new account name"
@@ -133,7 +133,7 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         await XCTAssertThrowsError(try await sut.updateCode(
             id: .new(),
             item: uniqueCode(),
-            edits: edits
+            edits: edits,
         ))
     }
 
@@ -406,9 +406,9 @@ extension VaultDataModelEditorAdapterTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
-        keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock()
+        keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock(),
     ) -> VaultDataModelEditorAdapter {
         VaultDataModelEditorAdapter(dataModel: dataModel, keyDeriverFactory: keyDeriverFactory)
     }
@@ -430,7 +430,7 @@ extension VaultDataModelEditorAdapterTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
-            color: nil
+            color: nil,
         )
     }
 }

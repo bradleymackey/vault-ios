@@ -10,7 +10,7 @@ public func confirmation<R: Sendable>(
     timeout: Duration,
     expectedCount: Int = 1,
     sourceLocation: Testing.SourceLocation = #_sourceLocation,
-    _ body: @escaping @Sendable (Testing.Confirmation) async throws -> R
+    _ body: @escaping @Sendable (Testing.Confirmation) async throws -> R,
 ) async throws -> R? {
     let timeoutID = UUID()
     do {

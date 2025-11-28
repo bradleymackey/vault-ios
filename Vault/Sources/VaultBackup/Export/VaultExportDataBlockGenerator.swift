@@ -15,9 +15,9 @@ struct VaultExportDataBlockGenerator {
         var document = DataBlockDocument(
             headerGenerator: VaultExportDataBlockHeaderGenerator(
                 dateCreated: payload.created,
-                totalNumberOfPages: knownPageCount
+                totalNumberOfPages: knownPageCount,
             ),
-            content: []
+            content: [],
         )
         document.content.append(.title(makeTitle()))
         for descriptionLabel in makeUserDescriptionLabels() {
@@ -35,7 +35,7 @@ extension VaultExportDataBlockGenerator {
         .init(
             text: localized(key: "Vault Export"),
             font: .systemFont(ofSize: 26, weight: .heavy),
-            padding: .init(top: 8, left: 0, bottom: 8, right: 0)
+            padding: .init(top: 8, left: 0, bottom: 8, right: 0),
         )
     }
 
@@ -47,7 +47,7 @@ extension VaultExportDataBlockGenerator {
                 return .init(
                     text: String(text),
                     font: .systemFont(ofSize: 10),
-                    padding: .zero
+                    padding: .zero,
                 )
             }
     }
@@ -55,11 +55,11 @@ extension VaultExportDataBlockGenerator {
     private func makeQRCodeHelperLabel(totalCodes: Int) -> DataBlockLabel {
         .init(
             text: localized(
-                key: "Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are \(totalCodes) QR codes."
+                key: "Your backup is contained within the following QR codes in an encrypted format. To import this backup, you should open the Vault app and scan every code during the import. In this export, there are \(totalCodes) QR codes.",
             ),
             font: .systemFont(ofSize: 8),
             textColor: .gray,
-            padding: .init(top: 12, left: 0, bottom: 8, right: 0)
+            padding: .init(top: 12, left: 0, bottom: 8, right: 0),
         )
     }
 

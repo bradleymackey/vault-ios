@@ -134,7 +134,7 @@ extension CombinationKeyDeriverTests {
 
         init(
             stubKey: KeyData<Bits256> = .zero(),
-            uniqueAlgorithmIdentifier: String = "stub"
+            uniqueAlgorithmIdentifier: String = "stub",
         ) {
             self.stubKey = stubKey
             self.uniqueAlgorithmIdentifier = uniqueAlgorithmIdentifier

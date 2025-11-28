@@ -20,7 +20,7 @@ final class VaultAutofillViewModel {
     let localSettings: LocalSettings
 
     init(
-        localSettings: LocalSettings
+        localSettings: LocalSettings,
     ) {
         self.localSettings = localSettings
     }

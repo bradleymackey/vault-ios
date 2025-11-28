@@ -77,7 +77,7 @@ extension VaultItemTests {
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil,
-        format: TextFormat = .markdown
+        format: TextFormat = .markdown,
     ) -> VaultItem {
         VaultItem(
             metadata: .init(
@@ -92,9 +92,9 @@ extension VaultItemTests {
                 searchPassphrase: searchPassphrase,
                 killphrase: killphrase,
                 lockState: lockState,
-                color: color
+                color: color,
             ),
-            item: .secureNote(.init(title: "title", contents: "contents", format: format))
+            item: .secureNote(.init(title: "title", contents: "contents", format: format)),
         )
     }
 }

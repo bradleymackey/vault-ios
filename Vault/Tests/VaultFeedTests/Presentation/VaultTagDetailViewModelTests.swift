@@ -164,9 +164,9 @@ extension VaultTagDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
-        existingTag: VaultItemTag? = nil
+        existingTag: VaultItemTag? = nil,
     ) -> VaultTagDetailViewModel {
         .init(dataModel: dataModel, existingTag: existingTag)
     }

@@ -15,7 +15,7 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
 
     init(
         viewFactory: Factory,
-        repository: any TOTPPreviewViewRepository
+        repository: any TOTPPreviewViewRepository,
     ) {
         self.viewFactory = viewFactory
         self.repository = repository
@@ -24,13 +24,13 @@ public final class TOTPPreviewViewGenerator<Factory: TOTPPreviewViewFactory>: Va
     public func makeVaultPreviewView(
         item: PreviewItem,
         metadata: VaultItem.Metadata,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         viewFactory.makeTOTPView(
             viewModel: repository.previewViewModel(metadata: metadata, code: item),
             periodState: repository.timerPeriodState(period: item.period),
             updater: repository.timerUpdater(period: item.period),
-            behaviour: behaviour
+            behaviour: behaviour,
         )
     }
 

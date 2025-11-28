@@ -79,12 +79,12 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
             authentication: .random(count: 10),
             encryptionIV: .random(count: 10),
             keygenSalt: .random(count: 10),
-            keygenSignature: "any"
+            keygenSignature: "any",
         )
         let view = sut.makeVaultPreviewView(
             item: .encryptedItem(encryptedItem),
             metadata: uniqueMetadata(),
-            behaviour: .normal
+            behaviour: .normal,
         )
 
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
@@ -146,20 +146,20 @@ extension GenericVaultItemPreviewViewGeneratorTests {
         TOTPGeneratorMock,
         HOTPGeneratorMock,
         SecureNoteGeneratorMock,
-        EncryptedItemGeneratorMock
+        EncryptedItemGeneratorMock,
     >
     @MainActor
     private func makeSUT(
         totp: TOTPGeneratorMock,
         hotp: HOTPGeneratorMock,
         secureNote: SecureNoteGeneratorMock,
-        encryptedItem: EncryptedItemGeneratorMock
+        encryptedItem: EncryptedItemGeneratorMock,
     ) -> SUT {
         GenericVaultItemPreviewViewGenerator(
             totpGenerator: totp,
             hotpGenerator: hotp,
             noteGenerator: secureNote,
-            encryptedGenerator: encryptedItem
+            encryptedGenerator: encryptedItem,
         )
     }
 }
@@ -176,7 +176,7 @@ private class HOTPGeneratorMock: VaultItemPreviewViewGenerator {
     func makeVaultPreviewView(
         item _: PreviewItem,
         metadata _: VaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
+        behaviour _: VaultItemViewBehaviour,
     ) -> some View {
         Text("HOTP")
     }
@@ -204,7 +204,7 @@ private class TOTPGeneratorMock: VaultItemPreviewViewGenerator {
     func makeVaultPreviewView(
         item _: PreviewItem,
         metadata _: VaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
+        behaviour _: VaultItemViewBehaviour,
     ) -> some View {
         Text("TOTP")
     }
@@ -232,7 +232,7 @@ private class SecureNoteGeneratorMock: VaultItemPreviewViewGenerator {
     func makeVaultPreviewView(
         item _: SecureNote,
         metadata _: VaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
+        behaviour _: VaultItemViewBehaviour,
     ) -> some View {
         Text("Secure Note")
     }
@@ -260,7 +260,7 @@ private class EncryptedItemGeneratorMock: VaultItemPreviewViewGenerator {
     func makeVaultPreviewView(
         item _: EncryptedItem,
         metadata _: VaultItem.Metadata,
-        behaviour _: VaultItemViewBehaviour
+        behaviour _: VaultItemViewBehaviour,
     ) -> some View {
         Text("Encrypted Item")
     }

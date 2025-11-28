@@ -9,7 +9,7 @@ public struct OTPAuthCode: Equatable, Hashable, Sendable {
 
     public init(
         type: OTPAuthType,
-        data: OTPAuthCodeData
+        data: OTPAuthCodeData,
     ) {
         self.type = type
         self.data = data

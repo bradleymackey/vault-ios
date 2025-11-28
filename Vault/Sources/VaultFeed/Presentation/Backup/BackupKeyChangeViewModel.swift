@@ -33,7 +33,7 @@ public final class BackupKeyChangeViewModel {
     public init(
         dataModel: VaultDataModel,
         authenticationService: DeviceAuthenticationService,
-        deriverFactory: some VaultKeyDeriverFactory
+        deriverFactory: some VaultKeyDeriverFactory,
     ) {
         self.authenticationService = authenticationService
         self.dataModel = dataModel

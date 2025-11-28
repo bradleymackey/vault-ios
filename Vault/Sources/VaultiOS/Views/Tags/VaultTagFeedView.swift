@@ -39,13 +39,13 @@ struct VaultTagFeedView: View {
             case .creatingTag:
                 NavigationStack {
                     VaultTagDetailView(
-                        viewModel: .init(dataModel: dataModel, existingTag: nil)
+                        viewModel: .init(dataModel: dataModel, existingTag: nil),
                     )
                 }
             case let .editingTag(tag):
                 NavigationStack {
                     VaultTagDetailView(
-                        viewModel: .init(dataModel: dataModel, existingTag: tag)
+                        viewModel: .init(dataModel: dataModel, existingTag: tag),
                     )
                 }
             }
@@ -70,9 +70,9 @@ struct VaultTagFeedView: View {
                 configuration: .init(
                     style: .secondary,
                     border: tag.color.color,
-                    padding: .init(all: 8)
-                )
-            )
+                    padding: .init(all: 8),
+                ),
+            ),
         )
     }
 

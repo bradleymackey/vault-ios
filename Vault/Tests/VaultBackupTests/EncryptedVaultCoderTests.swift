@@ -12,7 +12,7 @@ struct EncryptedVaultCoderTests {
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
             keygenSalt: Data("keySalt".utf8),
-            keygenSignature: "signature"
+            keygenSignature: "signature",
         )
         let sut = EncryptedVaultCoder()
 
@@ -28,7 +28,7 @@ struct EncryptedVaultCoderTests {
               "KEYGEN_SALT" : "a2V5U2FsdA==",
               "KEYGEN_SIGNATURE" : "signature"
             }
-            """
+            """,
         )
     }
 
@@ -54,7 +54,7 @@ struct EncryptedVaultCoderTests {
             authentication: Data("auth".utf8),
             encryptionIV: Data("iv".utf8),
             keygenSalt: Data("keySalt".utf8),
-            keygenSignature: "signature"
+            keygenSignature: "signature",
         ))
     }
 
@@ -64,9 +64,9 @@ struct EncryptedVaultCoderTests {
             group: .init(
                 id: 0,
                 number: 1,
-                totalNumber: 2
+                totalNumber: 2,
             ),
-            data: Data("data".utf8)
+            data: Data("data".utf8),
         )
         let sut = EncryptedVaultCoder()
 
@@ -82,7 +82,7 @@ struct EncryptedVaultCoderTests {
                 "N" : 2
               }
             }
-            """
+            """,
         )
     }
 
@@ -99,9 +99,9 @@ struct EncryptedVaultCoderTests {
             group: .init(
                 id: 0,
                 number: 1,
-                totalNumber: 2
+                totalNumber: 2,
             ),
-            data: Data("data".utf8)
+            data: Data("data".utf8),
         ))
     }
 }

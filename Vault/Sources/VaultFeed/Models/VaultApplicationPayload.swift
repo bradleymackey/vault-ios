@@ -28,7 +28,7 @@ extension VaultApplicationPayload: Digestable {
         }
         return DigestPayload(
             items: items.map(\.digestableData),
-            tags: tags.map(\.digestableData)
+            tags: tags.map(\.digestableData),
         )
     }
 }

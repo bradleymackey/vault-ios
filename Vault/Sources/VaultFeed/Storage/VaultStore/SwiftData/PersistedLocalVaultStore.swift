@@ -33,7 +33,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
     public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
         let descriptor = FetchDescriptor<PersistedVaultItem>(
             predicate: makePredicate(query: query),
-            sortBy: sortOrder.vaultItemSortDescriptors
+            sortBy: sortOrder.vaultItemSortDescriptors,
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
@@ -76,9 +76,9 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             // An item matches if the count of its tags that match our search equals the search count.
             let searchingTagsArray = Array(searchingTagIds)
             return #Predicate<PersistedVaultItem> { item in
-                item.tags.filter { tag in
+                item.tags.count(where: { tag in
                     searchingTagsArray.contains(tag.id)
-                }.count == searchingTagsArray.count
+                }) == searchingTagsArray.count
             }
         }
     }
@@ -278,13 +278,13 @@ extension Int64? {
 extension PersistedLocalVaultStore: VaultStoreReorderable {
     public func reorder(
         items: Set<Identifier<VaultItem>>,
-        to position: VaultReorderingPosition
+        to position: VaultReorderingPosition,
     ) async throws {
         do {
             var allItemsDescriptor = FetchDescriptor<PersistedVaultItem>(
                 predicate: .true,
                 // The same order that users see so the ordering is correct.
-                sortBy: sortOrder.vaultItemSortDescriptors
+                sortBy: sortOrder.vaultItemSortDescriptors,
             )
             allItemsDescriptor.propertiesToFetch = [\.id, \.relativeOrder]
             var allItems = try modelContext.fetch(allItemsDescriptor)
@@ -330,7 +330,7 @@ extension PersistedLocalVaultStore: VaultStoreExporter {
             },
             tags: allTags.map {
                 try tagDecoder.decode(item: $0)
-            }
+            },
         )
     }
 }
@@ -427,7 +427,7 @@ extension PersistedLocalVaultStore: VaultStoreImporter {
             for item in itemsToImport {
                 let encoded = try itemEncoder.encode(
                     item: item.makeWritable(),
-                    writeUpdateContext: item.makeImportingContext()
+                    writeUpdateContext: item.makeImportingContext(),
                 )
                 modelContext.insert(encoded)
             }
@@ -451,7 +451,7 @@ extension PersistedLocalVaultStore: VaultStoreImporter {
             for item in payload.items {
                 let encoded = try itemEncoder.encode(
                     item: item.makeWritable(),
-                    writeUpdateContext: item.makeImportingContext()
+                    writeUpdateContext: item.makeImportingContext(),
                 )
                 modelContext.insert(encoded)
             }

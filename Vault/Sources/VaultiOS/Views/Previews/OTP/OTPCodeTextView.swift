@@ -86,31 +86,31 @@ extension [Character] {
 #Preview {
     VStack {
         OTPCodeTextView(
-            codeState: .visible("123456")
+            codeState: .visible("123456"),
         )
 
         OTPCodeTextView(
-            codeState: .visible("1234567")
+            codeState: .visible("1234567"),
         )
 
         OTPCodeTextView(
-            codeState: .visible("12345678")
+            codeState: .visible("12345678"),
         )
 
         OTPCodeTextView(
-            codeState: .visible("123456789")
+            codeState: .visible("123456789"),
         )
 
         OTPCodeTextView(
-            codeState: .visible("1234567890")
+            codeState: .visible("1234567890"),
         )
 
         OTPCodeTextView(
-            codeState: .finished
+            codeState: .finished,
         )
 
         OTPCodeTextView(
-            codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6)
+            codeState: .error(.init(userTitle: "Any", debugDescription: "Any"), digits: 6),
         )
     }
     .font(.system(.largeTitle, design: .monospaced))

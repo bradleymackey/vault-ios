@@ -64,20 +64,20 @@ extension PDFDataBlockDocumentRendererUnitTests {
     private func makeSUT(
         rendererFactory: PDFRendererFactoryMock = makeRendererFactory(),
         imageRenderer: ImageDataRendererMock = makeImageRenderer(),
-        rectLayout: LayoutSpy = LayoutSpy()
+        rectLayout: LayoutSpy = LayoutSpy(),
     ) -> PDFDataBlockDocumentRenderer<ImageDataRendererMock, LayoutSpy> {
         PDFDataBlockDocumentRenderer(
             documentSize: USLetterDocumentSize(),
             rendererFactory: rendererFactory,
             imageRenderer: imageRenderer,
-            blockLayout: { _ in rectLayout }
+            blockLayout: { _ in rectLayout },
         )
     }
 
     private func anyDataBlockExportDocument() -> DataBlockDocument {
         DataBlockDocument(
             headerGenerator: DataBlockHeaderGeneratorMock(),
-            content: []
+            content: [],
         )
     }
 

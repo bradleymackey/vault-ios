@@ -115,7 +115,7 @@ struct VaultKeyDeriverTests {
         #expect(seenKeyDeriver.count == 1)
         #expect(
             seenKeys.first?.data.toHexString() ==
-                "b8ab51d4c385654810dbcc8e860426143a7b61a4273805ba9596b1f9c00530c6"
+                "b8ab51d4c385654810dbcc8e860426143a7b61a4273805ba9596b1f9c00530c6",
         )
         #expect(seenSalt.first?.toHexString() == "aabbccddeeff")
         #expect(seenKeyDeriver.first == .testing)

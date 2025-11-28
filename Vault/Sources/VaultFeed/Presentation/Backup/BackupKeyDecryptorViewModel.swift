@@ -56,7 +56,7 @@ public final class BackupKeyDecryptorViewModel {
         encryptedVault: EncryptedVault,
         keyDeriverFactory: any VaultKeyDeriverFactory,
         encryptedVaultDecoder: any EncryptedVaultDecoder,
-        decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never>
+        decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never>,
     ) {
         self.encryptedVault = encryptedVault
         self.keyDeriverFactory = keyDeriverFactory
@@ -87,7 +87,7 @@ public final class BackupKeyDecryptorViewModel {
             }
             let vaultApplicationPayload = try encryptedVaultDecoder.decryptAndDecode(
                 key: generatedKey.key,
-                encryptedVault: encryptedVault
+                encryptedVault: encryptedVault,
             )
             decryptionKeyState = .validDecryptionKey
             decryptedVaultSubject.send(vaultApplicationPayload)
@@ -97,7 +97,7 @@ public final class BackupKeyDecryptorViewModel {
             decryptionKeyState = .error(PresentationError(
                 userTitle: "Password Generation Error",
                 userDescription: "Please try again.",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             ))
         }
     }

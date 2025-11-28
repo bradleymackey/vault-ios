@@ -207,7 +207,7 @@ struct HOTPGeneratorTests {
     private func makeSUT(
         secret: Data,
         digits: UInt16 = 6,
-        algorithm: HOTPGenerator.Algorithm = .sha1
+        algorithm: HOTPGenerator.Algorithm = .sha1,
     ) -> HOTPGenerator {
         HOTPGenerator(secret: secret, digits: digits, algorithm: algorithm)
     }

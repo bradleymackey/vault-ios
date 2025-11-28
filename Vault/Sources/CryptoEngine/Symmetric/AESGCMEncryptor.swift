@@ -28,7 +28,7 @@ public struct AESGCMEncryptor: Encryptor {
         }
         return AESGCMEncryptedMessage(
             ciphertext: Data(ciphertextBytes),
-            authenticationTag: Data(authenticationTag)
+            authenticationTag: Data(authenticationTag),
         )
     }
 }

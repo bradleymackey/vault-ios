@@ -399,15 +399,15 @@ extension SecureNoteDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> SecureNoteDetailViewModel {
         let sut = SecureNoteDetailViewModel(
             mode: .editing(note: storedNote, metadata: storedMetadata, existingKey: existingKey),
             dataModel: dataModel,
-            editor: editor
+            editor: editor,
         )
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(editor, file: file, line: line)
@@ -425,10 +425,10 @@ extension SecureNoteDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> SecureNoteDetailViewModel {
         let sut = SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -447,10 +447,10 @@ extension SecureNoteDetailViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     )
         -> SecureNoteDetailViewModel
     {

@@ -5,7 +5,7 @@ import UIKit
 
 public struct PDFDataBlockDocumentRenderer<
     ImageRenderer: ImageDataRenderer,
-    RectLayout: RectSeriesLayout & PageLayout
+    RectLayout: RectSeriesLayout & PageLayout,
 >: PDFDocumentRenderer {
     public typealias Document = DataBlockDocument
 
@@ -18,7 +18,7 @@ public struct PDFDataBlockDocumentRenderer<
         documentSize: any PDFDocumentSize,
         rendererFactory: any PDFRendererFactory,
         imageRenderer: ImageRenderer,
-        blockLayout: @escaping (CGRect) -> RectLayout
+        blockLayout: @escaping (CGRect) -> RectLayout,
     ) {
         self.documentSize = documentSize
         self.rendererFactory = rendererFactory
@@ -35,7 +35,7 @@ public struct PDFDataBlockDocumentRenderer<
                 documentSize: documentSize,
                 headerGenerator: document.headerGenerator,
                 labelRenderer: PDFLabelRenderer(),
-                pageLayout: blockLayout
+                pageLayout: blockLayout,
             )
             drawer.startNextPage()
             do {
@@ -47,7 +47,7 @@ public struct PDFDataBlockDocumentRenderer<
                         try drawer.draw(
                             images: imageData,
                             imageRenderer: imageRenderer,
-                            rectSeriesLayout: blockLayout
+                            rectSeriesLayout: blockLayout,
                         )
                     }
                 }
@@ -81,7 +81,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
         documentSize: any PDFDocumentSize,
         headerGenerator: any DataBlockHeaderGenerator,
         labelRenderer: PDFLabelRenderer,
-        pageLayout: @escaping (CGRect) -> Layout
+        pageLayout: @escaping (CGRect) -> Layout,
     ) {
         self.context = context
         self.documentSize = documentSize
@@ -99,13 +99,13 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             let boundingRect = attributedString.boundingRect(
                 with: CGSize(width: width, height: .greatestFiniteMagnitude),
                 options: .usesLineFragmentOrigin,
-                context: nil
+                context: nil,
             )
             let rect = CGRect(
                 x: contentArea.currentBounds.minX + label.padding.left,
                 y: contentArea.currentBounds.minY + label.padding.top,
                 width: width,
-                height: boundingRect.height + label.padding.bottom
+                height: boundingRect.height + label.padding.bottom,
             )
             if currentLayoutEngine.isFullyWithinBounds(rect: rect) {
                 attributedString.draw(in: rect)
@@ -125,7 +125,7 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
     func draw(
         images: [Data],
         imageRenderer: some ImageDataRenderer,
-        rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout
+        rectSeriesLayout: @escaping (CGRect) -> some RectSeriesLayout,
     ) throws {
         var currentImageNumberOnPage: UInt = 0
         var currentLayoutEngine = rectSeriesLayout(contentArea.currentBounds)
@@ -172,13 +172,13 @@ private final class PDFDocumentDrawerHelper<Layout: PageLayout> {
             let boundingRect = attributedString.boundingRect(
                 with: CGSize(width: width, height: .greatestFiniteMagnitude),
                 options: .usesLineFragmentOrigin,
-                context: nil
+                context: nil,
             )
             let rect = CGRect(
                 x: label.position.xPosition(width: width, margins: documentSize.pointMargins),
                 y: documentSize.pointMargins.top,
                 width: width,
-                height: boundingRect.height + headerBottomSpacing
+                height: boundingRect.height + headerBottomSpacing,
             )
             attributedString.draw(in: rect)
             contentArea.didDrawContent(at: rect)

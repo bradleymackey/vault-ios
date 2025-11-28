@@ -32,14 +32,14 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
             issuer: "any",
             color: .black,
             isLocked: false,
-            fixedCodeState: .visible("123456")
+            fixedCodeState: .visible("123456"),
         ) }
         repository.incrementerViewModelHandler = { _, _ in OTPCodeIncrementerViewModel(
             id: .new(),
             codePublisher: .init(hotpGenerator: .init(secret: .random(count: 123))),
             timer: IntervalTimerMock(),
             initialCounter: 0,
-            incrementerStore: VaultStoreHOTPIncrementerMock()
+            incrementerStore: VaultStoreHOTPIncrementerMock(),
         ) }
         let (sut, _) = makeSUT(repository: repository)
 
@@ -100,7 +100,7 @@ extension HOTPPreviewViewGeneratorTests {
     @MainActor
     private func makeSUT(
         repository: HOTPPreviewViewRepositoryMock = HOTPPreviewViewRepositoryMock(),
-        timer _: IntervalTimerMock = IntervalTimerMock()
+        timer _: IntervalTimerMock = IntervalTimerMock(),
     ) -> (SUT, HOTPPreviewViewFactoryMock) {
         let factory = HOTPPreviewViewFactoryMock()
         factory.makeHOTPViewHandler = { _, _, _ in AnyView(Color.green) }
@@ -119,7 +119,7 @@ extension HOTPPreviewViewGeneratorTests {
         factory: HOTPPreviewViewFactoryMock,
         ids: [Identifier<VaultItem>],
         file: StaticString = #filePath,
-        line: UInt = #line
+        line: UInt = #line,
     ) -> [OTPCodePreviewViewModel] {
         var viewModels = [OTPCodePreviewViewModel]()
 
@@ -142,7 +142,7 @@ extension HOTPPreviewViewGeneratorTests {
             ids.count,
             "Invariant failed, expected number of view models to match the number of IDs we requested",
             file: file,
-            line: line
+            line: line,
         )
         return viewModels
     }

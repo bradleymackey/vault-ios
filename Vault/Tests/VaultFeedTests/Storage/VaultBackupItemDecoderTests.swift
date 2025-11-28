@@ -28,7 +28,7 @@ final class VaultBackupItemDecoderTests {
             killphrase: "killme",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .note(data: .init(title: "title", rawContents: "contents", format: .markdown))
+            item: .note(data: .init(title: "title", rawContents: "contents", format: .markdown)),
         )
         let sut = makeSUT()
 
@@ -85,7 +85,7 @@ final class VaultBackupItemDecoderTests {
             authentication: itemAuthentication,
             encryptionIV: itemEncryptionIV,
             keygenSalt: itemKeygenSalt,
-            keygenSignature: itemSignature
+            keygenSignature: itemSignature,
         )
         let item = VaultBackupItem(
             id: id,
@@ -100,7 +100,7 @@ final class VaultBackupItemDecoderTests {
             killphrase: "killmenow",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .encrypted(data: encryptedItem)
+            item: .encrypted(data: encryptedItem),
         )
         let sut = makeSUT()
 
@@ -160,8 +160,8 @@ final class VaultBackupItemDecoderTests {
                 algorithm: "SHA1",
                 digits: 5,
                 accountName: "my acc",
-                issuer: "my iss"
-            ))
+                issuer: "my iss",
+            )),
         )
         let sut = makeSUT()
 
@@ -218,8 +218,8 @@ final class VaultBackupItemDecoderTests {
                 algorithm: "SHA1",
                 digits: 7,
                 accountName: "my acc a",
-                issuer: "my iss a"
-            ))
+                issuer: "my iss a",
+            )),
         )
         let sut = makeSUT()
 
@@ -350,7 +350,7 @@ extension VaultBackupItemDecoderTests {
             killphrase: "killme",
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
-            item: .note(data: .init(title: "title", rawContents: contents, format: .markdown))
+            item: .note(data: .init(title: "title", rawContents: contents, format: .markdown)),
         )
     }
 
@@ -359,7 +359,7 @@ extension VaultBackupItemDecoderTests {
         period: UInt64? = 30,
         counter: UInt64? = 0,
         secretFormat: String = "BASE_32",
-        algorithm: String = "SHA1"
+        algorithm: String = "SHA1",
     ) -> VaultBackupItem {
         let createdDate = Date()
         let updateDate = Date()
@@ -386,8 +386,8 @@ extension VaultBackupItemDecoderTests {
                 algorithm: algorithm,
                 digits: 7,
                 accountName: "my acc a",
-                issuer: "my iss a"
-            ))
+                issuer: "my iss a",
+            )),
         )
     }
 }

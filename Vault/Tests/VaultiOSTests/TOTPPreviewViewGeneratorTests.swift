@@ -34,13 +34,13 @@ final class TOTPPreviewViewGeneratorTests: XCTestCase {
                 issuer: "",
                 color: .black,
                 isLocked: false,
-                fixedCodeState: .visible("12345")
+                fixedCodeState: .visible("12345"),
             )
         }
         repository.timerPeriodStateHandler = { _ in
             OTPCodeTimerPeriodState(
                 statePublisher: Just(OTPCodeTimerState(currentTime: 100, period: 10))
-                    .setFailureType(to: Never.self).eraseToAnyPublisher()
+                    .setFailureType(to: Never.self).eraseToAnyPublisher(),
             )
         }
         repository.timerUpdaterHandler = { _ in
@@ -114,7 +114,7 @@ extension TOTPPreviewViewGeneratorTests {
     @MainActor
     private func makeSUT(
         factory: TOTPPreviewViewFactoryMock = makeTOTPPreviewViewFactoryMock(),
-        repository: TOTPPreviewViewRepositoryMock = TOTPPreviewViewRepositoryMock()
+        repository: TOTPPreviewViewRepositoryMock = TOTPPreviewViewRepositoryMock(),
     ) -> SUT {
         SUT(viewFactory: factory, repository: repository)
     }

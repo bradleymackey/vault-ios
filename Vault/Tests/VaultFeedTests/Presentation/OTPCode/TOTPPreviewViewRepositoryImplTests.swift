@@ -208,7 +208,7 @@ extension TOTPPreviewViewRepositoryImplTests {
     private func makeSUT(
         clock: EpochClockMock = EpochClockMock(currentTime: 100),
         timer: IntervalTimerMock = IntervalTimerMock(),
-        updater: OTPCodeTimerUpdaterMock = OTPCodeTimerUpdaterMock()
+        updater: OTPCodeTimerUpdaterMock = OTPCodeTimerUpdaterMock(),
     ) -> TOTPPreviewViewRepositoryImpl {
         let factory = OTPCodeTimerUpdaterFactoryMock()
         factory.makeUpdaterHandler = { _ in updater }
@@ -219,7 +219,7 @@ extension TOTPPreviewViewRepositoryImplTests {
     private func makeSUT(
         clock: EpochClockMock = EpochClockMock(currentTime: 100),
         timer: IntervalTimerMock = IntervalTimerMock(),
-        factory: OTPCodeTimerUpdaterFactoryMock
+        factory: OTPCodeTimerUpdaterFactoryMock,
     ) -> TOTPPreviewViewRepositoryImpl {
         TOTPPreviewViewRepositoryImpl(clock: clock, timer: timer, updaterFactory: factory)
     }

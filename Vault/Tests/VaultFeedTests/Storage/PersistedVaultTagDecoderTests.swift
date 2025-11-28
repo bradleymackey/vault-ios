@@ -85,7 +85,7 @@ extension PersistedVaultTagDecoderTests {
         id: UUID = UUID(),
         title: String = "Any",
         color: PersistedColor? = nil,
-        iconName: String? = nil
+        iconName: String? = nil,
     ) -> PersistedVaultTag {
         let tag = PersistedVaultTag(id: id, title: title, color: color, iconName: iconName, items: [])
         context.insert(tag)

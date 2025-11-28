@@ -124,7 +124,7 @@ extension VaultItemFeedViewSnapshotTests {
         dataModel: VaultDataModel,
         state: VaultItemFeedState = VaultItemFeedState(),
         // swiftlint:disable:next force_try
-        localSettings: LocalSettings = LocalSettings(defaults: try! .nonPersistent())
+        localSettings: LocalSettings = LocalSettings(defaults: try! .nonPersistent()),
     ) -> some View {
         struct CodePlaceholderView: View {
             var behaviour: VaultItemViewBehaviour
@@ -154,7 +154,7 @@ extension VaultItemFeedViewSnapshotTests {
         return VaultItemFeedView(
             localSettings: localSettings,
             viewGenerator: generator,
-            state: state
+            state: state,
         )
         .environment(dataModel)
         .environment(VaultInjector(
@@ -164,7 +164,7 @@ extension VaultItemFeedViewSnapshotTests {
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
             encryptedVaultDecoder: EncryptedVaultDecoderMock(),
             defaults: Defaults(userDefaults: .standard),
-            fileManager: FileManager()
+            fileManager: FileManager(),
         ))
     }
 }

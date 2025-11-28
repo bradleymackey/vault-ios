@@ -7,7 +7,7 @@ final class VaultBackupTagDecoder {
             id: .init(id: tag.id),
             name: tag.title,
             color: decodeColor(color: tag.color),
-            iconName: tag.iconName ?? VaultItemTag.defaultIconName
+            iconName: tag.iconName ?? VaultItemTag.defaultIconName,
         )
     }
 }

@@ -24,7 +24,7 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
 
     public func decryptAndDecode(
         key: KeyData<Bits256>,
-        encryptedVault: EncryptedVault
+        encryptedVault: EncryptedVault,
     ) throws -> VaultApplicationPayload {
         try rethrowing {
             let backupDecoder = VaultBackupDecryptor(key: key)
@@ -38,7 +38,7 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
                 },
                 tags: payload.tags.map {
                     try tagDecoder.decode(tag: $0)
-                }
+                },
             )
         }
     }

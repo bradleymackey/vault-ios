@@ -5,7 +5,7 @@ import VaultFeed
 
 @MainActor
 struct OTPCodeCreateView<
-    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+    PreviewGenerator: VaultItemPreviewViewGenerator<VaultItem.Payload>,
 >: View {
     var previewGenerator: PreviewGenerator
     var copyActionHandler: any VaultItemCopyActionHandler
@@ -17,7 +17,7 @@ struct OTPCodeCreateView<
         previewGenerator: PreviewGenerator,
         copyActionHandler: any VaultItemCopyActionHandler,
         navigationPath: Binding<NavigationPath>,
-        intervalTimer: any IntervalTimer
+        intervalTimer: any IntervalTimer,
     ) {
         self.previewGenerator = previewGenerator
         self.copyActionHandler = copyActionHandler
@@ -79,11 +79,11 @@ struct OTPCodeCreateView<
                     dataModel: dataModel,
                     editor: VaultDataModelEditorAdapter(
                         dataModel: dataModel,
-                        keyDeriverFactory: injector.vaultKeyDeriverFactory
+                        keyDeriverFactory: injector.vaultKeyDeriverFactory,
                     ),
                     previewGenerator: previewGenerator,
                     copyActionHandler: copyActionHandler,
-                    presentationMode: presentationMode
+                    presentationMode: presentationMode,
                 )
             case let .cameraResult(scannedCode):
                 OTPCodeDetailView(
@@ -92,11 +92,11 @@ struct OTPCodeCreateView<
                     dataModel: dataModel,
                     editor: VaultDataModelEditorAdapter(
                         dataModel: dataModel,
-                        keyDeriverFactory: injector.vaultKeyDeriverFactory
+                        keyDeriverFactory: injector.vaultKeyDeriverFactory,
                     ),
                     previewGenerator: previewGenerator,
                     copyActionHandler: copyActionHandler,
-                    presentationMode: presentationMode
+                    presentationMode: presentationMode,
                 )
             }
         })
@@ -118,7 +118,7 @@ struct OTPCodeCreateView<
         } header: {
             CodeScanningView(
                 scanner: scanner,
-                isImagePickerVisible: $isCodeImagePickerGalleryVisible
+                isImagePickerVisible: $isCodeImagePickerGalleryVisible,
             )
             .padding()
             .modifier(HorizontallyCenter())

@@ -27,7 +27,7 @@ final class VaultBackupPDFAttacherImpl: VaultBackupPDFAttacher {
         let annotation = PDFAnnotation(
             bounds: CGRect(x: -100, y: -100, width: 100, height: 100),
             forType: .circle,
-            withProperties: nil
+            withProperties: nil,
         )
         let encoded = try makeEncodedVault(vault: vault)
         annotation.contents = "\(VaultIdentifiers.Backup.encryptedVaultData):" + encoded

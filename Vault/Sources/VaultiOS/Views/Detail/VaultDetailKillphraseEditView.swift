@@ -13,7 +13,7 @@ struct VaultDetailKillphraseEditView: View {
         title: String,
         description: String,
         hiddenWithKillphraseTitle: String,
-        killphrase: Binding<String>
+        killphrase: Binding<String>,
     ) {
         self.title = title
         self.description = description
@@ -39,7 +39,7 @@ struct VaultDetailKillphraseEditView: View {
             PlaceholderView(
                 systemIcon: killphraseIsEnabled ? "bolt.badge.checkmark.fill" : "bolt",
                 title: title,
-                subtitle: description
+                subtitle: description,
             )
             .padding()
             .containerRelativeFrame(.horizontal)
@@ -76,6 +76,6 @@ struct VaultDetailKillphraseEditView: View {
         title: "Test",
         description: "This is a test",
         hiddenWithKillphraseTitle: "This will be killed",
-        killphrase: .constant("x")
+        killphrase: .constant("x"),
     )
 }

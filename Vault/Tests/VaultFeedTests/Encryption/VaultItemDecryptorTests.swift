@@ -15,7 +15,7 @@ struct VaultItemDecryptorTests {
         let decryptor = VaultItemDecryptor(key: key)
         let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
             item: encryptedItem,
-            expectedItemIdentifier: "test"
+            expectedItemIdentifier: "test",
         )
 
         #expect(decryptedItem == item)
@@ -34,7 +34,7 @@ struct VaultItemDecryptorTests {
         do {
             let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
                 item: encryptedItem,
-                expectedItemIdentifier: "test"
+                expectedItemIdentifier: "test",
             )
             _ = decryptedItem
         } catch VaultItemDecryptor.Error.decryptionFailed {
@@ -58,13 +58,13 @@ struct VaultItemDecryptorTests {
             authentication: encrypted.authenticationTag,
             encryptionIV: iv,
             keygenSalt: Data(),
-            keygenSignature: ""
+            keygenSignature: "",
         )
 
         do {
             let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
                 item: encryptedItem,
-                expectedItemIdentifier: "test"
+                expectedItemIdentifier: "test",
             )
             _ = decryptedItem
         } catch VaultItemDecryptor.Error.decodingFailed {
@@ -86,7 +86,7 @@ struct VaultItemDecryptorTests {
         do {
             let decryptedItem: VaultItemEncryptableMock = try decryptor.decrypt(
                 item: encryptedItem,
-                expectedItemIdentifier: "invalid"
+                expectedItemIdentifier: "invalid",
             )
             _ = decryptedItem
         } catch let VaultItemDecryptor.Error.mismatchedItemIdentifier(expected, actual) {
@@ -144,7 +144,7 @@ struct VaultItemDecryptorTests {
             authentication: encrypted.authenticationTag,
             encryptionIV: iv,
             keygenSalt: Data(),
-            keygenSignature: ""
+            keygenSignature: "",
         )
 
         do {

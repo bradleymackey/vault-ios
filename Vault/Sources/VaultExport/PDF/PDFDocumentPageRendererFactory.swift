@@ -13,7 +13,7 @@ public struct PDFDocumentPageRendererFactory: PDFRendererFactory {
         size: any PDFDocumentSize,
         applicationName: String? = nil,
         authorName: String? = nil,
-        documentTitle: String? = nil
+        documentTitle: String? = nil,
     ) {
         self.size = size
         self.applicationName = applicationName

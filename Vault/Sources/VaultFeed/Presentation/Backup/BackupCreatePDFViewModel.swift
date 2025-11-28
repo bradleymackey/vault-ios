@@ -106,7 +106,7 @@ public final class BackupCreatePDFViewModel {
         clock: any EpochClock,
         backupEventLogger: any BackupEventLogger,
         defaults: Defaults,
-        fileManager: FileManager
+        fileManager: FileManager,
     ) {
         self.backupPassword = backupPassword
         self.dataModel = dataModel
@@ -144,7 +144,7 @@ public final class BackupCreatePDFViewModel {
             state = .error(.init(
                 userTitle: "PDF Error",
                 userDescription: "Failed to create PDF. Please try again.",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             ))
         }
     }
@@ -164,7 +164,7 @@ extension BackupCreatePDFViewModel {
             size: size.documentSize,
             documentTitle: "Backup",
             applicationName: "Vault",
-            authorName: authorName
+            authorName: authorName,
         )
         let exportPayload = try await makeExportPayload(payload: payload)
         return try pdfCreator.makePDF(payload: exportPayload)
@@ -177,7 +177,7 @@ extension BackupCreatePDFViewModel {
         return await VaultExportPayload(
             encryptedVault: encryptedVault,
             userDescription: userHint,
-            created: clock.currentDate
+            created: clock.currentDate,
         )
     }
 }

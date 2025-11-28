@@ -25,7 +25,7 @@ struct VaultCardModifier: ViewModifier {
             .clipShape(clipShape())
             .overlay(
                 clipShape()
-                    .stroke(borderColor, lineWidth: 2)
+                    .stroke(borderColor, lineWidth: 2),
             )
             .contentShape([.dragPreview], clipShape())
     }

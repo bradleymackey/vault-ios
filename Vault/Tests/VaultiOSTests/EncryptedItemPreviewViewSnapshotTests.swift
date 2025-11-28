@@ -49,7 +49,7 @@ struct EncryptedItemPreviewViewSnapshotTests {
 extension EncryptedItemPreviewViewSnapshotTests {
     private func makeSUT(
         title: String = "",
-        color: VaultItemColor = .default
+        color: VaultItemColor = .default,
     ) -> some View {
         let viewModel = EncryptedItemPreviewViewModel(title: title, color: color)
         return EncryptedItemPreviewView(viewModel: viewModel, behaviour: .normal)

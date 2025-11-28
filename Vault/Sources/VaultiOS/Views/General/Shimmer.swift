@@ -45,7 +45,7 @@ public struct Shimmer: ViewModifier {
     public init(
         animation: Animation = Self.defaultAnimation,
         gradient: Gradient = Self.defaultGradient,
-        bandSize: CGFloat = 0.3
+        bandSize: CGFloat = 0.3,
     ) {
         self.animation = animation
         self.gradient = gradient
@@ -125,7 +125,7 @@ extension View {
         active: Bool = true,
         animation: Animation = Shimmer.defaultAnimation,
         gradient: Gradient = Shimmer.defaultGradient,
-        bandSize: CGFloat = 0.3
+        bandSize: CGFloat = 0.3,
     ) -> some View {
         if active {
             modifier(Shimmer(animation: animation, gradient: gradient, bandSize: bandSize))

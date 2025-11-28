@@ -123,16 +123,16 @@ extension BackupKeyChangeViewModelTests {
             vaultDeleter: VaultStoreDeleterMock(),
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
-            backupEventLogger: BackupEventLoggerMock()
+            backupEventLogger: BackupEventLoggerMock(),
         ),
         authenticationService: DeviceAuthenticationService =
             DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
-        deriverFactory: any VaultKeyDeriverFactory = .testing
+        deriverFactory: any VaultKeyDeriverFactory = .testing,
     ) -> BackupKeyChangeViewModel {
         BackupKeyChangeViewModel(
             dataModel: dataModel,
             authenticationService: authenticationService,
-            deriverFactory: deriverFactory
+            deriverFactory: deriverFactory,
         )
     }
 

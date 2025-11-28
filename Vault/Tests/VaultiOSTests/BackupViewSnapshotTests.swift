@@ -69,7 +69,7 @@ struct BackupViewSnapshotTests {
         backupPasswordStore.fetchPasswordHandler = { .init(
             key: .random(),
             salt: .random(count: 32),
-            keyDervier: .testing
+            keyDervier: .testing,
         ) }
         let dataModel = anyVaultDataModel(vaultStore: vaultStore, backupPasswordStore: backupPasswordStore)
         await dataModel.loadBackupPassword()
@@ -89,7 +89,7 @@ struct BackupViewSnapshotTests {
         backupPasswordStore.fetchPasswordHandler = { .init(
             key: .random(),
             salt: .random(count: 32),
-            keyDervier: .testing
+            keyDervier: .testing,
         ) }
         let dataModel = anyVaultDataModel(vaultStore: vaultStore, backupPasswordStore: backupPasswordStore)
         await dataModel.loadBackupPassword()
@@ -104,7 +104,7 @@ struct BackupViewSnapshotTests {
 
 extension BackupViewSnapshotTests {
     private func makeSUT(
-        dataModel: VaultDataModel
+        dataModel: VaultDataModel,
     ) -> some View {
         let injector = anyVaultInjector()
         return BackupView()

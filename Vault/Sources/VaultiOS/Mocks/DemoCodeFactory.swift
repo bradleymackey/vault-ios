@@ -16,16 +16,16 @@ enum DemoVaultFactory {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: nil
+                color: nil,
             ),
             item: .otpCode(.init(
                 type: .totp(),
                 data: .init(
                     secret: .empty(),
                     accountName: "example@example.com",
-                    issuer: issuer
-                )
-            ))
+                    issuer: issuer,
+                ),
+            )),
         )
     }
 
@@ -43,16 +43,16 @@ enum DemoVaultFactory {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: VaultItemColor(color: .green)
+                color: VaultItemColor(color: .green),
             ),
             item: .otpCode(.init(
                 type: .hotp(),
                 data: .init(
                     secret: .empty(),
                     accountName: "HOTP test",
-                    issuer: issuer
-                )
-            ))
+                    issuer: issuer,
+                ),
+            )),
         )
     }
 
@@ -70,9 +70,9 @@ enum DemoVaultFactory {
                 searchPassphrase: "",
                 killphrase: "",
                 lockState: .notLocked,
-                color: VaultItemColor(color: .red)
+                color: VaultItemColor(color: .red),
             ),
-            item: .secureNote(.init(title: title, contents: contents, format: .markdown))
+            item: .secureNote(.init(title: title, contents: contents, format: .markdown)),
         )
     }
 }

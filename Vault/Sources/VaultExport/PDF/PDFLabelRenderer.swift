@@ -12,7 +12,7 @@ final class PDFLabelRenderer {
                 NSAttributedString.Key.paragraphStyle: paragraphStyle,
                 NSAttributedString.Key.font: UIFont.systemFont(ofSize: labelFontSize, weight: .regular),
                 NSAttributedString.Key.foregroundColor: UIColor.darkGray,
-            ]
+            ],
         )
     }
 
@@ -26,7 +26,7 @@ final class PDFLabelRenderer {
                 NSAttributedString.Key.paragraphStyle: paragraphStyle,
                 NSAttributedString.Key.font: label.font,
                 NSAttributedString.Key.foregroundColor: label.textColor,
-            ]
+            ],
         )
     }
 }

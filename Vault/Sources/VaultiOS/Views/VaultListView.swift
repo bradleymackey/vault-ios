@@ -5,7 +5,7 @@ import VaultSettings
 
 @MainActor
 struct VaultListView<
-    Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>
+    Generator: VaultItemPreviewViewGenerator<VaultItem.Payload>,
 >: View {
     var localSettings: LocalSettings
     var viewGenerator: Generator
@@ -17,7 +17,7 @@ struct VaultListView<
         localSettings: LocalSettings,
         viewGenerator: Generator,
         copyActionHandler: any VaultItemCopyActionHandler,
-        previewActionHandler: any VaultItemPreviewActionHandler
+        previewActionHandler: any VaultItemPreviewActionHandler,
     ) {
         self.localSettings = localSettings
         self.viewGenerator = viewGenerator
@@ -44,7 +44,7 @@ struct VaultListView<
             localSettings: localSettings,
             viewGenerator: interactableViewGenerator(),
             state: vaultItemFeedState,
-            gridSpacing: 12
+            gridSpacing: 12,
         )
         .toolbar {
             if vaultItemFeedState.isEditing {
@@ -114,7 +114,7 @@ struct VaultListView<
                         openInEditMode: vaultItemFeedState.isEditing,
                         openDetailSubject: openDetailSubject,
                         encryptionKey: encryptionKey,
-                        navigationPath: $navigationPath
+                        navigationPath: $navigationPath,
                     )
                 }
             case let .creatingItem(creatingItem):
@@ -123,7 +123,7 @@ struct VaultListView<
                         creatingItem: creatingItem,
                         previewGenerator: viewGenerator,
                         copyActionHandler: copyActionHandler,
-                        navigationPath: $navigationPath
+                        navigationPath: $navigationPath,
                     )
                 }
             }

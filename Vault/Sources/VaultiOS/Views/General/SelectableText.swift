@@ -44,7 +44,7 @@ struct SelectableText: UIViewRepresentable {
     func sizeThatFits(_ proposal: ProposedViewSize, uiView: SelectableTextView, context _: Context) -> CGSize? {
         let size = CGSize(
             width: proposal.width ?? .greatestFiniteMagnitude,
-            height: proposal.height ?? .greatestFiniteMagnitude
+            height: proposal.height ?? .greatestFiniteMagnitude,
         )
         return uiView.sizeThatFits(size)
     }

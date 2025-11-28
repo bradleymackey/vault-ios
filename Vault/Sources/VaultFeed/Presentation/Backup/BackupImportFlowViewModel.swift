@@ -54,7 +54,7 @@ public final class BackupImportFlowViewModel {
         dataModel: VaultDataModel,
         existingBackupPassword: DerivedEncryptionKey?,
         encryptedVaultDecoder: any EncryptedVaultDecoder,
-        backupPDFDetatcher: any VaultBackupPDFDetatcher = VaultBackupPDFDetatcherImpl()
+        backupPDFDetatcher: any VaultBackupPDFDetatcher = VaultBackupPDFDetatcherImpl(),
     ) {
         self.importContext = importContext
         self.dataModel = dataModel
@@ -70,7 +70,7 @@ public final class BackupImportFlowViewModel {
                 PresentationError(
                     userTitle: "File Error",
                     userDescription: "There was an error with the file you selected. Please try again.",
-                    debugDescription: error.localizedDescription
+                    debugDescription: error.localizedDescription,
                 )
             }
             let pdfData = try data.get()
@@ -94,7 +94,7 @@ public final class BackupImportFlowViewModel {
             let encryptedVault = try getEncryptedVault()
             let flowState = BackupImportFlowState(
                 encryptedVault: encryptedVault,
-                encryptedVaultDecoder: encryptedVaultDecoder
+                encryptedVaultDecoder: encryptedVaultDecoder,
             )
             let action = flowState.passwordProvided(password: existingBackupPassword)
             switch action {
@@ -111,7 +111,7 @@ public final class BackupImportFlowViewModel {
             payloadState = .error(PresentationError(
                 userTitle: "Document Error",
                 userDescription: "There was an error with the this Vault export document. Please check the document, your internet, and try again.",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             ))
         }
     }
@@ -146,7 +146,7 @@ public final class BackupImportFlowViewModel {
             importState = .error(PresentationError(
                 userTitle: "Import Error",
                 userDescription: "There was an error importing the data to your vault. Please try again.",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             ))
         }
     }

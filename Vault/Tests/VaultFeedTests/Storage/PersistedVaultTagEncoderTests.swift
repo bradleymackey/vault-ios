@@ -76,7 +76,7 @@ extension PersistedVaultTagEncoderTests {
     private func encode(
         sut: PersistedVaultTagEncoder,
         tag: VaultItemTag.Write,
-        existing: PersistedVaultTag? = nil
+        existing: PersistedVaultTag? = nil,
     ) -> PersistedVaultTag {
         let tag = sut.encode(tag: tag, existing: existing)
         context.insert(tag)
@@ -86,12 +86,12 @@ extension PersistedVaultTagEncoderTests {
     private func makeWritableVaultItemTag(
         name: String = "Any",
         color: VaultItemColor = .tagDefault,
-        iconName: String = VaultItemTag.defaultIconName
+        iconName: String = VaultItemTag.defaultIconName,
     ) -> VaultItemTag.Write {
         .init(
             name: name,
             color: color,
-            iconName: iconName
+            iconName: iconName,
         )
     }
 
@@ -99,7 +99,7 @@ extension PersistedVaultTagEncoderTests {
         id: UUID = UUID(),
         title: String = "Any",
         color: PersistedColor? = nil,
-        iconName: String? = nil
+        iconName: String? = nil,
     ) -> PersistedVaultTag {
         let tag = PersistedVaultTag(id: id, title: title, color: color, iconName: iconName, items: [])
         context.insert(tag)

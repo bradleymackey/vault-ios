@@ -62,13 +62,13 @@ struct DocumentPagePDFRendererFactoryTests {
         size: any PDFDocumentSize = USLetterDocumentSize(),
         applicationName: String? = "Any",
         authorName: String? = "Any",
-        documentTitle: String? = "Any"
+        documentTitle: String? = "Any",
     ) -> PDFDocumentPageRendererFactory {
         PDFDocumentPageRendererFactory(
             size: size,
             applicationName: applicationName,
             authorName: authorName,
-            documentTitle: documentTitle
+            documentTitle: documentTitle,
         )
     }
 }

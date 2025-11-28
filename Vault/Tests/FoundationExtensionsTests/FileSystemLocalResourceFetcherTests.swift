@@ -29,7 +29,7 @@ struct FileSystemLocalResourceFetcherTests {
             try await sut.fetchLocalResource(
                 fromBundle: bundle,
                 fileName: "doesnotexist",
-                fileExtension: "any"
+                fileExtension: "any",
             )
         }
     }
@@ -39,7 +39,7 @@ struct FileSystemLocalResourceFetcherTests {
         let response = try await sut.fetchLocalResource(
             fromBundle: .module,
             fileName: "TestFile",
-            fileExtension: "txt"
+            fileExtension: "txt",
         )
         #expect(response == Data("Test contents\n".utf8))
     }

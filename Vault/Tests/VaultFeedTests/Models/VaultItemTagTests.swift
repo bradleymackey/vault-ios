@@ -8,17 +8,17 @@ final class VaultItemTagTests: XCTestCase {
         let id = makeUniqueIdentifier()
         XCTAssertEqual(
             VaultItemTag(id: id, name: "same"),
-            VaultItemTag(id: id, name: "same")
+            VaultItemTag(id: id, name: "same"),
         )
 
         XCTAssertNotEqual(
             VaultItemTag(id: id, name: "one"),
-            VaultItemTag(id: id, name: "two")
+            VaultItemTag(id: id, name: "two"),
         )
 
         XCTAssertNotEqual(
             VaultItemTag(id: makeUniqueIdentifier(), name: "one"),
-            VaultItemTag(id: makeUniqueIdentifier(), name: "two")
+            VaultItemTag(id: makeUniqueIdentifier(), name: "two"),
         )
     }
 
@@ -26,19 +26,19 @@ final class VaultItemTagTests: XCTestCase {
         let id = makeUniqueIdentifier()
         XCTAssertEqual(
             VaultItemTag(id: id, name: "same").hashValue,
-            VaultItemTag(id: id, name: "same").hashValue
+            VaultItemTag(id: id, name: "same").hashValue,
         )
 
         let one = VaultItemTag(id: id, name: "one")
         let two = VaultItemTag(id: id, name: "two")
         XCTAssertNotEqual(
             one.hashValue,
-            two.hashValue
+            two.hashValue,
         )
 
         XCTAssertNotEqual(
             VaultItemTag(id: makeUniqueIdentifier(), name: "one").hashValue,
-            VaultItemTag(id: makeUniqueIdentifier(), name: "two").hashValue
+            VaultItemTag(id: makeUniqueIdentifier(), name: "two").hashValue,
         )
     }
 }

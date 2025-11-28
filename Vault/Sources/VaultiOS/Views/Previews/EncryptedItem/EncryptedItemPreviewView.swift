@@ -36,8 +36,8 @@ struct EncryptedItemPreviewView: View {
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color)
-            )
+                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color),
+            ),
         )
     }
 

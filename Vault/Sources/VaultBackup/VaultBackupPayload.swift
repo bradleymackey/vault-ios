@@ -75,7 +75,7 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         killphrase: String?,
         lockState: LockState,
         tintColor: VaultBackupRGBColor? = nil,
-        item: Item
+        item: Item,
     ) {
         self.id = id
         self.createdDate = createdDate
@@ -150,7 +150,7 @@ extension VaultBackupItem {
             authentication: Data,
             encryptionIV: Data,
             keygenSalt: Data,
-            keygenSignature: String
+            keygenSignature: String,
         ) {
             self.version = version
             self.title = title
@@ -183,7 +183,7 @@ extension VaultBackupItem {
             algorithm: String,
             digits: UInt16,
             accountName: String,
-            issuer: String = ""
+            issuer: String = "",
         ) {
             self.secretFormat = secretFormat
             self.secretData = secretData

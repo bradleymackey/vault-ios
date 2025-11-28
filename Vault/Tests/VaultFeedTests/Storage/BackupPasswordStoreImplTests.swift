@@ -57,14 +57,14 @@ struct BackupPasswordStoreImplTests {
         let newPassword = DerivedEncryptionKey(
             key: .random(),
             salt: Data.random(count: 45),
-            keyDervier: .backupFastV1
+            keyDervier: .backupFastV1,
         )
 
         try await sut.set(password: newPassword)
 
         #expect(
             storage.storeArgValues.map(\.1) ==
-                ["vault.secure-storage.backup-password.v1"]
+                ["vault.secure-storage.backup-password.v1"],
         )
     }
 }
@@ -73,7 +73,7 @@ struct BackupPasswordStoreImplTests {
 
 extension BackupPasswordStoreImplTests {
     private func makeSUT(
-        secureStorage: SecureStorageMock = SecureStorageMock()
+        secureStorage: SecureStorageMock = SecureStorageMock(),
     ) -> BackupPasswordStoreImpl {
         BackupPasswordStoreImpl(secureStorage: secureStorage)
     }

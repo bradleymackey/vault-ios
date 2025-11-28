@@ -34,7 +34,7 @@ struct VaultSettingsView: View {
                 NavigationStack {
                     SettingsDangerView(viewModel: .init(
                         dataModel: dataModel,
-                        authenticationService: authenticationService
+                        authenticationService: authenticationService,
                     ))
                     .toolbar {
                         ToolbarItem(placement: .confirmationAction) {
@@ -54,7 +54,7 @@ struct VaultSettingsView: View {
         PlaceholderView(
             systemIcon: "gear",
             title: "Settings",
-            subtitle: "Control your Vault settings, customizations, and more."
+            subtitle: "Control your Vault settings, customizations, and more.",
         )
         .padding()
         .containerRelativeFrame(.horizontal)
@@ -67,7 +67,7 @@ struct VaultSettingsView: View {
             } label: {
                 FormRow(
                     image: Image(systemName: "info.bubble.fill"),
-                    color: .blue
+                    color: .blue,
                 ) {
                     Text(viewModel.aboutTitle)
                 }
@@ -98,7 +98,7 @@ struct VaultSettingsView: View {
                 FormRow(
                     image: Image(systemName: "exclamationmark.triangle.fill"),
                     color: .red,
-                    style: .prominent
+                    style: .prominent,
                 ) {
                     Text("Danger Zone")
                 }

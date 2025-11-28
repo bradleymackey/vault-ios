@@ -127,7 +127,7 @@ public final class VaultDataModel {
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter,
         backupPasswordStore: any BackupPasswordStore,
         backupEventLogger: any BackupEventLogger,
-        itemCaches: [any VaultItemCache] = []
+        itemCaches: [any VaultItemCache] = [],
     ) {
         self.vaultStore = vaultStore
         self.vaultTagStore = vaultTagStore
@@ -210,7 +210,7 @@ extension VaultDataModel {
             backupPassword = .error(PresentationError(
                 userTitle: "Encryption Key Error",
                 userDescription: "Unable to load encryption key from storage",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             ))
         }
     }
@@ -235,7 +235,7 @@ extension VaultDataModel {
         do {
             let query = VaultStoreQuery(
                 filterText: itemsSanitizedQuery,
-                filterTags: itemsFilteringByTags
+                filterTags: itemsFilteringByTags,
             )
             await vaultKillphraseDeleter.deleteItems(matchingKillphrase: itemsSearchQuery)
             let result = try await vaultStore.retrieve(query: query)
@@ -247,7 +247,7 @@ extension VaultDataModel {
             itemsRetrievalError = PresentationError(
                 userTitle: "Error Loading",
                 userDescription: "Unable to load items",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             )
         }
     }
@@ -261,7 +261,7 @@ extension VaultDataModel {
             allTagsRetrievalError = PresentationError(
                 userTitle: "Error Loading",
                 userDescription: "Unable to load tags",
-                debugDescription: error.localizedDescription
+                debugDescription: error.localizedDescription,
             )
         }
     }

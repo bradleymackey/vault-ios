@@ -16,7 +16,7 @@ public protocol IntervalTimer: Sendable {
         priority: TaskPriority,
         wait time: Double,
         tolerance: Double?,
-        work: @Sendable @escaping () async throws -> T
+        work: @Sendable @escaping () async throws -> T,
     ) -> Task<T, any Error>
 }
 
@@ -25,7 +25,7 @@ extension IntervalTimer {
     public func schedule<T: Sendable>(
         priority: TaskPriority = .medium,
         wait time: Double,
-        work: @Sendable @escaping () async throws -> T
+        work: @Sendable @escaping () async throws -> T,
     ) -> Task<T, any Error> {
         schedule(priority: priority, wait: time, tolerance: nil, work: work)
     }
@@ -72,7 +72,7 @@ public final class IntervalTimerMock: IntervalTimer {
             try Task.checkCancellation()
             precondition(
                 self.waits.value.indices.contains(index),
-                "Cannot finishTimer, there is no wait handler at index \(index)!"
+                "Cannot finishTimer, there is no wait handler at index \(index)!",
             )
             let waiter = self.waits.get { $0[index] }
             while await !waiter.isWaiting {
@@ -109,7 +109,7 @@ public final class IntervalTimerMock: IntervalTimer {
 
     public func schedule<T: Sendable>(
         wait time: Double,
-        work: @Sendable @escaping () async throws -> T
+        work: @Sendable @escaping () async throws -> T,
     ) -> Task<T, any Error> {
         schedule(priority: .medium, wait: time, tolerance: nil, work: work)
     }
@@ -118,7 +118,7 @@ public final class IntervalTimerMock: IntervalTimer {
         priority: TaskPriority,
         wait _: Double,
         tolerance _: Double?,
-        work: @Sendable @escaping () async throws -> T
+        work: @Sendable @escaping () async throws -> T,
     ) -> Task<T, any Error> {
         let newPending = Pending.signal()
         waits.modify { $0.append(newPending) }
@@ -160,7 +160,7 @@ public final class IntervalTimerImpl: IntervalTimer {
         priority: TaskPriority,
         wait time: Double,
         tolerance: Double?,
-        work: @Sendable @escaping () async throws -> T
+        work: @Sendable @escaping () async throws -> T,
     ) -> Task<T, any Error> {
         // Performing the waiting is high priority, so we are sure this is scheduled ASAP.
         Task.detached(priority: .high) {
@@ -179,7 +179,7 @@ public final class IntervalTimerImpl: IntervalTimer {
 
     public func schedule<T: Sendable>(
         wait time: Double,
-        work: @Sendable @escaping () async throws -> T
+        work: @Sendable @escaping () async throws -> T,
     ) -> Task<T, any Error> {
         schedule(priority: .medium, wait: time, tolerance: nil, work: work)
     }

@@ -11,7 +11,7 @@ extension Snapshotting where Value == PDFDocument, Format == UIImage {
             diffing: .image,
             snapshot: { pdfDocument in
                 pdfDocument.asImage(page: page) ?? UIImage()
-            }
+            },
         )
     }
 }

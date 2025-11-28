@@ -33,7 +33,7 @@ struct FormatLintPlugin: CommandPlugin {
             swiftformat: context.tool(named: "swiftformat"),
             workDirectory: context.pluginWorkDirectoryURL,
             swiftSourcesDirectory: swiftSources,
-            action: action
+            action: action,
         )
     }
 }
@@ -62,7 +62,7 @@ extension FormatLintContext {
         try runProcess(
             url: swiftformat.url,
             arguments: makeSwiftFormatArgs(),
-            exitCodeHandler: swiftFormatExitCodeHandler(code:)
+            exitCodeHandler: swiftFormatExitCodeHandler(code:),
         )
     }
 }

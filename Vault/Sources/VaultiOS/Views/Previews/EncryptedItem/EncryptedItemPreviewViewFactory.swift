@@ -12,7 +12,7 @@ public protocol EncryptedItemPreviewViewFactory {
 public struct EncryptedItemPreviewViewFactoryImpl: EncryptedItemPreviewViewFactory {
     public func makeEncryptedItemView(
         viewModel: EncryptedItemPreviewViewModel,
-        behaviour: VaultItemViewBehaviour
+        behaviour: VaultItemViewBehaviour,
     ) -> some View {
         EncryptedItemPreviewView(viewModel: viewModel, behaviour: behaviour)
     }

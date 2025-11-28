@@ -2,7 +2,7 @@ import Foundation
 import VaultFeed
 
 func anyVaultItemMetadata(
-    lockState: VaultItemLockState = .notLocked
+    lockState: VaultItemLockState = .notLocked,
 ) -> VaultItem.Metadata {
     .init(
         id: Identifier<VaultItem>(),
@@ -16,13 +16,13 @@ func anyVaultItemMetadata(
         searchPassphrase: "",
         killphrase: "",
         lockState: lockState,
-        color: .black
+        color: .black,
     )
 }
 
 func anyVaultItem() -> VaultItem {
     VaultItem(
         metadata: anyVaultItemMetadata(),
-        item: .secureNote(.init(title: "hello", contents: "hello", format: .markdown))
+        item: .secureNote(.init(title: "hello", contents: "hello", format: .markdown)),
     )
 }

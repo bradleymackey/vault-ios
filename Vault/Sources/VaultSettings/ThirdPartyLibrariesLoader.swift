@@ -16,7 +16,7 @@ struct ThirdPartyLibraryLoader {
         let thirdPartyData = try await resourceFetcher.fetchLocalResource(
             fromBundle: .module,
             fileName: "third-party-libraries",
-            fileExtension: "json"
+            fileExtension: "json",
         )
         let decoder = JSONDecoder()
         let decoded = try decoder.decode(FileStructure.self, from: thirdPartyData)

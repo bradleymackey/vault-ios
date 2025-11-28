@@ -11,7 +11,7 @@ format:
 
 .PHONY: lint
 lint:
-	swift package plugin swiftlint --strict --quiet ./Sources
+	swift package plugin --allow-writing-to-package-directory swiftlint --strict --quiet ./Sources
 	swift package --allow-writing-to-package-directory format --lint --sources=./
 
 .PHONY: clean

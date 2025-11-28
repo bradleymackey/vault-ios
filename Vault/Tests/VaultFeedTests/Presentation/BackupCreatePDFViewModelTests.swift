@@ -79,7 +79,7 @@ extension BackupCreatePDFViewModelTests {
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupPassword: DerivedEncryptionKey = anyBackupPassword(),
         clock: some EpochClock = EpochClockMock(currentTime: 100),
-        backupEventLogger: any BackupEventLogger = BackupEventLoggerMock()
+        backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
     ) throws -> BackupCreatePDFViewModel {
         let defaults = try testUserDefaults()
         return BackupCreatePDFViewModel(
@@ -91,12 +91,12 @@ extension BackupCreatePDFViewModelTests {
                 vaultDeleter: VaultStoreDeleterMock(),
                 vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
                 backupPasswordStore: backupPasswordStore,
-                backupEventLogger: BackupEventLoggerMock()
+                backupEventLogger: BackupEventLoggerMock(),
             ),
             clock: clock,
             backupEventLogger: backupEventLogger,
             defaults: Defaults(userDefaults: defaults),
-            fileManager: FileManager()
+            fileManager: FileManager(),
         )
     }
 }

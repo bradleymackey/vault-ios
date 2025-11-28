@@ -218,7 +218,7 @@ extension PendingValueTests {
     /// Without this, you might acidentally call `fulfill`/`reject` before await, and thus the value will be cached.
     private func awaitValueInBackground(
         on sut: SUT,
-        action: @Sendable () async -> Void
+        action: @Sendable () async -> Void,
     ) async throws -> Result<Int, any Error> {
         let startedWaiting = Pending.signal()
         let finishedWaiting = Pending.signal()

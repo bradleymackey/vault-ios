@@ -12,7 +12,7 @@ struct VaultDetailKillphraseEditViewSnapshotTests {
             title: "This is my title",
             description: "This is my description",
             hiddenWithKillphraseTitle: "This is hidden with passphrase",
-            killphrase: .constant("")
+            killphrase: .constant(""),
         )
         .framedForTest()
 
@@ -25,7 +25,7 @@ struct VaultDetailKillphraseEditViewSnapshotTests {
             title: "This is my title",
             description: "This is my description",
             hiddenWithKillphraseTitle: "This is hidden with passphrase",
-            killphrase: .constant("this is kill")
+            killphrase: .constant("this is kill"),
         )
         .framedForTest()
 
