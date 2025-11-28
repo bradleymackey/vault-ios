@@ -36,6 +36,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
@@ -81,6 +82,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
@@ -95,6 +97,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.success) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
@@ -108,6 +111,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .endScanning(.dataRetrieved("any")) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer)
         sut.startScanning()
 
@@ -131,6 +135,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .endScanning(.unrecoverableError) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
@@ -144,6 +149,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.success) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
@@ -159,6 +165,7 @@ final class CodeScanningManagerTests: XCTestCase {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.ignore) }
+        handler.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         let sut = makeSUT(intervalTimer: timer, handler: handler)
         sut.startScanning()
 
@@ -187,6 +194,7 @@ extension CodeScanningHandlerMock {
     fileprivate static var defaultCompletedScanning: CodeScanningHandlerMock {
         let mock = CodeScanningHandlerMock()
         mock.decodeHandler = { _ in .endScanning(.dataRetrieved("any")) }
+        mock.makeSimulatedHandlerHandler = { SimulatedCodeScanningHandlerMock() }
         return mock
     }
 }

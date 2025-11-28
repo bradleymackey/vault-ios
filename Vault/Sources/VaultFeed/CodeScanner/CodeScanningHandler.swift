@@ -6,6 +6,8 @@ import Foundation
 /// This should maintain it's own state so can build results from multiple pieces of data, so it can eventually
 /// return a `DecodedModel` and, in the meantime, it can return partial results to the caller, indicating more data
 /// is needed.
+///
+/// @mockable(typealias: Simulated = SimulatedCodeScanningHandlerMock; DecodedModel = String)
 public protocol CodeScanningHandler<DecodedModel> {
     associatedtype Simulated: SimulatedCodeScanningHandler where Simulated.DecodedModel == DecodedModel
     associatedtype DecodedModel
@@ -28,37 +30,4 @@ public protocol CodeScanningHandler<DecodedModel> {
 public protocol SimulatedCodeScanningHandler<DecodedModel> {
     associatedtype DecodedModel
     func decodeSimulated() -> CodeScanningResult<DecodedModel>
-}
-
-// MARK: - Mocks
-
-public final class CodeScanningHandlerMock: CodeScanningHandler {
-    public init() {}
-
-    public typealias Simulated = SimulatedCodeScanningHandlerMock
-    public typealias DecodedModel = String
-
-    public var hasPartialState: Bool = false
-
-    public private(set) var decodeCallCount = 0
-    public var decodeArgValues = [String]()
-    public var decodeHandler: ((String) -> (CodeScanningResult<DecodedModel>))?
-    public func decode(data: String) -> CodeScanningResult<DecodedModel> {
-        decodeCallCount += 1
-        decodeArgValues.append(data)
-        if let decodeHandler {
-            return decodeHandler(data)
-        }
-        fatalError("decodeHandler returns can't have a default value thus its handler must be set")
-    }
-
-    public private(set) var makeSimulatedHandlerCallCount = 0
-    public var makeSimulatedHandlerHandler: (() -> (Simulated))?
-    public func makeSimulatedHandler() -> Simulated {
-        makeSimulatedHandlerCallCount += 1
-        if let makeSimulatedHandlerHandler {
-            return makeSimulatedHandlerHandler()
-        }
-        return SimulatedCodeScanningHandlerMock()
-    }
 }
