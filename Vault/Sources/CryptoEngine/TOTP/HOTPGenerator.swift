@@ -23,7 +23,7 @@ public struct HOTPGenerator {
         self.secret = secret
         self.digits = digits
         self.algorithm = algorithm
-        hmac = HMAC(key: secret.bytes, variant: algorithm.hmacVariant)
+        hmac = HMAC(key: secret.byteArray, variant: algorithm.hmacVariant)
     }
 
     /// Generate the HOTP code using the current counter value.

@@ -20,9 +20,9 @@ public struct AESGCMEncryptor: Encryptor {
 
     /// - Parameter plaintext: the message to be encrypted with AES-GCM.
     public func encrypt(plaintext: Data, iv: Data) throws -> AESGCMEncryptedMessage {
-        let gcm = GCM(iv: iv.bytes, mode: .detached)
-        let aes = try AES(key: key.bytes, blockMode: gcm, padding: .noPadding)
-        let ciphertextBytes = try aes.encrypt(plaintext.bytes)
+        let gcm = GCM(iv: iv.byteArray, mode: .detached)
+        let aes = try AES(key: key.byteArray, blockMode: gcm, padding: .noPadding)
+        let ciphertextBytes = try aes.encrypt(plaintext.byteArray)
         guard let authenticationTag = gcm.authenticationTag else {
             throw EncryptionError.noGCMTagGenerated
         }

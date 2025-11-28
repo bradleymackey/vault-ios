@@ -11,8 +11,8 @@ public struct PBKDF2KeyDeriver<Length: KeyLength>: KeyDeriver {
 
     public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         let engine = try PKCS5.PBKDF2(
-            password: password.bytes,
-            salt: salt.bytes,
+            password: password.byteArray,
+            salt: salt.byteArray,
             iterations: parameters.iterations,
             keyLength: Length.bytes,
             variant: parameters.variant.hmacVariant,

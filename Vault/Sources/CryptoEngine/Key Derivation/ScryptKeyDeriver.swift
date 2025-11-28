@@ -14,8 +14,8 @@ public struct ScryptKeyDeriver<Length: KeyLength>: KeyDeriver {
 
     public func key(password: Data, salt: Data) throws -> KeyData<Length> {
         let engine = try Scrypt(
-            password: password.bytes,
-            salt: salt.bytes,
+            password: password.byteArray,
+            salt: salt.byteArray,
             dkLen: Length.bytes,
             N: parameters.costFactor,
             r: parameters.blockSizeFactor,
