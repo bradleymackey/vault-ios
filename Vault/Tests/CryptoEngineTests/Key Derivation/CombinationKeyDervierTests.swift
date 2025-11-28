@@ -18,16 +18,14 @@ struct CombinationKeyDeriverTests {
     func key_returnsResultOfSingleKeyDeriver() throws {
         let expectedData = KeyData<Bits256>.random()
         let deriver = KeyDeriverMock<Bits256>()
-        deriver.keyHandler.modify {
-            $0 = { _, _ in
-                expectedData
-            }
+        deriver.keyHandler = { _, _ in
+            expectedData
         }
         let sut = CombinationKeyDeriver(derivers: [deriver])
 
         let result = try sut.key(password: anyData(), salt: anyData())
         #expect(result == expectedData)
-        #expect(deriver.keyCallCount.value == 1)
+        #expect(deriver.keyCallCount == 1)
     }
 
     @Test
@@ -39,9 +37,9 @@ struct CombinationKeyDeriverTests {
 
         let result = try sut.key(password: anyData(), salt: anyData())
         #expect(result == .repeating(byte: 0x02))
-        #expect(deriver1.keyCallCount.value == 1)
-        #expect(deriver2.keyCallCount.value == 1)
-        #expect(deriver3.keyCallCount.value == 1)
+        #expect(deriver1.keyCallCount == 1)
+        #expect(deriver2.keyCallCount == 1)
+        #expect(deriver3.keyCallCount == 1)
     }
 
     @Test
@@ -53,9 +51,9 @@ struct CombinationKeyDeriverTests {
 
         let initialPassword = Data(hex: "deadbeef")
         _ = try sut.key(password: initialPassword, salt: anyData())
-        #expect(deriver1.keyArgValues.value.first?.0 == initialPassword)
-        #expect(deriver2.keyArgValues.value.first?.0 == Data(repeating: 0x00, count: 32))
-        #expect(deriver3.keyArgValues.value.first?.0 == Data(repeating: 0x01, count: 32))
+        #expect(deriver1.keyArgValues.first?.0 == initialPassword)
+        #expect(deriver2.keyArgValues.first?.0 == Data(repeating: 0x00, count: 32))
+        #expect(deriver3.keyArgValues.first?.0 == Data(repeating: 0x01, count: 32))
     }
 
     @Test
@@ -67,9 +65,9 @@ struct CombinationKeyDeriverTests {
 
         let salt = Data(hex: "123456789aaaa")
         _ = try sut.key(password: anyData(), salt: salt)
-        #expect(deriver1.keyArgValues.value.first?.1 == salt)
-        #expect(deriver2.keyArgValues.value.first?.1 == salt)
-        #expect(deriver3.keyArgValues.value.first?.1 == salt)
+        #expect(deriver1.keyArgValues.first?.1 == salt)
+        #expect(deriver2.keyArgValues.first?.1 == salt)
+        #expect(deriver3.keyArgValues.first?.1 == salt)
     }
 
     @Test
@@ -120,10 +118,8 @@ struct CombinationKeyDeriverTests {
 extension CombinationKeyDeriverTests {
     private func mockKeyDeriver(returning: KeyData<Bits256>) -> KeyDeriverMock<Bits256> {
         let deriver1 = KeyDeriverMock<Bits256>()
-        deriver1.keyHandler.modify {
-            $0 = { _, _ in
-                returning
-            }
+        deriver1.keyHandler = { _, _ in
+            returning
         }
         return deriver1
     }

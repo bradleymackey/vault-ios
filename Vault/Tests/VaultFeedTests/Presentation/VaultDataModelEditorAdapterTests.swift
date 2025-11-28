@@ -1,3 +1,4 @@
+import CryptoEngine
 import Foundation
 import FoundationExtensions
 import TestHelpers
@@ -246,11 +247,9 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             return .new()
         }
 
-        deriverMock.keyHandler.modify {
-            $0 = { password, _ in
-                XCTAssertEqual(String(data: password, encoding: .utf8), "new password")
-                return .random()
-            }
+        deriverMock.keyHandler = { password, _ in
+            XCTAssertEqual(String(data: password, encoding: .utf8), "new password")
+            return .random()
         }
 
         try await sut.createNote(initialEdits: initialEdits)
