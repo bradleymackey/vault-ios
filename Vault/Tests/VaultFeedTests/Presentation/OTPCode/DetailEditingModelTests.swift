@@ -1,47 +1,51 @@
 import Foundation
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class DetailEditingModelTests: XCTestCase {
-    func test_isDirty_initiallyFalse() {
+struct DetailEditingModelTests {
+    @Test
+    func isDirtyInitiallyFalse() {
         let sut = makeSUT(detail: .init(value: "hello"))
 
-        XCTAssertFalse(sut.isDirty)
+        #expect(!sut.isDirty)
     }
 
-    func test_isDirty_resetsOncePersisted() async throws {
+    @Test
+    func isDirtyResetsOncePersisted() async throws {
         var sut = makeSUT(detail: .init(value: "hello"))
 
         sut.detail.value = "next"
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.didPersist()
-        XCTAssertFalse(sut.isDirty)
+        #expect(!sut.isDirty)
     }
 
-    func test_isDirty_isInitiallyDirtyAlwaysMakesDirty() throws {
+    @Test
+    func isDirtyIsInitiallyDirtyAlwaysMakesDirty() throws {
         var sut = makeSUT(detail: .init(value: "hello"), isInitiallyDirty: true)
 
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.detail.value = "next"
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.restoreInitialState()
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.detail.value = "next"
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
     }
 
-    func test_isDirty_isInitiallyDirtyPersistEnablesNormalDirtyState() throws {
+    @Test
+    func isDirtyIsInitiallyDirtyPersistEnablesNormalDirtyState() throws {
         var sut = makeSUT(detail: .init(value: "hello"), isInitiallyDirty: true)
 
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.detail.value = "next"
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.didPersist()
-        XCTAssertFalse(sut.isDirty)
+        #expect(!sut.isDirty)
         sut.detail.value = "hello"
-        XCTAssertTrue(sut.isDirty)
+        #expect(sut.isDirty)
         sut.detail.value = "next"
-        XCTAssertFalse(sut.isDirty)
+        #expect(!sut.isDirty)
     }
 }
 
