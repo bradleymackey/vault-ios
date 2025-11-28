@@ -2,6 +2,8 @@ import Foundation
 import FoundationExtensions
 import SwiftData
 
+// swiftformat:disable preferCountWhere
+
 /// Uses SwiftData with a CoreData backing layer to persist content.
 ///
 /// Conforms to SwiftData's `ModelActor` to ensure all database operations are thread-safe.
@@ -77,9 +79,9 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             let searchingTagsArray = Array(searchingTagIds)
             let expectedCount = searchingTagsArray.count
             return #Predicate<PersistedVaultItem> { item in
-                item.tags.count(where: { tag in
+                item.tags.filter { tag in
                     searchingTagsArray.contains(tag.id)
-                }) == expectedCount
+                }.count == expectedCount
             }
         }
     }
