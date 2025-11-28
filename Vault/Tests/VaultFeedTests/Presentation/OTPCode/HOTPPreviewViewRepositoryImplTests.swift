@@ -1,85 +1,86 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() {
+@MainActor
+struct HOTPPreviewViewRepositoryImplTests {
+    @Test
+    func initHasNoSideEffects() {
         let store = VaultStoreHOTPIncrementerMock()
         let sut = makeSUT(store: store)
 
-        XCTAssertEqual(store.incrementCounterCallCount, 0)
-        XCTAssertEqual(sut.cachedViewsCount, 0)
-        XCTAssertEqual(sut.cachedRendererCount, 0)
-        XCTAssertEqual(sut.cachedIncrementerCount, 0)
+        #expect(store.incrementCounterCallCount == 0)
+        #expect(sut.cachedViewsCount == 0)
+        #expect(sut.cachedRendererCount == 0)
+        #expect(sut.cachedIncrementerCount == 0)
     }
 
-    @MainActor
-    func test_previewViewModel_initiallyExpired() {
+    @Test
+    func previewViewModelInitiallyExpired() {
         let sut = makeSUT()
 
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
-        XCTAssertEqual(viewModel.code, .obfuscated(.expiry))
+        #expect(viewModel.code == .obfuscated(.expiry))
     }
 
-    @MainActor
-    func test_previewViewModel_returnsSameViewModelInstanceUsedCachedViewModels() {
+    @Test
+    func previewViewModelReturnsSameViewModelInstanceUsedCachedViewModels() {
         let sut = makeSUT()
 
         let sharedID = Identifier<VaultItem>.new()
         let viewModel1 = sut.previewViewModel(metadata: anyVaultItemMetadata(id: sharedID), code: anyHOTPCode())
-        XCTAssertEqual(sut.cachedViewsCount, 1)
+        #expect(sut.cachedViewsCount == 1)
         let viewModel2 = sut.previewViewModel(metadata: anyVaultItemMetadata(id: sharedID), code: anyHOTPCode())
-        XCTAssertEqual(sut.cachedViewsCount, 1)
+        #expect(sut.cachedViewsCount == 1)
         let viewModel3 = sut.previewViewModel(metadata: anyVaultItemMetadata(id: .new()), code: anyHOTPCode())
-        XCTAssertEqual(sut.cachedViewsCount, 2)
+        #expect(sut.cachedViewsCount == 2)
 
-        XCTAssertIdentical(viewModel1, viewModel2)
-        XCTAssertNotIdentical(viewModel1, viewModel3, "View Model 3 has a different ID")
-        XCTAssertNotIdentical(viewModel2, viewModel3, "View Model 3 has a different ID")
+        #expect(viewModel1 === viewModel2)
+        #expect(viewModel1 !== viewModel3, "View Model 3 has a different ID")
+        #expect(viewModel2 !== viewModel3, "View Model 3 has a different ID")
     }
 
-    @MainActor
-    func test_previewViewModel_returnsSameIncrementerInstanceUsedCachedViewModels() {
+    @Test
+    func previewViewModelReturnsSameIncrementerInstanceUsedCachedViewModels() {
         let sut = makeSUT()
 
         let sharedID = Identifier<VaultItem>.new()
         let incrementer1 = sut.incrementerViewModel(id: sharedID, code: anyHOTPCode())
-        XCTAssertEqual(sut.cachedIncrementerCount, 1)
+        #expect(sut.cachedIncrementerCount == 1)
         let incrementer2 = sut.incrementerViewModel(id: sharedID, code: anyHOTPCode())
-        XCTAssertEqual(sut.cachedIncrementerCount, 1)
+        #expect(sut.cachedIncrementerCount == 1)
         let incrementer3 = sut.incrementerViewModel(id: .new(), code: anyHOTPCode())
-        XCTAssertEqual(sut.cachedIncrementerCount, 2)
+        #expect(sut.cachedIncrementerCount == 2)
 
-        XCTAssertIdentical(incrementer1, incrementer2)
-        XCTAssertNotIdentical(incrementer1, incrementer3, "View Model 3 has a different ID")
-        XCTAssertNotIdentical(incrementer2, incrementer3, "View Model 3 has a different ID")
+        #expect(incrementer1 === incrementer2)
+        #expect(incrementer1 !== incrementer3, "View Model 3 has a different ID")
+        #expect(incrementer2 !== incrementer3, "View Model 3 has a different ID")
     }
 
-    @MainActor
-    func test_textToCopyForVaultItem_isNilIfCacheEmpty() {
+    @Test
+    func textToCopyForVaultItemIsNilIfCacheEmpty() {
         let sut = makeSUT()
 
         let copyAction = sut.textToCopyForVaultItem(id: .new())
 
-        XCTAssertNil(copyAction)
+        #expect(copyAction == nil)
     }
 
-    @MainActor
-    func test_textToCopyForVaultItem_isNilWhenCodeIsObfuscated() {
+    @Test
+    func textToCopyForVaultItemIsNilWhenCodeIsObfuscated() {
         let sut = makeSUT()
 
         let id = Identifier<VaultItem>()
         _ = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
         let code = sut.textToCopyForVaultItem(id: id)
 
-        XCTAssertNil(code, "Code is initially obfuscated, so this should be nil")
+        #expect(code == nil, "Code is initially obfuscated, so this should be nil")
     }
 
-    @MainActor
-    func test_textToCopyForVaultItem_isCopyTextIfCodeHasBeenGenerated() {
+    @Test
+    func textToCopyForVaultItemIsCopyTextIfCodeHasBeenGenerated() {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
@@ -87,11 +88,11 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
 
         let code = sut.textToCopyForVaultItem(id: id)
 
-        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: false))
+        #expect(code == .init(text: "123456", requiresAuthenticationToCopy: false))
     }
 
-    @MainActor
-    func test_textToCopyForVaultItem_requiresAuthenticationToCopyIfLocked() {
+    @Test
+    func textToCopyForVaultItemRequiresAuthenticationToCopyIfLocked() {
         let sut = makeSUT()
         let id = Identifier<VaultItem>()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(id: id), code: anyHOTPCode())
@@ -99,11 +100,11 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
 
         let code = sut.textToCopyForVaultItem(id: id)
 
-        XCTAssertEqual(code, .init(text: "123456", requiresAuthenticationToCopy: true))
+        #expect(code == .init(text: "123456", requiresAuthenticationToCopy: true))
     }
 
-    @MainActor
-    func test_expireAll_marksAllCachedViewsAsExpired() {
+    @Test
+    func expireAllMarksAllCachedViewsAsExpired() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
@@ -111,11 +112,11 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
 
         sut.expireAll()
 
-        XCTAssertEqual(viewModel.code, .obfuscated(.expiry))
+        #expect(viewModel.code == .obfuscated(.expiry))
     }
 
-    @MainActor
-    func test_obfuscateForPrivacy_obfuscatesVisibleCodesForPrivacy() {
+    @Test
+    func obfuscateForPrivacyObfuscatesVisibleCodesForPrivacy() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
@@ -123,11 +124,11 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
 
         sut.obfuscateForPrivacy()
 
-        XCTAssertEqual(viewModel.code, .obfuscated(.privacy))
+        #expect(viewModel.code == .obfuscated(.privacy))
     }
 
-    @MainActor
-    func test_unobfuscateForPrivacy_unobfuscatesCodesHiddenForPrivacy() {
+    @Test
+    func unobfuscateForPrivacyUnobfuscatesCodesHiddenForPrivacy() {
         let sut = makeSUT()
         let viewModel = sut.previewViewModel(metadata: anyVaultItemMetadata(), code: anyHOTPCode())
 
@@ -136,11 +137,11 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
 
         sut.unobfuscateForPrivacy()
 
-        XCTAssertEqual(viewModel.code, .visible("123456"))
+        #expect(viewModel.code == .visible("123456"))
     }
 
-    @MainActor
-    func test_vaultItemCacheClear_removesItemsMatchingIDFromCache() async {
+    @Test
+    func vaultItemCacheClearRemovesItemsMatchingIDFromCache() async {
         let sut = makeSUT()
 
         let id1 = Identifier<VaultItem>()
@@ -151,19 +152,19 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         _ = sut.incrementerViewModel(id: id1, code: anyHOTPCode())
         _ = sut.incrementerViewModel(id: id2, code: anyHOTPCode())
 
-        XCTAssertEqual(sut.cachedViewsCount, 2)
-        XCTAssertEqual(sut.cachedRendererCount, 2)
-        XCTAssertEqual(sut.cachedIncrementerCount, 2)
+        #expect(sut.cachedViewsCount == 2)
+        #expect(sut.cachedRendererCount == 2)
+        #expect(sut.cachedIncrementerCount == 2)
 
         await sut.vaultItemCacheClear(forVaultItemWithID: id1)
 
-        XCTAssertEqual(sut.cachedViewsCount, 1)
-        XCTAssertEqual(sut.cachedRendererCount, 1)
-        XCTAssertEqual(sut.cachedIncrementerCount, 1)
+        #expect(sut.cachedViewsCount == 1)
+        #expect(sut.cachedRendererCount == 1)
+        #expect(sut.cachedIncrementerCount == 1)
     }
 
-    @MainActor
-    func test_vaultItemCacheClearAll_removesItemsMatchingIDFromCache() async {
+    @Test
+    func vaultItemCacheClearAllRemovesItemsMatchingIDFromCache() async {
         let sut = makeSUT()
 
         let id1 = Identifier<VaultItem>()
@@ -173,22 +174,21 @@ final class HOTPPreviewViewRepositoryImplTests: XCTestCase {
         _ = sut.incrementerViewModel(id: id1, code: anyHOTPCode())
         _ = sut.incrementerViewModel(id: id2, code: anyHOTPCode())
 
-        XCTAssertEqual(sut.cachedViewsCount, 2)
-        XCTAssertEqual(sut.cachedRendererCount, 2)
-        XCTAssertEqual(sut.cachedIncrementerCount, 2)
+        #expect(sut.cachedViewsCount == 2)
+        #expect(sut.cachedRendererCount == 2)
+        #expect(sut.cachedIncrementerCount == 2)
 
         await sut.vaultItemCacheClearAll()
 
-        XCTAssertEqual(sut.cachedViewsCount, 0)
-        XCTAssertEqual(sut.cachedRendererCount, 0)
-        XCTAssertEqual(sut.cachedIncrementerCount, 0)
+        #expect(sut.cachedViewsCount == 0)
+        #expect(sut.cachedRendererCount == 0)
+        #expect(sut.cachedIncrementerCount == 0)
     }
 }
 
 // MARK: - Helpers
 
 extension HOTPPreviewViewRepositoryImplTests {
-    @MainActor
     private func makeSUT(
         timer: IntervalTimerMock = IntervalTimerMock(),
         store: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
