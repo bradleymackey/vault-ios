@@ -1,55 +1,56 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class DeviceAuthenticationServiceTests: XCTestCase {
-    @MainActor
-    func test_canAuthenticate_withNeither() {
+@MainActor
+struct DeviceAuthenticationServiceTests {
+    @Test
+    func canAuthenticateWithNeither() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: false,
         )
         let sut = makeSUT(policy: policy)
 
-        XCTAssertFalse(sut.canAuthenticate)
+        #expect(!sut.canAuthenticate)
     }
 
-    @MainActor
-    func test_canAuthenticate_withBiometrics() {
+    @Test
+    func canAuthenticateWithBiometrics() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
         )
         let sut = makeSUT(policy: policy)
 
-        XCTAssertTrue(sut.canAuthenticate)
+        #expect(sut.canAuthenticate)
     }
 
-    @MainActor
-    func test_canAuthenticate_withPasscode() {
+    @Test
+    func canAuthenticateWithPasscode() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
         )
         let sut = makeSUT(policy: policy)
 
-        XCTAssertTrue(sut.canAuthenticate)
+        #expect(sut.canAuthenticate)
     }
 
-    @MainActor
-    func test_canAuthenticate_withBoth() {
+    @Test
+    func canAuthenticateWithBoth() {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
         )
         let sut = makeSUT(policy: policy)
 
-        XCTAssertTrue(sut.canAuthenticate)
+        #expect(sut.canAuthenticate)
     }
 
-    @MainActor
-    func test_authenticate_noneEnabledFails() async throws {
+    @Test
+    func authenticateNoneEnabledFails() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: false,
@@ -57,13 +58,13 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .failure(.noAuthenticationSetup))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+        #expect(result == .failure(.noAuthenticationSetup))
+        #expect(policy.authenticateWithBiometricsCallCount == 0)
+        #expect(policy.authenticateWithPasscodeCallCount == 0)
     }
 
-    @MainActor
-    func test_authenticate_biometricsEnabledSuccess() async throws {
+    @Test
+    func authenticateBiometricsEnabledSuccess() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
@@ -72,13 +73,13 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .success(.authenticated))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+        #expect(result == .success(.authenticated))
+        #expect(policy.authenticateWithBiometricsCallCount == 1)
+        #expect(policy.authenticateWithPasscodeCallCount == 0)
     }
 
-    @MainActor
-    func test_authenticate_biometricsEnabledFailure() async throws {
+    @Test
+    func authenticateBiometricsEnabledFailure() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
@@ -87,13 +88,13 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .failure(.authenticationFailure))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+        #expect(result == .failure(.authenticationFailure))
+        #expect(policy.authenticateWithBiometricsCallCount == 1)
+        #expect(policy.authenticateWithPasscodeCallCount == 0)
     }
 
-    @MainActor
-    func test_authenticate_biometricsInternalError() async throws {
+    @Test
+    func authenticateBiometricsInternalError() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: false,
             canAuthenticateWithBiometrics: true,
@@ -101,13 +102,15 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+        await #expect(throws: (any Error).self) {
+            try await sut.authenticate(reason: "reason")
+        }
+        #expect(policy.authenticateWithBiometricsCallCount == 1)
+        #expect(policy.authenticateWithPasscodeCallCount == 0)
     }
 
-    @MainActor
-    func test_authenticate_passcodeEnabledSuccess() async throws {
+    @Test
+    func authenticatePasscodeEnabledSuccess() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
@@ -116,13 +119,13 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .success(.authenticated))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 1)
+        #expect(result == .success(.authenticated))
+        #expect(policy.authenticateWithBiometricsCallCount == 0)
+        #expect(policy.authenticateWithPasscodeCallCount == 1)
     }
 
-    @MainActor
-    func test_authenticate_passcodeEnabledFailure() async throws {
+    @Test
+    func authenticatePasscodeEnabledFailure() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
@@ -131,13 +134,13 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         let result = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(result, .failure(.authenticationFailure))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 1)
+        #expect(result == .failure(.authenticationFailure))
+        #expect(policy.authenticateWithBiometricsCallCount == 0)
+        #expect(policy.authenticateWithPasscodeCallCount == 1)
     }
 
-    @MainActor
-    func test_authenticate_passcodeInternalError() async throws {
+    @Test
+    func authenticatePasscodeInternalError() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: false,
@@ -145,13 +148,15 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithPasscodeHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.authenticate(reason: "reason"))
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 0)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 1)
+        await #expect(throws: (any Error).self) {
+            try await sut.authenticate(reason: "reason")
+        }
+        #expect(policy.authenticateWithBiometricsCallCount == 0)
+        #expect(policy.authenticateWithPasscodeCallCount == 1)
     }
 
-    @MainActor
-    func test_authenticate_bothEnabledAuthenticatesWithBiometrics() async throws {
+    @Test
+    func authenticateBothEnabledAuthenticatesWithBiometrics() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
@@ -160,12 +165,12 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         let sut = makeSUT(policy: policy)
 
         _ = try await sut.authenticate(reason: "reason")
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+        #expect(policy.authenticateWithBiometricsCallCount == 1)
+        #expect(policy.authenticateWithPasscodeCallCount == 0)
     }
 
-    @MainActor
-    func test_validateAuthentication_doesNotThrowIfValid() async throws {
+    @Test
+    func validateAuthenticationDoesNotThrowIfValid() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
@@ -173,13 +178,15 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithBiometricsHandler = { _ in true }
         let sut = makeSUT(policy: policy)
 
-        try await sut.validateAuthentication(reason: "reason")
-        XCTAssertEqual(policy.authenticateWithBiometricsCallCount, 1)
-        XCTAssertEqual(policy.authenticateWithPasscodeCallCount, 0)
+        await #expect(throws: Never.self) {
+            try await sut.validateAuthentication(reason: "reason")
+        }
+        #expect(policy.authenticateWithBiometricsCallCount == 1)
+        #expect(policy.authenticateWithPasscodeCallCount == 0)
     }
 
-    @MainActor
-    func test_validateAuthentication_throwsForNotAuthenticated() async throws {
+    @Test
+    func validateAuthenticationThrowsForNotAuthenticated() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
@@ -187,11 +194,13 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithBiometricsHandler = { _ in false }
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.validateAuthentication(reason: "reason"))
+        await #expect(throws: (any Error).self) {
+            try await sut.validateAuthentication(reason: "reason")
+        }
     }
 
-    @MainActor
-    func test_validateAuthentication_throwsForInternalError() async throws {
+    @Test
+    func validateAuthenticationThrowsForInternalError() async throws {
         let policy = DeviceAuthenticationPolicyMock(
             canAuthenicateWithPasscode: true,
             canAuthenticateWithBiometrics: true,
@@ -199,14 +208,15 @@ final class DeviceAuthenticationServiceTests: XCTestCase {
         policy.authenticateWithBiometricsHandler = { _ in throw TestError() }
         let sut = makeSUT(policy: policy)
 
-        await XCTAssertThrowsError(try await sut.validateAuthentication(reason: "reason"))
+        await #expect(throws: (any Error).self) {
+            try await sut.validateAuthentication(reason: "reason")
+        }
     }
 }
 
 // MARK: - Helpers
 
 extension DeviceAuthenticationServiceTests {
-    @MainActor
     private func makeSUT(
         policy: DeviceAuthenticationPolicyMock = DeviceAuthenticationPolicyMock(),
     ) -> DeviceAuthenticationService {
