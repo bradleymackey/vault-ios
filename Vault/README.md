@@ -107,7 +107,7 @@ Designed to cause an internal error during key generation.
 <table>
   <tr>
 	<td>Simulator for snapshot tests</td>
-	<td><b>iPhone 17 Pro on iOS 26.0</b></td>
+	<td><b>iPhone 17 Pro on iOS 26.1</b></td>
   </tr>
 </table>
 
