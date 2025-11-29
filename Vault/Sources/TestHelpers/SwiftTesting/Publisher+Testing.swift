@@ -5,14 +5,15 @@ import Testing
 
 extension Publisher {
     /// Creates a testing `confirmation` that a publisher will produce the given number of elements.
+    @MainActor
     public func expect(
         valueCount: Int,
-        sourceLocation _: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
         when actions: () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
-        try await confirmation(expectedCount: valueCount) { confirmation in
+        try await confirmation(expectedCount: valueCount, sourceLocation: sourceLocation) { confirmation in
             cancellable = sink { _ in
                 // noop
             } receiveValue: { _ in
@@ -44,7 +45,7 @@ extension Publisher where Output: Equatable, Output: Sendable {
     public func expect(
         firstValues: [Output],
         timeout: Duration = .seconds(1),
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
         when actions: sending @isolated(any) @escaping () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
@@ -71,5 +72,29 @@ extension Publisher where Output: Equatable, Output: Sendable {
         // Wait for all the values to be recieved.
         try await signal.wait(timeout: timeout)
         #expect(collectedValues.value == firstValues, sourceLocation: sourceLocation)
+    }
+}
+
+extension Publisher {
+    /// Collects the first *n* elements that are output.
+    public func collectFirst(_ count: Int) -> AnyPublisher<[Output], Failure> {
+        collect(count)
+            .first()
+            .eraseToAnyPublisher()
+    }
+}
+
+extension Published.Publisher {
+    /// Collect the next *n* elements that are output, ignoring the first result
+    public func collectNext(_ count: Int) -> AnyPublisher<[Output], Never> {
+        dropFirst()
+            .collect(count)
+            .first()
+            .eraseToAnyPublisher()
+    }
+
+    /// For @Published, this is a publisher that ignores the first element.
+    public func nextElements() -> AnyPublisher<Output, Never> {
+        dropFirst().eraseToAnyPublisher()
     }
 }

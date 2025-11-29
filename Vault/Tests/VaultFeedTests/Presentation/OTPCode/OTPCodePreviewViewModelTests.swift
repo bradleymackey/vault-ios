@@ -1,103 +1,103 @@
 import Combine
 import Foundation
 import TestHelpers
+import Testing
 import VaultFeed
-import XCTest
 
-final class OTPCodePreviewViewModelTests: XCTestCase {
-    @MainActor
-    func test_code_updatesWithCodes() async throws {
+@Suite
+@MainActor
+struct OTPCodePreviewViewModelTests {
+    @Test
+    func code_updatesWithCodes() async throws {
         let (codePublisher, sut) = makeSUT()
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("hello")
         }
-        XCTAssertEqual(sut.code, .visible("hello"))
+        #expect(sut.code == .visible("hello"))
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("world")
         }
-        XCTAssertEqual(sut.code, .visible("world"))
+        #expect(sut.code == .visible("world"))
     }
 
-    @MainActor
-    func test_code_lockedUpdatesWithObfuscatedCodes() async throws {
+    @Test
+    func code_lockedUpdatesWithObfuscatedCodes() async throws {
         let (codePublisher, sut) = makeSUT(isLocked: true)
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("hello")
         }
-        XCTAssertEqual(sut.code, .locked(code: "hello"))
+        #expect(sut.code == .locked(code: "hello"))
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("world")
         }
-        XCTAssertEqual(sut.code, .locked(code: "world"))
+        #expect(sut.code == .locked(code: "world"))
     }
 
-    @MainActor
-    func test_code_goesToNoMoreCodesWhenFinished() async throws {
+    @Test
+    func code_goesToNoMoreCodesWhenFinished() async throws {
         let (codePublisher, sut) = makeSUT()
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send("hi")
         }
-        XCTAssertEqual(sut.code, .visible("hi"))
+        #expect(sut.code == .visible("hi"))
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send(completion: .finished)
         }
-        XCTAssertEqual(sut.code, .finished)
+        #expect(sut.code == .finished)
     }
 
-    @MainActor
-    func test_code_goesToErrorWhenErrors() async throws {
+    @Test
+    func code_goesToErrorWhenErrors() async throws {
         let (codePublisher, sut) = makeSUT()
 
         try await sut.waitForChange(to: \.code) {
             codePublisher.subject.send(completion: .failure(TestError()))
         }
 
-        switch sut.code {
-        case .error:
-            break
-        default:
-            XCTFail("Unexpected output")
+        guard case .error = sut.code else {
+            Issue.record("Expected .error but got \(sut.code)")
+            return
         }
     }
 
-    @MainActor
-    func test_update_setsCodeToVisible() {
+    @Test
+    func update_setsCodeToVisible() {
         let (_, sut) = makeSUT()
 
         sut.update(.visible("123456"))
 
-        XCTAssertEqual(sut.code, .visible("123456"))
+        #expect(sut.code == .visible("123456"))
     }
 
-    @MainActor
-    func test_update_obfuscatesForPrivacy() {
+    @Test
+    func update_obfuscatesForPrivacy() {
         let (_, sut) = makeSUT()
 
         sut.update(.visible("123456"))
         sut.update(.obfuscated(.privacy))
 
-        XCTAssertEqual(sut.code, .obfuscated(.privacy))
+        #expect(sut.code == .obfuscated(.privacy))
     }
 
-    @MainActor
-    func test_updateRemovePrivacyObfuscation_removesPreviousPrivacyObfuscation() {
+    @Test
+    func updateRemovePrivacyObfuscation_removesPreviousPrivacyObfuscation() {
         let (_, sut) = makeSUT()
 
         sut.update(.visible("456"))
         sut.update(.obfuscated(.privacy))
         sut.updateRemovePrivacyObfuscation()
 
-        XCTAssertEqual(sut.code, .visible("456"))
+        #expect(sut.code == .visible("456"))
     }
 
-    @MainActor
-    func test_updateRemovePrivacyObfuscation_hasNoEffectForNonPrivacyObfuscation() {
+    @Test
+    func updateRemovePrivacyObfuscation_hasNoEffectForNonPrivacyObfuscation() {
         let states: [OTPCodeState] = [
             .obfuscated(.expiry),
             .error(.init(userTitle: "", debugDescription: ""), digits: 1),
@@ -112,44 +112,44 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
             sut.update(state)
             sut.updateRemovePrivacyObfuscation()
 
-            XCTAssertEqual(sut.code, state, "\(state) should be the current state")
+            #expect(sut.code == state, "\(state) should be the current state")
         }
     }
 
-    @MainActor
-    func test_visibleIssuer_isPlaceholderIfIssuerEmpty() {
+    @Test
+    func visibleIssuer_isPlaceholderIfIssuerEmpty() {
         let (_, sut) = makeSUT(issuer: "")
 
-        XCTAssertEqual(sut.visibleIssuer, "Unnamed")
+        #expect(sut.visibleIssuer == "Unnamed")
     }
 
-    @MainActor
-    func test_visibleIssuer_isIssuerIfNotEmpty() {
+    @Test
+    func visibleIssuer_isIssuerIfNotEmpty() {
         let (_, sut) = makeSUT(issuer: "my issuer")
 
-        XCTAssertEqual(sut.visibleIssuer, "my issuer")
+        #expect(sut.visibleIssuer == "my issuer")
     }
 
-    @MainActor
-    func test_pasteboardCopyText_isVisibleCode() {
+    @Test
+    func pasteboardCopyText_isVisibleCode() {
         let (_, sut) = makeSUT()
         sut.update(.visible("1234"))
 
         let expected = VaultTextCopyAction(text: "1234", requiresAuthenticationToCopy: false)
-        XCTAssertEqual(sut.pasteboardCopyText, expected)
+        #expect(sut.pasteboardCopyText == expected)
     }
 
-    @MainActor
-    func test_pasteboardCopyText_isLockedCode() {
+    @Test
+    func pasteboardCopyText_isLockedCode() {
         let (_, sut) = makeSUT()
         sut.update(.locked(code: "4567"))
 
         let expected = VaultTextCopyAction(text: "4567", requiresAuthenticationToCopy: true)
-        XCTAssertEqual(sut.pasteboardCopyText, expected)
+        #expect(sut.pasteboardCopyText == expected)
     }
 
-    @MainActor
-    func test_pasteboardCopyText_isNil() {
+    @Test
+    func pasteboardCopyText_isNil() {
         let nilCases: [OTPCodeState] = [
             .notReady,
             .finished,
@@ -161,18 +161,15 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
             let (_, sut) = makeSUT()
             sut.update(nilCase)
 
-            XCTAssertNil(sut.pasteboardCopyText)
+            #expect(sut.pasteboardCopyText == nil)
         }
     }
 
     // MARK: - Helpers
 
-    @MainActor
     private func makeSUT(
         issuer: String = "any",
         isLocked: Bool = false,
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> (OTPCodePublisherMock, OTPCodePreviewViewModel) {
         let codePublisher = OTPCodePublisherMock()
         let viewModel = OTPCodePreviewViewModel(
@@ -182,7 +179,6 @@ final class OTPCodePreviewViewModelTests: XCTestCase {
             isLocked: isLocked,
             codePublisher: codePublisher,
         )
-        trackForMemoryLeaks(viewModel, file: file, line: line)
         return (codePublisher, viewModel)
     }
 }

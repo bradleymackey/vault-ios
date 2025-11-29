@@ -27,6 +27,7 @@ func anyVaultDataModel(
     )
 }
 
+@MainActor
 func anyVaultInjector() -> VaultInjector {
     VaultInjector(
         clock: EpochClockMock(currentTime: 100),

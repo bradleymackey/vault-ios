@@ -5,6 +5,7 @@ import Testing
 import VaultCore
 @testable import VaultFeed
 
+@MainActor
 struct BackupEventLoggerImplTests {
     @Test
     func init_hasNoSideEffects() throws {
@@ -59,7 +60,7 @@ struct BackupEventLoggerImplTests {
         let sut = makeSUT(defaults: defaults)
         let date = Date(timeIntervalSince1970: 1234)
 
-        await confirmation { confirmation in
+        await confirmation { @MainActor confirmation in
             var bag = Set<AnyCancellable>()
             sut.loggedEventPublisher.sink { _ in
                 confirmation.confirm()

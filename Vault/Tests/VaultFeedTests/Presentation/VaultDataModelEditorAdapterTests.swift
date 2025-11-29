@@ -2,24 +2,26 @@ import CryptoEngine
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 
-final class VaultDataModelEditorAdapterTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() {
+@Suite
+@MainActor
+struct VaultDataModelEditorAdapterTests {
+    @Test
+    func init_hasNoSideEffects() {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         _ = makeSUT(dataModel: dataModel)
 
-        XCTAssertEqual(store.calledMethods, [])
-        XCTAssertEqual(tagStore.calledMethods, [])
+        #expect(store.calledMethods == [])
+        #expect(tagStore.calledMethods == [])
     }
 
-    @MainActor
-    func test_createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
+    @Test
+    func createCode_createsOTPCodeInFeed_createsCodeInFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -40,39 +42,39 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
             lockState: .notLocked,
         )
 
-        let exp = expectation(description: "Wait for creation")
-        store.insertHandler = { data in
-            defer { exp.fulfill() }
-            switch data.item {
-            case let .otpCode(code):
-                XCTAssertEqual(
-                    code,
-                    initialCode,
-                    "The code that is saved should be the same as the state from the edits",
-                )
-            default:
-                XCTFail("invalid kind")
+        try await confirmation("Insert handler called") { confirmation in
+            store.insertHandler = { data in
+                defer { confirmation() }
+                switch data.item {
+                case let .otpCode(code):
+                    #expect(
+                        code == initialCode,
+                        "The code that is saved should be the same as the state from the edits",
+                    )
+                default:
+                    Issue.record("invalid kind")
+                }
+                return .new()
             }
-            return .new()
+
+            try await sut.createCode(initialEdits: initialEdits)
         }
-
-        try await sut.createCode(initialEdits: initialEdits)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_createCode_propagatesFailureOnError() async throws {
+    @Test
+    func createCode_propagatesFailureOnError() async throws {
         let store = VaultStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
         let edits = anyOTPCodeDetailEdits()
-        await XCTAssertThrowsError(try await sut.createCode(initialEdits: edits))
+        await #expect(throws: (any Error).self) {
+            try await sut.createCode(initialEdits: edits)
+        }
     }
 
-    @MainActor
-    func test_updateCode_translatesCodeDataForCall() async throws {
+    @Test
+    func updateCode_translatesCodeDataForCall() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -103,43 +105,44 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
         edits.killphrase = "new kill"
 
-        let exp = expectation(description: "Wait for update")
-        store.updateHandler = { _, data in
-            XCTAssertEqual(data.userDescription, "new description")
-            XCTAssertEqual(data.searchPassphrase, "new pass")
-            XCTAssertEqual(data.killphrase, "new kill")
-            switch data.item {
-            case let .otpCode(otpCode):
-                XCTAssertEqual(otpCode.data.accountName, "new account name")
-                XCTAssertEqual(otpCode.data.issuer, "new issuer name")
-            case .secureNote, .encryptedItem:
-                XCTFail("invalid kind")
+        try await confirmation("Update handler called") { confirmation in
+            store.updateHandler = { _, data in
+                defer { confirmation() }
+                #expect(data.userDescription == "new description")
+                #expect(data.searchPassphrase == "new pass")
+                #expect(data.killphrase == "new kill")
+                switch data.item {
+                case let .otpCode(otpCode):
+                    #expect(otpCode.data.accountName == "new account name")
+                    #expect(otpCode.data.issuer == "new issuer name")
+                case .secureNote, .encryptedItem:
+                    Issue.record("invalid kind")
+                }
             }
-            exp.fulfill()
+
+            try await sut.updateCode(id: item.metadata.id, item: code, edits: edits)
         }
-
-        try await sut.updateCode(id: item.metadata.id, item: code, edits: edits)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_updateCode_propagatesFailureOnError() async {
+    @Test
+    func updateCode_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: TestError())
         let tagStore = VaultTagStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
         let edits = anyOTPCodeDetailEdits()
-        await XCTAssertThrowsError(try await sut.updateCode(
-            id: .new(),
-            item: uniqueCode(),
-            edits: edits,
-        ))
+        await #expect(throws: (any Error).self) {
+            try await sut.updateCode(
+                id: .new(),
+                item: uniqueCode(),
+                edits: edits,
+            )
+        }
     }
 
-    @MainActor
-    func test_deleteCode_deletesFromFeed() async throws {
+    @Test
+    func deleteCode_deletesFromFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -147,29 +150,30 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
 
         let id = Identifier<VaultItem>.new()
 
-        let exp = expectation(description: "Wait for delete")
-        store.deleteHandler = { actualID in
-            XCTAssertEqual(id, actualID)
-            exp.fulfill()
+        try await confirmation("Delete handler called") { confirmation in
+            store.deleteHandler = { actualID in
+                defer { confirmation() }
+                #expect(id == actualID)
+            }
+
+            try await sut.deleteCode(id: id)
         }
-
-        try await sut.deleteCode(id: id)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_deleteCode_propagatesFailureOnError() async {
+    @Test
+    func deleteCode_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: TestError())
         let tagStore = VaultTagStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
-        await XCTAssertThrowsError(try await sut.deleteCode(id: .new()))
+        await #expect(throws: (any Error).self) {
+            try await sut.deleteCode(id: .new())
+        }
     }
 
-    @MainActor
-    func test_createNote_createsNote() async throws {
+    @Test
+    func createNote_createsNote() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -182,31 +186,30 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         initialEdits.killphrase = "this is kill"
         initialEdits.lockState = .lockedWithNativeSecurity
 
-        let exp = expectation(description: "Wait for creation")
-        store.insertHandler = { data in
-            defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
-            XCTAssertEqual(data.visibility, .onlySearch)
-            XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
-            XCTAssertEqual(data.searchPassphrase, "pass")
-            XCTAssertEqual(data.killphrase, "this is kill")
-            switch data.item {
-            case let .secureNote(note):
-                XCTAssertEqual(note.title, "first line")
-                XCTAssertEqual(note.contents, "first line\nsecond line")
-            default:
-                XCTFail("invalid kind")
+        try await confirmation("Insert handler called") { confirmation in
+            store.insertHandler = { data in
+                defer { confirmation() }
+                #expect(data.userDescription == "second line")
+                #expect(data.visibility == .onlySearch)
+                #expect(data.searchableLevel == .onlyPassphrase)
+                #expect(data.searchPassphrase == "pass")
+                #expect(data.killphrase == "this is kill")
+                switch data.item {
+                case let .secureNote(note):
+                    #expect(note.title == "first line")
+                    #expect(note.contents == "first line\nsecond line")
+                default:
+                    Issue.record("invalid kind")
+                }
+                return .new()
             }
-            return .new()
+
+            try await sut.createNote(initialEdits: initialEdits)
         }
-
-        try await sut.createNote(initialEdits: initialEdits)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_createNote_createsEncryptedNoteWithNewPassword() async throws {
+    @Test
+    func createNote_createsEncryptedNoteWithNewPassword() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -225,40 +228,42 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         initialEdits.lockState = .lockedWithNativeSecurity
         initialEdits.newEncryptionPassword = "new password"
 
-        let exp = expectation(description: "Wait for creation")
-        store.insertHandler = { data in
-            defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "", "Empty because note is encrypted")
-            XCTAssertEqual(data.visibility, .onlySearch)
-            XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
-            XCTAssertEqual(data.searchPassphrase, "pass")
-            XCTAssertEqual(data.killphrase, "this is kill")
-            switch data.item {
-            case let .encryptedItem(item):
-                XCTAssertEqual(item.title, "first line")
-                XCTAssertEqual(item.keygenSignature, "vault.keygen.testing")
-                XCTAssertTrue(item.data.isNotEmpty)
-                XCTAssertTrue(item.authentication.isNotEmpty)
-                XCTAssertTrue(item.keygenSalt.isNotEmpty)
-                XCTAssertTrue(item.encryptionIV.isNotEmpty)
-            default:
-                XCTFail("invalid kind")
+        try await confirmation("Insert handler called", expectedCount: 1) { insertConfirmation in
+            try await confirmation("Key handler called", expectedCount: 1) { keyConfirmation in
+                store.insertHandler = { data in
+                    defer { insertConfirmation() }
+                    #expect(data.userDescription == "", "Empty because note is encrypted")
+                    #expect(data.visibility == .onlySearch)
+                    #expect(data.searchableLevel == .onlyPassphrase)
+                    #expect(data.searchPassphrase == "pass")
+                    #expect(data.killphrase == "this is kill")
+                    switch data.item {
+                    case let .encryptedItem(item):
+                        #expect(item.title == "first line")
+                        #expect(item.keygenSignature == "vault.keygen.testing")
+                        #expect(item.data.isNotEmpty)
+                        #expect(item.authentication.isNotEmpty)
+                        #expect(item.keygenSalt.isNotEmpty)
+                        #expect(item.encryptionIV.isNotEmpty)
+                    default:
+                        Issue.record("invalid kind")
+                    }
+                    return .new()
+                }
+
+                deriverMock.keyHandler = { password, _ in
+                    defer { keyConfirmation() }
+                    #expect(String(data: password, encoding: .utf8) == "new password")
+                    return .random()
+                }
+
+                try await sut.createNote(initialEdits: initialEdits)
             }
-            return .new()
         }
-
-        deriverMock.keyHandler = { password, _ in
-            XCTAssertEqual(String(data: password, encoding: .utf8), "new password")
-            return .random()
-        }
-
-        try await sut.createNote(initialEdits: initialEdits)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_createNote_createsEncryptedNoteWithExistingEncryptionKey() async throws {
+    @Test
+    func createNote_createsEncryptedNoteWithExistingEncryptionKey() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -275,45 +280,46 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         initialEdits.newEncryptionPassword = ""
         initialEdits.existingEncryptionKey = .init(key: .random(), salt: .random(count: 32), keyDervier: .testing)
 
-        let exp = expectation(description: "Wait for creation")
-        store.insertHandler = { data in
-            defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "", "Empty because note is encrypted")
-            XCTAssertEqual(data.visibility, .onlySearch)
-            XCTAssertEqual(data.searchableLevel, .onlyPassphrase)
-            XCTAssertEqual(data.searchPassphrase, "pass")
-            XCTAssertEqual(data.killphrase, "this is kill")
-            switch data.item {
-            case let .encryptedItem(item):
-                XCTAssertEqual(item.title, "first line")
-                XCTAssertEqual(item.keygenSignature, "vault.keygen.testing")
-                XCTAssertTrue(item.data.isNotEmpty)
-                XCTAssertTrue(item.authentication.isNotEmpty)
-                XCTAssertTrue(item.keygenSalt.isNotEmpty)
-                XCTAssertTrue(item.encryptionIV.isNotEmpty)
-            default:
-                XCTFail("invalid kind")
+        try await confirmation("Insert handler called") { confirmation in
+            store.insertHandler = { data in
+                defer { confirmation() }
+                #expect(data.userDescription == "", "Empty because note is encrypted")
+                #expect(data.visibility == .onlySearch)
+                #expect(data.searchableLevel == .onlyPassphrase)
+                #expect(data.searchPassphrase == "pass")
+                #expect(data.killphrase == "this is kill")
+                switch data.item {
+                case let .encryptedItem(item):
+                    #expect(item.title == "first line")
+                    #expect(item.keygenSignature == "vault.keygen.testing")
+                    #expect(item.data.isNotEmpty)
+                    #expect(item.authentication.isNotEmpty)
+                    #expect(item.keygenSalt.isNotEmpty)
+                    #expect(item.encryptionIV.isNotEmpty)
+                default:
+                    Issue.record("invalid kind")
+                }
+                return .new()
             }
-            return .new()
+
+            try await sut.createNote(initialEdits: initialEdits)
         }
-
-        try await sut.createNote(initialEdits: initialEdits)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_createNote_propagatesFailureOnError() async throws {
+    @Test
+    func createNote_propagatesFailureOnError() async throws {
         let store = VaultStoreErroring(error: TestError())
         let tagStore = VaultTagStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         let sut = makeSUT(dataModel: dataModel)
 
-        await XCTAssertThrowsError(try await sut.createNote(initialEdits: .new()))
+        await #expect(throws: (any Error).self) {
+            try await sut.createNote(initialEdits: .new())
+        }
     }
 
-    @MainActor
-    func test_updateNote_updatesNoteInFeed() async throws {
+    @Test
+    func updateNote_updatesNoteInFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -333,40 +339,41 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
         edits.searchPassphrase = "new pass"
         edits.killphrase = "this kill"
 
-        let exp = expectation(description: "Wait for update")
-        store.updateHandler = { _, data in
-            defer { exp.fulfill() }
-            XCTAssertEqual(data.userDescription, "second line")
-            XCTAssertEqual(data.visibility, .always)
-            XCTAssertEqual(data.searchableLevel, .full)
-            XCTAssertEqual(data.searchPassphrase, "new pass")
-            XCTAssertEqual(data.killphrase, "this kill")
-            switch data.item {
-            case let .secureNote(note):
-                XCTAssertEqual(note.title, "first line")
-                XCTAssertEqual(note.contents, "first line\nsecond line")
-                XCTAssertEqual(note.format, .markdown)
-            default:
-                XCTFail("invalid kind")
+        try await confirmation("Update handler called") { confirmation in
+            store.updateHandler = { _, data in
+                defer { confirmation() }
+                #expect(data.userDescription == "second line")
+                #expect(data.visibility == .always)
+                #expect(data.searchableLevel == .full)
+                #expect(data.searchPassphrase == "new pass")
+                #expect(data.killphrase == "this kill")
+                switch data.item {
+                case let .secureNote(note):
+                    #expect(note.title == "first line")
+                    #expect(note.contents == "first line\nsecond line")
+                    #expect(note.format == .markdown)
+                default:
+                    Issue.record("invalid kind")
+                }
             }
+
+            try await sut.updateNote(id: item.metadata.id, item: note, edits: edits)
         }
-
-        try await sut.updateNote(id: item.metadata.id, item: note, edits: edits)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_updateNote_propagatesFailureOnError() async {
+    @Test
+    func updateNote_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
-        await XCTAssertThrowsError(try await sut.updateNote(id: .new(), item: anySecureNote(), edits: .new()))
+        await #expect(throws: (any Error).self) {
+            try await sut.updateNote(id: .new(), item: anySecureNote(), edits: .new())
+        }
     }
 
-    @MainActor
-    func test_deleteNote_deletesFromFeed() async throws {
+    @Test
+    func deleteNote_deletesFromFeed() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -374,24 +381,25 @@ final class VaultDataModelEditorAdapterTests: XCTestCase {
 
         let id = Identifier<VaultItem>.new()
 
-        let exp = expectation(description: "Wait for delete")
-        store.deleteHandler = { actualID in
-            XCTAssertEqual(id, actualID)
-            exp.fulfill()
+        try await confirmation("Delete handler called") { confirmation in
+            store.deleteHandler = { actualID in
+                defer { confirmation() }
+                #expect(id == actualID)
+            }
+
+            try await sut.deleteNote(id: id)
         }
-
-        try await sut.deleteNote(id: id)
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_deleteNote_propagatesFailureOnError() async {
+    @Test
+    func deleteNote_propagatesFailureOnError() async {
         let store = VaultStoreErroring(error: TestError())
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: store)
         let sut = makeSUT(dataModel: dataModel)
 
-        await XCTAssertThrowsError(try await sut.deleteNote(id: .new()))
+        await #expect(throws: (any Error).self) {
+            try await sut.deleteNote(id: .new())
+        }
     }
 }
 

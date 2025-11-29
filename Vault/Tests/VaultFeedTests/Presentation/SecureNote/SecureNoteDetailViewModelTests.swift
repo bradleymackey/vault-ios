@@ -1,141 +1,136 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 
-final class SecureNoteDetailViewModelTests: XCTestCase {
-    @MainActor
-    func test_init_creatingHasNoSideEffects() {
+@Suite
+@MainActor
+struct SecureNoteDetailViewModelTests {
+    @Test
+    func init_creatingHasNoSideEffects() {
         let editor = SecureNoteDetailEditorMock()
         _ = makeSUTCreating(editor: editor)
 
         editor.assertNoOperationsPerformed()
     }
 
-    @MainActor
-    func test_init_editingHasNoSideEffects() {
+    @Test
+    func init_editingHasNoSideEffects() {
         let editor = SecureNoteDetailEditorMock()
         _ = makeSUTEditing(editor: editor)
 
         editor.assertNoOperationsPerformed()
     }
 
-    @MainActor
-    func test_init_editingModelUsesInitialData() {
+    @Test
+    func init_editingModelUsesInitialData() {
         let note = SecureNote(title: "my title", contents: "first line\nsecond line", format: .plain)
         let metadata = anyVaultItemMetadata()
         let sut = makeSUTEditing(storedNote: note, storedMetadata: metadata)
 
-        XCTAssertEqual(sut.editingModel.detail.titleLine, "first line")
-        XCTAssertEqual(sut.editingModel.detail.contents, note.contents)
-        XCTAssertEqual(sut.editingModel.detail.textFormat, .plain)
+        #expect(sut.editingModel.detail.titleLine == "first line")
+        #expect(sut.editingModel.detail.contents == note.contents)
+        #expect(sut.editingModel.detail.textFormat == .plain)
     }
 
-    @MainActor
-    func test_init_editingModelUsesInitialEncryptionKey() {
+    @Test
+    func init_editingModelUsesInitialEncryptionKey() {
         let key = DerivedEncryptionKey(key: .random(), salt: .random(count: 32), keyDervier: .testing)
         let sut = makeSUTEditing(existingKey: key)
 
-        XCTAssertEqual(sut.editingModel.detail.existingEncryptionKey, key)
+        #expect(sut.editingModel.detail.existingEncryptionKey == key)
     }
 
-    @MainActor
-    func test_init_creatingSetsBlankInitialData() {
+    @Test
+    func init_creatingSetsBlankInitialData() {
         let sut = makeSUTCreating()
 
-        XCTAssertEqual(sut.editingModel.detail.titleLine, "")
-        XCTAssertEqual(sut.editingModel.detail.contents, "")
-        XCTAssertEqual(sut.editingModel.detail.textFormat, .markdown)
-        XCTAssertEqual(sut.editingModel.detail.newEncryptionPassword, "")
-        XCTAssertNil(sut.editingModel.detail.existingEncryptionKey, "There should be no initial encryption key")
+        #expect(sut.editingModel.detail.titleLine == "")
+        #expect(sut.editingModel.detail.contents == "")
+        #expect(sut.editingModel.detail.textFormat == .markdown)
+        #expect(sut.editingModel.detail.newEncryptionPassword == "")
+        #expect(sut.editingModel.detail.existingEncryptionKey == nil)
     }
 
-    @MainActor
-    func test_isInEditMode_editingInitiallyFalse() {
+    @Test
+    func isInEditMode_editingInitiallyFalse() {
         let sut = makeSUTEditing()
 
-        XCTAssertFalse(sut.isInEditMode)
+        #expect(sut.isInEditMode == false)
     }
 
-    @MainActor
-    func test_isInEditMode_creatingInitiallyFalse() {
+    @Test
+    func isInEditMode_creatingInitiallyFalse() {
         let sut = makeSUTCreating()
 
-        XCTAssertFalse(sut.isInEditMode, "Call startEditing manually!")
+        #expect(sut.isInEditMode == false)
     }
 
-    @MainActor
-    func test_startEditing_setsEditModeTrue() {
+    @Test
+    func startEditing_setsEditModeTrue() {
         let sut = makeSUTEditing()
 
         sut.startEditing()
 
-        XCTAssertTrue(sut.isInEditMode)
+        #expect(sut.isInEditMode)
     }
 
-    @MainActor
-    func test_isSaving_isInitiallyFalse() {
+    @Test
+    func isSaving_isInitiallyFalse() {
         let sut = makeSUTEditing()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(sut.isSaving == false)
     }
 
-    @MainActor
-    func test_saveChanges_creatingUpdatesEditor() async throws {
+    @Test
+    func saveChanges_creatingUpdatesEditor() async throws {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
-        let exp = expectation(description: "Wait for note creation")
-        editor.createNoteHandler = { _ in
-            exp.fulfill()
+        await confirmation { confirmation in
+            editor.createNoteHandler = { _ in
+                confirmation.confirm()
+            }
+
+            await sut.saveChanges()
         }
-
-        await sut.saveChanges()
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
+    @Test
+    func saveChanges_creatingDoesNotPersistEditingModelWhenSuccessful() async throws {
         let sut = makeSUTCreating()
         makeDirty(sut: sut)
 
         await sut.saveChanges()
 
-        XCTAssertTrue(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_saveChanges_creatingFinishesAfterCreation() async throws {
+    @Test
+    func saveChanges_creatingFinishesAfterCreation() async throws {
         let sut = makeSUTCreating()
 
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
+        try await sut.isFinishedPublisher().expect(valueCount: 1) {
             await sut.saveChanges()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_saveChanges_creatingSendsErrorIfSaveError() async throws {
+    @Test
+    func saveChanges_creatingSendsErrorIfSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.createNoteHandler = { _ in
             throw TestError()
         }
         let sut = makeSUTCreating(editor: editor)
 
-        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
-        let output = try await awaitPublisher(publisher) {
+        try await sut.didEncounterErrorPublisher().expect(valueCount: 1) {
             await sut.saveChanges()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
+    @Test
+    func saveChanges_creatingSetsSavingToFalseAfterSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.createNoteHandler = { _ in
             throw TestError()
@@ -144,36 +139,35 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         await sut.saveChanges()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(sut.isSaving == false)
     }
 
-    @MainActor
-    func test_saveChanges_updatesEditor() async throws {
+    @Test
+    func saveChanges_updatesEditor() async throws {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTEditing(editor: editor)
 
-        let exp = expectation(description: "Wait for note creation")
-        editor.updateNoteHandler = { _, _, _ in
-            exp.fulfill()
+        await confirmation { confirmation in
+            editor.updateNoteHandler = { _, _, _ in
+                confirmation.confirm()
+            }
+
+            await sut.saveChanges()
         }
-
-        await sut.saveChanges()
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_saveChanges_persistsEditingModelIfSuccessful() async throws {
+    @Test
+    func saveChanges_persistsEditingModelIfSuccessful() async throws {
         let sut = makeSUTEditing()
         makeDirty(sut: sut)
 
         await sut.saveChanges()
 
-        XCTAssertFalse(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty == false)
     }
 
-    @MainActor
-    func test_saveChanges_setsSavingToFalseAfterSaveError() async throws {
+    @Test
+    func saveChanges_setsSavingToFalseAfterSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
             throw TestError()
@@ -182,11 +176,11 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         await sut.saveChanges()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(sut.isSaving == false)
     }
 
-    @MainActor
-    func test_saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
+    @Test
+    func saveChanges_doesNotPersistEditingModelIfSaveFailed() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
             throw TestError()
@@ -196,27 +190,24 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         await sut.saveChanges()
 
-        XCTAssertTrue(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty)
     }
 
-    @MainActor
-    func test_saveChanges_sendsErrorIfSaveError() async throws {
+    @Test
+    func saveChanges_sendsErrorIfSaveError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.updateNoteHandler = { _, _, _ in
             throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
-        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
-        let output = try await awaitPublisher(publisher) {
+        try await sut.didEncounterErrorPublisher().expect(valueCount: 1) {
             await sut.saveChanges()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_deleteNote_hasNoActionIfCreatingNote() async throws {
+    @Test
+    func deleteNote_hasNoActionIfCreatingNote() async throws {
         let editor = SecureNoteDetailEditorMock()
         let sut = makeSUTCreating(editor: editor)
 
@@ -225,68 +216,59 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         editor.assertNoOperationsPerformed()
     }
 
-    @MainActor
-    func test_deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
+    @Test
+    func deleteNote_isSavingSetsBackToFalseAfterSuccessfulDelete() async throws {
         let sut = makeSUTEditing()
 
         await sut.deleteNote()
 
-        XCTAssertFalse(sut.isSaving)
+        #expect(sut.isSaving == false)
     }
 
-    @MainActor
-    func test_deleteNote_sendsFinishSignalOnSuccessfulDeletion() async throws {
+    @Test
+    func deleteNote_sendsFinishSignalOnSuccessfulDeletion() async throws {
         let sut = makeSUTEditing()
 
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
+        try await sut.isFinishedPublisher().expect(valueCount: 1) {
             await sut.deleteNote()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_deleteNote_sendsErrorIfDeleteError() async throws {
+    @Test
+    func deleteNote_sendsErrorIfDeleteError() async throws {
         let editor = SecureNoteDetailEditorMock()
         editor.deleteNoteHandler = { _ in
             throw TestError()
         }
         let sut = makeSUTEditing(editor: editor)
 
-        let publisher = sut.didEncounterErrorPublisher().collectFirst(1)
-        let output = try await awaitPublisher(publisher) {
+        try await sut.didEncounterErrorPublisher().expect(valueCount: 1) {
             await sut.deleteNote()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_done_restoresInitialEditingStateIfInEditMode() async throws {
+    @Test
+    func done_restoresInitialEditingStateIfInEditMode() async throws {
         let sut = makeSUTEditing()
         sut.startEditing()
         makeDirty(sut: sut)
 
         sut.done()
 
-        XCTAssertFalse(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty == false)
     }
 
-    @MainActor
-    func test_done_finishesIfNotInEditMode() async throws {
+    @Test
+    func done_finishesIfNotInEditMode() async throws {
         let sut = makeSUTEditing()
 
-        let publisher = sut.isFinishedPublisher().collectFirst(1)
-        let output: [Void] = try await awaitPublisher(publisher) {
+        try await sut.isFinishedPublisher().expect(valueCount: 1) {
             sut.done()
         }
-
-        XCTAssertEqual(output.count, 1)
     }
 
-    @MainActor
-    func test_editingModel_initialStateUsesData() {
+    @Test
+    func editingModel_initialStateUsesData() {
         var note = anySecureNote()
         note.contents = "first line\nsecond line"
         note.title = "this is my title"
@@ -295,12 +277,12 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         let editing = sut.editingModel
 
-        XCTAssertEqual(editing.initialDetail.contents, note.contents)
-        XCTAssertEqual(editing.initialDetail.titleLine, "first line")
+        #expect(editing.initialDetail.contents == note.contents)
+        #expect(editing.initialDetail.titleLine == "first line")
     }
 
-    @MainActor
-    func test_editingModel_editingStateUsesData() {
+    @Test
+    func editingModel_editingStateUsesData() {
         var note = anySecureNote()
         note.contents = "first line\nsecond line"
         note.title = "this is my title"
@@ -310,26 +292,26 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
 
         let editing = sut.editingModel
 
-        XCTAssertEqual(editing.detail.contents, note.contents)
-        XCTAssertEqual(editing.detail.titleLine, "first line")
+        #expect(editing.detail.contents == note.contents)
+        #expect(editing.detail.titleLine == "first line")
     }
 
-    @MainActor
-    func test_shouldShowDeleteButton_falseForCreating() {
+    @Test
+    func shouldShowDeleteButton_falseForCreating() {
         let sut = makeSUTCreating()
 
-        XCTAssertFalse(sut.shouldShowDeleteButton)
+        #expect(sut.shouldShowDeleteButton == false)
     }
 
-    @MainActor
-    func test_shouldShowDeleteButton_trueForEditing() {
+    @Test
+    func shouldShowDeleteButton_trueForEditing() {
         let sut = makeSUTEditing()
 
-        XCTAssertTrue(sut.shouldShowDeleteButton)
+        #expect(sut.shouldShowDeleteButton)
     }
 
-    @MainActor
-    func test_remainingTags_noTagsSelectedIsEqualToAllTags() {
+    @Test
+    func remainingTags_noTagsSelectedIsEqualToAllTags() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -339,11 +321,11 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = []
 
-        XCTAssertEqual(sut.remainingTags, [tag1, tag2, tag3])
+        #expect(sut.remainingTags == [tag1, tag2, tag3])
     }
 
-    @MainActor
-    func test_remainingTags_removesTagsThatHaveBeenSelected() {
+    @Test
+    func remainingTags_removesTagsThatHaveBeenSelected() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -353,11 +335,11 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = [tag1.id]
 
-        XCTAssertEqual(sut.remainingTags, [tag2, tag3])
+        #expect(sut.remainingTags == [tag2, tag3])
     }
 
-    @MainActor
-    func test_tagsThatAreSelected_isEmptyIfNoTagsSelected() {
+    @Test
+    func tagsThatAreSelected_isEmptyIfNoTagsSelected() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -367,11 +349,11 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = []
 
-        XCTAssertEqual(sut.tagsThatAreSelected, [])
+        #expect(sut.tagsThatAreSelected == [])
     }
 
-    @MainActor
-    func test_tagsThatAreSelected_matchesSelectedTags() {
+    @Test
+    func tagsThatAreSelected_matchesSelectedTags() {
         let tag1 = anyVaultItemTag()
         let tag2 = anyVaultItemTag()
         let tag3 = anyVaultItemTag()
@@ -381,7 +363,7 @@ final class SecureNoteDetailViewModelTests: XCTestCase {
         let sut = makeSUT(dataModel: dataModel)
         sut.editingModel.detail.tags = [tag1.id, tag3.id]
 
-        XCTAssertEqual(sut.tagsThatAreSelected, [tag1, tag3])
+        #expect(sut.tagsThatAreSelected == [tag1, tag3])
     }
 }
 
@@ -401,18 +383,12 @@ extension SecureNoteDetailViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock(),
         ),
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> SecureNoteDetailViewModel {
-        let sut = SecureNoteDetailViewModel(
+        SecureNoteDetailViewModel(
             mode: .editing(note: storedNote, metadata: storedMetadata, existingKey: existingKey),
             dataModel: dataModel,
             editor: editor,
         )
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(editor, file: file, line: line)
-        trackForMemoryLeaks(dataModel, file: file, line: line)
-        return sut
     }
 
     @MainActor
@@ -427,14 +403,8 @@ extension SecureNoteDetailViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock(),
         ),
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> SecureNoteDetailViewModel {
-        let sut = SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(editor, file: file, line: line)
-        trackForMemoryLeaks(dataModel, file: file, line: line)
-        return sut
+        SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
     }
 
     @MainActor
@@ -449,29 +419,21 @@ extension SecureNoteDetailViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             backupEventLogger: BackupEventLoggerMock(),
         ),
-        file: StaticString = #filePath,
-        line: UInt = #line,
-    )
-        -> SecureNoteDetailViewModel
-    {
-        let sut = SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(editor, file: file, line: line)
-        trackForMemoryLeaks(dataModel, file: file, line: line)
-        return sut
+    ) -> SecureNoteDetailViewModel {
+        SecureNoteDetailViewModel(mode: .creating, dataModel: dataModel, editor: editor)
     }
 
     @MainActor
-    private func makeDirty(sut: SecureNoteDetailViewModel) {
+    private func makeDirty(sut: SecureNoteDetailViewModel, sourceLocation: SourceLocation = #_sourceLocation) {
         sut.editingModel.detail.contents = UUID().uuidString
-        XCTAssertTrue(sut.editingModel.isDirty)
+        #expect(sut.editingModel.isDirty, sourceLocation: sourceLocation)
     }
 }
 
 extension SecureNoteDetailEditorMock {
-    func assertNoOperationsPerformed() {
-        XCTAssertEqual(createNoteCallCount, 0)
-        XCTAssertEqual(updateNoteCallCount, 0)
-        XCTAssertEqual(deleteNoteCallCount, 0)
+    func assertNoOperationsPerformed(sourceLocation: SourceLocation = #_sourceLocation) {
+        #expect(createNoteCallCount == 0, sourceLocation: sourceLocation)
+        #expect(updateNoteCallCount == 0, sourceLocation: sourceLocation)
+        #expect(deleteNoteCallCount == 0, sourceLocation: sourceLocation)
     }
 }

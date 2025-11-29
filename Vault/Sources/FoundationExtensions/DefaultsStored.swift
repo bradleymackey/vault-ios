@@ -3,6 +3,7 @@ import Foundation
 /// Property wrapper that indicates the following variable is stored in a `Defaults` instance.
 ///
 /// Automatically fetches the initial value from storage and sets new values as they are set.
+@MainActor
 @propertyWrapper
 public struct DefaultsStored<T: Codable> {
     private var defaults: Defaults

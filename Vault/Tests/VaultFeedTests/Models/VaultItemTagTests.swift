@@ -1,45 +1,42 @@
 import Foundation
 import FoundationExtensions
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class VaultItemTagTests: XCTestCase {
-    func test_equal_checksWholeObject() {
+@Suite
+struct VaultItemTagTests {
+    @Test
+    func equal_checksWholeObject() {
         let id = makeUniqueIdentifier()
-        XCTAssertEqual(
-            VaultItemTag(id: id, name: "same"),
-            VaultItemTag(id: id, name: "same"),
-        )
 
-        XCTAssertNotEqual(
-            VaultItemTag(id: id, name: "one"),
-            VaultItemTag(id: id, name: "two"),
-        )
+        let tag1 = VaultItemTag(id: id, name: "same")
+        let tag2 = VaultItemTag(id: id, name: "same")
+        #expect(tag1 == tag2)
 
-        XCTAssertNotEqual(
-            VaultItemTag(id: makeUniqueIdentifier(), name: "one"),
-            VaultItemTag(id: makeUniqueIdentifier(), name: "two"),
-        )
+        let tagOne = VaultItemTag(id: id, name: "one")
+        let tagTwo = VaultItemTag(id: id, name: "two")
+        #expect(tagOne != tagTwo)
+
+        let tagWithId1 = VaultItemTag(id: makeUniqueIdentifier(), name: "one")
+        let tagWithId2 = VaultItemTag(id: makeUniqueIdentifier(), name: "two")
+        #expect(tagWithId1 != tagWithId2)
     }
 
-    func test_hashable_onWholeObject() {
+    @Test
+    func hashable_onWholeObject() {
         let id = makeUniqueIdentifier()
-        XCTAssertEqual(
-            VaultItemTag(id: id, name: "same").hashValue,
-            VaultItemTag(id: id, name: "same").hashValue,
-        )
+
+        let tag1 = VaultItemTag(id: id, name: "same")
+        let tag2 = VaultItemTag(id: id, name: "same")
+        #expect(tag1.hashValue == tag2.hashValue)
 
         let one = VaultItemTag(id: id, name: "one")
         let two = VaultItemTag(id: id, name: "two")
-        XCTAssertNotEqual(
-            one.hashValue,
-            two.hashValue,
-        )
+        #expect(one.hashValue != two.hashValue)
 
-        XCTAssertNotEqual(
-            VaultItemTag(id: makeUniqueIdentifier(), name: "one").hashValue,
-            VaultItemTag(id: makeUniqueIdentifier(), name: "two").hashValue,
-        )
+        let tagWithId1 = VaultItemTag(id: makeUniqueIdentifier(), name: "one")
+        let tagWithId2 = VaultItemTag(id: makeUniqueIdentifier(), name: "two")
+        #expect(tagWithId1.hashValue != tagWithId2.hashValue)
     }
 }
 

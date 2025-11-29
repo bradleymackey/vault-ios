@@ -3,15 +3,12 @@ import FoundationExtensions
 import TestHelpers
 import Testing
 
+@MainActor
 final class DefaultsStoredTests {
     let defaults: Defaults
 
     init() throws {
-        defaults = try Defaults.nonPersistent()
-    }
-
-    deinit {
-        defaults.removeAll()
+        defaults = try .nonPersistent()
     }
 
     @Test(arguments: [0, 1234, 456])

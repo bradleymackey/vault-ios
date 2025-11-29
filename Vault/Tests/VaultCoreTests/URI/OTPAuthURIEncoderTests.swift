@@ -232,13 +232,13 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         hasScheme scheme: String,
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         let actual = uri.scheme
         #expect(actual == scheme, sourceLocation: sourceLocation)
     }
 
-    private func expect(_ uri: OTPAuthURI, hasType type: String, sourceLocation: SourceLocation = .__here()) {
+    private func expect(_ uri: OTPAuthURI, hasType type: String, sourceLocation: SourceLocation = #_sourceLocation) {
         let actual = uri.host
         #expect(actual == type, sourceLocation: sourceLocation)
     }
@@ -246,7 +246,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         hasPathComponents pathComponents: [String],
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         #expect(uri.pathComponents == pathComponents, sourceLocation: sourceLocation)
     }
@@ -254,7 +254,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         hasAllQueryParameters queryParamters: [String: String],
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         #expect(uri.queryParameters == queryParamters, sourceLocation: sourceLocation)
     }
@@ -262,7 +262,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         containsQueryParameter parameter: (key: String, value: String),
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         let actualValue = uri.queryParameters[parameter.key]
         #expect(actualValue == parameter.value, sourceLocation: sourceLocation)
@@ -271,7 +271,7 @@ extension OTPAuthURIEncoderTests {
     private func expect(
         _ uri: OTPAuthURI,
         doesNotContainQueryParameter parameter: String,
-        sourceLocation: SourceLocation = .__here(),
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) {
         let keys = uri.queryParameters.keys
         #expect(keys.contains(where: { $0 == parameter }) == false, sourceLocation: sourceLocation)

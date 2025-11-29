@@ -1,10 +1,12 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultFeed
-import XCTest
 
-final class SecureNotePreviewViewModelTests: XCTestCase {
-    func test_visibleTitle_isPlaceholderEmptyTitleIfTitleEmpty() {
+@Suite
+struct SecureNotePreviewViewModelTests {
+    @Test
+    func visibleTitle_isPlaceholderEmptyTitleIfTitleEmpty() {
         let sut = SecureNotePreviewViewModel(
             title: "",
             description: "description",
@@ -13,10 +15,11 @@ final class SecureNotePreviewViewModelTests: XCTestCase {
             textFormat: .plain,
         )
 
-        XCTAssertEqual(sut.visibleTitle, "Untitled Note")
+        #expect(sut.visibleTitle == "Untitled Note")
     }
 
-    func test_visibleTitle_isUserDefinedTitleIfTitleNotEmpty() {
+    @Test
+    func visibleTitle_isUserDefinedTitleIfTitleNotEmpty() {
         let sut = SecureNotePreviewViewModel(
             title: "title",
             description: "description",
@@ -25,6 +28,6 @@ final class SecureNotePreviewViewModelTests: XCTestCase {
             textFormat: .plain,
         )
 
-        XCTAssertEqual(sut.visibleTitle, "title")
+        #expect(sut.visibleTitle == "title")
     }
 }

@@ -1,94 +1,90 @@
 import Combine
 import Foundation
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 
-final class OTPCodeIncrementerViewModelTests: XCTestCase {
-    @MainActor
-    func test_isButtonEnabled_isInitiallyTrue() {
+@Suite
+@MainActor
+struct OTPCodeIncrementerViewModelTests {
+    @Test
+    func isButtonEnabled_isInitiallyTrue() {
         let sut = makeSUT()
 
-        XCTAssertTrue(sut.isButtonEnabled)
+        #expect(sut.isButtonEnabled)
     }
 
-    @MainActor
-    func test_isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
-        let sut = makeSUT()
-
-        try await sut.incrementCounter()
-
-        XCTAssertEqual(sut.isButtonEnabled, false)
-    }
-
-    @MainActor
-    func test_isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
+    @Test
+    func isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
         let sut = makeSUT()
 
         try await sut.incrementCounter()
-        try await sut.incrementCounter()
 
-        XCTAssertEqual(sut.isButtonEnabled, false)
+        #expect(sut.isButtonEnabled == false)
     }
 
-    @MainActor
-    func test_isButtonEnabled_enablesAfterTimerCompletion() async throws {
+    @Test
+    func isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
+        let sut = makeSUT()
+
+        try await sut.incrementCounter()
+        try await sut.incrementCounter()
+
+        #expect(sut.isButtonEnabled == false)
+    }
+
+    @Test
+    func isButtonEnabled_enablesAfterTimerCompletion() async throws {
         let timer = IntervalTimerMock()
         let sut = makeSUT(timer: timer)
 
         try await sut.incrementCounter()
-        XCTAssertEqual(sut.isButtonEnabled, false)
+        #expect(sut.isButtonEnabled == false)
 
         try await timer.finishTimer()
-        XCTAssertEqual(sut.isButtonEnabled, true)
+        #expect(sut.isButtonEnabled == true)
     }
 
-    @MainActor
-    func test_incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
+    @Test
+    func incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let sut = makeSUT(codePublisher: codePublisher)
-        let publisher = codePublisher.counterIncrementedPublisher()
-            .collectFirst(1)
 
-        let incrementOperations: [Void] = try await awaitPublisher(publisher) {
+        try await codePublisher.counterIncrementedPublisher().expect(valueCount: 1) {
             try await sut.incrementCounter()
         }
-        XCTAssertEqual(incrementOperations.count, 1)
     }
 
-    @MainActor
-    func test_incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
+    @Test
+    func incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let sut = makeSUT(codePublisher: codePublisher)
-        let publisher = codePublisher.counterIncrementedPublisher()
-            .dropFirst() // the renderer publishes the first value right away, so ignore that
-            .collectFirst(1)
 
         try await sut.incrementCounter() // disable button
 
-        try await awaitNoPublish(publisher: publisher) {
+        try await codePublisher.counterIncrementedPublisher()
+            .dropFirst() // the renderer publishes the first value right away, so ignore that
+            .expect(valueCount: 0) {
+                try? await sut.incrementCounter()
+            }
+    }
+
+    @Test
+    func incrementCounter_incrementsStore() async throws {
+        let incrementerStore = VaultStoreHOTPIncrementerMock()
+        let sut = makeSUT(incrementerStore: incrementerStore)
+
+        try await confirmation { confirmation in
+            incrementerStore.incrementCounterHandler = { _ in
+                confirmation.confirm()
+            }
             try await sut.incrementCounter()
         }
     }
 
-    @MainActor
-    func test_incrementCounter_incrementsStore() async throws {
-        let incrementerStore = VaultStoreHOTPIncrementerMock()
-        let sut = makeSUT(incrementerStore: incrementerStore)
-
-        let exp = expectation(description: "Wait for increment")
-        incrementerStore.incrementCounterHandler = { _ in
-            exp.fulfill()
-        }
-
-        try await sut.incrementCounter()
-
-        await fulfillment(of: [exp])
-    }
-
-    @MainActor
-    func test_incrementCounter_doesNotTriggerPublishIfIncrementFailed() async throws {
+    @Test
+    func incrementCounter_doesNotTriggerPublishIfIncrementFailed() async throws {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let incrementerStore = VaultStoreHOTPIncrementerMock()
         let sut = makeSUT(codePublisher: codePublisher, incrementerStore: incrementerStore)
@@ -97,24 +93,19 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             throw TestError()
         }
 
-        let publisher = codePublisher.counterIncrementedPublisher()
+        try await codePublisher.counterIncrementedPublisher()
             .dropFirst() // the renderer publishes the first value right away, so ignore that
-            .collectFirst(1)
-
-        await awaitNoPublish(publisher: publisher) {
-            try? await sut.incrementCounter()
-        }
+            .expect(valueCount: 0) {
+                try? await sut.incrementCounter()
+            }
     }
 
     // MARK: - Helpers
 
-    @MainActor
     private func makeSUT(
         codePublisher: HOTPCodePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data())),
         timer: IntervalTimerMock = IntervalTimerMock(),
         incrementerStore: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
-        file: StaticString = #filePath,
-        line: UInt = #line,
     ) -> OTPCodeIncrementerViewModel {
         let sut = OTPCodeIncrementerViewModel(
             id: .new(),
@@ -123,7 +114,6 @@ final class OTPCodeIncrementerViewModelTests: XCTestCase {
             initialCounter: 0,
             incrementerStore: incrementerStore,
         )
-        trackForMemoryLeaks(sut, file: file, line: line)
         return sut
     }
 }

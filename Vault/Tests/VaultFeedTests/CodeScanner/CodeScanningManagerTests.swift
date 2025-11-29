@@ -1,38 +1,40 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 
-final class CodeScanningManagerTests: XCTestCase {
-    @MainActor
-    func test_init_initialStateIsDisabled() {
+@Suite
+@MainActor
+struct CodeScanningManagerTests {
+    @Test
+    func init_initialStateIsDisabled() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.scanningState, .disabled)
+        #expect(sut.scanningState == .disabled)
     }
 
-    @MainActor
-    func test_startScanning_setsStateToStart() {
+    @Test
+    func startScanning_setsStateToStart() {
         let sut = makeSUT()
 
         sut.startScanning()
 
-        XCTAssertEqual(sut.scanningState, .scanning)
+        #expect(sut.scanningState == .scanning)
     }
 
-    @MainActor
-    func test_disable_setsStateToDisabled() {
+    @Test
+    func disable_setsStateToDisabled() {
         let sut = makeSUT()
 
         sut.startScanning()
         sut.disable()
 
-        XCTAssertEqual(sut.scanningState, .disabled)
+        #expect(sut.scanningState == .disabled)
     }
 
-    @MainActor
-    func test_scan_setsStateToInvalidForInvalidCode() {
+    @Test
+    func scan_setsStateToInvalidForInvalidCode() {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
@@ -42,11 +44,11 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "any")
 
-        XCTAssertEqual(sut.scanningState, .failure(.temporary))
+        #expect(sut.scanningState == .failure(.temporary))
     }
 
-    @MainActor
-    func test_simulatedScan_triggersSimulatedHandler() {
+    @Test
+    func simulatedScan_triggersSimulatedHandler() {
         let simulatedHandler = SimulatedCodeScanningHandlerMock()
         simulatedHandler.decodeSimulatedHandler = { .continueScanning(.ignore) }
         let handler = CodeScanningHandlerMock()
@@ -57,12 +59,12 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.simulatedScan()
 
-        XCTAssertEqual(simulatedHandler.decodeSimulatedCallCount, 1)
-        XCTAssertEqual(handler.decodeCallCount, 0)
+        #expect(simulatedHandler.decodeSimulatedCallCount == 1)
+        #expect(handler.decodeCallCount == 0)
     }
 
-    @MainActor
-    func test_scan_triggersNormalHandler() {
+    @Test
+    func scan_triggersNormalHandler() {
         let simulatedHandler = SimulatedCodeScanningHandlerMock()
         simulatedHandler.decodeSimulatedHandler = { .continueScanning(.ignore) }
         let handler = CodeScanningHandlerMock()
@@ -73,12 +75,12 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "some data")
 
-        XCTAssertEqual(simulatedHandler.decodeSimulatedCallCount, 0)
-        XCTAssertEqual(handler.decodeCallCount, 1)
+        #expect(simulatedHandler.decodeSimulatedCallCount == 0)
+        #expect(handler.decodeCallCount == 1)
     }
 
-    @MainActor
-    func test_scan_returnsToScanningAfterInvalidCodeFailure() async throws {
+    @Test
+    func scan_returnsToScanningAfterInvalidCodeFailure() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.invalidCode) }
@@ -89,11 +91,11 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.scan(text: "any")
         try await timer.finishTimer()
 
-        XCTAssertEqual(sut.scanningState, .scanning)
+        #expect(sut.scanningState == .scanning)
     }
 
-    @MainActor
-    func test_scan_successSetsStateToSuccess() {
+    @Test
+    func scan_successSetsStateToSuccess() {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.success) }
@@ -103,11 +105,11 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "any")
 
-        XCTAssertEqual(sut.scanningState, .success(.temporary))
+        #expect(sut.scanningState == .success(.temporary))
     }
 
-    @MainActor
-    func test_scan_publishesScannedCodeAfterDelayWhenCompletedScanning() async throws {
+    @Test
+    func scan_publishesScannedCodeAfterDelayWhenCompletedScanning() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .endScanning(.dataRetrieved("any")) }
@@ -117,21 +119,21 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "any")
 
-        let exp = expectation(description: "Wait for code")
-        let results = sut.itemScannedPublisher().collectFirst(1).sink { _ in
-            exp.fulfill()
+        try await confirmation { confirm in
+            let results = sut.itemScannedPublisher().collectFirst(1).sink { _ in
+                confirm()
+            }
+
+            try await timer.finishTimer()
+
+            withExtendedLifetime(results) {}
         }
 
-        try await timer.finishTimer()
-
-        await fulfillment(of: [exp], timeout: 1.0)
-        results.cancel()
-
-        XCTAssertEqual(sut.scanningState, .success(.complete))
+        #expect(sut.scanningState == .success(.complete))
     }
 
-    @MainActor
-    func test_scan_unrecoverableErrorSetsStateToDataError() async throws {
+    @Test
+    func scan_unrecoverableErrorSetsStateToDataError() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .endScanning(.unrecoverableError) }
@@ -141,11 +143,11 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "any")
 
-        XCTAssertEqual(sut.scanningState, .failure(.unrecoverable))
+        #expect(sut.scanningState == .failure(.unrecoverable))
     }
 
-    @MainActor
-    func test_scan_returnsToScanningAfterDelayWhenContinueScanningReturned() async throws {
+    @Test
+    func scan_returnsToScanningAfterDelayWhenContinueScanningReturned() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.success) }
@@ -154,14 +156,14 @@ final class CodeScanningManagerTests: XCTestCase {
         sut.startScanning()
 
         sut.scan(text: "any")
-        XCTAssertEqual(sut.scanningState, .success(.temporary))
+        #expect(sut.scanningState == .success(.temporary))
 
         try await timer.finishTimer()
-        XCTAssertEqual(sut.scanningState, .scanning)
+        #expect(sut.scanningState == .scanning)
     }
 
-    @MainActor
-    func test_scan_scanningStateUnchangedIfShouldIgnore() async throws {
+    @Test
+    func scan_scanningStateUnchangedIfShouldIgnore() async throws {
         let timer = IntervalTimerMock()
         let handler = CodeScanningHandlerMock()
         handler.decodeHandler = { _ in .continueScanning(.ignore) }
@@ -171,22 +173,17 @@ final class CodeScanningManagerTests: XCTestCase {
 
         sut.scan(text: "any")
 
-        XCTAssertEqual(sut.scanningState, .scanning)
+        #expect(sut.scanningState == .scanning)
     }
 }
 
 extension CodeScanningManagerTests {
-    @MainActor
     private func makeSUT(
         intervalTimer: IntervalTimerMock = IntervalTimerMock(),
         handler: CodeScanningHandlerMock = .defaultCompletedScanning,
-        file: StaticString = #filePath,
-        line: UInt = #line,
+        sourceLocation _: SourceLocation = #_sourceLocation,
     ) -> CodeScanningManager<CodeScanningHandlerMock> {
-        let sut = CodeScanningManager(intervalTimer: intervalTimer, handler: handler)
-        trackForMemoryLeaks(sut, file: file, line: line)
-        trackForMemoryLeaks(handler, file: file, line: line)
-        return sut
+        CodeScanningManager(intervalTimer: intervalTimer, handler: handler)
     }
 }
 

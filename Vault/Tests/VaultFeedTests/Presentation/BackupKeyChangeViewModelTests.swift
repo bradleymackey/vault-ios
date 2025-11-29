@@ -2,50 +2,52 @@ import CryptoEngine
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class BackupKeyChangeViewModelTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() {
+@Suite
+@MainActor
+struct BackupKeyChangeViewModelTests {
+    @Test
+    func init_hasNoSideEffects() {
         let store = BackupPasswordStoreMock()
         let dataModel = anyVaultDataModel(backupPasswordStore: store)
         _ = makeSUT(dataModel: dataModel)
 
-        XCTAssertEqual(store.fetchPasswordCallCount, 0)
-        XCTAssertEqual(store.setCallCount, 0)
+        #expect(store.fetchPasswordCallCount == 0)
+        #expect(store.setCallCount == 0)
     }
 
-    @MainActor
-    func test_init_initialPermissionStateLoading() {
+    @Test
+    func init_initialPermissionStateLoading() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.permissionState, .undetermined)
+        #expect(sut.permissionState == .undetermined)
     }
 
-    @MainActor
-    func test_onAppear_permissonStateAllowedIfNoError() async {
+    @Test
+    func onAppear_permissonStateAllowedIfNoError() async {
         let authenticationService = DeviceAuthenticationService(policy: .alwaysAllow)
         let sut = makeSUT(authenticationService: authenticationService)
 
         await sut.onAppear()
 
-        XCTAssertEqual(sut.permissionState, .allowed)
+        #expect(sut.permissionState == .allowed)
     }
 
-    @MainActor
-    func test_onAppear_permissionStateDeniedIfError() async {
+    @Test
+    func onAppear_permissionStateDeniedIfError() async {
         let authenticationService = DeviceAuthenticationService(policy: .alwaysDeny)
         let sut = makeSUT(authenticationService: authenticationService)
 
         await sut.onAppear()
 
-        XCTAssertEqual(sut.permissionState, .denied)
+        #expect(sut.permissionState == .denied)
     }
 
-    @MainActor
-    func test_loadExistingPassword_callsLoadFromDataModel() async {
+    @Test
+    func loadExistingPassword_callsLoadFromDataModel() async {
         let store = BackupPasswordStoreMock()
         let password = randomBackupPassword()
         store.fetchPasswordHandler = { password }
@@ -54,11 +56,11 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
         await sut.loadExistingPassword()
 
-        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+        #expect(store.fetchPasswordCallCount == 1)
     }
 
-    @MainActor
-    func test_saveEnteredPassword_isPasswordConfirmErrorIfPasswordsDoNotMatch() async {
+    @Test
+    func saveEnteredPassword_isPasswordConfirmErrorIfPasswordsDoNotMatch() async {
         let sut = makeSUT()
 
         sut.newlyEnteredPassword = "hello"
@@ -66,11 +68,11 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
         await sut.saveEnteredPassword()
 
-        XCTAssertEqual(sut.newPassword, .passwordConfirmError)
+        #expect(sut.newPassword == .passwordConfirmError)
     }
 
-    @MainActor
-    func test_saveEnteredPassword_isKeygenErrorIfGenerationError() async {
+    @Test
+    func saveEnteredPassword_isKeygenErrorIfGenerationError() async {
         let deriverFactory = VaultKeyDeriverFactoryMock()
         deriverFactory.makeVaultBackupKeyDeriverHandler = {
             VaultKeyDeriver(deriver: KeyDeriverErroring(), signature: .testing)
@@ -82,11 +84,11 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
         await sut.saveEnteredPassword()
 
-        XCTAssertEqual(sut.newPassword, .keygenError)
+        #expect(sut.newPassword == .keygenError)
     }
 
-    @MainActor
-    func test_saveEnteredPassword_successSetsNewPasswordStateToSuccess() async {
+    @Test
+    func saveEnteredPassword_successSetsNewPasswordStateToSuccess() async {
         let sut = makeSUT()
 
         sut.newlyEnteredPassword = "hello"
@@ -94,11 +96,11 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
         await sut.saveEnteredPassword()
 
-        XCTAssertEqual(sut.newPassword, .success)
+        #expect(sut.newPassword == .success)
     }
 
-    @MainActor
-    func test_saveEnteredPassword_successResetsEnteredPassword() async {
+    @Test
+    func saveEnteredPassword_successResetsEnteredPassword() async {
         let sut = makeSUT()
 
         sut.newlyEnteredPassword = "hello"
@@ -106,8 +108,8 @@ final class BackupKeyChangeViewModelTests: XCTestCase {
 
         await sut.saveEnteredPassword()
 
-        XCTAssertEqual(sut.newlyEnteredPassword, "", "resets password")
-        XCTAssertEqual(sut.newlyEnteredPasswordConfirm, "", "resets password")
+        #expect(sut.newlyEnteredPassword == "")
+        #expect(sut.newlyEnteredPasswordConfirm == "")
     }
 }
 

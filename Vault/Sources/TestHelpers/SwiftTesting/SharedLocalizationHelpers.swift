@@ -5,7 +5,7 @@ import Testing
 public func expectLocalizedKeyAndValuesExist(
     in presentationBundle: Bundle,
     _ table: String,
-    sourceLocation: SourceLocation = .__here(),
+    sourceLocation: SourceLocation = #_sourceLocation,
 ) {
     guard Test.current != nil else { fatalError("This must be running within a test!") }
     let localizationBundles = allLocalizationBundles(in: presentationBundle, sourceLocation: sourceLocation)

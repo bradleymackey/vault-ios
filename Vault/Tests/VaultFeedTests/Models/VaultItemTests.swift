@@ -1,63 +1,68 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultCore
-import XCTest
 @testable import VaultFeed
 
-final class VaultItemTests: XCTestCase {
-    func test_isContentEqual_comparesIDs() {
+@Suite
+struct VaultItemTests {
+    @Test
+    func isContentEqual_comparesIDs() {
         let id = Identifier<VaultItem>()
         let item1 = makeVaultItem(id: id)
         let item2 = makeVaultItem(id: id)
 
-        XCTAssertTrue(item1.isContentEqual(to: item2))
+        #expect(item1.isContentEqual(to: item2))
 
         let item3 = makeVaultItem(id: Identifier<VaultItem>())
         let item4 = makeVaultItem(id: Identifier<VaultItem>())
 
-        XCTAssertFalse(item3.isContentEqual(to: item4))
+        #expect(!item3.isContentEqual(to: item4))
     }
 
-    func test_isContentEqual_comparesContent() {
+    @Test
+    func isContentEqual_comparesContent() {
         let id = Identifier<VaultItem>()
         let item1 = makeVaultItem(id: id, userDescription: "hello")
         let item2 = makeVaultItem(id: id, userDescription: "hello")
 
-        XCTAssertTrue(item1.isContentEqual(to: item2))
+        #expect(item1.isContentEqual(to: item2))
 
         let item3 = makeVaultItem(id: id, userDescription: "NO")
         let item4 = makeVaultItem(id: id, userDescription: "YES")
 
-        XCTAssertFalse(item3.isContentEqual(to: item4))
+        #expect(!item3.isContentEqual(to: item4))
     }
 
-    func test_isContentEqual_doesNotCompareCreatedDate() {
+    @Test
+    func isContentEqual_doesNotCompareCreatedDate() {
         let id = Identifier<VaultItem>()
         let date = Date(timeIntervalSince1970: 1234)
         let item1 = makeVaultItem(id: id, created: date)
         let item2 = makeVaultItem(id: id, created: date)
 
-        XCTAssertTrue(item1.isContentEqual(to: item2))
+        #expect(item1.isContentEqual(to: item2))
 
         let item3 = makeVaultItem(id: id, created: Date(timeIntervalSince1970: 10000))
         let item4 = makeVaultItem(id: id, created: Date(timeIntervalSince1970: 12345))
 
-        XCTAssertTrue(item3.isContentEqual(to: item4), "Even though they differ, created date is not compared")
+        #expect(item3.isContentEqual(to: item4), "Even though they differ, created date is not compared")
     }
 
-    func test_isContentEqual_doesNotCompareUpdatedDate() {
+    @Test
+    func isContentEqual_doesNotCompareUpdatedDate() {
         let id = Identifier<VaultItem>()
         let date = Date(timeIntervalSince1970: 1234)
         let item1 = makeVaultItem(id: id, updated: date)
         let item2 = makeVaultItem(id: id, updated: date)
 
-        XCTAssertTrue(item1.isContentEqual(to: item2))
+        #expect(item1.isContentEqual(to: item2))
 
         let item3 = makeVaultItem(id: id, updated: Date(timeIntervalSince1970: 10000))
         let item4 = makeVaultItem(id: id, updated: Date(timeIntervalSince1970: 12345))
 
-        XCTAssertTrue(item3.isContentEqual(to: item4), "Even though they differ, updated date is not compared")
+        #expect(item3.isContentEqual(to: item4), "Even though they differ, updated date is not compared")
     }
 }
 

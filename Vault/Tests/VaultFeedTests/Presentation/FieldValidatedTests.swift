@@ -1,76 +1,86 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class FieldValidatedTests {
-    func test_wrappedValue_setsBasedOnValue() {
+@Suite
+struct FieldValidatedTests {
+    @Test
+    func wrappedValue_setsBasedOnValue() {
         @FieldValidated(validationLogic: .alwaysValid) var sut = "Hello"
-        XCTAssertEqual(sut, "Hello")
+        #expect(sut == "Hello")
 
         sut = "Hello, world"
-        XCTAssertEqual(sut, "Hello, world")
+        #expect(sut == "Hello, world")
     }
 
-    func test_projectedValue_getsCorrectValidationState() {
+    @Test
+    func projectedValue_getsCorrectValidationState() {
         let validOnFoo = FieldValidationLogic<String>(validate: { $0 == "foo" ? .valid : .invalid })
         @FieldValidated(validationLogic: validOnFoo) var sut = "Hello"
-        XCTAssertFalse($sut.isValid)
+        #expect($sut.isValid == false)
 
         sut = "foo"
-        XCTAssertTrue($sut.isValid)
+        #expect($sut.isValid)
 
         sut = "bar"
-        XCTAssertFalse($sut.isValid)
+        #expect($sut.isValid == false)
     }
 
-    func test_isEqual_ifContentIsEqual() {
+    @Test
+    func isEqual_ifContentIsEqual() {
         @FieldValidated(validationLogic: .alwaysValid) var sut1 = "Hello"
         @FieldValidated(validationLogic: .alwaysInvalid) var sut2 = "Hello"
 
-        XCTAssertEqual(sut1, sut2)
+        #expect(sut1 == sut2)
 
         @FieldValidated(validationLogic: .alwaysValid) var sut3 = "Hello"
         @FieldValidated(validationLogic: .alwaysInvalid) var sut4 = "World"
 
-        XCTAssertNotEqual(sut3, sut4)
+        #expect(sut3 != sut4)
     }
 
-    func test_alwaysValid_isValid() {
+    @Test
+    func alwaysValid_isValid() {
         @FieldValidated(validationLogic: .alwaysValid) var sut = "Hello"
 
-        XCTAssertTrue($sut.isValid)
-        XCTAssertFalse($sut.isError)
+        #expect($sut.isValid)
+        #expect($sut.isError == false)
     }
 
-    func test_alwaysInvalid_isInvalid() {
+    @Test
+    func alwaysInvalid_isInvalid() {
         @FieldValidated(validationLogic: .alwaysInvalid) var sut = "Hello"
 
-        XCTAssertFalse($sut.isValid)
-        XCTAssertFalse($sut.isError)
+        #expect($sut.isValid == false)
+        #expect($sut.isError == false)
     }
 
-    func test_alwaysError_isError() {
+    @Test
+    func alwaysError_isError() {
         @FieldValidated(validationLogic: .alwaysError) var sut = "Hello"
 
-        XCTAssertFalse($sut.isValid)
-        XCTAssertTrue($sut.isError)
+        #expect($sut.isValid == false)
+        #expect($sut.isError)
     }
 
-    func test_stringRequiringContent_invalidForEmpty() {
+    @Test
+    func stringRequiringContent_invalidForEmpty() {
         @FieldValidated(validationLogic: .stringRequiringContent) var sut = ""
-        XCTAssertFalse($sut.isValid)
+        #expect($sut.isValid == false)
     }
 
-    func test_stringRequiringContent_invalidForBlank() {
+    @Test
+    func stringRequiringContent_invalidForBlank() {
         @FieldValidated(validationLogic: .stringRequiringContent) var sut = "  \n\n\t"
-        XCTAssertFalse($sut.isValid)
+        #expect($sut.isValid == false)
     }
 
-    func test_stringRequiringContent_validForSomeContent() {
+    @Test
+    func stringRequiringContent_validForSomeContent() {
         @FieldValidated(validationLogic: .stringRequiringContent) var sut = "  Hello  "
-        XCTAssertTrue($sut.isValid)
+        #expect($sut.isValid)
         sut = "nice"
-        XCTAssertTrue($sut.isValid)
+        #expect($sut.isValid)
     }
 }

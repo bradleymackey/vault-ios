@@ -57,6 +57,7 @@ public final class HOTPCodePublisher: OTPCodePublisher {
     }
 
     /// Update the current value of the counter.
+    @MainActor
     public func set(counter: UInt64) {
         counterSubject.send(counter)
     }

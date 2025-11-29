@@ -7,7 +7,8 @@ import VaultCore
 /// Logs backup events so the user has visibility when the last one was performed.
 ///
 /// @mockable
-public protocol BackupEventLogger {
+@MainActor
+public protocol BackupEventLogger: Sendable {
     func lastBackupEvent() -> VaultBackupEvent?
     func exportedToPDF(date: Date, hash: Digest<VaultApplicationPayload>.SHA256)
     /// Publishes whenever an event is logged.

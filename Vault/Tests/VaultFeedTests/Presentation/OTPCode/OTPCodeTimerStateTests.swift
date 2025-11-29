@@ -1,121 +1,140 @@
 import Foundation
+import TestHelpers
+import Testing
 import VaultFeed
-import XCTest
 
-final class OTPCodeTimerStateTests: XCTestCase {
-    func test_init_startTimeAndEndTimeIsValues() {
+@Suite
+struct OTPCodeTimerStateTests {
+    @Test
+    func init_startTimeAndEndTimeIsValues() {
         let sut = OTPCodeTimerState(startTime: 123, endTime: 456)
 
-        XCTAssertEqual(sut.startTime, 123)
-        XCTAssertEqual(sut.endTime, 456)
+        #expect(sut.startTime == 123)
+        #expect(sut.endTime == 456)
     }
 
-    func test_init_currentTimePeriod_firstRange() {
+    @Test
+    func init_currentTimePeriod_firstRange() {
         let sut = OTPCodeTimerState(currentTime: 50, period: 30)
 
-        XCTAssertEqual(sut.startTime, 30)
-        XCTAssertEqual(sut.endTime, 60)
+        #expect(sut.startTime == 30)
+        #expect(sut.endTime == 60)
     }
 
-    func test_init_currentTimePeriod_subsequentRange() {
+    @Test
+    func init_currentTimePeriod_subsequentRange() {
         let sut = OTPCodeTimerState(currentTime: 91.3, period: 30)
 
-        XCTAssertEqual(sut.startTime, 90)
-        XCTAssertEqual(sut.endTime, 120)
+        #expect(sut.startTime == 90)
+        #expect(sut.endTime == 120)
     }
 
-    func test_init_currentTimePeriod_isExactRangeBoundary() {
+    @Test
+    func init_currentTimePeriod_isExactRangeBoundary() {
         let sut = OTPCodeTimerState(currentTime: 90, period: 30)
 
-        XCTAssertEqual(sut.startTime, 90)
-        XCTAssertEqual(sut.endTime, 120)
+        #expect(sut.startTime == 90)
+        #expect(sut.endTime == 120)
     }
 
-    func test_totalTime_isDurationOfTimeRangePositive() {
+    @Test
+    func totalTime_isDurationOfTimeRangePositive() {
         let sut = OTPCodeTimerState(startTime: 150, endTime: 250)
         let totalTime = sut.totalTime
-        XCTAssertEqual(totalTime, 100, accuracy: .ulpOfOne)
+        #expect(totalTime.isApproximatelyEqual(to: 100, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_totalTime_isDurationOfTimeRangeNegative() {
+    @Test
+    func totalTime_isDurationOfTimeRangeNegative() {
         let sut = OTPCodeTimerState(startTime: 250, endTime: 150)
         let totalTime = sut.totalTime
-        XCTAssertEqual(totalTime, -100, accuracy: .ulpOfOne)
+        #expect(totalTime.isApproximatelyEqual(to: -100, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_remainingTime_isTimeRemaining() {
+    @Test
+    func remainingTime_isTimeRemaining() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let timeRemaining = sut.remainingTime(at: 399)
-        XCTAssertEqual(timeRemaining, 51, accuracy: .ulpOfOne)
+        #expect(timeRemaining.isApproximatelyEqual(to: 51, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_remainingTime_isTimeRemainingClampsToZero() {
+    @Test
+    func remainingTime_isTimeRemainingClampsToZero() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let timeRemaining = sut.remainingTime(at: 461)
-        XCTAssertEqual(timeRemaining, 0, accuracy: .ulpOfOne)
+        #expect(timeRemaining.isApproximatelyEqual(to: 0, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_fractionCompleted_emptyTimeRangeIsCompleted() {
+    @Test
+    func fractionCompleted_emptyTimeRangeIsCompleted() {
         let sut = OTPCodeTimerState(startTime: 100, endTime: 100)
 
-        XCTAssertEqual(sut.fractionCompleted(at: 100), 1)
+        #expect(sut.fractionCompleted(at: 100) == 1)
     }
 
-    func test_fractionCompleted_negativeTimeRange() {
+    @Test
+    func fractionCompleted_negativeTimeRange() {
         let sut = OTPCodeTimerState(startTime: 100, endTime: 50)
 
-        XCTAssertEqual(sut.fractionCompleted(at: 49), 0)
-        XCTAssertEqual(sut.fractionCompleted(at: 50), 1)
-        XCTAssertEqual(sut.fractionCompleted(at: 75), 1)
-        XCTAssertEqual(sut.fractionCompleted(at: 100), 1)
-        XCTAssertEqual(sut.fractionCompleted(at: 101), 1)
+        #expect(sut.fractionCompleted(at: 49) == 0)
+        #expect(sut.fractionCompleted(at: 50) == 1)
+        #expect(sut.fractionCompleted(at: 75) == 1)
+        #expect(sut.fractionCompleted(at: 100) == 1)
+        #expect(sut.fractionCompleted(at: 101) == 1)
     }
 
-    func test_fractionCompleted_isFractionOfRangeCompleted() {
+    @Test
+    func fractionCompleted_isFractionOfRangeCompleted() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let fractionCompleted = sut.fractionCompleted(at: 360)
-        XCTAssertEqual(fractionCompleted, 0.1, accuracy: .ulpOfOne)
+        #expect(fractionCompleted.isApproximatelyEqual(to: 0.1, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_fractionCompleted_isFractionOfRangeCompletedZero() {
+    @Test
+    func fractionCompleted_isFractionOfRangeCompletedZero() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let fractionCompleted = sut.fractionCompleted(at: 350)
-        XCTAssertEqual(fractionCompleted, 0, accuracy: .ulpOfOne)
+        #expect(fractionCompleted.isApproximatelyEqual(to: 0, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_fractionCompleted_isFractionOfRangeCompletedCapsToZero() {
+    @Test
+    func fractionCompleted_isFractionOfRangeCompletedCapsToZero() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let fractionCompleted = sut.fractionCompleted(at: 340)
-        XCTAssertEqual(fractionCompleted, 0, accuracy: .ulpOfOne)
+        #expect(fractionCompleted.isApproximatelyEqual(to: 0, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_fractionCompleted_isFractionOfRangeCompletedOne() {
+    @Test
+    func fractionCompleted_isFractionOfRangeCompletedOne() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let fractionCompleted = sut.fractionCompleted(at: 450)
-        XCTAssertEqual(fractionCompleted, 1, accuracy: .ulpOfOne)
+        #expect(fractionCompleted.isApproximatelyEqual(to: 1, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_fractionCompleted_isFractionOfRangeCompletedCapsToOne() {
+    @Test
+    func fractionCompleted_isFractionOfRangeCompletedCapsToOne() {
         let sut = OTPCodeTimerState(startTime: 350, endTime: 450)
         let fractionCompleted = sut.fractionCompleted(at: 460)
-        XCTAssertEqual(fractionCompleted, 1, accuracy: .ulpOfOne)
+        #expect(fractionCompleted.isApproximatelyEqual(to: 1, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_offset_addsTimeToValues() {
+    @Test
+    func offset_addsTimeToValues() {
         let sut = OTPCodeTimerState(startTime: 100, endTime: 101)
 
         let offset = sut.offset(time: 23.2)
 
-        XCTAssertEqual(offset.startTime, 123.2, accuracy: .ulpOfOne)
-        XCTAssertEqual(offset.endTime, 124.2, accuracy: .ulpOfOne)
+        #expect(offset.startTime.isApproximatelyEqual(to: 123.2, absoluteTolerance: .ulpOfOne))
+        #expect(offset.endTime.isApproximatelyEqual(to: 124.2, absoluteTolerance: .ulpOfOne))
     }
 
-    func test_offset_subtractsTimeFromValues() {
+    @Test
+    func offset_subtractsTimeFromValues() {
         let sut = OTPCodeTimerState(startTime: 100, endTime: 101)
 
         let offset = sut.offset(time: -10)
 
-        XCTAssertEqual(offset.startTime, 90, accuracy: .ulpOfOne)
-        XCTAssertEqual(offset.endTime, 91, accuracy: .ulpOfOne)
+        #expect(offset.startTime.isApproximatelyEqual(to: 90, absoluteTolerance: .ulpOfOne))
+        #expect(offset.endTime.isApproximatelyEqual(to: 91, absoluteTolerance: .ulpOfOne))
     }
 }
