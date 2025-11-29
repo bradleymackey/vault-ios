@@ -1,38 +1,40 @@
 import Combine
 import Foundation
 import TestHelpers
+import Testing
 import VaultBackup
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class BackupKeyDecryptorViewModelTests: XCTestCase {
-    @MainActor
-    func test_init_setsInitialState() {
+@Suite
+@MainActor
+struct BackupKeyDecryptorViewModelTests {
+    @Test
+    func init_setsInitialState() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.enteredPassword, "")
-        XCTAssertEqual(sut.decryptionKeyState, .none)
+        #expect(sut.enteredPassword == "")
+        #expect(sut.decryptionKeyState == .none)
     }
 
-    @MainActor
-    func test_canAttemptDecryption_falseIfPasswordEmpty() async throws {
+    @Test
+    func canAttemptDecryption_falseIfPasswordEmpty() async throws {
         let sut = makeSUT()
         sut.enteredPassword = ""
 
-        XCTAssertFalse(sut.canAttemptDecryption)
+        #expect(sut.canAttemptDecryption == false)
     }
 
-    @MainActor
-    func test_canAttemptDecryption_trueIfPasswordNotEmpty() async throws {
+    @Test
+    func canAttemptDecryption_trueIfPasswordNotEmpty() async throws {
         let sut = makeSUT()
         sut.enteredPassword = "a"
 
-        XCTAssertTrue(sut.canAttemptDecryption)
+        #expect(sut.canAttemptDecryption)
     }
 
-    @MainActor
-    func test_attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
+    @Test
+    func attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
         let vaultApplicationPayload = VaultApplicationPayload(userDescription: "my stuff", items: [], tags: [])
         let decoder = EncryptedVaultDecoderMock()
         // returned payload implies successful decryption
@@ -48,23 +50,22 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
         )
         sut.enteredPassword = "hello"
 
-        let exp = expectation(description: "Wait for application payload")
-        let cancel = subject.sink { payload in
-            XCTAssertEqual(payload, vaultApplicationPayload)
-            exp.fulfill()
+        await confirmation { confirmation in
+            let cancel = subject.sink { payload in
+                #expect(payload == vaultApplicationPayload)
+                confirmation.confirm()
+            }
+
+            await sut.attemptDecryption()
+
+            cancel.cancel()
         }
 
-        await sut.attemptDecryption()
-
-        await fulfillment(of: [exp], timeout: 1)
-
-        XCTAssertEqual(sut.decryptionKeyState, .validDecryptionKey)
-
-        cancel.cancel()
+        #expect(sut.decryptionKeyState == .validDecryptionKey)
     }
 
-    @MainActor
-    func test_generateKey_emptyPasswordGeneratesError() async {
+    @Test
+    func generateKey_emptyPasswordGeneratesError() async {
         let decoder = EncryptedVaultDecoderMock()
         decoder.verifyCanDecryptHandler = { _, _ in throw TestError() }
         let sut = makeSUT(encryptedVaultDecoder: decoder)
@@ -72,17 +73,17 @@ final class BackupKeyDecryptorViewModelTests: XCTestCase {
 
         await sut.attemptDecryption()
 
-        XCTAssertTrue(sut.decryptionKeyState.isError)
+        #expect(sut.decryptionKeyState.isError)
     }
 
-    @MainActor
-    func test_generateKey_keyDeriverErrorGeneratesError() async {
+    @Test
+    func generateKey_keyDeriverErrorGeneratesError() async {
         let sut = makeSUT(keyDeriverFactory: .failing)
         sut.enteredPassword = "hello"
 
         await sut.attemptDecryption()
 
-        XCTAssertTrue(sut.decryptionKeyState.isError)
+        #expect(sut.decryptionKeyState.isError)
     }
 }
 
