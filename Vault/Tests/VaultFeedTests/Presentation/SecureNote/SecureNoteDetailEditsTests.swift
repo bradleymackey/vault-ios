@@ -1,80 +1,91 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class SecureNoteDetailEditsTests: XCTestCase {
-    func test_isValid_validForTitleWithContents() {
+@Suite
+struct SecureNoteDetailEditsTests {
+    @Test
+    func isValid_validForTitleWithContents() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "Nice"
 
-        XCTAssertTrue(sut.isValid)
+        #expect(sut.isValid)
     }
 
-    func test_isValid_invalidForEmptySearchPassphrase() {
+    @Test
+    func isValid_invalidForEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
         sut.viewConfig = .requiresSearchPassphrase
         sut.searchPassphrase = ""
 
-        XCTAssertFalse(sut.isValid)
+        #expect(sut.isValid == false)
     }
 
-    func test_isValid_validForNonEmptySearchPassphrase() {
+    @Test
+    func isValid_validForNonEmptySearchPassphrase() {
         var sut = SecureNoteDetailEdits.new()
         sut.viewConfig = .requiresSearchPassphrase
         sut.searchPassphrase = "passphrase"
 
-        XCTAssertTrue(sut.isValid)
+        #expect(sut.isValid)
     }
 
-    func test_title_isFirstLineOfContent() {
+    @Test
+    func title_isFirstLineOfContent() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First\nSecond\nThird"
 
-        XCTAssertEqual(sut.titleLine, "First")
+        #expect(sut.titleLine == "First")
     }
 
-    func test_title_skipsEmptyLines() {
+    @Test
+    func title_skipsEmptyLines() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "\n\nFirst\n\nSecond\nThird"
 
-        XCTAssertEqual(sut.titleLine, "First")
+        #expect(sut.titleLine == "First")
     }
 
-    func test_contentPreviewLine_isSecondLineOfContent() {
+    @Test
+    func contentPreviewLine_isSecondLineOfContent() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First\nSecond\nThird"
 
-        XCTAssertEqual(sut.contentPreviewLine, "Second")
+        #expect(sut.contentPreviewLine == "Second")
     }
 
-    func test_contentPreviewLine_isEmptyIfNoSecondLine() {
+    @Test
+    func contentPreviewLine_isEmptyIfNoSecondLine() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First"
 
-        XCTAssertEqual(sut.contentPreviewLine, "")
+        #expect(sut.contentPreviewLine == "")
     }
 
-    func test_contentPreviewLine_skipsEmptyLines() {
+    @Test
+    func contentPreviewLine_skipsEmptyLines() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "\n\nFirst\n\nSecond\nThird"
 
-        XCTAssertEqual(sut.contentPreviewLine, "Second")
+        #expect(sut.contentPreviewLine == "Second")
     }
 
-    func test_contentPreviewLine_isEmptyIfNoteEncrpyted() {
+    @Test
+    func contentPreviewLine_isEmptyIfNoteEncrpyted() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First\n\nSecond\nThird"
         sut.existingEncryptionKey = .init(key: .random(), salt: .random(count: 10), keyDervier: .testing)
 
-        XCTAssertEqual(sut.contentPreviewLine, "")
+        #expect(sut.contentPreviewLine == "")
     }
 
-    func test_contentPreviewLine_isEmptyIfNoteAboutToBeENcrpyted() {
+    @Test
+    func contentPreviewLine_isEmptyIfNoteAboutToBeENcrpyted() {
         var sut = SecureNoteDetailEdits.new()
         sut.contents = "First\n\nSecond\nThird"
         sut.newEncryptionPassword = "password"
 
-        XCTAssertEqual(sut.contentPreviewLine, "")
+        #expect(sut.contentPreviewLine == "")
     }
 }
