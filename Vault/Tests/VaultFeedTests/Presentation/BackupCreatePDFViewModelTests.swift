@@ -1,48 +1,50 @@
 import Foundation
 import TestHelpers
+import Testing
 import VaultCore
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class BackupCreatePDFViewModelTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() throws {
+@Suite
+@MainActor
+struct BackupCreatePDFViewModelTests {
+    @Test
+    func init_hasNoSideEffects() throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         let backupPasswordStore = BackupPasswordStoreMock()
         _ = try makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
 
-        XCTAssertEqual(vaultStore.calledMethods, [])
-        XCTAssertEqual(vaultTagStore.calledMethods, [])
-        XCTAssertEqual(backupPasswordStore.fetchPasswordCallCount, 0)
-        XCTAssertEqual(backupPasswordStore.setCallCount, 0)
+        #expect(vaultStore.calledMethods == [])
+        #expect(vaultTagStore.calledMethods == [])
+        #expect(backupPasswordStore.fetchPasswordCallCount == 0)
+        #expect(backupPasswordStore.setCallCount == 0)
     }
 
-    @MainActor
-    func test_init_initialStateIsIdle() throws {
+    @Test
+    func init_initialStateIsIdle() throws {
         let sut = try makeSUT()
 
-        XCTAssertEqual(sut.state, .idle)
+        #expect(sut.state == .idle)
     }
 
-    @MainActor
-    func test_createPDF_makesPDFDocument() async throws {
+    @Test
+    func createPDF_makesPDFDocument() async throws {
         let vaultStore = VaultStoreStub()
         vaultStore.exportVaultHandler = { _ in
             .init(userDescription: "Hello", items: [], tags: [])
         }
         let sut = try makeSUT(vaultStore: vaultStore)
 
-        try await expect(publisher: sut.generatedPDFPublisher(), valueCount: 1) {
+        try await sut.generatedPDFPublisher().expect(valueCount: 1) {
             await sut.createPDF()
         }
 
-        XCTAssertEqual(sut.state, .success)
+        #expect(sut.state == .success)
     }
 
-    @MainActor
-    func test_createPDF_recordsBackupEvent() async throws {
+    @Test
+    func createPDF_recordsBackupEvent() async throws {
         let vaultStore = VaultStoreStub()
         vaultStore.exportVaultHandler = { _ in
             .init(userDescription: "Hello", items: [], tags: [])
@@ -52,20 +54,20 @@ final class BackupCreatePDFViewModelTests: XCTestCase {
 
         await sut.createPDF()
 
-        XCTAssertEqual(logger.exportedToPDFCallCount, 1)
+        #expect(logger.exportedToPDFCallCount == 1)
     }
 
-    @MainActor
-    func test_createPDF_errorSetsErrorState() async throws {
+    @Test
+    func createPDF_errorSetsErrorState() async throws {
         let vaultStore = VaultStoreStub()
         vaultStore.exportVaultHandler = { _ in throw TestError() }
         let sut = try makeSUT(vaultStore: vaultStore)
 
-        _ = await awaitNoPublish(publisher: sut.generatedPDFPublisher(), when: {
+        try await sut.generatedPDFPublisher().expect(valueCount: 0) {
             await sut.createPDF()
-        })
+        }
 
-        XCTAssertTrue(sut.state.isError)
+        #expect(sut.state.isError)
     }
 }
 
