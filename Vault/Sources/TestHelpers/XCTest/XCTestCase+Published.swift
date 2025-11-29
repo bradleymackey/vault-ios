@@ -104,27 +104,3 @@ extension XCTestCase {
         await fulfillment(of: [exp], timeout: 2.0)
     }
 }
-
-extension Published.Publisher {
-    /// Collect the next *n* elements that are output, ignoring the first result
-    public func collectNext(_ count: Int) -> AnyPublisher<[Output], Never> {
-        dropFirst()
-            .collect(count)
-            .first()
-            .eraseToAnyPublisher()
-    }
-
-    /// For @Published, this is a publisher that ignores the first element.
-    public func nextElements() -> AnyPublisher<Output, Never> {
-        dropFirst().eraseToAnyPublisher()
-    }
-}
-
-extension Publisher {
-    /// Collects the first *n* elements that are output.
-    public func collectFirst(_ count: Int) -> AnyPublisher<[Output], Failure> {
-        collect(count)
-            .first()
-            .eraseToAnyPublisher()
-    }
-}
