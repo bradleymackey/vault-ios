@@ -1,23 +1,25 @@
 import Foundation
 import PDFKit
 import TestHelpers
+import Testing
 import VaultBackup
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class BackupImportFlowViewModelTests: XCTestCase {
-    @MainActor
-    func test_init_initialState() {
+@Suite
+@MainActor
+struct BackupImportFlowViewModelTests {
+    @Test
+    func init_initialState() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.payloadState, .none)
-        XCTAssertEqual(sut.importState, .notStarted)
-        XCTAssertFalse(sut.isImporting)
+        #expect(sut.payloadState == .none)
+        #expect(sut.importState == .notStarted)
+        #expect(sut.isImporting == false)
     }
 
-    @MainActor
-    func test_handleImportFromEncryptedVault_validGivesSuccess() async {
+    @Test
+    func handleImportFromEncryptedVault_validGivesSuccess() async {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         let payload = anyVaultApplicationPayload()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -32,15 +34,15 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         switch sut.payloadState {
         case let .ready(readyPayload, _):
-            XCTAssertEqual(readyPayload, payload)
+            #expect(readyPayload == payload)
         default:
-            XCTFail("Invalid state")
+            Issue.record("Expected .ready but got \(sut.payloadState)")
         }
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromEncryptedVault_failedToDecrypt() async throws {
+    @Test
+    func handleImportFromEncryptedVault_failedToDecrypt() async throws {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw TestError()
@@ -52,12 +54,12 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(fromEncryptedVault: anyEncryptedVault())
 
-        XCTAssertTrue(sut.payloadState.isError)
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState.isError)
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromEncryptedVault_noExistingPasswordPromptsForDifferentPassword() async throws {
+    @Test
+    func handleImportFromEncryptedVault_noExistingPasswordPromptsForDifferentPassword() async throws {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             anyVaultApplicationPayload()
@@ -70,12 +72,12 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(fromEncryptedVault: encryptedVault)
 
-        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState == .needsPasswordEntry(encryptedVault))
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromEncryptedVault_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
+    @Test
+    func handleImportFromEncryptedVault_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw EncryptedVaultDecoderError.decryption
@@ -88,32 +90,32 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(fromEncryptedVault: encryptedVault)
 
-        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState == .needsPasswordEntry(encryptedVault))
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromPDF_errorUpdatesPresentationError() async {
+    @Test
+    func handleImportFromPDF_errorUpdatesPresentationError() async {
         let sut = makeSUT()
 
         await sut.handleImport(fromPDF: .failure(TestError()))
 
-        XCTAssertTrue(sut.payloadState.isError)
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState.isError)
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromPDF_invalidPDFDataFails() async {
+    @Test
+    func handleImportFromPDF_invalidPDFDataFails() async {
         let sut = makeSUT()
 
         await sut.handleImport(fromPDF: .success(Data()))
 
-        XCTAssertTrue(sut.payloadState.isError)
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState.isError)
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromPDF_validExtractionGivesSuccess() async throws {
+    @Test
+    func handleImportFromPDF_validExtractionGivesSuccess() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         let payload = anyVaultApplicationPayload()
@@ -134,15 +136,15 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         switch sut.payloadState {
         case let .ready(readyPayload, _):
-            XCTAssertEqual(readyPayload, payload)
+            #expect(readyPayload == payload)
         default:
-            XCTFail("Invalid state")
+            Issue.record("Expected .ready but got \(sut.payloadState)")
         }
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromPDF_failedToDecrypt() async throws {
+    @Test
+    func handleImportFromPDF_failedToDecrypt() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -160,12 +162,12 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(fromPDF: .success(pdfData))
 
-        XCTAssertTrue(sut.payloadState.isError)
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState.isError)
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromPDF_noExistingPasswordPromptsForDifferentPassword() async throws {
+    @Test
+    func handleImportFromPDF_noExistingPasswordPromptsForDifferentPassword() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -184,12 +186,12 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(fromPDF: .success(pdfData))
 
-        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState == .needsPasswordEntry(encryptedVault))
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleImportFromPDF_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
+    @Test
+    func handleImportFromPDF_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
@@ -208,12 +210,12 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         await sut.handleImport(fromPDF: .success(pdfData))
 
-        XCTAssertEqual(sut.payloadState, .needsPasswordEntry(encryptedVault))
-        XCTAssertEqual(sut.importState, .notStarted)
+        #expect(sut.payloadState == .needsPasswordEntry(encryptedVault))
+        #expect(sut.importState == .notStarted)
     }
 
-    @MainActor
-    func test_handleVaultDecoded_updatesPayloadStateToReady() {
+    @Test
+    func handleVaultDecoded_updatesPayloadStateToReady() {
         let sut = makeSUT()
 
         let initialPayload = anyVaultApplicationPayload()
@@ -221,49 +223,49 @@ final class BackupImportFlowViewModelTests: XCTestCase {
 
         switch sut.payloadState {
         case let .ready(payload, _):
-            XCTAssertEqual(payload, initialPayload)
+            #expect(payload == initialPayload)
         default:
-            XCTFail("Invalid")
+            Issue.record("Expected .ready but got \(sut.payloadState)")
         }
     }
 
-    @MainActor
-    func test_importPayload_toEmptyVault() async throws {
+    @Test
+    func importPayload_toEmptyVault() async throws {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)
         let sut = makeSUT(importContext: .toEmptyVault, dataModel: dataModel)
 
         await sut.importPayload(payload: anyVaultApplicationPayload())
 
-        XCTAssertEqual(sut.importState, .success)
-        XCTAssertEqual(importer.importAndMergeVaultCallCount, 1)
-        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 0)
+        #expect(sut.importState == .success)
+        #expect(importer.importAndMergeVaultCallCount == 1)
+        #expect(importer.importAndOverrideVaultCallCount == 0)
     }
 
-    @MainActor
-    func test_importPayload_merge() async throws {
+    @Test
+    func importPayload_merge() async throws {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)
         let sut = makeSUT(importContext: .merge, dataModel: dataModel)
 
         await sut.importPayload(payload: anyVaultApplicationPayload())
 
-        XCTAssertEqual(sut.importState, .success)
-        XCTAssertEqual(importer.importAndMergeVaultCallCount, 1)
-        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 0)
+        #expect(sut.importState == .success)
+        #expect(importer.importAndMergeVaultCallCount == 1)
+        #expect(importer.importAndOverrideVaultCallCount == 0)
     }
 
-    @MainActor
-    func test_importPayload_override() async throws {
+    @Test
+    func importPayload_override() async throws {
         let importer = VaultStoreImporterMock()
         let dataModel = anyVaultDataModel(vaultImporter: importer)
         let sut = makeSUT(importContext: .override, dataModel: dataModel)
 
         await sut.importPayload(payload: anyVaultApplicationPayload())
 
-        XCTAssertEqual(sut.importState, .success)
-        XCTAssertEqual(importer.importAndMergeVaultCallCount, 0)
-        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 1)
+        #expect(sut.importState == .success)
+        #expect(importer.importAndMergeVaultCallCount == 0)
+        #expect(importer.importAndOverrideVaultCallCount == 1)
     }
 }
 
