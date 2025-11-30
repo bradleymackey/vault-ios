@@ -84,11 +84,10 @@ custom_rules:
     message: "Is there a library that supports concurrency instead? We want to be thread safe, if at all possible! Please provide a description if this is unavoidable."
     severity: error
   no_xctest:
-    excluded: "(Tests/(VaultiOSTests)|Sources/TestHelpers)/*"
-    name: "XCTest is not allowed in this target."
+    name: "XCTest is not allowed."
     regex: "import XCTest"
     match_kinds:
       - keyword
       - identifier
-    message: "`import Testing` to use Swift Testing"
+    message: "`import Testing` to use Swift Testing. It's faster and safer by default. We don't allow legacy XCTest"
     severity: error
