@@ -1838,9 +1838,7 @@ extension PersistedLocalVaultStore {
             item.id == uuid
         })
         descriptor.fetchLimit = 1
-        guard let existing = try? modelContext.fetch(descriptor).first else {
-            return
-        }
+        let existing = try #require(try? modelContext.fetch(descriptor).first, "Item not found")
         existing.otpDetails?.algorithm = "INVALID"
 
         modelContext.insert(existing)
