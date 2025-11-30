@@ -31,6 +31,9 @@
       "identifier" : "London, England",
       "referenceType" : "built-in"
     },
+    "mainThreadCheckerDetectionPolicy" : {
+      "severity" : "failure"
+    },
     "region" : "US",
     "testExecutionOrdering" : "random",
     "testTimeoutsEnabled" : true
