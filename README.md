@@ -37,7 +37,7 @@ There's a few ways that you can use Vault to store your data:
 
 ### Development Tenets
 
-- [x] **Tested**: high level of test coverage, mockolo for mocking, adopting Swift Testing whereever possible, snapshot tests
+- [x] **Tested**: high level of test coverage, mockolo for mocking, Swift Testing, snapshot tests
 - [x] **Safe**: Swift 6 concurrency
 - [x] **Modern**: iOS 26, SwiftUI, Structured Concurrency
 - [x] **Availability**: iPhone & iPad Support
