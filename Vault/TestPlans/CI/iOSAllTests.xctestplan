@@ -33,6 +33,7 @@
     },
     "region" : "US",
     "testExecutionOrdering" : "random",
+    "testRepetitionMode" : "retryOnFailure",
     "testTimeoutsEnabled" : true
   },
   "testTargets" : [
