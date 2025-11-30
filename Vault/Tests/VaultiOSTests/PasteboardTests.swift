@@ -1,56 +1,54 @@
 import Foundation
 import FoundationExtensions
+import Testing
 import VaultSettings
-import XCTest
 @testable import VaultiOS
 
-final class PasteboardTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() async throws {
+@Suite
+@MainActor
+final class PasteboardTests {
+    @Test
+    func init_hasNoSideEffects() async throws {
         let pasteboard = SystemPasteboardMock()
 
-        let exp = expectation(description: "Wait for pasteboard copy")
-        exp.isInverted = true
-        pasteboard.copyHandler = { _, _ in
-            exp.fulfill()
+        await confirmation(expectedCount: 0) { confirm in
+            pasteboard.copyHandler = { _, _ in
+                confirm()
+            }
+
+            _ = makeSUT(pasteboard: pasteboard)
         }
-
-        _ = makeSUT(pasteboard: pasteboard)
-
-        await fulfillment(of: [exp], timeout: 1.0)
     }
 
-    @MainActor
-    func test_copy_copiesToPasteboard() async throws {
+    @Test
+    func copy_copiesToPasteboard() async throws {
         let pasteboard = SystemPasteboardMock()
         let sut = makeSUT(pasteboard: pasteboard)
         let targetString = "hello world, this is my string"
 
-        let exp = expectation(description: "Wait for pasteboard copy")
-        pasteboard.copyHandler = { copiedString, _ in
-            XCTAssertEqual(copiedString, targetString)
-            exp.fulfill()
+        await confirmation { confirm in
+            pasteboard.copyHandler = { copiedString, _ in
+                #expect(copiedString == targetString)
+                confirm()
+            }
+
+            sut.copy(targetString)
         }
-
-        sut.copy(targetString)
-
-        await fulfillment(of: [exp], timeout: 1.0)
     }
 
-    @MainActor
-    func test_copy_emitsDidPasteEvent() async throws {
+    @Test
+    func copy_emitsDidPasteEvent() async throws {
         let sut = makeSUT()
 
-        let output = sut.didPaste().collectFirst(3)
-        _ = try await awaitPublisher(output) {
+        try await sut.didPaste().expect(valueCount: 3) {
             sut.copy("any")
             sut.copy("any")
             sut.copy("any")
         }
     }
 
-    @MainActor
-    func test_copy_usesTTLFromSettings() async throws {
+    @Test
+    func copy_usesTTLFromSettings() async throws {
         let ttl = PasteTTL(duration: 1234)
         let pasteboard = SystemPasteboardMock()
         let defaults = try makeDefaults()
@@ -59,37 +57,32 @@ final class PasteboardTests: XCTestCase {
 
         settings.state.pasteTimeToLive = ttl
 
-        let exp = expectation(description: "Wait for pasteboard copy")
-        pasteboard.copyHandler = { _, actualTTL in
-            XCTAssertEqual(actualTTL, ttl.duration)
-            exp.fulfill()
+        await confirmation { confirm in
+            pasteboard.copyHandler = { _, actualTTL in
+                #expect(actualTTL == ttl.duration)
+                confirm()
+            }
+
+            sut.copy("some string")
         }
-
-        sut.copy("some string")
-
-        await fulfillment(of: [exp], timeout: 1.0)
     }
 }
 
 // MARK: - Helpers
 
 extension PasteboardTests {
-    @MainActor
     private func makeSUT(
         pasteboard: SystemPasteboardMock = SystemPasteboardMock(),
         localSettings: LocalSettings = LocalSettings(defaults: .init(userDefaults: .standard)),
-        file: StaticString = #filePath,
-        line: UInt = #line,
+        file _: StaticString = #filePath,
+        line _: UInt = #line,
     ) -> Pasteboard {
         let pasteboard = Pasteboard(pasteboard, localSettings: localSettings)
-        trackForMemoryLeaks(pasteboard, file: file, line: line)
-        trackForMemoryLeaks(localSettings, file: file, line: line)
         return pasteboard
     }
 
-    @MainActor
     private func makeDefaults() throws -> Defaults {
-        let userDefaults = try XCTUnwrap(UserDefaults(suiteName: #file))
+        let userDefaults = try #require(UserDefaults(suiteName: #file))
         userDefaults.removePersistentDomain(forName: #file)
         return Defaults(userDefaults: userDefaults)
     }
