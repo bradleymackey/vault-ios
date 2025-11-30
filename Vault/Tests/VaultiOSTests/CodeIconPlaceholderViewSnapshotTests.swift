@@ -1,16 +1,20 @@
 import Combine
 import SnapshotTesting
-import XCTest
+import Testing
 @testable import VaultiOS
 
-final class CodeIconPlaceholderViewSnapshotTests: XCTestCase {
-    func test_layout_smallSize() {
+@Suite
+@MainActor
+final class CodeIconPlaceholderViewSnapshotTests {
+    @Test
+    func layout_smallSize() {
         let view = OTPCodeIconPlaceholderView(iconFontSize: 22)
 
         assertSnapshot(of: view, as: .image)
     }
 
-    func test_layout_mediumSize() {
+    @Test
+    func layout_mediumSize() {
         let view = OTPCodeIconPlaceholderView(iconFontSize: 44)
 
         assertSnapshot(of: view, as: .image)
