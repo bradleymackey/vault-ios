@@ -1,23 +1,25 @@
 import Foundation
 import FoundationExtensions
 import TestHelpers
+import Testing
 import VaultKeygen
-import XCTest
 @testable import VaultFeed
 
-final class VaultDataModelTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoStoreSideEffects() {
+@Suite
+@MainActor
+final class VaultDataModelTests {
+    @Test
+    func initHasNoStoreSideEffects() {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         _ = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
 
-        XCTAssertEqual(vaultStore.calledMethods, [])
-        XCTAssertEqual(vaultTagStore.calledMethods, [])
+        #expect(vaultStore.calledMethods == [])
+        #expect(vaultTagStore.calledMethods == [])
     }
 
-    @MainActor
-    func test_init_initiallyFetchesBackupState() {
+    @Test
+    func init_initiallyFetchesBackupState() {
         let logger = BackupEventLoggerMock()
         logger.lastBackupEventHandler = { .init(
             backupDate: Date(),
@@ -27,27 +29,27 @@ final class VaultDataModelTests: XCTestCase {
         ) }
         let sut = makeSUT(backupEventLogger: logger)
 
-        XCTAssertEqual(logger.lastBackupEventCallCount, 1)
-        XCTAssertNotNil(sut.lastBackupEvent)
+        #expect(logger.lastBackupEventCallCount == 1)
+        #expect(sut.lastBackupEvent != nil)
     }
 
-    @MainActor
-    func test_init_initiallyFetchesBackupStateNil() {
+    @Test
+    func init_initiallyFetchesBackupStateNil() {
         let logger = BackupEventLoggerMock()
         logger.lastBackupEventHandler = { nil }
         let sut = makeSUT(backupEventLogger: logger)
 
-        XCTAssertEqual(logger.lastBackupEventCallCount, 1)
-        XCTAssertNil(sut.lastBackupEvent)
+        #expect(logger.lastBackupEventCallCount == 1)
+        #expect(sut.lastBackupEvent == nil)
     }
 
-    @MainActor
-    func test_init_monitorsChangesToBackupEventLogger() {
+    @Test
+    func init_monitorsChangesToBackupEventLogger() {
         let logger = BackupEventLoggerMock()
         logger.lastBackupEventHandler = { nil }
         let sut = makeSUT(backupEventLogger: logger)
 
-        XCTAssertNil(sut.lastBackupEvent)
+        #expect(sut.lastBackupEvent == nil)
 
         let event = VaultBackupEvent(
             backupDate: Date(),
@@ -57,7 +59,7 @@ final class VaultDataModelTests: XCTestCase {
         )
         logger.loggedEventPublisherSubject.send(event)
 
-        XCTAssertEqual(sut.lastBackupEvent, event)
+        #expect(sut.lastBackupEvent == event)
 
         let event2 = VaultBackupEvent(
             backupDate: Date(),
@@ -67,170 +69,170 @@ final class VaultDataModelTests: XCTestCase {
         )
         logger.loggedEventPublisherSubject.send(event2)
 
-        XCTAssertEqual(sut.lastBackupEvent, event2)
+        #expect(sut.lastBackupEvent == event2)
     }
 
-    @MainActor
-    func test_init_initiallyEmptyData() {
+    @Test
+    func init_initiallyEmptyData() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.items, [])
-        XCTAssertEqual(sut.itemErrors, [])
-        XCTAssertEqual(sut.itemsState, .base)
-        XCTAssertNil(sut.itemsRetrievalError)
-        XCTAssertEqual(sut.allTags, [])
-        XCTAssertEqual(sut.allTagsState, .base)
-        XCTAssertEqual(sut.backupPassword, .notFetched)
-        XCTAssertNil(sut.allTagsRetrievalError)
-        XCTAssertFalse(sut.hasAnyItems)
+        #expect(sut.items == [])
+        #expect(sut.itemErrors == [])
+        #expect(sut.itemsState == .base)
+        #expect(sut.itemsRetrievalError == nil)
+        #expect(sut.allTags == [])
+        #expect(sut.allTagsState == .base)
+        #expect(sut.backupPassword == .notFetched)
+        #expect(sut.allTagsRetrievalError == nil)
+        #expect(sut.hasAnyItems == false)
     }
 
-    @MainActor
-    func test_init_initiallyNotQueryingItems() {
+    @Test
+    func init_initiallyNotQueryingItems() {
         let sut = makeSUT()
 
-        XCTAssertEqual(sut.itemsSearchQuery, "")
-        XCTAssertEqual(sut.itemsFilteringByTags, [])
+        #expect(sut.itemsSearchQuery == "")
+        #expect(sut.itemsFilteringByTags == [])
     }
 
-    @MainActor
-    func test_init_initialPayloadHashIsNil() {
+    @Test
+    func init_initialPayloadHashIsNil() {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
 
-        XCTAssertNil(sut.currentPayloadHash)
+        #expect(sut.currentPayloadHash == nil)
     }
 
-    @MainActor
-    func test_setup_computesCurrentPayloadHash() async {
+    @Test
+    func setup_computesCurrentPayloadHash() async {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
 
         await sut.setup()
 
-        XCTAssertEqual(store.calledMethods, [.export])
-        XCTAssertNotNil(sut.currentPayloadHash)
+        #expect(store.calledMethods == [.export])
+        #expect(sut.currentPayloadHash != nil)
     }
 
-    @MainActor
-    func test_isSearching_whenQueryingItems() {
+    @Test
+    func isSearching_whenQueryingItems() {
         let sut = makeSUT()
         sut.itemsSearchQuery = " \tSOME QUERY 123\n "
 
-        XCTAssertTrue(sut.isSearching)
+        #expect(sut.isSearching == true)
     }
 
-    @MainActor
-    func test_isSearching_whenNotQueryingItems() {
+    @Test
+    func isSearching_whenNotQueryingItems() {
         let sut = makeSUT()
         sut.itemsSearchQuery = ""
         // filtering tags does not count as searching
         sut.itemsFilteringByTags = [.init(id: UUID())]
 
-        XCTAssertFalse(sut.isSearching)
+        #expect(sut.isSearching == false)
     }
 
-    @MainActor
-    func test_toggleFiltering_addsTagToFiltering() {
+    @Test
+    func toggleFiltering_addsTagToFiltering() {
         let sut = makeSUT()
         let tagID = Identifier<VaultItemTag>.new()
 
         sut.toggleFiltering(tag: tagID)
 
-        XCTAssertEqual(sut.itemsFilteringByTags, [tagID])
+        #expect(sut.itemsFilteringByTags == [tagID])
     }
 
-    @MainActor
-    func test_toggleFiltering_removesTagFromFiltering() {
+    @Test
+    func toggleFiltering_removesTagFromFiltering() {
         let sut = makeSUT()
         let tagID = Identifier<VaultItemTag>.new()
         sut.itemsFilteringByTags = [tagID]
 
         sut.toggleFiltering(tag: tagID)
 
-        XCTAssertEqual(sut.itemsFilteringByTags, [])
+        #expect(sut.itemsFilteringByTags == [])
     }
 
-    @MainActor
-    func test_reloadItems_populatesNoItemsFromEmptyStore() async {
+    @Test
+    func reloadItems_populatesNoItemsFromEmptyStore() async {
         let sut = makeSUT(vaultStore: VaultStoreStub.empty)
 
         await sut.reloadItems()
 
-        XCTAssertEqual(sut.items, [])
+        #expect(sut.items == [])
     }
 
-    @MainActor
-    func test_reloadItems_populatesItemsFromStore() async {
+    @Test
+    func reloadItems_populatesItemsFromStore() async {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
 
-        let exp = expectation(description: "Wait for reload data")
-        store.retrieveHandler = { _ in
-            defer { exp.fulfill() }
-            return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        await confirmation { confirm in
+            store.retrieveHandler = { _ in
+                confirm()
+                return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+            }
+
+            await sut.reloadData()
+
+            #expect(sut.items.count == 2)
         }
-
-        await sut.reloadData()
-
-        await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.items.count, 2)
     }
 
-    @MainActor
-    func test_reloadItems_populatesItemsFromStoreQueryingText() async {
+    @Test
+    func reloadItems_populatesItemsFromStoreQueryingText() async {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
         sut.itemsSearchQuery = " \tSOME QUERY 123\n "
 
-        let exp = expectation(description: "Wait for reload data")
-        store.retrieveHandler = { query in
-            defer { exp.fulfill() }
-            XCTAssertEqual(query.filterText, "SOME QUERY 123")
-            XCTAssertEqual(query.filterTags, [])
-            return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        await confirmation { confirm in
+            store.retrieveHandler = { query in
+                #expect(query.filterText == "SOME QUERY 123")
+                #expect(query.filterTags == [])
+                confirm()
+                return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+            }
+
+            await sut.reloadData()
+
+            #expect(sut.items.count == 2)
         }
-
-        await sut.reloadData()
-
-        await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.items.count, 2)
     }
 
-    @MainActor
-    func test_reloadItems_loadsItemsQueryingTextAndFiltering() async {
+    @Test
+    func reloadItems_loadsItemsQueryingTextAndFiltering() async {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
         sut.itemsSearchQuery = " \tSOME QUERY 123\n "
         let filterTags: Set<Identifier<VaultItemTag>> = [.init(id: UUID())]
         sut.itemsFilteringByTags = filterTags
 
-        let exp = expectation(description: "Wait for reload data")
-        store.retrieveHandler = { query in
-            defer { exp.fulfill() }
-            XCTAssertEqual(query.filterText, "SOME QUERY 123")
-            XCTAssertEqual(query.filterTags, filterTags)
-            return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+        await confirmation { confirm in
+            store.retrieveHandler = { query in
+                #expect(query.filterText == "SOME QUERY 123")
+                #expect(query.filterTags == filterTags)
+                confirm()
+                return .init(items: [uniqueVaultItem(), uniqueVaultItem()])
+            }
+
+            await sut.reloadData()
+
+            #expect(sut.items.count == 2)
         }
-
-        await sut.reloadData()
-
-        await fulfillment(of: [exp], timeout: 1.0)
-        XCTAssertEqual(sut.items.count, 2)
     }
 
-    @MainActor
-    func test_reloadItems_presentsErrorOnFailure() async {
+    @Test
+    func reloadItems_presentsErrorOnFailure() async {
         let store = VaultStoreErroring(error: TestError())
         let sut = makeSUT(vaultStore: store)
 
         await sut.reloadData()
 
-        XCTAssertNotNil(sut.itemsRetrievalError)
+        #expect(sut.itemsRetrievalError != nil)
     }
 
-    @MainActor
-    func test_reloadItems_clearsExistingError() async {
+    @Test
+    func reloadItems_clearsExistingError() async {
         let store = VaultStoreStub()
         store.retrieveHandler = { _ in
             throw TestError()
@@ -243,11 +245,11 @@ final class VaultDataModelTests: XCTestCase {
 
         await sut.reloadData()
 
-        XCTAssertNil(sut.itemsRetrievalError)
+        #expect(sut.itemsRetrievalError == nil)
     }
 
-    @MainActor
-    func test_reloadItems_loadsHasItems() async {
+    @Test
+    func reloadItems_loadsHasItems() async {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
         for hasItems in [true, false] {
@@ -255,46 +257,48 @@ final class VaultDataModelTests: XCTestCase {
 
             await sut.reloadItems()
 
-            XCTAssertEqual(sut.hasAnyItems, hasItems)
+            #expect(sut.hasAnyItems == hasItems)
         }
     }
 
-    @MainActor
-    func test_reloadItems_deletesKillphraseItemsBeforeReturningResults() async throws {
-        let expDelete = expectation(description: "Wait for delete")
-        let expRetrieve = expectation(description: "Wait for retrieve")
+    @Test
+    func reloadItems_deletesKillphraseItemsBeforeReturningResults() async throws {
         let store = VaultStoreStub()
-        store.retrieveHandler = { query in
-            XCTAssertEqual(query.filterText, "hello world")
-            expRetrieve.fulfill()
-            return .empty()
-        }
         let killphraseDeleter = VaultStoreKillphraseDeleterMock()
-        killphraseDeleter.deleteItemsHandler = { query in
-            XCTAssertEqual(query, "hello world")
-            expDelete.fulfill()
-        }
         let sut = makeSUT(vaultStore: store, vaultKillphraseDeleter: killphraseDeleter)
         sut.itemsSearchQuery = "hello world"
 
-        await sut.reloadItems()
+        await confirmation("Delete called", expectedCount: 1) { confirmDelete in
+            killphraseDeleter.deleteItemsHandler = { query in
+                #expect(query == "hello world")
+                confirmDelete()
+            }
 
-        await fulfillment(of: [expDelete, expRetrieve], timeout: 1, enforceOrder: true)
+            await confirmation("Retrieve called", expectedCount: 1) { confirmRetrieve in
+                store.retrieveHandler = { query in
+                    #expect(query.filterText == "hello world")
+                    confirmRetrieve()
+                    return .empty()
+                }
+
+                await sut.reloadItems()
+            }
+        }
     }
 
-    @MainActor
-    func test_insert_createsItemInStoreAndReloads() async throws {
+    @Test
+    func insert_createsItemInStoreAndReloads() async throws {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
         let item = uniqueVaultItem().makeWritable()
 
         try await sut.insert(item: item)
 
-        XCTAssertEqual(store.calledMethods, [.insert, .retrieve])
+        #expect(store.calledMethods == [.insert, .retrieve])
     }
 
-    @MainActor
-    func test_update_updatesItemInvalidatesAndReloads() async throws {
+    @Test
+    func update_updatesItemInvalidatesAndReloads() async throws {
         let store = VaultStoreStub()
         let cache1 = VaultItemCacheMock()
         let cache2 = VaultItemCacheMock()
@@ -303,13 +307,13 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.update(itemID: .new(), data: item)
 
-        XCTAssertEqual(store.calledMethods, [.update, .retrieve, .export])
-        XCTAssertEqual(cache1.vaultItemCacheClearCallCount, 1)
-        XCTAssertEqual(cache2.vaultItemCacheClearCallCount, 1)
+        #expect(store.calledMethods == [.update, .retrieve, .export])
+        #expect(cache1.vaultItemCacheClearCallCount == 1)
+        #expect(cache2.vaultItemCacheClearCallCount == 1)
     }
 
-    @MainActor
-    func test_delete_deletesItemInvalidatesAndReloads() async throws {
+    @Test
+    func delete_deletesItemInvalidatesAndReloads() async throws {
         let store = VaultStoreStub()
         let cache1 = VaultItemCacheMock()
         let cache2 = VaultItemCacheMock()
@@ -317,56 +321,56 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.delete(itemID: .new())
 
-        XCTAssertEqual(store.calledMethods, [.delete, .retrieve, .export])
-        XCTAssertEqual(cache1.vaultItemCacheClearCallCount, 1)
-        XCTAssertEqual(cache2.vaultItemCacheClearCallCount, 1)
+        #expect(store.calledMethods == [.delete, .retrieve, .export])
+        #expect(cache1.vaultItemCacheClearCallCount == 1)
+        #expect(cache2.vaultItemCacheClearCallCount == 1)
     }
 
-    @MainActor
-    func test_reorder_reordersItemsInStore() async throws {
+    @Test
+    func reorder_reordersItemsInStore() async throws {
         let store = VaultStoreStub()
         let sut = makeSUT(vaultStore: store)
         let items = [uniqueVaultItem(), uniqueVaultItem()].map(\.id)
 
         try await sut.reorder(items: Set(items), to: .start)
 
-        XCTAssertEqual(store.calledMethods, [.reorder, .export])
+        #expect(store.calledMethods == [.reorder, .export])
     }
 
-    @MainActor
-    func test_insertTag_createsTagInStoreAndReloads() async throws {
+    @Test
+    func insertTag_createsTagInStoreAndReloads() async throws {
         let store = VaultTagStoreStub()
         let sut = makeSUT(vaultTagStore: store)
         let tag = anyVaultItemTag().makeWritable()
 
         try await sut.insert(tag: tag)
 
-        XCTAssertEqual(store.calledMethods, [.insertTag, .retrieveTags])
+        #expect(store.calledMethods == [.insertTag, .retrieveTags])
     }
 
-    @MainActor
-    func test_updateTag_updatesTagInStoreAndReloads() async throws {
+    @Test
+    func updateTag_updatesTagInStoreAndReloads() async throws {
         let store = VaultTagStoreStub()
         let sut = makeSUT(vaultTagStore: store)
         let tag = anyVaultItemTag().makeWritable()
 
         try await sut.update(tagID: .new(), data: tag)
 
-        XCTAssertEqual(store.calledMethods, [.updateTag, .retrieveTags])
+        #expect(store.calledMethods == [.updateTag, .retrieveTags])
     }
 
-    @MainActor
-    func test_deleteTag_deletesTagInStoreAndReloads() async throws {
+    @Test
+    func deleteTag_deletesTagInStoreAndReloads() async throws {
         let tagStore = VaultTagStoreStub()
         let sut = makeSUT(vaultTagStore: tagStore)
 
         try await sut.delete(tagID: .new())
 
-        XCTAssertEqual(tagStore.calledMethods, [.deleteTag, .retrieveTags])
+        #expect(tagStore.calledMethods == [.deleteTag, .retrieveTags])
     }
 
-    @MainActor
-    func test_deleteTag_removesFromCurrentFilteringAndReloads() async throws {
+    @Test
+    func deleteTag_removesFromCurrentFilteringAndReloads() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let sut = makeSUT(vaultStore: store, vaultTagStore: tagStore)
@@ -375,12 +379,12 @@ final class VaultDataModelTests: XCTestCase {
 
         try await sut.delete(tagID: tagID)
 
-        XCTAssertEqual(store.calledMethods, [.retrieve, .export])
-        XCTAssertEqual(sut.itemsFilteringByTags, [])
+        #expect(store.calledMethods == [.retrieve, .export])
+        #expect(sut.itemsFilteringByTags == [])
     }
 
-    @MainActor
-    func test_makeExport_exportsFromVaultStore() async throws {
+    @Test
+    func makeExport_exportsFromVaultStore() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let sut = makeSUT(vaultStore: store, vaultTagStore: tagStore)
@@ -389,13 +393,13 @@ final class VaultDataModelTests: XCTestCase {
         store.exportVaultHandler = { _ in payload }
         let exported = try await sut.makeExport(userDescription: "desc")
 
-        XCTAssertEqual(exported, payload)
-        XCTAssertEqual(store.calledMethods, [.export])
-        XCTAssertEqual(tagStore.calledMethods, [])
+        #expect(exported == payload)
+        #expect(store.calledMethods == [.export])
+        #expect(tagStore.calledMethods == [])
     }
 
-    @MainActor
-    func test_loadBackupPassword_setsFetchedFromStore() async throws {
+    @Test
+    func loadBackupPassword_setsFetchedFromStore() async throws {
         let store = BackupPasswordStoreMock()
         let password = DerivedEncryptionKey(key: .zero(), salt: Data(), keyDervier: .testing)
         store.fetchPasswordHandler = { password }
@@ -403,36 +407,36 @@ final class VaultDataModelTests: XCTestCase {
 
         await sut.loadBackupPassword()
 
-        XCTAssertEqual(sut.backupPassword, .fetched(password))
-        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+        #expect(sut.backupPassword == .fetched(password))
+        #expect(store.fetchPasswordCallCount == 1)
     }
 
-    @MainActor
-    func test_loadBackupPassword_setsNotCreatedIfNotInStore() async throws {
+    @Test
+    func loadBackupPassword_setsNotCreatedIfNotInStore() async throws {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { nil }
         let sut = makeSUT(backupPasswordStore: store)
 
         await sut.loadBackupPassword()
 
-        XCTAssertEqual(sut.backupPassword, .notCreated)
-        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+        #expect(sut.backupPassword == .notCreated)
+        #expect(store.fetchPasswordCallCount == 1)
     }
 
-    @MainActor
-    func test_loadBackupPassword_setsErrorIfStoreError() async throws {
+    @Test
+    func loadBackupPassword_setsErrorIfStoreError() async throws {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { throw TestError() }
         let sut = makeSUT(backupPasswordStore: store)
 
         await sut.loadBackupPassword()
 
-        XCTAssertTrue(sut.backupPassword.isError)
-        XCTAssertEqual(store.fetchPasswordCallCount, 1)
+        #expect(sut.backupPassword.isError == true)
+        #expect(store.fetchPasswordCallCount == 1)
     }
 
-    @MainActor
-    func test_storeBackupPassword_setsInStoreAndUpdatesEntry() async throws {
+    @Test
+    func storeBackupPassword_setsInStoreAndUpdatesEntry() async throws {
         let store = BackupPasswordStoreMock()
         store.setHandler = { _ in }
         let sut = makeSUT(backupPasswordStore: store)
@@ -440,44 +444,46 @@ final class VaultDataModelTests: XCTestCase {
         let password = DerivedEncryptionKey(key: .random(), salt: Data(), keyDervier: .testing)
         try await sut.store(backupPassword: password)
 
-        XCTAssertEqual(sut.backupPassword, .fetched(password))
-        XCTAssertEqual(store.setCallCount, 1)
+        #expect(sut.backupPassword == .fetched(password))
+        #expect(store.setCallCount == 1)
     }
 
-    @MainActor
-    func test_storeBackupPassword_errorDoesNotUpdateEntry() async throws {
+    @Test
+    func storeBackupPassword_errorDoesNotUpdateEntry() async throws {
         let store = BackupPasswordStoreMock()
         store.setHandler = { _ in throw TestError() }
         let sut = makeSUT(backupPasswordStore: store)
 
         let password = DerivedEncryptionKey(key: .random(), salt: Data(), keyDervier: .testing)
-        await XCTAssertThrowsError(try await sut.store(backupPassword: password))
+        await #expect(throws: (any Error).self) {
+            try await sut.store(backupPassword: password)
+        }
 
-        XCTAssertEqual(sut.backupPassword, .notFetched) // still initial value
-        XCTAssertEqual(store.setCallCount, 1)
+        #expect(sut.backupPassword == .notFetched) // still initial value
+        #expect(store.setCallCount == 1)
     }
 
-    @MainActor
-    func test_backupPassword_errorState() async {
+    @Test
+    func backupPassword_errorState() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { throw TestError() }
         let sut = makeSUT(backupPasswordStore: store)
 
         await sut.loadBackupPassword()
 
-        XCTAssertTrue(sut.backupPassword.isRetryable)
+        #expect(sut.backupPassword.isRetryable == true)
     }
 
-    @MainActor
-    func test_backupPassword_notFetched() async {
+    @Test
+    func backupPassword_notFetched() async {
         let store = BackupPasswordStoreMock()
         let sut = makeSUT(backupPasswordStore: store)
 
-        XCTAssertTrue(sut.backupPassword.isRetryable)
+        #expect(sut.backupPassword.isRetryable == true)
     }
 
-    @MainActor
-    func test_backupPassword_fetched() async {
+    @Test
+    func backupPassword_fetched() async {
         let store = BackupPasswordStoreMock()
         let password = DerivedEncryptionKey(key: .zero(), salt: Data(), keyDervier: .testing)
         store.fetchPasswordHandler = { password }
@@ -485,22 +491,22 @@ final class VaultDataModelTests: XCTestCase {
 
         await sut.loadBackupPassword()
 
-        XCTAssertFalse(sut.backupPassword.isRetryable)
+        #expect(sut.backupPassword.isRetryable == false)
     }
 
-    @MainActor
-    func test_backupPassword_notCreated() async {
+    @Test
+    func backupPassword_notCreated() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { nil }
         let sut = makeSUT(backupPasswordStore: store)
 
         await sut.loadBackupPassword()
 
-        XCTAssertFalse(sut.backupPassword.isRetryable)
+        #expect(sut.backupPassword.isRetryable == false)
     }
 
-    @MainActor
-    func test_purgeSensitiveData_clearsBackupPassword() async {
+    @Test
+    func purgeSensitiveData_clearsBackupPassword() async {
         let store = BackupPasswordStoreMock()
         store.fetchPasswordHandler = { DerivedEncryptionKey(key: .random(), salt: Data(), keyDervier: .testing) }
         let sut = makeSUT(backupPasswordStore: store)
@@ -508,101 +514,97 @@ final class VaultDataModelTests: XCTestCase {
         await sut.loadBackupPassword()
         sut.purgeSensitiveData()
 
-        XCTAssertEqual(sut.backupPassword, .notFetched)
+        #expect(sut.backupPassword == .notFetched)
     }
 
-    @MainActor
-    func test_deleteVault_removesAllDataFromVault() async throws {
+    @Test
+    func deleteVault_removesAllDataFromVault() async throws {
         let deleter = VaultStoreDeleterMock()
         let sut = makeSUT(vaultDeleter: deleter)
 
-        let exp = expectation(description: "Wait for deletion")
-        deleter.deleteVaultHandler = {
-            exp.fulfill()
+        try await confirmation { confirm in
+            deleter.deleteVaultHandler = {
+                confirm()
+            }
+
+            try await sut.deleteVault()
         }
-
-        try await sut.deleteVault()
-
-        await fulfillment(of: [exp])
     }
 
-    @MainActor
-    func test_deleteVault_reloadsData() async throws {
+    @Test
+    func deleteVault_reloadsData() async throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
 
         try await sut.deleteVault()
 
-        XCTAssertEqual(vaultStore.calledMethods, [.retrieve])
-        XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
+        #expect(vaultStore.calledMethods == [.retrieve])
+        #expect(vaultTagStore.calledMethods == [.retrieveTags])
     }
 
-    @MainActor
-    func test_importMerge_mergesDataFromImporter() async throws {
+    @Test
+    func importMerge_mergesDataFromImporter() async throws {
         let importer = VaultStoreImporterMock()
         let sut = makeSUT(vaultImporter: importer)
 
-        let exp = expectation(description: "Wait for import")
-        importer.importAndMergeVaultHandler = { _ in
-            exp.fulfill()
+        try await confirmation { confirm in
+            importer.importAndMergeVaultHandler = { _ in
+                confirm()
+            }
+
+            try await sut.importMerge(payload: anyApplicationPayload())
+
+            #expect(importer.importAndMergeVaultCallCount == 1)
+            #expect(importer.importAndOverrideVaultCallCount == 0)
         }
-
-        try await sut.importMerge(payload: anyApplicationPayload())
-
-        await fulfillment(of: [exp])
-
-        XCTAssertEqual(importer.importAndMergeVaultCallCount, 1)
-        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 0)
     }
 
-    @MainActor
-    func test_importMerge_reloadsStores() async throws {
+    @Test
+    func importMerge_reloadsStores() async throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
 
         try await sut.importMerge(payload: anyApplicationPayload())
 
-        XCTAssertEqual(vaultStore.calledMethods, [.retrieve, .export])
-        XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
+        #expect(vaultStore.calledMethods == [.retrieve, .export])
+        #expect(vaultTagStore.calledMethods == [.retrieveTags])
     }
 
-    @MainActor
-    func test_importOverride_mergesDataFromImporter() async throws {
+    @Test
+    func importOverride_mergesDataFromImporter() async throws {
         let importer = VaultStoreImporterMock()
         let sut = makeSUT(vaultImporter: importer)
 
-        let exp = expectation(description: "Wait for import")
-        importer.importAndOverrideVaultHandler = { _ in
-            exp.fulfill()
+        try await confirmation { confirm in
+            importer.importAndOverrideVaultHandler = { _ in
+                confirm()
+            }
+
+            try await sut.importOverride(payload: anyApplicationPayload())
+
+            #expect(importer.importAndMergeVaultCallCount == 0)
+            #expect(importer.importAndOverrideVaultCallCount == 1)
         }
-
-        try await sut.importOverride(payload: anyApplicationPayload())
-
-        await fulfillment(of: [exp])
-
-        XCTAssertEqual(importer.importAndMergeVaultCallCount, 0)
-        XCTAssertEqual(importer.importAndOverrideVaultCallCount, 1)
     }
 
-    @MainActor
-    func test_importOverride_reloadsStores() async throws {
+    @Test
+    func importOverride_reloadsStores() async throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
         let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
 
         try await sut.importOverride(payload: anyApplicationPayload())
 
-        XCTAssertEqual(vaultStore.calledMethods, [.retrieve, .export])
-        XCTAssertEqual(vaultTagStore.calledMethods, [.retrieveTags])
+        #expect(vaultStore.calledMethods == [.retrieve, .export])
+        #expect(vaultTagStore.calledMethods == [.retrieveTags])
     }
 }
 
 // MARK: - Helpers
 
 extension VaultDataModelTests {
-    @MainActor
     private func makeSUT(
         vaultStore: any VaultStore = VaultStoreStub(),
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
