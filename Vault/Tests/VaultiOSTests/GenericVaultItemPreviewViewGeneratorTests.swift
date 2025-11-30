@@ -2,28 +2,30 @@ import Foundation
 import FoundationExtensions
 import SwiftUI
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() {
+@Suite
+@MainActor
+final class GenericVaultItemPreviewViewGeneratorTests {
+    @Test
+    func init_hasNoSideEffects() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
         let encrypted = EncryptedItemGeneratorMock()
         _ = makeSUT(totp: totp, hotp: hotp, secureNote: note, encryptedItem: encrypted)
 
-        XCTAssertEqual(totp.calledMethods, [])
-        XCTAssertEqual(hotp.calledMethods, [])
-        XCTAssertEqual(note.calledMethods, [])
-        XCTAssertEqual(encrypted.calledMethods, [])
+        #expect(totp.calledMethods == [])
+        #expect(hotp.calledMethods == [])
+        #expect(note.calledMethods == [])
+        #expect(encrypted.calledMethods == [])
     }
 
-    @MainActor
-    func test_makeVaultPreviewView_makesTOTPViewForTOTP() throws {
+    @Test
+    func makeVaultPreviewView_makesTOTPViewForTOTP() throws {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -36,8 +38,8 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
-    @MainActor
-    func test_makeVaultPreviewView_makesHOTPViewForHOTP() throws {
+    @Test
+    func makeVaultPreviewView_makesHOTPViewForHOTP() throws {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -50,8 +52,8 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
-    @MainActor
-    func test_makeVaultPreviewView_makesSecureNoteView() throws {
+    @Test
+    func makeVaultPreviewView_makesSecureNoteView() throws {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -64,8 +66,8 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
-    @MainActor
-    func test_makeVaultPreviewView_makesEncryptedItemView() throws {
+    @Test
+    func makeVaultPreviewView_makesEncryptedItemView() throws {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -90,8 +92,8 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
-    @MainActor
-    func test_scenePhaseDidChange_callsOnAllCollaborators() {
+    @Test
+    func scenePhaseDidChange_callsOnAllCollaborators() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -100,14 +102,14 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         sut.scenePhaseDidChange(to: .active)
 
-        XCTAssertEqual(totp.calledMethods, ["scenePhaseDidChange(to:)"])
-        XCTAssertEqual(hotp.calledMethods, ["scenePhaseDidChange(to:)"])
-        XCTAssertEqual(note.calledMethods, ["scenePhaseDidChange(to:)"])
-        XCTAssertEqual(encrypted.calledMethods, ["scenePhaseDidChange(to:)"])
+        #expect(totp.calledMethods == ["scenePhaseDidChange(to:)"])
+        #expect(hotp.calledMethods == ["scenePhaseDidChange(to:)"])
+        #expect(note.calledMethods == ["scenePhaseDidChange(to:)"])
+        #expect(encrypted.calledMethods == ["scenePhaseDidChange(to:)"])
     }
 
-    @MainActor
-    func test_clearViewCache_callsOnAllCollaborators() async {
+    @Test
+    func clearViewCache_callsOnAllCollaborators() async {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -116,14 +118,14 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         await sut.clearViewCache()
 
-        XCTAssertEqual(totp.calledMethods, ["clearViewCache()"])
-        XCTAssertEqual(hotp.calledMethods, ["clearViewCache()"])
-        XCTAssertEqual(note.calledMethods, ["clearViewCache()"])
-        XCTAssertEqual(encrypted.calledMethods, ["clearViewCache()"])
+        #expect(totp.calledMethods == ["clearViewCache()"])
+        #expect(hotp.calledMethods == ["clearViewCache()"])
+        #expect(note.calledMethods == ["clearViewCache()"])
+        #expect(encrypted.calledMethods == ["clearViewCache()"])
     }
 
-    @MainActor
-    func test_didAppear_callsOnAllCollaborators() {
+    @Test
+    func didAppear_callsOnAllCollaborators() {
         let totp = TOTPGeneratorMock()
         let hotp = HOTPGeneratorMock()
         let note = SecureNoteGeneratorMock()
@@ -132,10 +134,10 @@ final class GenericVaultItemPreviewViewGeneratorTests: XCTestCase {
 
         sut.didAppear()
 
-        XCTAssertEqual(totp.calledMethods, ["didAppear()"])
-        XCTAssertEqual(hotp.calledMethods, ["didAppear()"])
-        XCTAssertEqual(note.calledMethods, ["didAppear()"])
-        XCTAssertEqual(encrypted.calledMethods, ["didAppear()"])
+        #expect(totp.calledMethods == ["didAppear()"])
+        #expect(hotp.calledMethods == ["didAppear()"])
+        #expect(note.calledMethods == ["didAppear()"])
+        #expect(encrypted.calledMethods == ["didAppear()"])
     }
 }
 
