@@ -141,7 +141,6 @@ final class PersistedLocalVaultStoreTests {
     }
 
     @Test
-    @MainActor
     func retrieveAll_returnsCorruptedItemsAsErrors() async throws {
         let codes: [VaultItem.Write] = [
             uniqueVaultItem().makeWritable(),
@@ -163,7 +162,6 @@ final class PersistedLocalVaultStoreTests {
     }
 
     @Test
-    @MainActor
     func retrieveAll_returnsAllItemsCorrupted() async throws {
         let codes: [VaultItem.Write] = [
             uniqueVaultItem().makeWritable(),
@@ -684,7 +682,6 @@ final class PersistedLocalVaultStoreTests {
         #expect(result.errors == [])
     }
 
-    @MainActor
     @Test
     func retrieveMatchingQuery_returnsCorruptedItemsAsErrors() async throws {
         let codes: [VaultItem.Write] = [
@@ -708,7 +705,6 @@ final class PersistedLocalVaultStoreTests {
         #expect(result.errors == [.failedToDecode(.invalidAlgorithm)])
     }
 
-    @MainActor
     @Test
     func retrieveMatchingQuery_returnsAllItemsCorrupted() async throws {
         let codes: [VaultItem.Write] = [
