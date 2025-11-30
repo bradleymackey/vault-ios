@@ -1,42 +1,44 @@
 import Foundation
 import SnapshotTesting
 import SwiftUI
+import Testing
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class SecureNotePreviewViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_layout_titleOnly() {
+@Suite
+@MainActor
+final class SecureNotePreviewViewSnapshotTests {
+    @Test
+    func layout_titleOnly() {
         let sut = makeSUT(title: "Title", description: nil)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_titleOnlyLong() {
+    @Test
+    func layout_titleOnlyLong() {
         let sut = makeSUT(title: "Title that is a little bit long, but's that's OK", description: nil)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_titleAndDescription() {
+    @Test
+    func layout_titleAndDescription() {
         let sut = makeSUT(title: "Title", description: "Short description")
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_titleAndDescriptionTruncation() {
+    @Test
+    func layout_titleAndDescriptionTruncation() {
         let description = Array(repeating: "Testing description", count: 50).joined(separator: " ")
         let sut = makeSUT(title: "Title", description: description)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_titleAndDescriptionTruncatesTitleFirst() {
+    @Test
+    func layout_titleAndDescriptionTruncatesTitleFirst() {
         let title = Array(repeating: "Title", count: 50).joined(separator: " ")
         let description = Array(repeating: "Description", count: 50).joined(separator: " ")
         let sut = makeSUT(title: title, description: description)
@@ -44,29 +46,29 @@ final class SecureNotePreviewViewSnapshotTests: XCTestCase {
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_emptyDescriptionRendersNothing() {
+    @Test
+    func layout_emptyDescriptionRendersNothing() {
         let sut = makeSUT(title: "Title", description: "")
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_lockedIcon() {
+    @Test
+    func layout_lockedIcon() {
         let sut = makeSUT(isLocked: true)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_textFormat_plainText() {
+    @Test
+    func textFormat_plainText() {
         let sut = makeSUT(title: "## Hello", description: "## description", textFormat: .plain)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_textFormat_markdown() {
+    @Test
+    func textFormat_markdown() {
         let sut = makeSUT(title: "## Hello", description: "## description", textFormat: .markdown)
 
         assertSnapshot(of: sut, as: .image)
