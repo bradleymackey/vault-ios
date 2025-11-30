@@ -961,11 +961,8 @@ final class PersistedLocalVaultStoreTests {
 
     @Test
     func updateByID_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
-        do {
+        await #expect(throws: (any Error).self) {
             try await sut.update(id: Identifier<VaultItem>(), item: uniqueVaultItem().makeWritable())
-            Issue.record("Expected to throw error")
-        } catch {
-            // ignore
         }
     }
 
@@ -1296,17 +1293,16 @@ final class PersistedLocalVaultStoreTests {
 
     @Test
     func updateTag_deliversErrorIfCodeDoesNotAlreadyExist() async throws {
-        do {
+        await #expect(throws: (any Error).self) {
             try await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().makeWritable())
-            Issue.record("Expected to throw error")
-        } catch {
-            // ignore
         }
     }
 
     @Test
     func updateTag_hasNoEffectOnEmptyStorageIfDoesNotAlreadyExist() async throws {
-        try? await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().makeWritable())
+        await #expect(throws: (any Error).self) {
+            try await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().makeWritable())
+        }
 
         let result = try await sut.retrieveTags()
         #expect(result == [])
@@ -1323,7 +1319,9 @@ final class PersistedLocalVaultStoreTests {
             try await sut.insertTag(item: tag)
         }
 
-        try? await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().makeWritable())
+        await #expect(throws: (any Error).self) {
+            try await sut.updateTag(id: .init(id: UUID()), item: anyVaultItemTag().makeWritable())
+        }
 
         let result = try await sut.retrieveTags()
         #expect(result.map { $0.makeWritable() } == tags)
@@ -1393,11 +1391,9 @@ final class PersistedLocalVaultStoreTests {
     func incrementCounter_throwsForNonTOTP() async throws {
         let note = anySecureNote().wrapInAnyVaultItem().makeWritable()
         let id1 = try await sut.insert(item: note)
-        do {
+
+        await #expect(throws: (any Error).self) {
             try await sut.incrementCounter(id: id1)
-            Issue.record("Expected error")
-        } catch {
-            // expected
         }
     }
 
