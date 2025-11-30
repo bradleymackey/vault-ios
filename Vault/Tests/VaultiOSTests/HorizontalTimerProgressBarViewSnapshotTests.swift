@@ -1,10 +1,13 @@
 import Combine
 import SnapshotTesting
-import XCTest
+import Testing
 @testable import VaultiOS
 
-final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
-    func test_layout_empty() {
+@Suite
+@MainActor
+final class HorizontalTimerProgressBarViewSnapshotTests {
+    @Test
+    func layout_empty() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0,
             color: .blue,
@@ -13,7 +16,8 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 
-    func test_layout_halfFull() {
+    @Test
+    func layout_halfFull() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0.5,
             color: .blue,
@@ -22,7 +26,8 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 
-    func test_layout_full() {
+    @Test
+    func layout_full() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 1,
             color: .blue,
@@ -31,7 +36,8 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 
-    func test_layout_setsBackgroundColor() {
+    @Test
+    func layout_setsBackgroundColor() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0.5,
             color: .blue,
@@ -41,7 +47,8 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 
-    func test_redactedPlaceholder_showsEmptyProgressBar() {
+    @Test
+    func redactedPlaceholder_showsEmptyProgressBar() {
         let view = HorizontalTimerProgressBarView(
             fractionCompleted: 0.5,
             color: .blue,
@@ -53,7 +60,8 @@ final class HorizontalTimerProgressBarViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 
-    func test_redactedPrivacy_showsProgressStill() {
+    @Test
+    func redactedPrivacy_showsProgressStill() {
         let view = HorizontalTimerProgressBarView(fractionCompleted: 0.5, color: .blue)
             .redacted(reason: .privacy)
             .frame(width: 150, height: 20)
