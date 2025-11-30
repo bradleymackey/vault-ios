@@ -1,40 +1,45 @@
 import Combine
 import SnapshotTesting
 import SwiftUI
+import Testing
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class OTPCodeTextViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_visible_defaultCode() {
+@Suite
+@MainActor
+final class OTPCodeTextViewSnapshotTests {
+    @Test
+    func visible_defaultCode() {
         let view = makeSUT(codeState: .visible("123456"))
 
         assertSnapshot(of: view, as: .image)
     }
 
-    @MainActor
-    func test_visible_staysOnSingleLineForLongCode() {
+    @Test
+    func visible_staysOnSingleLineForLongCode() {
         let view = makeSUT(codeState: .visible("123456123456123456"))
 
         assertSnapshot(of: view, as: .image)
     }
 
-    @MainActor
-    func test_error_staysOnSingleLine() {
+    @Test
+    func error_staysOnSingleLine() {
         let view = makeSUT(codeState: .error(.init(userTitle: "err", debugDescription: "err"), digits: 20))
 
         assertSnapshot(of: view, as: .image)
     }
 
-    @MainActor
-    func test_obfuscated_staysOnSingleLine() {
+    @Test
+    func obfuscated_staysOnSingleLine() {
         let view = makeSUT(codeState: .obfuscated(.expiry))
 
         assertSnapshot(of: view, as: .image)
     }
+}
 
-    @MainActor
+// MARK: - Helpers
+
+extension OTPCodeTextViewSnapshotTests {
     private func makeSUT(codeState: OTPCodeState) -> some View {
         OTPCodeTextView(codeState: codeState)
             .frame(width: 100, height: 100)
