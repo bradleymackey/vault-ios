@@ -1,81 +1,80 @@
 import Foundation
 import SnapshotTesting
 import SwiftUI
+import Testing
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_layout_codeVisible() {
+@Suite
+@MainActor
+final class TOTPCodePreviewViewSnapshotTests {
+    @Test
+    func layout_codeVisible() {
         let sut = makeSUT(state: .visible("123456"))
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_codeError() {
+    @Test
+    func layout_codeError() {
         let error = PresentationError(userTitle: "userTitle", debugDescription: "debugDescription")
         let sut = makeSUT(state: .error(error, digits: 6))
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_codeNotReady() {
+    @Test
+    func layout_codeNotReady() {
         let sut = makeSUT(state: .notReady)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_noMoreCodes() {
+    @Test
+    func layout_noMoreCodes() {
         let sut = makeSUT(state: .finished)
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_obfuscateWithoutMessage() {
+    @Test
+    func layout_obfuscateWithoutMessage() {
         let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: nil))
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_obfuscateWithMessage() {
+    @Test
+    func layout_obfuscateWithMessage() {
         let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: "Custom message"))
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_obfuscateWithLongMessage() {
+    @Test
+    func layout_obfuscateWithLongMessage() {
         let sut = makeSUT(state: .visible("123456"), behaviour: .editingState(message: longMessage()))
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_textWrapping_longCodeMaintainsSameSizeForAllDigits() {
-        let digits = [6, 7, 8, 20]
-        for count in digits {
-            let code = String(Array(repeating: Character("0"), count: count))
-            let sut = makeSUT(state: .visible(code))
+    @Test(arguments: [6, 7, 8, 20])
+    func textWrapping_longCodeMaintainsSameSizeForAllDigits(digits: Int) {
+        let code = String(Array(repeating: Character("0"), count: digits))
+        let sut = makeSUT(state: .visible(code))
 
-            assertSnapshot(of: sut, as: .image, named: "\(count)-digits")
-        }
+        assertSnapshot(of: sut, as: .image, named: "\(digits)-digits")
     }
 
-    @MainActor
-    func test_textWrapping_longIssuerStaysOnTwoLines() {
+    @Test
+    func textWrapping_longIssuerStaysOnTwoLines() {
         let sut = makeSUT(issuer: longMessage())
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_textWrapping_longAccountNameStaysOnTwoLines() {
+    @Test
+    func textWrapping_longAccountNameStaysOnTwoLines() {
         let sut = makeSUT(accountName: longMessage())
 
         assertSnapshot(of: sut, as: .image)
@@ -83,7 +82,6 @@ final class TOTPCodePreviewViewSnapshotTests: XCTestCase {
 
     // MARK: - Helpers
 
-    @MainActor
     private func makeSUT(
         accountName: String = "Test",
         issuer: String = "Issuer",

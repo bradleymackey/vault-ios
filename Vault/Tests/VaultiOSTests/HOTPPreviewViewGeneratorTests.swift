@@ -2,30 +2,32 @@ import Foundation
 import FoundationExtensions
 import SwiftUI
 import TestHelpers
+import Testing
 import VaultCore
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class HOTPPreviewViewGeneratorTests: XCTestCase {
-    @MainActor
-    func test_init_hasNoSideEffects() {
+@Suite
+@MainActor
+final class HOTPPreviewViewGeneratorTests {
+    @Test
+    func init_hasNoSideEffects() {
         let repository = HOTPPreviewViewRepositoryMock()
         let timer = IntervalTimerMock()
         let (_, factory) = makeSUT(repository: repository, timer: timer)
 
-        XCTAssertEqual(factory.makeHOTPViewCallCount, 0)
-        XCTAssertEqual(timer.waitArgValues, [])
-        XCTAssertEqual(repository.expireAllCallCount, 0)
-        XCTAssertEqual(repository.previewViewModelCallCount, 0)
-        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
-        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 0)
-        XCTAssertEqual(repository.incrementerViewModelCallCount, 0)
-        XCTAssertEqual(repository.textToCopyForVaultItemCallCount, 0)
+        #expect(factory.makeHOTPViewCallCount == 0)
+        #expect(timer.waitArgValues == [])
+        #expect(repository.expireAllCallCount == 0)
+        #expect(repository.previewViewModelCallCount == 0)
+        #expect(repository.obfuscateForPrivacyCallCount == 0)
+        #expect(repository.unobfuscateForPrivacyCallCount == 0)
+        #expect(repository.incrementerViewModelCallCount == 0)
+        #expect(repository.textToCopyForVaultItemCallCount == 0)
     }
 
-    @MainActor
-    func test_makeOTPView_generatesViews() throws {
+    @Test
+    func makeOTPView_generatesViews() throws {
         let repository = HOTPPreviewViewRepositoryMock()
         repository.previewViewModelHandler = { _, _ in
             MainActor.assumeIsolated {
@@ -56,56 +58,56 @@ final class HOTPPreviewViewGeneratorTests: XCTestCase {
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
 
-    @MainActor
-    func test_scenePhaseDidChange_backgroundExpiresAll() {
+    @Test
+    func scenePhaseDidChange_backgroundExpiresAll() {
         let repository = HOTPPreviewViewRepositoryMock()
         let (sut, _) = makeSUT(repository: repository)
 
         sut.scenePhaseDidChange(to: .background)
 
-        XCTAssertEqual(repository.expireAllCallCount, 1)
-        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 0)
-        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
+        #expect(repository.expireAllCallCount == 1)
+        #expect(repository.unobfuscateForPrivacyCallCount == 0)
+        #expect(repository.obfuscateForPrivacyCallCount == 0)
     }
 
-    @MainActor
-    func test_scenePhaseDidChange_inactiveObfuscatesAll() {
+    @Test
+    func scenePhaseDidChange_inactiveObfuscatesAll() {
         let repository = HOTPPreviewViewRepositoryMock()
         let (sut, _) = makeSUT(repository: repository)
 
         sut.scenePhaseDidChange(to: .inactive)
 
-        XCTAssertEqual(repository.expireAllCallCount, 0)
-        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 0)
-        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 1)
+        #expect(repository.expireAllCallCount == 0)
+        #expect(repository.unobfuscateForPrivacyCallCount == 0)
+        #expect(repository.obfuscateForPrivacyCallCount == 1)
     }
 
-    @MainActor
-    func test_scenePhaseDidChange_activeUnobfuscatesAll() {
+    @Test
+    func scenePhaseDidChange_activeUnobfuscatesAll() {
         let repository = HOTPPreviewViewRepositoryMock()
         let (sut, _) = makeSUT(repository: repository)
 
         sut.scenePhaseDidChange(to: .active)
 
-        XCTAssertEqual(repository.expireAllCallCount, 0)
-        XCTAssertEqual(repository.unobfuscateForPrivacyCallCount, 1)
-        XCTAssertEqual(repository.obfuscateForPrivacyCallCount, 0)
+        #expect(repository.expireAllCallCount == 0)
+        #expect(repository.unobfuscateForPrivacyCallCount == 1)
+        #expect(repository.obfuscateForPrivacyCallCount == 0)
     }
 
-    @MainActor
-    func test_clearViewCache_clearsRepositoryCache() async {
+    @Test
+    func clearViewCache_clearsRepositoryCache() async {
         let repository = HOTPPreviewViewRepositoryMock()
         let (sut, _) = makeSUT(repository: repository)
 
         await sut.clearViewCache()
 
-        XCTAssertEqual(repository.vaultItemCacheClearAllCallCount, 1)
+        #expect(repository.vaultItemCacheClearAllCallCount == 1)
     }
 }
 
 extension HOTPPreviewViewGeneratorTests {
     private typealias SUT = HOTPPreviewViewGenerator<HOTPPreviewViewFactoryMock>
-    @MainActor
+
     private func makeSUT(
         repository: HOTPPreviewViewRepositoryMock = HOTPPreviewViewRepositoryMock(),
         timer _: IntervalTimerMock = IntervalTimerMock(),
@@ -126,8 +128,7 @@ extension HOTPPreviewViewGeneratorTests {
         sut: SUT,
         factory: HOTPPreviewViewFactoryMock,
         ids: [Identifier<VaultItem>],
-        file: StaticString = #filePath,
-        line: UInt = #line,
+        sourceLocation: SourceLocation = #_sourceLocation,
     ) -> [OTPCodePreviewViewModel] {
         var viewModels = [OTPCodePreviewViewModel]()
 
@@ -145,12 +146,10 @@ extension HOTPPreviewViewGeneratorTests {
 
         _ = group.wait(timeout: .now() + .seconds(1))
 
-        XCTAssertEqual(
-            viewModels.count,
-            ids.count,
+        #expect(
+            viewModels.count == ids.count,
             "Invariant failed, expected number of view models to match the number of IDs we requested",
-            file: file,
-            line: line,
+            sourceLocation: sourceLocation,
         )
         return viewModels
     }

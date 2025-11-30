@@ -1,13 +1,15 @@
 import Foundation
 import SwiftUI
 import TestHelpers
+import Testing
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class SecureNoteDetailViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_emptyState() async {
+@Suite
+@MainActor
+final class SecureNoteDetailViewSnapshotTests {
+    @Test
+    func emptyState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -31,11 +33,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_lockedState() async {
+    @Test
+    func lockedState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -59,11 +61,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_lockedStateNoAuthentication() async {
+    @Test
+    func lockedStateNoAuthentication() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -87,11 +89,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
+        snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
     }
 
-    @MainActor
-    func test_titleOnly() async {
+    @Test
+    func titleOnly() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -115,11 +117,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_titleDescriptionAndShortContent() async {
+    @Test
+    func titleDescriptionAndShortContent() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
             encryptionKey: nil,
@@ -143,11 +145,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_titleDescriptionAndLongContent() async {
+    @Test
+    func titleDescriptionAndLongContent() async {
         let longContent = Array(repeating: "My content is cool.", count: 100).joined(separator: " ")
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: longContent, format: .markdown),
@@ -172,11 +174,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_contentUpdated() async {
+    @Test
+    func contentUpdated() async {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
@@ -201,11 +203,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: false,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_editMode_emptyState() async {
+    @Test
+    func editMode_emptyState() async {
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "", contents: "", format: .markdown),
             encryptionKey: nil,
@@ -229,11 +231,11 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: true,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_editMode_editedContent() async {
+    @Test
+    func editMode_editedContent() async {
         let date = fixedTestDate()
         let sut = SecureNoteDetailView(
             editingExistingNote: .init(title: "My Title", contents: "My contents", format: .markdown),
@@ -258,19 +260,18 @@ final class SecureNoteDetailViewSnapshotTests: XCTestCase {
             openInEditMode: true,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 }
 
 // MARK: - Helpers
 
 extension SecureNoteDetailViewSnapshotTests {
-    @MainActor
     private func snapshotScenarios(
         view: some View,
         deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
         testName: String = #function,
-    ) async {
+    ) {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
         for colorScheme in colorSchemes {

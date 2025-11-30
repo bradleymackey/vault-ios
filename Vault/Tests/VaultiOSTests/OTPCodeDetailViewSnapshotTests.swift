@@ -1,14 +1,16 @@
 import Foundation
 import SwiftUI
 import TestHelpers
+import Testing
 import VaultFeed
 import VaultSettings
-import XCTest
 @testable import VaultiOS
 
-final class OTPCodeDetailViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_emptyState() async {
+@Suite
+@MainActor
+final class OTPCodeDetailViewSnapshotTests {
+    @Test
+    func emptyState() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -34,11 +36,11 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             presentationMode: .none,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_lockedState() async {
+    @Test
+    func lockedState() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -64,11 +66,11 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             presentationMode: .none,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_lockedStateNoAuthentication() async {
+    @Test
+    func lockedStateNoAuthentication() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -94,11 +96,11 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             presentationMode: .none,
         )
 
-        await snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
+        snapshotScenarios(view: sut, deviceAuthenticationPolicy: .cannotAuthenticate)
     }
 
-    @MainActor
-    func test_withUserDescription() async {
+    @Test
+    func withUserDescription() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -124,11 +126,11 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             presentationMode: .none,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_editMode_emptyState() async {
+    @Test
+    func editMode_emptyState() async {
         let sut = OTPCodeDetailView(
             editingExistingCode: .init(type: .totp(period: 30), data: .init(secret: .empty(), accountName: "")),
             navigationPath: .constant(NavigationPath()),
@@ -154,19 +156,18 @@ final class OTPCodeDetailViewSnapshotTests: XCTestCase {
             presentationMode: .none,
         )
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 }
 
 // MARK: - Helpers
 
 extension OTPCodeDetailViewSnapshotTests {
-    @MainActor
     private func snapshotScenarios(
         view: some View,
         deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
         testName: String = #function,
-    ) async {
+    ) {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
         for colorScheme in colorSchemes {
@@ -189,7 +190,6 @@ extension OTPCodeDetailViewSnapshotTests {
         }
     }
 
-    @MainActor
     private func makePasteboard() -> Pasteboard {
         Pasteboard(SystemPasteboardMock(), localSettings: LocalSettings(defaults: .init(userDefaults: .standard)))
     }

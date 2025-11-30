@@ -1,21 +1,23 @@
 import Foundation
 import SnapshotTesting
 import SwiftUI
+import Testing
 import VaultFeed
-import XCTest
 @testable import VaultiOS
 
-final class VaultTagFeedViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_layout_noTags() async {
+@Suite
+@MainActor
+final class VaultTagFeedViewSnapshotTests {
+    @Test
+    func layout_noTags() async {
         let sut = await makeSUT()
             .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_multipleTags() async {
+    @Test
+    func layout_multipleTags() async {
         let vaultTagStore = VaultTagStoreStub()
         vaultTagStore.retrieveTagsHandler = {
             [
@@ -35,7 +37,6 @@ final class VaultTagFeedViewSnapshotTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultTagFeedViewSnapshotTests {
-    @MainActor
     private func makeSUT(
         vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
     ) async -> some View {

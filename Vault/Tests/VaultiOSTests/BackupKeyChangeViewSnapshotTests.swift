@@ -1,14 +1,16 @@
 import Foundation
 import SwiftUI
 import TestHelpers
+import Testing
 import VaultSettings
-import XCTest
 @testable import VaultFeed
 @testable import VaultiOS
 
-final class BackupKeyChangeViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_layout() async {
+@Suite
+@MainActor
+final class BackupKeyChangeViewSnapshotTests {
+    @Test
+    func layout() async {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
@@ -16,11 +18,11 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
         )
         let sut = BackupKeyChangeView(viewModel: viewModel)
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 
-    @MainActor
-    func test_layoutAuthenticated() async {
+    @Test
+    func layoutAuthenticated() async {
         let viewModel = BackupKeyChangeViewModel(
             dataModel: anyVaultDataModel(),
             authenticationService: DeviceAuthenticationService(policy: DeviceAuthenticationPolicyAlwaysAllow()),
@@ -29,19 +31,18 @@ final class BackupKeyChangeViewSnapshotTests: XCTestCase {
         viewModel.permissionState = .allowed
         let sut = BackupKeyChangeView(viewModel: viewModel)
 
-        await snapshotScenarios(view: sut)
+        snapshotScenarios(view: sut)
     }
 }
 
 // MARK: - Helpers
 
 extension BackupKeyChangeViewSnapshotTests {
-    @MainActor
     private func snapshotScenarios(
         view: some View,
         deviceAuthenticationPolicy: some DeviceAuthenticationPolicy = DeviceAuthenticationPolicyAlwaysAllow(),
         testName: String = #function,
-    ) async {
+    ) {
         let colorSchemes: [ColorScheme] = [.light, .dark]
         let dynamicTypeSizes: [DynamicTypeSize] = [.xSmall, .medium, .xxLarge]
         for colorScheme in colorSchemes {
@@ -64,7 +65,6 @@ extension BackupKeyChangeViewSnapshotTests {
         }
     }
 
-    @MainActor
     private func makePasteboard() -> Pasteboard {
         Pasteboard(SystemPasteboardMock(), localSettings: LocalSettings(defaults: .init(userDefaults: .standard)))
     }
