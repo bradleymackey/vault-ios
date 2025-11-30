@@ -1,37 +1,39 @@
 import Foundation
 import TestHelpers
-import XCTest
+import Testing
 @testable import VaultFeed
 
-final class EncryptedItemDetailViewModelTests: XCTestCase {
-    @MainActor
-    func test_canStartDecryption_isInitiallyFalse() {
+@Suite
+@MainActor
+final class EncryptedItemDetailViewModelTests {
+    @Test
+    func canStartDecryption_isInitiallyFalse() {
         let sut = makeSUT(item: anyEncryptedItem())
 
-        XCTAssertFalse(sut.canStartDecryption)
+        #expect(sut.canStartDecryption == false)
     }
 
-    @MainActor
-    func test_canStartDecryption_trueWhenPasswordIsEntered() {
+    @Test
+    func canStartDecryption_trueWhenPasswordIsEntered() {
         let sut = makeSUT(item: anyEncryptedItem())
         sut.enteredEncryptionPassword = "hello"
 
-        XCTAssertTrue(sut.canStartDecryption)
+        #expect(sut.canStartDecryption == true)
     }
 
-    @MainActor
-    func test_state_isInitiallyBase() {
+    @Test
+    func state_isInitiallyBase() {
         let sut = makeSUT(item: anyEncryptedItem())
 
-        XCTAssertEqual(sut.state, .base)
+        #expect(sut.state == .base)
     }
 
-    @MainActor
-    func test_startDecryption_setsStateToDecrypting() async {
+    @Test
+    func startDecryption_setsStateToDecrypting() async {
         let keyDeriverFactory = VaultKeyDeriverFactoryMock()
-        let exp = expectation(description: "test")
+        let handlerCalled = Pending.signal()
         let keyDeriver = SuspendingKeyDeriver<Bits256> { _, _ in
-            exp.fulfill()
+            Task { await handlerCalled.fulfill() }
             return .random()
         }
         keyDeriverFactory.lookupVaultKeyDeriverHandler = { _ in .init(deriver: keyDeriver, signature: .testing) }
@@ -42,15 +44,15 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
             await sut.startDecryption()
         }
 
-        await fulfillment(of: [exp], timeout: 1)
+        try? await handlerCalled.wait()
 
-        XCTAssertEqual(sut.state, .decrypting)
+        #expect(sut.state == .decrypting)
 
         keyDeriver.signalDerivationComplete()
     }
 
-    @MainActor
-    func test_startDecryption_secureNote() async throws {
+    @Test
+    func startDecryption_secureNote() async throws {
         let note = SecureNote(title: "Hello", contents: "World", format: .plain)
         let derivedKey = try VaultKeyDeriver.testing.createEncryptionKey(password: "hello")
         let encryptor = VaultItemEncryptor(key: derivedKey)
@@ -65,15 +67,15 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
 
         switch sut.state {
         case let .decrypted(.secureNote(decryptedNote), key):
-            XCTAssertEqual(decryptedNote, note)
-            XCTAssertEqual(key, derivedKey)
+            #expect(decryptedNote == note)
+            #expect(key == derivedKey)
         default:
-            XCTFail("Unexpected state \(sut.state)")
+            Issue.record("Unexpected state \(sut.state)")
         }
     }
 
-    @MainActor
-    func test_startDecryption_unknownItem() async throws {
+    @Test
+    func startDecryption_unknownItem() async throws {
         let encryptable = VaultItemEncryptableMock(
             itemIdentifier: "this is invalid",
         )
@@ -90,18 +92,19 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
 
         switch sut.state {
         case let .decryptionError(error):
-            XCTAssertEqual(error.userTitle, "Error")
-            XCTAssertEqual(
-                error.userDescription,
-                "Your password was correct, but the item that was encrypted is not known to Vault. We can't display it.",
+            #expect(error.userTitle == "Error")
+            #expect(
+                error.userDescription
+                    ==
+                    "Your password was correct, but the item that was encrypted is not known to Vault. We can't display it.",
             )
         default:
-            XCTFail("Unexpected state \(sut.state)")
+            Issue.record("Unexpected state \(sut.state)")
         }
     }
 
-    @MainActor
-    func test_startDecryption_invalidPassword() async throws {
+    @Test
+    func startDecryption_invalidPassword() async throws {
         let encryptable = VaultItemEncryptableMock(
             itemIdentifier: "any",
         )
@@ -118,10 +121,10 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
 
         switch sut.state {
         case let .decryptionError(error):
-            XCTAssertEqual(error.userTitle, "Incorrect Password")
-            XCTAssertEqual(error.userDescription, "Your password was not recognized, please try again.")
+            #expect(error.userTitle == "Incorrect Password")
+            #expect(error.userDescription == "Your password was not recognized, please try again.")
         default:
-            XCTFail("Unexpected state \(sut.state)")
+            Issue.record("Unexpected state \(sut.state)")
         }
     }
 }
@@ -129,7 +132,6 @@ final class EncryptedItemDetailViewModelTests: XCTestCase {
 // MARK: - Helpers
 
 extension EncryptedItemDetailViewModelTests {
-    @MainActor
     private func makeSUT(
         item: EncryptedItem,
         metadata: VaultItem.Metadata = anyVaultItemMetadata(),
