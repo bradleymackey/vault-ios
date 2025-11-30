@@ -2,14 +2,16 @@ import Foundation
 import FoundationExtensions
 import SwiftUI
 import TestHelpers
+import Testing
 import VaultFeed
 import VaultSettings
-import XCTest
 @testable import VaultiOS
 
-final class VaultItemFeedViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_layout_noCodes() async throws {
+@Suite
+@MainActor
+final class VaultItemFeedViewSnapshotTests {
+    @Test
+    func layout_noCodes() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
@@ -21,8 +23,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_singleCodeAtMediumSize() async throws {
+    @Test
+    func layout_singleCodeAtMediumSize() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
@@ -35,8 +37,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_layout_multipleCodesAtMediumSize() async throws {
+    @Test
+    func layout_multipleCodesAtMediumSize() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         store.retrieveHandler = { _ in
@@ -55,8 +57,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_viewState_toggleEditingMode() async throws {
+    @Test
+    func viewState_toggleEditingMode() async throws {
         let state = VaultItemFeedState()
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
@@ -74,8 +76,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(of: sut, as: .image, named: "notEditing")
     }
 
-    @MainActor
-    func test_searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
+    @Test
+    func searchBar_includesTagsIfTheyExistInTheVaultStore() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         tagStore.retrieveTagsHandler = {
@@ -93,8 +95,8 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
         assertSnapshot(of: sut, as: .image)
     }
 
-    @MainActor
-    func test_searchBar_tagsBeingFiltered() async throws {
+    @Test
+    func searchBar_tagsBeingFiltered() async throws {
         let store = VaultStoreStub()
         let tagStore = VaultTagStoreStub()
         let tag1Id = Identifier<VaultItemTag>()
@@ -119,7 +121,6 @@ final class VaultItemFeedViewSnapshotTests: XCTestCase {
 // MARK: - Helpers
 
 extension VaultItemFeedViewSnapshotTests {
-    @MainActor
     private func makeSUT(
         dataModel: VaultDataModel,
         state: VaultItemFeedState = VaultItemFeedState(),
