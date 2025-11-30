@@ -1,11 +1,13 @@
 import SnapshotTesting
 import SwiftUI
-import XCTest
+import Testing
 @testable import VaultiOS
 
-final class LiteratureViewSnapshotTests: XCTestCase {
-    @MainActor
-    func test_layout_markdownText() {
+@Suite
+@MainActor
+final class LiteratureViewSnapshotTests {
+    @Test
+    func layout_markdownText() {
         let view = NavigationStack {
             LiteratureView(title: "Title", bodyText: .markdown(.init("Body\n\nText\nTest")), bodyColor: .secondary)
         }
@@ -14,8 +16,8 @@ final class LiteratureViewSnapshotTests: XCTestCase {
         assertSnapshot(of: view, as: .image)
     }
 
-    @MainActor
-    func test_layout_rawText() {
+    @Test
+    func layout_rawText() {
         let view = NavigationStack {
             LiteratureView(title: "Title", bodyText: .raw("Body\n\nText\nTest"), bodyColor: .secondary)
         }

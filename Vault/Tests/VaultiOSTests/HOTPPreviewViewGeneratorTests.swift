@@ -107,7 +107,7 @@ final class HOTPPreviewViewGeneratorTests {
 
 extension HOTPPreviewViewGeneratorTests {
     private typealias SUT = HOTPPreviewViewGenerator<HOTPPreviewViewFactoryMock>
-    
+
     private func makeSUT(
         repository: HOTPPreviewViewRepositoryMock = HOTPPreviewViewRepositoryMock(),
         timer _: IntervalTimerMock = IntervalTimerMock(),
