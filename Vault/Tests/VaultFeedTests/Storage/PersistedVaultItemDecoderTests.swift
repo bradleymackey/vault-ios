@@ -2,33 +2,26 @@ import Foundation
 import FoundationExtensions
 import SwiftData
 import TestHelpers
+import Testing
 import VaultCore
-import XCTest
 @testable import VaultFeed
 
-final class PersistedVaultItemDecoderTests: XCTestCase {
-    // swiftlint:disable:next implicitly_unwrapped_optional
-    private var context: ModelContext!
+@Suite
+struct PersistedVaultItemDecoderTests {
+    private let context: ModelContext
 
-    override func setUp() async throws {
-        try await super.setUp()
-
+    init() throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: PersistedVaultItem.self, configurations: config)
         context = ModelContext(container)
-    }
-
-    override func tearDown() async throws {
-        try await super.tearDown()
-
-        context = nil
     }
 }
 
 // MARK: - Generic
 
 extension PersistedVaultItemDecoderTests {
-    func test_decodeItem_missingItemDetail() throws {
+    @Test
+    func decodeItem_missingItemDetail() throws {
         let sut = makeSUT()
 
         let persistedItem = makePersistedItem(
@@ -36,345 +29,372 @@ extension PersistedVaultItemDecoderTests {
             otpDetails: nil,
         )
 
-        XCTAssertThrowsError(try sut.decode(item: persistedItem))
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: persistedItem)
+        }
     }
 }
 
 // MARK: - Metadata
 
 extension PersistedVaultItemDecoderTests {
-    func test_decodeMetadata_id() throws {
+    @Test
+    func decodeMetadata_id() throws {
         let id = UUID()
         let item = makePersistedItem(id: id)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.id.rawValue, id)
+        #expect(decoded.id.rawValue == id)
     }
 
-    func test_decodeMetadata_createdDate() throws {
+    @Test
+    func decodeMetadata_createdDate() throws {
         let date = Date()
         let item = makePersistedItem(createdDate: date)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.metadata.created, date)
+        #expect(decoded.metadata.created == date)
     }
 
-    func test_decodeMetadata_updatedDate() throws {
+    @Test
+    func decodeMetadata_updatedDate() throws {
         let date = Date()
         let item = makePersistedItem(updatedDate: date)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.metadata.updated, date)
+        #expect(decoded.metadata.updated == date)
     }
 
-    func test_decodeMetadata_userDescription() throws {
+    @Test
+    func decodeMetadata_userDescription() throws {
         let description = "my description \(UUID().uuidString)"
         let item = makePersistedItem(userDescription: description)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.metadata.userDescription, description)
+        #expect(decoded.metadata.userDescription == description)
     }
 
-    func test_decodeMetadata_colorIsNil() throws {
-        let item = makePersistedItem(
-            color: nil,
-        )
+    @Test
+    func decodeMetadata_colorIsNil() throws {
+        let item = makePersistedItem(color: nil)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertNil(decoded.metadata.color)
+        #expect(decoded.metadata.color == nil)
     }
 
-    func test_decodeMetadata_decodesColorValues() throws {
-        let item = makePersistedItem(
-            color: .init(red: 0.7, green: 0.6, blue: 0.5),
-        )
+    @Test
+    func decodeMetadata_decodesColorValues() throws {
+        let item = makePersistedItem(color: .init(red: 0.7, green: 0.6, blue: 0.5))
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
 
         let expectedColor = VaultItemColor(red: 0.7, green: 0.6, blue: 0.5)
-        XCTAssertEqual(decoded.metadata.color, expectedColor)
+        #expect(decoded.metadata.color == expectedColor)
     }
 
-    func test_decodeMetadata_decodesVisibilityLevels() throws {
-        let mapping: [VaultItemVisibility: String] = [
-            .always: "ALWAYS",
-            .onlySearch: "ONLY_SEARCH",
-        ]
-        for (value, key) in mapping {
-            let item = makePersistedItem(visibility: key)
-            let sut = makeSUT()
+    @Test(arguments: [
+        (VaultItemVisibility.always, "ALWAYS"),
+        (VaultItemVisibility.onlySearch, "ONLY_SEARCH"),
+    ])
+    func decodeMetadata_decodesVisibilityLevels(expected: VaultItemVisibility, key: String) throws {
+        let item = makePersistedItem(visibility: key)
+        let sut = makeSUT()
 
-            let decoded = try sut.decode(item: item)
+        let decoded = try sut.decode(item: item)
 
-            XCTAssertEqual(decoded.metadata.visibility, value)
-        }
+        #expect(decoded.metadata.visibility == expected)
     }
 
-    func test_decodeMetadata_throwsForInvalidVisibilityLevel() throws {
+    @Test
+    func decodeMetadata_throwsForInvalidVisibilityLevel() throws {
         let item = makePersistedItem(visibility: "INVALID")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
-    }
-
-    func test_decodeMetadata_decodesSearchableLevels() throws {
-        let mapping: [VaultItemSearchableLevel: String] = [
-            .full: "FULL",
-            .none: "NONE",
-            .onlyTitle: "ONLY_TITLE",
-            .onlyPassphrase: "ONLY_PASSPHRASE",
-        ]
-        for (value, key) in mapping {
-            let item = makePersistedItem(searchableLevel: key)
-            let sut = makeSUT()
-
-            let decoded = try sut.decode(item: item)
-
-            XCTAssertEqual(decoded.metadata.searchableLevel, value)
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
         }
     }
 
-    func test_decodeMetadata_throwsForInvalidSearchableLevel() throws {
+    @Test(arguments: [
+        (VaultItemSearchableLevel.full, "FULL"),
+        (VaultItemSearchableLevel.none, "NONE"),
+        (VaultItemSearchableLevel.onlyTitle, "ONLY_TITLE"),
+        (VaultItemSearchableLevel.onlyPassphrase, "ONLY_PASSPHRASE"),
+    ])
+    func decodeMetadata_decodesSearchableLevels(expected: VaultItemSearchableLevel, key: String) throws {
+        let item = makePersistedItem(searchableLevel: key)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+
+        #expect(decoded.metadata.searchableLevel == expected)
+    }
+
+    @Test
+    func decodeMetadata_throwsForInvalidSearchableLevel() throws {
         let item = makePersistedItem(searchableLevel: "INVALID")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
+        }
     }
 
-    func test_decodeMetadata_decodesSearchPassphrase() throws {
+    @Test
+    func decodeMetadata_decodesSearchPassphrase() throws {
         let item = makePersistedItem(searchPassphrase: "my secret - super secret")
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.searchPassphrase, "my secret - super secret")
+        #expect(decoded.metadata.searchPassphrase == "my secret - super secret")
     }
 
-    func test_decodeMetadata_decodesKillphrase() throws {
+    @Test
+    func decodeMetadata_decodesKillphrase() throws {
         let item = makePersistedItem(killphrase: "kill me now")
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.killphrase, "kill me now")
+        #expect(decoded.metadata.killphrase == "kill me now")
     }
 
-    func test_decodeMetadata_decodesEmptyItemTags() throws {
+    @Test
+    func decodeMetadata_decodesEmptyItemTags() throws {
         let item = makePersistedItem(tags: [])
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.tags, [])
+        #expect(decoded.metadata.tags == [])
     }
 
-    func test_decodeMetadata_decodesItemTags() throws {
+    @Test
+    func decodeMetadata_decodesItemTags() throws {
         let id1 = UUID()
         let id2 = UUID()
         let item = makePersistedItem(tags: [makePersistedTag(id: id1), makePersistedTag(id: id2)])
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.tags, [.init(id: id1), .init(id: id2)])
+        #expect(decoded.metadata.tags == [.init(id: id1), .init(id: id2)])
     }
 
-    func test_decodeLockState_nilIsNotLocked() throws {
+    @Test
+    func decodeLockState_nilIsNotLocked() throws {
         let item = makePersistedItem(lockState: nil)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.lockState, .notLocked)
+        #expect(decoded.metadata.lockState == .notLocked)
     }
 
-    func test_decodeLockState_notLocked() throws {
+    @Test
+    func decodeLockState_notLocked() throws {
         let item = makePersistedItem(lockState: "NOT_LOCKED")
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.lockState, .notLocked)
+        #expect(decoded.metadata.lockState == .notLocked)
     }
 
-    func test_decodeLockState_lockedNative() throws {
+    @Test
+    func decodeLockState_lockedNative() throws {
         let item = makePersistedItem(lockState: "LOCKED_NATIVE")
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.metadata.lockState, .lockedWithNativeSecurity)
+        #expect(decoded.metadata.lockState == .lockedWithNativeSecurity)
     }
 
-    func test_decodeLockState_invalidValueThrows() throws {
+    @Test
+    func decodeLockState_invalidValueThrows() throws {
         let item = makePersistedItem(lockState: "INVALID")
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
+        }
     }
 }
 
 // MARK: - OTP Code
 
 extension PersistedVaultItemDecoderTests {
-    func test_decodeOTP_digits() throws {
-        let samples: [OTPAuthDigits: Int32] = [
-            OTPAuthDigits(value: 0): 0,
-            OTPAuthDigits(value: 6): 6,
-            OTPAuthDigits(value: 7): 7,
-            OTPAuthDigits(value: 8): 8,
-            OTPAuthDigits(value: 100): 100,
-            OTPAuthDigits(value: 1024): 1024,
-        ]
-        for (digits, value) in samples {
-            let sut = makeSUT()
-            let otpDetails = makePersistedOTPDetails(digits: value)
-            let item = makePersistedItem(otpDetails: otpDetails)
+    @Test(arguments: [
+        (OTPAuthDigits(value: 0), Int32(0)),
+        (OTPAuthDigits(value: 6), Int32(6)),
+        (OTPAuthDigits(value: 7), Int32(7)),
+        (OTPAuthDigits(value: 8), Int32(8)),
+        (OTPAuthDigits(value: 100), Int32(100)),
+        (OTPAuthDigits(value: 1024), Int32(1024)),
+    ])
+    func decodeOTP_digits(expectedDigits: OTPAuthDigits, value: Int32) throws {
+        let sut = makeSUT()
+        let otpDetails = makePersistedOTPDetails(digits: value)
+        let item = makePersistedItem(otpDetails: otpDetails)
 
-            let decoded = try sut.decode(item: item)
-            XCTAssertEqual(decoded.item.otpCode?.data.digits, digits)
+        let decoded = try sut.decode(item: item)
+        #expect(decoded.item.otpCode?.data.digits == expectedDigits)
+    }
+
+    @Test(arguments: [Int32(-33), Int32(333_333)])
+    func decodeOTP_invalidDigits(value: Int32) throws {
+        let sut = makeSUT()
+        let otpDetails = makePersistedOTPDetails(digits: value)
+        let item = makePersistedItem(otpDetails: otpDetails)
+
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
         }
     }
 
-    func test_decodeOTP_invalidDigits() throws {
-        let unsupported: [Int32] = [-33, 333_333]
-        for value in unsupported {
-            let sut = makeSUT()
-            let otpDetails = makePersistedOTPDetails(digits: value)
-            let item = makePersistedItem(otpDetails: otpDetails)
-
-            XCTAssertThrowsError(try sut.decode(item: item))
-        }
-    }
-
-    func test_decodeOTP_accountName() throws {
+    @Test
+    func decodeOTP_accountName() throws {
         let accountName = UUID().uuidString
         let otpDetails = makePersistedOTPDetails(accountName: accountName)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.otpCode?.data.accountName, accountName)
+        #expect(decoded.item.otpCode?.data.accountName == accountName)
     }
 
-    func test_decodeOTP_issuer() throws {
+    @Test
+    func decodeOTP_issuer() throws {
         let issuerName = UUID().uuidString
         let otpDetails = makePersistedOTPDetails(issuer: issuerName)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.otpCode?.data.issuer, issuerName)
+        #expect(decoded.item.otpCode?.data.issuer == issuerName)
     }
 
-    func test_decodeOTP_authTypeTOTPWithPeriod() throws {
+    @Test
+    func decodeOTP_authTypeTOTPWithPeriod() throws {
         let otpDetails = makePersistedOTPDetails(authType: "totp", period: 69)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.otpCode?.type, .totp(period: 69))
+        #expect(decoded.item.otpCode?.type == .totp(period: 69))
     }
 
-    func test_decodeOTP_authTypeTOTPWithoutPeriodThrows() throws {
+    @Test
+    func decodeOTP_authTypeTOTPWithoutPeriodThrows() throws {
         let otpDetails = makePersistedOTPDetails(authType: "totp", period: nil)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
+        }
     }
 
-    func test_decodeOTP_authTypeHOTPWithCounter() throws {
+    @Test
+    func decodeOTP_authTypeHOTPWithCounter() throws {
         let otpDetails = makePersistedOTPDetails(authType: "hotp", counter: 69)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.otpCode?.type, .hotp(counter: 69))
+        #expect(decoded.item.otpCode?.type == .hotp(counter: 69))
     }
 
-    func test_decodeOTP_authTypeHOTPWithoutCounterThrows() throws {
+    @Test
+    func decodeOTP_authTypeHOTPWithoutCounterThrows() throws {
         let otpDetails = makePersistedOTPDetails(authType: "hotp", counter: nil)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
-    }
-
-    func test_decodeOTP_algorithm() throws {
-        let expected: [OTPAuthAlgorithm: String] = [
-            .sha1: "SHA1",
-            .sha256: "SHA256",
-            .sha512: "SHA512",
-        ]
-        for (algo, string) in expected {
-            let otpDetails = makePersistedOTPDetails(algorithm: string)
-            let item = makePersistedItem(otpDetails: otpDetails)
-            let sut = makeSUT()
-
-            let decoded = try sut.decode(item: item)
-            XCTAssertEqual(decoded.item.otpCode?.data.algorithm, algo)
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
         }
     }
 
-    func test_decodeOTP_invalidAlgorithmThrows() throws {
+    @Test(arguments: [
+        (OTPAuthAlgorithm.sha1, "SHA1"),
+        (OTPAuthAlgorithm.sha256, "SHA256"),
+        (OTPAuthAlgorithm.sha512, "SHA512"),
+    ])
+    func decodeOTP_algorithm(expected: OTPAuthAlgorithm, string: String) throws {
+        let otpDetails = makePersistedOTPDetails(algorithm: string)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        #expect(decoded.item.otpCode?.data.algorithm == expected)
+    }
+
+    @Test
+    func decodeOTP_invalidAlgorithmThrows() throws {
         let otpDetails = makePersistedOTPDetails(algorithm: "OTHER")
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
-    }
-
-    func test_decodeOTP_secretFormat() throws {
-        let expected: [OTPAuthSecret.Format: String] = [
-            .base32: "BASE_32",
-        ]
-        for (format, string) in expected {
-            let otpDetails = makePersistedOTPDetails(secretFormat: string)
-            let item = makePersistedItem(otpDetails: otpDetails)
-            let sut = makeSUT()
-
-            let decoded = try sut.decode(item: item)
-            XCTAssertEqual(decoded.item.otpCode?.data.secret.format, format)
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
         }
     }
 
-    func test_decodeOTP_secretFormatInvalidThrows() throws {
+    @Test(arguments: [(OTPAuthSecret.Format.base32, "BASE_32")])
+    func decodeOTP_secretFormat(expected: OTPAuthSecret.Format, string: String) throws {
+        let otpDetails = makePersistedOTPDetails(secretFormat: string)
+        let item = makePersistedItem(otpDetails: otpDetails)
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        #expect(decoded.item.otpCode?.data.secret.format == expected)
+    }
+
+    @Test
+    func decodeOTP_secretFormatInvalidThrows() throws {
         let otpDetails = makePersistedOTPDetails(secretFormat: "INVALID")
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
-        XCTAssertThrowsError(try sut.decode(item: item))
+        #expect(throws: (any Error).self) {
+            try sut.decode(item: item)
+        }
     }
 
-    func test_decodeOTP_emptySecret() throws {
+    @Test
+    func decodeOTP_emptySecret() throws {
         let otpDetails = makePersistedOTPDetails(secretData: Data())
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.otpCode?.data.secret.data, Data())
+        #expect(decoded.item.otpCode?.data.secret.data == Data())
     }
 
-    func test_decodeOTP_nonEmptySecret() throws {
+    @Test
+    func decodeOTP_nonEmptySecret() throws {
         let data = Data([0xFF, 0xEE, 0x11, 0x12, 0x13, 0x56])
         let otpDetails = makePersistedOTPDetails(secretData: data)
         let item = makePersistedItem(otpDetails: otpDetails)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.otpCode?.data.secret.data, data)
+        #expect(decoded.item.otpCode?.data.secret.data == data)
     }
 }
 
 // MARK: - Secure Note
 
 extension PersistedVaultItemDecoderTests {
-    func test_decodeNote_title() throws {
+    @Test
+    func decodeNote_title() throws {
         let sut = makeSUT()
 
         let title = "this is my note title"
@@ -382,10 +402,11 @@ extension PersistedVaultItemDecoderTests {
         let item = makePersistedItem(noteDetails: noteDetails, otpDetails: nil)
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.secureNote?.title, title)
+        #expect(decoded.item.secureNote?.title == title)
     }
 
-    func test_decodeNote_contents() throws {
+    @Test
+    func decodeNote_contents() throws {
         let sut = makeSUT()
 
         let contents = "this is my note contents"
@@ -393,14 +414,15 @@ extension PersistedVaultItemDecoderTests {
         let item = makePersistedItem(noteDetails: noteDetails, otpDetails: nil)
 
         let decoded = try sut.decode(item: item)
-        XCTAssertEqual(decoded.item.secureNote?.contents, contents)
+        #expect(decoded.item.secureNote?.contents == contents)
     }
 }
 
 // MARK: - EncryptedItem
 
 extension PersistedVaultItemDecoderTests {
-    func test_decodeEncryptedItem_correctly() throws {
+    @Test
+    func decodeEncryptedItem_correctly() throws {
         let sut = makeSUT()
 
         let itemData = Data.random(count: 16)
@@ -421,13 +443,13 @@ extension PersistedVaultItemDecoderTests {
 
         let decoded = try sut.decode(item: item)
 
-        XCTAssertEqual(decoded.item.encryptedItem?.version, "1.0.3")
-        XCTAssertEqual(decoded.item.encryptedItem?.title, "cool title")
-        XCTAssertEqual(decoded.item.encryptedItem?.data, itemData)
-        XCTAssertEqual(decoded.item.encryptedItem?.authentication, itemAuth)
-        XCTAssertEqual(decoded.item.encryptedItem?.encryptionIV, itemEncryptionIV)
-        XCTAssertEqual(decoded.item.encryptedItem?.keygenSalt, itemKeygenSalt)
-        XCTAssertEqual(decoded.item.encryptedItem?.keygenSignature, itemKeygenSignature)
+        #expect(decoded.item.encryptedItem?.version == "1.0.3")
+        #expect(decoded.item.encryptedItem?.title == "cool title")
+        #expect(decoded.item.encryptedItem?.data == itemData)
+        #expect(decoded.item.encryptedItem?.authentication == itemAuth)
+        #expect(decoded.item.encryptedItem?.encryptionIV == itemEncryptionIV)
+        #expect(decoded.item.encryptedItem?.keygenSalt == itemKeygenSalt)
+        #expect(decoded.item.encryptedItem?.keygenSignature == itemKeygenSignature)
     }
 }
 
