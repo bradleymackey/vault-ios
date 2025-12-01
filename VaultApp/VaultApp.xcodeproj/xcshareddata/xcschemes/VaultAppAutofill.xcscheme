@@ -17,8 +17,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1CBE0CCA2CD229FF000EA09D"
-               BuildableName = "VaultAppAutofill.appex"
-               BlueprintName = "VaultAppAutofill"
+               BuildableName = "VaultAutofill.appex"
+               BlueprintName = "VaultAutofill"
                ReferencedContainer = "container:VaultApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -31,8 +31,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "1CDA9C902A057A8B00555E7A"
-               BuildableName = "VaultApp.app"
-               BlueprintName = "VaultApp"
+               BuildableName = "Vault.app"
+               BlueprintName = "Vault"
                ReferencedContainer = "container:VaultApp.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -60,8 +60,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1CDA9C902A057A8B00555E7A"
-            BuildableName = "VaultApp.app"
-            BlueprintName = "VaultApp"
+            BuildableName = "Vault.app"
+            BlueprintName = "Vault"
             ReferencedContainer = "container:VaultApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -79,8 +79,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "1CDA9C902A057A8B00555E7A"
-            BuildableName = "VaultApp.app"
-            BlueprintName = "VaultApp"
+            BuildableName = "Vault.app"
+            BlueprintName = "Vault"
             ReferencedContainer = "container:VaultApp.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
