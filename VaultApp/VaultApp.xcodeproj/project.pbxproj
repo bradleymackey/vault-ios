@@ -13,7 +13,7 @@
 		1C58F2F32AE5764100962BAB /* VaultiOS in Frameworks */ = {isa = PBXBuildFile; productRef = 1C58F2F22AE5764100962BAB /* VaultiOS */; };
 		1C8B89F52CD3759400F3D340 /* VaultiOSAutofill in Frameworks */ = {isa = PBXBuildFile; productRef = 1C8B89F42CD3759400F3D340 /* VaultiOSAutofill */; };
 		1CBE0CCD2CD229FF000EA09D /* AuthenticationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1CBE0CCC2CD229FF000EA09D /* AuthenticationServices.framework */; };
-		1CBE0CD82CD229FF000EA09D /* VaultAutofill.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1CBE0CCB2CD229FF000EA09D /* VaultAutofill.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		1CBE0CD82CD229FF000EA09D /* VaultAppAutofill.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +33,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
-				1CBE0CD82CD229FF000EA09D /* VaultAutofill.appex in Embed Foundation Extensions */,
+				1CBE0CD82CD229FF000EA09D /* VaultAppAutofill.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -46,9 +46,9 @@
 		1C1318012AD75008006F14F5 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		1C45B07B2ADFE8BE00197B32 /* VaultAppMain.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultAppMain.swift; sourceTree = "<group>"; };
 		1C648DFB2C0A884500163D41 /* VaultApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = VaultApp.entitlements; sourceTree = "<group>"; };
-		1CBE0CCB2CD229FF000EA09D /* VaultAutofill.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VaultAutofill.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = VaultAppAutofill.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		1CBE0CCC2CD229FF000EA09D /* AuthenticationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AuthenticationServices.framework; path = System/Library/Frameworks/AuthenticationServices.framework; sourceTree = SDKROOT; };
-		1CDA9C912A057A8B00555E7A /* Vault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Vault.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		1CDA9C912A057A8B00555E7A /* VaultApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = VaultApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -57,7 +57,7 @@
 			membershipExceptions = (
 				Info.plist,
 			);
-			target = 1CBE0CCA2CD229FF000EA09D /* VaultAutofill */;
+			target = 1CBE0CCA2CD229FF000EA09D /* VaultAppAutofill */;
 		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
@@ -119,8 +119,8 @@
 		1CDA9C922A057A8B00555E7A /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				1CDA9C912A057A8B00555E7A /* Vault.app */,
-				1CBE0CCB2CD229FF000EA09D /* VaultAutofill.appex */,
+				1CDA9C912A057A8B00555E7A /* VaultApp.app */,
+				1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -136,9 +136,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		1CBE0CCA2CD229FF000EA09D /* VaultAutofill */ = {
+		1CBE0CCA2CD229FF000EA09D /* VaultAppAutofill */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1CBE0CDD2CD229FF000EA09D /* Build configuration list for PBXNativeTarget "VaultAutofill" */;
+			buildConfigurationList = 1CBE0CDD2CD229FF000EA09D /* Build configuration list for PBXNativeTarget "VaultAppAutofill" */;
 			buildPhases = (
 				1CBE0CC72CD229FF000EA09D /* Sources */,
 				1CBE0CC82CD229FF000EA09D /* Frameworks */,
@@ -151,17 +151,17 @@
 			fileSystemSynchronizedGroups = (
 				1CBE0CCE2CD229FF000EA09D /* VaultAppAutofill */,
 			);
-			name = VaultAutofill;
+			name = VaultAppAutofill;
 			packageProductDependencies = (
 				1C8B89F42CD3759400F3D340 /* VaultiOSAutofill */,
 			);
 			productName = VaultAppAutofill;
-			productReference = 1CBE0CCB2CD229FF000EA09D /* VaultAutofill.appex */;
+			productReference = 1CBE0CCB2CD229FF000EA09D /* VaultAppAutofill.appex */;
 			productType = "com.apple.product-type.app-extension";
 		};
-		1CDA9C902A057A8B00555E7A /* Vault */ = {
+		1CDA9C902A057A8B00555E7A /* VaultApp */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "Vault" */;
+			buildConfigurationList = 1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "VaultApp" */;
 			buildPhases = (
 				1CDA9C8D2A057A8B00555E7A /* Sources */,
 				1CDA9C8E2A057A8B00555E7A /* Frameworks */,
@@ -173,12 +173,12 @@
 			dependencies = (
 				1CBE0CD72CD229FF000EA09D /* PBXTargetDependency */,
 			);
-			name = Vault;
+			name = VaultApp;
 			packageProductDependencies = (
 				1C58F2F22AE5764100962BAB /* VaultiOS */,
 			);
 			productName = CodeManager;
-			productReference = 1CDA9C912A057A8B00555E7A /* Vault.app */;
+			productReference = 1CDA9C912A057A8B00555E7A /* VaultApp.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -212,8 +212,8 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				1CDA9C902A057A8B00555E7A /* Vault */,
-				1CBE0CCA2CD229FF000EA09D /* VaultAutofill */,
+				1CDA9C902A057A8B00555E7A /* VaultApp */,
+				1CBE0CCA2CD229FF000EA09D /* VaultAppAutofill */,
 			);
 		};
 /* End PBXProject section */
@@ -258,7 +258,7 @@
 /* Begin PBXTargetDependency section */
 		1CBE0CD72CD229FF000EA09D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 1CBE0CCA2CD229FF000EA09D /* VaultAutofill */;
+			target = 1CBE0CCA2CD229FF000EA09D /* VaultAppAutofill */;
 			targetProxy = 1CBE0CD62CD229FF000EA09D /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -520,7 +520,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		1CBE0CDD2CD229FF000EA09D /* Build configuration list for PBXNativeTarget "VaultAutofill" */ = {
+		1CBE0CDD2CD229FF000EA09D /* Build configuration list for PBXNativeTarget "VaultAppAutofill" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CBE0CDA2CD229FF000EA09D /* Debug */,
@@ -538,7 +538,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "Vault" */ = {
+		1CDA9CB52A057A8C00555E7A /* Build configuration list for PBXNativeTarget "VaultApp" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1CDA9CB62A057A8C00555E7A /* Debug */,
