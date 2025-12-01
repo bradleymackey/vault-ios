@@ -8,6 +8,8 @@
 		<dict>
 			<key>ASCredentialProviderExtensionCapabilities</key>
 			<dict>
+                <key>ShowsConfigurationUI</key>
+                <true/>
 				<key>ProvidesOneTimeCodes</key>
 				<true/>
 				<key>ProvidesPasskeys</key>
@@ -15,7 +17,7 @@
 				<key>ProvidesPasswords</key>
 				<false/>
 				<key>ProvidesTextToInsert</key>
-				<true/>
+				<false/>
 			</dict>
 			<key>ASCredentialProviderExtensionShowsConfigurationUI</key>
 			<true/>

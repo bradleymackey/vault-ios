@@ -4,7 +4,7 @@
 <dict>
 	<key>com.apple.developer.associated-domains</key>
 	<array>
-		<string>webcredentials:example.com</string>
+		<string>webcredentials:mcky.dev?mode=developer</string>
 	</array>
 </dict>
 </plist>

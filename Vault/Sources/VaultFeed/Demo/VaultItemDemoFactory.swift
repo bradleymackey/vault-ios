@@ -5,10 +5,10 @@ public struct VaultItemDemoFactory {
     public init() {}
 
     public func makeTOTPCode() -> VaultItem.Write {
-        let randomAccountName = "example.com \(UUID().uuidString.prefix(10))"
+        let randomAccountName = "mcky.dev \(UUID().uuidString.prefix(10))"
         let code = OTPAuthCode(
             type: .totp(period: 30),
-            data: .init(secret: .empty(), accountName: randomAccountName, issuer: "example.com"),
+            data: .init(secret: .empty(), accountName: randomAccountName, issuer: "mcky.dev"),
         )
         return VaultItem.Write(
             relativeOrder: 0,
@@ -28,7 +28,7 @@ public struct VaultItemDemoFactory {
         let randomAccountName = "example.com \(UUID().uuidString.prefix(10))"
         let code = OTPAuthCode(
             type: .totp(period: 30),
-            data: .init(secret: .empty(), accountName: randomAccountName, issuer: "example.com"),
+            data: .init(secret: .empty(), accountName: randomAccountName, issuer: "mcky.dev"),
         )
         return VaultItem.Write(
             relativeOrder: 0,
@@ -52,7 +52,7 @@ public struct VaultItemDemoFactory {
         )
         return VaultItem.Write(
             relativeOrder: 0,
-            userDescription: "This is a demo HOTP code",
+            userDescription: "This is a demo note",
             color: nil,
             item: .secureNote(note),
             tags: [],
