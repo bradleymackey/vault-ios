@@ -87,7 +87,7 @@ extension Pending {
         try Task.checkCancellation()
 
         if let timeout {
-            return try await Task.withTimeout(delay: timeout) {
+            return try await Task.withTimeout(delay: timeout, description: "Pending value timeout after \(timeout)") {
                 try await getValue()
             }
         } else {
