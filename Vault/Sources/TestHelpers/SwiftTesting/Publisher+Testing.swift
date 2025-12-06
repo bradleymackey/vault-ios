@@ -22,22 +22,6 @@ extension Publisher {
             try await actions()
         }
     }
-
-    @MainActor
-    public func waitForFirstValue(timeout: Duration = .seconds(1)) async throws {
-        var cancellable: AnyCancellable?
-        defer { cancellable?.cancel() }
-
-        let signal = Pending.signal()
-
-        cancellable = sink { _ in
-            // noop
-        } receiveValue: { _ in
-            Task { await signal.fulfill() }
-        }
-
-        try await signal.wait(timeout: timeout)
-    }
 }
 
 extension Publisher where Output: Equatable, Output: Sendable {
