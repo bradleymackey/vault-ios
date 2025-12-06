@@ -28,33 +28,21 @@ extension Publisher where Output: Equatable, Output: Sendable {
     @MainActor
     public func expect(
         firstValues: [Output],
-        timeout: Duration = .seconds(1),
         sourceLocation: SourceLocation = #_sourceLocation,
         when actions: sending @isolated(any) @escaping () async throws -> Void,
     ) async throws {
         var cancellable: AnyCancellable?
         defer { cancellable?.cancel() }
-
-        let signal = Pending.signal()
-
         let collectedValues = SharedMutex<[Output]>([])
-        cancellable = prefix(firstValues.count).sink { _ in
-            Task { await signal.fulfill() }
-        } receiveValue: { value in
-            collectedValues.modify {
-                $0.append(value)
+        try await confirmation(expectedCount: firstValues.count, sourceLocation: sourceLocation) { confirmation in
+            cancellable = sink { _ in
+                // noop
+            } receiveValue: { value in
+                collectedValues.modify { $0.append(value) }
+                confirmation.confirm()
             }
-        }
-
-        // Concurrently run actions while we are collecting the values.
-        Task.detached {
             try await actions()
-            // Yield to allow some extra time for the publisher to collect the results.
-            await Task.yield()
         }
-
-        // Wait for all the values to be recieved.
-        try await signal.wait(timeout: timeout)
         #expect(collectedValues.value == firstValues, sourceLocation: sourceLocation)
     }
 }
