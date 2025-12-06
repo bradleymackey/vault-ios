@@ -11,6 +11,7 @@ extension Task where Failure == any Error {
     /// Race for the first result by any of the provided tasks.
     ///
     /// This will return the first valid result or throw the first thrown error by *any* child task.
+    /// Cancelled tasks are ignored as they are no longer eligible to participate in the race.
     ///
     /// - throws: The first error yielded for any child tasks, or `CancellationError` if cancelled.
     /// - returns: The value for the first resolved result, throws if it's an error.
@@ -27,11 +28,21 @@ extension Task where Failure == any Error {
             defer { group.cancelAll() }
             try Task<Never, Never>.checkCancellation()
 
-            if let firstToResolve = try await group.next() {
-                return firstToResolve
-            } else {
-                throw TaskRaceError.noTasksScheduled
+            while let nextResult = await group.nextResult() {
+                try Task<Never, Never>.checkCancellation()
+                switch nextResult {
+                case let .failure(error as CancellationError):
+                    // Ignore cancelled tasks - they're no longer eligible
+                    continue
+                case let .failure(error):
+                    throw error
+                case let .success(value):
+                    return value
+                }
             }
+
+            // All tasks were cancelled or no tasks scheduled
+            throw TaskRaceError.noTasksScheduled
         }
     }
 

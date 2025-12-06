@@ -23,6 +23,7 @@ extension Task where Success == Never, Failure == TimeoutError {
     /// Throws a `TimeoutError` after `duration`. Never returns.
     public static func timeout(in duration: Duration, id: UUID = UUID()) async throws -> Never {
         try await Task<Never, Never>.sleep(for: duration)
+        try Task<Never, Never>.checkCancellation()
         throw TimeoutError(id: id)
     }
 }

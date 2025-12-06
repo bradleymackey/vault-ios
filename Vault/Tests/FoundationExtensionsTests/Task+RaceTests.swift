@@ -101,6 +101,36 @@ enum TaskRaceTests {
                 _ = try await parent.value
             })
         }
+
+        @Test
+        func cancelledTasksAreIgnoredFromRace() async throws {
+            let pending1 = Pending.signal()
+            let pending2 = Pending.signal()
+            let pending3 = Pending.signal()
+            let t1: TaskRace<Int> = {
+                try await pending1.wait()
+                throw CancellationError()
+            }
+            let t2: TaskRace<Int> = {
+                try await pending2.wait()
+                return TestTask.t2.testValue
+            }
+            let t3: TaskRace<Int> = {
+                try await pending3.wait()
+                return TestTask.t3.testValue
+            }
+            let parent = Task {
+                try await Task.race(firstResolved: [t1, t2, t3])
+            }
+            // Task 1 throws CancellationError first
+            await pending1.fulfill()
+            // Task 2 completes successfully
+            await pending2.fulfill()
+            // Race should ignore the cancelled task and return t2's value
+            let value = try await parent.value
+
+            #expect(value == TestTask.t2.testValue)
+        }
     }
 
     struct FirstValue {
