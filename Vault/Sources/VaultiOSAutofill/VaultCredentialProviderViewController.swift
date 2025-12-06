@@ -59,7 +59,46 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
     //
     // It's triggered by the "ASCredentialProviderExtensionShowsConfigurationUI" key in the Info.plist
     override open func prepareInterfaceForExtensionConfiguration() {
+        super.prepareInterfaceForExtensionConfiguration()
+
+        // Populate the credential identity store with OTP identities
+        // so that iOS knows our extension can provide OTP codes
+        populateOTPCredentialStore()
+
         vaultAutofillViewModel.show(feature: .setupConfiguration)
+    }
+
+    /// Populates the credential identity store with stub OTP credential identities
+    /// This allows iOS to show OTP suggestions in QuickType from this extension
+    private func populateOTPCredentialStore() {
+        Task {
+            let store = ASCredentialIdentityStore.shared
+
+            // Check if we support incremental updates
+            let state = await store.state()
+            let supportsIncremental = state.supportsIncrementalUpdates
+
+            // Create a stub OTP credential identity
+            // In a real implementation, you would create identities for all your OTP vault items
+            let serviceIdentifier = ASCredentialServiceIdentifier(
+                identifier: "mcky.dev",
+                type: .domain,
+            )
+
+            let otpIdentity = ASOneTimeCodeCredentialIdentity(
+                serviceIdentifier: serviceIdentifier,
+                label: "Test OTP",
+                recordIdentifier: "test-otp-1",
+            )
+
+            if supportsIncremental {
+                // Save incrementally if supported
+                try? await store.saveCredentialIdentities([otpIdentity])
+            } else {
+                // Replace all identities
+                try? await store.replaceCredentialIdentities([otpIdentity])
+            }
+        }
     }
 
     struct CredentialTypeNotSupportedError: Error, LocalizedError {
@@ -76,13 +115,15 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      If using the credential would require showing custom UI for authenticating the user, cancel
      the request with error code ASExtensionError.userInteractionRequired.
      */
-    override open func provideCredentialWithoutUserInteraction(for _: any ASCredentialRequest) {
-        // TODO: OTP QuickType autofill does not currently work in iOS 18, we need to use
-        // `prepareInterfaceForUserChoosingTextToInsert`
-        vaultAutofillViewModel.show(feature: .unimplemented(#function))
-        extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
-//            let credential = ASOneTimeCodeCredential(code: "123456")
-//            self.extensionContext.completeOneTimeCodeRequest(using: credential)
+    override open func provideCredentialWithoutUserInteraction(for request: any ASCredentialRequest) {
+        // Handle OTP code requests from QuickType bar
+        switch request.type {
+        case .oneTimeCode:
+            let credential = ASOneTimeCodeCredential(code: "123456")
+            extensionContext.completeOneTimeCodeRequest(using: credential, completionHandler: nil)
+        default:
+            extensionContext.cancelRequest(withError: CredentialTypeNotSupportedError())
+        }
     }
 
     /*
@@ -91,7 +132,8 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      UI and call this method. Show appropriate UI for authenticating the user then provide the password
      by completing the extension request with the associated AS PasswordCredential.
      */
-    override open func prepareInterfaceToProvideCredential(for _: any ASCredentialRequest) {
+    override open func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
+        super.prepareInterfaceToProvideCredential(for: credentialRequest)
         vaultAutofillViewModel.show(feature: .unimplemented(#function))
     }
 
@@ -105,9 +147,13 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
     override open func prepareOneTimeCodeCredentialList(for _: [ASCredentialServiceIdentifier]) {
-        // This is not actually displayed when we want to autofill, `prepareInterfaceForUserChoosingTextToInsert`
-        // is called instead.
-        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+        // For testing, immediately provide the stub OTP code without showing UI
+        // In a real implementation, you would:
+        // 1. Filter your vault items to find OTP credentials matching the serviceIdentifiers
+        // 2. Show UI with the list of matching OTP items
+        // 3. When user selects one, generate the actual OTP code and complete the request
+        let cred = ASOneTimeCodeCredential(code: "123456")
+        extensionContext.completeOneTimeCodeRequest(using: cred, completionHandler: nil)
     }
 
     /*
@@ -118,13 +164,9 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      [m.example.com, example.com] with the first item representing the more specifc service that requires a credential.
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
-    override open func prepareCredentialList(for _: [ASCredentialServiceIdentifier]) {
+    override open func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        super.prepareCredentialList(for: serviceIdentifiers)
         vaultAutofillViewModel.show(feature: .unimplemented(#function))
-    }
-
-    override open func prepareInterfaceForUserChoosingTextToInsert() {
-        // This is the UI that appears when the user chooses to "Autofill" a "Password" with Vault.
-        vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 }
 
