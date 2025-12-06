@@ -31,7 +31,7 @@ extension Task where Failure == any Error {
             while let nextResult = await group.nextResult() {
                 try Task<Never, Never>.checkCancellation()
                 switch nextResult {
-                case let .failure(error as CancellationError):
+                case let .failure(error) where error is CancellationError:
                     // Ignore cancelled tasks - they're no longer eligible
                     continue
                 case let .failure(error):
