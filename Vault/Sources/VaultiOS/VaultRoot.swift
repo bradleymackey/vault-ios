@@ -49,6 +49,9 @@ public enum VaultRoot {
     public static let backupPasswordStore: some BackupPasswordStore =
         BackupPasswordStoreImpl(secureStorage: secureStorage)
 
+    public static let vaultOtpAutofillStore: some VaultOTPAutofillStore =
+        VaultOTPAutofillStoreImpl(store: RealCredentialIdentityStore())
+
     @MainActor
     public static let vaultDataModel: VaultDataModel = .init(
         vaultStore: vaultStore,
@@ -56,6 +59,7 @@ public enum VaultRoot {
         vaultImporter: vaultStore,
         vaultDeleter: vaultStore,
         vaultKillphraseDeleter: vaultStore,
+        vaultOtpAutofillStore: vaultOtpAutofillStore,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger,
     )

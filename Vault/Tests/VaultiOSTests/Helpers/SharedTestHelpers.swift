@@ -13,6 +13,7 @@ func anyVaultDataModel(
     vaultImporter: any VaultStoreImporter = VaultStoreImporterMock(),
     vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
     vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
+    vaultOtpAutofillStore: any VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
     backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
     backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
@@ -22,6 +23,7 @@ func anyVaultDataModel(
         vaultImporter: vaultImporter,
         vaultDeleter: vaultDeleter,
         vaultKillphraseDeleter: vaultKillphraseDeleter,
+        vaultOtpAutofillStore: vaultOtpAutofillStore,
         backupPasswordStore: backupPasswordStore,
         backupEventLogger: backupEventLogger,
     )

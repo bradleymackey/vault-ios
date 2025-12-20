@@ -115,6 +115,7 @@ public final class VaultDataModel {
     private let vaultImporter: any VaultStoreImporter
     private let vaultDeleter: any VaultStoreDeleter
     private let vaultKillphraseDeleter: any VaultStoreKillphraseDeleter
+    private let vaultOtpAutofillStore: any VaultOTPAutofillStore
     private let backupPasswordStore: any BackupPasswordStore
     private let backupEventLogger: any BackupEventLogger
     private var observationBag = Set<AnyCancellable>()
@@ -125,6 +126,7 @@ public final class VaultDataModel {
         vaultImporter: any VaultStoreImporter,
         vaultDeleter: any VaultStoreDeleter,
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter,
+        vaultOtpAutofillStore: any VaultOTPAutofillStore,
         backupPasswordStore: any BackupPasswordStore,
         backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = [],
@@ -134,6 +136,7 @@ public final class VaultDataModel {
         self.vaultImporter = vaultImporter
         self.vaultDeleter = vaultDeleter
         self.vaultKillphraseDeleter = vaultKillphraseDeleter
+        self.vaultOtpAutofillStore = vaultOtpAutofillStore
         self.backupPasswordStore = backupPasswordStore
         self.backupEventLogger = backupEventLogger
         self.itemCaches = itemCaches
@@ -355,6 +358,7 @@ extension VaultDataModel {
 extension VaultDataModel {
     public func deleteVault() async throws {
         try await vaultDeleter.deleteVault()
+        try await vaultOtpAutofillStore.removeAll()
         await reloadItems()
         await reloadTags()
     }

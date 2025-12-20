@@ -520,10 +520,15 @@ final class VaultDataModelTests {
     @Test
     func deleteVault_removesAllDataFromVault() async throws {
         let deleter = VaultStoreDeleterMock()
-        let sut = makeSUT(vaultDeleter: deleter)
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultDeleter: deleter, vaultOtpAutofillStore: vaultOtpAutofillStore)
 
-        try await confirmation { confirm in
+        try await confirmation(expectedCount: 2) { confirm in
             deleter.deleteVaultHandler = {
+                confirm()
+            }
+
+            vaultOtpAutofillStore.removeAllHandler = {
                 confirm()
             }
 
@@ -611,6 +616,7 @@ extension VaultDataModelTests {
         vaultImporter: any VaultStoreImporter = VaultStoreImporterMock(),
         vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
+        vaultOtpAutofillStore: any VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = [],
@@ -621,6 +627,7 @@ extension VaultDataModelTests {
             vaultImporter: vaultImporter,
             vaultDeleter: vaultDeleter,
             vaultKillphraseDeleter: vaultKillphraseDeleter,
+            vaultOtpAutofillStore: vaultOtpAutofillStore,
             backupPasswordStore: backupPasswordStore,
             backupEventLogger: backupEventLogger,
             itemCaches: itemCaches,
