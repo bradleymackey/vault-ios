@@ -74,19 +74,45 @@ struct VaultTagFeedView: View {
                 Button {
                     modal = .editingTag(tag)
                 } label: {
-                    HStack(spacing: 12) {
-                        TagIconView()
-                        TagPillView(tag: tag, isSelected: false)
-                        Spacer()
+                    Label {
+                        Text(tag.name)
+                            .foregroundStyle(tagForegroundColor(for: tag))
+                    } icon: {
+                        Image(systemName: tag.iconName)
+                            .foregroundStyle(tagForegroundColor(for: tag))
                     }
                     .contentShape(Rectangle())
                 }
-                .buttonStyle(.plain)
+                .listRowBackground(tagBackgroundColor(for: tag))
             }
             .onDelete { indexSet in
                 deleteTag(at: indexSet)
             }
         }
+    }
+
+    private func tagForegroundColor(for tag: VaultItemTag) -> Color {
+        let baseColor = tag.color.color
+
+        // If color is too light or dark for default list background, use contrasting color
+        if baseColor.isPercievedLight || baseColor.isPercievedDark {
+            return baseColor.contrastingForegroundColor
+        }
+
+        return baseColor
+    }
+
+    private func tagBackgroundColor(for tag: VaultItemTag) -> Color? {
+        let baseColor = tag.color.color
+
+        // Add subtle tinted background for light/dark colors to improve visibility
+        if baseColor.isPercievedLight {
+            return baseColor.opacity(0.15)
+        } else if baseColor.isPercievedDark {
+            return baseColor.opacity(0.2)
+        }
+
+        return nil
     }
 
     private func deleteTag(at indexSet: IndexSet) {
