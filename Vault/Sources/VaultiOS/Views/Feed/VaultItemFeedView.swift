@@ -163,8 +163,8 @@ public struct VaultItemFeedView<
                 metadata: storedItem.metadata,
                 behaviour: currentBehaviour,
             )
+            .id(makeID(item: storedItem))
             .opacity(targetedIds.contains(storedItem.id) ? 0.5 : 1)
-            .id(storedItem.id)
             .draggable(storedItem)
             .if(state.isEditing) {
                 $0.dropDestination(for: Identifier<VaultItem>.self) { dropItems, _ in
@@ -195,13 +195,17 @@ public struct VaultItemFeedView<
                 }
             }
         }
-        // Reload content when editing state changes.
-        // The content needs to rerender when the editing state changes.
-        .id(state.isEditing)
-        .id(dataModel.itemSearchHash)
         .onChange(of: state.isEditing) { _, isEditing in
             if !isEditing { targetedIds.removeAll() }
         }
+    }
+
+    private func makeID(item: VaultItem) -> some Hashable {
+        var hasher = Hasher()
+        hasher.combine(item.id)
+        hasher.combine(state.isEditing)
+        hasher.combine(dataModel.itemSearchHash)
+        return hasher.finalize()
     }
 
     private var columns: [GridItem] {

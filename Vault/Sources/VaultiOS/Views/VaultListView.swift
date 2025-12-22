@@ -28,7 +28,6 @@ struct VaultListView<
     @Environment(VaultDataModel.self) private var dataModel
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @Environment(DeviceAuthenticationService.self) var authenticationService
-    @Environment(\.editMode) private var editMode
     @State private var vaultItemFeedState = VaultItemFeedState()
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
@@ -49,7 +48,15 @@ struct VaultListView<
         .toolbar {
             if dataModel.items.isNotEmpty {
                 ToolbarItem(placement: .topBarTrailing) {
-                    EditButton()
+                    Button {
+                        vaultItemFeedState.isEditing.toggle()
+                    } label: {
+                        Label(
+                            vaultItemFeedState.isEditing ? "Done" : "Edit",
+                            systemImage: vaultItemFeedState.isEditing ? "checkmark" : "pencil",
+                        )
+                        .labelStyle(.iconOnly)
+                    }
                 }
             }
             ToolbarItem(placement: .topBarTrailing) {
@@ -107,14 +114,10 @@ struct VaultListView<
             let item = vaultItemEncryptedPayload.decryptedItem
             modal = .detail(item.id, item, vaultItemEncryptedPayload.encryptionKey)
         })
-        .onChange(of: editMode?.wrappedValue) { _, newValue in
-            vaultItemFeedState.isEditing = newValue == .active
-        }
         .onChange(of: modal) { _, newValue in
             // When the detail modal is dismissed, exit editing mode.
             if newValue == nil {
                 vaultItemFeedState.isEditing = false
-                editMode?.wrappedValue = .inactive
             }
         }
         .onChange(of: scenePhase) { _, newValue in
