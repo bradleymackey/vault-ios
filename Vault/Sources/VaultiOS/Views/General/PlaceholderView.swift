@@ -8,13 +8,13 @@ struct PlaceholderView: View {
     var subtitle: String?
 
     var body: some View {
-        VStack(alignment: .center, spacing: 12) {
+        VStack(alignment: .leading, spacing: 16) {
             Image(systemName: systemIcon)
                 .font(.largeTitle)
                 .foregroundStyle(.primary)
-            VStack(alignment: .center, spacing: 4) {
+            VStack(alignment: .leading, spacing: 2) {
                 Text(title)
-                    .font(.headline.bold())
+                    .font(.headline)
                     .foregroundStyle(.primary)
                 if let subtitle {
                     Text(subtitle)
@@ -23,8 +23,9 @@ struct PlaceholderView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .textCase(.none)
-        .multilineTextAlignment(.center)
+        .multilineTextAlignment(.leading)
         .listRowSeparator(.hidden)
     }
 }

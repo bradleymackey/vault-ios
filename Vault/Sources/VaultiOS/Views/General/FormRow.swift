@@ -45,7 +45,7 @@ struct FormRow<Content: View>: View {
         ZStack {
             color
             image
-                .font(.system(size: prominentIconSize / 2.5))
+                .font(.system(size: prominentIconSize / 2.0))
         }
         .clipShape(RoundedRectangle(cornerRadius: 8))
         .frame(width: prominentIconSize, height: prominentIconSize)

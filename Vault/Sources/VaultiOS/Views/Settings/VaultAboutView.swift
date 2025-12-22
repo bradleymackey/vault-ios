@@ -13,8 +13,7 @@ struct VaultAboutView: View {
     var body: some View {
         Form {
             headerSection
-            helpSection
-            tenetsSection
+            generalSection
             policySection
             mastheadSection
         }
@@ -32,7 +31,7 @@ struct VaultAboutView: View {
         .containerRelativeFrame(.horizontal)
     }
 
-    private var helpSection: some View {
+    private var generalSection: some View {
         Section {
             NavigationLink {
                 HelpView(viewModel: viewModel)
@@ -44,11 +43,7 @@ struct VaultAboutView: View {
                     Text(viewModel.helpTitle)
                 }
             }
-        }
-    }
 
-    private var tenetsSection: some View {
-        Section {
             NavigationLink {
                 OpenSourceView()
             } label: {
@@ -59,8 +54,6 @@ struct VaultAboutView: View {
                     Text(viewModel.openSourceTitle)
                 }
             }
-        } header: {
-            Text("Proud to be...")
         }
     }
 
@@ -98,8 +91,6 @@ struct VaultAboutView: View {
                     Text(viewModel.thirdPartyTitle)
                 }
             }
-        } header: {
-            Text("Legal")
         }
     }
 
