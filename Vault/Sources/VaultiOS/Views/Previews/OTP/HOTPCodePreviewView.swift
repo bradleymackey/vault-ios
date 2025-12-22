@@ -8,20 +8,36 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     var behaviour: VaultItemViewBehaviour
 
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
+        VStack(alignment: .leading, spacing: 0) {
+            // Icon at top
+            icon
+                .padding(.bottom, 8)
+
+            // Issuer and account labels
             labelsStack
-            Spacer()
-            codeText.layoutPriority(100)
-            Spacer()
+
+            // Code section - prominent
+            codeText
+                .padding(.vertical, 12)
+
+            Spacer(minLength: 0)
+
+            // Timer bar and button at bottom
             timerSection
         }
+        .padding(16)
         .animation(.easeOut, value: behaviour)
         .animation(.easeOut, value: canLoadNextCode)
+        .frame(maxWidth: .infinity, maxHeight: .infinity)
         .aspectRatio(1, contentMode: .fill)
         .shimmering(active: isEditing)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: previewViewModel.color.color),
+                configuration: .init(
+                    style: isEditing ? .prominent : .secondary,
+                    border: previewViewModel.color.color,
+                    padding: .init(),
+                ),
             ),
         )
     }
@@ -44,37 +60,49 @@ struct HOTPCodePreviewView<ButtonView: View>: View {
     }
 
     private var labelsStack: some View {
-        HStack(alignment: .top, spacing: 6) {
-            icon
-                .padding(.top, 2)
-            OTPCodeLabels(accountName: previewViewModel.accountName, issuer: previewViewModel.visibleIssuer)
+        VStack(alignment: .leading, spacing: 2) {
+            Text(previewViewModel.visibleIssuer)
+                .font(.title3.weight(.bold))
                 .foregroundStyle(isEditing ? .white : .primary)
-            Spacer()
+                .lineLimit(2)
+
+            Text(accountNameFormatted)
+                .font(.caption2)
+                .foregroundStyle(isEditing ? .white.opacity(0.8) : .secondary)
+                .lineLimit(1)
         }
-        .padding(.horizontal, 2)
-        .padding(.top, 6)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    private var accountNameFormatted: String {
+        if previewViewModel.accountName.isNotEmpty {
+            previewViewModel.accountName
+        } else {
+            localized(key: "code.accountNamePlaceholder")
+        }
     }
 
     @ViewBuilder
     private var icon: some View {
         if case .error = previewViewModel.code {
             PreviewErrorIcon()
-                .font(.callout)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(isEditing ? .white.opacity(0.8) : previewViewModel.color.color.opacity(0.7))
         } else {
-            OTPCodeIconPlaceholderView(iconFontSize: 8, backgroundColor: previewViewModel.color.color)
-                .clipShape(Circle())
+            Image(systemName: "key.horizontal.fill")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(isEditing ? .white.opacity(0.8) : previewViewModel.color.color.opacity(0.7))
         }
     }
 
     private var codeText: some View {
-        VStack(alignment: .leading, spacing: 4) {
-            OTPCodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
-                .font(.system(.largeTitle, design: .monospaced))
-                .fontWeight(.bold)
-                .padding(.horizontal, 2)
-                .foregroundColor(isEditing ? .white : .primary)
-        }
-        .frame(maxWidth: .infinity, alignment: .center)
+        OTPCodeTextView(codeState: behaviour != .normal ? .notReady : previewViewModel.code)
+            .font(.system(size: 36, design: .monospaced))
+            .fontWeight(.heavy)
+            .minimumScaleFactor(0.5)
+            .lineLimit(1)
+            .foregroundColor(isEditing ? .white : .primary)
+            .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     private var timerSection: some View {

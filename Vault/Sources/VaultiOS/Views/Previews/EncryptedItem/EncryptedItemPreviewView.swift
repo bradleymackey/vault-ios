@@ -8,35 +8,42 @@ struct EncryptedItemPreviewView: View {
     var behaviour: VaultItemViewBehaviour
 
     var body: some View {
-        VStack(alignment: .center, spacing: 4) {
-            Spacer()
+        VStack(alignment: .leading, spacing: 0) {
+            // Icon - small and subtle at top
             Image(systemName: "lock.fill")
-                .font(.subheadline.bold())
-                .foregroundStyle(isEditing ? .white : viewModel.color.color)
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(isEditing ? .white.opacity(0.8) : viewModel.color.color.opacity(0.7))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 8)
+
+            // Title - emphasized and large
             Text(viewModel.visibleTitle)
-                .font(.subheadline.bold())
+                .font(.title.weight(.heavy))
+                .foregroundStyle(isEditing ? .white : .primary)
+                .lineLimit(nil)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             Spacer()
 
+            // Encrypted label at bottom
             Text("Encrypted")
-                .font(.system(size: 8))
-                .foregroundStyle(.tertiary)
+                .font(.system(size: 9, weight: .medium))
+                .foregroundStyle(isEditing ? .white.opacity(0.6) : .secondary.opacity(0.6))
                 .textCase(.uppercase)
-                .lineLimit(1)
+                .tracking(0.5)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .foregroundStyle(isEditing ? .white : .primary)
-        .tint(.primary)
-        .multilineTextAlignment(.center)
-        .frame(maxHeight: .infinity)
-        .padding(.horizontal, 8)
-        .padding(.top, 8)
-        .padding(.bottom, 2)
-        .shimmering(active: isEditing)
-        .aspectRatio(1, contentMode: .fill)
+        .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fill)
+        .shimmering(active: isEditing)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color),
+                configuration: .init(
+                    style: isEditing ? .prominent : .secondary,
+                    border: viewModel.color.color,
+                    padding: .init(),
+                ),
             ),
         )
     }
