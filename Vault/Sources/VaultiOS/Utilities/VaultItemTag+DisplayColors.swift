@@ -30,9 +30,9 @@ extension VaultItemTag {
 
     /// Returns the stroke/foreground color for displaying this tag in pill form
     /// - Parameter isSelected: Whether the tag is in a selected state
-    func strokeColor(isSelected: Bool) -> Color {
+    func strokeColor(isSelected _: Bool) -> Color {
         // Use the readable foreground color that has good contrast
-        return readableForegroundColor()
+        readableForegroundColor()
     }
 
     /// Returns the background color for list row display (subtle tint)
@@ -56,7 +56,7 @@ extension VaultItemTag {
 
     /// Returns the foreground color for list row display
     func listRowForegroundColor() -> Color {
-        return readableForegroundColor()
+        readableForegroundColor()
     }
 
     /// Returns a foreground color that's guaranteed to be readable
