@@ -96,7 +96,8 @@ public struct VaultItemFeedView<
                     .padding(.top, 8)
                     .padding(.bottom, 8)
                     .padding(.horizontal)
-                    .animation(.easeOut, value: dataModel.itemsFilteringByTags)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.allTags.isEmpty)
             }
         }
     }
@@ -105,6 +106,7 @@ public struct VaultItemFeedView<
         VStack(spacing: 8) {
             if dataModel.itemsFilteringByTags.isNotEmpty {
                 filteringByTagsInfoSection
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
 
             ScrollView(.horizontal, showsIndicators: false) {
@@ -121,6 +123,7 @@ public struct VaultItemFeedView<
             }
             .scrollClipDisabled()
         }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.itemsFilteringByTags)
     }
 
     /// Informational section when we are filtering by tags
