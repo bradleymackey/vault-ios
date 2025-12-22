@@ -16,7 +16,7 @@ struct SecureNotePreviewView: View {
                 .padding(.bottom, 8)
 
             Text(title)
-                .font(description != nil ? .title3.weight(.bold) : .title.weight(.heavy))
+                .font(titleFont)
                 .foregroundStyle(isEditing ? .white : .primary)
                 .lineLimit(description != nil ? 3 : nil)
                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -85,6 +85,32 @@ struct SecureNotePreviewView: View {
         case .markdown: return MarkdownContent(description).renderPlainText()
         }
     }
+
+    private var titleFont: Font {
+        let length = title.count
+        let hasDescription = description != nil
+
+        // Base font size depends on whether there's a description
+        let baseFonts: (Font, Font, Font, Font) = hasDescription
+            ? (
+                .title3.weight(.bold),
+                .system(size: 18, weight: .bold),
+                .system(size: 16, weight: .bold),
+                .system(size: 14, weight: .bold),
+            )
+            : (.title.weight(.heavy), .title2.weight(.heavy), .title3.weight(.heavy), .system(size: 20, weight: .heavy))
+
+        switch length {
+        case 0 ... 25:
+            return baseFonts.0
+        case 26 ... 40:
+            return baseFonts.1
+        case 41 ... 55:
+            return baseFonts.2
+        default:
+            return baseFonts.3
+        }
+    }
 }
 
 #Preview {
@@ -106,6 +132,21 @@ struct SecureNotePreviewView: View {
     SecureNotePreviewView(
         viewModel: .init(
             title: "Test title",
+            description: "",
+            color: .init(red: 0, green: 0, blue: 0),
+            isLocked: false,
+            textFormat: .plain,
+        ),
+        behaviour: .normal,
+    )
+    .frame(width: 200, height: 200)
+    .padding()
+}
+
+#Preview {
+    SecureNotePreviewView(
+        viewModel: .init(
+            title: "This is a somewhat longer title with more detail",
             description: "",
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: false,

@@ -52,7 +52,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
     private var labelsStack: some View {
         VStack(alignment: .leading, spacing: 2) {
             Text(previewViewModel.visibleIssuer)
-                .font(.title3.weight(.bold))
+                .font(issuerFont)
                 .foregroundStyle(isEditing ? .white : .primary)
                 .lineLimit(2)
 
@@ -117,6 +117,20 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
         switch behaviour {
         case .normal: false
         case .editingState: true
+        }
+    }
+
+    private var issuerFont: Font {
+        let length = previewViewModel.visibleIssuer.count
+        switch length {
+        case 0 ... 20:
+            return .title3.weight(.bold)
+        case 21 ... 35:
+            return .system(size: 18, weight: .bold)
+        case 36 ... 50:
+            return .system(size: 16, weight: .bold)
+        default:
+            return .system(size: 14, weight: .bold)
         }
     }
 }
