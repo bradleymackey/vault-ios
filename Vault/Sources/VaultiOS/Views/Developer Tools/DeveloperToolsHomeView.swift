@@ -1,14 +1,10 @@
 import SwiftUI
-import Toasts
 import VaultFeed
 
 struct DeveloperToolsHomeView: View {
-    @Environment(VaultDataModel.self) var dataModel
-    @Environment(\.presentToast) private var presentToast
-
     enum Destination: Hashable {
         case createItems
-        case addOTPItem
+        case otpAutofill
     }
 
     var body: some View {
@@ -17,21 +13,8 @@ struct DeveloperToolsHomeView: View {
                 Text("Create Items")
             }
 
-            Section("OTP Autofill Store") {
-                NavigationLink(value: Destination.addOTPItem) {
-                    Text("Add OTP Item")
-                }
-
-                AsyncButton {
-                    try await dataModel.clearOTPAutofillStore()
-                    let toast = ToastValue(icon: Image(systemName: "checkmark"), message: "All OTP Items Cleared")
-                    presentToast(toast)
-                } label: {
-                    Text("Clear All OTP Items")
-                } loading: {
-                    ProgressView()
-                }
-                .foregroundStyle(.red)
+            NavigationLink(value: Destination.otpAutofill) {
+                Text("OTP Autofill")
             }
         }
         .navigationTitle("Developer")
@@ -39,8 +22,8 @@ struct DeveloperToolsHomeView: View {
             switch item {
             case .createItems:
                 DeveloperCreateItemsView()
-            case .addOTPItem:
-                DeveloperAddOTPItemView()
+            case .otpAutofill:
+                DeveloperOTPAutofillView()
             }
         }
     }
