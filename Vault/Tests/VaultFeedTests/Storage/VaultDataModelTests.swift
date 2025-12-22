@@ -520,10 +520,15 @@ final class VaultDataModelTests {
     @Test
     func deleteVault_removesAllDataFromVault() async throws {
         let deleter = VaultStoreDeleterMock()
-        let sut = makeSUT(vaultDeleter: deleter)
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultDeleter: deleter, vaultOtpAutofillStore: vaultOtpAutofillStore)
 
-        try await confirmation { confirm in
+        try await confirmation(expectedCount: 2) { confirm in
             deleter.deleteVaultHandler = {
+                confirm()
+            }
+
+            vaultOtpAutofillStore.removeAllHandler = {
                 confirm()
             }
 
@@ -600,6 +605,71 @@ final class VaultDataModelTests {
         #expect(vaultStore.calledMethods == [.retrieve, .export])
         #expect(vaultTagStore.calledMethods == [.retrieveTags])
     }
+
+    @Test
+    func addDemoOTPItemToAutofillStore_addsItemToStore() async throws {
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.updateHandler = { _, code in
+                #expect(code.type == .totp(period: 30))
+                #expect(code.data.accountName == "test@example.com")
+                #expect(code.data.issuer == "example.com")
+                #expect(code.data.algorithm == .sha1)
+                #expect(code.data.digits == .default)
+                confirm()
+            }
+
+            try await sut.addDemoOTPItemToAutofillStore(
+                issuer: "example.com",
+                accountName: "test@example.com",
+            )
+
+            #expect(vaultOtpAutofillStore.updateCallCount == 1)
+        }
+    }
+
+    @Test
+    func addDemoOTPItemToAutofillStore_throwsErrorOnFailure() async throws {
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        vaultOtpAutofillStore.updateHandler = { _, _ in throw TestError() }
+        let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        await #expect(throws: (any Error).self) {
+            try await sut.addDemoOTPItemToAutofillStore(
+                issuer: "example.com",
+                accountName: "test@example.com",
+            )
+        }
+    }
+
+    @Test
+    func clearOTPAutofillStore_removesAllItemsFromStore() async throws {
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.removeAllHandler = {
+                confirm()
+            }
+
+            try await sut.clearOTPAutofillStore()
+
+            #expect(vaultOtpAutofillStore.removeAllCallCount == 1)
+        }
+    }
+
+    @Test
+    func clearOTPAutofillStore_throwsErrorOnFailure() async throws {
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        vaultOtpAutofillStore.removeAllHandler = { throw TestError() }
+        let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        await #expect(throws: (any Error).self) {
+            try await sut.clearOTPAutofillStore()
+        }
+    }
 }
 
 // MARK: - Helpers
@@ -611,6 +681,7 @@ extension VaultDataModelTests {
         vaultImporter: any VaultStoreImporter = VaultStoreImporterMock(),
         vaultDeleter: any VaultStoreDeleter = VaultStoreDeleterMock(),
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
+        vaultOtpAutofillStore: any VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = [],
@@ -621,6 +692,7 @@ extension VaultDataModelTests {
             vaultImporter: vaultImporter,
             vaultDeleter: vaultDeleter,
             vaultKillphraseDeleter: vaultKillphraseDeleter,
+            vaultOtpAutofillStore: vaultOtpAutofillStore,
             backupPasswordStore: backupPasswordStore,
             backupEventLogger: backupEventLogger,
             itemCaches: itemCaches,
