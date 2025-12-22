@@ -29,7 +29,6 @@ struct VaultListView<
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var vaultItemFeedState = VaultItemFeedState()
-    @State private var isShowingEditSheet = false
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
     @Environment(\.scenePhase) private var scenePhase
@@ -49,30 +48,17 @@ struct VaultListView<
         .toolbar {
             if vaultItemFeedState.isEditing {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
+                    Button("Done") {
                         vaultItemFeedState.isEditing = false
-                    } label: {
-                        Label("Done", systemImage: "checkmark")
                     }
                 }
 
             } else {
                 if dataModel.items.isNotEmpty {
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isShowingEditSheet.toggle()
-                        } label: {
-                            Label("Edit", systemImage: "ellipsis")
+                        Button("Edit") {
+                            vaultItemFeedState.isEditing = true
                         }
-                        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
-                            Button {
-                                vaultItemFeedState.isEditing = true
-                            } label: {
-                                Label("Edit Items", systemImage: "pencil")
-                            }
-
-                            Button("Cancel", role: .cancel) {}
-                        })
                     }
                 }
 
