@@ -37,7 +37,12 @@ struct VaultTagFeedView: View {
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
+            if dataModel.allTags.isNotEmpty {
+                ToolbarItem(placement: .secondaryAction) {
+                    EditButton()
+                }
+            }
+            ToolbarItem(placement: .primaryAction) {
                 Button {
                     modal = .creatingTag
                 } label: {
@@ -77,6 +82,18 @@ struct VaultTagFeedView: View {
                     .contentShape(Rectangle())
                 }
                 .buttonStyle(.plain)
+            }
+            .onDelete { indexSet in
+                deleteTag(at: indexSet)
+            }
+        }
+    }
+
+    private func deleteTag(at indexSet: IndexSet) {
+        Task {
+            for index in indexSet {
+                let tag = dataModel.allTags[index]
+                try? await dataModel.delete(tagID: tag.id)
             }
         }
     }
