@@ -28,6 +28,7 @@ struct SecureNotePreviewView: View {
                         .foregroundStyle(isEditing ? .white.opacity(0.85) : .secondary)
                         .lineSpacing(3)
                         .lineLimit(nil)
+                        .multilineTextAlignment(.leading)
                         .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
                         .mask {
                             VStack(spacing: 0) {
