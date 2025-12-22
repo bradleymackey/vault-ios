@@ -16,9 +16,12 @@ struct VaultTagDetailView: View {
 
     var body: some View {
         Form {
-            previewSection
             tagNameSection
-            iconSection
+            styleSection
+
+            if viewModel.isExistingItem {
+                deleteSection
+            }
         }
         .navigationTitle(viewModel.strings.title)
         .navigationBarTitleDisplayMode(.inline)
@@ -51,74 +54,84 @@ struct VaultTagDetailView: View {
         }
     }
 
-    private var previewSection: some View {
-        Section {
-            VStack(alignment: .center, spacing: 16) {
-                TagPillView(
-                    tag: .init(
-                        id: .init(),
-                        name: viewModel.currentTag.name,
-                        color: viewModel.currentTag.color,
-                        iconName: viewModel.currentTag.iconName,
-                    ),
-                    isSelected: true,
-                )
-                .font(.title3)
-
-                ColorPicker("Tag Color", selection: $selectedColor)
-                    .labelsHidden()
-            }
-            .modifier(HorizontallyCenter())
-        }
-        .listRowBackground(EmptyView())
-    }
-
     private var tagNameSection: some View {
         Section {
             TextField("My Tag", text: $viewModel.currentTag.name)
         } header: {
-            Text("Tag Name")
+            Text("Name")
         }
     }
 
-    private var iconSection: some View {
+    private var styleSection: some View {
         Section {
-            LazyVGrid(columns: [GridItem(.adaptive(minimum: 70, maximum: 100))], spacing: 12) {
-                ForEach(viewModel.systemIconOptions, id: \.self) { icon in
-                    Image(systemName: icon)
-                        .font(.system(.title2))
-                        .padding(8)
-                        .foregroundStyle(
-                            viewModel.currentTag.iconName == icon ? selectedColor : Color(UIColor.tertiaryLabel)
-                                .opacity(0.5),
-                        )
-                        .onTapGesture {
-                            viewModel.currentTag.iconName = icon
-                        }
+            ColorPicker("Color", selection: $selectedColor)
+
+            NavigationLink {
+                IconPickerView(
+                    selectedIcon: $viewModel.currentTag.iconName,
+                    iconOptions: viewModel.systemIconOptions,
+                    selectedColor: selectedColor,
+                )
+            } label: {
+                HStack {
+                    Text("Icon")
+                    Spacer()
+                    Image(systemName: viewModel.currentTag.iconName)
+                        .foregroundStyle(selectedColor)
                 }
             }
         } header: {
-            Text("Icon")
-        } footer: {
-            if viewModel.isExistingItem {
-                deleteButton
-                    .padding()
-                    .modifier(HorizontallyCenter())
-                    .padding(.vertical, 16)
-            }
+            Text("Style")
         }
     }
 
-    private var deleteButton: some View {
-        AsyncButton {
-            await viewModel.delete()
-            dismiss()
-        } label: {
-            Label("Delete Tag", systemImage: "trash.fill")
-        } loading: {
-            ProgressView()
-                .tint(.white)
+    private var deleteSection: some View {
+        Section {
+            AsyncButton {
+                await viewModel.delete()
+                dismiss()
+            } label: {
+                Label("Delete Tag", systemImage: "trash.fill")
+            } loading: {
+                ProgressView()
+                    .tint(.white)
+            }
+            .modifier(ProminentButtonModifier(color: .red))
+            .modifier(HorizontallyCenter())
         }
-        .modifier(ProminentButtonModifier(color: .red))
+        .listRowBackground(EmptyView())
+    }
+}
+
+// MARK: - Icon Picker View
+
+@MainActor
+private struct IconPickerView: View {
+    @Binding var selectedIcon: String
+    let iconOptions: [String]
+    let selectedColor: Color
+
+    var body: some View {
+        List {
+            ForEach(iconOptions, id: \.self) { icon in
+                Button {
+                    selectedIcon = icon
+                } label: {
+                    HStack {
+                        Image(systemName: icon)
+                            .foregroundStyle(selectedIcon == icon ? selectedColor : .secondary)
+                            .frame(width: 30)
+                        Spacer()
+                        if selectedIcon == icon {
+                            Image(systemName: "checkmark")
+                                .foregroundStyle(selectedColor)
+                        }
+                    }
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .navigationTitle("Choose Icon")
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

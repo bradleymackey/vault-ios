@@ -15,42 +15,10 @@ struct TagPillView: View {
         .padding(.vertical, 8)
         .background(
             Capsule(style: .circular)
-                .fill(fillColor)
-                .stroke(strokeColor, lineWidth: 1),
+                .fill(tag.fillColor(isSelected: isSelected))
+                .stroke(tag.strokeColor(isSelected: isSelected), lineWidth: 1),
         )
-        .foregroundColor(strokeColor)
-    }
-
-    private var isLight: Bool {
-        tag.color.color.isPercievedLight
-    }
-
-    private var isDark: Bool {
-        tag.color.color.isPercievedDark
-    }
-
-    private var fillColor: Color {
-        if isLight {
-            isSelected ? tag.color.brighten(amount: -0.2).color : .clear
-        } else if isDark {
-            isSelected ? tag.color.brighten(amount: 0.2).color : .clear
-        } else {
-            isSelected ? tagColor : .clear
-        }
-    }
-
-    private var strokeColor: Color {
-        if isLight {
-            isSelected ? .black.opacity(0.8) : tag.color.brighten(amount: -0.4).color
-        } else if isDark {
-            isSelected ? .white : .primary.opacity(0.9)
-        } else {
-            isSelected ? tagColor.contrastingForegroundColor : tagColor
-        }
-    }
-
-    private var tagColor: Color {
-        tag.color.color.opacity(isSelected ? 1 : 0.8)
+        .foregroundColor(tag.strokeColor(isSelected: isSelected))
     }
 }
 

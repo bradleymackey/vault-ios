@@ -73,14 +73,6 @@ public struct VaultItemFeedView<
     private var listOfCodesView: some View {
         @Bindable var dataModel = dataModel
         return ScrollView(.vertical, showsIndicators: true) {
-            if dataModel.allTags.isNotEmpty {
-                filteringByTagsSection
-                    .padding(.top, 1)
-                    .padding(.bottom, 4)
-                    .padding(.horizontal)
-                    .animation(.easeOut, value: dataModel.itemsFilteringByTags)
-            }
-
             LazyVGrid(columns: columns) {
                 Section {
                     if dataModel.items.isNotEmpty {
@@ -98,10 +90,25 @@ public struct VaultItemFeedView<
         .searchable(text: $dataModel.itemsSearchQuery)
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
+        .safeAreaInset(edge: .bottom, spacing: 0) {
+            if dataModel.allTags.isNotEmpty {
+                filteringByTagsSection
+                    .padding(.top, 8)
+                    .padding(.bottom, 8)
+                    .padding(.horizontal)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.allTags.isEmpty)
+            }
+        }
     }
 
     private var filteringByTagsSection: some View {
-        VStack {
+        VStack(spacing: 8) {
+            if dataModel.itemsFilteringByTags.isNotEmpty {
+                filteringByTagsInfoSection
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+            }
+
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(dataModel.allTags) { tag in
@@ -115,36 +122,36 @@ public struct VaultItemFeedView<
                 .font(.callout)
             }
             .scrollClipDisabled()
-
-            if dataModel.itemsFilteringByTags.isNotEmpty {
-                filteringByTagsInfoSection
-                    .padding(.horizontal, 8)
-            }
         }
+        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.itemsFilteringByTags)
     }
 
-    /// Small informational section when we are filtering by tags
+    /// Informational section when we are filtering by tags
     private var filteringByTagsInfoSection: some View {
         HStack {
             Text(dataModel.filteringByTagsDescription)
                 .foregroundColor(.secondary)
+                .font(.subheadline)
 
             Spacer()
 
             Button {
                 dataModel.itemsFilteringByTags.removeAll()
             } label: {
-                Label("Clear Tags", systemImage: "xmark")
+                Label("Clear", systemImage: "xmark.circle.fill")
             }
             .fontWeight(.semibold)
-            .font(.caption2)
+            .font(.subheadline)
             .foregroundStyle(.white)
-            .padding(.vertical, 2)
-            .padding(.horizontal, 8)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
             .background(Color.accentColor)
             .clipShape(Capsule())
         }
-        .font(.caption)
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color.primary.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
     @State private var targetedIds = Set<Identifier<VaultItem>>()
