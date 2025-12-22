@@ -38,11 +38,11 @@ struct VaultTagFeedView: View {
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if dataModel.allTags.isNotEmpty {
-                ToolbarItem(placement: .secondaryAction) {
+                ToolbarItem(placement: .topBarTrailing) {
                     EditButton()
                 }
             }
-            ToolbarItem(placement: .primaryAction) {
+            ToolbarItem(placement: .topBarTrailing) {
                 Button {
                     modal = .creatingTag
                 } label: {

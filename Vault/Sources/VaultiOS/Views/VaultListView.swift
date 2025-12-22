@@ -29,7 +29,6 @@ struct VaultListView<
     @Environment(Pasteboard.self) var pasteboard: Pasteboard
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @State private var vaultItemFeedState = VaultItemFeedState()
-    @State private var isShowingEditSheet = false
     @State private var modal: Modal?
     @State private var navigationPath = NavigationPath()
     @Environment(\.scenePhase) private var scenePhase
@@ -47,59 +46,42 @@ struct VaultListView<
             gridSpacing: 12,
         )
         .toolbar {
-            if vaultItemFeedState.isEditing {
+            if dataModel.items.isNotEmpty {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button {
-                        vaultItemFeedState.isEditing = false
+                        vaultItemFeedState.isEditing.toggle()
                     } label: {
-                        Label("Done", systemImage: "checkmark")
+                        Label(
+                            vaultItemFeedState.isEditing ? "Done" : "Edit",
+                            systemImage: vaultItemFeedState.isEditing ? "checkmark" : "pencil",
+                        )
+                        .labelStyle(.iconOnly)
                     }
                 }
-
-            } else {
-                if dataModel.items.isNotEmpty {
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button {
-                            isShowingEditSheet.toggle()
-                        } label: {
-                            Label("Edit", systemImage: "ellipsis")
-                        }
-                        .confirmationDialog("Items", isPresented: $isShowingEditSheet, actions: {
-                            Button {
-                                vaultItemFeedState.isEditing = true
-                            } label: {
-                                Label("Edit Items", systemImage: "pencil")
-                            }
-
-                            Button("Cancel", role: .cancel) {}
-                        })
-                    }
-                }
-
-                ToolbarItem(placement: .topBarTrailing) {
-                    Menu {
-                        Button {
-                            modal = .creatingItem(.otpCode)
-                        } label: {
-                            LabeledContent {
-                                Text("Code")
-                            } label: {
-                                Image(systemName: "qrcode")
-                            }
-                        }
-
-                        Button {
-                            modal = .creatingItem(.secureNote)
-                        } label: {
-                            LabeledContent {
-                                Text("Note")
-                            } label: {
-                                Image(systemName: "text.alignleft")
-                            }
-                        }
+            }
+            ToolbarItem(placement: .topBarTrailing) {
+                Menu {
+                    Button {
+                        modal = .creatingItem(.otpCode)
                     } label: {
-                        Image(systemName: "plus")
+                        LabeledContent {
+                            Text("Code")
+                        } label: {
+                            Image(systemName: "qrcode")
+                        }
                     }
+
+                    Button {
+                        modal = .creatingItem(.secureNote)
+                    } label: {
+                        LabeledContent {
+                            Text("Note")
+                        } label: {
+                            Image(systemName: "text.alignleft")
+                        }
+                    }
+                } label: {
+                    Image(systemName: "plus")
                 }
             }
         }
@@ -134,7 +116,9 @@ struct VaultListView<
         })
         .onChange(of: modal) { _, newValue in
             // When the detail modal is dismissed, exit editing mode.
-            if newValue == nil { vaultItemFeedState.isEditing = false }
+            if newValue == nil {
+                vaultItemFeedState.isEditing = false
+            }
         }
         .onChange(of: scenePhase) { _, newValue in
             viewGenerator.scenePhaseDidChange(to: newValue)
