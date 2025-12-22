@@ -8,40 +8,57 @@ struct SecureNotePreviewView: View {
     var behaviour: VaultItemViewBehaviour
 
     var body: some View {
-        VStack(alignment: .center, spacing: 8) {
-            HStack(alignment: .firstTextBaseline, spacing: 4) {
-                Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")
-                    .font(.subheadline.bold())
-                    .foregroundStyle(isEditing ? .white : viewModel.color.color)
-                Text(title)
-                    .font(.subheadline.bold())
-            }
-            .foregroundStyle(isEditing ? .white : .primary)
-            .tint(.primary)
-            .multilineTextAlignment(.leading)
-            .layoutPriority(100)
+        VStack(alignment: .leading, spacing: 0) {
+            Image(systemName: viewModel.isLocked ? "lock.doc.fill" : "doc.text.fill")
+                .font(.caption2.weight(.semibold))
+                .foregroundStyle(isEditing ? .white.opacity(0.8) : viewModel.color.color.opacity(0.7))
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .padding(.bottom, 8)
+
+            Text(title)
+                .font(description != nil ? .title3.weight(.bold) : .title.weight(.heavy))
+                .foregroundStyle(isEditing ? .white : .primary)
+                .lineLimit(description != nil ? 3 : nil)
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             if let description {
-                Spacer()
-
-                Text(description)
-                    .font(.footnote)
-                    .foregroundStyle(isEditing ? .white : .secondary)
-                    .tint(.secondary)
-                    .layoutPriority(99)
-                    .multilineTextAlignment(.leading)
-
+                ZStack(alignment: .topLeading) {
+                    Text(description)
+                        .font(.caption)
+                        .foregroundStyle(isEditing ? .white.opacity(0.85) : .secondary)
+                        .lineSpacing(3)
+                        .lineLimit(nil)
+                        .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+                        .mask {
+                            VStack(spacing: 0) {
+                                Rectangle()
+                                    .fill(.white)
+                                LinearGradient(
+                                    colors: [.white, .white.opacity(0)],
+                                    startPoint: .top,
+                                    endPoint: .bottom,
+                                )
+                                .frame(height: 40)
+                            }
+                        }
+                }
+                .padding(.top, 12)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
+            } else {
                 Spacer()
             }
         }
-        .frame(maxHeight: .infinity)
-        .padding(8)
-        .shimmering(active: isEditing)
-        .aspectRatio(1, contentMode: .fill)
+        .padding(16)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
+        .aspectRatio(1, contentMode: .fill)
+        .shimmering(active: isEditing)
         .modifier(
             VaultCardModifier(
-                configuration: .init(style: isEditing ? .prominent : .secondary, border: viewModel.color.color),
+                configuration: .init(
+                    style: isEditing ? .prominent : .secondary,
+                    border: viewModel.color.color,
+                    padding: .init(),
+                ),
             ),
         )
     }
@@ -73,7 +90,7 @@ struct SecureNotePreviewView: View {
     SecureNotePreviewView(
         viewModel: .init(
             title: "## Test title",
-            description: "desc",
+            description: "This is a test description. It's a little long, but that's OK. This is a test description. It's a little long, but that's OK. This is a test description. It's a little long, but that's OK.",
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: true,
             textFormat: .markdown,
