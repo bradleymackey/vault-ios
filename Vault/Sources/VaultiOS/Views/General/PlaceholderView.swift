@@ -11,7 +11,7 @@ struct PlaceholderView: View {
         VStack(alignment: .leading, spacing: 16) {
             Image(systemName: systemIcon)
                 .font(.largeTitle)
-                .foregroundStyle(.secondary)
+                .foregroundStyle(.primary)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.headline)
@@ -23,6 +23,7 @@ struct PlaceholderView: View {
                 }
             }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .textCase(.none)
         .multilineTextAlignment(.leading)
         .listRowSeparator(.hidden)
