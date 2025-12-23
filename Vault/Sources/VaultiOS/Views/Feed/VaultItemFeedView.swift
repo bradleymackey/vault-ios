@@ -91,14 +91,25 @@ public struct VaultItemFeedView<
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            if dataModel.allTags.isNotEmpty {
-                filteringByTagsSection
-                    .padding(.top, 8)
-                    .padding(.bottom, 8)
-                    .padding(.horizontal)
-                    .transition(.move(edge: .bottom).combined(with: .opacity))
-                    .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.allTags.isEmpty)
+            VStack(spacing: 0) {
+                if state.isEditing {
+                    editModeInfoSection
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)
+                        .padding(.horizontal)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                }
+
+                if dataModel.allTags.isNotEmpty {
+                    filteringByTagsSection
+                        .padding(.top, 8)
+                        .padding(.bottom, 8)
+                        .padding(.horizontal)
+                        .transition(.move(edge: .bottom).combined(with: .opacity))
+                        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.allTags.isEmpty)
+                }
             }
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isEditing)
         }
     }
 
@@ -147,6 +158,26 @@ public struct VaultItemFeedView<
             .padding(.horizontal, 16)
             .background(Color.accentColor)
             .clipShape(Capsule())
+        }
+        .padding(.vertical, 8)
+        .padding(.horizontal, 12)
+        .background(Color.primary.opacity(0.05))
+        .clipShape(RoundedRectangle(cornerRadius: 12))
+    }
+
+    /// Informational section when in edit mode
+    private var editModeInfoSection: some View {
+        HStack {
+            Label {
+                Text(localized(key: "codeFeed.editMode.dragToReorder"))
+                    .foregroundColor(.secondary)
+                    .font(.subheadline)
+            } icon: {
+                Image(systemName: "arrow.up.arrow.down")
+                    .foregroundColor(.secondary)
+            }
+
+            Spacer()
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
