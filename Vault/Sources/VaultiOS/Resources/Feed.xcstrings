@@ -89,6 +89,17 @@
         }
       }
     },
+    "codeFeed.editMode.dragToReorder" : {
+      "extractionState" : "migrated",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Drag to reorder"
+          }
+        }
+      }
+    },
     "codeFeed.noCodes.title" : {
       "extractionState" : "migrated",
       "localizations" : {
