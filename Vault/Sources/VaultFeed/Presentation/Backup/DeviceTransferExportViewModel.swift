@@ -108,7 +108,7 @@ public final class DeviceTransferExportViewModel {
                 do {
                     try await intervalTimer.wait(for: 2.0)
                     guard !Task.isCancelled else { break }
-                    await advanceToNextShard()
+                    advanceToNextShard()
                 } catch {
                     break
                 }
