@@ -1,5 +1,5 @@
 import Foundation
-import SnapshotTesting
+import TestHelpers
 import Testing
 @testable import VaultiOS
 

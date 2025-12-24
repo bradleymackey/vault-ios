@@ -1,6 +1,6 @@
 import Foundation
-import SnapshotTesting
 import SwiftUI
+import TestHelpers
 import Testing
 import VaultFeed
 @testable import VaultiOS
