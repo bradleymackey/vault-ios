@@ -34,11 +34,15 @@ extension VaultBackupEvent {
     public enum Kind: String, Equatable, Hashable, Sendable, Codable {
         case exportedToPDF = "EXPORT_TO_PDF"
         case importedToPDF = "IMPORT_FROM_PDF"
+        case exportedToDevice = "EXPORT_TO_DEVICE"
+        case importedFromDevice = "IMPORT_FROM_DEVICE"
 
         public var localizedTitle: String {
             switch self {
             case .exportedToPDF: "Exported to PDF"
             case .importedToPDF: "Imported from PDF"
+            case .exportedToDevice: "Transferred to Device"
+            case .importedFromDevice: "Imported from Device"
             }
         }
     }

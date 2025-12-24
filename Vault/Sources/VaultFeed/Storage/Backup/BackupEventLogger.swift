@@ -11,6 +11,7 @@ import VaultCore
 public protocol BackupEventLogger: Sendable {
     func lastBackupEvent() -> VaultBackupEvent?
     func exportedToPDF(date: Date, hash: Digest<VaultApplicationPayload>.SHA256)
+    func exportedToDevice(date: Date, hash: Digest<VaultApplicationPayload>.SHA256)
     /// Publishes whenever an event is logged.
     var loggedEventPublisher: AnyPublisher<VaultBackupEvent, Never> { get }
 }
@@ -37,6 +38,21 @@ public final class BackupEventLoggerImpl: BackupEventLogger {
             backupDate: clock.currentDate,
             eventDate: date,
             kind: .exportedToPDF,
+            payloadHash: hash,
+        )
+        do {
+            try defaults.set(event, for: backupEventKey)
+            loggedEventSubject.send(event)
+        } catch {
+            // no event
+        }
+    }
+
+    public func exportedToDevice(date: Date, hash: Digest<VaultApplicationPayload>.SHA256) {
+        let event = VaultBackupEvent(
+            backupDate: clock.currentDate,
+            eventDate: date,
+            kind: .exportedToDevice,
             payloadHash: hash,
         )
         do {

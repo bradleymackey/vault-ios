@@ -238,14 +238,14 @@ struct BackupImportFlowView: View {
                         .background(Color.accentColor.opacity(0.1))
                         .clipShape(RoundedRectangle(cornerRadius: 8))
 
-                    Text("Manual Import")
+                    Text("QR Code Import")
                         .font(.headline.bold())
                         .foregroundStyle(.primary)
 
                     Spacer()
                 }
 
-                Text("Use your camera to scan all the QR codes on your Vault Export document")
+                Text("Use your camera to scan the QR codes from a PDF backup or another device")
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
                     .fixedSize(horizontal: false, vertical: true)
@@ -253,7 +253,7 @@ struct BackupImportFlowView: View {
                 Button {
                     modal = .cameraScanning
                 } label: {
-                    Label("Scan QR Codes", systemImage: "qrcode.viewfinder")
+                    Label("Start Scanning", systemImage: "qrcode.viewfinder")
                         .frame(maxWidth: .infinity)
                 }
                 .modifier(ProminentButtonModifier())
