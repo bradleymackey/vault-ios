@@ -152,7 +152,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         // 1. Filter your vault items to find OTP credentials matching the serviceIdentifiers
         // 2. Show UI with the list of matching OTP items
         // 3. When user selects one, generate the actual OTP code and complete the request
-        let cred = ASOneTimeCodeCredential(code: "123456")
+        let cred = ASOneTimeCodeCredential(code: "654321")
         extensionContext.completeOneTimeCodeRequest(using: cred, completionHandler: nil)
     }
 

@@ -1,3 +1,5 @@
+// swiftlint:disable:next no_preconcurrency
+@preconcurrency import AuthenticationServices
 import Combine
 import Foundation
 import FoundationExtensions
@@ -391,5 +393,17 @@ extension VaultDataModel {
 
     public func clearOTPAutofillStore() async throws {
         try await vaultOtpAutofillStore.removeAll()
+    }
+
+    public func getOTPAutofillStoreIdentities() async throws -> [ASOneTimeCodeCredentialIdentity] {
+        try await vaultOtpAutofillStore.getAllIdentities()
+    }
+
+    public func removeOTPItemFromAutofillStore(id: UUID) async throws {
+        try await vaultOtpAutofillStore.remove(id: id)
+    }
+
+    public func getOTPAutofillStoreState() async -> ASCredentialIdentityStoreState {
+        await vaultOtpAutofillStore.getState()
     }
 }
