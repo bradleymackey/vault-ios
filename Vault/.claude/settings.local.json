@@ -3,7 +3,9 @@
     "allow": [
       "Bash(grep:*)",
       "Bash(xargs:*)",
-      "Bash(sort:*)"
+      "Bash(sort:*)",
+      "Bash(find:*)",
+      "Bash(cat:*)"
     ]
   }
 }
