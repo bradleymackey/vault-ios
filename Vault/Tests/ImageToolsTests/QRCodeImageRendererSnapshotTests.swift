@@ -4,6 +4,7 @@ import TestHelpers
 import Testing
 import UIKit
 
+@MainActor
 struct QRCodeImageRendererSnapshotTests {
     let sut = QRCodeImageRenderer()
 
