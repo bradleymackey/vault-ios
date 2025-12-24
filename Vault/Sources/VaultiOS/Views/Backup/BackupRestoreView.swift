@@ -17,12 +17,15 @@ struct BackupRestoreView: View {
     }
 
     var body: some View {
-        Form {
-            if dataModel.hasAnyItems {
-                hasExistingCodesImportSection
-            } else {
-                noExistingCodesImportSection
+        ScrollView(.vertical) {
+            VStack(spacing: 16) {
+                if dataModel.hasAnyItems {
+                    hasExistingCodesImportCards
+                } else {
+                    noExistingCodesImportCard
+                }
             }
+            .padding(16)
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
         .task {
@@ -55,71 +58,133 @@ struct BackupRestoreView: View {
         }
     }
 
-    private var noExistingCodesImportSection: some View {
-        Section {
-            AsyncButton {
-                await dataModel.loadBackupPassword()
-                modal = .importToCurrentlyEmpty(dataModel.backupPassword.fetchedPassword)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.fill"),
-                    color: .accentColor,
-                    style: .standard,
-                    alignment: .firstTextBaseline,
-                ) {
-                    TextAndSubtitle(
-                        title: "Import Backup",
-                        subtitle: "Using a Vault PDF backup file, import data to your device locally.",
-                    )
-                }
-            } loading: {
-                ProgressView()
-            }
+    private var noExistingCodesImportCard: some View {
+        ImportOptionCard(
+            icon: "square.and.arrow.down.fill",
+            iconColor: .accentColor,
+            title: "Import Backup",
+            subtitle: "Using a Vault PDF backup file, import data to your device locally.",
+            buttonLabel: "Import Backup",
+            buttonIcon: "square.and.arrow.down.fill",
+            isDestructive: false,
+            showRecommended: false,
+        ) {
+            await dataModel.loadBackupPassword()
+            modal = .importToCurrentlyEmpty(dataModel.backupPassword.fetchedPassword)
         }
     }
 
-    private var hasExistingCodesImportSection: some View {
-        Section {
-            AsyncButton {
+    private var hasExistingCodesImportCards: some View {
+        VStack(spacing: 16) {
+            // Header
+            HStack {
+                Text("Import from a backup")
+                    .font(.headline)
+                    .foregroundStyle(.primary)
+                Spacer()
+            }
+            .padding(.horizontal, 4)
+
+            // Merge option (recommended)
+            ImportOptionCard(
+                icon: "square.and.arrow.down.on.square.fill",
+                iconColor: .accentColor,
+                title: "Import & Merge",
+                subtitle: "Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
+                buttonLabel: "Import & Merge",
+                buttonIcon: "square.and.arrow.down.on.square.fill",
+                isDestructive: false,
+                showRecommended: true,
+            ) {
                 await dataModel.loadBackupPassword()
                 modal = .importAndMerge(dataModel.backupPassword.fetchedPassword)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.on.square.fill"),
-                    color: .accentColor,
-                    style: .standard,
-                    alignment: .firstTextBaseline,
-                ) {
-                    TextAndSubtitle(
-                        title: "Import & Merge",
-                        subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
-                    )
-                }
-            } loading: {
-                ProgressView()
             }
 
-            AsyncButton {
+            // Override option (destructive)
+            ImportOptionCard(
+                icon: "exclamationmark.triangle.fill",
+                iconColor: .red,
+                title: "Import & Override",
+                subtitle: "⚠️ Warning! Overrides your existing on-device data with the data from the backup. On-device data will be replaced. If an item exists on device but not in the backup, it will be lost.",
+                buttonLabel: "Import & Override",
+                buttonIcon: "square.and.arrow.down.fill",
+                isDestructive: true,
+                showRecommended: false,
+            ) {
                 await dataModel.loadBackupPassword()
                 modal = .importAndOverride(dataModel.backupPassword.fetchedPassword)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.fill"),
-                    color: .red,
-                    style: .standard,
-                    alignment: .firstTextBaseline,
-                ) {
-                    TextAndSubtitle(
-                        title: "Import & Override",
-                        subtitle: "Warning! Overrides your existing on-device data with the data from the backup. On device data will be replaced by the backup data. If an item exists on device but not in the backup, it will be lost.",
-                    )
+            }
+        }
+    }
+}
+
+// MARK: - Import Option Card Component
+
+private struct ImportOptionCard: View {
+    let icon: String
+    let iconColor: Color
+    let title: String
+    let subtitle: String
+    let buttonLabel: String
+    let buttonIcon: String
+    let isDestructive: Bool
+    let showRecommended: Bool
+    let action: () async -> Void
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            // Header with icon and title
+            HStack(spacing: 12) {
+                Image(systemName: icon)
+                    .font(.title2)
+                    .foregroundStyle(iconColor)
+                    .frame(width: 40, height: 40)
+                    .background(iconColor.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                Text(title)
+                    .font(.headline.bold())
+                    .foregroundStyle(.primary)
+
+                Spacer()
+
+                if showRecommended {
+                    Text("Recommended")
+                        .textCase(.uppercase)
+                        .font(.caption2.weight(.bold))
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 8)
+                        .padding(.vertical, 4)
+                        .background(Color.accentColor)
+                        .clipShape(Capsule())
                 }
-                .foregroundStyle(.red)
+            }
+
+            // Description
+            Text(subtitle)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            // Action button
+            AsyncButton {
+                await action()
+            } label: {
+                Label(buttonLabel, systemImage: buttonIcon)
+                    .frame(maxWidth: .infinity)
             } loading: {
                 ProgressView()
+                    .tint(.white)
             }
-        } header: {
-            Text("Import from a backup")
+            .modifier(ProminentButtonModifier(
+                color: isDestructive ? .red : .accentColor,
+            ))
         }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: isDestructive ? .red : .accentColor,
+            padding: .init(),
+        )))
     }
 }

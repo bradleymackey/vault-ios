@@ -7,28 +7,42 @@ struct LastBackupSummaryView: View {
     var lastBackup: VaultBackupEvent?
 
     var body: some View {
-        VStack(alignment: .center, spacing: 4) {
-            Label(title, systemImage: systemImage)
-                .font(.title3.bold())
-                .foregroundStyle(.primary)
+        HStack(spacing: 0) {
+            // Colored accent bar
+            Rectangle()
+                .fill(accentColor)
+                .frame(width: 4)
 
-            if let lastBackup {
-                Text(lastBackup.backupDate.formatted(date: .abbreviated, time: .shortened))
-                    .foregroundStyle(.primary)
-                Text(lastBackup.kind.localizedTitle)
-                    .foregroundStyle(.secondary)
-            } else {
-                Text("You haven't created a backup from this device and could be at risk of data loss.")
-                    .multilineTextAlignment(.center)
-                    .foregroundStyle(.secondary)
-                    .font(.callout)
+            // Content
+            VStack(alignment: .leading, spacing: 8) {
+                HStack(spacing: 8) {
+                    Image(systemName: systemImage)
+                        .font(.headline)
+                        .foregroundStyle(accentColor)
+
+                    Text(title)
+                        .font(.headline.bold())
+                        .foregroundStyle(.primary)
+                }
+
+                if let lastBackup {
+                    Text(lastBackup.backupDate.formatted(date: .abbreviated, time: .shortened))
+                        .font(.subheadline)
+                        .foregroundStyle(.primary)
+
+                    Text(lastBackup.kind.localizedTitle)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(.secondary)
+                } else {
+                    Text("You haven't created a backup from this device and could be at risk of data loss.")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
             }
+            .padding(16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
-        .padding()
-        .containerRelativeFrame(.horizontal)
-        .alignmentGuide(.listRowSeparatorLeading, computeValue: { _ in
-            0
-        })
     }
 
     private var title: String {
@@ -37,6 +51,21 @@ struct LastBackupSummaryView: View {
 
     private var systemImage: String {
         lastBackup == nil ? "exclamationmark.arrow.triangle.2.circlepath" : "clock.arrow.2.circlepath"
+    }
+
+    private var accentColor: Color {
+        guard let lastBackup else { return Color.red }
+
+        let daysSinceBackup = Calendar.current.dateComponents([.day], from: lastBackup.backupDate, to: Date())
+            .day ?? Int.max
+
+        if daysSinceBackup < 7 {
+            return Color.green
+        } else if daysSinceBackup < 30 {
+            return Color.orange
+        } else {
+            return Color.red
+        }
     }
 }
 

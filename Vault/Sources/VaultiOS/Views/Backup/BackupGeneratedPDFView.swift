@@ -1,4 +1,5 @@
 import Foundation
+import PDFKit
 import SwiftUI
 import VaultFeed
 
@@ -8,8 +9,9 @@ struct BackupGeneratedPDFView: View {
     private let dismiss: () -> Void
 
     @Environment(\.displayScale) private var displayScale
+    @State private var selectedPageIndex: Int?
 
-    private let previewTargetWidth = 80.0
+    private let previewTargetWidth = 120.0
 
     init(pdf: ViewModel.GeneratedPDF, dismiss: @escaping () -> Void) {
         self.pdf = pdf
@@ -32,14 +34,37 @@ struct BackupGeneratedPDFView: View {
                 }
             }
         }
+        .fullScreenCover(item: Binding(
+            get: { selectedPageIndex.map { PDFPageSelection(
+                index: $0,
+                document: pdf.document,
+                totalPages: pdf.document.pageCount,
+            ) } },
+            set: { selectedPageIndex = $0?.index },
+        )) { selection in
+            if let page = pdf.document.page(at: selection.index) {
+                PDFPageViewerView(
+                    page: page,
+                    pageIndex: selection.index,
+                    pageCount: selection.totalPages,
+                )
+            }
+        }
         .interactiveDismissDisabled()
         .navigationBarBackButtonHidden()
+    }
+
+    private struct PDFPageSelection: Identifiable {
+        let index: Int
+        let document: PDFDocument
+        let totalPages: Int
+        var id: Int { index }
     }
 
     private var pdfPreviewSection: some View {
         Section {
             ScrollView(.horizontal, showsIndicators: false) {
-                HStack(alignment: .center, spacing: 16) {
+                HStack(alignment: .center, spacing: 12) {
                     Spacer(minLength: 2)
                     ForEach(0 ..< pdf.document.pageCount, id: \.self) { pageIndex in
                         thumbnail(pageIndex: pageIndex)?
@@ -47,7 +72,14 @@ struct BackupGeneratedPDFView: View {
                             .aspectRatio(pdf.size.aspectRatio, contentMode: .fit)
                             .frame(width: previewTargetWidth)
                             .clipShape(RoundedRectangle(cornerRadius: 5))
-                            .shadow(radius: 5)
+                            .shadow(radius: 8)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 5)
+                                    .stroke(.secondary.opacity(0.2), lineWidth: 1),
+                            )
+                            .onTapGesture {
+                                selectedPageIndex = pageIndex
+                            }
                     }
                     Spacer(minLength: 2)
                 }
@@ -57,16 +89,27 @@ struct BackupGeneratedPDFView: View {
         } header: {
             Text("Generated Document Preview")
         } footer: {
-            VStack(alignment: .center, spacing: 8) {
+            VStack(alignment: .center, spacing: 16) {
                 exportButton
 
-                Label(
-                    "Make sure you export and save the PDF, or your data will not be backed up.",
-                    systemImage: "exclamationmark.triangle.fill",
-                )
-                .foregroundStyle(.red)
-                .font(.footnote)
-                .multilineTextAlignment(.center)
+                HStack(spacing: 12) {
+                    Image(systemName: "exclamationmark.triangle.fill")
+                        .font(.title3)
+                        .foregroundStyle(Color.red)
+
+                    Text("Make sure you export and save the PDF, or your data will not be backed up.")
+                        .font(.footnote)
+                        .foregroundStyle(Color.red)
+                        .multilineTextAlignment(.leading)
+                        .fixedSize(horizontal: false, vertical: true)
+                }
+                .padding(12)
+                .frame(maxWidth: .infinity, alignment: .leading)
+                .modifier(VaultCardModifier(configuration: .init(
+                    style: .secondary,
+                    border: .red,
+                    padding: .init(),
+                )))
             }
             .padding(16)
             .frame(maxWidth: .infinity)
