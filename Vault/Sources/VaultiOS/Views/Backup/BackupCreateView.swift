@@ -18,17 +18,22 @@ struct BackupCreateView: View {
     }
 
     var body: some View {
-        Form {
-            switch dataModel.backupPassword {
-            case .error:
-                authenticateSection(isError: true)
-            case .notFetched:
-                authenticateSection(isError: false)
-            case .notCreated:
-                currentBackupsSection(password: nil)
-            case let .fetched(password):
-                currentBackupsSection(password: password)
+        ScrollView(.vertical) {
+            VStack(spacing: 16) {
+                switch dataModel.backupPassword {
+                case .error:
+                    authenticateCard(isError: true)
+                case .notFetched:
+                    authenticateCard(isError: false)
+                case .notCreated:
+                    passwordNotCreatedCard
+                case let .fetched(password):
+                    passwordExistsCard
+                    lastBackupSummaryCard
+                    createBackupButton(password: password)
+                }
             }
+            .padding(16)
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
         .task {
@@ -81,34 +86,10 @@ struct BackupCreateView: View {
         }
     }
 
-    private func currentBackupsSection(password: DerivedEncryptionKey?) -> some View {
-        Section {
-            if password != nil {
-                LastBackupSummaryView(
-                    lastBackup: dataModel.lastBackupEvent,
-                )
+    // MARK: - Authenticate Card
 
-                updateButton
-            } else {
-                createButton
-            }
-        } footer: {
-            if let password {
-                Button {
-                    modal = .pdfBackup(password)
-                } label: {
-                    Label("Create Backup", systemImage: "printer.filled.and.paper")
-                }
-                .modifier(ProminentButtonModifier())
-                .padding()
-                .frame(maxWidth: .infinity)
-            }
-        }
-        .transition(.slide)
-    }
-
-    private func authenticateSection(isError: Bool) -> some View {
-        Section {
+    private func authenticateCard(isError: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
             PlaceholderView(
                 systemIcon: isError ? "key.slash.fill" : "lock.fill",
                 title: isError ? viewModel.strings.backupPasswordErrorTitle : viewModel.strings
@@ -116,41 +97,150 @@ struct BackupCreateView: View {
                 subtitle: isError ? viewModel.strings
                     .backupPasswordErrorDetail : "Authenticate to access backup settings.",
             )
-            .padding()
-            .containerRelativeFrame(.horizontal)
 
-        } footer: {
             AsyncButton(progressAlignment: .center) {
                 await dataModel.loadBackupPassword()
             } label: {
                 Label("Authenticate", systemImage: "key.horizontal.fill")
+                    .frame(maxWidth: .infinity)
             } loading: {
                 ProgressView()
+                    .tint(.white)
             }
             .modifier(ProminentButtonModifier())
-            .containerRelativeFrame(.horizontal)
-            .padding()
         }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: isError ? .red : .accentColor,
+            padding: .init(),
+        )))
         .transition(.slide)
     }
 
-    private var createButton: some View {
-        Button {
-            modal = .updatePassword
-        } label: {
-            FormRow(image: Image(systemName: "key.horizontal.fill"), color: .accentColor, style: .standard) {
-                Text(viewModel.strings.backupPasswordCreateTitle)
+    // MARK: - Password Not Created Card
+
+    private var passwordNotCreatedCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
+                Image(systemName: "key.horizontal.fill")
+                    .font(.title2)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 40, height: 40)
+                    .background(Color.accentColor.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Backup Password Not Set")
+                        .font(.title3.bold())
+                        .foregroundStyle(.primary)
+
+                    Text("Create a backup password to protect your vault backups.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
             }
+
+            Button {
+                modal = .updatePassword
+            } label: {
+                Label("Create Backup Password", systemImage: "key.horizontal.fill")
+                    .frame(maxWidth: .infinity)
+            }
+            .modifier(ProminentButtonModifier())
+        }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: Color.accentColor,
+            padding: .init(),
+        )))
+        .transition(.slide)
+    }
+
+    // MARK: - Password Exists Card
+
+    private var passwordExistsCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
+                Image(systemName: "checkmark.shield.fill")
+                    .font(.title2)
+                    .foregroundStyle(Color.green)
+                    .frame(width: 40, height: 40)
+                    .background(Color.green.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Backup Password Active")
+                        .font(.title3.bold())
+                        .foregroundStyle(.primary)
+
+                    Text("Your backups are protected with encryption.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+
+            Button {
+                modal = .updatePassword
+            } label: {
+                Label("Change Password", systemImage: "key.2.on.ring.fill")
+                    .frame(maxWidth: .infinity)
+            }
+            .modifier(ProminentButtonModifier(color: .gray))
+        }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: Color.green,
+            padding: .init(),
+        )))
+        .transition(.slide)
+    }
+
+    // MARK: - Last Backup Summary Card
+
+    private var lastBackupSummaryCard: some View {
+        LastBackupSummaryView(
+            lastBackup: dataModel.lastBackupEvent,
+        )
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: lastBackupBorderColor,
+            padding: .init(),
+        )))
+        .transition(.slide)
+    }
+
+    private var lastBackupBorderColor: Color {
+        guard let lastBackup = dataModel.lastBackupEvent else { return Color.red }
+
+        let daysSinceBackup = Calendar.current.dateComponents([.day], from: lastBackup.backupDate, to: Date())
+            .day ?? Int.max
+
+        if daysSinceBackup < 7 {
+            return Color.green
+        } else if daysSinceBackup < 30 {
+            return Color.orange
+        } else {
+            return Color.red
         }
     }
 
-    private var updateButton: some View {
+    // MARK: - Create Backup Button
+
+    private func createBackupButton(password: DerivedEncryptionKey) -> some View {
         Button {
-            modal = .updatePassword
+            modal = .pdfBackup(password)
         } label: {
-            FormRow(image: Image(systemName: "key.2.on.ring.fill"), color: .accentColor, style: .standard) {
-                Text(viewModel.strings.backupPasswordUpdateTitle)
-            }
+            Label("Create Backup", systemImage: "printer.filled.and.paper")
+                .font(.headline)
+                .frame(maxWidth: .infinity)
         }
+        .modifier(ProminentButtonModifier())
+        .padding(.vertical, 4)
+        .transition(.slide)
     }
 }
