@@ -49,12 +49,11 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         id: UUID,
         code: OTPAuthCode,
     ) async throws {
-        let serviceIdentifier = ASCredentialServiceIdentifier(
-            identifier: code.data.issuer,
-            type: .domain,
-        )
         let identity = ASOneTimeCodeCredentialIdentity(
-            serviceIdentifier: serviceIdentifier,
+            serviceIdentifier: ASCredentialServiceIdentifier(
+                identifier: code.data.issuer,
+                type: .domain,
+            ),
             label: code.data.accountName,
             recordIdentifier: id.uuidString,
         )
@@ -64,12 +63,11 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
     public func remove(id: UUID) async throws {
         // Create minimal identity with recordIdentifier for removal
         // Apple's API matches by recordIdentifier, so other fields don't matter
-        let serviceIdentifier = ASCredentialServiceIdentifier(
-            identifier: "",
-            type: .domain,
-        )
         let identity = ASOneTimeCodeCredentialIdentity(
-            serviceIdentifier: serviceIdentifier,
+            serviceIdentifier: ASCredentialServiceIdentifier(
+                identifier: "",
+                type: .domain,
+            ),
             label: "",
             recordIdentifier: id.uuidString,
         )
