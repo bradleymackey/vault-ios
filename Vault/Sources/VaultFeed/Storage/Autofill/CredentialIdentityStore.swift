@@ -21,6 +21,7 @@ public protocol CredentialIdentityStore: Sendable {
 }
 
 /// Real implementation that delegates to ASCredentialIdentityStore.shared
+/// For more information on how this works, see: https://nonstrict.eu/wwdcindex/wwdc2018/721
 public final class RealCredentialIdentityStore: CredentialIdentityStore {
     private let store = ASCredentialIdentityStore.shared
 
