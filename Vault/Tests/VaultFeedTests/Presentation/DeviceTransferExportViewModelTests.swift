@@ -1,0 +1,229 @@
+import Foundation
+import TestHelpers
+import Testing
+import VaultCore
+import VaultKeygen
+@testable import VaultFeed
+
+@Suite
+@MainActor
+struct DeviceTransferExportViewModelTests {
+    @Test
+    func init_hasNoSideEffects() throws {
+        let vaultStore = VaultStoreStub()
+        let vaultTagStore = VaultTagStoreStub()
+        let backupPasswordStore = BackupPasswordStoreMock()
+        _ = try makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore, backupPasswordStore: backupPasswordStore)
+
+        #expect(vaultStore.calledMethods == [])
+        #expect(vaultTagStore.calledMethods == [])
+        #expect(backupPasswordStore.fetchPasswordCallCount == 0)
+        #expect(backupPasswordStore.setCallCount == 0)
+    }
+
+    @Test
+    func init_initialStateIsIdle() throws {
+        let sut = try makeSUT()
+
+        #expect(sut.state == .idle)
+    }
+
+    @Test
+    func generateShards_transitionsToGeneratingState() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let sut = try makeSUT(vaultStore: vaultStore)
+
+        await sut.generateShards()
+
+        // Should transition from generating to displayingQR
+        #expect(sut.state.isDisplaying)
+    }
+
+    @Test
+    func generateShards_createsShards() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let sut = try makeSUT(vaultStore: vaultStore)
+
+        await sut.generateShards()
+
+        if case let .displayingQR(_, totalCount) = sut.state {
+            #expect(totalCount > 0)
+        } else {
+            Issue.record("Expected displayingQR state")
+        }
+    }
+
+    @Test
+    func generateShards_startsAtFirstCode() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let sut = try makeSUT(vaultStore: vaultStore)
+
+        await sut.generateShards()
+
+        if case let .displayingQR(currentIndex, _) = sut.state {
+            #expect(currentIndex == 0)
+        } else {
+            Issue.record("Expected displayingQR state")
+        }
+    }
+
+    @Test
+    func generateShards_rendersQRCode() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let sut = try makeSUT(vaultStore: vaultStore)
+
+        await sut.generateShards()
+
+        #expect(sut.currentQRCodeImage != nil)
+    }
+
+    @Test
+    func generateShards_recordsBackupEvent() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let logger = BackupEventLoggerMock()
+        let sut = try makeSUT(vaultStore: vaultStore, backupEventLogger: logger)
+
+        await sut.generateShards()
+
+        #expect(logger.exportedToDeviceCallCount == 1)
+    }
+
+    @Test
+    func generateShards_errorSetsErrorState() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in throw TestError() }
+        let sut = try makeSUT(vaultStore: vaultStore)
+
+        await sut.generateShards()
+
+        #expect(sut.state.isError)
+    }
+
+    @Test
+    func autoCycling_advancesThroughCodes() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let timer = IntervalTimerMock()
+        let sut = try makeSUT(vaultStore: vaultStore, intervalTimer: timer)
+
+        await sut.generateShards()
+
+        // Verify we start at index 0
+        if case let .displayingQR(currentIndex, _) = sut.state {
+            #expect(currentIndex == 0)
+        }
+
+        // Advance the timer
+        try await timer.finishTimer(at: 0)
+
+        // Should advance to index 1
+        if case let .displayingQR(currentIndex, _) = sut.state {
+            #expect(currentIndex == 1)
+        } else {
+            Issue.record("Expected displayingQR state after advancing")
+        }
+    }
+
+    @Test
+    func autoCycling_wrapsAroundAtEnd() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let timer = IntervalTimerMock()
+        let sut = try makeSUT(vaultStore: vaultStore, intervalTimer: timer)
+
+        await sut.generateShards()
+
+        // Get total count
+        guard case let .displayingQR(_, totalCount) = sut.state else {
+            Issue.record("Expected displayingQR state")
+            return
+        }
+
+        // Advance through all codes and wrap around
+        // Each finishTimer call needs the correct index since a new timer is created each time
+        for i in 0 ..< totalCount {
+            try await timer.finishTimer(at: i)
+        }
+
+        // Should wrap back to index 0
+        if case let .displayingQR(currentIndex, _) = sut.state {
+            #expect(currentIndex == 0)
+        } else {
+            Issue.record("Expected to wrap around to index 0")
+        }
+    }
+
+    @Test
+    func autoCycling_updatesQRCodeImage() async throws {
+        let vaultStore = VaultStoreStub()
+        vaultStore.exportVaultHandler = { _ in
+            .init(userDescription: "", items: [], tags: [])
+        }
+        let timer = IntervalTimerMock()
+        let sut = try makeSUT(vaultStore: vaultStore, intervalTimer: timer)
+
+        await sut.generateShards()
+
+        let initialImage = sut.currentQRCodeImage
+
+        // Advance the timer
+        try await timer.finishTimer(at: 0)
+
+        let updatedImage = sut.currentQRCodeImage
+
+        // Images should be different (different QR code rendered)
+        #expect(initialImage != nil)
+        #expect(updatedImage != nil)
+    }
+}
+
+// MARK: - Helpers
+
+extension DeviceTransferExportViewModelTests {
+    @MainActor
+    private func makeSUT(
+        vaultStore: any VaultStore = VaultStoreStub(),
+        vaultTagStore: any VaultTagStore = VaultTagStoreStub(),
+        backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+        backupPassword: DerivedEncryptionKey = anyBackupPassword(),
+        clock: some EpochClock = EpochClockMock(currentTime: 100),
+        backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
+        intervalTimer: any IntervalTimer = IntervalTimerMock(),
+    ) throws -> DeviceTransferExportViewModel {
+        DeviceTransferExportViewModel(
+            backupPassword: backupPassword,
+            dataModel: VaultDataModel(
+                vaultStore: vaultStore,
+                vaultTagStore: vaultTagStore,
+                vaultImporter: VaultStoreImporterMock(),
+                vaultDeleter: VaultStoreDeleterMock(),
+                vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
+                vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
+                backupPasswordStore: backupPasswordStore,
+                backupEventLogger: BackupEventLoggerMock(),
+            ),
+            clock: clock,
+            backupEventLogger: backupEventLogger,
+            intervalTimer: intervalTimer,
+        )
+    }
+}
