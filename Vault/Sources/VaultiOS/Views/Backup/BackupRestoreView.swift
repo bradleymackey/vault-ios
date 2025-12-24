@@ -90,7 +90,7 @@ struct BackupRestoreView: View {
                 icon: "square.and.arrow.down.on.square.fill",
                 iconColor: .accentColor,
                 title: "Import & Merge",
-                subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
+                subtitle: "Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
                 buttonLabel: "Import & Merge",
                 buttonIcon: "square.and.arrow.down.on.square.fill",
                 isDestructive: false,
