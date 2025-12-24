@@ -191,11 +191,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
 
     private var iconHeader: some View {
         VStack(spacing: 8) {
-            OTPCodeIconPlaceholderView(
-                iconFontSize: viewModel.isInEditMode ? 44 : 22,
-                backgroundColor: selectedColor,
-            )
-            .clipShape(Circle())
+            Image(systemName: "key.horizontal.fill")
+                .font(.system(size: viewModel.isInEditMode ? 60 : 30))
+                .foregroundStyle(selectedColor)
 
             ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
                 EmptyView()
