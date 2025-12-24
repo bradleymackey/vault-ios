@@ -30,8 +30,7 @@ struct BackupCreateView: View {
                     passwordNotCreatedCard
                 case let .fetched(password):
                     passwordExistsCard
-                    lastBackupSummaryCard
-                    createBackupButton(password: password)
+                    lastBackupSummaryCard(password: password)
                     deviceTransferCard(password: password)
                 }
             }
@@ -216,10 +215,26 @@ struct BackupCreateView: View {
 
     // MARK: - Last Backup Summary Card
 
-    private var lastBackupSummaryCard: some View {
-        LastBackupSummaryView(
-            lastBackup: dataModel.lastBackupEvent,
-        )
+    private func lastBackupSummaryCard(password: DerivedEncryptionKey) -> some View {
+        VStack(spacing: 0) {
+            LastBackupSummaryView(
+                lastBackup: dataModel.lastBackupEvent,
+            )
+
+            Divider()
+                .padding(.horizontal, 16)
+
+            VStack(spacing: 12) {
+                Button {
+                    modal = .pdfBackup(password)
+                } label: {
+                    Label("Create PDF Backup", systemImage: "printer.filled.and.paper")
+                        .frame(maxWidth: .infinity)
+                }
+                .modifier(ProminentButtonModifier())
+            }
+            .padding(16)
+        }
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
             border: lastBackupBorderColor,
@@ -241,21 +256,6 @@ struct BackupCreateView: View {
         } else {
             return Color.red
         }
-    }
-
-    // MARK: - Create Backup Button
-
-    private func createBackupButton(password: DerivedEncryptionKey) -> some View {
-        Button {
-            modal = .pdfBackup(password)
-        } label: {
-            Label("Create Backup", systemImage: "printer.filled.and.paper")
-                .font(.headline)
-                .frame(maxWidth: .infinity)
-        }
-        .modifier(ProminentButtonModifier())
-        .padding(.vertical, 4)
-        .transition(.slide)
     }
 
     // MARK: - Device Transfer Card
