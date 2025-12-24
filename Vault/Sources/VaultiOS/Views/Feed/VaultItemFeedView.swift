@@ -49,19 +49,6 @@ public struct VaultItemFeedView<
         }
     }
 
-    private var noCodesFoundView: some View {
-        VStack(alignment: .center, spacing: 12) {
-            Label(localized(key: "codeFeed.noCodes.title"), systemImage: "key.horizontal")
-                .font(.callout)
-        }
-        .textCase(.none)
-        .multilineTextAlignment(.center)
-        .foregroundStyle(.secondary)
-        .frame(maxWidth: .infinity, maxHeight: .infinity)
-        .aspectRatio(1, contentMode: .fit)
-        .modifier(VaultCardModifier(configuration: .init(style: .secondary, border: .secondary)))
-    }
-
     private var currentBehaviour: VaultItemViewBehaviour {
         if state.isEditing {
             .editingState(message: localized(key: "action.tapToView"))
@@ -73,19 +60,22 @@ public struct VaultItemFeedView<
     private var listOfCodesView: some View {
         @Bindable var dataModel = dataModel
         return ScrollView(.vertical, showsIndicators: true) {
-            LazyVGrid(columns: columns) {
-                Section {
-                    if dataModel.items.isNotEmpty {
+            if dataModel.items.isNotEmpty {
+                LazyVGrid(columns: columns) {
+                    Section {
                         vaultItemsList
-                    } else {
-                        noCodesFoundView
                     }
                 }
+                .scrollTargetLayout()
+                .padding(.horizontal)
+                .padding(.bottom)
+                .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
+            } else {
+                ContentUnavailableView {
+                    Label(localized(key: "codeFeed.noCodes.title"), systemImage: "key.horizontal")
+                }
+                .containerRelativeFrame(.vertical)
             }
-            .scrollTargetLayout()
-            .padding(.horizontal)
-            .padding(.bottom)
-            .animation(.easeOut(duration: 0.1), value: dataModel.itemsFilteringByTags)
         }
         .searchable(text: $dataModel.itemsSearchQuery)
         .autocorrectionDisabled()

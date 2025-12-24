@@ -4,6 +4,7 @@ import Testing
 import VaultBackup
 import VaultExport
 
+@MainActor
 struct VaultBackupPDFGeneratorSnapshotTests {
     @Test
     func makeDocument_attachesMetadataDocumentAttributes() throws {
