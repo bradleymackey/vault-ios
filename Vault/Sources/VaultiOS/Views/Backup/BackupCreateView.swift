@@ -15,6 +15,7 @@ struct BackupCreateView: View {
     enum Modal: IdentifiableSelf {
         case updatePassword
         case pdfBackup(DerivedEncryptionKey)
+        case deviceTransfer(DerivedEncryptionKey)
     }
 
     var body: some View {
@@ -31,6 +32,7 @@ struct BackupCreateView: View {
                     passwordExistsCard
                     lastBackupSummaryCard
                     createBackupButton(password: password)
+                    deviceTransferCard(password: password)
                 }
             }
             .padding(16)
@@ -81,6 +83,18 @@ struct BackupCreateView: View {
                         authenticationService: authenticationService,
                         deriverFactory: injector.vaultKeyDeriverFactory,
                     ))
+                }
+            case let .deviceTransfer(password):
+                NavigationStack {
+                    DeviceTransferExportView(
+                        viewModel: .init(
+                            backupPassword: password,
+                            dataModel: dataModel,
+                            clock: injector.clock,
+                            backupEventLogger: injector.backupEventLogger,
+                            intervalTimer: injector.intervalTimer,
+                        ),
+                    )
                 }
             }
         }
@@ -241,6 +255,48 @@ struct BackupCreateView: View {
         }
         .modifier(ProminentButtonModifier())
         .padding(.vertical, 4)
+        .transition(.slide)
+    }
+
+    // MARK: - Device Transfer Card
+
+    private func deviceTransferCard(password: DerivedEncryptionKey) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
+                Image(systemName: "qrcode")
+                    .font(.title2)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 40, height: 40)
+                    .background(Color.accentColor.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Transfer to Another Device")
+                        .font(.headline.bold())
+                        .foregroundStyle(.primary)
+
+                    Text("Display QR codes to scan with another device.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+
+            Button {
+                modal = .deviceTransfer(password)
+            } label: {
+                Label("Start Transfer", systemImage: "qrcode")
+                    .frame(maxWidth: .infinity)
+            }
+            .modifier(ProminentButtonModifier())
+        }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: Color.accentColor,
+            padding: .init(),
+        )))
         .transition(.slide)
     }
 }

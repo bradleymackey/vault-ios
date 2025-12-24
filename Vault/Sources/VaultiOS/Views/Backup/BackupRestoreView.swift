@@ -57,13 +57,17 @@ struct BackupRestoreView: View {
             }
         }
     }
+}
 
+// MARK: - BackupRestoreView Extensions
+
+extension BackupRestoreView {
     private var noExistingCodesImportCard: some View {
         ImportOptionCard(
             icon: "square.and.arrow.down.fill",
             iconColor: .accentColor,
             title: "Import Backup",
-            subtitle: "Using a Vault PDF backup file, import data to your device locally.",
+            subtitle: "Import data from a Vault backup using a PDF file or by scanning QR codes from another device.",
             buttonLabel: "Import Backup",
             buttonIcon: "square.and.arrow.down.fill",
             isDestructive: false,
@@ -90,7 +94,7 @@ struct BackupRestoreView: View {
                 icon: "square.and.arrow.down.on.square.fill",
                 iconColor: .accentColor,
                 title: "Import & Merge",
-                subtitle: "Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
+                subtitle: "Import from a PDF file or scan QR codes from another device. Merges with existing data, keeping the most recent version of each item.",
                 buttonLabel: "Import & Merge",
                 buttonIcon: "square.and.arrow.down.on.square.fill",
                 isDestructive: false,
@@ -105,7 +109,7 @@ struct BackupRestoreView: View {
                 icon: "exclamationmark.triangle.fill",
                 iconColor: .red,
                 title: "Import & Override",
-                subtitle: "⚠️ Warning! Overrides your existing on-device data with the data from the backup. On-device data will be replaced. If an item exists on device but not in the backup, it will be lost.",
+                subtitle: "⚠️ Warning! Import from a PDF file or scan QR codes and replace all existing data. On-device data will be lost if not in the backup.",
                 buttonLabel: "Import & Override",
                 buttonIcon: "square.and.arrow.down.fill",
                 isDestructive: true,
