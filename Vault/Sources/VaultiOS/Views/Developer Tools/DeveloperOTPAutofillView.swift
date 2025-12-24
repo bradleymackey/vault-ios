@@ -1,3 +1,4 @@
+import AuthenticationServices
 import SwiftUI
 import Toasts
 import VaultFeed
@@ -5,6 +6,7 @@ import VaultFeed
 struct DeveloperOTPAutofillView: View {
     @Environment(VaultDataModel.self) var dataModel
     @Environment(\.presentToast) private var presentToast
+    @State private var storeState: ASCredentialIdentityStoreState?
 
     enum Destination: Hashable {
         case addOTPItem
@@ -19,6 +21,7 @@ struct DeveloperOTPAutofillView: View {
 
                 AsyncButton {
                     try await dataModel.clearOTPAutofillStore()
+                    await loadState()
                     let toast = ToastValue(icon: Image(systemName: "checkmark"), message: "All OTP Items Cleared")
                     presentToast(toast)
                 } label: {
@@ -28,9 +31,43 @@ struct DeveloperOTPAutofillView: View {
                 }
                 .foregroundStyle(.red)
             } header: {
-                Text("OTP Autofill Store")
+                Text("Actions")
+            }
+
+            Section {
+                if let state = storeState {
+                    LabeledContent("Extension Enabled") {
+                        Image(systemName: state.isEnabled ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundStyle(state.isEnabled ? .green : .red)
+                    }
+
+                    LabeledContent("Incremental Updates") {
+                        Image(systemName: state
+                            .supportsIncrementalUpdates ? "checkmark.circle.fill" : "xmark.circle.fill")
+                            .foregroundStyle(state.supportsIncrementalUpdates ? .green : .secondary)
+                    }
+                } else {
+                    Text("Loading state...")
+                        .foregroundStyle(.secondary)
+                }
+            } header: {
+                HStack {
+                    Text("Current State")
+                    Spacer()
+                    Button {
+                        Task {
+                            await loadState()
+                        }
+                    } label: {
+                        Image(systemName: "arrow.clockwise")
+                            .font(.caption)
+                    }
+                    .buttonStyle(.borderless)
+                }
             } footer: {
-                Text("Manage OTP codes in the iOS AutoFill credential store for testing.")
+                Text(
+                    "The credential store state can only be read by the app. Individual credentials are managed by the system and cannot be listed.",
+                )
             }
         }
         .navigationTitle("OTP Autofill")
@@ -41,5 +78,15 @@ struct DeveloperOTPAutofillView: View {
                 DeveloperAddOTPItemView()
             }
         }
+        .task {
+            await loadState()
+        }
+        .refreshable {
+            await loadState()
+        }
+    }
+
+    private func loadState() async {
+        storeState = await dataModel.getOTPAutofillStoreState()
     }
 }
