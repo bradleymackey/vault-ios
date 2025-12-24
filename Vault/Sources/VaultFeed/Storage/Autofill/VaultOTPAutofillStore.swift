@@ -17,14 +17,12 @@ import VaultCore
 ///
 /// @mockable
 public protocol VaultOTPAutofillStore: Sendable {
-    /// Updates or adds an OTP credential identity for the given VaultItem.
-    /// If an identity with this UUID already exists, it will be updated.
-    func update(
-        id: UUID,
-        code: OTPAuthCode,
-    ) async throws
+    /// Syncs a VaultItem to the autofill store.
+    /// If the item is an OTP code, it will be added/updated. Otherwise, this is a no-op.
+    func sync(id: UUID, item: VaultItem.Payload) async throws
 
     /// Removes a specific OTP credential identity by VaultItem UUID.
+    /// Safe to call even if the item is not in the autofill store.
     func remove(id: UUID) async throws
 
     /// Removes all OTP credential identities from the store.
@@ -45,16 +43,19 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         self.store = store
     }
 
-    public func update(
-        id: UUID,
-        code: OTPAuthCode,
-    ) async throws {
+    public func sync(id: UUID, item: VaultItem.Payload) async throws {
+        guard let otpCode = item.otpCode else {
+            // Not an OTP item, remove from autofill store if present
+            try await remove(id: id)
+            return
+        }
+
         let identity = ASOneTimeCodeCredentialIdentity(
             serviceIdentifier: ASCredentialServiceIdentifier(
-                identifier: code.data.issuer,
+                identifier: otpCode.data.issuer,
                 type: .domain,
             ),
-            label: code.data.accountName,
+            label: otpCode.data.accountName,
             recordIdentifier: id.uuidString,
         )
         try await store.saveCredentialIdentities([identity])

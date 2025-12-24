@@ -12,7 +12,7 @@ struct VaultOTPAutofillStoreImplTests {
         ("tom@me.com", "issuer"),
         ("tom@me.com", "issuer@example.com"),
     ])
-    func update_createsIdentityWithCorrectIdentifiers(accountName: String, issuerName: String) async throws {
+    func sync_otpItem_createsIdentityWithCorrectIdentifiers(accountName: String, issuerName: String) async throws {
         let spy = CredentialIdentityStoreMock()
         let sut = makeSUT(store: spy)
         let id = UUID()
@@ -21,7 +21,7 @@ struct VaultOTPAutofillStoreImplTests {
             issuerName: issuerName,
         )
 
-        try await sut.update(id: id, code: code)
+        try await sut.sync(id: id, item: .otpCode(code))
 
         let identities = try #require(spy.saveCredentialIdentitiesArgValues.first)
         let identity = try #require(identities.first as? ASOneTimeCodeCredentialIdentity)
@@ -32,13 +32,13 @@ struct VaultOTPAutofillStoreImplTests {
     }
 
     @Test
-    func update_savesSingleIdentity() async throws {
+    func sync_otpItem_savesSingleIdentity() async throws {
         let spy = CredentialIdentityStoreMock()
         let sut = makeSUT(store: spy)
         let id = UUID()
         let code = anyOTPAuthCode()
 
-        try await sut.update(id: id, code: code)
+        try await sut.sync(id: id, item: .otpCode(code))
 
         #expect(spy.saveCredentialIdentitiesCallCount == 1)
         let identities = try #require(spy.saveCredentialIdentitiesArgValues.first)
@@ -46,7 +46,22 @@ struct VaultOTPAutofillStoreImplTests {
     }
 
     @Test
-    func update_errorInStoreIsRethrown() async throws {
+    func sync_nonOTPItem_removesFromStore() async throws {
+        let spy = CredentialIdentityStoreMock()
+        let sut = makeSUT(store: spy)
+        let id = UUID()
+
+        try await sut.sync(id: id, item: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
+
+        #expect(spy.saveCredentialIdentitiesCallCount == 0)
+        #expect(spy.removeCredentialIdentitiesCallCount == 1)
+        let identities = try #require(spy.removeCredentialIdentitiesArgValues.first)
+        let identity = try #require(identities.first as? ASOneTimeCodeCredentialIdentity)
+        #expect(identity.recordIdentifier == id.uuidString)
+    }
+
+    @Test
+    func sync_errorInStoreIsRethrown() async throws {
         let spy = CredentialIdentityStoreMock()
         let sut = makeSUT(store: spy)
         spy.saveCredentialIdentitiesHandler = { _ in
@@ -54,7 +69,7 @@ struct VaultOTPAutofillStoreImplTests {
         }
 
         await #expect(throws: (any Error).self) {
-            try await sut.update(id: UUID(), code: anyOTPAuthCode())
+            try await sut.sync(id: UUID(), item: .otpCode(anyOTPAuthCode()))
         }
     }
 

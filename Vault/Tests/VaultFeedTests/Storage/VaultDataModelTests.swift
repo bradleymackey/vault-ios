@@ -612,7 +612,11 @@ final class VaultDataModelTests {
         let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.updateHandler = { _, code in
+            vaultOtpAutofillStore.syncHandler = { _, item in
+                guard case let .otpCode(code) = item else {
+                    Issue.record("Expected OTP code")
+                    return
+                }
                 #expect(code.type == .totp(period: 30))
                 #expect(code.data.accountName == "test@example.com")
                 #expect(code.data.issuer == "example.com")
@@ -626,14 +630,14 @@ final class VaultDataModelTests {
                 accountName: "test@example.com",
             )
 
-            #expect(vaultOtpAutofillStore.updateCallCount == 1)
+            #expect(vaultOtpAutofillStore.syncCallCount == 1)
         }
     }
 
     @Test
     func addDemoOTPItemToAutofillStore_throwsErrorOnFailure() async throws {
         let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
-        vaultOtpAutofillStore.updateHandler = { _, _ in throw TestError() }
+        vaultOtpAutofillStore.syncHandler = { _, _ in throw TestError() }
         let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
 
         await #expect(throws: (any Error).self) {
@@ -668,6 +672,166 @@ final class VaultDataModelTests {
 
         await #expect(throws: (any Error).self) {
             try await sut.clearOTPAutofillStore()
+        }
+    }
+
+    @Test
+    func insert_otpItem_syncsToAutofillStore() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        let itemID = Identifier<VaultItem>.new()
+        store.insertHandler = { _ in itemID }
+
+        let otpCode = anyOTPAuthCode()
+        let item = VaultItem.Write(
+            relativeOrder: 0,
+            userDescription: "Test",
+            color: nil,
+            item: .otpCode(otpCode),
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+        )
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.syncHandler = { id, payload in
+                #expect(id == itemID.rawValue)
+                #expect(payload == .otpCode(otpCode))
+                confirm()
+            }
+
+            try await sut.insert(item: item)
+
+            #expect(vaultOtpAutofillStore.syncCallCount == 1)
+        }
+    }
+
+    @Test
+    func insert_nonOTPItem_syncsToAutofillStore() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        let itemID = Identifier<VaultItem>.new()
+        store.insertHandler = { _ in itemID }
+
+        let secureNote = SecureNote(title: "Note", contents: "Content", format: .plain)
+        let item = VaultItem.Write(
+            relativeOrder: 0,
+            userDescription: "Test",
+            color: nil,
+            item: .secureNote(secureNote),
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+        )
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.syncHandler = { id, payload in
+                #expect(id == itemID.rawValue)
+                #expect(payload == .secureNote(secureNote))
+                confirm()
+            }
+
+            try await sut.insert(item: item)
+
+            #expect(vaultOtpAutofillStore.syncCallCount == 1)
+        }
+    }
+
+    @Test
+    func update_otpItem_syncsToAutofillStore() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        let itemID = Identifier<VaultItem>.new()
+        let otpCode = anyOTPAuthCode()
+        let item = VaultItem.Write(
+            relativeOrder: 0,
+            userDescription: "Test",
+            color: nil,
+            item: .otpCode(otpCode),
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+        )
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.syncHandler = { id, payload in
+                #expect(id == itemID.rawValue)
+                #expect(payload == .otpCode(otpCode))
+                confirm()
+            }
+
+            try await sut.update(itemID: itemID, data: item)
+
+            #expect(vaultOtpAutofillStore.syncCallCount == 1)
+        }
+    }
+
+    @Test
+    func update_nonOTPItem_syncsToAutofillStore() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        let itemID = Identifier<VaultItem>.new()
+        let secureNote = SecureNote(title: "Note", contents: "Content", format: .plain)
+        let item = VaultItem.Write(
+            relativeOrder: 0,
+            userDescription: "Test",
+            color: nil,
+            item: .secureNote(secureNote),
+            tags: [],
+            visibility: .always,
+            searchableLevel: .full,
+            searchPassphrase: nil,
+            killphrase: nil,
+            lockState: .notLocked,
+        )
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.syncHandler = { id, payload in
+                #expect(id == itemID.rawValue)
+                #expect(payload == .secureNote(secureNote))
+                confirm()
+            }
+
+            try await sut.update(itemID: itemID, data: item)
+
+            #expect(vaultOtpAutofillStore.syncCallCount == 1)
+        }
+    }
+
+    @Test
+    func delete_removesFromAutofillStore() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        let itemID = Identifier<VaultItem>.new()
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.removeHandler = { id in
+                #expect(id == itemID.rawValue)
+                confirm()
+            }
+
+            try await sut.delete(itemID: itemID)
+
+            #expect(vaultOtpAutofillStore.removeCallCount == 1)
         }
     }
 }

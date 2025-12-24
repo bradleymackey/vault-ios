@@ -276,8 +276,9 @@ extension VaultDataModel {
 
 extension VaultDataModel {
     public func insert(item: VaultItem.Write) async throws {
-        try await vaultStore.insert(item: item)
+        let itemID = try await vaultStore.insert(item: item)
         await reloadItems()
+        try? await vaultOtpAutofillStore.sync(id: itemID.rawValue, item: item.item)
     }
 
     public func update(itemID id: Identifier<VaultItem>, data: VaultItem.Write) async throws {
@@ -285,9 +286,11 @@ extension VaultDataModel {
         await invalidateCaches(itemID: id)
         await reloadItems()
         await updateCurrentPayloadHash()
+        try? await vaultOtpAutofillStore.sync(id: id.rawValue, item: data.item)
     }
 
     public func delete(itemID: Identifier<VaultItem>) async throws {
+        try? await vaultOtpAutofillStore.remove(id: itemID.rawValue)
         try await vaultStore.delete(id: itemID)
         await invalidateCaches(itemID: itemID)
         await reloadItems()
@@ -385,9 +388,9 @@ extension VaultDataModel {
             type: .totp(period: 30),
             data: codeData,
         )
-        try await vaultOtpAutofillStore.update(
+        try await vaultOtpAutofillStore.sync(
             id: UUID(),
-            code: code,
+            item: .otpCode(code),
         )
     }
 
