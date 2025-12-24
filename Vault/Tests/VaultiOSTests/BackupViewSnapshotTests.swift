@@ -8,94 +8,80 @@ import VaultFeed
 @MainActor
 struct BackupViewSnapshotTests {
     @Test
-    func backupPasswordNotFetched() async throws {
-        let sut = makeSUT(dataModel: anyVaultDataModel())
+    func backupCreate_passwordNotFetched() async throws {
+        let sut = makeBackupCreateSUT(dataModel: anyVaultDataModel())
             .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
 
     @Test
-    func backupPasswordError() async {
+    func backupCreate_passwordError() async {
         let backupPasswordStore = BackupPasswordStoreMock()
         backupPasswordStore.fetchPasswordHandler = { throw TestError() }
         let dataModel = anyVaultDataModel(backupPasswordStore: backupPasswordStore)
         await dataModel.loadBackupPassword()
         await dataModel.reloadData()
 
-        let sut = makeSUT(dataModel: dataModel)
+        let sut = makeBackupCreateSUT(dataModel: dataModel)
             .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
 
     @Test
-    func backupPasswordNotCreated_noItems() async {
-        let vaultStore = VaultStoreStub()
-        vaultStore.hasAnyItemsHandler = { false }
+    func backupCreate_passwordNotCreated() async {
         let backupPasswordStore = BackupPasswordStoreMock()
         backupPasswordStore.fetchPasswordHandler = { nil }
-        let dataModel = anyVaultDataModel(vaultStore: vaultStore, backupPasswordStore: backupPasswordStore)
+        let dataModel = anyVaultDataModel(backupPasswordStore: backupPasswordStore)
         await dataModel.loadBackupPassword()
         await dataModel.reloadData()
 
-        let sut = makeSUT(dataModel: dataModel)
+        let sut = makeBackupCreateSUT(dataModel: dataModel)
             .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
 
     @Test
-    func backupPasswordNotCreated_hasItems() async {
-        let vaultStore = VaultStoreStub()
-        vaultStore.hasAnyItemsHandler = { true }
-        let backupPasswordStore = BackupPasswordStoreMock()
-        backupPasswordStore.fetchPasswordHandler = { nil }
-        let dataModel = anyVaultDataModel(vaultStore: vaultStore, backupPasswordStore: backupPasswordStore)
-        await dataModel.loadBackupPassword()
-        await dataModel.reloadData()
-
-        let sut = makeSUT(dataModel: dataModel)
-            .framedForTest()
-
-        assertSnapshot(of: sut, as: .image)
-    }
-
-    @Test
-    func backupPasswordFetched_noItems() async {
-        let vaultStore = VaultStoreStub()
-        vaultStore.hasAnyItemsHandler = { false }
+    func backupCreate_passwordFetched() async {
         let backupPasswordStore = BackupPasswordStoreMock()
         backupPasswordStore.fetchPasswordHandler = { .init(
             key: .random(),
             salt: .random(count: 32),
             keyDervier: .testing,
         ) }
-        let dataModel = anyVaultDataModel(vaultStore: vaultStore, backupPasswordStore: backupPasswordStore)
+        let dataModel = anyVaultDataModel(backupPasswordStore: backupPasswordStore)
         await dataModel.loadBackupPassword()
         await dataModel.reloadData()
 
-        let sut = makeSUT(dataModel: dataModel)
+        let sut = makeBackupCreateSUT(dataModel: dataModel)
             .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
     }
 
     @Test
-    func backupPasswordFetched_hasItems() async {
+    func backupRestore_noItems() async {
         let vaultStore = VaultStoreStub()
-        vaultStore.hasAnyItemsHandler = { true }
-        let backupPasswordStore = BackupPasswordStoreMock()
-        backupPasswordStore.fetchPasswordHandler = { .init(
-            key: .random(),
-            salt: .random(count: 32),
-            keyDervier: .testing,
-        ) }
-        let dataModel = anyVaultDataModel(vaultStore: vaultStore, backupPasswordStore: backupPasswordStore)
-        await dataModel.loadBackupPassword()
+        vaultStore.hasAnyItemsHandler = { false }
+        let dataModel = anyVaultDataModel(vaultStore: vaultStore)
         await dataModel.reloadData()
 
-        let sut = makeSUT(dataModel: dataModel)
+        let sut = makeBackupRestoreSUT(dataModel: dataModel)
+            .framedForTest()
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @Test
+    func backupRestore_hasItems() async {
+        let vaultStore = VaultStoreStub()
+        vaultStore.hasAnyItemsHandler = { true }
+        let dataModel = anyVaultDataModel(vaultStore: vaultStore)
+        await dataModel.reloadData()
+
+        let sut = makeBackupRestoreSUT(dataModel: dataModel)
             .framedForTest()
 
         assertSnapshot(of: sut, as: .image)
@@ -103,13 +89,22 @@ struct BackupViewSnapshotTests {
 }
 
 extension BackupViewSnapshotTests {
-    private func makeSUT(
+    private func makeBackupCreateSUT(
         dataModel: VaultDataModel,
     ) -> some View {
         let injector = anyVaultInjector()
-        return BackupView()
+        return BackupCreateView()
             .environment(dataModel)
             .environment(DeviceAuthenticationService(policy: .alwaysAllow))
+            .environment(injector)
+    }
+
+    private func makeBackupRestoreSUT(
+        dataModel: VaultDataModel,
+    ) -> some View {
+        let injector = anyVaultInjector()
+        return BackupRestoreView()
+            .environment(dataModel)
             .environment(injector)
     }
 }

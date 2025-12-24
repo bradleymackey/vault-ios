@@ -4,20 +4,17 @@ import VaultFeed
 import VaultKeygen
 
 @MainActor
-struct BackupView: View {
+struct BackupCreateView: View {
     @Environment(VaultDataModel.self) var dataModel
     @Environment(DeviceAuthenticationService.self) var authenticationService
     @Environment(VaultInjector.self) var injector
-    @State private var viewModel = BackupViewModel()
+    @State private var viewModel = BackupCreateViewModel()
     @State private var modal: Modal?
     @State private var pdfNavigationPath = NavigationPath()
 
     enum Modal: IdentifiableSelf {
         case updatePassword
         case pdfBackup(DerivedEncryptionKey)
-        case importToCurrentlyEmpty(DerivedEncryptionKey?)
-        case importAndMerge(DerivedEncryptionKey?)
-        case importAndOverride(DerivedEncryptionKey?)
     }
 
     var body: some View {
@@ -28,19 +25,9 @@ struct BackupView: View {
             case .notFetched:
                 authenticateSection(isError: false)
             case .notCreated:
-                if dataModel.hasAnyItems {
-                    currentBackupsSection(password: nil)
-                    hasExistingCodesImportSection
-                } else {
-                    noExistingCodesImportSection
-                }
+                currentBackupsSection(password: nil)
             case let .fetched(password):
-                if dataModel.hasAnyItems {
-                    currentBackupsSection(password: password)
-                    hasExistingCodesImportSection
-                } else {
-                    noExistingCodesImportSection
-                }
+                currentBackupsSection(password: password)
             }
         }
         .navigationTitle(Text(viewModel.strings.homeTitle))
@@ -90,27 +77,6 @@ struct BackupView: View {
                         deriverFactory: injector.vaultKeyDeriverFactory,
                     ))
                 }
-            case let .importToCurrentlyEmpty(backupPassword):
-                BackupImportFlowView(viewModel: .init(
-                    importContext: .toEmptyVault,
-                    dataModel: dataModel,
-                    existingBackupPassword: backupPassword,
-                    encryptedVaultDecoder: injector.encryptedVaultDecoder,
-                ))
-            case let .importAndMerge(backupPassword):
-                BackupImportFlowView(viewModel: .init(
-                    importContext: .merge,
-                    dataModel: dataModel,
-                    existingBackupPassword: backupPassword,
-                    encryptedVaultDecoder: injector.encryptedVaultDecoder,
-                ))
-            case let .importAndOverride(backupPassword):
-                BackupImportFlowView(viewModel: .init(
-                    importContext: .override,
-                    dataModel: dataModel,
-                    existingBackupPassword: backupPassword,
-                    encryptedVaultDecoder: injector.encryptedVaultDecoder,
-                ))
             }
         }
     }
@@ -137,19 +103,6 @@ struct BackupView: View {
                 .padding()
                 .frame(maxWidth: .infinity)
             }
-        }
-        .transition(.slide)
-    }
-
-    private func keySection(existingPassword: DerivedEncryptionKey?) -> some View {
-        Section {
-            if existingPassword != nil {
-                updateButton
-            } else {
-                createButton
-            }
-        } header: {
-            Text("Backup Encryption Key")
         }
         .transition(.slide)
     }
@@ -198,74 +151,6 @@ struct BackupView: View {
             FormRow(image: Image(systemName: "key.2.on.ring.fill"), color: .accentColor, style: .standard) {
                 Text(viewModel.strings.backupPasswordUpdateTitle)
             }
-        }
-    }
-
-    private var noExistingCodesImportSection: some View {
-        Section {
-            AsyncButton {
-                await dataModel.loadBackupPassword()
-                modal = .importToCurrentlyEmpty(dataModel.backupPassword.fetchedPassword)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.fill"),
-                    color: .accentColor,
-                    style: .standard,
-                    alignment: .firstTextBaseline,
-                ) {
-                    TextAndSubtitle(
-                        title: "Import Backup",
-                        subtitle: "Using a Vault PDF backup file, import data to your device locally.",
-                    )
-                }
-            } loading: {
-                ProgressView()
-            }
-        }
-    }
-
-    private var hasExistingCodesImportSection: some View {
-        Section {
-            AsyncButton {
-                await dataModel.loadBackupPassword()
-                modal = .importAndMerge(dataModel.backupPassword.fetchedPassword)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.on.square.fill"),
-                    color: .accentColor,
-                    style: .standard,
-                    alignment: .firstTextBaseline,
-                ) {
-                    TextAndSubtitle(
-                        title: "Import & Merge",
-                        subtitle: "Recommended. Merges with your existing on-device data. If any items conflict, the most recent version will be used, either from the backup or from your device.",
-                    )
-                }
-            } loading: {
-                ProgressView()
-            }
-
-            AsyncButton {
-                await dataModel.loadBackupPassword()
-                modal = .importAndOverride(dataModel.backupPassword.fetchedPassword)
-            } label: {
-                FormRow(
-                    image: Image(systemName: "square.and.arrow.down.fill"),
-                    color: .red,
-                    style: .standard,
-                    alignment: .firstTextBaseline,
-                ) {
-                    TextAndSubtitle(
-                        title: "Import & Override",
-                        subtitle: "Warning! Overrides your existing on-device data with the data from the backup. On device data will be replaced by the backup data. If an item exists on device but not in the backup, it will be lost.",
-                    )
-                }
-                .foregroundStyle(.red)
-            } loading: {
-                ProgressView()
-            }
-        } header: {
-            Text("Import from a backup")
         }
     }
 }
