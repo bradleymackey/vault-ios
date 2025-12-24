@@ -1,3 +1,4 @@
+import Foundation
 import SnapshotTesting
 import UIKit
 
@@ -5,6 +6,8 @@ import UIKit
 /// This must match the configuration specified in Vault/README.md.
 private let expectedDeviceName = "iPhone 17 Pro"
 private let expectedIOSVersion = "26.2"
+private let expectedLocaleIdentifier = "en_US"
+private let expectedTimezoneIdentifier = ["UTC", "GMT"]
 
 /// Asserts that a snapshot matches a reference, but first validates the device configuration.
 ///
@@ -36,7 +39,7 @@ public func assertSnapshot<Value>(
     line: UInt = #line,
     column: UInt = #column,
 ) {
-    assertDeviceConfiguration(fileID: fileID, file: file, line: line)
+    assertDeviceConfiguration(file: file, line: line)
 
     try SnapshotTesting.assertSnapshot(
         of: value(),
@@ -54,16 +57,17 @@ public func assertSnapshot<Value>(
 
 /// Validates that the current device matches the expected configuration for snapshot testing.
 ///
-/// - Throws: `fatalError` if the device name or iOS version doesn't match expectations
+/// - Throws: `fatalError` if the device name, iOS version, locale, timezone, or appearance doesn't match expectations
 @MainActor
 private func assertDeviceConfiguration(
-    fileID _: StaticString = #fileID,
     file: StaticString = #file,
     line: UInt = #line,
 ) {
     let currentDevice = UIDevice.current
     let deviceName = currentDevice.name
     let systemVersion = currentDevice.systemVersion
+    let currentLocale = Locale.current.identifier
+    let currentTimezone = TimeZone.current.identifier
 
     guard deviceName == expectedDeviceName else {
         fatalError(
@@ -87,6 +91,34 @@ private func assertDeviceConfiguration(
             Actual: iOS \(systemVersion)
 
             Please run snapshot tests on iOS \(expectedIOSVersion) as specified in Vault/README.md
+            """,
+            file: file,
+            line: line,
+        )
+    }
+
+    guard currentLocale == expectedLocaleIdentifier else {
+        fatalError(
+            """
+            ❌ Snapshot test locale mismatch!
+            Expected: \(expectedLocaleIdentifier)
+            Actual: \(currentLocale)
+
+            Please configure the simulator locale to English (United States).
+            """,
+            file: file,
+            line: line,
+        )
+    }
+
+    guard expectedTimezoneIdentifier.contains(currentTimezone) else {
+        fatalError(
+            """
+            ❌ Snapshot test timezone mismatch!
+            Expected: \(expectedTimezoneIdentifier)
+            Actual: \(currentTimezone)
+
+            Please configure the simulator timezone to a valid timezone.
             """,
             file: file,
             line: line,
