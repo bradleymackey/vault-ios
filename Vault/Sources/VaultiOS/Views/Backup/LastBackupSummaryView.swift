@@ -17,25 +17,25 @@ struct LastBackupSummaryView: View {
             VStack(alignment: .leading, spacing: 8) {
                 HStack(spacing: 8) {
                     Image(systemName: systemImage)
-                        .font(.title2)
+                        .font(.headline)
                         .foregroundStyle(accentColor)
 
                     Text(title)
-                        .font(.title2.bold())
+                        .font(.headline.bold())
                         .foregroundStyle(.primary)
                 }
 
                 if let lastBackup {
                     Text(lastBackup.backupDate.formatted(date: .abbreviated, time: .shortened))
-                        .font(.title3)
+                        .font(.subheadline)
                         .foregroundStyle(.primary)
 
                     Text(lastBackup.kind.localizedTitle)
-                        .font(.callout.weight(.medium))
+                        .font(.subheadline.weight(.medium))
                         .foregroundStyle(.secondary)
                 } else {
                     Text("You haven't created a backup from this device and could be at risk of data loss.")
-                        .font(.callout)
+                        .font(.subheadline)
                         .foregroundStyle(.secondary)
                         .fixedSize(horizontal: false, vertical: true)
                 }

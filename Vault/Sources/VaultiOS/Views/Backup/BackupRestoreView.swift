@@ -79,7 +79,7 @@ struct BackupRestoreView: View {
             // Header
             HStack {
                 Text("Import from a backup")
-                    .font(.title3.bold())
+                    .font(.headline)
                     .foregroundStyle(.primary)
                 Spacer()
             }
@@ -143,7 +143,7 @@ private struct ImportOptionCard: View {
                     .clipShape(RoundedRectangle(cornerRadius: 8))
 
                 Text(title)
-                    .font(.title3.bold())
+                    .font(.headline.bold())
                     .foregroundStyle(.primary)
 
                 Spacer()
@@ -162,7 +162,7 @@ private struct ImportOptionCard: View {
 
             // Description
             Text(subtitle)
-                .font(.callout)
+                .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 

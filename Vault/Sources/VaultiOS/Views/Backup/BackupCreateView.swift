@@ -172,7 +172,7 @@ struct BackupCreateView: View {
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Backup Password Active")
-                        .font(.title3.bold())
+                        .font(.headline.bold())
                         .foregroundStyle(.primary)
 
                     Text("Your backups are protected with encryption.")

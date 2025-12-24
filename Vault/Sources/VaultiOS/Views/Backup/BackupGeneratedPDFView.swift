@@ -99,7 +99,7 @@ struct BackupGeneratedPDFView: View {
 
                     Text("Make sure you export and save the PDF, or your data will not be backed up.")
                         .font(.footnote)
-                        .foregroundStyle(.secondary)
+                        .foregroundStyle(Color.red)
                         .multilineTextAlignment(.leading)
                         .fixedSize(horizontal: false, vertical: true)
                 }
