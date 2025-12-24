@@ -1,6 +1,6 @@
 import Foundation
 import ImageTools
-import SnapshotTesting
+import TestHelpers
 import Testing
 import UIKit
 

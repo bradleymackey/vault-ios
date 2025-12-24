@@ -4,6 +4,7 @@ import TestHelpers
 import Testing
 import VaultExport
 
+@MainActor
 struct PDFDataBlockDocumentRendererSnapshotTests {
     @Test
     func render_drawsEmptyPDFDocument() throws {

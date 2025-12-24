@@ -1,5 +1,5 @@
 import Combine
-import SnapshotTesting
+import TestHelpers
 import Testing
 @testable import VaultiOS
 
