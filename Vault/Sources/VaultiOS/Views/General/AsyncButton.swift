@@ -33,11 +33,12 @@ struct AsyncButton<Label: View, Loading: View>: View {
                         }
                     }
 
+                    defer {
+                        progressViewTask?.cancel()
+                        isDisabled = false
+                        showProgressView = false
+                    }
                     try await action()
-                    progressViewTask?.cancel()
-
-                    isDisabled = false
-                    showProgressView = false
                 }
             },
             label: {
