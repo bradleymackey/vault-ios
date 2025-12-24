@@ -80,15 +80,6 @@ extension BackupRestoreView {
 
     private var hasExistingCodesImportCards: some View {
         VStack(spacing: 16) {
-            // Header
-            HStack {
-                Text("Import from a backup")
-                    .font(.headline)
-                    .foregroundStyle(.primary)
-                Spacer()
-            }
-            .padding(.horizontal, 4)
-
             // Merge option (recommended)
             ImportOptionCard(
                 icon: "square.and.arrow.down.on.square.fill",
