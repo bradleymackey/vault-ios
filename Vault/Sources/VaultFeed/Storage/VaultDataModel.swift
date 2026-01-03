@@ -409,4 +409,12 @@ extension VaultDataModel {
     public func getOTPAutofillStoreState() async -> ASCredentialIdentityStoreState {
         await vaultOtpAutofillStore.getState()
     }
+
+    /// Performs a full sync of all vault items to the autofill store.
+    /// Removes all existing items and repopulates with all OTP items from the vault.
+    public func syncAllToOTPAutofillStore() async throws {
+        try await vaultOtpAutofillStore.removeAll()
+        let result = try await vaultStore.retrieve(query: .init())
+        try await vaultOtpAutofillStore.syncAll(items: result.items)
+    }
 }

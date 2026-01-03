@@ -21,6 +21,10 @@ public protocol VaultOTPAutofillStore: Sendable {
     /// If the item is an OTP code, it will be added/updated. Otherwise, this is a no-op.
     func sync(id: UUID, item: VaultItem.Payload) async throws
 
+    /// Syncs all vault items to the autofill store.
+    /// Removes all existing items and repopulates with all OTP items from the vault.
+    func syncAll(items: [VaultItem]) async throws
+
     /// Removes a specific OTP credential identity by VaultItem UUID.
     /// Safe to call even if the item is not in the autofill store.
     func remove(id: UUID) async throws
@@ -58,7 +62,29 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
             label: otpCode.data.accountName,
             recordIdentifier: id.uuidString,
         )
+        try await remove(id: id)
         try await store.saveCredentialIdentities([identity])
+    }
+
+    public func syncAll(items: [VaultItem]) async throws {
+        // Clear all existing identities
+        try await store.removeAllCredentialIdentities()
+
+        // Build identities for all OTP items
+        let identities = items.compactMap { item -> ASOneTimeCodeCredentialIdentity? in
+            guard let otpCode = item.item.otpCode else { return nil }
+
+            return ASOneTimeCodeCredentialIdentity(
+                serviceIdentifier: ASCredentialServiceIdentifier(
+                    identifier: otpCode.data.issuer,
+                    type: .domain,
+                ),
+                label: otpCode.data.accountName,
+                recordIdentifier: item.id.rawValue.uuidString,
+            )
+        }
+
+        try await store.saveCredentialIdentities(identities)
     }
 
     public func remove(id: UUID) async throws {

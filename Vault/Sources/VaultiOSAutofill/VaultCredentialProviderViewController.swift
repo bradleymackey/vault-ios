@@ -61,44 +61,13 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
     override open func prepareInterfaceForExtensionConfiguration() {
         super.prepareInterfaceForExtensionConfiguration()
 
-        // Populate the credential identity store with OTP identities
+        // Populate the credential identity store with all OTP identities from the vault
         // so that iOS knows our extension can provide OTP codes
-        populateOTPCredentialStore()
+        Task {
+            try? await VaultRoot.vaultDataModel.syncAllToOTPAutofillStore()
+        }
 
         vaultAutofillViewModel.show(feature: .setupConfiguration)
-    }
-
-    /// Populates the credential identity store with stub OTP credential identities
-    /// This allows iOS to show OTP suggestions in QuickType from this extension
-    private func populateOTPCredentialStore() {
-        Task {
-            let store = ASCredentialIdentityStore.shared
-
-            // Check if we support incremental updates
-            let state = await store.state()
-            let supportsIncremental = state.supportsIncrementalUpdates
-
-            // Create a stub OTP credential identity
-            // In a real implementation, you would create identities for all your OTP vault items
-            let serviceIdentifier = ASCredentialServiceIdentifier(
-                identifier: "mcky.dev",
-                type: .domain,
-            )
-
-            let otpIdentity = ASOneTimeCodeCredentialIdentity(
-                serviceIdentifier: serviceIdentifier,
-                label: "Test OTP",
-                recordIdentifier: "test-otp-1",
-            )
-
-            if supportsIncremental {
-                // Save incrementally if supported
-                try? await store.saveCredentialIdentities([otpIdentity])
-            } else {
-                // Replace all identities
-                try? await store.replaceCredentialIdentities([otpIdentity])
-            }
-        }
     }
 
     struct CredentialTypeNotSupportedError: Error, LocalizedError {

@@ -834,6 +834,49 @@ final class VaultDataModelTests {
             #expect(vaultOtpAutofillStore.removeCallCount == 1)
         }
     }
+
+    @Test
+    func syncAllToOTPAutofillStore_syncsAllItems() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        let item1 = uniqueVaultItem(payload: .otpCode(anyOTPAuthCode()))
+        let item2 = uniqueVaultItem(payload: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
+
+        store.retrieveHandler = { _ in
+            .init(items: [.success(item1), .success(item2)])
+        }
+
+        try await confirmation { confirm in
+            vaultOtpAutofillStore.syncAllHandler = { items in
+                #expect(items.count == 2)
+                #expect(items[0].id == item1.id)
+                #expect(items[1].id == item2.id)
+                confirm()
+            }
+
+            try await sut.syncAllToOTPAutofillStore()
+
+            #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
+        }
+    }
+
+    @Test
+    func syncAllToOTPAutofillStore_handlesErrors() async throws {
+        let store = VaultStoreStub()
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
+
+        store.retrieveHandler = { _ in
+            .init(items: [.success(uniqueVaultItem())])
+        }
+        vaultOtpAutofillStore.syncAllHandler = { _ in throw TestError() }
+
+        await #expect(throws: (any Error).self) {
+            try await sut.syncAllToOTPAutofillStore()
+        }
+    }
 }
 
 // MARK: - Helpers
