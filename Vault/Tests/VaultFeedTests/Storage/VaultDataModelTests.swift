@@ -569,12 +569,22 @@ final class VaultDataModelTests {
     func importMerge_reloadsStores() async throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
-        let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(
+            vaultStore: vaultStore,
+            vaultTagStore: vaultTagStore,
+            vaultOtpAutofillStore: vaultOtpAutofillStore,
+        )
 
         try await sut.importMerge(payload: anyApplicationPayload())
 
-        #expect(vaultStore.calledMethods == [.retrieve, .export])
+        #expect(vaultStore.calledMethods == [
+            .retrieve, // reload items
+            .export, // export for payload hash
+            .retrieve, // sync to OTP autofill store
+        ])
         #expect(vaultTagStore.calledMethods == [.retrieveTags])
+        #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
     }
 
     @Test
@@ -598,12 +608,22 @@ final class VaultDataModelTests {
     func importOverride_reloadsStores() async throws {
         let vaultStore = VaultStoreStub()
         let vaultTagStore = VaultTagStoreStub()
-        let sut = makeSUT(vaultStore: vaultStore, vaultTagStore: vaultTagStore)
+        let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
+        let sut = makeSUT(
+            vaultStore: vaultStore,
+            vaultTagStore: vaultTagStore,
+            vaultOtpAutofillStore: vaultOtpAutofillStore,
+        )
 
         try await sut.importOverride(payload: anyApplicationPayload())
 
-        #expect(vaultStore.calledMethods == [.retrieve, .export])
+        #expect(vaultStore.calledMethods == [
+            .retrieve, // reload items
+            .export, // export for payload hash
+            .retrieve, // sync to OTP autofill store
+        ])
         #expect(vaultTagStore.calledMethods == [.retrieveTags])
+        #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
     }
 
     @Test
