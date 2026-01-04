@@ -841,11 +841,11 @@ final class VaultDataModelTests {
         let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
         let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
 
-        let item1 = uniqueVaultItem(payload: .otpCode(anyOTPAuthCode()))
-        let item2 = uniqueVaultItem(payload: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
+        let item1 = uniqueVaultItem(item: .otpCode(anyOTPAuthCode()))
+        let item2 = uniqueVaultItem(item: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
 
         store.retrieveHandler = { _ in
-            .init(items: [.success(item1), .success(item2)])
+            .init(items: [item1, item2])
         }
 
         try await confirmation { confirm in
@@ -869,7 +869,7 @@ final class VaultDataModelTests {
         let sut = makeSUT(vaultStore: store, vaultOtpAutofillStore: vaultOtpAutofillStore)
 
         store.retrieveHandler = { _ in
-            .init(items: [.success(uniqueVaultItem())])
+            .init(items: [uniqueVaultItem()])
         }
         vaultOtpAutofillStore.syncAllHandler = { _ in throw TestError() }
 

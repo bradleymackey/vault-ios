@@ -127,16 +127,16 @@ struct VaultOTPAutofillStoreImplTests {
         let spy = CredentialIdentityStoreMock()
         let sut = makeSUT(store: spy)
 
-        let item1 = uniqueVaultItem(payload: .otpCode(anyOTPAuthCode(accountName: "user1", issuerName: "example.com")))
-        let item2 = uniqueVaultItem(payload: .otpCode(anyOTPAuthCode(accountName: "user2", issuerName: "test.com")))
-        let item3 = uniqueVaultItem(payload: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
+        let item1 = uniqueVaultItem(item: .otpCode(anyOTPAuthCode(accountName: "user1", issuerName: "example.com")))
+        let item2 = uniqueVaultItem(item: .otpCode(anyOTPAuthCode(accountName: "user2", issuerName: "test.com")))
+        let item3 = uniqueVaultItem(item: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
 
         try await sut.syncAll(items: [item1, item2, item3])
 
         #expect(spy.removeAllCredentialIdentitiesCallCount == 1)
-        #expect(spy.replaceCredentialIdentitiesCallCount == 1)
+        #expect(spy.saveCredentialIdentitiesCallCount == 1)
 
-        let identities = try #require(spy.replaceCredentialIdentitiesArgValues.first)
+        let identities = try #require(spy.saveCredentialIdentitiesArgValues.first)
         #expect(identities.count == 2) // Only the 2 OTP items
 
         let otpIdentities = identities.compactMap { $0 as? ASOneTimeCodeCredentialIdentity }
@@ -159,7 +159,7 @@ struct VaultOTPAutofillStoreImplTests {
         try await sut.syncAll(items: [])
 
         #expect(spy.removeAllCredentialIdentitiesCallCount == 1)
-        #expect(spy.replaceCredentialIdentitiesCallCount == 0)
+        #expect(spy.saveCredentialIdentitiesCallCount == 0)
     }
 
     @Test
@@ -167,13 +167,13 @@ struct VaultOTPAutofillStoreImplTests {
         let spy = CredentialIdentityStoreMock()
         let sut = makeSUT(store: spy)
 
-        let item1 = uniqueVaultItem(payload: .secureNote(.init(title: "Note 1", contents: "Content", format: .plain)))
-        let item2 = uniqueVaultItem(payload: .secureNote(.init(title: "Note 2", contents: "Content", format: .plain)))
+        let item1 = uniqueVaultItem(item: .secureNote(.init(title: "Note 1", contents: "Content", format: .plain)))
+        let item2 = uniqueVaultItem(item: .secureNote(.init(title: "Note 2", contents: "Content", format: .plain)))
 
         try await sut.syncAll(items: [item1, item2])
 
         #expect(spy.removeAllCredentialIdentitiesCallCount == 1)
-        #expect(spy.replaceCredentialIdentitiesCallCount == 0)
+        #expect(spy.saveCredentialIdentitiesCallCount == 0)
     }
 }
 

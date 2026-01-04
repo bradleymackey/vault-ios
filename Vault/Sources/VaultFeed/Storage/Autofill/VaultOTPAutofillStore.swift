@@ -62,7 +62,6 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
             label: otpCode.data.accountName,
             recordIdentifier: id.uuidString,
         )
-        try await remove(id: id)
         try await store.saveCredentialIdentities([identity])
     }
 
@@ -84,7 +83,10 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
             )
         }
 
-        try await store.saveCredentialIdentities(identities)
+        // Only save if there are identities to add
+        if !identities.isEmpty {
+            try await store.saveCredentialIdentities(identities)
+        }
     }
 
     public func remove(id: UUID) async throws {
