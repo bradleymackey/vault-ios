@@ -242,12 +242,18 @@ extension VaultDataModel {
                 filterText: itemsSanitizedQuery,
                 filterTags: itemsFilteringByTags,
             )
-            await vaultKillphraseDeleter.deleteItems(matchingKillphrase: itemsSearchQuery)
+            let didDeleteKillphraseItems = await vaultKillphraseDeleter
+                .deleteItems(matchingKillphrase: itemsSearchQuery)
             let result = try await vaultStore.retrieve(query: query)
             items = result.items
             itemErrors = result.errors
             itemsRetrievalError = nil
             hasAnyItems = try await vaultStore.hasAnyItems
+
+            // If killphrase deletion occurred, sync OTP autofill store to remove deleted items
+            if didDeleteKillphraseItems {
+                try? await syncAllToOTPAutofillStore()
+            }
         } catch {
             itemsRetrievalError = PresentationError(
                 userTitle: "Error Loading",

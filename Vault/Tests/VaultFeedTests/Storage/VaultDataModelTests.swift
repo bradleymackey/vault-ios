@@ -272,6 +272,7 @@ final class VaultDataModelTests {
             killphraseDeleter.deleteItemsHandler = { query in
                 #expect(query == "hello world")
                 confirmDelete()
+                return false
             }
 
             await confirmation("Retrieve called", expectedCount: 1) { confirmRetrieve in
