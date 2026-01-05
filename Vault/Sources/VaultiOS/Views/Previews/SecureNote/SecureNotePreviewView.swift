@@ -19,6 +19,7 @@ struct SecureNotePreviewView: View {
                 .font(titleFont)
                 .foregroundStyle(isEditing ? .white : .primary)
                 .lineLimit(description != nil ? 3 : nil)
+                .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             if let description {
