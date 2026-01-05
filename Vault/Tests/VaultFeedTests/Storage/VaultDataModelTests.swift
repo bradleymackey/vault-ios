@@ -308,7 +308,12 @@ final class VaultDataModelTests {
 
         try await sut.update(itemID: .new(), data: item)
 
-        #expect(store.calledMethods == [.update, .retrieve, .export])
+        #expect(store.calledMethods == [
+            .update,
+            .retrieve, // reload items
+            .export, // export for payload hash
+            .retrieve, // sync to OTP autofill store
+        ])
         #expect(cache1.vaultItemCacheClearCallCount == 1)
         #expect(cache2.vaultItemCacheClearCallCount == 1)
     }
@@ -322,7 +327,12 @@ final class VaultDataModelTests {
 
         try await sut.delete(itemID: .new())
 
-        #expect(store.calledMethods == [.delete, .retrieve, .export])
+        #expect(store.calledMethods == [
+            .delete,
+            .retrieve, // reload items
+            .export, // export for payload hash
+            .retrieve, // sync to OTP autofill store
+        ])
         #expect(cache1.vaultItemCacheClearCallCount == 1)
         #expect(cache2.vaultItemCacheClearCallCount == 1)
     }
@@ -790,15 +800,14 @@ final class VaultDataModelTests {
         )
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.syncHandler = { id, payload in
-                #expect(id == itemID.rawValue)
-                #expect(payload == .otpCode(otpCode))
+            vaultOtpAutofillStore.syncAllHandler = { _ in
                 confirm()
             }
 
             try await sut.update(itemID: itemID, data: item)
 
-            #expect(vaultOtpAutofillStore.syncCallCount == 1)
+            // Updates use full sync since we don't have access to old values
+            #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
         }
     }
 
@@ -824,15 +833,14 @@ final class VaultDataModelTests {
         )
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.syncHandler = { id, payload in
-                #expect(id == itemID.rawValue)
-                #expect(payload == .secureNote(secureNote))
+            vaultOtpAutofillStore.syncAllHandler = { _ in
                 confirm()
             }
 
             try await sut.update(itemID: itemID, data: item)
 
-            #expect(vaultOtpAutofillStore.syncCallCount == 1)
+            // Updates use full sync since we don't have access to old values
+            #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
         }
     }
 
@@ -845,14 +853,14 @@ final class VaultDataModelTests {
         let itemID = Identifier<VaultItem>.new()
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.removeHandler = { id in
-                #expect(id == itemID.rawValue)
+            vaultOtpAutofillStore.syncAllHandler = { _ in
                 confirm()
             }
 
             try await sut.delete(itemID: itemID)
 
-            #expect(vaultOtpAutofillStore.removeCallCount == 1)
+            // Deletes use full sync to ensure removal works reliably
+            #expect(vaultOtpAutofillStore.syncAllCallCount == 1)
         }
     }
 

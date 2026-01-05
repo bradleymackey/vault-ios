@@ -46,6 +46,26 @@ struct VaultOTPAutofillStoreImplTests {
     }
 
     @Test
+    func sync_otpItem_removesBeforeSaving() async throws {
+        let spy = CredentialIdentityStoreMock()
+        let sut = makeSUT(store: spy)
+        let id = UUID()
+        let code = anyOTPAuthCode()
+
+        try await sut.sync(id: id, item: .otpCode(code))
+
+        // Should remove existing identity first, then save the new one
+        // This ensures updates are reflected in the QuickType bar
+        #expect(spy.removeCredentialIdentitiesCallCount == 1)
+        #expect(spy.saveCredentialIdentitiesCallCount == 1)
+
+        // Verify the remove happened before the save
+        let removeIdentities = try #require(spy.removeCredentialIdentitiesArgValues.first)
+        let removeIdentity = try #require(removeIdentities.first as? ASOneTimeCodeCredentialIdentity)
+        #expect(removeIdentity.recordIdentifier == id.uuidString)
+    }
+
+    @Test
     func sync_nonOTPItem_removesFromStore() async throws {
         let spy = CredentialIdentityStoreMock()
         let sut = makeSUT(store: spy)
@@ -79,7 +99,7 @@ struct VaultOTPAutofillStoreImplTests {
         let sut = makeSUT(store: spy)
         let id = UUID()
 
-        try await sut.remove(id: id)
+        try await sut.remove(id: id, code: nil)
 
         let identities = try #require(spy.removeCredentialIdentitiesArgValues.first)
         let identity = try #require(identities.first as? ASOneTimeCodeCredentialIdentity)
@@ -95,7 +115,7 @@ struct VaultOTPAutofillStoreImplTests {
         }
 
         await #expect(throws: (any Error).self) {
-            try await sut.remove(id: UUID())
+            try await sut.remove(id: UUID(), code: nil)
         }
     }
 

@@ -284,6 +284,7 @@ extension VaultDataModel {
     public func insert(item: VaultItem.Write) async throws {
         let itemID = try await vaultStore.insert(item: item)
         await reloadItems()
+        // Individual sync works for inserts since there's no old value to worry about
         try? await vaultOtpAutofillStore.sync(id: itemID.rawValue, item: item.item)
     }
 
@@ -292,15 +293,19 @@ extension VaultDataModel {
         await invalidateCaches(itemID: id)
         await reloadItems()
         await updateCurrentPayloadHash()
-        try? await vaultOtpAutofillStore.sync(id: id.rawValue, item: data.item)
+        // Must do full sync for updates because we don't have access to old values
+        // to construct a matching identity for removal. Attempting individual remove
+        // with new values won't match the existing identity with old values.
+        try? await syncAllToOTPAutofillStore()
     }
 
     public func delete(itemID: Identifier<VaultItem>) async throws {
-        try? await vaultOtpAutofillStore.remove(id: itemID.rawValue)
         try await vaultStore.delete(id: itemID)
         await invalidateCaches(itemID: itemID)
         await reloadItems()
         await updateCurrentPayloadHash()
+        // Full sync for deletes to ensure removal works reliably
+        try? await syncAllToOTPAutofillStore()
     }
 
     public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
@@ -411,7 +416,7 @@ extension VaultDataModel {
     }
 
     public func removeOTPItemFromAutofillStore(id: UUID) async throws {
-        try await vaultOtpAutofillStore.remove(id: id)
+        try await vaultOtpAutofillStore.remove(id: id, code: nil)
     }
 
     public func getOTPAutofillStoreState() async -> ASCredentialIdentityStoreState {

@@ -27,7 +27,10 @@ public protocol VaultOTPAutofillStore: Sendable {
 
     /// Removes a specific OTP credential identity by VaultItem UUID.
     /// Safe to call even if the item is not in the autofill store.
-    func remove(id: UUID) async throws
+    /// - Parameters:
+    ///   - id: The UUID of the vault item
+    ///   - code: Optional OTP code data to help match the identity. If nil, will attempt removal with empty fields.
+    func remove(id: UUID, code: OTPAuthCode?) async throws
 
     /// Removes all OTP credential identities from the store.
     func removeAll() async throws
@@ -50,9 +53,13 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
     public func sync(id: UUID, item: VaultItem.Payload) async throws {
         guard let otpCode = item.otpCode else {
             // Not an OTP item, remove from autofill store if present
-            try await remove(id: id)
+            try await remove(id: id, code: nil)
             return
         }
+
+        // Remove existing identity first to ensure updates are reflected
+        // saveCredentialIdentities does not update existing identities, only inserts new ones
+        try await remove(id: id, code: otpCode)
 
         let identity = ASOneTimeCodeCredentialIdentity(
             serviceIdentifier: ASCredentialServiceIdentifier(
@@ -89,15 +96,16 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         }
     }
 
-    public func remove(id: UUID) async throws {
-        // Create minimal identity with recordIdentifier for removal
-        // Apple's API matches by recordIdentifier, so other fields don't matter
+    public func remove(id: UUID, code: OTPAuthCode?) async throws {
+        // Create identity for removal
+        // If we have the code data, use it to ensure proper matching
+        // Otherwise use empty values and hope recordIdentifier alone is enough
         let identity = ASOneTimeCodeCredentialIdentity(
             serviceIdentifier: ASCredentialServiceIdentifier(
-                identifier: "",
+                identifier: code?.data.issuer ?? "",
                 type: .domain,
             ),
-            label: "",
+            label: code?.data.accountName ?? "",
             recordIdentifier: id.uuidString,
         )
         try await store.removeCredentialIdentities([identity])
