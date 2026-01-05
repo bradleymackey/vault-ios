@@ -74,5 +74,8 @@ public protocol VaultStoreDeleter: Sendable {
 
 /// @mockable
 public protocol VaultStoreKillphraseDeleter: Sendable {
-    func deleteItems(matchingKillphrase: String) async
+    /// Deletes items matching the given killphrase.
+    /// - Returns: `true` if any items were deleted, `false` otherwise
+    @discardableResult
+    func deleteItems(matchingKillphrase: String) async -> Bool
 }

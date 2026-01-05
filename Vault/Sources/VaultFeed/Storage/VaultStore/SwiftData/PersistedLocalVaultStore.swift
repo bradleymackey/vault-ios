@@ -486,14 +486,23 @@ extension PersistedLocalVaultStore: VaultStoreDeleter {
 // MARK: - VaultStoreKillphraseDeleter
 
 extension PersistedLocalVaultStore: VaultStoreKillphraseDeleter {
-    public func deleteItems(matchingKillphrase: String) async {
+    @discardableResult
+    public func deleteItems(matchingKillphrase: String) async -> Bool {
         do {
-            guard matchingKillphrase.isNotBlank else { return }
-            try modelContext.delete(model: PersistedVaultItem.self, where: #Predicate {
+            guard matchingKillphrase.isNotBlank else { return false }
+
+            let predicate: Predicate<PersistedVaultItem> = #Predicate {
                 // must match EXACTLY
                 $0.killphrase == matchingKillphrase
-            })
+            }
+            // Count items before deletion
+            let descriptor = FetchDescriptor<PersistedVaultItem>(predicate: predicate)
+            let itemsToDelete = try modelContext.fetchCount(descriptor)
+            guard itemsToDelete > 0 else { return false }
+
+            try modelContext.delete(model: PersistedVaultItem.self, where: predicate)
             try modelContext.save()
+            return true
         } catch {
             modelContext.rollback()
             fatalError("Crashing to protect data privacy – unable to delete killphrase item")

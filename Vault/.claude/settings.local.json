@@ -5,7 +5,9 @@
       "Bash(xargs:*)",
       "Bash(sort:*)",
       "Bash(find:*)",
-      "Bash(cat:*)"
+      "Bash(cat:*)",
+      "Bash(xcodebuild test:*)",
+      "Bash(xcodebuild -list:*)"
     ]
   }
 }

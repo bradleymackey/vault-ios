@@ -20,6 +20,20 @@ struct DeveloperOTPAutofillView: View {
                 }
 
                 AsyncButton {
+                    try await dataModel.syncAllToOTPAutofillStore()
+                    await loadState()
+                    let toast = ToastValue(
+                        icon: Image(systemName: "arrow.triangle.2.circlepath"),
+                        message: "Synced All Vault Items",
+                    )
+                    presentToast(toast)
+                } label: {
+                    Text("Sync All Vault Items")
+                } loading: {
+                    ProgressView()
+                }
+
+                AsyncButton {
                     try await dataModel.clearOTPAutofillStore()
                     await loadState()
                     let toast = ToastValue(icon: Image(systemName: "checkmark"), message: "All OTP Items Cleared")
