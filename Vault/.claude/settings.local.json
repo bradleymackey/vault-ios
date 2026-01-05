@@ -7,7 +7,9 @@
       "Bash(find:*)",
       "Bash(cat:*)",
       "Bash(xcodebuild test:*)",
-      "Bash(xcodebuild -list:*)"
+      "Bash(xcodebuild -list:*)",
+      "Bash(git push:*)",
+      "mcp__github__create_pull_request"
     ]
   }
 }
