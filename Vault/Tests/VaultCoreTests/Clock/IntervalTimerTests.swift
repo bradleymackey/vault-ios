@@ -66,13 +66,16 @@ enum IntervalTimerTests {
 
         @Test
         func wait_multipleWaitsCanCompleteIndependently() async throws {
-            try await confirmation(expectedCount: 3) { confirmation in
+            try await confirmation(timeout: .seconds(10), expectedCount: 3) { confirmation in
                 for _ in 0 ..< 3 {
                     Task(priority: .high) {
                         try await sut.wait(for: 10)
                         confirmation.confirm()
                     }
                 }
+
+                // Give tasks time to start and register their waits
+                await Task.yield()
 
                 try await sut.finishTimer(at: 0)
                 try await sut.finishTimer(at: 1)
