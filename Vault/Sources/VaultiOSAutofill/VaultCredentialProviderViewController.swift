@@ -44,7 +44,9 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
             self?.extensionContext.completeExtensionConfigurationRequest()
         }.store(in: &cancellables)
         vaultAutofillViewModel.textToInsertPublisher.sink { [weak self] text in
-            self?.extensionContext.completeRequest(withTextToInsert: text)
+            // Complete the OTP code request with the generated code
+            let credential = ASOneTimeCodeCredential(code: text)
+            self?.extensionContext.completeOneTimeCodeRequest(using: credential, completionHandler: nil)
         }.store(in: &cancellables)
         vaultAutofillViewModel.cancelRequestPublisher.sink { [weak self] reason in
             let error = switch reason {
