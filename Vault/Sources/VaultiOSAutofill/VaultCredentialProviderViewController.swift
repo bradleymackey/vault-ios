@@ -157,7 +157,10 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      */
     override open func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
         super.prepareInterfaceToProvideCredential(for: credentialRequest)
-        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+
+        // Show the OTP code selector which handles authentication and code generation
+        // The user can select and authenticate to get their OTP code
+        vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 
     /*! @abstract Prepare the view controller to show a list of one time code credentials.
@@ -169,14 +172,14 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      [m.example.com, example.com] with the first item representing the more specifc service that requires a credential.
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
-    override open func prepareOneTimeCodeCredentialList(for _: [ASCredentialServiceIdentifier]) {
-        // For testing, immediately provide the stub OTP code without showing UI
-        // In a real implementation, you would:
-        // 1. Filter your vault items to find OTP credentials matching the serviceIdentifiers
-        // 2. Show UI with the list of matching OTP items
-        // 3. When user selects one, generate the actual OTP code and complete the request
-        let cred = ASOneTimeCodeCredential(code: "654321")
-        extensionContext.completeOneTimeCodeRequest(using: cred, completionHandler: nil)
+    override open func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        super.prepareOneTimeCodeCredentialList(for: serviceIdentifiers)
+
+        // Show the OTP code selector UI where users can:
+        // 1. See all their OTP credentials
+        // 2. Authenticate if needed
+        // 3. Select an OTP code to autofill
+        vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 
     /*
@@ -189,7 +192,8 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      */
     override open func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         super.prepareCredentialList(for: serviceIdentifiers)
-        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+        // This extension only supports OTP codes, not password credentials
+        extensionContext.cancelRequest(withError: CredentialTypeNotSupportedError())
     }
 }
 
