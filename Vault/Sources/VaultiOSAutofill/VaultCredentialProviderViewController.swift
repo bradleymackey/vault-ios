@@ -73,12 +73,6 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         vaultAutofillViewModel.show(feature: .setupConfiguration)
     }
 
-    struct CredentialTypeNotSupportedError: Error, LocalizedError {
-        var errorDescription: String? {
-            "Credential type is not supported by Vault"
-        }
-    }
-
     /*
      Implement this method if your extension supports showing credentials in the QuickType bar.
      When the user selects a credential from your app, this method will be called with the
@@ -95,7 +89,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
                 await provideOTPCredential(for: request)
             }
         default:
-            extensionContext.cancelRequest(withError: CredentialTypeNotSupportedError())
+            extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
         }
     }
 
@@ -195,7 +189,7 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
     override open func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         super.prepareCredentialList(for: serviceIdentifiers)
         // This extension only supports OTP codes, not password credentials
-        extensionContext.cancelRequest(withError: CredentialTypeNotSupportedError())
+        extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
     }
 }
 
