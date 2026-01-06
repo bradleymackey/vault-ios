@@ -19,10 +19,17 @@ import VaultCore
 public protocol VaultOTPAutofillStore: Sendable {
     /// Syncs a VaultItem to the autofill store.
     /// If the item is an OTP code, it will be added/updated. Otherwise, this is a no-op.
-    func sync(id: UUID, item: VaultItem.Payload) async throws
+    /// Items hidden with passphrase (requiresSearchPassphrase) will not be added to autofill.
+    func sync(
+        id: UUID,
+        item: VaultItem.Payload,
+        visibility: VaultItemVisibility,
+        searchableLevel: VaultItemSearchableLevel,
+    ) async throws
 
     /// Syncs all vault items to the autofill store.
     /// Removes all existing items and repopulates with all OTP items from the vault.
+    /// Items hidden with passphrase (requiresSearchPassphrase) will not be added to autofill.
     func syncAll(items: [VaultItem]) async throws
 
     /// Removes a specific OTP credential identity by VaultItem UUID.
@@ -50,10 +57,23 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         self.store = store
     }
 
-    public func sync(id: UUID, item: VaultItem.Payload) async throws {
+    public func sync(
+        id: UUID,
+        item: VaultItem.Payload,
+        visibility: VaultItemVisibility,
+        searchableLevel: VaultItemSearchableLevel,
+    ) async throws {
         guard let otpCode = item.otpCode else {
             // Not an OTP item, remove from autofill store if present
             try await remove(id: id, code: nil)
+            return
+        }
+
+        // Check if item is hidden with passphrase
+        let viewConfig = VaultItemViewConfiguration(visibility: visibility, searchableLevel: searchableLevel)
+        if viewConfig == .requiresSearchPassphrase {
+            // Hidden items should not appear in autofill, remove if present
+            try await remove(id: id, code: otpCode)
             return
         }
 
@@ -76,9 +96,19 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         // Clear all existing identities
         try await store.removeAllCredentialIdentities()
 
-        // Build identities for all OTP items
+        // Build identities for all OTP items that are not hidden with passphrase
         let identities = items.compactMap { item -> ASOneTimeCodeCredentialIdentity? in
             guard let otpCode = item.item.otpCode else { return nil }
+
+            // Check if item is hidden with passphrase
+            let viewConfig = VaultItemViewConfiguration(
+                visibility: item.metadata.visibility,
+                searchableLevel: item.metadata.searchableLevel,
+            )
+            if viewConfig == .requiresSearchPassphrase {
+                // Hidden items should not appear in autofill
+                return nil
+            }
 
             return ASOneTimeCodeCredentialIdentity(
                 serviceIdentifier: ASCredentialServiceIdentifier(

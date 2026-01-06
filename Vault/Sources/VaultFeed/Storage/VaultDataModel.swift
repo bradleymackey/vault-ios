@@ -285,7 +285,12 @@ extension VaultDataModel {
         let itemID = try await vaultStore.insert(item: item)
         await reloadItems()
         // Individual sync works for inserts since there's no old value to worry about
-        try? await vaultOtpAutofillStore.sync(id: itemID.rawValue, item: item.item)
+        try? await vaultOtpAutofillStore.sync(
+            id: itemID.rawValue,
+            item: item.item,
+            visibility: item.visibility,
+            searchableLevel: item.searchableLevel,
+        )
     }
 
     public func update(itemID id: Identifier<VaultItem>, data: VaultItem.Write) async throws {
@@ -404,6 +409,8 @@ extension VaultDataModel {
         try await vaultOtpAutofillStore.sync(
             id: UUID(),
             item: .otpCode(code),
+            visibility: .always,
+            searchableLevel: .full,
         )
     }
 
