@@ -659,7 +659,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "This item will be hidden in the main feed. You must search exactly for this passphrase to find this item. Don't forget it!"
+            "value" : "This item will be hidden in the main feed. You must search exactly for this passphrase to find this item. Don't forget it!\n\nNote: Hidden OTP codes will not appear in autofill."
           }
         }
       }
