@@ -19,38 +19,71 @@ struct VaultAutofillConfigurationView: View {
     }
 
     private var container: some View {
-        VStack(alignment: .center, spacing: 24) {
-            VStack(alignment: .center, spacing: 8) {
-                Image(systemName: "character.textbox")
-                    .font(.largeTitle.bold())
-                Text("Vault Autofill")
-                    .font(.largeTitle.bold())
+        VStack(alignment: .center, spacing: 32) {
+            Spacer()
+
+            VStack(alignment: .center, spacing: 12) {
+                Image(systemName: "number.circle.fill")
+                    .font(.system(size: 64, weight: .medium))
+                    .foregroundStyle(.blue)
+                    .symbolRenderingMode(.hierarchical)
+
+                Text("OTP Autofill")
+                    .font(.system(size: 28, weight: .bold))
             }
 
-            VStack(alignment: .center, spacing: 8) {
-                Text("Autofill for your items is now enabled.")
-                Text(
-                    "To autofill in a text field, hold down on the text field, select 'Autofill' followed by 'Passwords'",
-                )
-            }
-            .font(.body)
+            VStack(alignment: .center, spacing: 24) {
+                Text("Your OTP codes are now available for autofill")
+                    .font(.title3)
+                    .fontWeight(.semibold)
 
-            VStack(alignment: .center, spacing: 8) {
-                Text(
-                    "Due to a bug in the latest release of iOS, OTP codes may not automatically offer to autofill currently. This feature will be added as soon as possible.",
-                )
+                VStack(alignment: .leading, spacing: 16) {
+                    featureRow(
+                        icon: "network",
+                        text: "OTP codes appear on their configured domain names",
+                    )
+
+                    featureRow(
+                        icon: "arrow.triangle.2.circlepath",
+                        text: "Codes update automatically based on your vault items",
+                    )
+                }
+                .frame(maxWidth: 400)
             }
-            .font(.footnote)
-            .foregroundStyle(.secondary)
+
+            Spacer()
 
             Button {
                 viewModel.dismiss()
             } label: {
-                Text("Understood")
+                Text("Continue")
                     .font(.headline)
+                    .frame(maxWidth: .infinity)
             }
             .modifier(ProminentButtonModifier())
         }
         .multilineTextAlignment(.center)
+    }
+
+    private func featureRow(icon: String, text: String) -> some View {
+        HStack(alignment: .top, spacing: 16) {
+            Image(systemName: icon)
+                .font(.system(size: 24))
+                .foregroundStyle(.blue)
+                .symbolRenderingMode(.hierarchical)
+                .frame(width: 32, height: 32)
+
+            Text(text)
+                .font(.body)
+                .foregroundStyle(.primary)
+                .multilineTextAlignment(.leading)
+                .frame(maxWidth: .infinity, alignment: .leading)
+        }
+        .padding(.horizontal, 16)
+        .padding(.vertical, 12)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color(uiColor: .secondarySystemGroupedBackground)),
+        )
     }
 }

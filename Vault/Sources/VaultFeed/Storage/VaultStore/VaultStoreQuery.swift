@@ -12,7 +12,7 @@ public struct VaultStoreQuery: Sendable, Equatable {
     /// Require that the item includes **any** of these search tags.
     public var filterTags: Set<Identifier<VaultItemTag>>
 
-    init(filterText: String? = nil, filterTags: Set<Identifier<VaultItemTag>> = []) {
+    public init(filterText: String? = nil, filterTags: Set<Identifier<VaultItemTag>> = []) {
         self.filterText = filterText
         self.filterTags = filterTags
     }

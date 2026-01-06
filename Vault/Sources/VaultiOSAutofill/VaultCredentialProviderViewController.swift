@@ -1,6 +1,7 @@
 import AuthenticationServices
 import Combine
 import SwiftUI
+import VaultCore
 import VaultiOS
 
 /// Implementation of the view controller that presents
@@ -43,7 +44,9 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
             self?.extensionContext.completeExtensionConfigurationRequest()
         }.store(in: &cancellables)
         vaultAutofillViewModel.textToInsertPublisher.sink { [weak self] text in
-            self?.extensionContext.completeRequest(withTextToInsert: text)
+            // Complete the OTP code request with the generated code
+            let credential = ASOneTimeCodeCredential(code: text)
+            self?.extensionContext.completeOneTimeCodeRequest(using: credential, completionHandler: nil)
         }.store(in: &cancellables)
         vaultAutofillViewModel.cancelRequestPublisher.sink { [weak self] reason in
             let error = switch reason {
@@ -70,12 +73,6 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         vaultAutofillViewModel.show(feature: .setupConfiguration)
     }
 
-    struct CredentialTypeNotSupportedError: Error, LocalizedError {
-        var errorDescription: String? {
-            "Credential type is not supported by Vault"
-        }
-    }
-
     /*
      Implement this method if your extension supports showing credentials in the QuickType bar.
      When the user selects a credential from your app, this method will be called with the
@@ -88,10 +85,63 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
         // Handle OTP code requests from QuickType bar
         switch request.type {
         case .oneTimeCode:
-            let credential = ASOneTimeCodeCredential(code: "123456")
-            extensionContext.completeOneTimeCodeRequest(using: credential, completionHandler: nil)
+            Task {
+                await provideOTPCredential(for: request)
+            }
         default:
-            extensionContext.cancelRequest(withError: CredentialTypeNotSupportedError())
+            extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+        }
+    }
+
+    @MainActor
+    private func provideOTPCredential(for request: any ASCredentialRequest) async {
+        // Extract the credential identity and record identifier
+        guard let identity = request.credentialIdentity as? ASOneTimeCodeCredentialIdentity,
+              let recordIdentifier = identity.recordIdentifier,
+              let itemUUID = UUID(uuidString: recordIdentifier)
+        else {
+            extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+            return
+        }
+
+        do {
+            // Retrieve all items from the vault to find the matching OTP item
+            let result = try await VaultRoot.vaultStore.retrieve(query: .init())
+
+            guard let vaultItem = result.items.first(where: { $0.id.rawValue == itemUUID }),
+                  let otpCode = vaultItem.item.otpCode
+            else {
+                extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
+                return
+            }
+
+            // Check if the item requires authentication to access
+            let copyAction = VaultRoot.vaultItemCopyHandler.textToCopyForVaultItem(id: vaultItem.id)
+            if copyAction?.requiresAuthenticationToCopy == true {
+                // Require user interaction for authentication
+                extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
+                return
+            }
+
+            // Generate the OTP code based on the type
+            let codeString: String
+            switch otpCode.type {
+            case let .totp(period):
+                let totpCode = TOTPAuthCode(period: period, data: otpCode.data)
+                let epochSeconds = UInt64(Date().timeIntervalSince1970)
+                codeString = try totpCode.renderCode(epochSeconds: epochSeconds)
+            case .hotp:
+                // HOTP codes require user interaction to increment counter
+                extensionContext.cancelRequest(withError: ASExtensionError(.userInteractionRequired))
+                return
+            }
+
+            // Complete the request with the generated code
+            let credential = ASOneTimeCodeCredential(code: codeString)
+            extensionContext.completeOneTimeCodeRequest(using: credential, completionHandler: nil)
+
+        } catch {
+            extensionContext.cancelRequest(withError: ASExtensionError(.failed))
         }
     }
 
@@ -103,7 +153,10 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      */
     override open func prepareInterfaceToProvideCredential(for credentialRequest: any ASCredentialRequest) {
         super.prepareInterfaceToProvideCredential(for: credentialRequest)
-        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+
+        // Show the OTP code selector which handles authentication and code generation
+        // The user can select and authenticate to get their OTP code
+        vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 
     /*! @abstract Prepare the view controller to show a list of one time code credentials.
@@ -115,14 +168,14 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      [m.example.com, example.com] with the first item representing the more specifc service that requires a credential.
      If the array of service identifiers is empty, it is expected that the credential list should still show credentials that the user can pick from.
      */
-    override open func prepareOneTimeCodeCredentialList(for _: [ASCredentialServiceIdentifier]) {
-        // For testing, immediately provide the stub OTP code without showing UI
-        // In a real implementation, you would:
-        // 1. Filter your vault items to find OTP credentials matching the serviceIdentifiers
-        // 2. Show UI with the list of matching OTP items
-        // 3. When user selects one, generate the actual OTP code and complete the request
-        let cred = ASOneTimeCodeCredential(code: "654321")
-        extensionContext.completeOneTimeCodeRequest(using: cred, completionHandler: nil)
+    override open func prepareOneTimeCodeCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
+        super.prepareOneTimeCodeCredentialList(for: serviceIdentifiers)
+
+        // Show the OTP code selector UI where users can:
+        // 1. See all their OTP credentials
+        // 2. Authenticate if needed
+        // 3. Select an OTP code to autofill
+        vaultAutofillViewModel.show(feature: .showAllCodesSelector)
     }
 
     /*
@@ -135,7 +188,8 @@ open class VaultCredentialProviderViewController: ASCredentialProviderViewContro
      */
     override open func prepareCredentialList(for serviceIdentifiers: [ASCredentialServiceIdentifier]) {
         super.prepareCredentialList(for: serviceIdentifiers)
-        vaultAutofillViewModel.show(feature: .unimplemented(#function))
+        // This extension only supports OTP codes, not password credentials
+        extensionContext.cancelRequest(withError: ASExtensionError(.credentialIdentityNotFound))
     }
 }
 
