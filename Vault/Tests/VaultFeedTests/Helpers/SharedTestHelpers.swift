@@ -144,6 +144,7 @@ func uniqueVaultItem(
     userDescription: String = "",
     visibility: VaultItemVisibility = .always,
     tags: Set<Identifier<VaultItemTag>> = [],
+    searchableLevel: VaultItemSearchableLevel = .full,
     killphrase: String? = nil,
     lockState: VaultItemLockState = .notLocked,
 ) -> VaultItem {
@@ -155,6 +156,7 @@ func uniqueVaultItem(
             userDescription: userDescription,
             visibility: visibility,
             tags: tags,
+            searchableLevel: searchableLevel,
             killphrase: killphrase,
             lockState: lockState,
         ),

@@ -21,7 +21,7 @@ struct VaultOTPAutofillStoreImplTests {
             issuerName: issuerName,
         )
 
-        try await sut.sync(id: id, item: .otpCode(code))
+        try await sut.sync(id: id, item: .otpCode(code), visibility: .always, searchableLevel: .full)
 
         let identities = try #require(spy.saveCredentialIdentitiesArgValues.first)
         let identity = try #require(identities.first as? ASOneTimeCodeCredentialIdentity)
@@ -38,7 +38,7 @@ struct VaultOTPAutofillStoreImplTests {
         let id = UUID()
         let code = anyOTPAuthCode()
 
-        try await sut.sync(id: id, item: .otpCode(code))
+        try await sut.sync(id: id, item: .otpCode(code), visibility: .always, searchableLevel: .full)
 
         #expect(spy.saveCredentialIdentitiesCallCount == 1)
         let identities = try #require(spy.saveCredentialIdentitiesArgValues.first)
@@ -52,7 +52,7 @@ struct VaultOTPAutofillStoreImplTests {
         let id = UUID()
         let code = anyOTPAuthCode()
 
-        try await sut.sync(id: id, item: .otpCode(code))
+        try await sut.sync(id: id, item: .otpCode(code), visibility: .always, searchableLevel: .full)
 
         // Should remove existing identity first, then save the new one
         // This ensures updates are reflected in the QuickType bar
@@ -71,7 +71,12 @@ struct VaultOTPAutofillStoreImplTests {
         let sut = makeSUT(store: spy)
         let id = UUID()
 
-        try await sut.sync(id: id, item: .secureNote(.init(title: "Note", contents: "Content", format: .plain)))
+        try await sut.sync(
+            id: id,
+            item: .secureNote(.init(title: "Note", contents: "Content", format: .plain)),
+            visibility: .always,
+            searchableLevel: .full,
+        )
 
         #expect(spy.saveCredentialIdentitiesCallCount == 0)
         #expect(spy.removeCredentialIdentitiesCallCount == 1)
@@ -89,7 +94,12 @@ struct VaultOTPAutofillStoreImplTests {
         }
 
         await #expect(throws: (any Error).self) {
-            try await sut.sync(id: UUID(), item: .otpCode(anyOTPAuthCode()))
+            try await sut.sync(
+                id: UUID(),
+                item: .otpCode(anyOTPAuthCode()),
+                visibility: .always,
+                searchableLevel: .full,
+            )
         }
     }
 
@@ -194,6 +204,67 @@ struct VaultOTPAutofillStoreImplTests {
 
         #expect(spy.removeAllCredentialIdentitiesCallCount == 1)
         #expect(spy.saveCredentialIdentitiesCallCount == 0)
+    }
+
+    @Test
+    func sync_hiddenOTPItem_removesFromStore() async throws {
+        let spy = CredentialIdentityStoreMock()
+        let sut = makeSUT(store: spy)
+        let id = UUID()
+        let code = anyOTPAuthCode()
+
+        try await sut.sync(id: id, item: .otpCode(code), visibility: .onlySearch, searchableLevel: .onlyPassphrase)
+
+        // Should remove from autofill store, not save
+        #expect(spy.removeCredentialIdentitiesCallCount == 1)
+        #expect(spy.saveCredentialIdentitiesCallCount == 0)
+
+        let identities = try #require(spy.removeCredentialIdentitiesArgValues.first)
+        let identity = try #require(identities.first as? ASOneTimeCodeCredentialIdentity)
+        #expect(identity.recordIdentifier == id.uuidString)
+    }
+
+    @Test
+    func syncAll_hidesItemsWithRequiresSearchPassphrase() async throws {
+        let spy = CredentialIdentityStoreMock()
+        let sut = makeSUT(store: spy)
+
+        let item1 = uniqueVaultItem(
+            item: .otpCode(anyOTPAuthCode(accountName: "user1", issuerName: "example.com")),
+            visibility: .always,
+            searchableLevel: .full,
+        )
+        let item2 = uniqueVaultItem(
+            item: .otpCode(anyOTPAuthCode(accountName: "user2", issuerName: "test.com")),
+            visibility: .onlySearch,
+            searchableLevel: .onlyPassphrase,
+        )
+        let item3 = uniqueVaultItem(
+            item: .otpCode(anyOTPAuthCode(accountName: "user3", issuerName: "demo.com")),
+            visibility: .always,
+            searchableLevel: .full,
+        )
+
+        try await sut.syncAll(items: [item1, item2, item3])
+
+        #expect(spy.removeAllCredentialIdentitiesCallCount == 1)
+        #expect(spy.saveCredentialIdentitiesCallCount == 1)
+
+        let identities = try #require(spy.saveCredentialIdentitiesArgValues.first)
+        #expect(identities.count == 2) // Only the 2 visible OTP items
+
+        let otpIdentities = identities.compactMap { $0 as? ASOneTimeCodeCredentialIdentity }
+        #expect(otpIdentities.count == 2)
+
+        // Verify only the visible items are included
+        let identity1 = try #require(otpIdentities.first(where: { $0.label == "user1" }))
+        #expect(identity1.recordIdentifier == item1.id.rawValue.uuidString)
+
+        let identity3 = try #require(otpIdentities.first(where: { $0.label == "user3" }))
+        #expect(identity3.recordIdentifier == item3.id.rawValue.uuidString)
+
+        // Verify the hidden item is not included
+        #expect(otpIdentities.first(where: { $0.label == "user2" }) == nil)
     }
 }
 
