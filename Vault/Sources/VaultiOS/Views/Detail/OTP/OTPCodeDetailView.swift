@@ -190,9 +190,15 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     }
 
     private var iconHeader: some View {
+        Image(systemName: "key.horizontal.fill")
+            .font(.title)
+            .foregroundStyle(selectedColor)
+    }
+
+    private var iconEditingHeader: some View {
         VStack(spacing: 8) {
             Image(systemName: "key.horizontal.fill")
-                .font(.system(size: viewModel.isInEditMode ? 60 : 30))
+                .font(.largeTitle)
                 .foregroundStyle(selectedColor)
 
             ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
@@ -200,7 +206,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             })
             .labelsHidden()
         }
-        .frame(maxWidth: .infinity)
     }
 
     private var nameEditingSection: some View {
@@ -213,14 +218,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 Text(viewModel.strings.accountNameExample)
             }
         } header: {
-            iconHeader
-                .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
+            iconEditingHeader
+                .containerRelativeFrame(.horizontal)
+                .padding(.vertical, 4)
+                .padding(.bottom, 8)
         }
     }
 
     private var descriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
+                .font(.subheadline)
                 .frame(minHeight: 200)
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets())
@@ -292,55 +300,58 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
 
     private func codeInformationSection(code: OTPAuthCode, metadata: VaultItem.Metadata) -> some View {
         Section {
-            copyableViewGenerator().makeVaultPreviewView(
-                item: .otpCode(code),
-                metadata: metadata,
-                behaviour: .normal,
-            )
-            .frame(maxWidth: 200)
-            .padding()
-            .shadow(radius: 10)
-            .modifier(HorizontallyCenter())
-            .listRowBackground(EmptyView())
-        } footer: {
-            VStack(alignment: .center, spacing: 24) {
+            VStack(spacing: 16) {
+                copyableViewGenerator().makeVaultPreviewView(
+                    item: .otpCode(code),
+                    metadata: metadata,
+                    behaviour: .normal,
+                )
+                .frame(maxWidth: 200)
+
                 if viewModel.editingModel.detail.description.isNotBlank {
                     Text(viewModel.editingModel.detail.description)
                         .foregroundStyle(.primary)
                         .textSelection(.enabled)
                         .font(.callout)
                         .multilineTextAlignment(.leading)
-
-                    Divider()
-                }
-
-                VStack(alignment: .leading, spacing: 16) {
-                    if viewModel.tagsThatAreSelected.isNotEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                ForEach(viewModel.tagsThatAreSelected) { tag in
-                                    TagPillView(tag: tag, isSelected: true)
-                                        .id(tag)
-                                }
-                            }
-                            .font(.callout)
-                        }
-                        .scrollClipDisabled()
-                    }
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(viewModel.detailMenuItems) { entry in
-                            FooterInfoLabel(
-                                title: entry.title,
-                                detail: entry.detail,
-                                systemImageName: entry.systemIconName,
-                            )
-                        }
-                    }
-                    .font(.footnote)
+                        .frame(maxWidth: .infinity, alignment: .leading)
                 }
             }
-            .padding(.top, 16)
+            .padding(.vertical, 8)
+            .modifier(HorizontallyCenter())
+            .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
+        } header: {
+            iconHeader
+                .containerRelativeFrame(.horizontal)
+                .padding(.vertical, 4)
+        } footer: {
+            VStack(alignment: .leading, spacing: 16) {
+                if viewModel.tagsThatAreSelected.isNotEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(viewModel.tagsThatAreSelected) { tag in
+                                TagPillView(tag: tag, isSelected: true)
+                                    .id(tag)
+                            }
+                        }
+                        .font(.callout)
+                    }
+                    .scrollClipDisabled()
+                }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    ForEach(viewModel.detailMenuItems) { entry in
+                        FooterInfoLabel(
+                            title: entry.title,
+                            detail: entry.detail,
+                            systemImageName: entry.systemIconName,
+                        )
+                    }
+                }
+            }
+            .font(.footnote)
+            .padding(.top, 8)
+            .transition(.opacity)
         }
     }
 
