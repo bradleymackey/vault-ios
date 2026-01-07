@@ -106,6 +106,133 @@ final class VaultItemFeedViewSnapshotTests {
                 VaultItemTag(id: .init(), name: "tag2", color: .gray),
             ]
         }
+        store.retrieveHandler = { _ in .init(items: [uniqueVaultItem()]) }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel)
+            .framedForTest()
+
+        dataModel.itemsFilteringByTags = [tag1Id]
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @Test
+    func unifiedBar_searchingWithResults() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+            ])
+        }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel)
+            .framedForTest()
+
+        dataModel.itemsSearchQuery = "test"
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @Test
+    func unifiedBar_searchingWithNoResults() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        store.retrieveHandler = { _ in .init(items: []) }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel)
+            .framedForTest()
+
+        dataModel.itemsSearchQuery = "nonexistent"
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @Test
+    func unifiedBar_tagFilteringInEditMode() async throws {
+        let state = VaultItemFeedState()
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let tag1Id = Identifier<VaultItemTag>()
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: tag1Id, name: "work"),
+                VaultItemTag(id: .init(), name: "personal", color: .tagDefault),
+            ]
+        }
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+            ])
+        }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel, state: state)
+            .framedForTest()
+
+        dataModel.itemsFilteringByTags = [tag1Id]
+        state.isEditing = true
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @Test
+    func unifiedBar_multipleTagsFiltered() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let tag1Id = Identifier<VaultItemTag>()
+        let tag2Id = Identifier<VaultItemTag>()
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: tag1Id, name: "work"),
+                VaultItemTag(id: tag2Id, name: "personal", color: .tagDefault),
+                VaultItemTag(id: .init(), name: "archive", color: .gray),
+            ]
+        }
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+            ])
+        }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        let sut = makeSUT(dataModel: dataModel)
+            .framedForTest()
+
+        dataModel.itemsFilteringByTags = [tag1Id, tag2Id]
+
+        assertSnapshot(of: sut, as: .image)
+    }
+
+    @Test
+    func unifiedBar_clearButtonVisible() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let tag1Id = Identifier<VaultItemTag>()
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: tag1Id, name: "important"),
+                VaultItemTag(id: .init(), name: "todo", color: .init(red: 1.0, green: 0.6, blue: 0.0)),
+            ]
+        }
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+                uniqueVaultItem(),
+            ])
+        }
         let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
         await dataModel.reloadData()
 
