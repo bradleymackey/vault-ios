@@ -100,18 +100,16 @@ public struct VaultItemFeedView<
                     .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
 
-                if dataModel.items.isNotEmpty {
-                    unifiedInfoSection
-                        .padding(.horizontal)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
+                unifiedInfoSection
+                    .padding(.horizontal)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
             }
             .padding(.top, 8)
             .padding(.bottom, 8)
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isEditing)
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.isSearching)
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.itemsFilteringByTags)
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.allTags.isEmpty)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: state.isEditing)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: dataModel.isSearching)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: dataModel.itemsFilteringByTags.count)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: dataModel.allTags.isEmpty)
         }
     }
 
@@ -155,41 +153,44 @@ public struct VaultItemFeedView<
             Spacer()
 
             // Right side: Action buttons
-            HStack(spacing: 8) {
-                // Clear button when filtering by tags
-                if dataModel.itemsFilteringByTags.isNotEmpty && !state.isEditing {
+            if dataModel.items.isNotEmpty {
+                HStack(spacing: 8) {
+                    // Clear button when filtering by tags
+                    if dataModel.itemsFilteringByTags.isNotEmpty, !state.isEditing {
+                        Button {
+                            dataModel.itemsFilteringByTags.removeAll()
+                        } label: {
+                            Label("Clear", systemImage: "tag.slash.fill")
+                        }
+                        .fontWeight(.semibold)
+                        .font(.footnote)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background(Color.secondary)
+                        .clipShape(Capsule())
+                    }
+
+                    // Edit/Done button
                     Button {
-                        dataModel.itemsFilteringByTags.removeAll()
+                        state.isEditing.toggle()
                     } label: {
-                        Label("Clear", systemImage: "tag.slash.fill")
+                        Label(
+                            state.isEditing ? "Done" : "Edit",
+                            systemImage: state.isEditing ? "checkmark" : "pencil",
+                        )
                     }
                     .fontWeight(.semibold)
                     .font(.footnote)
                     .foregroundStyle(.white)
                     .padding(.vertical, 8)
                     .padding(.horizontal, 16)
-                    .background(Color.secondary)
+                    .background(Color.accentColor)
                     .clipShape(Capsule())
                 }
-
-                // Edit/Done button
-                Button {
-                    state.isEditing.toggle()
-                } label: {
-                    Label(
-                        state.isEditing ? "Done" : "Edit",
-                        systemImage: state.isEditing ? "checkmark" : "pencil",
-                    )
-                }
-                .fontWeight(.semibold)
-                .font(.footnote)
-                .foregroundStyle(.white)
-                .padding(.vertical, 8)
-                .padding(.horizontal, 16)
-                .background(Color.accentColor)
-                .clipShape(Capsule())
             }
         }
+        .frame(minHeight: 44)
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
         .background(Color.primary.opacity(0.05))
