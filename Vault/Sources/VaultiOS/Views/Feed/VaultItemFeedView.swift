@@ -81,94 +81,122 @@ public struct VaultItemFeedView<
         .autocorrectionDisabled()
         .textInputAutocapitalization(.never)
         .safeAreaInset(edge: .bottom, spacing: 0) {
-            VStack(spacing: 0) {
-                if state.isEditing {
-                    editModeInfoSection
-                        .padding(.top, 8)
-                        .padding(.bottom, 8)
-                        .padding(.horizontal)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                }
-
+            VStack(spacing: 8) {
                 if dataModel.allTags.isNotEmpty {
-                    filteringByTagsSection
-                        .padding(.top, 8)
-                        .padding(.bottom, 8)
-                        .padding(.horizontal)
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.allTags.isEmpty)
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(dataModel.allTags) { tag in
+                                TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
+                                    .id(tag)
+                                    .onTapGesture {
+                                        dataModel.toggleFiltering(tag: tag.id)
+                                    }
+                            }
+                        }
+                        .font(.footnote)
+                    }
+                    .scrollClipDisabled()
+                    .padding(.horizontal)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
                 }
-            }
-            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isEditing)
-        }
-    }
 
-    private var filteringByTagsSection: some View {
-        VStack(spacing: 8) {
-            if dataModel.itemsFilteringByTags.isNotEmpty {
-                filteringByTagsInfoSection
+                unifiedInfoSection
+                    .padding(.horizontal)
                     .transition(.move(edge: .bottom).combined(with: .opacity))
             }
+            .padding(.top, 8)
+            .padding(.bottom, 8)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: state.isEditing)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: dataModel.isSearching)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: dataModel.itemsFilteringByTags.count)
+            .animation(.spring(response: 0.3, dampingFraction: 1.0), value: dataModel.allTags.isEmpty)
+        }
+    }
 
-            ScrollView(.horizontal, showsIndicators: false) {
-                HStack {
-                    ForEach(dataModel.allTags) { tag in
-                        TagPillView(tag: tag, isSelected: dataModel.itemsFilteringByTags.contains(tag.id))
-                            .id(tag)
-                            .onTapGesture {
-                                dataModel.toggleFiltering(tag: tag.id)
-                            }
+    /// Unified bottom section with item count, filtering status, and action buttons
+    private var unifiedInfoSection: some View {
+        HStack {
+            // Left side: Item count or drag to reorder message
+            if state.isEditing {
+                Label {
+                    Text(localized(key: "codeFeed.editMode.dragToReorder"))
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                        .lineLimit(1)
+                } icon: {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                let count = dataModel.items.count
+                let itemText = count == 1 ? "item" : "items"
+                let filterCount = dataModel.itemsFilteringByTags.count
+
+                HStack(spacing: 4) {
+                    Image(systemName: "key.horizontal")
+                        .foregroundColor(.secondary)
+                    Text("\(count) \(itemText)")
+                        .foregroundColor(.secondary)
+
+                    if filterCount > 0 {
+                        Text("•")
+                            .foregroundColor(.secondary)
+                        Image(systemName: "tag.fill")
+                            .foregroundColor(.secondary)
+                            .font(.caption)
+                        Text("\(filterCount)")
+                            .foregroundColor(.secondary)
                     }
                 }
-                .font(.callout)
-            }
-            .scrollClipDisabled()
-        }
-        .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.itemsFilteringByTags)
-    }
-
-    /// Informational section when we are filtering by tags
-    private var filteringByTagsInfoSection: some View {
-        HStack {
-            Text(dataModel.filteringByTagsDescription)
-                .foregroundColor(.secondary)
                 .font(.subheadline)
-
-            Spacer()
-
-            Button {
-                dataModel.itemsFilteringByTags.removeAll()
-            } label: {
-                Label("Clear", systemImage: "xmark.circle.fill")
-            }
-            .fontWeight(.semibold)
-            .font(.subheadline)
-            .foregroundStyle(.white)
-            .padding(.vertical, 8)
-            .padding(.horizontal, 16)
-            .background(Color.accentColor)
-            .clipShape(Capsule())
-        }
-        .padding(.vertical, 8)
-        .padding(.horizontal, 12)
-        .background(Color.primary.opacity(0.05))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
-    }
-
-    /// Informational section when in edit mode
-    private var editModeInfoSection: some View {
-        HStack {
-            Label {
-                Text(localized(key: "codeFeed.editMode.dragToReorder"))
-                    .foregroundColor(.secondary)
-                    .font(.subheadline)
-            } icon: {
-                Image(systemName: "arrow.up.arrow.down")
-                    .foregroundColor(.secondary)
+                .lineLimit(1)
             }
 
             Spacer()
+
+            // Right side: Action buttons
+            if dataModel.items.isNotEmpty {
+                HStack(spacing: 8) {
+                    // Clear button when filtering by tags
+                    if dataModel.itemsFilteringByTags.isNotEmpty, !state.isEditing {
+                        Button {
+                            dataModel.itemsFilteringByTags.removeAll()
+                        } label: {
+                            Label("Clear", systemImage: "tag.slash.fill")
+                                .lineLimit(1)
+                        }
+                        .fontWeight(.semibold)
+                        .font(.footnote)
+                        .foregroundStyle(.white)
+                        .padding(.vertical, 8)
+                        .padding(.horizontal, 16)
+                        .background(Color.secondary)
+                        .clipShape(Capsule())
+                        .fixedSize()
+                    }
+
+                    // Edit/Done button
+                    Button {
+                        state.isEditing.toggle()
+                    } label: {
+                        Label(
+                            state.isEditing ? "Done" : "Edit",
+                            systemImage: state.isEditing ? "checkmark" : "pencil",
+                        )
+                        .lineLimit(1)
+                    }
+                    .fontWeight(.semibold)
+                    .font(.footnote)
+                    .foregroundStyle(.white)
+                    .padding(.vertical, 8)
+                    .padding(.horizontal, 16)
+                    .background(Color.accentColor)
+                    .clipShape(Capsule())
+                    .fixedSize()
+                }
+            }
         }
+        .frame(minHeight: 44)
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
         .background(Color.primary.opacity(0.05))

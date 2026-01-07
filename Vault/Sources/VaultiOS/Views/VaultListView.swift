@@ -46,19 +46,6 @@ struct VaultListView<
             gridSpacing: 12,
         )
         .toolbar {
-            if dataModel.items.isNotEmpty {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        vaultItemFeedState.isEditing.toggle()
-                    } label: {
-                        Label(
-                            vaultItemFeedState.isEditing ? "Done" : "Edit",
-                            systemImage: vaultItemFeedState.isEditing ? "checkmark" : "pencil",
-                        )
-                        .labelStyle(.iconOnly)
-                    }
-                }
-            }
             ToolbarItem(placement: .topBarTrailing) {
                 Menu {
                     Button {
