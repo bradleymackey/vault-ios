@@ -82,7 +82,7 @@ public struct VaultItemFeedView<
         .textInputAutocapitalization(.never)
         .safeAreaInset(edge: .bottom, spacing: 0) {
             VStack(spacing: 0) {
-                if state.isEditing {
+                if dataModel.items.isNotEmpty {
                     editModeInfoSection
                         .padding(.top, 8)
                         .padding(.bottom, 8)
@@ -100,6 +100,7 @@ public struct VaultItemFeedView<
                 }
             }
             .animation(.spring(response: 0.4, dampingFraction: 0.8), value: state.isEditing)
+            .animation(.spring(response: 0.4, dampingFraction: 0.8), value: dataModel.isSearching)
         }
     }
 
@@ -155,19 +156,48 @@ public struct VaultItemFeedView<
         .clipShape(RoundedRectangle(cornerRadius: 12))
     }
 
-    /// Informational section when in edit mode
+    /// Informational section with item count and edit button
     private var editModeInfoSection: some View {
         HStack {
-            Label {
-                Text(localized(key: "codeFeed.editMode.dragToReorder"))
-                    .foregroundColor(.secondary)
-                    .font(.subheadline)
-            } icon: {
-                Image(systemName: "arrow.up.arrow.down")
-                    .foregroundColor(.secondary)
+            if state.isEditing {
+                Label {
+                    Text(localized(key: "codeFeed.editMode.dragToReorder"))
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                } icon: {
+                    Image(systemName: "arrow.up.arrow.down")
+                        .foregroundColor(.secondary)
+                }
+            } else {
+                let count = dataModel.items.count
+                let itemText = count == 1 ? "item" : "items"
+                Label {
+                    Text("\(count) \(itemText)")
+                        .foregroundColor(.secondary)
+                        .font(.subheadline)
+                } icon: {
+                    Image(systemName: "key.horizontal")
+                        .foregroundColor(.secondary)
+                }
             }
 
             Spacer()
+
+            Button {
+                state.isEditing.toggle()
+            } label: {
+                Label(
+                    state.isEditing ? "Done" : "Edit",
+                    systemImage: state.isEditing ? "checkmark" : "pencil",
+                )
+            }
+            .fontWeight(.semibold)
+            .font(.subheadline)
+            .foregroundStyle(.white)
+            .padding(.vertical, 8)
+            .padding(.horizontal, 16)
+            .background(Color.accentColor)
+            .clipShape(Capsule())
         }
         .padding(.vertical, 8)
         .padding(.horizontal, 12)
