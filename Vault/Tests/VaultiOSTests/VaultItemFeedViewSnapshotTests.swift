@@ -243,6 +243,34 @@ final class VaultItemFeedViewSnapshotTests {
 
         assertSnapshot(of: sut, as: .image)
     }
+
+    @Test
+    func unifiedBar_narrowWidth_buttonsDoNotWrap() async throws {
+        let store = VaultStoreStub()
+        let tagStore = VaultTagStoreStub()
+        let tag1Id = Identifier<VaultItemTag>()
+        tagStore.retrieveTagsHandler = {
+            [
+                VaultItemTag(id: tag1Id, name: "work"),
+                VaultItemTag(id: .init(), name: "personal", color: .tagDefault),
+            ]
+        }
+        store.retrieveHandler = { _ in
+            .init(items: [
+                uniqueVaultItem(),
+            ])
+        }
+        let dataModel = anyVaultDataModel(vaultStore: store, vaultTagStore: tagStore)
+        await dataModel.reloadData()
+
+        // Use a narrow width to stress-test button wrapping
+        let sut = makeSUT(dataModel: dataModel)
+            .frame(width: 320, height: 600)
+
+        dataModel.itemsFilteringByTags = [tag1Id]
+
+        assertSnapshot(of: sut, as: .image)
+    }
 }
 
 // MARK: - Helpers

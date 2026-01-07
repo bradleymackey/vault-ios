@@ -122,6 +122,7 @@ public struct VaultItemFeedView<
                     Text(localized(key: "codeFeed.editMode.dragToReorder"))
                         .foregroundColor(.secondary)
                         .font(.subheadline)
+                        .lineLimit(1)
                 } icon: {
                     Image(systemName: "arrow.up.arrow.down")
                         .foregroundColor(.secondary)
@@ -148,6 +149,7 @@ public struct VaultItemFeedView<
                     }
                 }
                 .font(.subheadline)
+                .lineLimit(1)
             }
 
             Spacer()
@@ -161,6 +163,7 @@ public struct VaultItemFeedView<
                             dataModel.itemsFilteringByTags.removeAll()
                         } label: {
                             Label("Clear", systemImage: "tag.slash.fill")
+                                .lineLimit(1)
                         }
                         .fontWeight(.semibold)
                         .font(.footnote)
@@ -169,6 +172,7 @@ public struct VaultItemFeedView<
                         .padding(.horizontal, 16)
                         .background(Color.secondary)
                         .clipShape(Capsule())
+                        .fixedSize()
                     }
 
                     // Edit/Done button
@@ -179,6 +183,7 @@ public struct VaultItemFeedView<
                             state.isEditing ? "Done" : "Edit",
                             systemImage: state.isEditing ? "checkmark" : "pencil",
                         )
+                        .lineLimit(1)
                     }
                     .fontWeight(.semibold)
                     .font(.footnote)
@@ -187,6 +192,7 @@ public struct VaultItemFeedView<
                     .padding(.horizontal, 16)
                     .background(Color.accentColor)
                     .clipShape(Capsule())
+                    .fixedSize()
                 }
             }
         }
