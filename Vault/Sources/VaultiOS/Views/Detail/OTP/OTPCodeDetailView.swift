@@ -190,9 +190,15 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     }
 
     private var iconHeader: some View {
-        VStack(spacing: 8) {
+        Image(systemName: "key.horizontal.fill")
+            .font(.title)
+            .foregroundStyle(selectedColor)
+    }
+
+    private var iconEditingHeader: some View {
+        VStack(spacing: 6) {
             Image(systemName: "key.horizontal.fill")
-                .font(.system(size: viewModel.isInEditMode ? 60 : 30))
+                .font(.title)
                 .foregroundStyle(selectedColor)
 
             ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
@@ -200,7 +206,6 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             })
             .labelsHidden()
         }
-        .frame(maxWidth: .infinity)
     }
 
     private var nameEditingSection: some View {
@@ -213,15 +218,18 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 Text(viewModel.strings.accountNameExample)
             }
         } header: {
-            iconHeader
-                .padding(.vertical, viewModel.isInEditMode ? 16 : 0)
+            iconEditingHeader
+                .containerRelativeFrame(.horizontal)
+                .padding(.vertical, 2)
+                .padding(.bottom, 4)
         }
     }
 
     private var descriptionEditingSection: some View {
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
-                .frame(minHeight: 200)
+                .font(.subheadline)
+                .frame(minHeight: 120)
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets())
         } header: {
@@ -292,55 +300,53 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
 
     private func codeInformationSection(code: OTPAuthCode, metadata: VaultItem.Metadata) -> some View {
         Section {
+            if viewModel.editingModel.detail.description.isNotBlank {
+                Text(viewModel.editingModel.detail.description)
+                    .foregroundStyle(.primary)
+                    .textSelection(.enabled)
+                    .font(.callout)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 8)
+            }
+        } header: {
             copyableViewGenerator().makeVaultPreviewView(
                 item: .otpCode(code),
                 metadata: metadata,
                 behaviour: .normal,
             )
-            .frame(maxWidth: 200)
-            .padding()
-            .shadow(radius: 10)
-            .modifier(HorizontallyCenter())
-            .listRowBackground(EmptyView())
+            .frame(width: 180)
+            .fixedSize(horizontal: false, vertical: true)
+            .containerRelativeFrame(.horizontal)
+            .padding(.vertical, 8)
         } footer: {
-            VStack(alignment: .center, spacing: 24) {
-                if viewModel.editingModel.detail.description.isNotBlank {
-                    Text(viewModel.editingModel.detail.description)
-                        .foregroundStyle(.primary)
-                        .textSelection(.enabled)
+            VStack(alignment: .leading, spacing: 12) {
+                if viewModel.tagsThatAreSelected.isNotEmpty {
+                    ScrollView(.horizontal, showsIndicators: false) {
+                        HStack {
+                            ForEach(viewModel.tagsThatAreSelected) { tag in
+                                TagPillView(tag: tag, isSelected: true)
+                                    .id(tag)
+                            }
+                        }
                         .font(.callout)
-                        .multilineTextAlignment(.leading)
-
-                    Divider()
+                    }
+                    .scrollClipDisabled()
                 }
 
-                VStack(alignment: .leading, spacing: 16) {
-                    if viewModel.tagsThatAreSelected.isNotEmpty {
-                        ScrollView(.horizontal, showsIndicators: false) {
-                            HStack {
-                                ForEach(viewModel.tagsThatAreSelected) { tag in
-                                    TagPillView(tag: tag, isSelected: true)
-                                        .id(tag)
-                                }
-                            }
-                            .font(.callout)
-                        }
-                        .scrollClipDisabled()
+                VStack(alignment: .leading, spacing: 6) {
+                    ForEach(viewModel.detailMenuItems) { entry in
+                        FooterInfoLabel(
+                            title: entry.title,
+                            detail: entry.detail,
+                            systemImageName: entry.systemIconName,
+                        )
                     }
-
-                    VStack(alignment: .leading, spacing: 8) {
-                        ForEach(viewModel.detailMenuItems) { entry in
-                            FooterInfoLabel(
-                                title: entry.title,
-                                detail: entry.detail,
-                                systemImageName: entry.systemIconName,
-                            )
-                        }
-                    }
-                    .font(.footnote)
                 }
             }
-            .padding(.top, 16)
+            .font(.footnote)
+            .padding(.top, 6)
+            .transition(.opacity)
         }
     }
 
@@ -417,9 +423,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         } footer: {
             if viewModel.shouldShowDeleteButton {
                 deleteButton
-                    .padding()
+                    .padding(.horizontal)
                     .modifier(HorizontallyCenter())
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 12)
             }
         }
     }

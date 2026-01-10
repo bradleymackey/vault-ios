@@ -197,9 +197,9 @@ struct SecureNoteDetailView: View {
     }
 
     private var noteIconEditingHeader: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Image(systemName: viewModel.editingModel.detail.lockState.isLocked ? "lock.doc.fill" : "doc.text.fill")
-                .font(.largeTitle)
+                .font(.title)
                 .foregroundStyle(selectedColor)
 
             ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
@@ -231,9 +231,9 @@ struct SecureNoteDetailView: View {
         } header: {
             noteIconHeader
                 .containerRelativeFrame(.horizontal)
-                .padding(.vertical, 4)
+                .padding(.vertical, 2)
         } footer: {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
                 if viewModel.tagsThatAreSelected.isNotEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
@@ -247,14 +247,14 @@ struct SecureNoteDetailView: View {
                     .scrollClipDisabled()
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(viewModel.detailEntries) { item in
                         FooterInfoLabel(title: item.title, detail: item.detail, systemImageName: item.systemIconName)
                     }
                 }
             }
             .font(.footnote)
-            .padding(.top, 8)
+            .padding(.top, 6)
             .transition(.opacity)
         }
     }
@@ -264,14 +264,14 @@ struct SecureNoteDetailView: View {
             TextEditor(text: $viewModel.editingModel.detail.contents)
                 .font(.subheadline)
                 .fontDesign(.monospaced)
-                .frame(minHeight: 600)
+                .frame(minHeight: 400)
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets())
         } header: {
             noteIconEditingHeader
                 .containerRelativeFrame(.horizontal)
-                .padding(.vertical, 4)
-                .padding(.bottom, 8)
+                .padding(.vertical, 2)
+                .padding(.bottom, 4)
         }
     }
 
@@ -372,9 +372,9 @@ struct SecureNoteDetailView: View {
         } footer: {
             if viewModel.shouldShowDeleteButton {
                 deleteButton
-                    .padding()
+                    .padding(.horizontal)
                     .modifier(HorizontallyCenter())
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 12)
             }
         }
     }
