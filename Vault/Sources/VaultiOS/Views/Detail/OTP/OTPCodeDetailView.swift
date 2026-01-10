@@ -196,9 +196,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     }
 
     private var iconEditingHeader: some View {
-        VStack(spacing: 8) {
+        VStack(spacing: 6) {
             Image(systemName: "key.horizontal.fill")
-                .font(.largeTitle)
+                .font(.title)
                 .foregroundStyle(selectedColor)
 
             ColorPicker(selection: $selectedColor, supportsOpacity: false, label: {
@@ -220,8 +220,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         } header: {
             iconEditingHeader
                 .containerRelativeFrame(.horizontal)
-                .padding(.vertical, 4)
-                .padding(.bottom, 8)
+                .padding(.vertical, 2)
+                .padding(.bottom, 4)
         }
     }
 
@@ -229,7 +229,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         Section {
             TextEditor(text: $viewModel.editingModel.detail.description)
                 .font(.subheadline)
-                .frame(minHeight: 200)
+                .frame(minHeight: 120)
                 .keyboardType(.default)
                 .listRowInsets(EdgeInsets())
         } header: {
@@ -300,32 +300,27 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
 
     private func codeInformationSection(code: OTPAuthCode, metadata: VaultItem.Metadata) -> some View {
         Section {
-            VStack(spacing: 16) {
-                copyableViewGenerator().makeVaultPreviewView(
-                    item: .otpCode(code),
-                    metadata: metadata,
-                    behaviour: .normal,
-                )
-                .frame(maxWidth: 200)
-
-                if viewModel.editingModel.detail.description.isNotBlank {
-                    Text(viewModel.editingModel.detail.description)
-                        .foregroundStyle(.primary)
-                        .textSelection(.enabled)
-                        .font(.callout)
-                        .multilineTextAlignment(.leading)
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                }
+            if viewModel.editingModel.detail.description.isNotBlank {
+                Text(viewModel.editingModel.detail.description)
+                    .foregroundStyle(.primary)
+                    .textSelection(.enabled)
+                    .font(.callout)
+                    .multilineTextAlignment(.leading)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 8)
             }
-            .padding(.vertical, 8)
-            .modifier(HorizontallyCenter())
-            .listRowInsets(EdgeInsets(top: 16, leading: 16, bottom: 16, trailing: 16))
         } header: {
-            iconHeader
-                .containerRelativeFrame(.horizontal)
-                .padding(.vertical, 4)
+            copyableViewGenerator().makeVaultPreviewView(
+                item: .otpCode(code),
+                metadata: metadata,
+                behaviour: .normal,
+            )
+            .frame(width: 180)
+            .fixedSize(horizontal: false, vertical: true)
+            .containerRelativeFrame(.horizontal)
+            .padding(.vertical, 8)
         } footer: {
-            VStack(alignment: .leading, spacing: 16) {
+            VStack(alignment: .leading, spacing: 12) {
                 if viewModel.tagsThatAreSelected.isNotEmpty {
                     ScrollView(.horizontal, showsIndicators: false) {
                         HStack {
@@ -339,7 +334,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     .scrollClipDisabled()
                 }
 
-                VStack(alignment: .leading, spacing: 8) {
+                VStack(alignment: .leading, spacing: 6) {
                     ForEach(viewModel.detailMenuItems) { entry in
                         FooterInfoLabel(
                             title: entry.title,
@@ -350,7 +345,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 }
             }
             .font(.footnote)
-            .padding(.top, 8)
+            .padding(.top, 6)
             .transition(.opacity)
         }
     }
@@ -428,9 +423,9 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
         } footer: {
             if viewModel.shouldShowDeleteButton {
                 deleteButton
-                    .padding()
+                    .padding(.horizontal)
                     .modifier(HorizontallyCenter())
-                    .padding(.vertical, 16)
+                    .padding(.vertical, 12)
             }
         }
     }
