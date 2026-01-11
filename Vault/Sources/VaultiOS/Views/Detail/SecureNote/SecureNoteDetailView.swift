@@ -74,6 +74,10 @@ struct SecureNoteDetailView: View {
                     editingActionsSection
                 } else {
                     noteContentsSection(size: reader.size)
+                    MetadataDisclosureSection(
+                        tags: viewModel.tagsThatAreSelected,
+                        entries: viewModel.detailEntries,
+                    )
                 }
             }
         }
@@ -232,30 +236,6 @@ struct SecureNoteDetailView: View {
             noteIconHeader
                 .containerRelativeFrame(.horizontal)
                 .padding(.vertical, 2)
-        } footer: {
-            VStack(alignment: .leading, spacing: 12) {
-                if viewModel.tagsThatAreSelected.isNotEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(viewModel.tagsThatAreSelected) { tag in
-                                TagPillView(tag: tag, isSelected: true)
-                                    .id(tag)
-                            }
-                        }
-                        .font(.callout)
-                    }
-                    .scrollClipDisabled()
-                }
-
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(viewModel.detailEntries) { item in
-                        FooterInfoLabel(title: item.title, detail: item.detail, systemImageName: item.systemIconName)
-                    }
-                }
-            }
-            .font(.footnote)
-            .padding(.top, 6)
-            .transition(.opacity)
         }
     }
 

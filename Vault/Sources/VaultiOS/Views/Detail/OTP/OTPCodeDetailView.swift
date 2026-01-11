@@ -91,6 +91,11 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             } else {
                 if case let .editing(code, metadata) = viewModel.mode {
                     codeInformationSection(code: code, metadata: metadata)
+                    descriptionSection
+                    MetadataDisclosureSection(
+                        tags: viewModel.tagsThatAreSelected,
+                        entries: viewModel.detailMenuItems,
+                    )
                 }
             }
         }
@@ -299,17 +304,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
     }
 
     private func codeInformationSection(code: OTPAuthCode, metadata: VaultItem.Metadata) -> some View {
-        Section {
-            if viewModel.editingModel.detail.description.isNotBlank {
-                Text(viewModel.editingModel.detail.description)
-                    .foregroundStyle(.primary)
-                    .textSelection(.enabled)
-                    .font(.callout)
-                    .multilineTextAlignment(.leading)
-                    .frame(maxWidth: .infinity, alignment: .leading)
-                    .padding(.vertical, 8)
-            }
-        } header: {
+        Section {} header: {
             copyableViewGenerator().makeVaultPreviewView(
                 item: .otpCode(code),
                 metadata: metadata,
@@ -319,34 +314,24 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             .fixedSize(horizontal: false, vertical: true)
             .containerRelativeFrame(.horizontal)
             .padding(.vertical, 8)
-        } footer: {
-            VStack(alignment: .leading, spacing: 12) {
-                if viewModel.tagsThatAreSelected.isNotEmpty {
-                    ScrollView(.horizontal, showsIndicators: false) {
-                        HStack {
-                            ForEach(viewModel.tagsThatAreSelected) { tag in
-                                TagPillView(tag: tag, isSelected: true)
-                                    .id(tag)
-                            }
-                        }
-                        .font(.callout)
-                    }
-                    .scrollClipDisabled()
-                }
+        }
+    }
 
-                VStack(alignment: .leading, spacing: 6) {
-                    ForEach(viewModel.detailMenuItems) { entry in
-                        FooterInfoLabel(
-                            title: entry.title,
-                            detail: entry.detail,
-                            systemImageName: entry.systemIconName,
-                        )
-                    }
+    private var descriptionSection: some View {
+        Group {
+            if viewModel.editingModel.detail.description.isNotBlank {
+                Section {
+                    Text(viewModel.editingModel.detail.description)
+                        .foregroundStyle(.primary)
+                        .textSelection(.enabled)
+                        .font(.callout)
+                        .multilineTextAlignment(.leading)
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .padding(.vertical, 8)
+                } header: {
+                    Text(viewModel.strings.descriptionTitle)
                 }
             }
-            .font(.footnote)
-            .padding(.top, 6)
-            .transition(.opacity)
         }
     }
 
