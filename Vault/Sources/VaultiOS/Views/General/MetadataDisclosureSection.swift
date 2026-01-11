@@ -9,10 +9,6 @@ struct MetadataDisclosureSection: View {
     var body: some View {
         Section {
             DisclosureGroup(isExpanded: $isExpanded) {
-                if tags.isNotEmpty {
-                    tagsRow
-                }
-
                 ForEach(entries) { entry in
                     LabeledContent {
                         Text(entry.detail)
@@ -24,13 +20,14 @@ struct MetadataDisclosureSection: View {
             } label: {
                 Label("Metadata", systemImage: "info.circle")
             }
+        } footer: {
+            tagsFooter
         }
     }
 
-    private var tagsRow: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Label("Tags", systemImage: "tag")
-
+    @ViewBuilder
+    private var tagsFooter: some View {
+        if tags.isNotEmpty {
             ScrollView(.horizontal, showsIndicators: false) {
                 HStack {
                     ForEach(tags) { tag in
@@ -38,10 +35,10 @@ struct MetadataDisclosureSection: View {
                             .id(tag)
                     }
                 }
-                .font(.callout)
+                .font(.footnote)
             }
             .scrollClipDisabled()
+            .padding(.top, 8)
         }
-        .padding(.vertical, 4)
     }
 }
