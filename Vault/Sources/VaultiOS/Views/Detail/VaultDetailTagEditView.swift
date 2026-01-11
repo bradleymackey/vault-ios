@@ -9,7 +9,7 @@ struct VaultDetailTagEditView: View {
     var didRemove: (VaultItemTag) -> Void
 
     var body: some View {
-        Form {
+        List {
             if hasAnyTags {
                 currentTagsSection
             }
@@ -31,14 +31,20 @@ struct VaultDetailTagEditView: View {
                         didRemove(tag)
                     }
                 } label: {
-                    FormRow(
-                        image: Image(systemName: "minus.circle.fill"),
-                        color: .red,
-                        style: .standard,
-                    ) {
-                        TagPillView(tag: tag, isSelected: true)
+                    HStack {
+                        Label {
+                            Text(tag.name)
+                        } icon: {
+                            Image(systemName: tag.iconName)
+                        }
+                        Spacer()
+                        Image(systemName: "minus.circle.fill")
+                            .foregroundStyle(.red)
                     }
+                    .foregroundStyle(tag.listRowForegroundColor())
+                    .contentShape(Rectangle())
                 }
+                .listRowBackground(tag.listRowBackgroundColor())
                 .id(tag.id)
             }
 
@@ -48,7 +54,7 @@ struct VaultDetailTagEditView: View {
                     title: "No Tags Selected",
                     subtitle: "Add a tag from the available tags",
                 )
-                .containerRelativeFrame(.horizontal)
+                .frame(maxWidth: .infinity)
                 .padding()
             }
         } header: {
@@ -64,14 +70,20 @@ struct VaultDetailTagEditView: View {
                         didAdd(tag)
                     }
                 } label: {
-                    FormRow(
-                        image: Image(systemName: "plus.circle.fill"),
-                        color: .green,
-                        style: .standard,
-                    ) {
-                        TagPillView(tag: tag, isSelected: false)
+                    HStack {
+                        Label {
+                            Text(tag.name)
+                        } icon: {
+                            Image(systemName: tag.iconName)
+                        }
+                        Spacer()
+                        Image(systemName: "plus.circle.fill")
+                            .foregroundStyle(.green)
                     }
+                    .foregroundStyle(tag.listRowForegroundColor())
+                    .contentShape(Rectangle())
                 }
+                .listRowBackground(tag.listRowBackgroundColor())
                 .id(tag.id)
             }
 
@@ -81,7 +93,7 @@ struct VaultDetailTagEditView: View {
                     title: "No Other Tags",
                     subtitle: "Create new tags in the tag manager",
                 )
-                .containerRelativeFrame(.horizontal)
+                .frame(maxWidth: .infinity)
                 .padding()
             }
         } header: {
