@@ -175,7 +175,7 @@ struct BackupCreateView: View {
     // MARK: - Password Exists Card
 
     private var passwordExistsCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Image(systemName: "checkmark.shield.fill")
                     .font(.title2)
@@ -196,6 +196,10 @@ struct BackupCreateView: View {
 
                 Spacer()
             }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
 
             Button {
                 modal = .updatePassword
@@ -204,8 +208,8 @@ struct BackupCreateView: View {
                     .frame(maxWidth: .infinity)
             }
             .modifier(ProminentButtonModifier(color: .gray))
+            .padding(16)
         }
-        .padding(16)
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
             border: Color.green,
@@ -217,7 +221,7 @@ struct BackupCreateView: View {
     // MARK: - PDF Backup Card
 
     private func pdfBackupCard(password: DerivedEncryptionKey) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Image(systemName: "doc.richtext")
                     .font(.title2)
@@ -238,6 +242,10 @@ struct BackupCreateView: View {
 
                 Spacer()
             }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
 
             Button {
                 modal = .pdfBackup(password)
@@ -246,8 +254,8 @@ struct BackupCreateView: View {
                     .frame(maxWidth: .infinity)
             }
             .modifier(ProminentButtonModifier())
+            .padding(16)
         }
-        .padding(16)
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
             border: Color.accentColor,
@@ -259,7 +267,7 @@ struct BackupCreateView: View {
     // MARK: - Device Transfer Card
 
     private func deviceTransferCard(password: DerivedEncryptionKey) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Image(systemName: "qrcode")
                     .font(.title2)
@@ -280,6 +288,10 @@ struct BackupCreateView: View {
 
                 Spacer()
             }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
 
             Button {
                 modal = .deviceTransfer(password)
@@ -288,8 +300,8 @@ struct BackupCreateView: View {
                     .frame(maxWidth: .infinity)
             }
             .modifier(ProminentButtonModifier())
+            .padding(16)
         }
-        .padding(16)
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
             border: Color.accentColor,
