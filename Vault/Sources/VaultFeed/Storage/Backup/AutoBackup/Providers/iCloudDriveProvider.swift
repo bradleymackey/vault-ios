@@ -39,6 +39,10 @@ public actor iCloudDriveProvider: BackupStorageProvider {
         config.folderBookmark != nil
     }
 
+    public var configurationSummary: String? {
+        config.folderDisplayName
+    }
+
     public var isAvailable: Bool {
         get async {
             // If we have a configured folder, try to access it to verify availability

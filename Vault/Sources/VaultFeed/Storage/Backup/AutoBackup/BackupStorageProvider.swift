@@ -30,6 +30,10 @@ public protocol BackupStorageProvider: Identifiable, Sendable {
     /// Whether the provider has been configured (e.g., folder selected).
     var isConfigured: Bool { get async }
 
+    /// A short description of the current configuration (e.g., folder name).
+    /// Returns nil if not configured.
+    var configurationSummary: String? { get async }
+
     /// Check if the provider is currently available (e.g., iCloud signed in).
     var isAvailable: Bool { get async }
 

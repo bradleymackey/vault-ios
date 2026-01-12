@@ -12,6 +12,7 @@ struct AutoBackupSettingsView: View {
     @State private var isShowingFolderPicker = false
     @State private var selectedProviderID: String?
     @State private var providerConfigStates: [String: Bool] = [:]
+    @State private var providerConfigSummaries: [String: String] = [:]
 
     // Local state to observe changes from publishers
     @State private var status: AutoBackupStatus = .disabled
@@ -145,11 +146,11 @@ struct AutoBackupSettingsView: View {
                     Text(provider.displayName)
                         .foregroundStyle(isSelected ? .white : .primary)
 
-                    if isConfigured {
-                        Text("Configured")
+                    if let summary = providerConfigSummaries[provider.id] {
+                        Text("Backing up to \(summary)")
                             .font(.caption)
                             .foregroundStyle(isSelected ? .white.opacity(0.8) : .secondary)
-                    } else {
+                    } else if !isConfigured {
                         Text("Not configured")
                             .font(.caption)
                             .foregroundStyle(isSelected ? .white.opacity(0.8) : .secondary)
@@ -333,6 +334,9 @@ struct AutoBackupSettingsView: View {
     private func loadProviderConfigStates() async {
         for provider in autoBackupService.availableProviders {
             providerConfigStates[provider.id] = await provider.isConfigured
+            if let summary = await provider.configurationSummary {
+                providerConfigSummaries[provider.id] = summary
+            }
         }
     }
 
