@@ -82,6 +82,7 @@ struct CodeTimerHorizontalBarView: View {
         backupEventLogger: BackupEventLoggerMock(),
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock(),
+        autoBackupService: AutoBackupServiceMock(),
         defaults: Defaults(userDefaults: .standard),
         fileManager: .default,
     ))

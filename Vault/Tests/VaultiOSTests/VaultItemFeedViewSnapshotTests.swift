@@ -319,6 +319,7 @@ extension VaultItemFeedViewSnapshotTests {
             backupEventLogger: BackupEventLoggerMock(),
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
             encryptedVaultDecoder: EncryptedVaultDecoderMock(),
+            autoBackupService: AutoBackupServiceMock(),
             defaults: Defaults(userDefaults: .standard),
             fileManager: FileManager(),
         ))

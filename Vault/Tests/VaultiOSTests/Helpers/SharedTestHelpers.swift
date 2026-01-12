@@ -37,6 +37,7 @@ func anyVaultInjector() -> VaultInjector {
         backupEventLogger: BackupEventLoggerMock(),
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock(),
+        autoBackupService: AutoBackupServiceMock(),
         defaults: Defaults(userDefaults: .standard),
         fileManager: .default,
     )

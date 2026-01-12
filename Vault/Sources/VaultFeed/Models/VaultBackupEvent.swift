@@ -31,11 +31,12 @@ public struct VaultBackupEvent: Equatable, Hashable, Codable, Sendable {
 }
 
 extension VaultBackupEvent {
-    public enum Kind: String, Equatable, Hashable, Sendable, Codable {
-        case exportedToPDF = "EXPORT_TO_PDF"
-        case importedToPDF = "IMPORT_FROM_PDF"
-        case exportedToDevice = "EXPORT_TO_DEVICE"
-        case importedFromDevice = "IMPORT_FROM_DEVICE"
+    public enum Kind: Equatable, Hashable, Sendable, Codable {
+        case exportedToPDF
+        case importedToPDF
+        case exportedToDevice
+        case importedFromDevice
+        case exportedToAutoBackup(providerID: String)
 
         public var localizedTitle: String {
             switch self {
@@ -43,6 +44,56 @@ extension VaultBackupEvent {
             case .importedToPDF: "Imported from PDF"
             case .exportedToDevice: "Transferred to Device"
             case .importedFromDevice: "Imported from Device"
+            case .exportedToAutoBackup: "Auto-Backup"
+            }
+        }
+
+        // Custom Codable for backwards compatibility
+        private enum CodingKeys: String, CodingKey {
+            case type
+            case providerID
+        }
+
+        private enum LegacyType: String, Codable {
+            case exportedToPDF = "EXPORT_TO_PDF"
+            case importedToPDF = "IMPORT_FROM_PDF"
+            case exportedToDevice = "EXPORT_TO_DEVICE"
+            case importedFromDevice = "IMPORT_FROM_DEVICE"
+            case exportedToAutoBackup = "EXPORT_TO_AUTO_BACKUP"
+        }
+
+        public init(from decoder: Decoder) throws {
+            let container = try decoder.container(keyedBy: CodingKeys.self)
+            let type = try container.decode(LegacyType.self, forKey: .type)
+            switch type {
+            case .exportedToPDF:
+                self = .exportedToPDF
+            case .importedToPDF:
+                self = .importedToPDF
+            case .exportedToDevice:
+                self = .exportedToDevice
+            case .importedFromDevice:
+                self = .importedFromDevice
+            case .exportedToAutoBackup:
+                let providerID = try container.decode(String.self, forKey: .providerID)
+                self = .exportedToAutoBackup(providerID: providerID)
+            }
+        }
+
+        public func encode(to encoder: Encoder) throws {
+            var container = encoder.container(keyedBy: CodingKeys.self)
+            switch self {
+            case .exportedToPDF:
+                try container.encode(LegacyType.exportedToPDF, forKey: .type)
+            case .importedToPDF:
+                try container.encode(LegacyType.importedToPDF, forKey: .type)
+            case .exportedToDevice:
+                try container.encode(LegacyType.exportedToDevice, forKey: .type)
+            case .importedFromDevice:
+                try container.encode(LegacyType.importedFromDevice, forKey: .type)
+            case let .exportedToAutoBackup(providerID):
+                try container.encode(LegacyType.exportedToAutoBackup, forKey: .type)
+                try container.encode(providerID, forKey: .providerID)
             }
         }
     }

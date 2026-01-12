@@ -31,6 +31,7 @@ struct BackupCreateView: View {
                 case let .fetched(password):
                     passwordExistsCard
                     lastBackupSummaryCard(password: password)
+                    AutoBackupSettingsView(autoBackupService: injector.autoBackupService)
                     deviceTransferCard(password: password)
                 }
             }

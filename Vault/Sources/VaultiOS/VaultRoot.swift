@@ -156,6 +156,20 @@ public enum VaultRoot {
     @MainActor
     public static let deviceAuthenticationService: DeviceAuthenticationService = .init(policy: .default)
 
+    // MARK: - Auto-Backup
+
+    @MainActor
+    static let iCloudDriveProvider: iCloudDriveProvider = .init()
+
+    @MainActor
+    public static let autoBackupService: some AutoBackupService = AutoBackupServiceImpl(
+        dataModel: vaultDataModel,
+        backupEventLogger: backupEventLogger,
+        clock: clock,
+        defaults: defaults,
+        providers: [iCloudDriveProvider],
+    )
+
     @MainActor
     public static let vaultInjector: VaultInjector = .init(
         clock: clock,
@@ -163,6 +177,7 @@ public enum VaultRoot {
         backupEventLogger: backupEventLogger,
         vaultKeyDeriverFactory: vaultKeyDeriverFactory,
         encryptedVaultDecoder: encryptedVaultDecoder,
+        autoBackupService: autoBackupService,
         defaults: defaults,
         fileManager: fileManager,
     )
