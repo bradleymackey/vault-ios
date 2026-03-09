@@ -72,4 +72,8 @@ public protocol AutoBackupService: Sendable {
 
     /// Stop monitoring for data changes.
     func stopMonitoring()
+
+    /// Notify the service that vault data has changed.
+    /// This triggers a debounced backup if auto-backup is enabled.
+    func notifyDataChanged()
 }

@@ -181,4 +181,15 @@ public enum VaultRoot {
         defaults: defaults,
         fileManager: fileManager,
     )
+
+    // MARK: - Setup
+
+    /// Call this at app startup to wire up connections between components.
+    @MainActor
+    public static func setup() {
+        // Wire up auto-backup to trigger when vault data changes
+        vaultDataModel.onDataChanged = {
+            autoBackupService.notifyDataChanged()
+        }
+    }
 }

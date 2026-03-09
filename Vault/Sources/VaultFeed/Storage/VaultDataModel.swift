@@ -110,6 +110,10 @@ public final class VaultDataModel {
     /// This is so it can be compared to the last backup event to see if we have any changes.
     public private(set) var currentPayloadHash: Digest<VaultApplicationPayload>.SHA256?
 
+    /// Callback invoked when vault data changes (items or tags added, updated, deleted, or imported).
+    /// Use this to trigger auto-backup or other side effects.
+    public var onDataChanged: (() -> Void)?
+
     // MARK: - Init
 
     private let vaultStore: any VaultStore
@@ -302,6 +306,7 @@ extension VaultDataModel {
         // to construct a matching identity for removal. Attempting individual remove
         // with new values won't match the existing identity with old values.
         try? await syncAllToOTPAutofillStore()
+        onDataChanged?()
     }
 
     public func delete(itemID: Identifier<VaultItem>) async throws {
@@ -311,24 +316,28 @@ extension VaultDataModel {
         await updateCurrentPayloadHash()
         // Full sync for deletes to ensure removal works reliably
         try? await syncAllToOTPAutofillStore()
+        onDataChanged?()
     }
 
     public func reorder(items: Set<Identifier<VaultItem>>, to position: VaultReorderingPosition) async throws {
         try await vaultStore.reorder(items: items, to: position)
         // don't reload, assume UI state has reordered items directly
         await updateCurrentPayloadHash()
+        onDataChanged?()
     }
 
     public func insert(tag: VaultItemTag.Write) async throws {
         try await vaultTagStore.insertTag(item: tag)
         await reloadTags()
         await updateCurrentPayloadHash()
+        onDataChanged?()
     }
 
     public func update(tagID id: Identifier<VaultItemTag>, data: VaultItemTag.Write) async throws {
         try await vaultTagStore.updateTag(id: id, item: data)
         await reloadTags()
         await updateCurrentPayloadHash()
+        onDataChanged?()
     }
 
     public func delete(tagID: Identifier<VaultItemTag>) async throws {
@@ -337,6 +346,7 @@ extension VaultDataModel {
         itemsFilteringByTags.remove(tagID)
         await reloadItems()
         await updateCurrentPayloadHash()
+        onDataChanged?()
     }
 }
 
@@ -356,6 +366,7 @@ extension VaultDataModel {
         await reloadTags()
         await updateCurrentPayloadHash()
         try? await syncAllToOTPAutofillStore()
+        onDataChanged?()
     }
 
     public func importOverride(payload: VaultApplicationPayload) async throws {
@@ -364,6 +375,7 @@ extension VaultDataModel {
         await reloadTags()
         await updateCurrentPayloadHash()
         try? await syncAllToOTPAutofillStore()
+        onDataChanged?()
     }
 }
 
