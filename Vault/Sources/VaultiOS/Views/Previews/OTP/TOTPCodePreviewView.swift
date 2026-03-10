@@ -143,7 +143,7 @@ struct TOTPCodePreviewView<TimerBar: View>: View {
         backupEventLogger: BackupEventLoggerMock(),
         vaultKeyDeriverFactory: VaultKeyDeriverFactoryImpl(),
         encryptedVaultDecoder: EncryptedVaultDecoderMock(),
-        autoBackupService: AutoBackupServiceMock(),
+        autoBackupService: AutoBackupServiceMock(status: .disabled, configuration: .init()),
         defaults: Defaults(userDefaults: .standard),
         fileManager: .default,
     )
