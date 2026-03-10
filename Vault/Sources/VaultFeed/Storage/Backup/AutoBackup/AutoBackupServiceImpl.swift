@@ -46,7 +46,6 @@ public final class AutoBackupServiceImpl: AutoBackupService {
     private let defaults: Defaults
     private let providers: [any BackupStorageProvider]
 
-    private var observationBag = Set<AnyCancellable>()
     private var debounceTask: Task<Void, Never>?
 
     private static let configKey = Key<AutoBackupConfiguration>(VaultIdentifiers.AutoBackup.configuration)
@@ -153,18 +152,6 @@ public final class AutoBackupServiceImpl: AutoBackupService {
     }
 
     // MARK: - Monitoring
-
-    public func startMonitoring() {
-        // Observe payload hash changes from data model
-        // Since VaultDataModel uses @Observable, we need to use a different approach
-        // We'll check on each relevant operation instead
-    }
-
-    public func stopMonitoring() {
-        debounceTask?.cancel()
-        debounceTask = nil
-        observationBag.removeAll()
-    }
 
     /// Called by external code when data changes are detected.
     /// This should be called after any vault mutation.

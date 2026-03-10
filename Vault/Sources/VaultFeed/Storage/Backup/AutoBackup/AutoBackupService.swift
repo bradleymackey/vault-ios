@@ -67,12 +67,6 @@ public protocol AutoBackupService: Sendable {
     /// Call this after configuring a provider externally.
     func saveProviderConfiguration() async
 
-    /// Start monitoring for data changes (called on app launch).
-    func startMonitoring()
-
-    /// Stop monitoring for data changes.
-    func stopMonitoring()
-
     /// Notify the service that vault data has changed.
     /// This triggers a debounced backup if auto-backup is enabled.
     func notifyDataChanged()
