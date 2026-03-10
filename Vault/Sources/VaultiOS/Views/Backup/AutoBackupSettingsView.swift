@@ -98,9 +98,9 @@ struct AutoBackupSettingsView: View {
         VStack(alignment: .leading, spacing: 12) {
             Divider()
 
-            providerSelectionView
+            destinationRow
 
-            if configuration.providerID != nil {
+            if selectedProviderIsConfigured {
                 retentionPickerView
             }
 
@@ -108,74 +108,49 @@ struct AutoBackupSettingsView: View {
                 errorView(error)
             }
 
-            actionButtonsView
-        }
-    }
-
-    private var providerSelectionView: some View {
-        VStack(alignment: .leading, spacing: 8) {
-            Text("Destination")
-                .font(.subheadline)
-                .foregroundStyle(.secondary)
-
-            ForEach(autoBackupService.availableProviders, id: \.id) { provider in
-                providerRow(provider, isConfigured: providerConfigStates[provider.id] ?? false)
+            if selectedProviderIsConfigured {
+                backupNowButton
             }
         }
     }
 
-    private func providerRow(_ provider: any BackupStorageProvider, isConfigured: Bool) -> some View {
-        let isSelected = configuration.providerID == provider.id
-
-        return Button {
-            Task {
-                await autoBackupService.selectProvider(id: provider.id)
-                // Show folder picker if not configured, or if already selected (to allow reconfiguring)
-                if !isConfigured || isSelected {
-                    isShowingFolderPicker = true
-                    selectedProviderID = provider.id
+    private var destinationRow: some View {
+        Button {
+            if let provider = autoBackupService.availableProviders.first {
+                Task {
+                    await autoBackupService.selectProvider(id: provider.id)
                 }
+                selectedProviderID = provider.id
+                isShowingFolderPicker = true
             }
         } label: {
-            HStack {
-                Image(systemName: provider.iconSystemName)
-                    .foregroundStyle(isSelected ? .white : .green)
+            HStack(spacing: 12) {
+                Image(systemName: "folder.fill")
+                    .foregroundStyle(.green)
                     .frame(width: 24)
 
                 VStack(alignment: .leading, spacing: 2) {
-                    Text(provider.displayName)
-                        .foregroundStyle(isSelected ? .white : .primary)
+                    Text("Destination")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
 
-                    if let summary = providerConfigSummaries[provider.id] {
-                        Text("Backing up to \(summary)")
-                            .font(.caption)
-                            .foregroundStyle(isSelected ? .white.opacity(0.8) : .secondary)
-                    } else if !isConfigured {
-                        Text("Not configured")
-                            .font(.caption)
-                            .foregroundStyle(isSelected ? .white.opacity(0.8) : .secondary)
+                    if let summary = selectedProviderSummary {
+                        Text(summary)
+                            .font(.body)
+                            .foregroundStyle(.primary)
+                    } else {
+                        Text("Choose a folder")
+                            .font(.body)
+                            .foregroundStyle(Color.accentColor)
                     }
                 }
 
                 Spacer()
 
-                if isSelected {
-                    Image(systemName: "checkmark.circle.fill")
-                        .foregroundStyle(.white)
-                } else if isConfigured {
-                    Image(systemName: "checkmark")
-                        .foregroundStyle(.green)
-                        .font(.caption)
-                }
+                Image(systemName: "chevron.right")
+                    .font(.caption.weight(.semibold))
+                    .foregroundStyle(Color(uiColor: .tertiaryLabel))
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 10)
-            .background(isSelected ? Color.green : Color.clear)
-            .overlay(
-                RoundedRectangle(cornerRadius: 8)
-                    .strokeBorder(isSelected ? Color.clear : Color(.separator), lineWidth: 1),
-            )
-            .clipShape(RoundedRectangle(cornerRadius: 8))
         }
         .buttonStyle(.plain)
     }
@@ -225,36 +200,18 @@ struct AutoBackupSettingsView: View {
         .clipShape(RoundedRectangle(cornerRadius: 8))
     }
 
-    private var actionButtonsView: some View {
-        HStack(spacing: 12) {
-            if let providerID = configuration.providerID,
-               let provider = autoBackupService.availableProviders.first(where: { $0.id == providerID })
-            {
-                let isConfigured = providerConfigStates[provider.id] ?? false
-                if isConfigured {
-                    AsyncButton(progressAlignment: .center) {
-                        await autoBackupService.forceBackup()
-                    } label: {
-                        Label("Backup Now", systemImage: "arrow.clockwise.icloud")
-                            .frame(maxWidth: .infinity)
-                    } loading: {
-                        ProgressView()
-                            .tint(.white)
-                    }
-                    .modifier(ProminentButtonModifier())
-                    .disabled(isBackingUp)
-                } else {
-                    Button {
-                        selectedProviderID = provider.id
-                        isShowingFolderPicker = true
-                    } label: {
-                        Label("Select Folder", systemImage: "folder")
-                            .frame(maxWidth: .infinity)
-                    }
-                    .modifier(ProminentButtonModifier())
-                }
-            }
+    private var backupNowButton: some View {
+        AsyncButton(progressAlignment: .center) {
+            await autoBackupService.forceBackup()
+        } label: {
+            Label("Backup Now", systemImage: "arrow.clockwise.icloud")
+                .frame(maxWidth: .infinity)
+        } loading: {
+            ProgressView()
+                .tint(.white)
         }
+        .modifier(ProminentButtonModifier())
+        .disabled(isBackingUp)
     }
 
     // MARK: - Disabled Content
@@ -329,6 +286,16 @@ struct AutoBackupSettingsView: View {
         if case .backingUp = status { return true }
         if case .cleaningUp = status { return true }
         return false
+    }
+
+    private var selectedProviderIsConfigured: Bool {
+        guard let providerID = configuration.providerID else { return false }
+        return providerConfigStates[providerID] ?? false
+    }
+
+    private var selectedProviderSummary: String? {
+        guard let providerID = configuration.providerID else { return nil }
+        return providerConfigSummaries[providerID]
     }
 
     private func loadProviderConfigStates() async {
