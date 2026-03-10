@@ -20,8 +20,8 @@ struct BackupKeyChangeView: View {
                 case .undetermined:
                     authenticateCard(isError: false)
                 case .allowed:
-                    warningCard
                     passwordCard
+                    warningCard
                     detailsCard
                 case .denied:
                     authenticateCard(isError: true)
