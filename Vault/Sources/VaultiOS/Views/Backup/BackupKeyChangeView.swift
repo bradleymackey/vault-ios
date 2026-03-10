@@ -14,25 +14,20 @@ struct BackupKeyChangeView: View {
     }
 
     var body: some View {
-        Form {
-            switch viewModel.permissionState {
-            case .undetermined:
-                PlaceholderView(systemIcon: "lock.fill", title: "Locked")
-                    .padding()
-                    .containerRelativeFrame(.horizontal)
-            case .allowed:
-                warningSection
-                passwordSection
-                detailsSection
-            case .denied:
-                PlaceholderView(
-                    systemIcon: "lock.slash.fill",
-                    title: "Authentication Failed",
-                    subtitle: "Please try again",
-                )
-                .containerRelativeFrame(.horizontal)
-                .padding()
+        ScrollView(.vertical) {
+            VStack(spacing: 16) {
+                switch viewModel.permissionState {
+                case .undetermined:
+                    authenticateCard(isError: false)
+                case .allowed:
+                    passwordCard
+                    warningCard
+                    detailsCard
+                case .denied:
+                    authenticateCard(isError: true)
+                }
             }
+            .padding(16)
         }
         .navigationTitle(Text("Backup Password"))
         .navigationBarTitleDisplayMode(.inline)
@@ -70,52 +65,128 @@ struct BackupKeyChangeView: View {
         }
     }
 
-    private var warningSection: some View {
-        Section {
-            HStack(alignment: .top, spacing: 12) {
+    // MARK: - Authenticate Card
+
+    private func authenticateCard(isError: Bool) -> some View {
+        VStack(alignment: .leading, spacing: 16) {
+            PlaceholderView(
+                systemIcon: isError ? "key.slash.fill" : "lock.fill",
+                title: isError ? "Authentication Failed" : "Locked",
+                subtitle: isError ? "Unable to verify your identity. Please try again."
+                    : "Authenticate to change the backup password.",
+            )
+
+            AsyncButton(progressAlignment: .center) {
+                await viewModel.onAppear()
+            } label: {
+                Label("Authenticate", systemImage: "key.horizontal.fill")
+                    .frame(maxWidth: .infinity)
+            } loading: {
+                ProgressView()
+                    .tint(.white)
+            }
+            .modifier(ProminentButtonModifier())
+        }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: isError ? .red : .accentColor,
+            padding: .init(),
+        )))
+    }
+
+    // MARK: - Warning Card
+
+    private var warningCard: some View {
+        VStack(alignment: .leading, spacing: 16) {
+            HStack(spacing: 12) {
                 Image(systemName: "exclamationmark.triangle.fill")
+                    .font(.title2)
                     .foregroundStyle(.orange)
-                    .font(.title3)
+                    .frame(width: 40, height: 40)
+                    .background(Color.orange.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
 
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Historical Backups")
-                        .font(.subheadline.bold())
+                        .font(.headline.bold())
                         .foregroundStyle(.primary)
 
                     Text(
                         "Changing your password will not update existing backups. To restore from a previous backup, you must use the password that was active when that backup was created.",
                     )
-                    .font(.caption)
+                    .font(.callout)
                     .foregroundStyle(.secondary)
                 }
             }
-            .padding(.vertical, 4)
         }
+        .padding(16)
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: .orange,
+            padding: .init(),
+        )))
     }
 
-    private var passwordSection: some View {
-        Section {
-            FormRow(image: Image(systemName: "lock.fill"), color: .primary, style: .standard) {
-                SecureField("New Password", text: $viewModel.newlyEnteredPassword)
-            }
-            .disabled(viewModel.newPassword.isLoading)
+    // MARK: - Password Card
 
-            if viewModel.newlyEnteredPassword.isNotEmpty {
-                FormRow(
-                    image: Image(
-                        systemName: viewModel
-                            .passwordConfirmMatches ? "checkmark.circle.fill" : "xmark.circle.fill",
-                    ),
-                    color: viewModel.passwordConfirmMatches ? .green : .red,
-                    style: .standard,
-                ) {
-                    SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
+    private var passwordCard: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(systemName: "key.horizontal.fill")
+                    .font(.title2)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 40, height: 40)
+                    .background(Color.accentColor.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("New Password")
+                        .font(.headline.bold())
+                        .foregroundStyle(.primary)
+
+                    Text("Enter a new password to generate an encryption key.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
+
+            VStack(alignment: .leading, spacing: 12) {
+                HStack(spacing: 12) {
+                    Image(systemName: "lock.fill")
+                        .frame(width: 28, height: 28)
+                        .foregroundStyle(.primary)
+
+                    SecureField("New Password", text: $viewModel.newlyEnteredPassword)
                 }
                 .disabled(viewModel.newPassword.isLoading)
-            }
 
-        } footer: {
-            VStack(alignment: .center, spacing: 8) {
+                if viewModel.newlyEnteredPassword.isNotEmpty {
+                    HStack(spacing: 12) {
+                        Image(
+                            systemName: viewModel
+                                .passwordConfirmMatches ? "checkmark.circle.fill" : "xmark.circle.fill",
+                        )
+                        .frame(width: 28, height: 28)
+                        .foregroundStyle(viewModel.passwordConfirmMatches ? .green : .red)
+
+                        SecureField("Confirm Password", text: $viewModel.newlyEnteredPasswordConfirm)
+                    }
+                    .disabled(viewModel.newPassword.isLoading)
+                }
+            }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
+
+            VStack(spacing: 8) {
                 Button {
                     keyGenerationTask?.cancel()
                     keyGenerationTask = Task {
@@ -123,6 +194,7 @@ struct BackupKeyChangeView: View {
                     }
                 } label: {
                     Label("Generate Key", systemImage: "key.2.on.ring.fill")
+                        .frame(maxWidth: .infinity)
                 }
                 .modifier(ProminentButtonModifier())
                 .animation(.none, value: viewModel.newPassword)
@@ -151,65 +223,104 @@ struct BackupKeyChangeView: View {
                     }
                 }
                 .font(.caption)
-                .animation(.none, value: viewModel.newlyEnteredPassword)
             }
-            .padding()
-            .modifier(HorizontallyCenter())
+            .padding(16)
         }
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: Color.accentColor,
+            padding: .init(),
+        )))
         .animation(.easeOut, value: viewModel.newlyEnteredPassword)
-        .transition(.move(edge: .leading))
     }
 
-    private var detailsSection: some View {
-        Section {
-            DisclosureGroup {
-                Group {
-                    Text("Your password is used to generate an encryption key that is used to secure your vault.")
-                    Text(
-                        "For security, this key generation process may take up to 3 minutes, even on a very fast device.",
-                    )
-                    Text(
-                        "Your encryption key is not shared between devices.",
-                    )
+    // MARK: - Details Card
+
+    private var detailsCard: some View {
+        VStack(spacing: 0) {
+            HStack(spacing: 12) {
+                Image(systemName: "info.circle.fill")
+                    .font(.title2)
+                    .foregroundStyle(.gray)
+                    .frame(width: 40, height: 40)
+                    .background(Color.gray.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Details")
+                        .font(.headline.bold())
+                        .foregroundStyle(.primary)
+
+                    Text("Encryption algorithm and key generation info.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
                 }
-                .font(.callout)
+
+                Spacer()
+            }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
+
+            VStack(alignment: .leading, spacing: 16) {
+                DisclosureGroup {
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("Your password is used to generate an encryption key that is used to secure your vault.")
+                        Text(
+                            "For security, this key generation process may take up to 3 minutes, even on a very fast device.",
+                        )
+                        Text(
+                            "Your encryption key is not shared between devices.",
+                        )
+                    }
+                    .font(.callout)
+                    .foregroundStyle(.secondary)
+                } label: {
+                    Label("About", systemImage: "questionmark.circle.fill")
+                }
+
+                DisclosureGroup {
+                    VStack(alignment: .leading, spacing: 8) {
+                        LabeledContent {
+                            Text(viewModel.encryptionKeyDeriverSignature.userVisibleDescription)
+                        } label: {
+                            Text("Algorithm")
+                        }
+
+                        LabeledContent {
+                            Text(viewModel.encryptionKeyDeriverSignature.id)
+                                .font(.caption2)
+                                .fontDesign(.monospaced)
+                        } label: {
+                            Text("ID")
+                        }
+                    }
+                } label: {
+                    Label("Keygen Information", systemImage: "key.horizontal.fill")
+                }
+
+                #if DEBUG
+                DisclosureGroup {
+                    AsyncButton {
+                        await viewModel.loadExistingPassword()
+                    } label: {
+                        Text("Fetch existing password")
+                    } loading: {
+                        ProgressView()
+                    }
+                } label: {
+                    Text("DEBUG: Keygen Information")
+                }
                 .foregroundStyle(.secondary)
-            } label: {
-                Label("About", systemImage: "questionmark.circle.fill")
+                #endif
             }
-
-            DisclosureGroup {
-                LabeledContent {
-                    Text(viewModel.encryptionKeyDeriverSignature.userVisibleDescription)
-                } label: {
-                    Text("Algorithm")
-                }
-
-                LabeledContent {
-                    Text(viewModel.encryptionKeyDeriverSignature.id)
-                        .font(.caption2)
-                        .fontDesign(.monospaced)
-                } label: {
-                    Text("ID")
-                }
-            } label: {
-                Label("Keygen Information", systemImage: "key.horizontal.fill")
-            }
-
-            #if DEBUG
-            DisclosureGroup {
-                AsyncButton {
-                    await viewModel.loadExistingPassword()
-                } label: {
-                    Text("Fetch existing password")
-                } loading: {
-                    ProgressView()
-                }
-            } label: {
-                Text("DEBUG: Keygen Information")
-            }
-            .foregroundStyle(.secondary)
-            #endif
+            .padding(16)
         }
+        .modifier(VaultCardModifier(configuration: .init(
+            style: .secondary,
+            border: .gray,
+            padding: .init(),
+        )))
     }
 }
