@@ -6,7 +6,8 @@
       "Bash(git:*)",
       "Bash(grep:*)",
       "Bash(ls:*)",
-      "Bash(swift test:*)"
+      "Bash(swift test:*)",
+      "Bash(gh pr:*)"
     ],
     "deny": [],
     "ask": []
