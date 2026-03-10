@@ -2,7 +2,11 @@
   "permissions": {
     "allow": [
       "Bash(perl:*)",
-      "Bash(xcodebuild:*)"
+      "Bash(xcodebuild:*)",
+      "Bash(git:*)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(swift test:*)"
     ],
     "deny": [],
     "ask": []
