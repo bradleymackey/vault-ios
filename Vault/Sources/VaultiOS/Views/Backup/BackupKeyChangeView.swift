@@ -21,6 +21,7 @@ struct BackupKeyChangeView: View {
                     .padding()
                     .containerRelativeFrame(.horizontal)
             case .allowed:
+                warningSection
                 passwordSection
                 detailsSection
             case .denied:
@@ -66,6 +67,29 @@ struct BackupKeyChangeView: View {
                     .disabled(viewModel.newPassword.isLoading)
                 }
             }
+        }
+    }
+
+    private var warningSection: some View {
+        Section {
+            HStack(alignment: .top, spacing: 12) {
+                Image(systemName: "exclamationmark.triangle.fill")
+                    .foregroundStyle(.orange)
+                    .font(.title3)
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Historical Backups")
+                        .font(.subheadline.bold())
+                        .foregroundStyle(.primary)
+
+                    Text(
+                        "Changing your password will not update existing backups. To restore from a previous backup, you must use the password that was active when that backup was created.",
+                    )
+                    .font(.caption)
+                    .foregroundStyle(.secondary)
+                }
+            }
+            .padding(.vertical, 4)
         }
     }
 

@@ -14,6 +14,7 @@ public struct VaultMainScene: Scene {
 
     public init() {
         UITextView.appearance().textContainerInset = UIEdgeInsets(top: 12, left: 12, bottom: 12, right: 12)
+        VaultRoot.setup()
     }
 
     public var body: some Scene {

@@ -21,6 +21,7 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
             backupEventLogger: BackupEventLoggerMock(),
             vaultKeyDeriverFactory: VaultKeyDeriverFactoryMock(),
             encryptedVaultDecoder: EncryptedVaultDecoderMock(),
+            autoBackupService: AutoBackupServiceMock(status: .disabled, configuration: .init()),
             defaults: .nonPersistent(),
             fileManager: .default,
         )

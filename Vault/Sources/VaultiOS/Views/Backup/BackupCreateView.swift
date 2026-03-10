@@ -30,7 +30,8 @@ struct BackupCreateView: View {
                     passwordNotCreatedCard
                 case let .fetched(password):
                     passwordExistsCard
-                    lastBackupSummaryCard(password: password)
+                    AutoBackupSettingsView(autoBackupService: injector.autoBackupService)
+                    pdfBackupCard(password: password)
                     deviceTransferCard(password: password)
                 }
             }
@@ -174,7 +175,7 @@ struct BackupCreateView: View {
     // MARK: - Password Exists Card
 
     private var passwordExistsCard: some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Image(systemName: "checkmark.shield.fill")
                     .font(.title2)
@@ -195,6 +196,10 @@ struct BackupCreateView: View {
 
                 Spacer()
             }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
 
             Button {
                 modal = .updatePassword
@@ -203,8 +208,8 @@ struct BackupCreateView: View {
                     .frame(maxWidth: .infinity)
             }
             .modifier(ProminentButtonModifier(color: .gray))
+            .padding(16)
         }
-        .padding(16)
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
             border: Color.green,
@@ -213,55 +218,56 @@ struct BackupCreateView: View {
         .transition(.slide)
     }
 
-    // MARK: - Last Backup Summary Card
+    // MARK: - PDF Backup Card
 
-    private func lastBackupSummaryCard(password: DerivedEncryptionKey) -> some View {
+    private func pdfBackupCard(password: DerivedEncryptionKey) -> some View {
         VStack(spacing: 0) {
-            LastBackupSummaryView(
-                lastBackup: dataModel.lastBackupEvent,
-            )
+            HStack(spacing: 12) {
+                Image(systemName: "doc.richtext")
+                    .font(.title2)
+                    .foregroundStyle(Color.accentColor)
+                    .frame(width: 40, height: 40)
+                    .background(Color.accentColor.opacity(0.1))
+                    .clipShape(RoundedRectangle(cornerRadius: 8))
+
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("PDF Backup")
+                        .font(.headline.bold())
+                        .foregroundStyle(.primary)
+
+                    Text("Create an offline backup you can print or save.")
+                        .font(.callout)
+                        .foregroundStyle(.secondary)
+                }
+
+                Spacer()
+            }
+            .padding(16)
 
             Divider()
                 .padding(.horizontal, 16)
 
-            VStack(spacing: 12) {
-                Button {
-                    modal = .pdfBackup(password)
-                } label: {
-                    Label("Create PDF Backup", systemImage: "printer.filled.and.paper")
-                        .frame(maxWidth: .infinity)
-                }
-                .modifier(ProminentButtonModifier())
+            Button {
+                modal = .pdfBackup(password)
+            } label: {
+                Label("Create PDF Backup", systemImage: "printer.filled.and.paper")
+                    .frame(maxWidth: .infinity)
             }
+            .modifier(ProminentButtonModifier())
             .padding(16)
         }
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
-            border: lastBackupBorderColor,
+            border: Color.accentColor,
             padding: .init(),
         )))
         .transition(.slide)
     }
 
-    private var lastBackupBorderColor: Color {
-        guard let lastBackup = dataModel.lastBackupEvent else { return Color.red }
-
-        let daysSinceBackup = Calendar.current.dateComponents([.day], from: lastBackup.backupDate, to: Date())
-            .day ?? Int.max
-
-        if daysSinceBackup < 7 {
-            return Color.green
-        } else if daysSinceBackup < 30 {
-            return Color.orange
-        } else {
-            return Color.red
-        }
-    }
-
     // MARK: - Device Transfer Card
 
     private func deviceTransferCard(password: DerivedEncryptionKey) -> some View {
-        VStack(alignment: .leading, spacing: 16) {
+        VStack(spacing: 0) {
             HStack(spacing: 12) {
                 Image(systemName: "qrcode")
                     .font(.title2)
@@ -282,6 +288,10 @@ struct BackupCreateView: View {
 
                 Spacer()
             }
+            .padding(16)
+
+            Divider()
+                .padding(.horizontal, 16)
 
             Button {
                 modal = .deviceTransfer(password)
@@ -290,8 +300,8 @@ struct BackupCreateView: View {
                     .frame(maxWidth: .infinity)
             }
             .modifier(ProminentButtonModifier())
+            .padding(16)
         }
-        .padding(16)
         .modifier(VaultCardModifier(configuration: .init(
             style: .secondary,
             border: Color.accentColor,

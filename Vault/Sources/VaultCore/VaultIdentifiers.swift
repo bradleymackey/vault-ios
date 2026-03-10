@@ -16,6 +16,10 @@ public enum VaultIdentifiers {
         public static let lastBackupEvent = "vault.backup.last-event"
     }
 
+    public enum AutoBackup {
+        public static let configuration = "vault.backup.auto.configuration"
+    }
+
     public enum Preferences {
         public enum PDF {
             public static let defaultSize = "vault.preferences.pdf.default-size"
