@@ -46,6 +46,9 @@ public protocol BackupStorageProvider: Identifiable, Sendable {
     /// Clear the provider's configuration.
     func clearConfiguration() async
 
+    /// Configure the provider with a user-selected folder URL.
+    func configure(with folderURL: URL) async throws
+
     /// Write backup data to the provider.
     /// - Parameters:
     ///   - data: The PDF backup data to write.

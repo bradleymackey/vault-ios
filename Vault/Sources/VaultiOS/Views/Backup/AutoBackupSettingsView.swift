@@ -345,18 +345,16 @@ struct AutoBackupSettingsView: View {
               let provider = autoBackupService.availableProviders.first(where: { $0.id == providerID })
         else { return }
 
-        if let iCloudProvider = provider as? iCloudDriveProvider {
-            Task {
-                do {
-                    try await iCloudProvider.configure(with: url)
-                    // Save the configuration to persistent storage
-                    await autoBackupService.saveProviderConfiguration()
-                    await loadProviderConfigStates()
-                    // Trigger a backup now that it's configured
-                    await autoBackupService.triggerBackupIfNeeded()
-                } catch {
-                    // Configuration failed - the provider will remain unconfigured
-                }
+        Task {
+            do {
+                try await provider.configure(with: url)
+                // Save the configuration to persistent storage
+                await autoBackupService.saveProviderConfiguration()
+                await loadProviderConfigStates()
+                // Trigger a backup now that it's configured
+                await autoBackupService.triggerBackupIfNeeded()
+            } catch {
+                // Configuration failed - the provider will remain unconfigured
             }
         }
     }

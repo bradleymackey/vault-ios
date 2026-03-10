@@ -444,6 +444,9 @@ final class BackupStorageProviderStub: BackupStorageProvider, Sendable {
         clearedConfiguration = true
     }
 
+    func configure(with folderURL: URL) async throws {}
+
+
     func write(data: Data, filename: String) async throws {
         writeCallCount += 1
         writtenData.append((data: data, filename: filename))
