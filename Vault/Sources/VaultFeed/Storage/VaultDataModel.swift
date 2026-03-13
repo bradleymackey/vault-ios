@@ -294,6 +294,7 @@ extension VaultDataModel {
             item: item.item,
             visibility: item.visibility,
             searchableLevel: item.searchableLevel,
+            showInQuickType: item.showInQuickType,
         )
     }
 
@@ -423,6 +424,7 @@ extension VaultDataModel {
             item: .otpCode(code),
             visibility: .always,
             searchableLevel: .full,
+            showInQuickType: true,
         )
     }
 

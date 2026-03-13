@@ -43,6 +43,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             searchPassphrase: metadata.searchPassphrase,
             killphrase: metadata.killphrase,
             lockState: metadata.lockState,
+            showInQuickType: metadata.showInQuickType,
         )
     }
 
@@ -120,6 +121,8 @@ extension VaultItem {
         public var lockState: VaultItemLockState
         /// The color tint for this item.
         public var color: VaultItemColor?
+        /// Whether this item should appear in QuickType suggestions.
+        public var showInQuickType: Bool
 
         public init(
             id: Identifier<VaultItem>,
@@ -134,6 +137,7 @@ extension VaultItem {
             killphrase: String?,
             lockState: VaultItemLockState,
             color: VaultItemColor?,
+            showInQuickType: Bool,
         ) {
             self.id = id
             self.created = created
@@ -147,6 +151,7 @@ extension VaultItem {
             self.killphrase = killphrase
             self.lockState = lockState
             self.color = color
+            self.showInQuickType = showInQuickType
         }
     }
 }
@@ -164,6 +169,7 @@ extension VaultItem {
         public var searchPassphrase: String?
         public var killphrase: String?
         public var lockState: VaultItemLockState
+        public var showInQuickType: Bool
 
         public init(
             relativeOrder: UInt64,
@@ -176,6 +182,7 @@ extension VaultItem {
             searchPassphrase: String?,
             killphrase: String?,
             lockState: VaultItemLockState,
+            showInQuickType: Bool,
         ) {
             self.relativeOrder = relativeOrder
             self.userDescription = userDescription
@@ -187,6 +194,7 @@ extension VaultItem {
             self.searchPassphrase = searchPassphrase
             self.killphrase = killphrase
             self.lockState = lockState
+            self.showInQuickType = showInQuickType
         }
     }
 

@@ -40,6 +40,7 @@ struct VaultDataModelEditorAdapterTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         try await confirmation("Insert handler called") { confirmation in
@@ -98,6 +99,7 @@ struct VaultDataModelEditorAdapterTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
         edits.issuerTitle = "new issuer name"
         edits.accountNameTitle = "new account name"
@@ -439,6 +441,7 @@ extension VaultDataModelEditorAdapterTests {
             tags: [],
             lockState: .notLocked,
             color: nil,
+            showInQuickType: true,
         )
     }
 }

@@ -98,6 +98,7 @@ extension VaultItemTests {
                 killphrase: killphrase,
                 lockState: lockState,
                 color: color,
+                showInQuickType: true,
             ),
             item: .secureNote(.init(title: "title", contents: "contents", format: format)),
         )

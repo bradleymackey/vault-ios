@@ -350,6 +350,17 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                 }
             }
 
+            Toggle(isOn: $viewModel.editingModel.detail.showInQuickType) {
+                FormRow(
+                    image: Image(systemName: "keyboard"),
+                    color: .accentColor,
+                    style: .standard,
+                ) {
+                    Text("Show in QuickType")
+                        .font(.body)
+                }
+            }
+
             Button {
                 modal = .editLock
             } label: {
@@ -467,6 +478,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             killphrase: "",
             lockState: .notLocked,
             color: VaultItemColor(color: .green),
+            showInQuickType: true,
         ),
         editor: OTPCodeDetailEditorMock(),
         previewGenerator: VaultItemPreviewViewGeneratorMock(),

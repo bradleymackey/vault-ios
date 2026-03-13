@@ -21,6 +21,7 @@ public struct VaultItemDemoFactory {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: true,
         )
     }
 
@@ -41,6 +42,7 @@ public struct VaultItemDemoFactory {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: true,
         )
     }
 
@@ -61,6 +63,7 @@ public struct VaultItemDemoFactory {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: false,
         )
     }
 
@@ -84,6 +87,7 @@ public struct VaultItemDemoFactory {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: false,
         )
     }
 }

@@ -30,6 +30,7 @@ struct OTPCodeDetailEditsTests {
             killphrase: "killme",
             tags: [],
             lockState: .lockedWithNativeSecurity,
+            showInQuickType: true,
         )
 
         #expect(sut.codeType == .totp)
@@ -73,6 +74,7 @@ struct OTPCodeDetailEditsTests {
             killphrase: "killme",
             tags: [],
             lockState: .lockedWithNativeSecurity,
+            showInQuickType: true,
         )
 
         #expect(sut.codeType == .hotp)
@@ -106,6 +108,7 @@ struct OTPCodeDetailEditsTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         #expect(sut.secretBase32String == "")
@@ -125,6 +128,7 @@ struct OTPCodeDetailEditsTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         #expect(sut.isValid)
@@ -187,6 +191,7 @@ struct OTPCodeDetailEditsTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         let newCode = try sut.asOTPAuthCode()
@@ -207,6 +212,7 @@ struct OTPCodeDetailEditsTests {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         let newCode = try sut.asOTPAuthCode()

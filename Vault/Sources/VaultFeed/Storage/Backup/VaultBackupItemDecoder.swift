@@ -29,6 +29,7 @@ extension VaultBackupItemDecoder {
             killphrase: backupItem.killphrase,
             lockState: decodeLockState(state: backupItem.lockState),
             color: decodeColor(color: backupItem.tintColor),
+            showInQuickType: true,
         )
     }
 

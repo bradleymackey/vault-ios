@@ -78,6 +78,7 @@ extension PersistedVaultItemEncoder {
             color: newData.color.flatMap { color in
                 .init(red: color.red, green: color.green, blue: color.blue)
             },
+            showInQuickType: newData.showInQuickType,
             tags: fetchTagsForItem(newData: newData),
             noteDetails: noteDetails,
             otpDetails: otpDetails,

@@ -27,6 +27,7 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
             searchPassphrase: initialEdits.searchPassphrase,
             killphrase: initialEdits.killphrase,
             lockState: initialEdits.lockState,
+            showInQuickType: initialEdits.showInQuickType,
         )
 
         try await dataModel.insert(item: newCodeVaultItem)
@@ -50,6 +51,7 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
                 searchPassphrase: edits.searchPassphrase,
                 killphrase: edits.killphrase,
                 lockState: edits.lockState,
+                showInQuickType: edits.showInQuickType,
             ),
         )
     }
@@ -73,6 +75,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             searchPassphrase: initialEdits.searchPassphrase,
             killphrase: initialEdits.killphrase,
             lockState: initialEdits.lockState,
+            showInQuickType: false,
         )
 
         try await dataModel.insert(item: newVaultItem)
@@ -91,6 +94,7 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             searchPassphrase: edits.searchPassphrase,
             killphrase: edits.killphrase,
             lockState: edits.lockState,
+            showInQuickType: false,
         )
 
         try await dataModel.update(itemID: id, data: updatedVaultItem)

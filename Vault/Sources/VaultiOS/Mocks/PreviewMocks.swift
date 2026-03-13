@@ -23,6 +23,7 @@ struct CodeStoreFake: VaultStoreReader {
                 killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
+                showInQuickType: true,
             ),
             item: .otpCode(
                 .init(
@@ -49,6 +50,7 @@ struct CodeStoreFake: VaultStoreReader {
                 killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
+                showInQuickType: true,
             ),
             item: .otpCode(
                 .init(
@@ -75,6 +77,7 @@ struct CodeStoreFake: VaultStoreReader {
                 killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
+                showInQuickType: true,
             ),
             item: .otpCode(
                 .init(

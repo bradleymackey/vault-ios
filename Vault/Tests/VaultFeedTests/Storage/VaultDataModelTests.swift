@@ -643,7 +643,7 @@ final class VaultDataModelTests {
         let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.syncHandler = { _, item, _, _ in
+            vaultOtpAutofillStore.syncHandler = { _, item, _, _, _ in
                 guard case let .otpCode(code) = item else {
                     Issue.record("Expected OTP code")
                     return
@@ -668,7 +668,7 @@ final class VaultDataModelTests {
     @Test
     func addDemoOTPItemToAutofillStore_throwsErrorOnFailure() async throws {
         let vaultOtpAutofillStore = VaultOTPAutofillStoreMock()
-        vaultOtpAutofillStore.syncHandler = { _, _, _, _ in throw TestError() }
+        vaultOtpAutofillStore.syncHandler = { _, _, _, _, _ in throw TestError() }
         let sut = makeSUT(vaultOtpAutofillStore: vaultOtpAutofillStore)
 
         await #expect(throws: (any Error).self) {
@@ -727,10 +727,11 @@ final class VaultDataModelTests {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.syncHandler = { id, payload, _, _ in
+            vaultOtpAutofillStore.syncHandler = { id, payload, _, _, _ in
                 #expect(id == itemID.rawValue)
                 #expect(payload == .otpCode(otpCode))
                 confirm()
@@ -763,10 +764,11 @@ final class VaultDataModelTests {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         try await confirmation { confirm in
-            vaultOtpAutofillStore.syncHandler = { id, payload, _, _ in
+            vaultOtpAutofillStore.syncHandler = { id, payload, _, _, _ in
                 #expect(id == itemID.rawValue)
                 #expect(payload == .secureNote(secureNote))
                 confirm()
@@ -797,6 +799,7 @@ final class VaultDataModelTests {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         try await confirmation { confirm in
@@ -830,6 +833,7 @@ final class VaultDataModelTests {
             searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
+            showInQuickType: true,
         )
 
         try await confirmation { confirm in

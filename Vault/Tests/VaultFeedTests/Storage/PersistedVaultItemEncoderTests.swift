@@ -553,6 +553,7 @@ extension PersistedVaultItemEncoderTests {
         searchPassphrase: String = "",
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
+        showInQuickType: Bool = true,
     ) -> VaultItem.Write {
         VaultItem.Write(
             relativeOrder: relativeOrder,
@@ -565,6 +566,7 @@ extension PersistedVaultItemEncoderTests {
             searchPassphrase: searchPassphrase,
             killphrase: killphrase,
             lockState: lockState,
+            showInQuickType: showInQuickType,
         )
     }
 

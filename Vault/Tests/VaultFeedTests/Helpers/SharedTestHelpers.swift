@@ -188,6 +188,7 @@ func anyVaultItemMetadata(
     killphrase: String? = nil,
     lockState: VaultItemLockState = .notLocked,
     color: VaultItemColor? = nil,
+    showInQuickType: Bool = true,
 ) -> VaultItem.Metadata {
     .init(
         id: id,
@@ -202,6 +203,7 @@ func anyVaultItemMetadata(
         killphrase: killphrase,
         lockState: lockState,
         color: color,
+        showInQuickType: showInQuickType,
     )
 }
 
@@ -214,6 +216,7 @@ extension SecureNote {
         searchPassphrase: String? = nil,
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
+        showInQuickType: Bool = true,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -224,6 +227,7 @@ extension SecureNote {
                 searchPassphrase: searchPassphrase,
                 killphrase: killphrase,
                 lockState: lockState,
+                showInQuickType: showInQuickType,
             ),
             item: .secureNote(self),
         )
@@ -239,6 +243,7 @@ extension EncryptedItem {
         searchPassphrase: String? = nil,
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
+        showInQuickType: Bool = true,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -249,6 +254,7 @@ extension EncryptedItem {
                 searchPassphrase: searchPassphrase,
                 killphrase: killphrase,
                 lockState: lockState,
+                showInQuickType: showInQuickType,
             ),
             item: .encryptedItem(self),
         )
@@ -265,6 +271,7 @@ extension OTPAuthCode {
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil,
+        showInQuickType: Bool = true,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -276,6 +283,7 @@ extension OTPAuthCode {
                 killphrase: killphrase,
                 lockState: lockState,
                 color: color,
+                showInQuickType: showInQuickType,
             ),
             item: .otpCode(self),
         )
