@@ -8,17 +8,9 @@ struct DeveloperOTPAutofillView: View {
     @Environment(\.presentToast) private var presentToast
     @State private var storeState: ASCredentialIdentityStoreState?
 
-    enum Destination: Hashable {
-        case addOTPItem
-    }
-
     var body: some View {
         Form {
             Section {
-                NavigationLink(value: Destination.addOTPItem) {
-                    Text("Add OTP Item")
-                }
-
                 AsyncButton {
                     try await dataModel.syncAllToOTPAutofillStore()
                     await loadState()
@@ -86,12 +78,6 @@ struct DeveloperOTPAutofillView: View {
         }
         .navigationTitle("OTP Autofill")
         .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(for: Destination.self) { item in
-            switch item {
-            case .addOTPItem:
-                DeveloperAddOTPItemView()
-            }
-        }
         .task {
             await loadState()
         }

@@ -403,31 +403,6 @@ extension VaultDataModel {
 // MARK: - OTP Autofill Store
 
 extension VaultDataModel {
-    public func addDemoOTPItemToAutofillStore(
-        issuer: String,
-        accountName: String,
-    ) async throws {
-        let secret = try OTPAuthSecret.base32EncodedString("JBSWY3DPEHPK3PXP")
-        let codeData = OTPAuthCodeData(
-            secret: secret,
-            algorithm: .sha1,
-            digits: .default,
-            accountName: accountName,
-            issuer: issuer,
-        )
-        let code = OTPAuthCode(
-            type: .totp(period: 30),
-            data: codeData,
-        )
-        try await vaultOtpAutofillStore.sync(
-            id: UUID(),
-            item: .otpCode(code),
-            visibility: .always,
-            searchableLevel: .full,
-            showInQuickType: true,
-        )
-    }
-
     public func clearOTPAutofillStore() async throws {
         try await vaultOtpAutofillStore.removeAll()
     }
