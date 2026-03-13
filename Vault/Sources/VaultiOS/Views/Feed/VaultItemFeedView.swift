@@ -289,6 +289,7 @@ public struct VaultItemFeedView<
                 killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
+                showInQuickType: true,
             ),
             item: .otpCode(.init(
                 type: .totp(),

@@ -31,6 +31,7 @@ final class VaultBackupItemEncoderTests {
                 killphrase: "killme",
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
+                showInQuickType: false,
             ),
             item: .secureNote(note),
         )
@@ -93,6 +94,7 @@ final class VaultBackupItemEncoderTests {
                 killphrase: "killmenow",
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
+                showInQuickType: false,
             ),
             item: .encryptedItem(encryptedItem),
         )
@@ -155,6 +157,7 @@ final class VaultBackupItemEncoderTests {
                 killphrase: "killme",
                 lockState: .lockedWithNativeSecurity,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
+                showInQuickType: true,
             ),
             item: .otpCode(code),
         )
@@ -219,6 +222,7 @@ final class VaultBackupItemEncoderTests {
                 killphrase: "killme",
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
+                showInQuickType: true,
             ),
             item: .otpCode(code),
         )

@@ -87,6 +87,7 @@ public final class BackupImportScanningHandlerSimulated: SimulatedCodeScanningHa
                         killphrase: nil,
                         lockState: .notLocked,
                         color: nil,
+                        showInQuickType: false,
                     ),
                     item: .secureNote(.init(
                         title: "My example secure note",

@@ -52,6 +52,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 killphrase: metadata.killphrase ?? "",
                 tags: metadata.tags,
                 lockState: metadata.lockState,
+                showInQuickType: metadata.showInQuickType,
             ))
         }
     }

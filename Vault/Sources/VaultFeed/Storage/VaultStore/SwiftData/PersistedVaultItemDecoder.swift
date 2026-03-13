@@ -17,6 +17,7 @@ struct PersistedVaultItemDecoder {
             killphrase: item.killphrase,
             lockState: decodeLockState(value: item.lockState),
             color: decodeColor(item: item),
+            showInQuickType: item.showInQuickType,
         )
         if let otp = item.otpDetails {
             let otpCode = try decodeOTPCode(otp: otp)

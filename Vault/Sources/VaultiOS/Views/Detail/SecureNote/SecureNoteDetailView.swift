@@ -401,6 +401,7 @@ struct SecureNoteDetailView: View {
             killphrase: "",
             lockState: .notLocked,
             color: nil,
+            showInQuickType: false,
         ),
         editor: SecureNoteDetailEditorMock(),
         openInEditMode: false,

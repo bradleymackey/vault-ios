@@ -17,6 +17,7 @@ enum DemoVaultFactory {
                 killphrase: "",
                 lockState: .notLocked,
                 color: nil,
+                showInQuickType: true,
             ),
             item: .otpCode(.init(
                 type: .totp(),
@@ -44,6 +45,7 @@ enum DemoVaultFactory {
                 killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
+                showInQuickType: true,
             ),
             item: .otpCode(.init(
                 type: .hotp(),
@@ -71,6 +73,7 @@ enum DemoVaultFactory {
                 killphrase: "",
                 lockState: .notLocked,
                 color: VaultItemColor(color: .red),
+                showInQuickType: false,
             ),
             item: .secureNote(.init(title: title, contents: contents, format: .markdown)),
         )

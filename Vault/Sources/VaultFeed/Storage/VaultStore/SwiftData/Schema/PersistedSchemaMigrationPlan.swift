@@ -7,7 +7,6 @@ enum PersistedSchemaMigrationPlan: SchemaMigrationPlan {
     }
 
     static var stages: [MigrationStage] {
-        // There are no migrations yet, as we only have a V1 schema.
         []
     }
 }

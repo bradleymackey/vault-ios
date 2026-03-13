@@ -25,6 +25,7 @@ public protocol VaultOTPAutofillStore: Sendable {
         item: VaultItem.Payload,
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
+        showInQuickType: Bool,
     ) async throws
 
     /// Syncs all vault items to the autofill store.
@@ -62,6 +63,7 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         item: VaultItem.Payload,
         visibility: VaultItemVisibility,
         searchableLevel: VaultItemSearchableLevel,
+        showInQuickType: Bool,
     ) async throws {
         guard let otpCode = item.otpCode else {
             // Not an OTP item, remove from autofill store if present
@@ -73,6 +75,12 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
         let viewConfig = VaultItemViewConfiguration(visibility: visibility, searchableLevel: searchableLevel)
         if viewConfig == .requiresSearchPassphrase {
             // Hidden items should not appear in autofill, remove if present
+            try await remove(id: id, code: otpCode)
+            return
+        }
+
+        // Check if item has QuickType disabled
+        if !showInQuickType {
             try await remove(id: id, code: otpCode)
             return
         }
@@ -107,6 +115,11 @@ public final class VaultOTPAutofillStoreImpl: VaultOTPAutofillStore {
             )
             if viewConfig == .requiresSearchPassphrase {
                 // Hidden items should not appear in autofill
+                return nil
+            }
+
+            // Check if item has QuickType disabled
+            if !item.metadata.showInQuickType {
                 return nil
             }
 

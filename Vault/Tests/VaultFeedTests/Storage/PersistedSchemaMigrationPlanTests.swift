@@ -5,7 +5,7 @@ import Testing
 
 struct PersistedSchemaMigrationPlanTests {
     @Test
-    func stages_none() {
+    func stages_hasExpectedCount() {
         let stages = PersistedSchemaMigrationPlan.stages
 
         #expect(stages.isEmpty)

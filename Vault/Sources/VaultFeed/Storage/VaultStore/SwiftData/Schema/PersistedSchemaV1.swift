@@ -28,6 +28,7 @@ extension PersistedSchemaV1 {
         var killphrase: String?
         var lockState: String?
         var color: PersistedColor?
+        var showInQuickType: Bool = true
         @Relationship(deleteRule: .noAction)
         var tags: [PersistedVaultTag] = []
 
@@ -50,6 +51,7 @@ extension PersistedSchemaV1 {
             killphrase: String?,
             lockState: String?,
             color: PersistedColor?,
+            showInQuickType: Bool,
             tags: [PersistedVaultTag],
             noteDetails: PersistedNoteDetails?,
             otpDetails: PersistedOTPDetails?,
@@ -66,6 +68,7 @@ extension PersistedSchemaV1 {
             self.killphrase = killphrase
             self.lockState = lockState
             self.color = color
+            self.showInQuickType = showInQuickType
             self.tags = tags
             self.noteDetails = noteDetails
             self.otpDetails = otpDetails

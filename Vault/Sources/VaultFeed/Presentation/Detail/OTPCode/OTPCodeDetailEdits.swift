@@ -45,6 +45,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
 
     public var lockState: VaultItemLockState
 
+    public var showInQuickType: Bool
+
     public init(
         codeType: OTPAuthType.Kind,
         relativeOrder: UInt64,
@@ -62,6 +64,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         color: VaultItemColor?,
+        showInQuickType: Bool,
     ) {
         self.codeType = codeType
         self.relativeOrder = relativeOrder
@@ -79,6 +82,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.tags = tags
         self.lockState = lockState
         self.color = color
+        self.showInQuickType = showInQuickType
     }
 
     public init(
@@ -91,6 +95,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         killphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
+        showInQuickType: Bool,
     ) {
         codeType = code.type.kind
         totpPeriodLength = switch code.type {
@@ -114,6 +119,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.lockState = lockState
         self.color = color
         self.relativeOrder = relativeOrder
+        self.showInQuickType = showInQuickType
     }
 
     /// Constructs an OTPAuthCode from the current state of the edits
@@ -197,6 +203,7 @@ extension OTPCodeDetailEdits {
             tags: [],
             lockState: .notLocked,
             color: nil,
+            showInQuickType: true,
         )
     }
 
@@ -211,6 +218,7 @@ extension OTPCodeDetailEdits {
             killphrase: "",
             tags: [],
             lockState: .notLocked,
+            showInQuickType: true,
         )
     }
 }

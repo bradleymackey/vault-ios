@@ -17,6 +17,7 @@ func anyVaultItemMetadata(
         killphrase: "",
         lockState: lockState,
         color: .black,
+        showInQuickType: true,
     )
 }
 

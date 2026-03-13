@@ -508,6 +508,7 @@ extension PersistedVaultItemDecoderTests {
             killphrase: killphrase,
             lockState: lockState,
             color: color,
+            showInQuickType: true,
             tags: tags,
             noteDetails: noteDetails,
             otpDetails: otpDetails,
