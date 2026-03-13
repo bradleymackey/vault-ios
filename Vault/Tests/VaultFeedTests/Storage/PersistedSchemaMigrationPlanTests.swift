@@ -8,6 +8,6 @@ struct PersistedSchemaMigrationPlanTests {
     func stages_hasExpectedCount() {
         let stages = PersistedSchemaMigrationPlan.stages
 
-        #expect(stages.count == 1)
+        #expect(stages.isEmpty)
     }
 }
