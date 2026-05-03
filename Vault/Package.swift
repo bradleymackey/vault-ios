@@ -2,7 +2,7 @@
 
 import PackageDescription
 
-let swiftLintVersion: Version = "0.62.2"
+let swiftLintVersion: Version = "0.63.2"
 let swiftFormatVersion: Version = "0.58.6"
 let swiftFormatChecksum: String = "d2ee571b3f15c173b1789b82b9fcf1e799cff66de0ae9f6839bd35aa8e9b9608"
 
@@ -267,8 +267,8 @@ let package = Package(
         ),
         .binaryTarget(
             name: "mockolo",
-            url: "https://github.com/uber/mockolo/releases/download/2.5.0/mockolo.artifactbundle.zip",
-            checksum: "107825279e5c7c2f8ef021320d8054e0b36fcb9e634d02d2ff1bde6d8b460722",
+            url: "https://github.com/uber/mockolo/releases/download/2.6.1/mockolo.artifactbundle.zip",
+            checksum: "8ed3fd73a7b76b87b3d53cd702e5b977443d4ffd00d50161200e2526fc08e7bf",
         ),
 
         .plugin(
