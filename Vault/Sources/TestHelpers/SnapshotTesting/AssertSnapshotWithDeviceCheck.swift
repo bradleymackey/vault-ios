@@ -1,3 +1,4 @@
+#if canImport(UIKit)
 import Foundation
 import SnapshotTesting
 import UIKit
@@ -123,3 +124,5 @@ private func assertDeviceConfiguration(
         )
     }
 }
+
+#endif // canImport(UIKit)
