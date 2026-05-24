@@ -1,5 +1,6 @@
 # Agents
 .cursor/.agent-tools
+.claude/*.local.*
 
 # Bundler
 .bundle/
