@@ -12,6 +12,7 @@ struct PlaceholderView: View {
             Image(systemName: systemIcon)
                 .font(.largeTitle)
                 .foregroundStyle(.primary)
+                .frame(height: 40, alignment: .center)
             VStack(alignment: .leading, spacing: 2) {
                 Text(title)
                     .font(.headline)
@@ -21,6 +22,9 @@ struct PlaceholderView: View {
                         .font(.subheadline)
                         .foregroundStyle(.secondary)
                 }
+            }
+            .transaction { transaction in
+                transaction.animation = nil
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
