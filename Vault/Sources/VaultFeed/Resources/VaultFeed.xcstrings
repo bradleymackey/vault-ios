@@ -23,17 +23,6 @@
         }
       }
     },
-    "backupRestore.title" : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Restore"
-          }
-        }
-      }
-    },
     "backupPasswordState.create.title" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -122,8 +111,19 @@
         }
       }
     },
+    "backupRestore.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Restore"
+          }
+        }
+      }
+    },
     "codeDetail.action.delete.confirm.subtitle" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -134,7 +134,7 @@
       }
     },
     "codeDetail.action.delete.confirm.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -145,7 +145,7 @@
       }
     },
     "codeDetail.action.delete.entity.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -156,7 +156,7 @@
       }
     },
     "codeDetail.description.subtitle" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -167,7 +167,7 @@
       }
     },
     "codeDetail.description.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -178,7 +178,7 @@
       }
     },
     "codeDetail.field.accountName.example" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -189,7 +189,7 @@
       }
     },
     "codeDetail.field.accountName.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -234,7 +234,7 @@
       }
     },
     "codeDetail.field.siteName.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -322,7 +322,7 @@
       }
     },
     "codeDetail.listSection.algorithm.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -333,7 +333,7 @@
       }
     },
     "codeDetail.listSection.created.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -355,7 +355,7 @@
       }
     },
     "codeDetail.listSection.digits.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -366,7 +366,7 @@
       }
     },
     "codeDetail.listSection.period.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -377,7 +377,7 @@
       }
     },
     "codeDetail.listSection.secretFormat.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -388,7 +388,7 @@
       }
     },
     "codeDetail.listSection.type.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -399,7 +399,7 @@
       }
     },
     "codeDetail.listSection.updated.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -410,7 +410,7 @@
       }
     },
     "codeDetail.secretType.base32" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -443,7 +443,7 @@
       }
     },
     "codeDetail.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -454,7 +454,7 @@
       }
     },
     "codeDetail.typeName.hotp" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -465,7 +465,7 @@
       }
     },
     "codeDetail.typeName.totp" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -476,7 +476,7 @@
       }
     },
     "codePreview.codeGenerationError.description" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -487,7 +487,7 @@
       }
     },
     "codePreview.codeGenerationError.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -498,7 +498,7 @@
       }
     },
     "detail.operationError.delete.description" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -509,7 +509,7 @@
       }
     },
     "detail.operationError.save.description" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -520,7 +520,7 @@
       }
     },
     "feed.searching.filteringByTags.%lld" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -543,7 +543,7 @@
       }
     },
     "feedRetrieval.error.description" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -554,7 +554,7 @@
       }
     },
     "feedRetrieval.error.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -565,7 +565,7 @@
       }
     },
     "feedViewModel.list.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -576,7 +576,7 @@
       }
     },
     "feedViewModel.searching.title.%lld" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -687,7 +687,7 @@
       }
     },
     "itemDetail.tagsCount.%lld" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "variations" : {
@@ -743,7 +743,7 @@
       }
     },
     "noteDetail.action.delete.confirm.subtitle" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -754,7 +754,7 @@
       }
     },
     "noteDetail.action.delete.confirm.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -765,7 +765,7 @@
       }
     },
     "noteDetail.action.delete.entity.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -776,7 +776,7 @@
       }
     },
     "noteDetail.description.subtitle" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -787,7 +787,7 @@
       }
     },
     "noteDetail.description.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -798,7 +798,7 @@
       }
     },
     "noteDetail.field.noteContents.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -809,7 +809,7 @@
       }
     },
     "noteDetail.field.noteDescription.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -820,7 +820,7 @@
       }
     },
     "noteDetail.field.noteTitle.example" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -831,7 +831,7 @@
       }
     },
     "noteDetail.field.noteTitle.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -853,7 +853,7 @@
       }
     },
     "noteDetail.listSection.created.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -875,7 +875,7 @@
       }
     },
     "noteDetail.listSection.updated.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -908,7 +908,7 @@
       }
     },
     "noteDetail.title" : {
-      "extractionState" : "migrated",
+      "extractionState" : "manual",
       "localizations" : {
         "en" : {
           "stringUnit" : {
