@@ -23,7 +23,7 @@
       },
       {
         "key" : "SNAPSHOT_TESTING_RECORD",
-        "value" : "missing"
+        "value" : "failed"
       }
     ],
     "language" : "en",
