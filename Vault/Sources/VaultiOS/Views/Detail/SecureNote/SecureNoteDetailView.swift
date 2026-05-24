@@ -176,6 +176,7 @@ struct SecureNoteDetailView: View {
                     VaultDetailNotePreviewEditView(
                         title: "Preview",
                         description: "Controls what appears in the note's preview tile. Hiding fields keeps content off the main feed.",
+                        isEncrypted: viewModel.editingModel.detail.encrypted,
                         previewMode: $viewModel.editingModel.detail.previewMode,
                     )
                     .toolbar {

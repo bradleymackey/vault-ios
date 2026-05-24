@@ -4,7 +4,16 @@ import VaultFeed
 struct VaultDetailNotePreviewEditView: View {
     var title: String
     var description: String
+    var isEncrypted: Bool
     @Binding var previewMode: NotePreviewMode
+
+    private var availableModes: [NotePreviewMode] {
+        if isEncrypted {
+            NotePreviewMode.allCases.filter { $0 != .titleAndFirstLine }
+        } else {
+            NotePreviewMode.allCases
+        }
+    }
 
     var body: some View {
         Form {
@@ -13,6 +22,11 @@ struct VaultDetailNotePreviewEditView: View {
         }
         .animation(.easeOut, value: previewMode)
         .transition(.move(edge: .top))
+        .onAppear {
+            if !availableModes.contains(previewMode) {
+                previewMode = availableModes.first ?? .titleOnly
+            }
+        }
     }
 
     private var titleSection: some View {
@@ -31,7 +45,7 @@ struct VaultDetailNotePreviewEditView: View {
     private var optionSection: some View {
         Section {
             Picker(selection: $previewMode) {
-                ForEach(NotePreviewMode.allCases, id: \.self) { mode in
+                ForEach(availableModes, id: \.self) { mode in
                     Text(mode.localizedTitle).tag(mode)
                 }
             } label: {
@@ -58,6 +72,16 @@ extension NotePreviewMode {
     VaultDetailNotePreviewEditView(
         title: "Preview",
         description: "Choose what shows in the preview tile.",
+        isEncrypted: false,
         previewMode: .constant(.titleAndFirstLine),
+    )
+}
+
+#Preview("Encrypted") {
+    VaultDetailNotePreviewEditView(
+        title: "Preview",
+        description: "Choose what shows in the preview tile.",
+        isEncrypted: true,
+        previewMode: .constant(.titleOnly),
     )
 }
