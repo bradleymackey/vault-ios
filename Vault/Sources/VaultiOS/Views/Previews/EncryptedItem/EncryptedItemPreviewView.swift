@@ -21,6 +21,7 @@ struct EncryptedItemPreviewView: View {
                 .font(titleFont)
                 .foregroundStyle(isEditing ? .white : .primary)
                 .lineLimit(nil)
+                .multilineTextAlignment(.leading)
                 .frame(maxWidth: .infinity, alignment: .leading)
 
             Spacer()
