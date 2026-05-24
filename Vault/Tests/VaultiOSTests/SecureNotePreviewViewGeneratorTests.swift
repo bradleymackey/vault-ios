@@ -30,6 +30,23 @@ final class SecureNotePreviewViewGeneratorTests {
         #expect(factory.makeSecureNoteViewCallCount == 1)
         assertSnapshot(of: view.frame(width: 100, height: 100), as: .image)
     }
+
+    @Test
+    func makeVaultPreviewItem_propagatesPreviewMode() throws {
+        let factory = SecureNotePreviewViewFactoryMock()
+        var capturedPreviewMode: NotePreviewMode?
+        factory.makeSecureNoteViewHandler = { viewModel, _ in
+            capturedPreviewMode = viewModel.previewMode
+            return AnyView(Color.red)
+        }
+        let sut = makeSUT(factory: factory)
+        var metadata = uniqueMetadata()
+        metadata.previewMode = .hidden
+
+        _ = sut.makeVaultPreviewView(item: anySecureNote(), metadata: metadata, behaviour: .normal)
+
+        #expect(capturedPreviewMode == .hidden)
+    }
 }
 
 // MARK: - Helpers

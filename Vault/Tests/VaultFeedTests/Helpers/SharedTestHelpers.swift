@@ -189,6 +189,7 @@ func anyVaultItemMetadata(
     lockState: VaultItemLockState = .notLocked,
     color: VaultItemColor? = nil,
     showInQuickType: Bool = true,
+    previewMode: NotePreviewMode = .titleAndFirstLine,
 ) -> VaultItem.Metadata {
     .init(
         id: id,
@@ -204,6 +205,7 @@ func anyVaultItemMetadata(
         lockState: lockState,
         color: color,
         showInQuickType: showInQuickType,
+        previewMode: previewMode,
     )
 }
 
@@ -217,6 +219,7 @@ extension SecureNote {
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
+        previewMode: NotePreviewMode = .titleAndFirstLine,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -228,6 +231,7 @@ extension SecureNote {
                 killphrase: killphrase,
                 lockState: lockState,
                 showInQuickType: showInQuickType,
+                previewMode: previewMode,
             ),
             item: .secureNote(self),
         )
@@ -244,6 +248,7 @@ extension EncryptedItem {
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
+        previewMode: NotePreviewMode = .titleAndFirstLine,
     ) -> VaultItem {
         VaultItem(
             metadata: anyVaultItemMetadata(
@@ -255,6 +260,7 @@ extension EncryptedItem {
                 killphrase: killphrase,
                 lockState: lockState,
                 showInQuickType: showInQuickType,
+                previewMode: previewMode,
             ),
             item: .encryptedItem(self),
         )

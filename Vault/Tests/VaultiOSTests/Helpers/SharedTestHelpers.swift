@@ -75,6 +75,7 @@ func anyVaultItemMetadata(
         lockState: lockState,
         color: .black,
         showInQuickType: true,
+        previewMode: .titleAndFirstLine,
     )
 }
 
@@ -110,6 +111,7 @@ func anyOTPVaultItem(
             lockState: .notLocked,
             color: color,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         ),
         item: .otpCode(code),
     )
@@ -186,6 +188,7 @@ func uniqueMetadata(id: Identifier<VaultItem> = Identifier<VaultItem>()) -> Vaul
         lockState: .notLocked,
         color: nil,
         showInQuickType: true,
+        previewMode: .titleAndFirstLine,
     )
 }
 

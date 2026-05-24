@@ -290,6 +290,7 @@ public struct VaultItemFeedView<
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(.init(
                 type: .totp(),

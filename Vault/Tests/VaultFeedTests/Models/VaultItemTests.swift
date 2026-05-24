@@ -99,6 +99,7 @@ extension VaultItemTests {
                 lockState: lockState,
                 color: color,
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .secureNote(.init(title: "title", contents: "contents", format: format)),
         )

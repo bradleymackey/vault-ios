@@ -509,6 +509,7 @@ extension PersistedVaultItemDecoderTests {
             lockState: lockState,
             color: color,
             showInQuickType: true,
+            previewMode: NotePreviewMode.titleAndFirstLine.rawValue,
             tags: tags,
             noteDetails: noteDetails,
             otpDetails: otpDetails,

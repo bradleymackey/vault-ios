@@ -18,6 +18,7 @@ func anyVaultItemMetadata(
         lockState: lockState,
         color: .black,
         showInQuickType: true,
+        previewMode: .titleAndFirstLine,
     )
 }
 

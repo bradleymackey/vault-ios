@@ -18,6 +18,7 @@ enum DemoVaultFactory {
                 lockState: .notLocked,
                 color: nil,
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(.init(
                 type: .totp(),
@@ -46,6 +47,7 @@ enum DemoVaultFactory {
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(.init(
                 type: .hotp(),
@@ -74,6 +76,7 @@ enum DemoVaultFactory {
                 lockState: .notLocked,
                 color: VaultItemColor(color: .red),
                 showInQuickType: false,
+                previewMode: .titleAndFirstLine,
             ),
             item: .secureNote(.init(title: title, contents: contents, format: .markdown)),
         )

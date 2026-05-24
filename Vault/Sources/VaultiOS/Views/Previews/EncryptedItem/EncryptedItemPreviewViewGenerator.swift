@@ -22,6 +22,7 @@ public final class EncryptedItemPreviewViewGenerator<
         let viewModel = EncryptedItemPreviewViewModel(
             title: item.title,
             color: metadata.color ?? .default,
+            previewMode: metadata.previewMode,
         )
         return viewFactory.makeEncryptedItemView(viewModel: viewModel, behaviour: behaviour)
     }
