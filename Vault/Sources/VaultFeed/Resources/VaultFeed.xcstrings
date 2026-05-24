@@ -918,6 +918,50 @@
         }
       }
     },
+    "notePreviewMode.hidden.localizedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Hidden"
+          }
+        }
+      }
+    },
+    "notePreviewMode.hiddenNote.title" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Note"
+          }
+        }
+      }
+    },
+    "notePreviewMode.titleAndFirstLine.localizedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title & first line"
+          }
+        }
+      }
+    },
+    "notePreviewMode.titleOnly.localizedTitle" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Title only"
+          }
+        }
+      }
+    },
     "tagDetail.deleteError.title" : {
       "extractionState" : "manual",
       "localizations" : {

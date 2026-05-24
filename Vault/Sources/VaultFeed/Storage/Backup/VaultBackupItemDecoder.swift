@@ -30,6 +30,7 @@ extension VaultBackupItemDecoder {
             lockState: decodeLockState(state: backupItem.lockState),
             color: decodeColor(color: backupItem.tintColor),
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
     }
 

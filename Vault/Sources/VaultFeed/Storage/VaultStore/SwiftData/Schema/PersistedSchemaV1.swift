@@ -29,6 +29,7 @@ extension PersistedSchemaV1 {
         var lockState: String?
         var color: PersistedColor?
         var showInQuickType: Bool = true
+        var previewMode: String = NotePreviewMode.titleAndFirstLine.rawValue
         @Relationship(deleteRule: .noAction)
         var tags: [PersistedVaultTag] = []
 
@@ -52,6 +53,7 @@ extension PersistedSchemaV1 {
             lockState: String?,
             color: PersistedColor?,
             showInQuickType: Bool,
+            previewMode: String,
             tags: [PersistedVaultTag],
             noteDetails: PersistedNoteDetails?,
             otpDetails: PersistedOTPDetails?,
@@ -69,6 +71,7 @@ extension PersistedSchemaV1 {
             self.lockState = lockState
             self.color = color
             self.showInQuickType = showInQuickType
+            self.previewMode = previewMode
             self.tags = tags
             self.noteDetails = noteDetails
             self.otpDetails = otpDetails

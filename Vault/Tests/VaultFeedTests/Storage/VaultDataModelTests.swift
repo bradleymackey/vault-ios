@@ -686,6 +686,7 @@ final class VaultDataModelTests {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
 
         try await confirmation { confirm in
@@ -723,6 +724,7 @@ final class VaultDataModelTests {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
 
         try await confirmation { confirm in
@@ -758,6 +760,7 @@ final class VaultDataModelTests {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
 
         try await confirmation { confirm in
@@ -792,6 +795,7 @@ final class VaultDataModelTests {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
 
         try await confirmation { confirm in

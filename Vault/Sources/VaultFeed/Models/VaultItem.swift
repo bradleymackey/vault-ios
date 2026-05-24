@@ -44,6 +44,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             killphrase: metadata.killphrase,
             lockState: metadata.lockState,
             showInQuickType: metadata.showInQuickType,
+            previewMode: metadata.previewMode,
         )
     }
 
@@ -123,6 +124,8 @@ extension VaultItem {
         public var color: VaultItemColor?
         /// Whether this item should appear in QuickType suggestions.
         public var showInQuickType: Bool
+        /// Controls what appears in the at-a-glance preview tile (note items only).
+        public var previewMode: NotePreviewMode
 
         public init(
             id: Identifier<VaultItem>,
@@ -138,6 +141,7 @@ extension VaultItem {
             lockState: VaultItemLockState,
             color: VaultItemColor?,
             showInQuickType: Bool,
+            previewMode: NotePreviewMode,
         ) {
             self.id = id
             self.created = created
@@ -152,6 +156,7 @@ extension VaultItem {
             self.lockState = lockState
             self.color = color
             self.showInQuickType = showInQuickType
+            self.previewMode = previewMode
         }
     }
 }
@@ -170,6 +175,7 @@ extension VaultItem {
         public var killphrase: String?
         public var lockState: VaultItemLockState
         public var showInQuickType: Bool
+        public var previewMode: NotePreviewMode
 
         public init(
             relativeOrder: UInt64,
@@ -183,6 +189,7 @@ extension VaultItem {
             killphrase: String?,
             lockState: VaultItemLockState,
             showInQuickType: Bool,
+            previewMode: NotePreviewMode,
         ) {
             self.relativeOrder = relativeOrder
             self.userDescription = userDescription
@@ -195,6 +202,7 @@ extension VaultItem {
             self.killphrase = killphrase
             self.lockState = lockState
             self.showInQuickType = showInQuickType
+            self.previewMode = previewMode
         }
     }
 

@@ -80,6 +80,7 @@ struct SecureNotePreviewView: View {
     }
 
     private var description: String? {
+        guard viewModel.showsDescription else { return nil }
         guard let description = viewModel.description, description.isNotBlank else { return nil }
         switch viewModel.textFormat {
         case .plain: return description
@@ -122,6 +123,7 @@ struct SecureNotePreviewView: View {
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: true,
             textFormat: .markdown,
+            previewMode: .titleAndFirstLine,
         ),
         behaviour: .normal,
     )
@@ -137,6 +139,7 @@ struct SecureNotePreviewView: View {
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: false,
             textFormat: .plain,
+            previewMode: .titleOnly,
         ),
         behaviour: .normal,
     )
@@ -152,6 +155,7 @@ struct SecureNotePreviewView: View {
             color: .init(red: 0, green: 0, blue: 0),
             isLocked: false,
             textFormat: .plain,
+            previewMode: .hidden,
         ),
         behaviour: .normal,
     )

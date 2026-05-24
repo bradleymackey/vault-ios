@@ -38,6 +38,8 @@ public struct SecureNoteDetailEdits: EditableState {
 
     public var lockState: VaultItemLockState
 
+    public var previewMode: NotePreviewMode
+
     public init(
         contents: String,
         textFormat: TextFormat,
@@ -49,6 +51,7 @@ public struct SecureNoteDetailEdits: EditableState {
         lockState: VaultItemLockState,
         relativeOrder: UInt64,
         existingEncryptionKey: DerivedEncryptionKey?,
+        previewMode: NotePreviewMode,
     ) {
         self.contents = contents
         self.textFormat = textFormat
@@ -60,6 +63,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.lockState = lockState
         self.relativeOrder = relativeOrder
         self.existingEncryptionKey = existingEncryptionKey
+        self.previewMode = previewMode
     }
 
     public var isValid: Bool {
@@ -121,7 +125,7 @@ public struct SecureNoteDetailEdits: EditableState {
 
     /// The second line of the note, used to preview the content.
     public var contentPreviewLine: String {
-        guard !encrypted else { return "" }
+        guard !encrypted, previewMode == .titleAndFirstLine else { return "" }
         let secondLine = contents
             .split(separator: "\n")
             .lazy
@@ -149,6 +153,7 @@ extension SecureNoteDetailEdits {
             lockState: .notLocked,
             relativeOrder: .min,
             existingEncryptionKey: nil,
+            previewMode: .titleAndFirstLine,
         )
     }
 }

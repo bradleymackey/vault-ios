@@ -79,6 +79,7 @@ extension PersistedVaultItemEncoder {
                 .init(red: color.red, green: color.green, blue: color.blue)
             },
             showInQuickType: newData.showInQuickType,
+            previewMode: newData.previewMode.rawValue,
             tags: fetchTagsForItem(newData: newData),
             noteDetails: noteDetails,
             otpDetails: otpDetails,

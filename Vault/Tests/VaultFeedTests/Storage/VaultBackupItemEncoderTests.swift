@@ -32,6 +32,7 @@ final class VaultBackupItemEncoderTests {
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: false,
+                previewMode: .titleAndFirstLine,
             ),
             item: .secureNote(note),
         )
@@ -95,6 +96,7 @@ final class VaultBackupItemEncoderTests {
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: false,
+                previewMode: .titleAndFirstLine,
             ),
             item: .encryptedItem(encryptedItem),
         )
@@ -158,6 +160,7 @@ final class VaultBackupItemEncoderTests {
                 lockState: .lockedWithNativeSecurity,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(code),
         )
@@ -223,6 +226,7 @@ final class VaultBackupItemEncoderTests {
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(code),
         )

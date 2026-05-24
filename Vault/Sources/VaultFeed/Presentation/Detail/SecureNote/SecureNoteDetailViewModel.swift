@@ -49,6 +49,7 @@ public final class SecureNoteDetailViewModel: DetailViewModel {
                 lockState: metadata.lockState,
                 relativeOrder: metadata.relativeOrder,
                 existingEncryptionKey: encryptionKey,
+                previewMode: metadata.previewMode,
             ))
         }
     }

@@ -22,6 +22,7 @@ public struct VaultItemDemoFactory {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
     }
 
@@ -43,6 +44,7 @@ public struct VaultItemDemoFactory {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         )
     }
 
@@ -64,6 +66,7 @@ public struct VaultItemDemoFactory {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: false,
+            previewMode: .titleAndFirstLine,
         )
     }
 
@@ -88,6 +91,7 @@ public struct VaultItemDemoFactory {
             killphrase: nil,
             lockState: .notLocked,
             showInQuickType: false,
+            previewMode: .titleAndFirstLine,
         )
     }
 }

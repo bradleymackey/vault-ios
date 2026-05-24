@@ -50,8 +50,9 @@ extension EncryptedItemPreviewViewSnapshotTests {
     private func makeSUT(
         title: String = "",
         color: VaultItemColor = .default,
+        previewMode: NotePreviewMode = .titleAndFirstLine,
     ) -> some View {
-        let viewModel = EncryptedItemPreviewViewModel(title: title, color: color)
+        let viewModel = EncryptedItemPreviewViewModel(title: title, color: color, previewMode: previewMode)
         return EncryptedItemPreviewView(viewModel: viewModel, behaviour: .normal)
             .frame(width: 250)
     }

@@ -16,6 +16,7 @@ struct SecureNoteDetailView: View {
         case editPassphrase
         case editKillphrase
         case editEncryption
+        case editPreviewMode
         case editTags
     }
 
@@ -170,6 +171,23 @@ struct SecureNoteDetailView: View {
                         }
                     }
                 }
+            case .editPreviewMode:
+                NavigationStack {
+                    VaultDetailNotePreviewEditView(
+                        title: "Preview",
+                        description: "Controls what appears in the note's preview tile. Hiding fields keeps content off the main feed.",
+                        previewMode: $viewModel.editingModel.detail.previewMode,
+                    )
+                    .toolbar {
+                        ToolbarItem(placement: .confirmationAction) {
+                            Button {
+                                modal = nil
+                            } label: {
+                                Text("Done")
+                            }
+                        }
+                    }
+                }
             case .editTags:
                 NavigationStack {
                     VaultDetailTagEditView(
@@ -277,6 +295,19 @@ struct SecureNoteDetailView: View {
                     style: .standard,
                 ) {
                     LabeledContent("Visibility", value: viewModel.editingModel.detail.viewConfig.localizedTitle)
+                        .font(.body)
+                }
+            }
+
+            Button {
+                modal = .editPreviewMode
+            } label: {
+                FormRow(
+                    image: Image(systemName: "rectangle.dashed"),
+                    color: .accentColor,
+                    style: .standard,
+                ) {
+                    LabeledContent("Preview", value: viewModel.editingModel.detail.previewMode.localizedTitle)
                         .font(.body)
                 }
             }
@@ -402,6 +433,7 @@ struct SecureNoteDetailView: View {
             lockState: .notLocked,
             color: nil,
             showInQuickType: false,
+            previewMode: .titleAndFirstLine,
         ),
         editor: SecureNoteDetailEditorMock(),
         openInEditMode: false,

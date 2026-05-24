@@ -88,4 +88,22 @@ struct SecureNoteDetailEditsTests {
 
         #expect(sut.contentPreviewLine == "")
     }
+
+    @Test
+    func contentPreviewLine_isEmptyWhenPreviewModeIsTitleOnly() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.contents = "First\nSecond\nThird"
+        sut.previewMode = .titleOnly
+
+        #expect(sut.contentPreviewLine == "")
+    }
+
+    @Test
+    func contentPreviewLine_isEmptyWhenPreviewModeIsHidden() {
+        var sut = SecureNoteDetailEdits.new()
+        sut.contents = "First\nSecond\nThird"
+        sut.previewMode = .hidden
+
+        #expect(sut.contentPreviewLine == "")
+    }
 }

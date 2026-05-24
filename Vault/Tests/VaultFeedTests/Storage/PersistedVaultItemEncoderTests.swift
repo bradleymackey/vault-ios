@@ -554,6 +554,7 @@ extension PersistedVaultItemEncoderTests {
         killphrase: String? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
+        previewMode: NotePreviewMode = .titleAndFirstLine,
     ) -> VaultItem.Write {
         VaultItem.Write(
             relativeOrder: relativeOrder,
@@ -567,6 +568,7 @@ extension PersistedVaultItemEncoderTests {
             killphrase: killphrase,
             lockState: lockState,
             showInQuickType: showInQuickType,
+            previewMode: previewMode,
         )
     }
 

@@ -84,6 +84,7 @@ extension SecureNotePreviewViewSnapshotTests {
         description: String? = "Short Description",
         isLocked: Bool = false,
         textFormat: TextFormat = .plain,
+        previewMode: NotePreviewMode = .titleAndFirstLine,
     ) -> some View {
         let viewModel = SecureNotePreviewViewModel(
             title: title,
@@ -91,6 +92,7 @@ extension SecureNotePreviewViewSnapshotTests {
             color: .default,
             isLocked: isLocked,
             textFormat: textFormat,
+            previewMode: previewMode,
         )
         return SecureNotePreviewView(viewModel: viewModel, behaviour: .normal)
             .frame(width: 250)

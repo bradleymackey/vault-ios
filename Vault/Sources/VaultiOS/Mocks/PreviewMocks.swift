@@ -24,6 +24,7 @@ struct CodeStoreFake: VaultStoreReader {
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(
                 .init(
@@ -51,6 +52,7 @@ struct CodeStoreFake: VaultStoreReader {
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(
                 .init(
@@ -78,6 +80,7 @@ struct CodeStoreFake: VaultStoreReader {
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
                 showInQuickType: true,
+                previewMode: .titleAndFirstLine,
             ),
             item: .otpCode(
                 .init(

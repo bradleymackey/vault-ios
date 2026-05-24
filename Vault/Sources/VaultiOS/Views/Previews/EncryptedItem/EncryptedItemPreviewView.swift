@@ -71,14 +71,30 @@ struct EncryptedItemPreviewView: View {
 }
 
 #Preview {
-    EncryptedItemPreviewView(viewModel: .init(title: "Hello", color: .tagDefault), behaviour: .normal)
-        .frame(width: 200, height: 200)
-        .padding()
+    EncryptedItemPreviewView(
+        viewModel: .init(title: "Hello", color: .tagDefault, previewMode: .titleAndFirstLine),
+        behaviour: .normal,
+    )
+    .frame(width: 200, height: 200)
+    .padding()
 }
 
 #Preview {
     EncryptedItemPreviewView(
-        viewModel: .init(title: "Hello Hello Hello Hello Hello Hello Hello", color: .tagDefault),
+        viewModel: .init(
+            title: "Hello Hello Hello Hello Hello Hello Hello",
+            color: .tagDefault,
+            previewMode: .titleAndFirstLine,
+        ),
+        behaviour: .normal,
+    )
+    .frame(width: 200, height: 200)
+    .padding()
+}
+
+#Preview {
+    EncryptedItemPreviewView(
+        viewModel: .init(title: "Hello", color: .tagDefault, previewMode: .hidden),
         behaviour: .normal,
     )
     .frame(width: 200, height: 200)

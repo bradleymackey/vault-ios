@@ -479,6 +479,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             lockState: .notLocked,
             color: VaultItemColor(color: .green),
             showInQuickType: true,
+            previewMode: .titleAndFirstLine,
         ),
         editor: OTPCodeDetailEditorMock(),
         previewGenerator: VaultItemPreviewViewGeneratorMock(),
