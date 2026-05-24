@@ -5,7 +5,7 @@ import UIKit
 /// Expected device configuration for snapshot tests.
 /// This must match the configuration specified in Vault/README.md.
 private let expectedDeviceName = "iPhone 17 Pro"
-private let expectedIOSVersion = "26.2"
+private let expectedIOSVersion = "26.4"
 private let expectedLocaleIdentifier = "en_US"
 private let expectedTimezoneIdentifier = ["UTC", "GMT"]
 
