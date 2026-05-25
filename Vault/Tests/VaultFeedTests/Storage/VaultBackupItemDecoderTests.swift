@@ -25,7 +25,8 @@ final class VaultBackupItemDecoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "hello",
-            killphrase: "killme",
+            killphraseSalt: anyKillphraseDigest.salt,
+            killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: "contents", format: .markdown)),
@@ -41,7 +42,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.searchPassphrase == "hello")
-        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killme"))
+        #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.tags == [.init(id: tag)])
         #expect(decodedItem.metadata.lockState == .notLocked)
@@ -97,7 +98,8 @@ final class VaultBackupItemDecoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "hello",
-            killphrase: "killmenow",
+            killphraseSalt: anyKillphraseDigest.salt,
+            killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .encrypted(data: encryptedItem),
@@ -113,7 +115,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.searchPassphrase == "hello")
-        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killmenow"))
+        #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.tags == [.init(id: tag)])
         #expect(decodedItem.metadata.lockState == .notLocked)
@@ -148,7 +150,8 @@ final class VaultBackupItemDecoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "pass",
-            killphrase: "killme",
+            killphraseSalt: anyKillphraseDigest.salt,
+            killphraseDigest: anyKillphraseDigest.digest,
             lockState: .lockedWithNativeSecurity,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
@@ -174,7 +177,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.userDescription == description)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.searchPassphrase == "pass")
-        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killme"))
+        #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.lockState == .lockedWithNativeSecurity)
@@ -206,7 +209,8 @@ final class VaultBackupItemDecoderTests {
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "nice",
-            killphrase: "killmeNOW",
+            killphraseSalt: anyKillphraseDigest.salt,
+            killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
@@ -234,7 +238,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.visibility == .onlySearch)
         #expect(decodedItem.metadata.searchPassphrase == "nice")
-        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killmeNOW"))
+        #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.color == .init(red: 0.2, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.lockState == .notLocked)
         #expect(decodedItem.item.otpCode?.type == .hotp(counter: 10))
@@ -329,15 +333,7 @@ final class VaultBackupItemDecoderTests {
 
 extension VaultBackupItemDecoderTests {
     private func makeSUT() -> VaultBackupItemDecoder {
-        // Inject a deterministic test digester so legacy plaintext
-        // killphrases on V1 backups get rehashed into a `KillphraseDigest`
-        // on decode (rather than dropped to nil).
-        VaultBackupItemDecoder(killphraseDigester: testDigester)
-    }
-
-    private func matchesKillphrase(_ digest: KillphraseDigest?, expected: String) -> Bool {
-        guard let digest else { return false }
-        return testDigester.matches(query: expected, salt: digest.salt, digest: digest.digest)
+        VaultBackupItemDecoder()
     }
 
     private func anyNoteItem(contents: String? = nil) -> VaultBackupItem {
@@ -355,7 +351,8 @@ extension VaultBackupItemDecoderTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            killphrase: "killme",
+            killphraseSalt: anyKillphraseDigest.salt,
+            killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
             tintColor: .init(red: 0.1, green: 0.2, blue: 0.3),
             item: .note(data: .init(title: "title", rawContents: contents, format: .markdown)),
@@ -382,7 +379,8 @@ extension VaultBackupItemDecoderTests {
             visibility: .onlySearch,
             searchableLevel: .full,
             searchPassphrase: "",
-            killphrase: "killer",
+            killphraseSalt: anyKillphraseDigest.salt,
+            killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
             tintColor: .init(red: 0.2, green: 0.2, blue: 0.3),
             item: .otp(data: .init(
@@ -399,3 +397,8 @@ extension VaultBackupItemDecoderTests {
         )
     }
 }
+
+private let anyKillphraseDigest = KillphraseDigest(
+    salt: Data(repeating: 0x11, count: 16),
+    digest: Data(repeating: 0x22, count: 32),
+)

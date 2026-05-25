@@ -4,15 +4,7 @@ import VaultBackup
 import VaultCore
 
 final class VaultBackupItemDecoder {
-    /// Optional digester used to rehash plaintext killphrases found in
-    /// legacy V1 backups. `nil` callers (e.g. older code paths that never
-    /// imported a backup) will silently drop the killphrase on those
-    /// items rather than persist plaintext.
-    private let killphraseDigester: KillphraseDigester?
-
-    init(killphraseDigester: KillphraseDigester? = nil) {
-        self.killphraseDigester = killphraseDigester
-    }
+    init() {}
 
     func decode(backupItem: VaultBackupItem) throws -> VaultItem {
         try VaultItem(
@@ -44,21 +36,12 @@ extension VaultBackupItemDecoder {
         )
     }
 
-    /// Reconstructs the killphrase digest from a backup item.
-    ///
-    /// Prefers the salt + digest pair emitted by current backups. Falls
-    /// back to rehashing the legacy plaintext field with the importing
-    /// device's digester, which lets users restore from a backup that was
-    /// created before per-item HMAC was introduced. If neither path is
-    /// available the killphrase is dropped — better than silently
-    /// persisting plaintext.
+    /// Reconstructs the killphrase digest from the salt + digest pair.
+    /// Both halves must be present, otherwise the killphrase is treated
+    /// as not set.
     private func decodeKillphrase(backupItem: VaultBackupItem) -> KillphraseDigest? {
-        if let salt = backupItem.killphraseSalt, let digest = backupItem.killphraseDigest {
-            return KillphraseDigest(salt: salt, digest: digest)
-        }
-        guard let plaintext = backupItem.killphrase, plaintext.isEmpty == false else { return nil }
-        guard let digester = killphraseDigester else { return nil }
-        return digester.makeDigest(phrase: plaintext)
+        guard let salt = backupItem.killphraseSalt, let digest = backupItem.killphraseDigest else { return nil }
+        return KillphraseDigest(salt: salt, digest: digest)
     }
 
     private func decodeTags(ids: Set<UUID>) -> Set<Identifier<VaultItemTag>> {

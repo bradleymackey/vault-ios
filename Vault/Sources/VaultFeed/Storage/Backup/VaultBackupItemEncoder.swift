@@ -24,10 +24,6 @@ final class VaultBackupItemEncoder {
             visibility: encodeVisibility(metadata: storedItem.metadata),
             searchableLevel: encodeSearchableLevel(metadata: storedItem.metadata),
             searchPassphrase: storedItem.metadata.searchPassphrase,
-            // Always emit the salt+digest pair only. The plaintext
-            // `killphrase` field on `VaultBackupItem` exists solely to
-            // decode legacy V1 payloads on import.
-            killphrase: nil,
             killphraseSalt: storedItem.metadata.killphrase?.salt,
             killphraseDigest: storedItem.metadata.killphrase?.digest,
             lockState: encodeLockState(metadata: storedItem.metadata),

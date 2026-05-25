@@ -22,7 +22,7 @@ struct BackupImportFlowViewModelTests {
     func handleImportFromEncryptedVault_validGivesSuccess() async {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         let payload = anyVaultApplicationPayload()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             payload
         }
         let sut = makeSUT(
@@ -44,7 +44,7 @@ struct BackupImportFlowViewModelTests {
     @Test
     func handleImportFromEncryptedVault_failedToDecrypt() async throws {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw TestError()
         }
         let sut = makeSUT(
@@ -61,7 +61,7 @@ struct BackupImportFlowViewModelTests {
     @Test
     func handleImportFromEncryptedVault_noExistingPasswordPromptsForDifferentPassword() async throws {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             anyVaultApplicationPayload()
         }
         let sut = makeSUT(
@@ -79,7 +79,7 @@ struct BackupImportFlowViewModelTests {
     @Test
     func handleImportFromEncryptedVault_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw EncryptedVaultDecoderError.decryption
         }
         let sut = makeSUT(
@@ -119,7 +119,7 @@ struct BackupImportFlowViewModelTests {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
         let payload = anyVaultApplicationPayload()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             payload
         }
         let sut = makeSUT(
@@ -147,7 +147,7 @@ struct BackupImportFlowViewModelTests {
     func handleImportFromPDF_failedToDecrypt() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw TestError()
         }
         let sut = makeSUT(
@@ -170,7 +170,7 @@ struct BackupImportFlowViewModelTests {
     func handleImportFromPDF_noExistingPasswordPromptsForDifferentPassword() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             anyVaultApplicationPayload()
         }
         let sut = makeSUT(
@@ -194,7 +194,7 @@ struct BackupImportFlowViewModelTests {
     func handleImportFromPDF_wrongDecryptionPasswordPromptsForDifferentPassword() async throws {
         let backupPDFDetatcher = VaultBackupPDFDetatcherMock()
         let encryptedVaultDecoder = EncryptedVaultDecoderMock()
-        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _, _ in
+        encryptedVaultDecoder.decryptAndDecodeHandler = { _, _ in
             throw EncryptedVaultDecoderError.decryption
         }
         let sut = makeSUT(

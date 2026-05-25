@@ -6,30 +6,12 @@ import VaultCore
 
 /// @mockable
 public protocol EncryptedVaultDecoder: Sendable {
-    /// Decrypts and decodes an encrypted vault.
-    ///
-    /// - Parameter killphraseDigester: Optional. Used to rehash plaintext
-    ///   killphrases found in legacy V1 backup payloads. When `nil`,
-    ///   killphrases on legacy items are dropped on import rather than
-    ///   persisted as plaintext.
     func decryptAndDecode(
         key: KeyData<Bits256>,
         encryptedVault: EncryptedVault,
-        killphraseDigester: KillphraseDigester?,
     ) throws -> VaultApplicationPayload
     /// Throws if the given `key` cannot decrypt this vault.
     func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws
-}
-
-extension EncryptedVaultDecoder {
-    /// Convenience overload for callers that have no digester. Equivalent
-    /// to passing `nil`.
-    public func decryptAndDecode(
-        key: KeyData<Bits256>,
-        encryptedVault: EncryptedVault,
-    ) throws -> VaultApplicationPayload {
-        try decryptAndDecode(key: key, encryptedVault: encryptedVault, killphraseDigester: nil)
-    }
 }
 
 /// From an encrypted vault, deconstruct to application-level items.
@@ -45,12 +27,11 @@ public final class EncryptedVaultDecoderImpl: EncryptedVaultDecoder, Sendable {
     public func decryptAndDecode(
         key: KeyData<Bits256>,
         encryptedVault: EncryptedVault,
-        killphraseDigester: KillphraseDigester?,
     ) throws -> VaultApplicationPayload {
         try rethrowing {
             let backupDecoder = VaultBackupDecryptor(key: key)
             let payload = try backupDecoder.decryptBackupPayload(from: encryptedVault)
-            let itemDecoder = VaultBackupItemDecoder(killphraseDigester: killphraseDigester)
+            let itemDecoder = VaultBackupItemDecoder()
             let tagDecoder = VaultBackupTagDecoder()
             return try .init(
                 userDescription: payload.userDescription,
