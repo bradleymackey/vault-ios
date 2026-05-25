@@ -442,7 +442,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                     let result = try await authenticationService.authenticate(reason: "Copy locked text")
                     guard result == .success(.authenticated) else { return }
                 }
-                pasteboard.copy(copyAction.text)
+                pasteboard.copy(copyAction)
             }
         }
     }
