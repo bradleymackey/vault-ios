@@ -4,16 +4,22 @@ import Foundation
 // swiftlint:disable:next no_preconcurrency
 @preconcurrency import SwiftData
 
-enum PersistedSchemaV1: VersionedSchema {
-    static let versionIdentifier = Schema.Version(1, 0, 0)
+enum PersistedSchemaV2: VersionedSchema {
+    static let versionIdentifier = Schema.Version(2, 0, 0)
 
     static var models: [any PersistentModel.Type] {
         [PersistedVaultItem.self, PersistedOTPDetails.self, PersistedNoteDetails.self, PersistedVaultTag.self]
     }
 }
 
-extension PersistedSchemaV1 {
+extension PersistedSchemaV2 {
     /// A `VaultItem` persisted to disk using SwiftData.
+    ///
+    /// V2 replaces the V1 plaintext `killphrase: String?` field with a
+    /// one-way `(killphraseSalt, killphraseDigest)` pair so that a vault
+    /// database leak cannot expose killphrases verbatim. The pair is `nil`
+    /// when no killphrase is set, and either both are non-nil or both are
+    /// nil — never one without the other.
     @Model
     final class PersistedVaultItem {
         @Attribute(.unique)
@@ -25,7 +31,8 @@ extension PersistedSchemaV1 {
         var visibility: String
         var searchableLevel: String
         var searchPassphrase: String?
-        var killphrase: String?
+        var killphraseSalt: Data?
+        var killphraseDigest: Data?
         var lockState: String?
         var color: PersistedColor?
         var showInQuickType: Bool = true
@@ -49,7 +56,8 @@ extension PersistedSchemaV1 {
             visibility: String,
             searchableLevel: String,
             searchPassphrase: String?,
-            killphrase: String?,
+            killphraseSalt: Data?,
+            killphraseDigest: Data?,
             lockState: String?,
             color: PersistedColor?,
             showInQuickType: Bool,
@@ -67,7 +75,8 @@ extension PersistedSchemaV1 {
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphrase = searchPassphrase
-            self.killphrase = killphrase
+            self.killphraseSalt = killphraseSalt
+            self.killphraseDigest = killphraseDigest
             self.lockState = lockState
             self.color = color
             self.showInQuickType = showInQuickType
@@ -187,7 +196,7 @@ extension PersistedSchemaV1 {
     }
 }
 
-extension PersistedSchemaV1.PersistedVaultTag: Swift.Hashable {
+extension PersistedSchemaV2.PersistedVaultTag: Swift.Hashable {
     func hash(into hasher: inout Swift.Hasher) {
         hasher.combine(id)
     }
