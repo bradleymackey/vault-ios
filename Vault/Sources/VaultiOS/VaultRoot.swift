@@ -49,8 +49,28 @@ public enum VaultRoot {
     public static let backupPasswordStore: some BackupPasswordStore =
         BackupPasswordStoreImpl(secureStorage: secureStorage)
 
+    public static let killphraseKeyStore: some KillphraseKeyStore =
+        KillphraseKeyStoreImpl(secureStorage: secureStorage)
+
     public static let vaultOtpAutofillStore: some VaultOTPAutofillStore =
         VaultOTPAutofillStoreImpl(store: RealCredentialIdentityStore())
+
+    @MainActor
+    static let killphraseRehashService: KillphraseRehashService = makeKillphraseRehashService()
+
+    @MainActor
+    private static func makeKillphraseRehashService() -> KillphraseRehashService {
+        // Capture vaultStore (an actor reference, Sendable) into a local
+        // so the writer closure can hop straight onto the store actor
+        // without re-crossing MainActor on every call.
+        let store = vaultStore
+        return KillphraseRehashService(
+            storeDirectory: vaultStorageDirectory,
+            writer: { id, digest in
+                try await store.applyKillphraseDigest(itemID: id, digest: digest)
+            },
+        )
+    }
 
     @MainActor
     public static let vaultDataModel: VaultDataModel = .init(
@@ -61,6 +81,8 @@ public enum VaultRoot {
         vaultKillphraseDeleter: vaultStore,
         vaultOtpAutofillStore: vaultOtpAutofillStore,
         backupPasswordStore: backupPasswordStore,
+        killphraseKeyStore: killphraseKeyStore,
+        killphraseRehashService: killphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
 
