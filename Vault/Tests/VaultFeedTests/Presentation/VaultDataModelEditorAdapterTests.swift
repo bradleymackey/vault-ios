@@ -440,6 +440,7 @@ extension VaultDataModelEditorAdapterTests {
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
             killphraseEnabled: false,
+            newKillphrase: "",
             tags: [],
             lockState: .notLocked,
             color: nil,
