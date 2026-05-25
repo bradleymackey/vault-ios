@@ -451,6 +451,8 @@ extension OTPCodeDetailViewModelTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         allTags _: [VaultItemTag] = [],
@@ -476,6 +478,8 @@ extension OTPCodeDetailViewModelTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
     ) -> OTPCodeDetailViewModel {
@@ -500,6 +504,8 @@ extension OTPCodeDetailViewModelTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
     ) -> OTPCodeDetailViewModel {

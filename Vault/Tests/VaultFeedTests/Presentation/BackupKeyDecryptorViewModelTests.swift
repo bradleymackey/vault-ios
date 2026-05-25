@@ -38,7 +38,7 @@ struct BackupKeyDecryptorViewModelTests {
         let vaultApplicationPayload = VaultApplicationPayload(userDescription: "my stuff", items: [], tags: [])
         let decoder = EncryptedVaultDecoderMock()
         // returned payload implies successful decryption
-        decoder.decryptAndDecodeHandler = { _, _ in vaultApplicationPayload }
+        decoder.decryptAndDecodeHandler = { _, _, _ in vaultApplicationPayload }
         let salt = Data(hex: "1234567890")
         let vault = anyEncryptedVault(salt: salt)
         let subject = PassthroughSubject<VaultApplicationPayload, Never>()

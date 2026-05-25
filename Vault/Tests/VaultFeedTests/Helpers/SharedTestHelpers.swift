@@ -26,7 +26,7 @@ func anyVaultDataModel(
     vaultKillphraseDeleter: some VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
     vaultOtpAutofillStore: some VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
     backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock(),
-    killphraseKeyStore: some KillphraseKeyStore = KillphraseKeyStoreMock(),
+    killphraseKeyStore: (any KillphraseKeyStore)? = nil,
     killphraseRehashService: KillphraseRehashService? = nil,
     backupEventLogger: some BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
@@ -38,10 +38,19 @@ func anyVaultDataModel(
         vaultKillphraseDeleter: vaultKillphraseDeleter,
         vaultOtpAutofillStore: vaultOtpAutofillStore,
         backupPasswordStore: backupPasswordStore,
-        killphraseKeyStore: killphraseKeyStore,
+        killphraseKeyStore: killphraseKeyStore ?? StubKillphraseKeyStore(),
         killphraseRehashService: killphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
+}
+
+/// Default no-op key store for VaultDataModel tests that don't exercise
+/// the killphrase digest path. Returns a fixed all-zero key so
+/// `loadOrCreate` never fatal-errors when called from `setup()`.
+struct StubKillphraseKeyStore: KillphraseKeyStore {
+    func loadOrCreate() async throws -> KeyData<Bits256> {
+        .zero()
+    }
 }
 
 func anyPDFData() throws -> Data {

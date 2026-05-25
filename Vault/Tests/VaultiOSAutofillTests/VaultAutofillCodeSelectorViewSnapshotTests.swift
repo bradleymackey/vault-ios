@@ -37,6 +37,8 @@ struct VaultAutofillCodeSelectorViewSnapshotTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         )
         await dataModel.reloadData()

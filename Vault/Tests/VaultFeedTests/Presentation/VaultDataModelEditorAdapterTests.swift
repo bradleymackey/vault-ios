@@ -37,7 +37,7 @@ struct VaultDataModelEditorAdapterTests {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,
@@ -96,7 +96,7 @@ struct VaultDataModelEditorAdapterTests {
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,
@@ -105,14 +105,14 @@ struct VaultDataModelEditorAdapterTests {
         edits.accountNameTitle = "new account name"
         edits.description = "new description"
         edits.searchPassphrase = "new pass"
-        edits.killphrase = "new kill"
+        edits.killphraseEnabled = true
+        edits.newKillphrase = "new kill"
 
         try await confirmation("Update handler called") { confirmation in
             store.updateHandler = { _, data in
                 defer { confirmation() }
                 #expect(data.userDescription == "new description")
                 #expect(data.searchPassphrase == "new pass")
-                #expect(data.killphrase == "new kill")
                 switch data.item {
                 case let .otpCode(otpCode):
                     #expect(otpCode.data.accountName == "new account name")
@@ -185,7 +185,8 @@ struct VaultDataModelEditorAdapterTests {
         initialEdits.contents = "first line\nsecond line"
         initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
-        initialEdits.killphrase = "this is kill"
+        initialEdits.killphraseEnabled = true
+        initialEdits.newKillphrase = "this is kill"
         initialEdits.lockState = .lockedWithNativeSecurity
 
         try await confirmation("Insert handler called") { confirmation in
@@ -195,7 +196,6 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.visibility == .onlySearch)
                 #expect(data.searchableLevel == .onlyPassphrase)
                 #expect(data.searchPassphrase == "pass")
-                #expect(data.killphrase == "this is kill")
                 switch data.item {
                 case let .secureNote(note):
                     #expect(note.title == "first line")
@@ -226,7 +226,8 @@ struct VaultDataModelEditorAdapterTests {
         initialEdits.contents = "first line\nsecond line"
         initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
-        initialEdits.killphrase = "this is kill"
+        initialEdits.killphraseEnabled = true
+        initialEdits.newKillphrase = "this is kill"
         initialEdits.lockState = .lockedWithNativeSecurity
         initialEdits.newEncryptionPassword = "new password"
 
@@ -238,7 +239,6 @@ struct VaultDataModelEditorAdapterTests {
                     #expect(data.visibility == .onlySearch)
                     #expect(data.searchableLevel == .onlyPassphrase)
                     #expect(data.searchPassphrase == "pass")
-                    #expect(data.killphrase == "this is kill")
                     switch data.item {
                     case let .encryptedItem(item):
                         #expect(item.title == "first line")
@@ -277,7 +277,8 @@ struct VaultDataModelEditorAdapterTests {
         initialEdits.contents = "first line\nsecond line"
         initialEdits.viewConfig = .requiresSearchPassphrase
         initialEdits.searchPassphrase = "pass"
-        initialEdits.killphrase = "this is kill"
+        initialEdits.killphraseEnabled = true
+        initialEdits.newKillphrase = "this is kill"
         initialEdits.lockState = .lockedWithNativeSecurity
         initialEdits.newEncryptionPassword = ""
         initialEdits.existingEncryptionKey = .init(key: .random(), salt: .random(count: 32), keyDervier: .testing)
@@ -289,7 +290,6 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.visibility == .onlySearch)
                 #expect(data.searchableLevel == .onlyPassphrase)
                 #expect(data.searchPassphrase == "pass")
-                #expect(data.killphrase == "this is kill")
                 switch data.item {
                 case let .encryptedItem(item):
                     #expect(item.title == "first line")
@@ -339,7 +339,8 @@ struct VaultDataModelEditorAdapterTests {
         edits.contents = "first line\nsecond line"
         edits.viewConfig = .alwaysVisible
         edits.searchPassphrase = "new pass"
-        edits.killphrase = "this kill"
+        edits.killphraseEnabled = true
+        edits.newKillphrase = "this kill"
 
         try await confirmation("Update handler called") { confirmation in
             store.updateHandler = { _, data in
@@ -348,7 +349,6 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.visibility == .always)
                 #expect(data.searchableLevel == .full)
                 #expect(data.searchPassphrase == "new pass")
-                #expect(data.killphrase == "this kill")
                 switch data.item {
                 case let .secureNote(note):
                     #expect(note.title == "first line")
@@ -416,6 +416,8 @@ extension VaultDataModelEditorAdapterTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock(),
@@ -437,7 +439,7 @@ extension VaultDataModelEditorAdapterTests {
             description: "desc",
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             color: nil,

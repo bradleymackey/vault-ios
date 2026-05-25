@@ -265,11 +265,22 @@ final class VaultDataModelTests {
     func reloadItems_deletesKillphraseItemsBeforeReturningResults() async throws {
         let store = VaultStoreStub()
         let killphraseDeleter = VaultStoreKillphraseDeleterMock()
-        let sut = makeSUT(vaultStore: store, vaultKillphraseDeleter: killphraseDeleter)
+        let keyStore = KillphraseKeyStoreMock()
+        keyStore.loadOrCreateHandler = {
+            (try? KeyData<Bits256>(data: Data(repeating: 0xAA, count: 32))) ?? .zero()
+        }
+        let sut = makeSUT(
+            vaultStore: store,
+            vaultKillphraseDeleter: killphraseDeleter,
+            killphraseKeyStore: keyStore,
+        )
+        // Setup loads the digester. Without it, reloadItems skips the
+        // deleter entirely (locked-state behaviour).
+        await sut.setup()
         sut.itemsSearchQuery = "hello world"
 
         await confirmation("Delete called", expectedCount: 1) { confirmDelete in
-            killphraseDeleter.deleteItemsHandler = { query in
+            killphraseDeleter.deleteItemsHandler = { query, _ in
                 #expect(query == "hello world")
                 confirmDelete()
                 return false
@@ -683,7 +694,7 @@ final class VaultDataModelTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: nil,
-            killphrase: nil,
+            killphraseUpdate: .clear,
             lockState: .notLocked,
             showInQuickType: true,
             previewMode: .titleAndFirstLine,
@@ -721,7 +732,7 @@ final class VaultDataModelTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: nil,
-            killphrase: nil,
+            killphraseUpdate: .clear,
             lockState: .notLocked,
             showInQuickType: true,
             previewMode: .titleAndFirstLine,
@@ -757,7 +768,7 @@ final class VaultDataModelTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: nil,
-            killphrase: nil,
+            killphraseUpdate: .clear,
             lockState: .notLocked,
             showInQuickType: true,
             previewMode: .titleAndFirstLine,
@@ -792,7 +803,7 @@ final class VaultDataModelTests {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: nil,
-            killphrase: nil,
+            killphraseUpdate: .clear,
             lockState: .notLocked,
             showInQuickType: true,
             previewMode: .titleAndFirstLine,
@@ -885,6 +896,8 @@ extension VaultDataModelTests {
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
         vaultOtpAutofillStore: any VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
         backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+        killphraseKeyStore: any KillphraseKeyStore = StubKillphraseKeyStore(),
+        killphraseRehashService: KillphraseRehashService? = nil,
         backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
         itemCaches: [any VaultItemCache] = [],
     ) -> VaultDataModel {
@@ -896,6 +909,8 @@ extension VaultDataModelTests {
             vaultKillphraseDeleter: vaultKillphraseDeleter,
             vaultOtpAutofillStore: vaultOtpAutofillStore,
             backupPasswordStore: backupPasswordStore,
+            killphraseKeyStore: killphraseKeyStore,
+            killphraseRehashService: killphraseRehashService,
             backupEventLogger: backupEventLogger,
             itemCaches: itemCaches,
         )
