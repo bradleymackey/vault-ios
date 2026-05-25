@@ -272,6 +272,8 @@ public struct VaultItemFeedView<
         vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
         vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
         backupPasswordStore: BackupPasswordStoreMock(),
+        killphraseKeyStore: KillphraseKeyStoreMock(),
+        killphraseRehashService: nil,
         backupEventLogger: BackupEventLoggerMock(),
     )
     store.retrieveHandler = { _ in .init(items: [
@@ -286,7 +288,7 @@ public struct VaultItemFeedView<
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
-                killphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
                 showInQuickType: true,

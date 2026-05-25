@@ -133,7 +133,8 @@ struct SecureNoteDetailView: View {
                         title: "Killphrase",
                         description: "A killphrase is a secret phrase that is used to immediately delete this note. In the search bar, search exactly for this text and the note will be immediately and quitely deleted. Combined with a search passphrase, you can delete an item without it being made visible.",
                         hiddenWithKillphraseTitle: viewModel.strings.killphraseSubtitle,
-                        killphrase: $viewModel.editingModel.detail.killphrase,
+                        killphraseEnabled: $viewModel.editingModel.detail.killphraseEnabled,
+                        newKillphrase: $viewModel.editingModel.detail.newKillphrase,
                     )
                     .interactiveDismissDisabled(!viewModel.editingModel.detail.isKillphraseValid)
                     .toolbar {
@@ -418,6 +419,8 @@ struct SecureNoteDetailView: View {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: KillphraseKeyStoreMock(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         storedMetadata: .init(
@@ -430,7 +433,7 @@ struct SecureNoteDetailView: View {
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            killphrase: "",
+            killphrase: nil,
             lockState: .notLocked,
             color: nil,
             showInQuickType: false,
@@ -454,6 +457,8 @@ struct SecureNoteDetailView: View {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: KillphraseKeyStoreMock(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
     )

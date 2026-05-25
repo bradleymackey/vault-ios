@@ -146,7 +146,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
                         title: "Killphrase",
                         description: "A killphrase is a secret phrase that is used to immediately delete this code. In the search bar, search exactly for this text and the code will be immediately and quitely deleted. Combined with a search passphrase, you can delete an item without it being made visible.",
                         hiddenWithKillphraseTitle: viewModel.strings.killphraseSubtitle,
-                        killphrase: $viewModel.editingModel.detail.killphrase,
+                        killphraseEnabled: $viewModel.editingModel.detail.killphraseEnabled,
+                        newKillphrase: $viewModel.editingModel.detail.newKillphrase,
                     )
                     .interactiveDismissDisabled(!viewModel.editingModel.detail.isKillphraseValid)
                     .toolbar {
@@ -463,6 +464,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: KillphraseKeyStoreMock(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         storedMetadata: .init(
@@ -475,7 +478,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            killphrase: "",
+            killphrase: nil,
             lockState: .notLocked,
             color: VaultItemColor(color: .green),
             showInQuickType: true,

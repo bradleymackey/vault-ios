@@ -37,7 +37,15 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var searchPassphrase: String = ""
 
-    public var killphrase: String = ""
+    /// Whether this item currently has, or should have, a killphrase set.
+    /// The plaintext killphrase is never surfaced to the UI; this is the
+    /// only handle the edit screen has on the existing state.
+    public var killphraseEnabled: Bool = false
+
+    /// Plaintext entered by the user when setting or replacing the
+    /// killphrase. Always blank on screen-open. Sent to the digester and
+    /// then discarded before persistence.
+    public var newKillphrase: String = ""
 
     public var color: VaultItemColor?
 
@@ -60,7 +68,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         description: String,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
-        killphrase: String,
+        killphraseEnabled: Bool,
+        newKillphrase: String = "",
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         color: VaultItemColor?,
@@ -78,7 +87,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.description = description
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
-        self.killphrase = killphrase
+        self.killphraseEnabled = killphraseEnabled
+        self.newKillphrase = newKillphrase
         self.tags = tags
         self.lockState = lockState
         self.color = color
@@ -92,7 +102,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
-        killphrase: String,
+        killphraseEnabled: Bool,
         tags: Set<Identifier<VaultItemTag>>,
         lockState: VaultItemLockState,
         showInQuickType: Bool,
@@ -115,7 +125,8 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
         self.tags = tags
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
-        self.killphrase = killphrase
+        self.killphraseEnabled = killphraseEnabled
+        newKillphrase = ""
         self.lockState = lockState
         self.color = color
         self.relativeOrder = relativeOrder
@@ -154,15 +165,17 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     }
 
     public var isKillphraseValid: Bool {
-        killphrase.isEmpty || killphrase.isNotBlank
+        // Blank entry is valid (means "keep existing" when enabled, or
+        // "no killphrase" when disabled). Whitespace-only is rejected.
+        newKillphrase.isEmpty || newKillphrase.isNotBlank
     }
 
     public var killphraseIsEnabled: Bool {
-        killphrase.isNotEmpty
+        killphraseEnabled
     }
 
     public var killphraseEnabledText: String {
-        if killphraseIsEnabled {
+        if killphraseEnabled {
             "Enabled"
         } else {
             "None"
@@ -170,7 +183,7 @@ public struct OTPCodeDetailEdits: EditableState, Sendable {
     }
 
     public var killphraseEnabledIcon: String {
-        if killphraseIsEnabled {
+        if killphraseEnabled {
             "bolt.badge.checkmark.fill"
         } else {
             "bolt"
@@ -199,7 +212,7 @@ extension OTPCodeDetailEdits {
             description: "",
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             color: nil,
@@ -215,7 +228,7 @@ extension OTPCodeDetailEdits {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,
