@@ -504,8 +504,11 @@ extension PersistedLocalVaultStore: VaultStoreKillphraseDeleter {
             try modelContext.save()
             return true
         } catch {
+            // Error path must be indistinguishable from "no match" to preserve the
+            // killphrase threat model — any signal here (crash, throw, log) is an
+            // oracle that confirms phrase validity to an attacker.
             modelContext.rollback()
-            fatalError("Crashing to protect data privacy – unable to delete killphrase item")
+            return false
         }
     }
 }
