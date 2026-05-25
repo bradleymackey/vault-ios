@@ -2,6 +2,7 @@ import Combine
 import Foundation
 import TestHelpers
 import Testing
+import VaultCore
 import VaultFeed
 
 @Suite
@@ -135,7 +136,7 @@ struct OTPCodePreviewViewModelTests {
         let (_, sut) = makeSUT()
         sut.update(.visible("1234"))
 
-        let expected = VaultTextCopyAction(text: "1234", requiresAuthenticationToCopy: false)
+        let expected = VaultTextCopyAction(text: "1234", requiresAuthenticationToCopy: false, contentType: .otp)
         #expect(sut.pasteboardCopyText == expected)
     }
 
@@ -144,7 +145,7 @@ struct OTPCodePreviewViewModelTests {
         let (_, sut) = makeSUT()
         sut.update(.locked(code: "4567"))
 
-        let expected = VaultTextCopyAction(text: "4567", requiresAuthenticationToCopy: true)
+        let expected = VaultTextCopyAction(text: "4567", requiresAuthenticationToCopy: true, contentType: .otp)
         #expect(sut.pasteboardCopyText == expected)
     }
 
