@@ -25,7 +25,7 @@ final class SecureNoteDetailViewSnapshotTests {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "",
-                killphrase: "",
+                killphrase: nil,
                 lockState: .notLocked,
                 color: nil,
                 showInQuickType: false,

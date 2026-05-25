@@ -74,14 +74,22 @@ public protocol VaultStoreDeleter: Sendable {
 
 /// @mockable
 public protocol VaultStoreKillphraseDeleter: Sendable {
-    /// Deletes items matching the given killphrase.
+    /// Deletes items whose stored killphrase digest verifies against the
+    /// given query using the supplied matcher.
     ///
-    /// - Returns: `true` if any items were deleted, `false` if no items matched
-    ///   **or** if an internal error prevented deletion.
-    /// - Important: This method intentionally returns the same value on "no match"
-    ///   and on internal failure so the killphrase feature does not leak phrase
-    ///   validity through error channels. Callers must not surface failures via
-    ///   UI, logs, or telemetry.
+    /// - Parameters:
+    ///   - matchingKillphrase: The user-entered query (typically the live
+    ///     contents of the search bar).
+    ///   - matcher: Computes `HMAC(K, salt || query)` per-item and compares
+    ///     against the persisted digest in constant time. Must come from
+    ///     the unlocked vault key; when the vault is locked, callers
+    ///     should skip this call entirely.
+    /// - Returns: `true` if any items were deleted, `false` if no items
+    ///   matched **or** if an internal error prevented deletion.
+    /// - Important: This method intentionally returns the same value on
+    ///   "no match" and on internal failure so the killphrase feature does
+    ///   not leak phrase validity through error channels. Callers must not
+    ///   surface failures via UI, logs, or telemetry.
     @discardableResult
-    func deleteItems(matchingKillphrase: String) async -> Bool
+    func deleteItems(matchingKillphrase: String, using matcher: any KillphraseMatcher) async -> Bool
 }

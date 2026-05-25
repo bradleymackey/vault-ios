@@ -487,20 +487,32 @@ extension PersistedLocalVaultStore: VaultStoreDeleter {
 
 extension PersistedLocalVaultStore: VaultStoreKillphraseDeleter {
     @discardableResult
-    public func deleteItems(matchingKillphrase: String) async -> Bool {
+    public func deleteItems(matchingKillphrase: String, using matcher: any KillphraseMatcher) async -> Bool {
         do {
             guard matchingKillphrase.isNotBlank else { return false }
 
+            // Fetch all items that carry a killphrase digest. We deliberately
+            // iterate every candidate (no early exit, no #Predicate equality)
+            // so timing does not leak which item matched.
             let predicate: Predicate<PersistedVaultItem> = #Predicate {
-                // must match EXACTLY
-                $0.killphrase == matchingKillphrase
+                $0.killphraseDigest != nil && $0.killphraseSalt != nil
             }
-            // Count items before deletion
             let descriptor = FetchDescriptor<PersistedVaultItem>(predicate: predicate)
-            let itemsToDelete = try modelContext.fetchCount(descriptor)
-            guard itemsToDelete > 0 else { return false }
+            let candidates = try modelContext.fetch(descriptor)
 
-            try modelContext.delete(model: PersistedVaultItem.self, where: predicate)
+            var idsToDelete: [UUID] = []
+            for item in candidates {
+                guard let salt = item.killphraseSalt, let digest = item.killphraseDigest else { continue }
+                if matcher.matches(query: matchingKillphrase, salt: salt, digest: digest) {
+                    idsToDelete.append(item.id)
+                }
+            }
+            guard idsToDelete.isEmpty == false else { return false }
+
+            let deletionPredicate: Predicate<PersistedVaultItem> = #Predicate { item in
+                idsToDelete.contains(item.id)
+            }
+            try modelContext.delete(model: PersistedVaultItem.self, where: deletionPredicate)
             try modelContext.save()
             return true
         } catch {
@@ -509,6 +521,32 @@ extension PersistedLocalVaultStore: VaultStoreKillphraseDeleter {
             // oracle that confirms phrase validity to an attacker.
             modelContext.rollback()
             return false
+        }
+    }
+}
+
+// MARK: - Killphrase Rehash
+
+extension PersistedLocalVaultStore {
+    /// Writes a freshly-computed killphrase digest onto the persisted item
+    /// with the given ID. Used by `KillphraseRehashService` during the
+    /// V1 → V2 migration's Phase B.
+    ///
+    /// No-op (without error) if the item no longer exists — the item may
+    /// have been deleted between the schema migration and the rehash pass.
+    public func applyKillphraseDigest(itemID: UUID, digest: KillphraseDigest) async throws {
+        do {
+            var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
+                item.id == itemID
+            })
+            descriptor.fetchLimit = 1
+            guard let item = try modelContext.fetch(descriptor).first else { return }
+            item.killphraseSalt = digest.salt
+            item.killphraseDigest = digest.digest
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
         }
     }
 }

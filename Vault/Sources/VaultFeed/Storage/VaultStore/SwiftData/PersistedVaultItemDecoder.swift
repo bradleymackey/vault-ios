@@ -14,7 +14,7 @@ struct PersistedVaultItemDecoder {
             visibility: decodeVisibility(level: item.visibility),
             searchableLevel: decodeSearchableLevel(level: item.searchableLevel),
             searchPassphrase: item.searchPassphrase,
-            killphrase: item.killphrase,
+            killphrase: decodeKillphrase(item: item),
             lockState: decodeLockState(value: item.lockState),
             color: decodeColor(item: item),
             showInQuickType: item.showInQuickType,
@@ -64,6 +64,11 @@ extension PersistedVaultItemDecoder {
         case VaultEncodingConstants.Visibility.onlySearch: .onlySearch
         default: throw VaultItemDecodingError.invalidVisibility
         }
+    }
+
+    private func decodeKillphrase(item: PersistedVaultItem) -> KillphraseDigest? {
+        guard let salt = item.killphraseSalt, let digest = item.killphraseDigest else { return nil }
+        return KillphraseDigest(salt: salt, digest: digest)
     }
 
     private func decodeColor(item: PersistedVaultItem) -> VaultItemColor? {

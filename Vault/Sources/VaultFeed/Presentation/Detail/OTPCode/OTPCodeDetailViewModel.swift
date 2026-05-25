@@ -49,7 +49,7 @@ public final class OTPCodeDetailViewModel: DetailViewModel {
                 color: metadata.color,
                 viewConfig: .init(visibility: metadata.visibility, searchableLevel: metadata.searchableLevel),
                 searchPassphrase: metadata.searchPassphrase ?? "",
-                killphrase: metadata.killphrase ?? "",
+                killphraseEnabled: metadata.killphraseEnabled,
                 tags: metadata.tags,
                 lockState: metadata.lockState,
                 showInQuickType: metadata.showInQuickType,

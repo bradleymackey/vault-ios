@@ -283,6 +283,8 @@ extension BackupImportFlowViewModelTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         existingBackupPassword: DerivedEncryptionKey? = nil,

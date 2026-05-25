@@ -27,7 +27,7 @@ struct OTPCodeDetailEditsTests {
             color: color,
             viewConfig: .alwaysVisible,
             searchPassphrase: "search",
-            killphrase: "killme",
+            killphraseEnabled: true,
             tags: [],
             lockState: .lockedWithNativeSecurity,
             showInQuickType: true,
@@ -45,7 +45,7 @@ struct OTPCodeDetailEditsTests {
         #expect(sut.secretBase32String == "V6X27LY=")
         #expect(sut.viewConfig == .alwaysVisible)
         #expect(sut.searchPassphrase == "search")
-        #expect(sut.killphrase == "killme")
+        #expect(sut.killphraseEnabled == true)
         #expect(sut.lockState == .lockedWithNativeSecurity)
         #expect(sut.relativeOrder == 1234)
     }
@@ -71,7 +71,7 @@ struct OTPCodeDetailEditsTests {
             color: color,
             viewConfig: .alwaysVisible,
             searchPassphrase: "search",
-            killphrase: "killme",
+            killphraseEnabled: true,
             tags: [],
             lockState: .lockedWithNativeSecurity,
             showInQuickType: true,
@@ -89,7 +89,7 @@ struct OTPCodeDetailEditsTests {
         #expect(sut.secretBase32String == "V6X27LY=")
         #expect(sut.viewConfig == .alwaysVisible)
         #expect(sut.searchPassphrase == "search")
-        #expect(sut.killphrase == "killme")
+        #expect(sut.killphraseEnabled == true)
         #expect(sut.lockState == .lockedWithNativeSecurity)
         #expect(sut.relativeOrder == 4321)
     }
@@ -105,7 +105,7 @@ struct OTPCodeDetailEditsTests {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,
@@ -125,7 +125,7 @@ struct OTPCodeDetailEditsTests {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,
@@ -188,7 +188,7 @@ struct OTPCodeDetailEditsTests {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,
@@ -209,7 +209,7 @@ struct OTPCodeDetailEditsTests {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
-            killphrase: "",
+            killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
             showInQuickType: true,

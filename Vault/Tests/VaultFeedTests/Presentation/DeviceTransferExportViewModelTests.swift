@@ -219,6 +219,8 @@ extension DeviceTransferExportViewModelTests {
                 vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
                 vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
                 backupPasswordStore: backupPasswordStore,
+                killphraseKeyStore: StubKillphraseKeyStore(),
+                killphraseRehashService: nil,
                 backupEventLogger: BackupEventLoggerMock(),
             ),
             clock: clock,

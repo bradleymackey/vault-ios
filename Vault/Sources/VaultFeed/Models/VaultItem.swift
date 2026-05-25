@@ -41,7 +41,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             visibility: metadata.visibility,
             searchableLevel: metadata.searchableLevel,
             searchPassphrase: metadata.searchPassphrase,
-            killphrase: metadata.killphrase,
+            killphraseUpdate: metadata.killphrase.map { .set($0) } ?? .clear,
             lockState: metadata.lockState,
             showInQuickType: metadata.showInQuickType,
             previewMode: metadata.previewMode,
@@ -117,8 +117,16 @@ extension VaultItem {
         public var searchableLevel: VaultItemSearchableLevel
         public var tags: Set<Identifier<VaultItemTag>>
         public var searchPassphrase: String?
-        /// The phrase that, when entered, will immediately delete this item
-        public var killphrase: String?
+        /// One-way digest representing the phrase that, when entered, will
+        /// immediately delete this item. `nil` when no killphrase is set.
+        /// The plaintext phrase is never persisted or surfaced through the
+        /// model.
+        public var killphrase: KillphraseDigest?
+        /// Whether this item has a killphrase set.
+        public var killphraseEnabled: Bool {
+            killphrase != nil
+        }
+
         public var lockState: VaultItemLockState
         /// The color tint for this item.
         public var color: VaultItemColor?
@@ -137,7 +145,7 @@ extension VaultItem {
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
-            killphrase: String?,
+            killphrase: KillphraseDigest?,
             lockState: VaultItemLockState,
             color: VaultItemColor?,
             showInQuickType: Bool,
@@ -162,6 +170,17 @@ extension VaultItem {
 }
 
 extension VaultItem {
+    /// How the killphrase field should be modified on write.
+    public enum KillphraseUpdate: Equatable, Sendable {
+        /// Keep whatever is already persisted (no-op on update; equivalent
+        /// to `.clear` for a brand-new insert that has no existing value).
+        case unchanged
+        /// Remove any existing killphrase.
+        case clear
+        /// Replace the killphrase with the provided digest.
+        case set(KillphraseDigest)
+    }
+
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
         public var relativeOrder: UInt64
@@ -172,7 +191,7 @@ extension VaultItem {
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
         public var searchPassphrase: String?
-        public var killphrase: String?
+        public var killphraseUpdate: KillphraseUpdate
         public var lockState: VaultItemLockState
         public var showInQuickType: Bool
         public var previewMode: NotePreviewMode
@@ -186,7 +205,7 @@ extension VaultItem {
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
             searchPassphrase: String?,
-            killphrase: String?,
+            killphraseUpdate: KillphraseUpdate,
             lockState: VaultItemLockState,
             showInQuickType: Bool,
             previewMode: NotePreviewMode,
@@ -199,7 +218,7 @@ extension VaultItem {
             self.visibility = visibility
             self.searchableLevel = searchableLevel
             self.searchPassphrase = searchPassphrase
-            self.killphrase = killphrase
+            self.killphraseUpdate = killphraseUpdate
             self.lockState = lockState
             self.showInQuickType = showInQuickType
             self.previewMode = previewMode

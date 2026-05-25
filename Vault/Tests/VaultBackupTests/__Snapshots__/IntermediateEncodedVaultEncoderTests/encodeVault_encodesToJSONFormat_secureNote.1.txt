@@ -13,7 +13,6 @@
           }
         }
       },
-      "killphrase" : "kill",
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 1000,
       "search_passphrase" : "passphrase",

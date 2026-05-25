@@ -28,7 +28,7 @@ final class VaultBackupItemEncoderTests {
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "searchme",
-                killphrase: "killme",
+                killphrase: anyKillphraseDigest,
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: false,
@@ -52,7 +52,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .onlyTitle)
         #expect(encodedItem.searchPassphrase == "searchme")
-        #expect(encodedItem.killphrase == "killme")
+        #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
+        #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.lockState == .notLocked)
         #expect(encodedItem.tintColor == .init(red: 0.1, green: 0.2, blue: 0.3))
 
@@ -92,7 +93,7 @@ final class VaultBackupItemEncoderTests {
                 visibility: .always,
                 searchableLevel: .onlyTitle,
                 searchPassphrase: "searchme",
-                killphrase: "killmenow",
+                killphrase: anyKillphraseDigest,
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: false,
@@ -120,7 +121,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .onlyTitle)
         #expect(encodedItem.searchPassphrase == "searchme")
-        #expect(encodedItem.killphrase == "killmenow")
+        #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
+        #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.lockState == .notLocked)
         #expect(encodedItem.tintColor == .init(red: 0.1, green: 0.2, blue: 0.3))
 
@@ -156,7 +158,7 @@ final class VaultBackupItemEncoderTests {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "hello",
-                killphrase: "killme",
+                killphrase: anyKillphraseDigest,
                 lockState: .lockedWithNativeSecurity,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: true,
@@ -175,7 +177,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .full)
         #expect(encodedItem.searchPassphrase == "hello")
-        #expect(encodedItem.killphrase == "killme")
+        #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
+        #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.userDescription == description)
         #expect(encodedItem.lockState == .lockedWithNativeSecurity)
         #expect(encodedItem.tags == [])
@@ -222,7 +225,7 @@ final class VaultBackupItemEncoderTests {
                 visibility: .always,
                 searchableLevel: .full,
                 searchPassphrase: "test",
-                killphrase: "killme",
+                killphrase: anyKillphraseDigest,
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
                 showInQuickType: true,
@@ -241,7 +244,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .full)
         #expect(encodedItem.searchPassphrase == "test")
-        #expect(encodedItem.killphrase == "killme")
+        #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
+        #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.relativeOrder == .min)
         #expect(encodedItem.lockState == .notLocked)
         #expect(encodedItem.tags == [])
@@ -296,6 +300,11 @@ extension VaultBackupItemEncoderTests {
         VaultBackupItemEncoder()
     }
 }
+
+private let anyKillphraseDigest = KillphraseDigest(
+    salt: Data(repeating: 0x11, count: 16),
+    digest: Data(repeating: 0x22, count: 32),
+)
 
 extension VaultBackupItem.Item {
     fileprivate var noteData: VaultBackupItem.Note? {

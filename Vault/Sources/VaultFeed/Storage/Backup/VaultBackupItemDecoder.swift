@@ -4,6 +4,8 @@ import VaultBackup
 import VaultCore
 
 final class VaultBackupItemDecoder {
+    init() {}
+
     func decode(backupItem: VaultBackupItem) throws -> VaultItem {
         try VaultItem(
             metadata: decodeMetadata(backupItem: backupItem),
@@ -26,12 +28,20 @@ extension VaultBackupItemDecoder {
             visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
             searchPassphrase: backupItem.searchPassphrase,
-            killphrase: backupItem.killphrase,
+            killphrase: decodeKillphrase(backupItem: backupItem),
             lockState: decodeLockState(state: backupItem.lockState),
             color: decodeColor(color: backupItem.tintColor),
             showInQuickType: true,
             previewMode: .titleAndFirstLine,
         )
+    }
+
+    /// Reconstructs the killphrase digest from the salt + digest pair.
+    /// Both halves must be present, otherwise the killphrase is treated
+    /// as not set.
+    private func decodeKillphrase(backupItem: VaultBackupItem) -> KillphraseDigest? {
+        guard let salt = backupItem.killphraseSalt, let digest = backupItem.killphraseDigest else { return nil }
+        return KillphraseDigest(salt: salt, digest: digest)
     }
 
     private func decodeTags(ids: Set<UUID>) -> Set<Identifier<VaultItemTag>> {

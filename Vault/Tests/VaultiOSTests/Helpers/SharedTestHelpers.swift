@@ -15,6 +15,8 @@ func anyVaultDataModel(
     vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
     vaultOtpAutofillStore: any VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
     backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+    killphraseKeyStore: (any KillphraseKeyStore)? = nil,
+    killphraseRehashService: KillphraseRehashService? = nil,
     backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
     VaultDataModel(
@@ -25,8 +27,19 @@ func anyVaultDataModel(
         vaultKillphraseDeleter: vaultKillphraseDeleter,
         vaultOtpAutofillStore: vaultOtpAutofillStore,
         backupPasswordStore: backupPasswordStore,
+        killphraseKeyStore: killphraseKeyStore ?? StubKillphraseKeyStore(),
+        killphraseRehashService: killphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
+}
+
+/// Default no-op key store for VaultDataModel tests that don't exercise
+/// the killphrase digest path. Returns a fixed all-zero key so
+/// `loadOrCreate` never fatal-errors when called from `setup()`.
+struct StubKillphraseKeyStore: KillphraseKeyStore {
+    func loadOrCreate() async throws -> KeyData<Bits256> {
+        .zero()
+    }
 }
 
 @MainActor
@@ -71,7 +84,7 @@ func anyVaultItemMetadata(
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: "",
-        killphrase: "",
+        killphrase: nil,
         lockState: lockState,
         color: .black,
         showInQuickType: true,
@@ -107,7 +120,7 @@ func anyOTPVaultItem(
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            killphrase: "",
+            killphrase: nil,
             lockState: .notLocked,
             color: color,
             showInQuickType: true,

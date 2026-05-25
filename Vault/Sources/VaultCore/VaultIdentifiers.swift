@@ -9,6 +9,10 @@ public enum VaultIdentifiers {
 
     public enum SecureStorageKey {
         public static let backupPassword = "vault.secure-storage.backup-password.v1"
+        /// HMAC key for per-item killphrase digests. Stored with
+        /// `.whenUnlocked` access (no biometric) so the killphrase
+        /// match path works as soon as the device is unlocked.
+        public static let killphraseKey = "vault.secure-storage.killphrase-key.v1"
     }
 
     public enum Backup {

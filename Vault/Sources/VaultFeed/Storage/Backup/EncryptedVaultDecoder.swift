@@ -6,8 +6,10 @@ import VaultCore
 
 /// @mockable
 public protocol EncryptedVaultDecoder: Sendable {
-    func decryptAndDecode(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws
-        -> VaultApplicationPayload
+    func decryptAndDecode(
+        key: KeyData<Bits256>,
+        encryptedVault: EncryptedVault,
+    ) throws -> VaultApplicationPayload
     /// Throws if the given `key` cannot decrypt this vault.
     func verifyCanDecrypt(key: KeyData<Bits256>, encryptedVault: EncryptedVault) throws
 }

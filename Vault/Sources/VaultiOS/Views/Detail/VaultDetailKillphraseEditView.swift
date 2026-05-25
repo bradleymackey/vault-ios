@@ -2,24 +2,31 @@ import Foundation
 import SwiftUI
 import VaultFeed
 
+/// Edit affordance for the per-item killphrase.
+///
+/// The plaintext killphrase is never shown — the persisted form is a one-way
+/// digest, so the UI can only ask "is one set?" (the toggle) and "type a
+/// new one to set/replace" (the field). Leaving the field empty while the
+/// toggle stays on is treated as "leave the existing digest alone".
 struct VaultDetailKillphraseEditView: View {
     var title: String
     var description: String
     var hiddenWithKillphraseTitle: String
-    @State private var killphraseIsEnabled: Bool
-    @Binding var killphrase: String
+    @Binding var killphraseEnabled: Bool
+    @Binding var newKillphrase: String
 
     init(
         title: String,
         description: String,
         hiddenWithKillphraseTitle: String,
-        killphrase: Binding<String>,
+        killphraseEnabled: Binding<Bool>,
+        newKillphrase: Binding<String>,
     ) {
         self.title = title
         self.description = description
         self.hiddenWithKillphraseTitle = hiddenWithKillphraseTitle
-        killphraseIsEnabled = killphrase.wrappedValue.isNotEmpty
-        _killphrase = killphrase
+        _killphraseEnabled = killphraseEnabled
+        _newKillphrase = newKillphrase
     }
 
     var body: some View {
@@ -27,17 +34,17 @@ struct VaultDetailKillphraseEditView: View {
             titleSection
             optionSection
         }
-        .animation(.easeOut, value: killphraseIsEnabled)
+        .animation(.easeOut, value: killphraseEnabled)
         .transition(.move(edge: .top))
-        .onChange(of: killphraseIsEnabled) { _, newValue in
-            if !newValue { killphrase = "" }
+        .onChange(of: killphraseEnabled) { _, newValue in
+            if !newValue { newKillphrase = "" }
         }
     }
 
     private var titleSection: some View {
         Section {
             PlaceholderView(
-                systemIcon: killphraseIsEnabled ? "bolt.badge.checkmark.fill" : "bolt",
+                systemIcon: killphraseEnabled ? "bolt.badge.checkmark.fill" : "bolt",
                 title: title,
                 subtitle: description,
             )
@@ -49,14 +56,14 @@ struct VaultDetailKillphraseEditView: View {
 
     private var optionSection: some View {
         Section {
-            Toggle(isOn: $killphraseIsEnabled) {
+            Toggle(isOn: $killphraseEnabled) {
                 Text("Enable killphrase")
                     .font(.body)
             }
 
-            if killphraseIsEnabled {
+            if killphraseEnabled {
                 FormRow(image: Image(systemName: "textformat"), color: .secondary, style: .standard) {
-                    TextField("Enter killphrase...", text: $killphrase)
+                    TextField("Set new killphrase...", text: $newKillphrase)
                         .keyboardType(.default)
                         .autocorrectionDisabled()
                         .submitLabel(.done)
@@ -64,7 +71,7 @@ struct VaultDetailKillphraseEditView: View {
                 }
             }
         } footer: {
-            if killphraseIsEnabled {
+            if killphraseEnabled {
                 Text(hiddenWithKillphraseTitle)
             }
         }
@@ -72,10 +79,13 @@ struct VaultDetailKillphraseEditView: View {
 }
 
 #Preview {
-    VaultDetailKillphraseEditView(
+    @Previewable @State var enabled = true
+    @Previewable @State var newPhrase = ""
+    return VaultDetailKillphraseEditView(
         title: "Test",
         description: "This is a test",
         hiddenWithKillphraseTitle: "This will be killed",
-        killphrase: .constant("x"),
+        killphraseEnabled: $enabled,
+        newKillphrase: $newPhrase,
     )
 }

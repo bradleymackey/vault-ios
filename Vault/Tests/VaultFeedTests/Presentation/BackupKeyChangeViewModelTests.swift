@@ -126,6 +126,8 @@ extension BackupKeyChangeViewModelTests {
             vaultKillphraseDeleter: VaultStoreKillphraseDeleterMock(),
             vaultOtpAutofillStore: VaultOTPAutofillStoreMock(),
             backupPasswordStore: BackupPasswordStoreMock(),
+            killphraseKeyStore: StubKillphraseKeyStore(),
+            killphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         authenticationService: DeviceAuthenticationService =

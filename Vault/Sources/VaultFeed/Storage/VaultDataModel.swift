@@ -100,6 +100,11 @@ public final class VaultDataModel {
     public private(set) var backupPassword: BackupPasswordState = .notFetched
     public private(set) var backupPasswordLoadingState: LoadingState = .notLoading
 
+    /// Derived from the unlocked vault key. Cached here so the killphrase
+    /// match and write paths can avoid redoing HKDF on every keystroke.
+    /// `nil` whenever the vault is not currently unlocked.
+    public private(set) var killphraseDigester: KillphraseDigester?
+
     // MARK: - Backup Events
 
     /// The last time the user's vault was backed up.
@@ -123,6 +128,8 @@ public final class VaultDataModel {
     private let vaultKillphraseDeleter: any VaultStoreKillphraseDeleter
     private let vaultOtpAutofillStore: any VaultOTPAutofillStore
     private let backupPasswordStore: any BackupPasswordStore
+    private let killphraseKeyStore: any KillphraseKeyStore
+    private let killphraseRehashService: KillphraseRehashService?
     private let backupEventLogger: any BackupEventLogger
     private var observationBag = Set<AnyCancellable>()
 
@@ -134,6 +141,8 @@ public final class VaultDataModel {
         vaultKillphraseDeleter: any VaultStoreKillphraseDeleter,
         vaultOtpAutofillStore: any VaultOTPAutofillStore,
         backupPasswordStore: any BackupPasswordStore,
+        killphraseKeyStore: any KillphraseKeyStore,
+        killphraseRehashService: KillphraseRehashService?,
         backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = [],
     ) {
@@ -144,6 +153,8 @@ public final class VaultDataModel {
         self.vaultKillphraseDeleter = vaultKillphraseDeleter
         self.vaultOtpAutofillStore = vaultOtpAutofillStore
         self.backupPasswordStore = backupPasswordStore
+        self.killphraseKeyStore = killphraseKeyStore
+        self.killphraseRehashService = killphraseRehashService
         self.backupEventLogger = backupEventLogger
         self.itemCaches = itemCaches
 
@@ -152,7 +163,28 @@ public final class VaultDataModel {
 
     /// Initial setup to ensure the model is in a good state.
     public func setup() async {
+        await loadKillphraseDigester()
         await updateCurrentPayloadHash()
+    }
+
+    /// Loads or generates the killphrase HMAC key and caches a digester
+    /// for the lifetime of the unlocked-device session. Safe to call
+    /// multiple times — no-op if digester is already built.
+    public func loadKillphraseDigester() async {
+        if killphraseDigester != nil { return }
+        do {
+            let key = try await killphraseKeyStore.loadOrCreate()
+            let digester = KillphraseDigester(key: key)
+            killphraseDigester = digester
+            // Phase B of the V1 → V2 killphrase migration. Idempotent;
+            // does nothing if there are no pending entries. Best-effort —
+            // failure here must not block normal startup.
+            await killphraseRehashService?.run(using: digester)
+        } catch {
+            // Silent failure: we don't want to surface an alert here. The
+            // killphrase deleter will simply remain a no-op until next
+            // launch. No telemetry per MANIFESTO C3.
+        }
     }
 
     private func monitorBackupEvents() {
@@ -198,6 +230,10 @@ extension VaultDataModel {
     public func purgeSensitiveData() {
         backupPassword = .notFetched
         backupPasswordLoadingState = .notLoading
+        // killphraseDigester is intentionally NOT cleared. The key it
+        // wraps is a device-bound HMAC key (not the user's password), is
+        // re-fetched silently from keychain on next launch, and clearing
+        // it would break killphrase deletion until the next setup call.
     }
 }
 
@@ -246,8 +282,16 @@ extension VaultDataModel {
                 filterText: itemsSanitizedQuery,
                 filterTags: itemsFilteringByTags,
             )
-            let didDeleteKillphraseItems = await vaultKillphraseDeleter
-                .deleteItems(matchingKillphrase: itemsSearchQuery)
+            // Killphrase matching requires the derived HMAC key, which is
+            // only available when the vault is unlocked. If we don't have
+            // one yet (vault still locked, key load failed), skip the
+            // delete pass — the search itself remains functional.
+            let didDeleteKillphraseItems: Bool = if let digester = killphraseDigester {
+                await vaultKillphraseDeleter
+                    .deleteItems(matchingKillphrase: itemsSearchQuery, using: digester)
+            } else {
+                false
+            }
             let result = try await vaultStore.retrieve(query: query)
             items = result.items
             itemErrors = result.errors

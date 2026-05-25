@@ -1,0 +1,61 @@
+import Foundation
+
+/// Phase B of the V1 → V2 killphrase migration.
+///
+/// Reads plaintext killphrases stashed by the V1 → V2 schema migration's
+/// `willMigrate` handler, hashes them with the unlocked vault's digester,
+/// writes the digest + salt back onto the corresponding `PersistedVaultItem`,
+/// and securely clears the pending file.
+///
+/// Idempotent: if the pending file is empty or missing, `run` is a no-op.
+/// Crash-safe: any entry not successfully written remains in the pending
+/// file and will be retried on the next call.
+public struct KillphraseRehashService: Sendable {
+    public typealias Writer = @Sendable (UUID, KillphraseDigest) async throws -> Void
+
+    private let pendingStore: PendingKillphraseRehashStore
+    private let writer: Writer
+
+    init(pendingStore: PendingKillphraseRehashStore, writer: @escaping Writer) {
+        self.pendingStore = pendingStore
+        self.writer = writer
+    }
+
+    public init(storeDirectory: URL, writer: @escaping Writer) {
+        self.init(
+            pendingStore: PendingKillphraseRehashStore(
+                fileURL: PendingKillphraseRehashStore.defaultURL(storeDirectory: storeDirectory),
+            ),
+            writer: writer,
+        )
+    }
+
+    /// Runs the rehash pass. Safe to call repeatedly; if there are no
+    /// pending entries it returns immediately. Errors during write leave
+    /// the corresponding entries in the pending file for a future retry.
+    public func run(using digester: KillphraseDigester) async {
+        let entries: [PendingKillphraseRehashStore.Entry]
+        do {
+            entries = try pendingStore.read()
+        } catch {
+            return
+        }
+        guard entries.isEmpty == false else { return }
+
+        var remaining: [PendingKillphraseRehashStore.Entry] = []
+        for entry in entries {
+            let digest = digester.makeDigest(phrase: entry.phrase)
+            do {
+                try await writer(entry.itemID, digest)
+            } catch {
+                remaining.append(entry)
+            }
+        }
+
+        if remaining.isEmpty {
+            try? pendingStore.clear()
+        } else {
+            try? pendingStore.write(remaining)
+        }
+    }
+}
