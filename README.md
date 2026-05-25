@@ -22,6 +22,7 @@ There's a few ways that you can use Vault to store your data:
 - [x] **Modern**: we should use modern features and push for fast deprecations.
 - [x] **Open source**: no binary dependencies or obfuscated stuff.
 - [x] **Robust**: test-driven development, modular PRs/commits.
+- [x] **Duress-resistant**: see [`MANIFESTO.md`](./MANIFESTO.md) for the security principles that govern what Vault will and will not do.
 
 ## Features
 
