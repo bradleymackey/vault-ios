@@ -15,6 +15,8 @@ func anyVaultDataModel(
     vaultKillphraseDeleter: any VaultStoreKillphraseDeleter = VaultStoreKillphraseDeleterMock(),
     vaultOtpAutofillStore: any VaultOTPAutofillStore = VaultOTPAutofillStoreMock(),
     backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
+    killphraseKeyStore: any KillphraseKeyStore = KillphraseKeyStoreMock(),
+    killphraseRehashService: KillphraseRehashService? = nil,
     backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
     VaultDataModel(
@@ -25,6 +27,8 @@ func anyVaultDataModel(
         vaultKillphraseDeleter: vaultKillphraseDeleter,
         vaultOtpAutofillStore: vaultOtpAutofillStore,
         backupPasswordStore: backupPasswordStore,
+        killphraseKeyStore: killphraseKeyStore,
+        killphraseRehashService: killphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
 }
