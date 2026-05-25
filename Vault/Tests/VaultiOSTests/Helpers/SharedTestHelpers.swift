@@ -107,7 +107,7 @@ func anyOTPVaultItem(
             visibility: .always,
             searchableLevel: .full,
             searchPassphrase: "",
-            killphrase: "",
+            killphrase: nil,
             lockState: .notLocked,
             color: color,
             showInQuickType: true,

@@ -157,12 +157,22 @@ func uniqueVaultItem(
             visibility: visibility,
             tags: tags,
             searchableLevel: searchableLevel,
-            killphrase: killphrase,
+            killphrase: killphrase.flatMap { phrase in
+                phrase.isEmpty ? nil : testDigester.makeDigest(phrase: phrase)
+            },
             lockState: lockState,
         ),
         item: item,
     )
 }
+
+/// A deterministic killphrase digester used to build test fixtures from
+/// plaintext phrases. The key is zeroed so test assertions remain stable.
+let testDigester: KillphraseDigester = {
+    // swiftlint:disable:next force_try
+    let key = try! KeyData<Bits256>(data: Data(repeating: 0, count: 32))
+    return KillphraseDigester(key: key)
+}()
 
 /// A unique vault item with custom metadata.
 /// The default payload is any OTPAuthCode.
@@ -185,7 +195,7 @@ func anyVaultItemMetadata(
     tags: Set<Identifier<VaultItemTag>> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
     searchPassphrase: String? = nil,
-    killphrase: String? = nil,
+    killphrase: KillphraseDigest? = nil,
     lockState: VaultItemLockState = .notLocked,
     color: VaultItemColor? = nil,
     showInQuickType: Bool = true,
@@ -216,7 +226,7 @@ extension SecureNote {
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
-        killphrase: String? = nil,
+        killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
         previewMode: NotePreviewMode = .titleAndFirstLine,
@@ -245,7 +255,7 @@ extension EncryptedItem {
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
-        killphrase: String? = nil,
+        killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
         previewMode: NotePreviewMode = .titleAndFirstLine,
@@ -274,7 +284,7 @@ extension OTPAuthCode {
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
         searchPassphrase: String? = nil,
-        killphrase: String? = nil,
+        killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil,
         showInQuickType: Bool = true,

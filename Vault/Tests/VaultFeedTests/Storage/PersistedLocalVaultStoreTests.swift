@@ -1653,7 +1653,7 @@ final class PersistedLocalVaultStoreTests {
 
     @Test
     func deleteItemsMatchingKillphrase_hasNoEffectIfVaultEmpty() async throws {
-        await sut.deleteItems(matchingKillphrase: "a")
+        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
         try await assertStoreContains(exactlyItems: [])
     }
@@ -1671,7 +1671,7 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a")
+        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
         try await assertStoreContains(exactlyItems: [item2, item3])
     }
@@ -1689,7 +1689,7 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a")
+        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
         try await assertStoreContains(exactlyItems: [item3])
     }
@@ -1707,7 +1707,7 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a")
+        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
         try await assertStoreContains(exactlyItems: [item2, item3])
     }
@@ -1725,7 +1725,7 @@ final class PersistedLocalVaultStoreTests {
         )
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "a")
+        await sut.deleteItems(matchingKillphrase: "a", using: testDigester)
 
         try await assertStoreContains(exactlyItems: [item1, item3])
     }
@@ -1744,10 +1744,10 @@ final class PersistedLocalVaultStoreTests {
 
         try await sut.importAndOverrideVault(payload: payload)
 
-        await sut.deleteItems(matchingKillphrase: "")
-        await sut.deleteItems(matchingKillphrase: " ")
-        await sut.deleteItems(matchingKillphrase: "       ")
-        await sut.deleteItems(matchingKillphrase: "\n")
+        await sut.deleteItems(matchingKillphrase: "", using: testDigester)
+        await sut.deleteItems(matchingKillphrase: " ", using: testDigester)
+        await sut.deleteItems(matchingKillphrase: "       ", using: testDigester)
+        await sut.deleteItems(matchingKillphrase: "\n", using: testDigester)
 
         try await assertStoreContains(exactlyItems: [item1, item2, item3])
     }

@@ -41,7 +41,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.searchPassphrase == "hello")
-        #expect(decodedItem.metadata.killphrase == "killme")
+        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killme"))
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.tags == [.init(id: tag)])
         #expect(decodedItem.metadata.lockState == .notLocked)
@@ -113,7 +113,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.searchPassphrase == "hello")
-        #expect(decodedItem.metadata.killphrase == "killmenow")
+        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killmenow"))
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.tags == [.init(id: tag)])
         #expect(decodedItem.metadata.lockState == .notLocked)
@@ -174,7 +174,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.userDescription == description)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.searchPassphrase == "pass")
-        #expect(decodedItem.metadata.killphrase == "killme")
+        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killme"))
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.lockState == .lockedWithNativeSecurity)
@@ -234,7 +234,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.visibility == .onlySearch)
         #expect(decodedItem.metadata.searchPassphrase == "nice")
-        #expect(decodedItem.metadata.killphrase == "killmeNOW")
+        #expect(matchesKillphrase(decodedItem.metadata.killphrase, expected: "killmeNOW"))
         #expect(decodedItem.metadata.color == .init(red: 0.2, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.lockState == .notLocked)
         #expect(decodedItem.item.otpCode?.type == .hotp(counter: 10))
@@ -329,7 +329,15 @@ final class VaultBackupItemDecoderTests {
 
 extension VaultBackupItemDecoderTests {
     private func makeSUT() -> VaultBackupItemDecoder {
-        VaultBackupItemDecoder()
+        // Inject a deterministic test digester so legacy plaintext
+        // killphrases on V1 backups get rehashed into a `KillphraseDigest`
+        // on decode (rather than dropped to nil).
+        VaultBackupItemDecoder(killphraseDigester: testDigester)
+    }
+
+    private func matchesKillphrase(_ digest: KillphraseDigest?, expected: String) -> Bool {
+        guard let digest else { return false }
+        return testDigester.matches(query: expected, salt: digest.salt, digest: digest.digest)
     }
 
     private func anyNoteItem(contents: String? = nil) -> VaultBackupItem {

@@ -161,12 +161,26 @@ extension PersistedVaultItemDecoderTests {
     }
 
     @Test
-    func decodeMetadata_decodesKillphrase() throws {
-        let item = makePersistedItem(killphrase: "kill me now")
+    func decodeMetadata_decodesKillphraseDigest() throws {
+        let salt = Data(repeating: 0xAB, count: 16)
+        let digest = Data(repeating: 0xCD, count: 32)
+        let item = makePersistedItem(killphraseSalt: salt, killphraseDigest: digest)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        #expect(decoded.metadata.killphrase == "kill me now")
+        #expect(decoded.metadata.killphrase == KillphraseDigest(salt: salt, digest: digest))
+    }
+
+    @Test
+    func decodeMetadata_decodesKillphraseAsNilWhenOnlyOneSideStored() throws {
+        let item = makePersistedItem(
+            killphraseSalt: Data(repeating: 0xAB, count: 16),
+            killphraseDigest: nil,
+        )
+        let sut = makeSUT()
+
+        let decoded = try sut.decode(item: item)
+        #expect(decoded.metadata.killphrase == nil)
     }
 
     @Test
@@ -478,7 +492,9 @@ extension PersistedVaultItemDecoderTests {
         visibility: String = "ALWAYS",
         searchableLevel: String = "FULL",
         searchPassphrase: String? = nil,
-        killphrase: String? = nil,
+        killphrase _: String? = nil,
+        killphraseSalt: Data? = nil,
+        killphraseDigest: Data? = nil,
         lockState: String? = nil,
         color: PersistedColor? = nil,
         tags: [PersistedVaultTag] = [],
@@ -505,7 +521,8 @@ extension PersistedVaultItemDecoderTests {
             visibility: visibility,
             searchableLevel: searchableLevel,
             searchPassphrase: searchPassphrase,
-            killphrase: killphrase,
+            killphraseSalt: killphraseSalt,
+            killphraseDigest: killphraseDigest,
             lockState: lockState,
             color: color,
             showInQuickType: true,
