@@ -218,27 +218,67 @@ extension PersistedVaultItemEncoderTests {
     }
 
     @Test
-    func encodeMetadata_newItemEncodesKillphrase() throws {
+    func encodeMetadata_newItemEncodesKillphraseDigest() throws {
         let sut1 = makeSUT()
+        let digest = KillphraseDigest(
+            salt: Data(repeating: 0xAB, count: 16),
+            digest: Data(repeating: 0xCD, count: 32),
+        )
         var existingItem = uniqueVaultItem().makeWritable()
-        existingItem.killphrase = "kill me"
+        existingItem.killphraseUpdate = .set(digest)
         let existing = try encode(sut: sut1, item: existingItem)
 
-        #expect(existing.killphrase == "kill me")
+        #expect(existing.killphraseSalt == digest.salt)
+        #expect(existing.killphraseDigest == digest.digest)
     }
 
     @Test
-    func encodeMetadata_existingItemEncodesKillphrase() throws {
+    func encodeMetadata_existingItemReplacesKillphraseDigest() throws {
         let sut = makeSUT()
+        let d1 = KillphraseDigest(salt: Data(repeating: 0x01, count: 16), digest: Data(repeating: 0xA1, count: 32))
+        let d2 = KillphraseDigest(salt: Data(repeating: 0x02, count: 16), digest: Data(repeating: 0xA2, count: 32))
         var item1 = uniqueVaultItem().makeWritable()
-        item1.killphrase = "kill 1"
+        item1.killphraseUpdate = .set(d1)
         let existing = try encode(sut: sut, item: item1)
 
         var item2 = uniqueVaultItem().makeWritable()
-        item2.killphrase = "kill 2"
+        item2.killphraseUpdate = .set(d2)
         let existing2 = try encode(sut: sut, item: item2, existing: existing)
 
-        #expect(existing2.killphrase == "kill 2")
+        #expect(existing2.killphraseSalt == d2.salt)
+        #expect(existing2.killphraseDigest == d2.digest)
+    }
+
+    @Test
+    func encodeMetadata_unchangedKillphrasePreservesExistingDigest() throws {
+        let sut = makeSUT()
+        let d = KillphraseDigest(salt: Data(repeating: 0x03, count: 16), digest: Data(repeating: 0xA3, count: 32))
+        var item1 = uniqueVaultItem().makeWritable()
+        item1.killphraseUpdate = .set(d)
+        let existing = try encode(sut: sut, item: item1)
+
+        var item2 = uniqueVaultItem().makeWritable()
+        item2.killphraseUpdate = .unchanged
+        let existing2 = try encode(sut: sut, item: item2, existing: existing)
+
+        #expect(existing2.killphraseSalt == d.salt)
+        #expect(existing2.killphraseDigest == d.digest)
+    }
+
+    @Test
+    func encodeMetadata_clearKillphraseRemovesDigest() throws {
+        let sut = makeSUT()
+        let d = KillphraseDigest(salt: Data(repeating: 0x04, count: 16), digest: Data(repeating: 0xA4, count: 32))
+        var item1 = uniqueVaultItem().makeWritable()
+        item1.killphraseUpdate = .set(d)
+        let existing = try encode(sut: sut, item: item1)
+
+        var item2 = uniqueVaultItem().makeWritable()
+        item2.killphraseUpdate = .clear
+        let existing2 = try encode(sut: sut, item: item2, existing: existing)
+
+        #expect(existing2.killphraseSalt == nil)
+        #expect(existing2.killphraseDigest == nil)
     }
 
     @Test
