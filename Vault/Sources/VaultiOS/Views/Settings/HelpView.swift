@@ -8,6 +8,7 @@ struct HelpView: View {
     var body: some View {
         Form {
             generalSection
+            securitySection
             backupsSection
         }
         .navigationTitle(Text(viewModel.helpTitle))
@@ -25,6 +26,18 @@ struct HelpView: View {
         }
     }
 
+    private var securitySection: some View {
+        Section {
+            NavigationLink {
+                SettingsDocumentView(title: "Item Encryption", content: FAQItemEncryptionFileContent())
+            } label: {
+                Label("Can I encrypt individual items?", systemImage: "lock.shield.fill")
+            }
+        } header: {
+            Label("Security", systemImage: "lock.fill")
+        }
+    }
+
     private var backupsSection: some View {
         Section {
             NavigationLink {
@@ -37,6 +50,12 @@ struct HelpView: View {
                 SettingsDocumentView(title: "Backup Security", content: FAQBackupsSecurityFileContent())
             } label: {
                 Label("Are backups secure?", systemImage: "lock.fill")
+            }
+
+            NavigationLink {
+                SettingsDocumentView(title: "Moving Between Devices", content: FAQSyncDevicesFileContent())
+            } label: {
+                Label("How do I move items to another device?", systemImage: "iphone.and.arrow.forward")
             }
         } header: {
             Label("Backups", systemImage: "doc.on.doc.fill")

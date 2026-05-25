@@ -21,6 +21,20 @@ public final class FAQBackupsSecurityFileContent: FileBackedContent {
     public init() {}
 }
 
+public final class FAQItemEncryptionFileContent: FileBackedContent {
+    public let fileName: String = "FAQ-Item-Encryption"
+    public let fileExtension: String = "md"
+
+    public init() {}
+}
+
+public final class FAQSyncDevicesFileContent: FileBackedContent {
+    public let fileName: String = "FAQ-Sync-Devices"
+    public let fileExtension: String = "md"
+
+    public init() {}
+}
+
 public struct PrivacyPolicyContent: FileBackedContent {
     public let fileName: String = "PrivacyPolicy"
     public let fileExtension: String = "md"
