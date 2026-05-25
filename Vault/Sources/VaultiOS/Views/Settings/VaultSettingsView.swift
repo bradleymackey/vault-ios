@@ -88,6 +88,8 @@ struct VaultSettingsView: View {
                     Text(viewModel.pasteTTLTitle)
                 }
             }
+        } footer: {
+            Text("How long copied values stay on the clipboard before iOS automatically clears them.")
         }
     }
 
