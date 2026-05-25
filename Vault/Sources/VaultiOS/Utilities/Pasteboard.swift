@@ -1,6 +1,8 @@
 import Combine
 import Foundation
 import UIKit
+import VaultCore
+import VaultFeed
 import VaultSettings
 
 /// The iOS system pasteboard.
@@ -18,9 +20,10 @@ public final class Pasteboard {
         self.localSettings = localSettings
     }
 
-    func copy(_ string: String) {
+    func copy(_ action: VaultTextCopyAction) {
         let ttl = localSettings.state.pasteTimeToLive.duration
-        systemPasteboard.copy(string: string, ttl: ttl)
+        let localOnly = !localSettings.state.isUniversalClipboardAllowed(for: action.contentType)
+        systemPasteboard.copy(string: action.text, ttl: ttl, localOnly: localOnly)
         didPasteSubject.send()
     }
 

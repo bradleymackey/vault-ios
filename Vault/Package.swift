@@ -74,6 +74,9 @@ let package = Package(
             name: "VaultiOSTests",
             dependencies: [
                 "VaultiOS",
+                "VaultCore",
+                "VaultFeed",
+                "VaultSettings",
                 "TestHelpers",
             ],
             exclude: ["__Snapshots__"],
@@ -204,7 +207,7 @@ let package = Package(
         ),
         .testTarget(
             name: "VaultFeedTests",
-            dependencies: ["VaultFeed", "FoundationExtensions", "TestHelpers"],
+            dependencies: ["VaultFeed", "VaultCore", "FoundationExtensions", "TestHelpers"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,
         ),

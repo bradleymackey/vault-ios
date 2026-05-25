@@ -25,6 +25,7 @@ struct VaultSettingsView: View {
             headerSection
             aboutSection
             viewOptionsSection
+            universalClipboardSection
             dangerSection
         }
         .navigationTitle(viewModel.title)
@@ -87,6 +88,34 @@ struct VaultSettingsView: View {
                     Text(viewModel.pasteTTLTitle)
                 }
             }
+        } footer: {
+            Text("How long copied values stay on the clipboard before iOS automatically clears them.")
+        }
+    }
+
+    private var universalClipboardSection: some View {
+        Section {
+            Toggle(isOn: $localSettings.state.allowUniversalClipboardForPasswords) {
+                FormRow(image: Image(systemName: "key.fill"), color: .indigo, style: .prominent) {
+                    Text("Passwords")
+                }
+            }
+            Toggle(isOn: $localSettings.state.allowUniversalClipboardForOTPs) {
+                FormRow(image: Image(systemName: "number"), color: .indigo, style: .prominent) {
+                    Text("One-time codes")
+                }
+            }
+            Toggle(isOn: $localSettings.state.allowUniversalClipboardForOther) {
+                FormRow(image: Image(systemName: "doc.on.clipboard"), color: .indigo, style: .prominent) {
+                    Text("Other")
+                }
+            }
+        } header: {
+            Text("Universal Clipboard")
+        } footer: {
+            Text(
+                "When enabled, copied values of the selected kind sync to your other Apple devices via Universal Clipboard. Values are always copied locally; this only controls cross-device sync.",
+            )
         }
     }
 

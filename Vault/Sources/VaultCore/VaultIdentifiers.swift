@@ -29,6 +29,12 @@ public enum VaultIdentifiers {
         public enum General {
             public static let settingsPasteTTL = "vault.preferences.general.settings-paste-ttl"
         }
+
+        public enum UniversalClipboard {
+            public static let allowPasswords = "vault.preferences.universal-clipboard.allow-passwords"
+            public static let allowOTPs = "vault.preferences.universal-clipboard.allow-otps"
+            public static let allowOther = "vault.preferences.universal-clipboard.allow-other"
+        }
     }
 
     public enum CodeScanning {

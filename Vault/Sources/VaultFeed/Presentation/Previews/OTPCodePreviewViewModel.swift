@@ -98,9 +98,9 @@ public final class OTPCodePreviewViewModel {
     public var pasteboardCopyText: VaultTextCopyAction? {
         switch code {
         case let .visible(code):
-            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: false)
+            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: false, contentType: .otp)
         case let .locked(code):
-            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: true)
+            VaultTextCopyAction(text: code, requiresAuthenticationToCopy: true, contentType: .otp)
         case .notReady, .finished, .obfuscated, .error:
             nil
         }

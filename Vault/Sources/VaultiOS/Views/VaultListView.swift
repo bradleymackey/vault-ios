@@ -130,7 +130,7 @@ struct VaultListView<
                             .authenticate(reason: "Authenticate to copy locked data")
                         guard result == .success(.authenticated) else { return }
                     }
-                    pasteboard.copy(copyAction.text)
+                    pasteboard.copy(copyAction)
                 case let .openItemDetail(id):
                     guard let item = dataModel.code(id: id) else { return }
                     modal = .detail(id, item, nil)

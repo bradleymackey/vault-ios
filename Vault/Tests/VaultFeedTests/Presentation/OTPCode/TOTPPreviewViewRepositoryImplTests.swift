@@ -97,7 +97,7 @@ struct TOTPPreviewViewRepositoryImplTests {
 
         let code = sut.textToCopyForVaultItem(id: id)
 
-        #expect(code == .init(text: "123456", requiresAuthenticationToCopy: false))
+        #expect(code == .init(text: "123456", requiresAuthenticationToCopy: false, contentType: .otp))
     }
 
     @Test
@@ -109,7 +109,7 @@ struct TOTPPreviewViewRepositoryImplTests {
 
         let code = sut.textToCopyForVaultItem(id: id)
 
-        #expect(code == .init(text: "123456", requiresAuthenticationToCopy: true))
+        #expect(code == .init(text: "123456", requiresAuthenticationToCopy: true, contentType: .otp))
     }
 
     @Test
