@@ -75,7 +75,13 @@ public protocol VaultStoreDeleter: Sendable {
 /// @mockable
 public protocol VaultStoreKillphraseDeleter: Sendable {
     /// Deletes items matching the given killphrase.
-    /// - Returns: `true` if any items were deleted, `false` otherwise
+    ///
+    /// - Returns: `true` if any items were deleted, `false` if no items matched
+    ///   **or** if an internal error prevented deletion.
+    /// - Important: This method intentionally returns the same value on "no match"
+    ///   and on internal failure so the killphrase feature does not leak phrase
+    ///   validity through error channels. Callers must not surface failures via
+    ///   UI, logs, or telemetry.
     @discardableResult
     func deleteItems(matchingKillphrase: String) async -> Bool
 }
