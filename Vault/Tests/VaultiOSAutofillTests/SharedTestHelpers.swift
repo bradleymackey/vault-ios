@@ -1,4 +1,5 @@
 import Foundation
+import FoundationExtensions
 import VaultFeed
 
 func anyVaultItemMetadata(
@@ -14,7 +15,7 @@ func anyVaultItemMetadata(
         visibility: .always,
         searchableLevel: .full,
         searchPassphrase: "",
-        killphrase: "",
+        killphrase: nil,
         lockState: lockState,
         color: .black,
         showInQuickType: true,
@@ -27,4 +28,13 @@ func anyVaultItem() -> VaultItem {
         metadata: anyVaultItemMetadata(),
         item: .secureNote(.init(title: "hello", contents: "hello", format: .markdown)),
     )
+}
+
+/// No-op key store for autofill snapshot tests that don't exercise the
+/// killphrase digest path. Returns a fixed all-zero key so `loadOrCreate`
+/// never fatal-errors when called from VaultDataModel.setup().
+struct StubKillphraseKeyStore: KillphraseKeyStore {
+    func loadOrCreate() async throws -> KeyData<Bits256> {
+        .zero()
+    }
 }

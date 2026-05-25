@@ -13,7 +13,6 @@
           }
         }
       },
-      "killphrase" : "killme",
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 0,
       "search_passphrase" : "searchphrase",
@@ -65,7 +64,6 @@
           }
         }
       },
-      "killphrase" : "kill3",
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 9999,
       "search_passphrase" : "search3",
@@ -98,7 +96,6 @@
           }
         }
       },
-      "killphrase" : "kill",
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 1000,
       "search_passphrase" : "passphrase",
