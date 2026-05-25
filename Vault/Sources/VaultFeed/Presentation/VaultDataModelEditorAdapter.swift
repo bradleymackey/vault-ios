@@ -12,6 +12,32 @@ public struct VaultDataModelEditorAdapter {
         self.dataModel = dataModel
         self.keyDeriverFactory = keyDeriverFactory
     }
+
+    /// Translate the UI's killphrase edit state into a `KillphraseUpdate`
+    /// that the storage layer can apply.
+    ///
+    /// - If the toggle is off → `.clear` (remove any existing digest).
+    /// - If the toggle is on **and** the user typed a new phrase → derive a
+    ///   fresh digest and emit `.set(...)`. Refusing to digest a blank
+    ///   string preserves the existing "only non-blank phrases are armed"
+    ///   semantics.
+    /// - If the toggle is on **and** the field is blank → `.unchanged`,
+    ///   meaning the existing digest (if any) is kept. This is the path
+    ///   that handles the "user opened the edit screen without changing
+    ///   anything" case, since the UI can no longer hydrate the original
+    ///   plaintext into the field.
+    private func killphraseUpdate(enabled: Bool, newPhrase: String) -> VaultItem.KillphraseUpdate {
+        guard enabled else { return .clear }
+        let trimmed = newPhrase.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isNotEmpty else { return .unchanged }
+        guard let digester = dataModel.killphraseDigester else {
+            // Digester not available (extremely unexpected: setup() has
+            // not run, or keychain unreachable). Treat as "leave existing
+            // alone" rather than silently clearing or storing plaintext.
+            return .unchanged
+        }
+        return .set(digester.makeDigest(phrase: trimmed))
+    }
 }
 
 extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
@@ -25,7 +51,10 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
             searchPassphrase: initialEdits.searchPassphrase,
-            killphrase: initialEdits.killphrase,
+            killphraseUpdate: killphraseUpdate(
+                enabled: initialEdits.killphraseEnabled,
+                newPhrase: initialEdits.newKillphrase,
+            ),
             lockState: initialEdits.lockState,
             showInQuickType: initialEdits.showInQuickType,
             previewMode: .titleAndFirstLine,
@@ -50,7 +79,10 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
                 visibility: edits.viewConfig.visibility,
                 searchableLevel: edits.viewConfig.searchableLevel,
                 searchPassphrase: edits.searchPassphrase,
-                killphrase: edits.killphrase,
+                killphraseUpdate: killphraseUpdate(
+                    enabled: edits.killphraseEnabled,
+                    newPhrase: edits.newKillphrase,
+                ),
                 lockState: edits.lockState,
                 showInQuickType: edits.showInQuickType,
                 previewMode: .titleAndFirstLine,
@@ -75,7 +107,10 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
             searchPassphrase: initialEdits.searchPassphrase,
-            killphrase: initialEdits.killphrase,
+            killphraseUpdate: killphraseUpdate(
+                enabled: initialEdits.killphraseEnabled,
+                newPhrase: initialEdits.newKillphrase,
+            ),
             lockState: initialEdits.lockState,
             showInQuickType: false,
             previewMode: initialEdits.previewMode,
@@ -95,7 +130,10 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             visibility: edits.viewConfig.visibility,
             searchableLevel: edits.viewConfig.searchableLevel,
             searchPassphrase: edits.searchPassphrase,
-            killphrase: edits.killphrase,
+            killphraseUpdate: killphraseUpdate(
+                enabled: edits.killphraseEnabled,
+                newPhrase: edits.newKillphrase,
+            ),
             lockState: edits.lockState,
             showInQuickType: false,
             previewMode: edits.previewMode,
