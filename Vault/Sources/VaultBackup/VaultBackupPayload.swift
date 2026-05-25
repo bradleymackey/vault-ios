@@ -55,7 +55,16 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var visibility: Visibility
     public var searchableLevel: SearchableLevel
     public var searchPassphrase: String?
+    /// **Legacy.** Plaintext killphrase, only emitted by V1 backups. Newer
+    /// backups never set this; instead they carry `killphraseSalt` +
+    /// `killphraseDigest`. Kept for one-way decode of pre-existing
+    /// backups so users do not lose their killphrases on restore.
     public var killphrase: String?
+    /// Per-item random salt for the killphrase HMAC. Paired with
+    /// `killphraseDigest`; both are `nil` when no killphrase is set.
+    public var killphraseSalt: Data?
+    /// HMAC-SHA256 of `killphraseSalt || phrase`.
+    public var killphraseDigest: Data?
     public var lockState: LockState
     /// The tint color associated with the item.
     public var tintColor: VaultBackupRGBColor?
@@ -72,7 +81,9 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         visibility: Visibility,
         searchableLevel: SearchableLevel,
         searchPassphrase: String?,
-        killphrase: String?,
+        killphrase: String? = nil,
+        killphraseSalt: Data? = nil,
+        killphraseDigest: Data? = nil,
         lockState: LockState,
         tintColor: VaultBackupRGBColor? = nil,
         item: Item,
@@ -87,6 +98,8 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         self.searchableLevel = searchableLevel
         self.searchPassphrase = searchPassphrase
         self.killphrase = killphrase
+        self.killphraseSalt = killphraseSalt
+        self.killphraseDigest = killphraseDigest
         self.tintColor = tintColor
         self.lockState = lockState
         self.item = item
