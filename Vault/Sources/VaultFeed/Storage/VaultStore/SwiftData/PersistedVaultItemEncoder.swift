@@ -12,7 +12,7 @@ struct PersistedVaultItemEncoder {
     }
 
     func encode(item: VaultItem.Write, writeUpdateContext: VaultItem.WriteUpdateContext) throws -> PersistedVaultItem {
-        try encode(newData: item, writeUpdateContext: writeUpdateContext)
+        try encode(newData: item, writeUpdateContext: writeUpdateContext, existing: nil)
     }
 
     /// Encodes the given item, inserting it in the encoder's `context`.
@@ -23,9 +23,9 @@ struct PersistedVaultItemEncoder {
                 created: existing.createdDate,
                 updated: .updateUpdatedDate,
             )
-            return try encode(newData: item, writeUpdateContext: writeUpdateContext)
+            return try encode(newData: item, writeUpdateContext: writeUpdateContext, existing: existing)
         } else {
-            return try encode(newData: item, writeUpdateContext: nil)
+            return try encode(newData: item, writeUpdateContext: nil, existing: nil)
         }
     }
 }
@@ -42,6 +42,7 @@ extension PersistedVaultItemEncoder {
     private func encode(
         newData: VaultItem.Write,
         writeUpdateContext: VaultItem.WriteUpdateContext?,
+        existing: PersistedVaultItem? = nil,
     ) throws -> PersistedVaultItem {
         let now = currentDate()
         let noteDetails: PersistedNoteDetails? = switch newData.item {
@@ -64,6 +65,14 @@ extension PersistedVaultItemEncoder {
         case let .retainUpdatedDate(date): date
         case nil: now
         }
+        let (killphraseSalt, killphraseDigest): (Data?, Data?) = switch newData.killphraseUpdate {
+        case .unchanged:
+            (existing?.killphraseSalt, existing?.killphraseDigest)
+        case .clear:
+            (nil, nil)
+        case let .set(digest):
+            (digest.salt, digest.digest)
+        }
         return try PersistedVaultItem(
             id: writeUpdateContext?.id.id ?? UUID(),
             relativeOrder: newData.relativeOrder,
@@ -73,7 +82,8 @@ extension PersistedVaultItemEncoder {
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
             searchPassphrase: newData.searchPassphrase,
-            killphrase: newData.killphrase,
+            killphraseSalt: killphraseSalt,
+            killphraseDigest: killphraseDigest,
             lockState: encodeLockState(state: newData.lockState),
             color: newData.color.flatMap { color in
                 .init(red: color.red, green: color.green, blue: color.blue)
