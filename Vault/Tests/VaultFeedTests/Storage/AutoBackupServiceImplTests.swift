@@ -6,6 +6,7 @@ import VaultCore
 @testable import VaultFeed
 
 @MainActor
+@Suite(.trackLeaks)
 struct AutoBackupServiceImplTests {
     // MARK: - Init
 
@@ -378,13 +379,13 @@ extension AutoBackupServiceImplTests {
         providers: [BackupStorageProviderStub] = [],
     ) throws -> AutoBackupServiceImpl {
         let userDefaults = try defaults ?? testUserDefaults()
-        return AutoBackupServiceImpl(
+        return trackForMemoryLeaks(AutoBackupServiceImpl(
             dataModel: anyVaultDataModel(),
             backupEventLogger: BackupEventLoggerMock(),
             clock: clock,
             defaults: Defaults(userDefaults: userDefaults),
             providers: providers,
-        )
+        ))
     }
 }
 

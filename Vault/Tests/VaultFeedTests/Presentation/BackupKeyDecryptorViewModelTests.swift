@@ -6,7 +6,7 @@ import VaultBackup
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite
+@Suite(.trackLeaks)
 @MainActor
 struct BackupKeyDecryptorViewModelTests {
     @Test
@@ -97,11 +97,11 @@ extension BackupKeyDecryptorViewModelTests {
         encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock(),
         decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never> = .init(),
     ) -> BackupKeyDecryptorViewModel {
-        BackupKeyDecryptorViewModel(
+        trackForMemoryLeaks(BackupKeyDecryptorViewModel(
             encryptedVault: encryptedVault,
             keyDeriverFactory: keyDeriverFactory,
             encryptedVaultDecoder: encryptedVaultDecoder,
             decryptedVaultSubject: decryptedVaultSubject,
-        )
+        ))
     }
 }

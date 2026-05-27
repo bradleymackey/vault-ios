@@ -5,7 +5,7 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite
+@Suite(.trackLeaks)
 @MainActor
 struct OTPCodeIncrementerViewModelTests {
     @Test
@@ -107,14 +107,13 @@ struct OTPCodeIncrementerViewModelTests {
         timer: IntervalTimerMock = IntervalTimerMock(),
         incrementerStore: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
     ) -> OTPCodeIncrementerViewModel {
-        let sut = OTPCodeIncrementerViewModel(
+        trackForMemoryLeaks(OTPCodeIncrementerViewModel(
             id: .new(),
             codePublisher: codePublisher,
             timer: timer,
             initialCounter: 0,
             incrementerStore: incrementerStore,
-        )
-        return sut
+        ))
     }
 }
 
