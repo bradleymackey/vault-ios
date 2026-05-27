@@ -379,9 +379,15 @@ extension AutoBackupServiceImplTests {
         providers: [BackupStorageProviderStub] = [],
     ) throws -> AutoBackupServiceImpl {
         let userDefaults = try defaults ?? testUserDefaults()
+        let dataModel = trackForMemoryLeaks(anyVaultDataModel())
+        let backupEventLogger = trackForMemoryLeaks(BackupEventLoggerMock())
+        trackForMemoryLeaks(clock)
+        for provider in providers {
+            trackForMemoryLeaks(provider)
+        }
         return trackForMemoryLeaks(AutoBackupServiceImpl(
-            dataModel: anyVaultDataModel(),
-            backupEventLogger: BackupEventLoggerMock(),
+            dataModel: dataModel,
+            backupEventLogger: backupEventLogger,
             clock: clock,
             defaults: Defaults(userDefaults: userDefaults),
             providers: providers,

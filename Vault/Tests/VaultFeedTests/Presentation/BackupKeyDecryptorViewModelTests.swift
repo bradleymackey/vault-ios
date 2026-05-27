@@ -97,7 +97,8 @@ extension BackupKeyDecryptorViewModelTests {
         encryptedVaultDecoder: EncryptedVaultDecoderMock = EncryptedVaultDecoderMock(),
         decryptedVaultSubject: PassthroughSubject<VaultApplicationPayload, Never> = .init(),
     ) -> BackupKeyDecryptorViewModel {
-        trackForMemoryLeaks(BackupKeyDecryptorViewModel(
+        trackForMemoryLeaks(encryptedVaultDecoder)
+        return trackForMemoryLeaks(BackupKeyDecryptorViewModel(
             encryptedVault: encryptedVault,
             keyDeriverFactory: keyDeriverFactory,
             encryptedVaultDecoder: encryptedVaultDecoder,

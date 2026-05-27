@@ -107,7 +107,10 @@ struct OTPCodeIncrementerViewModelTests {
         timer: IntervalTimerMock = IntervalTimerMock(),
         incrementerStore: VaultStoreHOTPIncrementerMock = VaultStoreHOTPIncrementerMock(),
     ) -> OTPCodeIncrementerViewModel {
-        trackForMemoryLeaks(OTPCodeIncrementerViewModel(
+        trackForMemoryLeaks(codePublisher)
+        trackForMemoryLeaks(timer)
+        trackForMemoryLeaks(incrementerStore)
+        return trackForMemoryLeaks(OTPCodeIncrementerViewModel(
             id: .new(),
             codePublisher: codePublisher,
             timer: timer,
