@@ -1,5 +1,6 @@
 // swift-tools-version: 6.0
 
+import CompilerPluginSupport
 import PackageDescription
 
 let swiftLintVersion: Version = "0.63.2"
@@ -52,6 +53,7 @@ let package = Package(
         .package(url: "https://github.com/dm-zharov/swift-security.git", exact: "2.5.0"),
         .package(url: "https://github.com/gonzalezreal/swift-markdown-ui", exact: "2.4.1"),
         .package(url: "https://github.com/SimplyDanny/SwiftLintPlugins", exact: swiftLintVersion),
+        .package(url: "https://github.com/swiftlang/swift-syntax", from: "600.0.0"),
     ],
     targets: [
         .target(
@@ -100,10 +102,21 @@ let package = Package(
             name: "TestHelpers",
             dependencies: [
                 "FoundationExtensions",
+                "TestHelpersMacros",
                 .product(name: "SnapshotTesting", package: "swift-snapshot-testing"),
             ],
             swiftSettings: swiftSettings,
             plugins: targetPlugins,
+        ),
+        .macro(
+            name: "TestHelpersMacros",
+            dependencies: [
+                .product(name: "SwiftSyntax", package: "swift-syntax"),
+                .product(name: "SwiftSyntaxMacros", package: "swift-syntax"),
+                .product(name: "SwiftDiagnostics", package: "swift-syntax"),
+                .product(name: "SwiftCompilerPlugin", package: "swift-syntax"),
+            ],
+            swiftSettings: swiftSettings,
         ),
         .target(
             name: "VaultCore",

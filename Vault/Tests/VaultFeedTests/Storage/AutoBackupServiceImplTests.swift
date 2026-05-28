@@ -9,14 +9,14 @@ import VaultCore
 struct AutoBackupServiceImplTests {
     // MARK: - Init
 
-    @Test
+    @Test @LeakTracked
     func init_defaultsToDisabledStatus() throws {
         let sut = try makeSUT()
 
         #expect(sut.configuration.isEnabled == false)
     }
 
-    @Test
+    @Test @LeakTracked
     func init_restoresConfigurationFromDefaults() throws {
         let defaults = try testUserDefaults()
         let config = AutoBackupConfiguration(
@@ -40,7 +40,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Set Enabled
 
-    @Test
+    @Test @LeakTracked
     func setEnabled_updatesConfiguration() async throws {
         let sut = try makeSUT()
 
@@ -49,7 +49,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.configuration.isEnabled == true)
     }
 
-    @Test
+    @Test @LeakTracked
     func setEnabled_false_setsStatusToDisabled() async throws {
         let sut = try makeSUT()
         await sut.setEnabled(true)
@@ -59,7 +59,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .disabled)
     }
 
-    @Test
+    @Test @LeakTracked
     func setEnabled_true_setsStatusToIdle_whenNoLastBackup() async throws {
         let provider = BackupStorageProviderStub(id: "test", isConfigured: false)
         let sut = try makeSUT(providers: [provider])
@@ -70,7 +70,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .idle)
     }
 
-    @Test
+    @Test @LeakTracked
     func setEnabled_persistsToDefaults() async throws {
         let defaults = try testUserDefaults()
         let sut = try makeSUT(defaults: defaults)
@@ -84,7 +84,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Select Provider
 
-    @Test
+    @Test @LeakTracked
     func selectProvider_updatesConfiguration() async throws {
         let provider = BackupStorageProviderStub(id: "icloud")
         let sut = try makeSUT(providers: [provider])
@@ -95,14 +95,14 @@ struct AutoBackupServiceImplTests {
         #expect(sut.selectedProvider?.id == "icloud")
     }
 
-    @Test
+    @Test @LeakTracked
     func selectedProvider_returnsNil_whenNoProviderSelected() throws {
         let sut = try makeSUT()
 
         #expect(sut.selectedProvider == nil)
     }
 
-    @Test
+    @Test @LeakTracked
     func selectedProvider_returnsNil_whenProviderIDDoesNotMatch() throws {
         let provider = BackupStorageProviderStub(id: "icloud")
         let sut = try makeSUT(providers: [provider])
@@ -112,7 +112,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Set Retention
 
-    @Test
+    @Test @LeakTracked
     func setRetention_updatesConfiguration() async throws {
         let sut = try makeSUT()
 
@@ -121,7 +121,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.configuration.retentionDays == .year1)
     }
 
-    @Test
+    @Test @LeakTracked
     func setRetention_persistsToDefaults() async throws {
         let defaults = try testUserDefaults()
         let sut = try makeSUT(defaults: defaults)
@@ -135,7 +135,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Available Providers
 
-    @Test
+    @Test @LeakTracked
     func availableProviders_returnsInjectedProviders() throws {
         let providers = [
             BackupStorageProviderStub(id: "a"),
@@ -149,7 +149,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Trigger Backup If Needed
 
-    @Test
+    @Test @LeakTracked
     func triggerBackupIfNeeded_doesNothing_whenDisabled() async throws {
         let provider = BackupStorageProviderStub(id: "test")
         let sut = try makeSUT(providers: [provider])
@@ -160,7 +160,7 @@ struct AutoBackupServiceImplTests {
         #expect(provider.writeCallCount == 0)
     }
 
-    @Test
+    @Test @LeakTracked
     func triggerBackupIfNeeded_doesNothing_whenNoProviderSelected() async throws {
         let sut = try makeSUT()
         await sut.setEnabled(true)
@@ -170,7 +170,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .idle)
     }
 
-    @Test
+    @Test @LeakTracked
     func triggerBackupIfNeeded_doesNothing_whenProviderNotConfigured() async throws {
         let provider = BackupStorageProviderStub(id: "test", isConfigured: false)
         let sut = try makeSUT(providers: [provider])
@@ -184,7 +184,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Force Backup
 
-    @Test
+    @Test @LeakTracked
     func forceBackup_setsErrorStatus_whenNoProviderSelected() async throws {
         let sut = try makeSUT()
 
@@ -193,7 +193,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .error(.noProviderSelected))
     }
 
-    @Test
+    @Test @LeakTracked
     func forceBackup_setsErrorStatus_whenProviderNotConfigured() async throws {
         let provider = BackupStorageProviderStub(id: "test", isConfigured: false)
         let sut = try makeSUT(providers: [provider])
@@ -204,7 +204,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .error(.providerNotConfigured))
     }
 
-    @Test
+    @Test @LeakTracked
     func forceBackup_setsErrorStatus_whenProviderNotAvailable() async throws {
         let provider = BackupStorageProviderStub(id: "test", isAvailable: false)
         let sut = try makeSUT(providers: [provider])
@@ -215,7 +215,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .error(.providerUnavailable(reason: "Provider is not available")))
     }
 
-    @Test
+    @Test @LeakTracked
     func forceBackup_setsErrorStatus_whenBackupPasswordNotSet() async throws {
         let provider = BackupStorageProviderStub(id: "test")
         let sut = try makeSUT(providers: [provider])
@@ -228,7 +228,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Cleanup Old Backups
 
-    @Test
+    @Test @LeakTracked
     func cleanupOldBackups_doesNothing_whenRetentionIsForever() async throws {
         let provider = BackupStorageProviderStub(id: "test")
         let sut = try makeSUT(providers: [provider])
@@ -240,7 +240,7 @@ struct AutoBackupServiceImplTests {
         #expect(provider.listBackupsCallCount == 0)
     }
 
-    @Test
+    @Test @LeakTracked
     func cleanupOldBackups_doesNothing_whenNoProviderSelected() async throws {
         let sut = try makeSUT()
 
@@ -249,7 +249,7 @@ struct AutoBackupServiceImplTests {
         #expect(sut.status == .disabled)
     }
 
-    @Test
+    @Test @LeakTracked
     func cleanupOldBackups_deletesOldBackups() async throws {
         let clock = EpochClockMock(currentTime: Date(timeIntervalSince1970: 100 * 86400).timeIntervalSince1970)
         let provider = BackupStorageProviderStub(id: "test", backups: [
@@ -266,7 +266,7 @@ struct AutoBackupServiceImplTests {
         #expect(provider.deletedFilenames == ["old.pdf"])
     }
 
-    @Test
+    @Test @LeakTracked
     func cleanupOldBackups_setsErrorStatus_onFailure() async throws {
         let provider = BackupStorageProviderStub(id: "test", listBackupsError: TestError())
         let sut = try makeSUT(providers: [provider])
@@ -284,7 +284,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Notify Data Changed
 
-    @Test
+    @Test @LeakTracked
     func notifyDataChanged_doesNothing_whenDisabled() throws {
         let sut = try makeSUT()
 
@@ -296,7 +296,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Status Publisher
 
-    @Test
+    @Test @LeakTracked
     func statusPublisher_emitsOnStatusChange() async throws {
         let sut = try makeSUT()
 
@@ -313,7 +313,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Configuration Publisher
 
-    @Test
+    @Test @LeakTracked
     func configurationPublisher_emitsOnConfigChange() async throws {
         let sut = try makeSUT()
 
@@ -330,7 +330,7 @@ struct AutoBackupServiceImplTests {
 
     // MARK: - Provider Configuration Persistence
 
-    @Test
+    @Test @LeakTracked
     func saveProviderConfiguration_persistsProviderConfig() async throws {
         let defaults = try testUserDefaults()
         let configData = Data("test-config".utf8)
@@ -344,7 +344,7 @@ struct AutoBackupServiceImplTests {
         #expect(saved?.providerConfigs["test"] == configData)
     }
 
-    @Test
+    @Test @LeakTracked
     func init_restoresProviderConfiguration() async throws {
         let defaults = try testUserDefaults()
         let configData = Data("restored-config".utf8)
@@ -360,10 +360,12 @@ struct AutoBackupServiceImplTests {
         try wrappedDefaults.set(config, for: Key<AutoBackupConfiguration>(VaultIdentifiers.AutoBackup.configuration))
 
         let provider = BackupStorageProviderStub(id: "test")
-        _ = try makeSUT(defaults: defaults, providers: [provider])
+        let sut = try makeSUT(defaults: defaults, providers: [provider])
 
-        // Allow the init Task to run
+        // Allow the init Task to run. SUT must stay alive until then because the restore Task
+        // captures `self` weakly.
         await Task.yield()
+        _ = sut
 
         #expect(provider.restoredConfigurationData == configData)
     }
@@ -378,13 +380,19 @@ extension AutoBackupServiceImplTests {
         providers: [BackupStorageProviderStub] = [],
     ) throws -> AutoBackupServiceImpl {
         let userDefaults = try defaults ?? testUserDefaults()
-        return AutoBackupServiceImpl(
-            dataModel: anyVaultDataModel(),
-            backupEventLogger: BackupEventLoggerMock(),
+        let dataModel = trackForMemoryLeaks(anyVaultDataModel())
+        let backupEventLogger = trackForMemoryLeaks(BackupEventLoggerMock())
+        trackForMemoryLeaks(clock)
+        for provider in providers {
+            trackForMemoryLeaks(provider)
+        }
+        return trackForMemoryLeaks(AutoBackupServiceImpl(
+            dataModel: dataModel,
+            backupEventLogger: backupEventLogger,
             clock: clock,
             defaults: Defaults(userDefaults: userDefaults),
             providers: providers,
-        )
+        ))
     }
 }
 
