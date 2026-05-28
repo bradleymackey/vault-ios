@@ -301,6 +301,9 @@ extension VaultDataModel {
             // If killphrase deletion occurred, sync OTP autofill store to remove deleted items
             if didDeleteKillphraseItems {
                 try? await syncAllToOTPAutofillStore()
+                // Notify downstream observers (auto-backup, widget reload) that
+                // the item set changed silently from a killphrase match.
+                onDataChanged?()
             }
         } catch {
             itemsRetrievalError = PresentationError(
@@ -399,6 +402,7 @@ extension VaultDataModel: VaultStoreHOTPIncrementer {
     public func incrementCounter(id: Identifier<VaultItem>) async throws {
         try await vaultStore.incrementCounter(id: id)
         await reloadItems()
+        onDataChanged?()
     }
 }
 

@@ -1,12 +1,24 @@
-import Combine
 import SwiftUI
-import VaultFeed
+public import VaultFeed
+#if canImport(UIKit)
+import UIKit
+#endif
 
-struct OTPCodeTextView: View {
-    var codeState: OTPCodeState
-    var scaledDigitSpacing: Double = 8
+/// Renders an OTP code in the chunked, monospaced style used across all
+/// surfaces that present a code (in-app preview tile, widget, etc.). Lives in
+/// `VaultiOSShared` rather than `VaultiOS` so that lightweight surfaces — most
+/// notably WidgetKit extensions — can reuse the exact same rendering without
+/// pulling in the full `VaultiOS` dependency graph.
+public struct OTPCodeTextView: View {
+    public var codeState: OTPCodeState
+    public var scaledDigitSpacing: Double
 
-    var body: some View {
+    public init(codeState: OTPCodeState, scaledDigitSpacing: Double = 8) {
+        self.codeState = codeState
+        self.scaledDigitSpacing = scaledDigitSpacing
+    }
+
+    public var body: some View {
         switch codeState {
         case .notReady, .finished, .obfuscated:
             placeholderCode(digits: 6)
@@ -40,7 +52,11 @@ struct OTPCodeTextView: View {
     }
 
     private var spacing: Double {
+        #if canImport(UIKit)
         UIFontMetrics.default.scaledValue(for: scaledDigitSpacing)
+        #else
+        scaledDigitSpacing
+        #endif
     }
 
     private struct TextPart: Identifiable {

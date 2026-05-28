@@ -3,6 +3,7 @@ import SwiftUI
 import TestHelpers
 import Testing
 import VaultFeed
+import VaultiOSShared
 @testable import VaultiOS
 
 @Suite

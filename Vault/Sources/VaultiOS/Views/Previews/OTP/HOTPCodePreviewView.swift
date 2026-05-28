@@ -1,5 +1,6 @@
 import SwiftUI
 import VaultFeed
+import VaultiOSShared
 
 @MainActor
 struct HOTPCodePreviewView<ButtonView: View>: View {
