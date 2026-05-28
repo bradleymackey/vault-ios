@@ -3,6 +3,9 @@ import FoundationExtensions
 import SwiftSecurity
 import VaultFeed
 import VaultSettings
+#if canImport(WidgetKit)
+import WidgetKit
+#endif
 
 /// The root entrypoint for the vault application.
 ///
@@ -33,13 +36,7 @@ public enum VaultRoot {
     public static let secureStorage: some SecureStorage = SecureStorageImpl(keychain: keychain)
 
     @MainActor
-    static let vaultStorageDirectory: URL = {
-        let groupID = "group.com.badbundle.vault-group"
-        guard let url = fileManager.containerURL(forSecurityApplicationGroupIdentifier: groupID) else {
-            fatalError("Unable to access the provided directory")
-        }
-        return url
-    }()
+    static let vaultStorageDirectory: URL = VaultSharedStorage.directory(fileManager: fileManager)
 
     @MainActor
     public static let vaultStore: PersistedLocalVaultStore =
@@ -209,9 +206,19 @@ public enum VaultRoot {
     /// Call this at app startup to wire up connections between components.
     @MainActor
     public static func setup() {
-        // Wire up auto-backup to trigger when vault data changes
+        // Wire up auto-backup and widget reloads to trigger when vault data
+        // changes. The OTP widget reads items from the shared App Group
+        // container and only refreshes when the system or this hook asks it to.
         vaultDataModel.onDataChanged = {
             autoBackupService.notifyDataChanged()
+            reloadWidgetTimelines()
         }
+    }
+
+    @MainActor
+    private static func reloadWidgetTimelines() {
+        #if canImport(WidgetKit)
+        WidgetCenter.shared.reloadAllTimelines()
+        #endif
     }
 }

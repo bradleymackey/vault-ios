@@ -1,6 +1,7 @@
 import Combine
 import SwiftUI
 import VaultFeed
+import VaultiOSShared
 import VaultKeygen
 
 @MainActor

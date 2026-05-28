@@ -37,6 +37,8 @@ let package = Package(
             targets: ["VaultiOS"],
         ),
         .library(name: "VaultiOSAutofill", targets: ["VaultiOSAutofill"]),
+        .library(name: "VaultiOSShared", targets: ["VaultiOSShared"]),
+        .library(name: "VaultiOSWidgets", targets: ["VaultiOSWidgets"]),
         .executable(
             name: "vault-keygen-speedtest",
             targets: ["VaultKeygenSpeedtest"],
@@ -57,10 +59,19 @@ let package = Package(
     ],
     targets: [
         .target(
+            name: "VaultiOSShared",
+            dependencies: [
+                "VaultFeed",
+            ],
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins,
+        ),
+        .target(
             name: "VaultiOS",
             dependencies: [
                 "VaultFeed",
                 "VaultSettings",
+                "VaultiOSShared",
                 "CodeScanner",
                 "FoundationExtensions",
                 .product(name: "MarkdownUI", package: "swift-markdown-ui"),
@@ -270,6 +281,25 @@ let package = Package(
         .testTarget(
             name: "VaultiOSAutofillTests",
             dependencies: ["VaultiOSAutofill", "TestHelpers"],
+            swiftSettings: swiftSettings,
+            plugins: testTargetPlugins,
+        ),
+        .target(
+            name: "VaultiOSWidgets",
+            dependencies: [
+                "CryptoEngine",
+                "FoundationExtensions",
+                "VaultCore",
+                "VaultFeed",
+                "VaultiOSShared",
+            ],
+            swiftSettings: swiftSettings,
+            plugins: targetPlugins,
+        ),
+        .testTarget(
+            name: "VaultiOSWidgetsTests",
+            dependencies: ["VaultiOSWidgets", "VaultiOSShared", "TestHelpers"],
+            exclude: ["__Snapshots__"],
             swiftSettings: swiftSettings,
             plugins: testTargetPlugins,
         ),

@@ -1,6 +1,7 @@
 import SwiftUI
 import Toasts
 import VaultFeed
+import VaultiOSShared
 import VaultSettings
 
 /// Entrypoint scene for the vault app.
@@ -27,6 +28,17 @@ public struct VaultMainScene: Scene {
                 injector: injector,
             )
             .installToast(position: .top)
+            .onOpenURL(perform: handle(url:))
+        }
+    }
+
+    private func handle(url: URL) {
+        guard let action = WidgetDeepLink.parse(url) else { return }
+        switch action {
+        case let .incrementHOTP(itemID):
+            Task {
+                try? await vaultDataModel.incrementCounter(id: .init(id: itemID))
+            }
         }
     }
 }
