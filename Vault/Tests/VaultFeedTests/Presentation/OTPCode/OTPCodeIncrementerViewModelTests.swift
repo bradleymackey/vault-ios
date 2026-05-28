@@ -5,17 +5,16 @@ import Testing
 import VaultCore
 import VaultFeed
 
-@Suite(.trackLeaks)
 @MainActor
 struct OTPCodeIncrementerViewModelTests {
-    @Test
-    func isButtonEnabled_isInitiallyTrue() {
+    @Test @LeakTracked
+    func isButtonEnabled_isInitiallyTrue() throws {
         let sut = makeSUT()
 
         #expect(sut.isButtonEnabled)
     }
 
-    @Test
+    @Test @LeakTracked
     func isButtonEnabled_becomesDisabledAfterIncrementing() async throws {
         let sut = makeSUT()
 
@@ -24,7 +23,7 @@ struct OTPCodeIncrementerViewModelTests {
         #expect(sut.isButtonEnabled == false)
     }
 
-    @Test
+    @Test @LeakTracked
     func isButtonEnabled_hasNoEffectIncrementingCounterMoreThanOnce() async throws {
         let sut = makeSUT()
 
@@ -34,7 +33,7 @@ struct OTPCodeIncrementerViewModelTests {
         #expect(sut.isButtonEnabled == false)
     }
 
-    @Test
+    @Test @LeakTracked
     func isButtonEnabled_enablesAfterTimerCompletion() async throws {
         let timer = IntervalTimerMock()
         let sut = makeSUT(timer: timer)
@@ -46,7 +45,7 @@ struct OTPCodeIncrementerViewModelTests {
         #expect(sut.isButtonEnabled == true)
     }
 
-    @Test
+    @Test @LeakTracked
     func incrementCounter_incrementsCounterWhileButtonEnabled() async throws {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let sut = makeSUT(codePublisher: codePublisher)
@@ -56,7 +55,7 @@ struct OTPCodeIncrementerViewModelTests {
         }
     }
 
-    @Test
+    @Test @LeakTracked
     func incrementCounter_doesNotIncrementCounterWhileButtonDisabled() async throws {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let sut = makeSUT(codePublisher: codePublisher)
@@ -70,7 +69,7 @@ struct OTPCodeIncrementerViewModelTests {
             }
     }
 
-    @Test
+    @Test @LeakTracked
     func incrementCounter_incrementsStore() async throws {
         let incrementerStore = VaultStoreHOTPIncrementerMock()
         let sut = makeSUT(incrementerStore: incrementerStore)
@@ -83,7 +82,7 @@ struct OTPCodeIncrementerViewModelTests {
         }
     }
 
-    @Test
+    @Test @LeakTracked
     func incrementCounter_doesNotTriggerPublishIfIncrementFailed() async throws {
         let codePublisher = HOTPCodePublisher(hotpGenerator: .init(secret: Data()))
         let incrementerStore = VaultStoreHOTPIncrementerMock()

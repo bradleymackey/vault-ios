@@ -47,6 +47,7 @@ public final class AutoBackupServiceImpl: AutoBackupService {
     private let providers: [any BackupStorageProvider]
 
     private var debounceTask: Task<Void, Never>?
+    private var restoreTask: Task<Void, Never>?
 
     private static let configKey = Key<AutoBackupConfiguration>(VaultIdentifiers.AutoBackup.configuration)
     private static let debounceSeconds: UInt64 = 5
@@ -67,10 +68,16 @@ public final class AutoBackupServiceImpl: AutoBackupService {
         self.providers = providers
         configuration = defaults.get(for: Self.configKey) ?? AutoBackupConfiguration()
 
-        Task {
+        restoreTask = Task { [weak self] in
+            guard let self else { return }
             await restoreProviderConfigurations()
             updateStatus()
         }
+    }
+
+    deinit {
+        restoreTask?.cancel()
+        debounceTask?.cancel()
     }
 
     // MARK: - Configuration

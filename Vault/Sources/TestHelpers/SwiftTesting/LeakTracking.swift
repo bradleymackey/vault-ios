@@ -2,10 +2,10 @@ import Foundation
 import FoundationExtensions
 import Testing
 
-/// Tracks weak references to objects that should deallocate by the end of a test scope.
+/// Tracks weak references to objects that should deallocate by the end of a leak-tracking scope.
 ///
-/// You normally do not interact with `LeakTracker` directly — apply ``Testing/Trait/trackLeaks``
-/// to a `@Test` or `@Suite`, then register objects via ``trackForMemoryLeaks(_:sourceLocation:)``.
+/// You normally do not interact with `LeakTracker` directly — call ``withLeakTracking(_:)`` and
+/// register objects inside the closure via ``trackForMemoryLeaks(_:sourceLocation:)``.
 public final class LeakTracker: Sendable {
     @TaskLocal
     public static var current: LeakTracker?
@@ -44,35 +44,66 @@ public final class LeakTracker: Sendable {
     }
 }
 
-/// Scopes a ``LeakTracker`` to each `@Test` in the trait's scope. Use via ``Testing/Trait/trackLeaks``.
+/// Runs `body` with a fresh ``LeakTracker`` installed as ``LeakTracker/current``, then verifies on
+/// exit that every object registered via ``trackForMemoryLeaks(_:sourceLocation:)`` has been
+/// deallocated. Any live reference is reported as an `Issue` against the current test.
 ///
-/// `SuiteTrait.isRecursive` defaults to `false`, so applying `.trackLeaks` to an outer `@Suite`
-/// does not bleed into nested suites — those must opt in independently.
-public struct TrackLeaks: TestTrait, SuiteTrait, TestScoping {
-    public func provideScope(
-        for _: Test,
-        testCase _: Test.Case?,
-        performing function: @Sendable () async throws -> Void,
-    ) async throws {
-        let tracker = LeakTracker()
-        try await LeakTracker.$current.withValue(tracker) {
-            try await function()
-        }
-        tracker.verify()
+/// Wrap the body of each `@Test` that constructs reference-type SUTs:
+/// ```swift
+/// @Test
+/// func myTest() throws {
+///     try withLeakTracking {
+///         let sut = makeSUT()
+///         #expect(sut.foo)
+///     }
+/// }
+/// ```
+///
+/// The closure's body locals must be released before `verify()` runs, so the scope must be a
+/// closure (not the `@Test` method itself). Swift Testing retains the test method's stack frame
+/// for the duration of any `TestScoping`-based trait, which is why a trait-based approach causes
+/// false positives — see git history for the abandoned `.trackLeaks` trait.
+public func withLeakTracking<R>(
+    _ body: () throws -> R,
+) rethrows -> R {
+    let tracker = LeakTracker()
+    let result = try LeakTracker.$current.withValue(tracker) {
+        try body()
     }
+    tracker.verify()
+    return result
 }
 
-extension Trait where Self == TrackLeaks {
-    /// Records an Issue for any object registered via ``trackForMemoryLeaks(_:sourceLocation:)``
-    /// that is still alive when the test scope ends.
-    public static var trackLeaks: Self { TrackLeaks() }
+public func withLeakTracking<R>(
+    isolation _: isolated (any Actor)? = #isolation,
+    _ body: () async throws -> R,
+) async rethrows -> R {
+    let tracker = LeakTracker()
+    let result = try await LeakTracker.$current.withValue(tracker) {
+        try await body()
+    }
+    tracker.verify()
+    return result
 }
 
-/// Registers `instance` with the currently active ``LeakTracker``. When the enclosing test scope
-/// ends, an Issue is recorded if `instance` has not been deallocated.
+/// Wraps the function body in ``withLeakTracking(_:)``. Apply alongside `@Test`:
+/// ```swift
+/// @Test @LeakTracked
+/// func myTest() throws {
+///     let sut = makeSUT()
+///     #expect(sut.foo)
+/// }
+/// ```
+/// The function must be `throws` (or `async throws`).
+@attached(body)
+public macro LeakTracked() = #externalMacro(module: "TestHelpersMacros", type: "LeakTrackedMacro")
+
+/// Registers `instance` with the currently active ``LeakTracker``. When the enclosing
+/// ``withLeakTracking(_:)`` scope ends, an Issue is recorded if `instance` has not been
+/// deallocated.
 ///
-/// Must be called inside a `@Test` or `@Suite` carrying the ``Testing/Trait/trackLeaks`` trait.
-/// Calls outside such a scope record an Issue at `sourceLocation` so misuse is loud.
+/// Must be called inside ``withLeakTracking(_:)``. Calls outside record an Issue at
+/// `sourceLocation` so misuse is loud.
 ///
 /// Returns its argument so it can be chained at the construction site:
 /// ```swift
@@ -86,7 +117,7 @@ public func trackForMemoryLeaks<T: AnyObject>(
     let value = instance()
     guard let tracker = LeakTracker.current else {
         Issue.record(
-            "trackForMemoryLeaks called without an active .trackLeaks trait. Add `.trackLeaks` to the @Test or @Suite.",
+            "trackForMemoryLeaks called without an active withLeakTracking scope.",
             sourceLocation: sourceLocation,
         )
         return value

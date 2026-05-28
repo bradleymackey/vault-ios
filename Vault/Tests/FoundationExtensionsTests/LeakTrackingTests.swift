@@ -2,10 +2,10 @@ import Foundation
 import Testing
 @testable import TestHelpers
 
-@Suite(.trackLeaks)
+@Suite
 struct LeakTrackingTests {
-    @Test
-    func cleanDeallocation_recordsNoIssue() {
+    @Test @LeakTracked
+    func cleanDeallocation_recordsNoIssue() throws {
         _ = trackForMemoryLeaks(Probe())
     }
 
@@ -13,19 +13,30 @@ struct LeakTrackingTests {
     func retainedInstance_recordsIssue() async throws {
         let probe = Probe()
         await withKnownIssue {
-            try await runInIsolatedScope {
+            try await withLeakTracking {
                 _ = trackForMemoryLeaks(probe)
             }
         }
         _ = probe
     }
 
-    private func runInIsolatedScope(_ body: () async throws -> Void) async throws {
-        let tracker = LeakTracker()
-        try await LeakTracker.$current.withValue(tracker) {
-            try await body()
+    @Test
+    func trackWithoutScope_recordsIssue() async {
+        await withKnownIssue {
+            _ = trackForMemoryLeaks(Probe())
         }
-        tracker.verify()
+    }
+
+    @Test @LeakTracked
+    @MainActor
+    func mainActor_cleanDeallocation_recordsNoIssue() throws {
+        _ = trackForMemoryLeaks(Probe())
+    }
+
+    @Test @LeakTracked
+    @MainActor
+    func mainActor_async_cleanDeallocation_recordsNoIssue() async throws {
+        _ = trackForMemoryLeaks(Probe())
     }
 }
 

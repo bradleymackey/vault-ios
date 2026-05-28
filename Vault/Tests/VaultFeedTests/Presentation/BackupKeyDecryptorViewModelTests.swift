@@ -6,18 +6,17 @@ import VaultBackup
 import VaultKeygen
 @testable import VaultFeed
 
-@Suite(.trackLeaks)
 @MainActor
 struct BackupKeyDecryptorViewModelTests {
-    @Test
-    func init_setsInitialState() {
+    @Test @LeakTracked
+    func init_setsInitialState() throws {
         let sut = makeSUT()
 
         #expect(sut.enteredPassword == "")
         #expect(sut.decryptionKeyState == .none)
     }
 
-    @Test
+    @Test @LeakTracked
     func canAttemptDecryption_falseIfPasswordEmpty() async throws {
         let sut = makeSUT()
         sut.enteredPassword = ""
@@ -25,7 +24,7 @@ struct BackupKeyDecryptorViewModelTests {
         #expect(sut.canAttemptDecryption == false)
     }
 
-    @Test
+    @Test @LeakTracked
     func canAttemptDecryption_trueIfPasswordNotEmpty() async throws {
         let sut = makeSUT()
         sut.enteredPassword = "a"
@@ -33,7 +32,7 @@ struct BackupKeyDecryptorViewModelTests {
         #expect(sut.canAttemptDecryption)
     }
 
-    @Test
+    @Test @LeakTracked
     func attemptDecryption_validPasswordGeneratesConsistentlyWithSalt() async throws {
         let vaultApplicationPayload = VaultApplicationPayload(userDescription: "my stuff", items: [], tags: [])
         let decoder = EncryptedVaultDecoderMock()
@@ -64,8 +63,8 @@ struct BackupKeyDecryptorViewModelTests {
         #expect(sut.decryptionKeyState == .validDecryptionKey)
     }
 
-    @Test
-    func generateKey_emptyPasswordGeneratesError() async {
+    @Test @LeakTracked
+    func generateKey_emptyPasswordGeneratesError() async throws {
         let decoder = EncryptedVaultDecoderMock()
         decoder.verifyCanDecryptHandler = { _, _ in throw TestError() }
         let sut = makeSUT(encryptedVaultDecoder: decoder)
@@ -76,8 +75,8 @@ struct BackupKeyDecryptorViewModelTests {
         #expect(sut.decryptionKeyState.isError)
     }
 
-    @Test
-    func generateKey_keyDeriverErrorGeneratesError() async {
+    @Test @LeakTracked
+    func generateKey_keyDeriverErrorGeneratesError() async throws {
         let sut = makeSUT(keyDeriverFactory: .failing)
         sut.enteredPassword = "hello"
 
