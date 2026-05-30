@@ -17,6 +17,8 @@ func anyVaultDataModel(
     backupPasswordStore: any BackupPasswordStore = BackupPasswordStoreMock(),
     killphraseKeyStore: (any KillphraseKeyStore)? = nil,
     killphraseRehashService: KillphraseRehashService? = nil,
+    searchPassphraseKeyStore: (any SearchPassphraseKeyStore)? = nil,
+    searchPassphraseRehashService: SearchPassphraseRehashService? = nil,
     backupEventLogger: any BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
     VaultDataModel(
@@ -29,6 +31,8 @@ func anyVaultDataModel(
         backupPasswordStore: backupPasswordStore,
         killphraseKeyStore: killphraseKeyStore ?? StubKillphraseKeyStore(),
         killphraseRehashService: killphraseRehashService,
+        searchPassphraseKeyStore: searchPassphraseKeyStore ?? StubSearchPassphraseKeyStore(),
+        searchPassphraseRehashService: searchPassphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
 }
@@ -37,6 +41,14 @@ func anyVaultDataModel(
 /// the killphrase digest path. Returns a fixed all-zero key so
 /// `loadOrCreate` never fatal-errors when called from `setup()`.
 struct StubKillphraseKeyStore: KillphraseKeyStore {
+    func loadOrCreate() async throws -> KeyData<Bits256> {
+        .zero()
+    }
+}
+
+/// Default no-op key store for VaultDataModel tests that don't exercise
+/// the search-passphrase digest path.
+struct StubSearchPassphraseKeyStore: SearchPassphraseKeyStore {
     func loadOrCreate() async throws -> KeyData<Bits256> {
         .zero()
     }
@@ -83,7 +95,7 @@ func anyVaultItemMetadata(
         tags: [],
         visibility: .always,
         searchableLevel: .full,
-        searchPassphrase: "",
+        searchPassphrase: nil,
         killphrase: nil,
         lockState: lockState,
         color: .black,
@@ -119,7 +131,7 @@ func anyOTPVaultItem(
             tags: [],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "",
+            searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
             color: color,

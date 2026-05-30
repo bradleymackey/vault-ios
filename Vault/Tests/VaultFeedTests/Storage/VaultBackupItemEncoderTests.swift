@@ -27,7 +27,7 @@ final class VaultBackupItemEncoderTests {
                 tags: tags,
                 visibility: .always,
                 searchableLevel: .onlyTitle,
-                searchPassphrase: "searchme",
+                searchPassphrase: anySearchPassphraseDigest,
                 killphrase: anyKillphraseDigest,
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
@@ -51,7 +51,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.item.noteData?.format == .markdown)
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .onlyTitle)
-        #expect(encodedItem.searchPassphrase == "searchme")
+        #expect(encodedItem.searchPassphraseSalt == anySearchPassphraseDigest.salt)
+        #expect(encodedItem.searchPassphraseDigest == anySearchPassphraseDigest.digest)
         #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
         #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.lockState == .notLocked)
@@ -92,7 +93,7 @@ final class VaultBackupItemEncoderTests {
                 tags: tags,
                 visibility: .always,
                 searchableLevel: .onlyTitle,
-                searchPassphrase: "searchme",
+                searchPassphrase: anySearchPassphraseDigest,
                 killphrase: anyKillphraseDigest,
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
@@ -120,7 +121,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.item.encryptedData?.keygenSignature == itemSignature)
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .onlyTitle)
-        #expect(encodedItem.searchPassphrase == "searchme")
+        #expect(encodedItem.searchPassphraseSalt == anySearchPassphraseDigest.salt)
+        #expect(encodedItem.searchPassphraseDigest == anySearchPassphraseDigest.digest)
         #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
         #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.lockState == .notLocked)
@@ -157,7 +159,7 @@ final class VaultBackupItemEncoderTests {
                 tags: [],
                 visibility: .always,
                 searchableLevel: .full,
-                searchPassphrase: "hello",
+                searchPassphrase: anySearchPassphraseDigest,
                 killphrase: anyKillphraseDigest,
                 lockState: .lockedWithNativeSecurity,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
@@ -176,7 +178,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.relativeOrder == 1234)
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .full)
-        #expect(encodedItem.searchPassphrase == "hello")
+        #expect(encodedItem.searchPassphraseSalt == anySearchPassphraseDigest.salt)
+        #expect(encodedItem.searchPassphraseDigest == anySearchPassphraseDigest.digest)
         #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
         #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.userDescription == description)
@@ -224,7 +227,7 @@ final class VaultBackupItemEncoderTests {
                 tags: [],
                 visibility: .always,
                 searchableLevel: .full,
-                searchPassphrase: "test",
+                searchPassphrase: anySearchPassphraseDigest,
                 killphrase: anyKillphraseDigest,
                 lockState: .notLocked,
                 color: .init(red: 0.1, green: 0.2, blue: 0.3),
@@ -243,7 +246,8 @@ final class VaultBackupItemEncoderTests {
         #expect(encodedItem.userDescription == description)
         #expect(encodedItem.visibility == .always)
         #expect(encodedItem.searchableLevel == .full)
-        #expect(encodedItem.searchPassphrase == "test")
+        #expect(encodedItem.searchPassphraseSalt == anySearchPassphraseDigest.salt)
+        #expect(encodedItem.searchPassphraseDigest == anySearchPassphraseDigest.digest)
         #expect(encodedItem.killphraseSalt == anyKillphraseDigest.salt)
         #expect(encodedItem.killphraseDigest == anyKillphraseDigest.digest)
         #expect(encodedItem.relativeOrder == .min)
@@ -304,6 +308,11 @@ extension VaultBackupItemEncoderTests {
 private let anyKillphraseDigest = KillphraseDigest(
     salt: Data(repeating: 0x11, count: 16),
     digest: Data(repeating: 0x22, count: 32),
+)
+
+private let anySearchPassphraseDigest = SearchPassphraseDigest(
+    salt: Data(repeating: 0x33, count: 16),
+    digest: Data(repeating: 0x44, count: 32),
 )
 
 extension VaultBackupItem.Item {

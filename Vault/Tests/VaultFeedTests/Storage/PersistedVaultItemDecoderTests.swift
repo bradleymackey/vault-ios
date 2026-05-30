@@ -152,12 +152,14 @@ extension PersistedVaultItemDecoderTests {
     }
 
     @Test
-    func decodeMetadata_decodesSearchPassphrase() throws {
-        let item = makePersistedItem(searchPassphrase: "my secret - super secret")
+    func decodeMetadata_decodesSearchPassphraseDigest() throws {
+        let salt = Data(repeating: 0x11, count: 16)
+        let digest = Data(repeating: 0x22, count: 32)
+        let item = makePersistedItem(searchPassphraseSalt: salt, searchPassphraseDigest: digest)
         let sut = makeSUT()
 
         let decoded = try sut.decode(item: item)
-        #expect(decoded.metadata.searchPassphrase == "my secret - super secret")
+        #expect(decoded.metadata.searchPassphrase == SearchPassphraseDigest(salt: salt, digest: digest))
     }
 
     @Test
@@ -491,7 +493,8 @@ extension PersistedVaultItemDecoderTests {
         userDescription: String = "",
         visibility: String = "ALWAYS",
         searchableLevel: String = "FULL",
-        searchPassphrase: String? = nil,
+        searchPassphraseSalt: Data? = nil,
+        searchPassphraseDigest: Data? = nil,
         killphrase _: String? = nil,
         killphraseSalt: Data? = nil,
         killphraseDigest: Data? = nil,
@@ -520,7 +523,8 @@ extension PersistedVaultItemDecoderTests {
             userDescription: userDescription,
             visibility: visibility,
             searchableLevel: searchableLevel,
-            searchPassphrase: searchPassphrase,
+            searchPassphraseSalt: searchPassphraseSalt,
+            searchPassphraseDigest: searchPassphraseDigest,
             killphraseSalt: killphraseSalt,
             killphraseDigest: killphraseDigest,
             lockState: lockState,
