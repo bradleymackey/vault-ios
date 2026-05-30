@@ -15,7 +15,8 @@
       },
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 1000,
-      "search_passphrase" : "passphrase",
+      "search_passphrase_digest" : "REREREREREREREREREREREREREREREREREREREREREQ=",
+      "search_passphrase_salt" : "MzMzMzMzMzMzMzMzMzMzMw==",
       "searchable_level" : "FULL",
       "tags" : [
         "DCABE94A-C194-49AA-B709-7221DAD253AB"

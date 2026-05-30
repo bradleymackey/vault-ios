@@ -66,6 +66,50 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.item.secureNote?.contents == "")
     }
 
+    @Test
+    func decode_legacyV2BackupDropsPlaintextSearchPassphrase() throws {
+        // A vault backup created before V3 carried `searchPassphrase` as
+        // a plaintext String. After V3, that field is gone from the
+        // VaultBackupItem schema and Codable silently drops it. The
+        // resulting model has no digest pair, which is the intended
+        // failure mode: a pre-V3 backup is migrating into a model that
+        // expects HMAC digests, and we accept data loss rather than
+        // round-tripping the plaintext.
+        let legacyJSON = """
+        {
+            "id": "11111111-1111-1111-1111-111111111111",
+            "createdDate": 0,
+            "updatedDate": 0,
+            "relativeOrder": 0,
+            "userDescription": "legacy",
+            "tags": [],
+            "visibility": "ALWAYS",
+            "searchableLevel": "ONLY_PASSPHRASE",
+            "searchPassphrase": "old-plaintext-passphrase",
+            "lockState": "NOT_LOCKED",
+            "item": {
+                "note": {
+                    "data": {
+                        "title": "legacy note",
+                        "format": "PLAIN"
+                    }
+                }
+            },
+            "obfuscationPadding": ""
+        }
+        """
+        let data = Data(legacyJSON.utf8)
+        let backupItem = try JSONDecoder().decode(VaultBackupItem.self, from: data)
+
+        #expect(backupItem.searchPassphraseSalt == nil)
+        #expect(backupItem.searchPassphraseDigest == nil)
+
+        let sut = makeSUT()
+        let decoded = try sut.decode(backupItem: backupItem)
+
+        #expect(decoded.metadata.searchPassphrase == nil)
+    }
+
     // MARK: - Encrypted Item
 
     @Test

@@ -15,7 +15,8 @@
       },
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 0,
-      "search_passphrase" : "searchphrase",
+      "search_passphrase_digest" : "REREREREREREREREREREREREREREREREREREREREREQ=",
+      "search_passphrase_salt" : "MzMzMzMzMzMzMzMzMzMzMw==",
       "searchable_level" : "FULL",
       "tags" : [
 
@@ -66,7 +67,8 @@
       },
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 9999,
-      "search_passphrase" : "search3",
+      "search_passphrase_digest" : "REREREREREREREREREREREREREREREREREREREREREQ=",
+      "search_passphrase_salt" : "MzMzMzMzMzMzMzMzMzMzMw==",
       "searchable_level" : "ONLY_TITLE",
       "tags" : [
         "493DF342-E537-4722-B6DC-6430A1413E34"
@@ -98,7 +100,8 @@
       },
       "lock_state" : "NOT_LOCKED",
       "relative_order" : 1000,
-      "search_passphrase" : "passphrase",
+      "search_passphrase_digest" : "REREREREREREREREREREREREREREREREREREREREREQ=",
+      "search_passphrase_salt" : "MzMzMzMzMzMzMzMzMzMzMw==",
       "searchable_level" : "FULL",
       "tags" : [
         "DCABE94A-C194-49AA-B709-7221DAD253AB"
