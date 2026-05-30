@@ -69,6 +69,7 @@ public enum VaultRoot {
         let store = vaultStore
         return KillphraseRehashService(
             storeDirectory: vaultStorageDirectory,
+            fileManager: fileManager,
             writer: { id, digest in
                 try await store.applyKillphraseDigest(itemID: id, digest: digest)
             },
@@ -80,6 +81,7 @@ public enum VaultRoot {
         let store = vaultStore
         return SearchPassphraseRehashService(
             storeDirectory: vaultStorageDirectory,
+            fileManager: fileManager,
             writer: { id, digest in
                 try await store.applySearchPassphraseDigest(itemID: id, digest: digest)
             },

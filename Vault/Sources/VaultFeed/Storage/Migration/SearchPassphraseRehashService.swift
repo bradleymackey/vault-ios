@@ -21,10 +21,11 @@ public struct SearchPassphraseRehashService: Sendable {
         self.writer = writer
     }
 
-    public init(storeDirectory: URL, writer: @escaping Writer) {
+    public init(storeDirectory: URL, fileManager: FileManager = .default, writer: @escaping Writer) {
         self.init(
             pendingStore: PendingSearchPassphraseRehashStore(
                 fileURL: PendingSearchPassphraseRehashStore.defaultURL(storeDirectory: storeDirectory),
+                fileManager: fileManager,
             ),
             writer: writer,
         )
