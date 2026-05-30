@@ -13,16 +13,24 @@ import Foundation
 ///
 /// The file is cleared (and securely overwritten before deletion) once
 /// all entries have been re-hashed.
-struct PendingSearchPassphraseRehashStore: Sendable {
+///
+/// `FileManager` is thread-safe for the basic file operations used here
+/// (`fileExists`, `attributesOfItem`, `removeItem`) and the call sites
+/// only ever hop through this struct serially via the rehash service.
+/// Marked `@unchecked Sendable` so the injected dependency does not force
+/// every caller to wrap it.
+struct PendingSearchPassphraseRehashStore: @unchecked Sendable { // swiftlint:disable:this no_unchecked_sendable
     struct Entry: Codable, Equatable, Sendable {
         let itemID: UUID
         let phrase: String
     }
 
     private let fileURL: URL
+    private let fileManager: FileManager
 
-    init(fileURL: URL) {
+    init(fileURL: URL, fileManager: FileManager = .default) {
         self.fileURL = fileURL
+        self.fileManager = fileManager
     }
 
     /// Default location alongside the SwiftData store.
@@ -32,7 +40,7 @@ struct PendingSearchPassphraseRehashStore: Sendable {
 
     /// Read all pending entries. Returns an empty array if no file exists.
     func read() throws -> [Entry] {
-        guard FileManager.default.fileExists(atPath: fileURL.path(percentEncoded: false)) else {
+        guard fileManager.fileExists(atPath: fileURL.path(percentEncoded: false)) else {
             return []
         }
         let data = try Data(contentsOf: fileURL)
@@ -52,15 +60,15 @@ struct PendingSearchPassphraseRehashStore: Sendable {
     /// minimisation; the file system may still retain copies depending on
     /// underlying storage.
     func clear() throws {
-        guard FileManager.default.fileExists(atPath: fileURL.path(percentEncoded: false)) else {
+        guard fileManager.fileExists(atPath: fileURL.path(percentEncoded: false)) else {
             return
         }
-        if let size = try? FileManager.default.attributesOfItem(
+        if let size = try? fileManager.attributesOfItem(
             atPath: fileURL.path(percentEncoded: false),
         )[.size] as? Int, size > 0 {
             let zeros = Data(count: size)
             try? zeros.write(to: fileURL, options: [.atomic])
         }
-        try FileManager.default.removeItem(at: fileURL)
+        try fileManager.removeItem(at: fileURL)
     }
 }

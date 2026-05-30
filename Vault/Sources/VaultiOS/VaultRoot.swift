@@ -80,6 +80,7 @@ public enum VaultRoot {
         let store = vaultStore
         return SearchPassphraseRehashService(
             storeDirectory: vaultStorageDirectory,
+            fileManager: fileManager,
             writer: { id, digest in
                 try await store.applySearchPassphraseDigest(itemID: id, digest: digest)
             },
