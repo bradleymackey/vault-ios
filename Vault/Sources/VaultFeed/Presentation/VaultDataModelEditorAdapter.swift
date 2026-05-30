@@ -38,6 +38,31 @@ public struct VaultDataModelEditorAdapter {
         }
         return .set(digester.makeDigest(phrase: trimmed))
     }
+
+    /// Translate the UI's search-passphrase edit state into a
+    /// `SearchPassphraseUpdate` that the storage layer can apply.
+    ///
+    /// - If the item is not configured to require a passphrase →
+    ///   `.clear` (remove any existing digest).
+    /// - If it requires a passphrase **and** the user typed a new one →
+    ///   derive a fresh digest and emit `.set(...)`. Trimming follows the
+    ///   killphrase pattern: whitespace-only is treated as no input.
+    /// - If it requires a passphrase **and** the field is blank →
+    ///   `.unchanged`. The existing digest (if any) is kept; this is the
+    ///   path taken when the user opens the edit screen without changing
+    ///   the passphrase, since the UI no longer hydrates plaintext.
+    private func searchPassphraseUpdate(
+        viewConfig: VaultItemViewConfiguration,
+        newPhrase: String,
+    ) -> VaultItem.SearchPassphraseUpdate {
+        guard viewConfig == .requiresSearchPassphrase else { return .clear }
+        let trimmed = newPhrase.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard trimmed.isNotEmpty else { return .unchanged }
+        guard let digester = dataModel.searchPassphraseDigester else {
+            return .unchanged
+        }
+        return .set(digester.makeDigest(phrase: trimmed))
+    }
 }
 
 extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
@@ -50,7 +75,10 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
             tags: initialEdits.tags,
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
-            searchPassphrase: initialEdits.searchPassphrase,
+            searchPassphraseUpdate: searchPassphraseUpdate(
+                viewConfig: initialEdits.viewConfig,
+                newPhrase: initialEdits.searchPassphrase,
+            ),
             killphraseUpdate: killphraseUpdate(
                 enabled: initialEdits.killphraseEnabled,
                 newPhrase: initialEdits.newKillphrase,
@@ -78,7 +106,10 @@ extension VaultDataModelEditorAdapter: OTPCodeDetailEditor {
                 tags: edits.tags,
                 visibility: edits.viewConfig.visibility,
                 searchableLevel: edits.viewConfig.searchableLevel,
-                searchPassphrase: edits.searchPassphrase,
+                searchPassphraseUpdate: searchPassphraseUpdate(
+                    viewConfig: edits.viewConfig,
+                    newPhrase: edits.searchPassphrase,
+                ),
                 killphraseUpdate: killphraseUpdate(
                     enabled: edits.killphraseEnabled,
                     newPhrase: edits.newKillphrase,
@@ -106,7 +137,10 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             tags: initialEdits.tags,
             visibility: initialEdits.viewConfig.visibility,
             searchableLevel: initialEdits.viewConfig.searchableLevel,
-            searchPassphrase: initialEdits.searchPassphrase,
+            searchPassphraseUpdate: searchPassphraseUpdate(
+                viewConfig: initialEdits.viewConfig,
+                newPhrase: initialEdits.searchPassphrase,
+            ),
             killphraseUpdate: killphraseUpdate(
                 enabled: initialEdits.killphraseEnabled,
                 newPhrase: initialEdits.newKillphrase,
@@ -129,7 +163,10 @@ extension VaultDataModelEditorAdapter: SecureNoteDetailEditor {
             tags: edits.tags,
             visibility: edits.viewConfig.visibility,
             searchableLevel: edits.viewConfig.searchableLevel,
-            searchPassphrase: edits.searchPassphrase,
+            searchPassphraseUpdate: searchPassphraseUpdate(
+                viewConfig: edits.viewConfig,
+                newPhrase: edits.searchPassphrase,
+            ),
             killphraseUpdate: killphraseUpdate(
                 enabled: edits.killphraseEnabled,
                 newPhrase: edits.newKillphrase,

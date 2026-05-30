@@ -2,7 +2,7 @@ import Foundation
 import SwiftData
 
 /// The latest version of the schema.
-typealias PersistedSchemaLatestVersion = PersistedSchemaV2
+typealias PersistedSchemaLatestVersion = PersistedSchemaV3
 
 /// The most recent schema version for `PersistedVaultItem`.
 typealias PersistedVaultItem = PersistedSchemaLatestVersion.PersistedVaultItem

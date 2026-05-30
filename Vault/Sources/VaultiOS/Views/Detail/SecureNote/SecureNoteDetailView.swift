@@ -421,6 +421,8 @@ struct SecureNoteDetailView: View {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: KillphraseKeyStoreMock(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: SearchPassphraseKeyStoreMock(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         storedMetadata: .init(
@@ -432,7 +434,7 @@ struct SecureNoteDetailView: View {
             tags: [],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "",
+            searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
             color: nil,
@@ -459,6 +461,8 @@ struct SecureNoteDetailView: View {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: KillphraseKeyStoreMock(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: SearchPassphraseKeyStoreMock(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
     )

@@ -8,12 +8,29 @@ public typealias VaultStore = VaultStoreExporter & VaultStoreHOTPIncrementer & V
 
 public protocol VaultStoreReader: Sendable {
     /// Retrieve items matching the given query.
-    func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem>
+    ///
+    /// When `searchPassphraseMatcher` is supplied and `query.filterText` is
+    /// non-empty, items with `searchableLevel == .onlyPassphrase` are
+    /// additionally returned if the matcher verifies the filter text
+    /// against their stored digest.
+    func retrieve(
+        query: VaultStoreQuery,
+        searchPassphraseMatcher: (any SearchPassphraseMatcher)?,
+    ) async throws -> VaultRetrievalResult<VaultItem>
 
     /// Returns a boolean if there is any data in the store at all.
     ///
     /// This checks all items, including hidden and locked ones.
     var hasAnyItems: Bool { get async throws }
+}
+
+extension VaultStoreReader {
+    /// Convenience overload for callers that have no matcher available
+    /// (vault locked, app extension without keychain access, tests).
+    /// Passphrase-protected items will not be returned.
+    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+        try await retrieve(query: query, searchPassphraseMatcher: nil)
+    }
 }
 
 public protocol VaultStoreWriter: Sendable {

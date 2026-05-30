@@ -54,7 +54,11 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
     public var tags: Set<UUID>
     public var visibility: Visibility
     public var searchableLevel: SearchableLevel
-    public var searchPassphrase: String?
+    /// Per-item random salt for the search-passphrase HMAC. Paired with
+    /// `searchPassphraseDigest`; both are `nil` when no passphrase is set.
+    public var searchPassphraseSalt: Data?
+    /// HMAC-SHA256 of `searchPassphraseSalt || fold(phrase)`.
+    public var searchPassphraseDigest: Data?
     /// Per-item random salt for the killphrase HMAC. Paired with
     /// `killphraseDigest`; both are `nil` when no killphrase is set.
     public var killphraseSalt: Data?
@@ -75,7 +79,8 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         tags: Set<UUID>,
         visibility: Visibility,
         searchableLevel: SearchableLevel,
-        searchPassphrase: String?,
+        searchPassphraseSalt: Data?,
+        searchPassphraseDigest: Data?,
         killphraseSalt: Data?,
         killphraseDigest: Data?,
         lockState: LockState,
@@ -90,7 +95,8 @@ public struct VaultBackupItem: Codable, Equatable, Identifiable {
         self.tags = tags
         self.visibility = visibility
         self.searchableLevel = searchableLevel
-        self.searchPassphrase = searchPassphrase
+        self.searchPassphraseSalt = searchPassphraseSalt
+        self.searchPassphraseDigest = searchPassphraseDigest
         self.killphraseSalt = killphraseSalt
         self.killphraseDigest = killphraseDigest
         self.tintColor = tintColor
