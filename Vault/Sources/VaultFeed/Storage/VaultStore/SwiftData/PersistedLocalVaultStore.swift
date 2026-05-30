@@ -32,13 +32,55 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         }
     }
 
-    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+    public func retrieve(
+        query: VaultStoreQuery,
+        searchPassphraseMatcher: (any SearchPassphraseMatcher)?,
+    ) async throws -> VaultRetrievalResult<VaultItem> {
+        let basePredicate = makePredicate(query: query)
+        var passphraseMatchIDs: [UUID] = []
+        if let filterText = query.filterText, filterText.isNotEmpty, let matcher = searchPassphraseMatcher {
+            passphraseMatchIDs = try fetchSearchPassphraseMatchIDs(query: filterText, matcher: matcher)
+        }
+        let combinedPredicate: Predicate<PersistedVaultItem>
+        if passphraseMatchIDs.isEmpty {
+            combinedPredicate = basePredicate
+        } else {
+            combinedPredicate = #Predicate<PersistedVaultItem> { item in
+                basePredicate.evaluate(item) || passphraseMatchIDs.contains(item.id)
+            }
+        }
         let descriptor = FetchDescriptor<PersistedVaultItem>(
-            predicate: makePredicate(query: query),
+            predicate: combinedPredicate,
             sortBy: sortOrder.vaultItemSortDescriptors,
         )
         let results = try modelContext.fetch(descriptor)
         return .collectFrom(retrievedItems: results)
+    }
+
+    /// Fetches all `onlyPassphrase`-visible items with a stored digest and
+    /// returns the IDs of those whose digest verifies against `query` under
+    /// the supplied matcher. Iterates every candidate without early exit so
+    /// timing does not leak which item matched.
+    private func fetchSearchPassphraseMatchIDs(
+        query: String,
+        matcher: any SearchPassphraseMatcher,
+    ) throws -> [UUID] {
+        let onlyPassphrase = VaultEncodingConstants.SearchableLevel.onlyPassphrase
+        let predicate: Predicate<PersistedVaultItem> = #Predicate { item in
+            item.searchableLevel == onlyPassphrase &&
+                item.searchPassphraseSalt != nil &&
+                item.searchPassphraseDigest != nil
+        }
+        let descriptor = FetchDescriptor<PersistedVaultItem>(predicate: predicate)
+        let candidates = try modelContext.fetch(descriptor)
+        var ids: [UUID] = []
+        for item in candidates {
+            guard let salt = item.searchPassphraseSalt, let digest = item.searchPassphraseDigest else { continue }
+            if matcher.matches(query: query, salt: salt, digest: digest) {
+                ids.append(item.id)
+            }
+        }
+        return ids
     }
 
     /// Creates a predicate that returns items when querying.
@@ -114,15 +156,6 @@ extension PersistedLocalVaultStore: VaultStoreReader {
             $0.searchableLevel == full && $0.lockState == notLocked
         }
 
-        let orderedSame = ComparisonResult.orderedSame
-        let passphrasePredicate = #Predicate<PersistedVaultItem> { item in
-            item.searchableLevel == onlyPassphrase &&
-                // We need an EXACT match on the passphrase (case insensitive)
-                item.searchPassphrase.flatMap {
-                    $0.caseInsensitiveCompare(query) == orderedSame
-                } ?? false
-        }
-
         let userDescriptionPredicate = #Predicate<PersistedVaultItem> {
             $0.userDescription.localizedStandardContains(query) && titleSearchable.evaluate($0)
         }
@@ -158,8 +191,7 @@ extension PersistedLocalVaultStore: VaultStoreReader {
         }
 
         let matchesMetadata = #Predicate<PersistedVaultItem> {
-            passphrasePredicate.evaluate($0) ||
-                userDescriptionPredicate.evaluate($0)
+            userDescriptionPredicate.evaluate($0)
         }
 
         let matchesNote = #Predicate<PersistedVaultItem> {
@@ -543,6 +575,32 @@ extension PersistedLocalVaultStore {
             guard let item = try modelContext.fetch(descriptor).first else { return }
             item.killphraseSalt = digest.salt
             item.killphraseDigest = digest.digest
+            try modelContext.save()
+        } catch {
+            modelContext.rollback()
+            throw error
+        }
+    }
+}
+
+// MARK: - Search Passphrase Rehash
+
+extension PersistedLocalVaultStore {
+    /// Writes a freshly-computed search-passphrase digest onto the
+    /// persisted item with the given ID. Used by
+    /// `SearchPassphraseRehashService` during the V2 → V3 migration's
+    /// Phase B.
+    ///
+    /// No-op (without error) if the item no longer exists.
+    public func applySearchPassphraseDigest(itemID: UUID, digest: SearchPassphraseDigest) async throws {
+        do {
+            var descriptor = FetchDescriptor<PersistedVaultItem>(predicate: #Predicate { item in
+                item.id == itemID
+            })
+            descriptor.fetchLimit = 1
+            guard let item = try modelContext.fetch(descriptor).first else { return }
+            item.searchPassphraseSalt = digest.salt
+            item.searchPassphraseDigest = digest.digest
             try modelContext.save()
         } catch {
             modelContext.rollback()

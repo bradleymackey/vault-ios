@@ -78,7 +78,7 @@ extension VaultItemTests {
         tags: Set<Identifier<VaultItemTag>> = [],
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String? = nil,
+        searchPassphrase: SearchPassphraseDigest? = nil,
         killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil,

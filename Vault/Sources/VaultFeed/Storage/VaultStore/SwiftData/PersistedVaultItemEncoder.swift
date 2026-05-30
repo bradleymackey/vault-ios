@@ -73,6 +73,14 @@ extension PersistedVaultItemEncoder {
         case let .set(digest):
             (digest.salt, digest.digest)
         }
+        let (searchPassphraseSalt, searchPassphraseDigest): (Data?, Data?) = switch newData.searchPassphraseUpdate {
+        case .unchanged:
+            (existing?.searchPassphraseSalt, existing?.searchPassphraseDigest)
+        case .clear:
+            (nil, nil)
+        case let .set(digest):
+            (digest.salt, digest.digest)
+        }
         return try PersistedVaultItem(
             id: writeUpdateContext?.id.id ?? UUID(),
             relativeOrder: newData.relativeOrder,
@@ -81,7 +89,8 @@ extension PersistedVaultItemEncoder {
             userDescription: newData.userDescription,
             visibility: encodeVisibilityLevel(level: newData.visibility),
             searchableLevel: encodeSearchableLevel(level: newData.searchableLevel),
-            searchPassphrase: newData.searchPassphrase,
+            searchPassphraseSalt: searchPassphraseSalt,
+            searchPassphraseDigest: searchPassphraseDigest,
             killphraseSalt: killphraseSalt,
             killphraseDigest: killphraseDigest,
             lockState: encodeLockState(state: newData.lockState),

@@ -26,7 +26,10 @@ public final class VaultStoreStub: VaultStore {
 
     public private(set) var retrieveCallCount = 0
     public var retrieveHandler: (VaultStoreQuery) throws -> VaultRetrievalResult<VaultItem> = { _ in .empty() }
-    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+    public func retrieve(
+        query: VaultStoreQuery,
+        searchPassphraseMatcher _: (any SearchPassphraseMatcher)?,
+    ) async throws -> VaultRetrievalResult<VaultItem> {
         calledMethods.append(.retrieve)
         retrieveCallCount += 1
         return try retrieveHandler(query)

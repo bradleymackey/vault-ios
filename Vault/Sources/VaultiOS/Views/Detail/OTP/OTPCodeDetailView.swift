@@ -466,6 +466,8 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: KillphraseKeyStoreMock(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: SearchPassphraseKeyStoreMock(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         storedMetadata: .init(
@@ -477,7 +479,7 @@ struct OTPCodeDetailView<PreviewGenerator: VaultItemPreviewViewGenerator<VaultIt
             tags: [],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "",
+            searchPassphrase: nil,
             killphrase: nil,
             lockState: .notLocked,
             color: VaultItemColor(color: .green),

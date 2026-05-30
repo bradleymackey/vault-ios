@@ -10,7 +10,10 @@ public final class VaultStoreErroring: VaultStore, VaultTagStoreReader, VaultTag
     }
 
     public var retrieveQueryCalled: (VaultStoreQuery) -> Void = { _ in }
-    public func retrieve(query: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+    public func retrieve(
+        query: VaultStoreQuery,
+        searchPassphraseMatcher _: (any SearchPassphraseMatcher)?,
+    ) async throws -> VaultRetrievalResult<VaultItem> {
         retrieveQueryCalled(query)
         throw error
     }

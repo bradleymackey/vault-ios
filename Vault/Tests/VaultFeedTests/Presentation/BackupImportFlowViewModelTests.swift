@@ -285,6 +285,8 @@ extension BackupImportFlowViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: StubKillphraseKeyStore(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: StubSearchPassphraseKeyStore(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         existingBackupPassword: DerivedEncryptionKey? = nil,

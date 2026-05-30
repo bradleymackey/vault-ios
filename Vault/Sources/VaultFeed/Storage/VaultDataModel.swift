@@ -105,6 +105,12 @@ public final class VaultDataModel {
     /// `nil` whenever the vault is not currently unlocked.
     public private(set) var killphraseDigester: KillphraseDigester?
 
+    /// Cached search-passphrase HMAC digester. Same lifecycle as
+    /// `killphraseDigester` — loaded on `setup()`, retained across the
+    /// unlocked-device session, used for both the live search predicate
+    /// (passphrase-protected item match) and the editor write path.
+    public private(set) var searchPassphraseDigester: SearchPassphraseDigester?
+
     // MARK: - Backup Events
 
     /// The last time the user's vault was backed up.
@@ -130,6 +136,8 @@ public final class VaultDataModel {
     private let backupPasswordStore: any BackupPasswordStore
     private let killphraseKeyStore: any KillphraseKeyStore
     private let killphraseRehashService: KillphraseRehashService?
+    private let searchPassphraseKeyStore: any SearchPassphraseKeyStore
+    private let searchPassphraseRehashService: SearchPassphraseRehashService?
     private let backupEventLogger: any BackupEventLogger
     private var observationBag = Set<AnyCancellable>()
 
@@ -143,6 +151,8 @@ public final class VaultDataModel {
         backupPasswordStore: any BackupPasswordStore,
         killphraseKeyStore: any KillphraseKeyStore,
         killphraseRehashService: KillphraseRehashService?,
+        searchPassphraseKeyStore: any SearchPassphraseKeyStore,
+        searchPassphraseRehashService: SearchPassphraseRehashService?,
         backupEventLogger: any BackupEventLogger,
         itemCaches: [any VaultItemCache] = [],
     ) {
@@ -155,6 +165,8 @@ public final class VaultDataModel {
         self.backupPasswordStore = backupPasswordStore
         self.killphraseKeyStore = killphraseKeyStore
         self.killphraseRehashService = killphraseRehashService
+        self.searchPassphraseKeyStore = searchPassphraseKeyStore
+        self.searchPassphraseRehashService = searchPassphraseRehashService
         self.backupEventLogger = backupEventLogger
         self.itemCaches = itemCaches
 
@@ -164,6 +176,7 @@ public final class VaultDataModel {
     /// Initial setup to ensure the model is in a good state.
     public func setup() async {
         await loadKillphraseDigester()
+        await loadSearchPassphraseDigester()
         await updateCurrentPayloadHash()
     }
 
@@ -184,6 +197,23 @@ public final class VaultDataModel {
             // Silent failure: we don't want to surface an alert here. The
             // killphrase deleter will simply remain a no-op until next
             // launch. No telemetry per MANIFESTO C3.
+        }
+    }
+
+    /// Loads or generates the search-passphrase HMAC key and caches a
+    /// digester for the lifetime of the unlocked-device session. Same
+    /// shape as `loadKillphraseDigester`; failure leaves passphrase
+    /// matching disabled until next launch.
+    public func loadSearchPassphraseDigester() async {
+        if searchPassphraseDigester != nil { return }
+        do {
+            let key = try await searchPassphraseKeyStore.loadOrCreate()
+            let digester = SearchPassphraseDigester(key: key)
+            searchPassphraseDigester = digester
+            // Phase B of the V2 → V3 search-passphrase migration.
+            await searchPassphraseRehashService?.run(using: digester)
+        } catch {
+            // Silent failure per MANIFESTO C3.
         }
     }
 
@@ -292,7 +322,10 @@ extension VaultDataModel {
             } else {
                 false
             }
-            let result = try await vaultStore.retrieve(query: query)
+            let result = try await vaultStore.retrieve(
+                query: query,
+                searchPassphraseMatcher: searchPassphraseDigester,
+            )
             items = result.items
             itemErrors = result.errors
             itemsRetrievalError = nil

@@ -27,7 +27,7 @@ extension VaultBackupItemDecoder {
             tags: decodeTags(ids: backupItem.tags),
             visibility: decodeVisibility(level: backupItem.visibility),
             searchableLevel: decodeSearchableLevel(level: backupItem.searchableLevel),
-            searchPassphrase: backupItem.searchPassphrase,
+            searchPassphrase: decodeSearchPassphrase(backupItem: backupItem),
             killphrase: decodeKillphrase(backupItem: backupItem),
             lockState: decodeLockState(state: backupItem.lockState),
             color: decodeColor(color: backupItem.tintColor),
@@ -42,6 +42,15 @@ extension VaultBackupItemDecoder {
     private func decodeKillphrase(backupItem: VaultBackupItem) -> KillphraseDigest? {
         guard let salt = backupItem.killphraseSalt, let digest = backupItem.killphraseDigest else { return nil }
         return KillphraseDigest(salt: salt, digest: digest)
+    }
+
+    /// Reconstructs the search-passphrase digest from the salt + digest pair.
+    /// Both halves must be present, otherwise the passphrase is treated as
+    /// not set.
+    private func decodeSearchPassphrase(backupItem: VaultBackupItem) -> SearchPassphraseDigest? {
+        guard let salt = backupItem.searchPassphraseSalt,
+              let digest = backupItem.searchPassphraseDigest else { return nil }
+        return SearchPassphraseDigest(salt: salt, digest: digest)
     }
 
     private func decodeTags(ids: Set<UUID>) -> Set<Identifier<VaultItemTag>> {

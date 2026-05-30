@@ -128,6 +128,8 @@ extension BackupKeyChangeViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: StubKillphraseKeyStore(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: StubSearchPassphraseKeyStore(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         authenticationService: DeviceAuthenticationService =

@@ -21,7 +21,8 @@
       },
       "lock_state" : "LOCKED_NATIVE",
       "relative_order" : 999,
-      "search_passphrase" : "pass",
+      "search_passphrase_digest" : "REREREREREREREREREREREREREREREREREREREREREQ=",
+      "search_passphrase_salt" : "MzMzMzMzMzMzMzMzMzMzMw==",
       "searchable_level" : "FULL",
       "tags" : [
         "5738B828-FDE4-4F8C-8D4D-FF619054E98E"

@@ -50,6 +50,8 @@ extension VaultTagFeedViewSnapshotTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: StubKillphraseKeyStore(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: StubSearchPassphraseKeyStore(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         )
         await dataModel.reloadData()

@@ -49,11 +49,17 @@ public enum VaultRoot {
     public static let killphraseKeyStore: some KillphraseKeyStore =
         KillphraseKeyStoreImpl(secureStorage: secureStorage)
 
+    public static let searchPassphraseKeyStore: some SearchPassphraseKeyStore =
+        SearchPassphraseKeyStoreImpl(secureStorage: secureStorage)
+
     public static let vaultOtpAutofillStore: some VaultOTPAutofillStore =
         VaultOTPAutofillStoreImpl(store: RealCredentialIdentityStore())
 
     @MainActor
     static let killphraseRehashService: KillphraseRehashService = makeKillphraseRehashService()
+
+    @MainActor
+    static let searchPassphraseRehashService: SearchPassphraseRehashService = makeSearchPassphraseRehashService()
 
     @MainActor
     private static func makeKillphraseRehashService() -> KillphraseRehashService {
@@ -70,6 +76,17 @@ public enum VaultRoot {
     }
 
     @MainActor
+    private static func makeSearchPassphraseRehashService() -> SearchPassphraseRehashService {
+        let store = vaultStore
+        return SearchPassphraseRehashService(
+            storeDirectory: vaultStorageDirectory,
+            writer: { id, digest in
+                try await store.applySearchPassphraseDigest(itemID: id, digest: digest)
+            },
+        )
+    }
+
+    @MainActor
     public static let vaultDataModel: VaultDataModel = .init(
         vaultStore: vaultStore,
         vaultTagStore: vaultStore,
@@ -80,6 +97,8 @@ public enum VaultRoot {
         backupPasswordStore: backupPasswordStore,
         killphraseKeyStore: killphraseKeyStore,
         killphraseRehashService: killphraseRehashService,
+        searchPassphraseKeyStore: searchPassphraseKeyStore,
+        searchPassphraseRehashService: searchPassphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
 

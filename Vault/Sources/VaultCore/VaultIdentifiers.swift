@@ -13,6 +13,10 @@ public enum VaultIdentifiers {
         /// `.whenUnlocked` access (no biometric) so the killphrase
         /// match path works as soon as the device is unlocked.
         public static let killphraseKey = "vault.secure-storage.killphrase-key.v1"
+        /// HMAC key for per-item search-passphrase digests. Same access
+        /// class as `killphraseKey` so the case-folded match works the
+        /// moment the device is unlocked.
+        public static let searchPassphraseKey = "vault.secure-storage.search-passphrase-key.v1"
     }
 
     public enum Backup {

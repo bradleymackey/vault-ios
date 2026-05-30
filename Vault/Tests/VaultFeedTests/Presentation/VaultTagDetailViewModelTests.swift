@@ -169,6 +169,8 @@ extension VaultTagDetailViewModelTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: StubKillphraseKeyStore(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: StubSearchPassphraseKeyStore(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         existingTag: VaultItemTag? = nil,

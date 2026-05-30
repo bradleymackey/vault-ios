@@ -40,7 +40,7 @@ public struct VaultItem: Equatable, Hashable, Identifiable, Sendable {
             tags: metadata.tags,
             visibility: metadata.visibility,
             searchableLevel: metadata.searchableLevel,
-            searchPassphrase: metadata.searchPassphrase,
+            searchPassphraseUpdate: metadata.searchPassphrase.map { .set($0) } ?? .clear,
             killphraseUpdate: metadata.killphrase.map { .set($0) } ?? .clear,
             lockState: metadata.lockState,
             showInQuickType: metadata.showInQuickType,
@@ -116,7 +116,11 @@ extension VaultItem {
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
         public var tags: Set<Identifier<VaultItemTag>>
-        public var searchPassphrase: String?
+        /// One-way digest representing the phrase that, when entered into
+        /// the search bar, reveals this `onlyPassphrase`-visible item. `nil`
+        /// when no passphrase is set. The plaintext phrase is never
+        /// persisted or surfaced through the model.
+        public var searchPassphrase: SearchPassphraseDigest?
         /// One-way digest representing the phrase that, when entered, will
         /// immediately delete this item. `nil` when no killphrase is set.
         /// The plaintext phrase is never persisted or surfaced through the
@@ -144,7 +148,7 @@ extension VaultItem {
             tags: Set<Identifier<VaultItemTag>>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
-            searchPassphrase: String?,
+            searchPassphrase: SearchPassphraseDigest?,
             killphrase: KillphraseDigest?,
             lockState: VaultItemLockState,
             color: VaultItemColor?,
@@ -181,6 +185,17 @@ extension VaultItem {
         case set(KillphraseDigest)
     }
 
+    /// How the search passphrase field should be modified on write.
+    public enum SearchPassphraseUpdate: Equatable, Sendable {
+        /// Keep whatever is already persisted (no-op on update; equivalent
+        /// to `.clear` for a brand-new insert that has no existing value).
+        case unchanged
+        /// Remove any existing search passphrase digest.
+        case clear
+        /// Replace the search passphrase with the provided digest.
+        case set(SearchPassphraseDigest)
+    }
+
     /// Model used for creating or updating a new `VaultItem`, where the `id` is predetermined/generated randomly.
     public struct Write: Equatable, Sendable {
         public var relativeOrder: UInt64
@@ -190,7 +205,7 @@ extension VaultItem {
         public var tags: Set<Identifier<VaultItemTag>>
         public var visibility: VaultItemVisibility
         public var searchableLevel: VaultItemSearchableLevel
-        public var searchPassphrase: String?
+        public var searchPassphraseUpdate: SearchPassphraseUpdate
         public var killphraseUpdate: KillphraseUpdate
         public var lockState: VaultItemLockState
         public var showInQuickType: Bool
@@ -204,7 +219,7 @@ extension VaultItem {
             tags: Set<Identifier<VaultItemTag>>,
             visibility: VaultItemVisibility,
             searchableLevel: VaultItemSearchableLevel,
-            searchPassphrase: String?,
+            searchPassphraseUpdate: SearchPassphraseUpdate,
             killphraseUpdate: KillphraseUpdate,
             lockState: VaultItemLockState,
             showInQuickType: Bool,
@@ -217,7 +232,7 @@ extension VaultItem {
             self.tags = tags
             self.visibility = visibility
             self.searchableLevel = searchableLevel
-            self.searchPassphrase = searchPassphrase
+            self.searchPassphraseUpdate = searchPassphraseUpdate
             self.killphraseUpdate = killphraseUpdate
             self.lockState = lockState
             self.showInQuickType = showInQuickType

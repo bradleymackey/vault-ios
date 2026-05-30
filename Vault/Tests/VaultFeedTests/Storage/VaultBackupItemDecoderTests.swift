@@ -24,7 +24,8 @@ final class VaultBackupItemDecoderTests {
             tags: [tag],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "hello",
+            searchPassphraseSalt: anySearchPassphraseDigest.salt,
+            searchPassphraseDigest: anySearchPassphraseDigest.digest,
             killphraseSalt: anyKillphraseDigest.salt,
             killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
@@ -41,7 +42,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.userDescription == description)
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.searchableLevel == .full)
-        #expect(decodedItem.metadata.searchPassphrase == "hello")
+        #expect(decodedItem.metadata.searchPassphrase == anySearchPassphraseDigest)
         #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.tags == [.init(id: tag)])
@@ -63,6 +64,50 @@ final class VaultBackupItemDecoderTests {
         let decodedItem = try sut.decode(backupItem: item)
 
         #expect(decodedItem.item.secureNote?.contents == "")
+    }
+
+    @Test
+    func decode_legacyV2BackupDropsPlaintextSearchPassphrase() throws {
+        // A vault backup created before V3 carried `searchPassphrase` as
+        // a plaintext String. After V3, that field is gone from the
+        // VaultBackupItem schema and Codable silently drops it. The
+        // resulting model has no digest pair, which is the intended
+        // failure mode: a pre-V3 backup is migrating into a model that
+        // expects HMAC digests, and we accept data loss rather than
+        // round-tripping the plaintext.
+        let legacyJSON = """
+        {
+            "id": "11111111-1111-1111-1111-111111111111",
+            "createdDate": 0,
+            "updatedDate": 0,
+            "relativeOrder": 0,
+            "userDescription": "legacy",
+            "tags": [],
+            "visibility": "ALWAYS",
+            "searchableLevel": "ONLY_PASSPHRASE",
+            "searchPassphrase": "old-plaintext-passphrase",
+            "lockState": "NOT_LOCKED",
+            "item": {
+                "note": {
+                    "data": {
+                        "title": "legacy note",
+                        "format": "PLAIN"
+                    }
+                }
+            },
+            "obfuscationPadding": ""
+        }
+        """
+        let data = Data(legacyJSON.utf8)
+        let backupItem = try JSONDecoder().decode(VaultBackupItem.self, from: data)
+
+        #expect(backupItem.searchPassphraseSalt == nil)
+        #expect(backupItem.searchPassphraseDigest == nil)
+
+        let sut = makeSUT()
+        let decoded = try sut.decode(backupItem: backupItem)
+
+        #expect(decoded.metadata.searchPassphrase == nil)
     }
 
     // MARK: - Encrypted Item
@@ -97,7 +142,8 @@ final class VaultBackupItemDecoderTests {
             tags: [tag],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "hello",
+            searchPassphraseSalt: anySearchPassphraseDigest.salt,
+            searchPassphraseDigest: anySearchPassphraseDigest.digest,
             killphraseSalt: anyKillphraseDigest.salt,
             killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
@@ -114,7 +160,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.userDescription == description)
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.searchableLevel == .full)
-        #expect(decodedItem.metadata.searchPassphrase == "hello")
+        #expect(decodedItem.metadata.searchPassphrase == anySearchPassphraseDigest)
         #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.tags == [.init(id: tag)])
@@ -149,7 +195,8 @@ final class VaultBackupItemDecoderTests {
             tags: [],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "pass",
+            searchPassphraseSalt: anySearchPassphraseDigest.salt,
+            searchPassphraseDigest: anySearchPassphraseDigest.digest,
             killphraseSalt: anyKillphraseDigest.salt,
             killphraseDigest: anyKillphraseDigest.digest,
             lockState: .lockedWithNativeSecurity,
@@ -176,7 +223,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.updated == updateDate)
         #expect(decodedItem.metadata.userDescription == description)
         #expect(decodedItem.metadata.searchableLevel == .full)
-        #expect(decodedItem.metadata.searchPassphrase == "pass")
+        #expect(decodedItem.metadata.searchPassphrase == anySearchPassphraseDigest)
         #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.visibility == .always)
         #expect(decodedItem.metadata.color == .init(red: 0.1, green: 0.2, blue: 0.3))
@@ -208,7 +255,8 @@ final class VaultBackupItemDecoderTests {
             tags: [],
             visibility: .onlySearch,
             searchableLevel: .full,
-            searchPassphrase: "nice",
+            searchPassphraseSalt: anySearchPassphraseDigest.salt,
+            searchPassphraseDigest: anySearchPassphraseDigest.digest,
             killphraseSalt: anyKillphraseDigest.salt,
             killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
@@ -237,7 +285,7 @@ final class VaultBackupItemDecoderTests {
         #expect(decodedItem.metadata.userDescription == description)
         #expect(decodedItem.metadata.searchableLevel == .full)
         #expect(decodedItem.metadata.visibility == .onlySearch)
-        #expect(decodedItem.metadata.searchPassphrase == "nice")
+        #expect(decodedItem.metadata.searchPassphrase == anySearchPassphraseDigest)
         #expect(decodedItem.metadata.killphrase == anyKillphraseDigest)
         #expect(decodedItem.metadata.color == .init(red: 0.2, green: 0.2, blue: 0.3))
         #expect(decodedItem.metadata.lockState == .notLocked)
@@ -350,7 +398,8 @@ extension VaultBackupItemDecoderTests {
             tags: [],
             visibility: .always,
             searchableLevel: .full,
-            searchPassphrase: "",
+            searchPassphraseSalt: anySearchPassphraseDigest.salt,
+            searchPassphraseDigest: anySearchPassphraseDigest.digest,
             killphraseSalt: anyKillphraseDigest.salt,
             killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
@@ -378,7 +427,8 @@ extension VaultBackupItemDecoderTests {
             tags: [],
             visibility: .onlySearch,
             searchableLevel: .full,
-            searchPassphrase: "",
+            searchPassphraseSalt: anySearchPassphraseDigest.salt,
+            searchPassphraseDigest: anySearchPassphraseDigest.digest,
             killphraseSalt: anyKillphraseDigest.salt,
             killphraseDigest: anyKillphraseDigest.digest,
             lockState: .notLocked,
@@ -401,4 +451,9 @@ extension VaultBackupItemDecoderTests {
 private let anyKillphraseDigest = KillphraseDigest(
     salt: Data(repeating: 0x11, count: 16),
     digest: Data(repeating: 0x22, count: 32),
+)
+
+private let anySearchPassphraseDigest = SearchPassphraseDigest(
+    salt: Data(repeating: 0x33, count: 16),
+    digest: Data(repeating: 0x44, count: 32),
 )

@@ -14,8 +14,17 @@ public struct SecureNoteDetailEdits: EditableState {
 
     public var viewConfig: VaultItemViewConfiguration
 
+    /// Plaintext entered by the user when setting or replacing the search
+    /// passphrase. Always blank on screen-open. Sent to the digester and
+    /// then discarded before persistence.
     @FieldValidated(validationLogic: .stringRequiringContent)
     public var searchPassphrase: String = ""
+
+    /// Whether this item already has a stored search-passphrase digest.
+    /// Lets the edit form treat a blank `searchPassphrase` field as "keep
+    /// the existing value" rather than "clear it", mirroring the
+    /// killphrase behavior. The plaintext is never surfaced.
+    public var hasExistingSearchPassphrase: Bool = false
 
     /// Whether this item currently has, or should have, a killphrase set.
     /// The plaintext killphrase is never surfaced to the UI; this is the
@@ -54,6 +63,7 @@ public struct SecureNoteDetailEdits: EditableState {
         color: VaultItemColor?,
         viewConfig: VaultItemViewConfiguration,
         searchPassphrase: String,
+        hasExistingSearchPassphrase: Bool,
         killphraseEnabled: Bool,
         newKillphrase: String,
         tags: Set<Identifier<VaultItemTag>>,
@@ -67,6 +77,7 @@ public struct SecureNoteDetailEdits: EditableState {
         self.color = color
         self.viewConfig = viewConfig
         self.searchPassphrase = searchPassphrase
+        self.hasExistingSearchPassphrase = hasExistingSearchPassphrase
         self.killphraseEnabled = killphraseEnabled
         self.newKillphrase = newKillphrase
         self.tags = tags
@@ -82,7 +93,7 @@ public struct SecureNoteDetailEdits: EditableState {
 
     public var isPassphraseValid: Bool {
         switch viewConfig {
-        case .requiresSearchPassphrase: $searchPassphrase.isValid
+        case .requiresSearchPassphrase: hasExistingSearchPassphrase || $searchPassphrase.isValid
         default: true
         }
     }
@@ -160,6 +171,7 @@ extension SecureNoteDetailEdits {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            hasExistingSearchPassphrase: false,
             killphraseEnabled: false,
             newKillphrase: "",
             tags: [],

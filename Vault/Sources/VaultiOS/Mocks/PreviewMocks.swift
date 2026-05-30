@@ -19,7 +19,7 @@ struct CodeStoreFake: VaultStoreReader {
                 tags: [],
                 visibility: .always,
                 searchableLevel: .full,
-                searchPassphrase: "",
+                searchPassphrase: nil,
                 killphrase: nil,
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
@@ -47,7 +47,7 @@ struct CodeStoreFake: VaultStoreReader {
                 tags: [],
                 visibility: .always,
                 searchableLevel: .full,
-                searchPassphrase: "",
+                searchPassphrase: nil,
                 killphrase: nil,
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
@@ -75,7 +75,7 @@ struct CodeStoreFake: VaultStoreReader {
                 tags: [],
                 visibility: .always,
                 searchableLevel: .full,
-                searchPassphrase: "",
+                searchPassphrase: nil,
                 killphrase: nil,
                 lockState: .notLocked,
                 color: VaultItemColor(color: .green),
@@ -95,7 +95,10 @@ struct CodeStoreFake: VaultStoreReader {
         ),
     ]
 
-    func retrieve(query _: VaultStoreQuery) async throws -> VaultRetrievalResult<VaultItem> {
+    func retrieve(
+        query _: VaultStoreQuery,
+        searchPassphraseMatcher _: (any SearchPassphraseMatcher)?,
+    ) async throws -> VaultRetrievalResult<VaultItem> {
         .init(items: codes)
     }
 

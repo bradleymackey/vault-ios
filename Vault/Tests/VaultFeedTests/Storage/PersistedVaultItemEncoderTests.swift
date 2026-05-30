@@ -194,27 +194,79 @@ extension PersistedVaultItemEncoderTests {
     }
 
     @Test
-    func encodeMetadata_newItemEncodesSearchPassphrase() throws {
+    func encodeMetadata_newItemEncodesSearchPassphraseDigest() throws {
         let sut1 = makeSUT()
+        let digest = SearchPassphraseDigest(
+            salt: Data(repeating: 0x11, count: 16),
+            digest: Data(repeating: 0x22, count: 32),
+        )
         var existingItem = uniqueVaultItem().makeWritable()
-        existingItem.searchPassphrase = "my search"
+        existingItem.searchPassphraseUpdate = .set(digest)
         let existing = try encode(sut: sut1, item: existingItem)
 
-        #expect(existing.searchPassphrase == "my search")
+        #expect(existing.searchPassphraseSalt == digest.salt)
+        #expect(existing.searchPassphraseDigest == digest.digest)
     }
 
     @Test
-    func encodeMetadata_existingItemEncodesSearchPassphrase() throws {
+    func encodeMetadata_existingItemReplacesSearchPassphraseDigest() throws {
         let sut = makeSUT()
+        let first = SearchPassphraseDigest(
+            salt: Data(repeating: 0x01, count: 16),
+            digest: Data(repeating: 0x02, count: 32),
+        )
+        let second = SearchPassphraseDigest(
+            salt: Data(repeating: 0x03, count: 16),
+            digest: Data(repeating: 0x04, count: 32),
+        )
         var item1 = uniqueVaultItem().makeWritable()
-        item1.searchPassphrase = "my search 1"
+        item1.searchPassphraseUpdate = .set(first)
         let existing = try encode(sut: sut, item: item1)
 
         var item2 = uniqueVaultItem().makeWritable()
-        item2.searchPassphrase = "my search 2"
+        item2.searchPassphraseUpdate = .set(second)
         let existing2 = try encode(sut: sut, item: item2, existing: existing)
 
-        #expect(existing2.searchPassphrase == "my search 2")
+        #expect(existing2.searchPassphraseSalt == second.salt)
+        #expect(existing2.searchPassphraseDigest == second.digest)
+    }
+
+    @Test
+    func encodeMetadata_unchangedSearchPassphraseKeepsExisting() throws {
+        let sut = makeSUT()
+        let digest = SearchPassphraseDigest(
+            salt: Data(repeating: 0x05, count: 16),
+            digest: Data(repeating: 0x06, count: 32),
+        )
+        var item1 = uniqueVaultItem().makeWritable()
+        item1.searchPassphraseUpdate = .set(digest)
+        let existing = try encode(sut: sut, item: item1)
+
+        var item2 = uniqueVaultItem().makeWritable()
+        item2.searchPassphraseUpdate = .unchanged
+        let existing2 = try encode(sut: sut, item: item2, existing: existing)
+
+        #expect(existing2.searchPassphraseSalt == digest.salt)
+        #expect(existing2.searchPassphraseDigest == digest.digest)
+    }
+
+    @Test
+    func encodeMetadata_clearSearchPassphraseRemovesDigest() throws {
+        let sut = makeSUT()
+        let digest = SearchPassphraseDigest(
+            salt: Data(repeating: 0x07, count: 16),
+            digest: Data(repeating: 0x08, count: 32),
+        )
+        var item1 = uniqueVaultItem().makeWritable()
+        item1.searchPassphraseUpdate = .set(digest)
+        let existing = try encode(sut: sut, item: item1)
+
+        var item2 = uniqueVaultItem().makeWritable()
+        item2.searchPassphraseUpdate = .clear
+        let existing2 = try encode(sut: sut, item: item2, existing: existing)
+
+        #expect(existing2.searchPassphraseSalt == nil)
+        #expect(existing2.searchPassphraseDigest == nil)
     }
 
     @Test
@@ -590,7 +642,7 @@ extension PersistedVaultItemEncoderTests {
         visibility: VaultItemVisibility = .always,
         searchableLevel: VaultItemSearchableLevel = .full,
         tags: Set<Identifier<VaultItemTag>> = [],
-        searchPassphrase: String = "",
+        searchPassphraseUpdate: VaultItem.SearchPassphraseUpdate = .clear,
         killphraseUpdate: VaultItem.KillphraseUpdate = .clear,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
@@ -604,7 +656,7 @@ extension PersistedVaultItemEncoderTests {
             tags: tags,
             visibility: visibility,
             searchableLevel: searchableLevel,
-            searchPassphrase: searchPassphrase,
+            searchPassphraseUpdate: searchPassphraseUpdate,
             killphraseUpdate: killphraseUpdate,
             lockState: lockState,
             showInQuickType: showInQuickType,

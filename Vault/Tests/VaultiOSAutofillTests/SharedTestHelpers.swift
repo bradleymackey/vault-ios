@@ -14,7 +14,7 @@ func anyVaultItemMetadata(
         tags: [],
         visibility: .always,
         searchableLevel: .full,
-        searchPassphrase: "",
+        searchPassphrase: nil,
         killphrase: nil,
         lockState: lockState,
         color: .black,
@@ -34,6 +34,14 @@ func anyVaultItem() -> VaultItem {
 /// killphrase digest path. Returns a fixed all-zero key so `loadOrCreate`
 /// never fatal-errors when called from VaultDataModel.setup().
 struct StubKillphraseKeyStore: KillphraseKeyStore {
+    func loadOrCreate() async throws -> KeyData<Bits256> {
+        .zero()
+    }
+}
+
+/// No-op key store for autofill snapshot tests that don't exercise the
+/// search-passphrase digest path.
+struct StubSearchPassphraseKeyStore: SearchPassphraseKeyStore {
     func loadOrCreate() async throws -> KeyData<Bits256> {
         .zero()
     }

@@ -96,6 +96,8 @@ extension BackupCreatePDFViewModelTests {
                 backupPasswordStore: backupPasswordStore,
                 killphraseKeyStore: StubKillphraseKeyStore(),
                 killphraseRehashService: nil,
+                searchPassphraseKeyStore: StubSearchPassphraseKeyStore(),
+                searchPassphraseRehashService: nil,
                 backupEventLogger: BackupEventLoggerMock(),
             ),
             clock: clock,

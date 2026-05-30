@@ -631,15 +631,24 @@ final class PersistedLocalVaultStoreTests {
 
     @Test
     func retrieveMatchingQuery_requiresExactPassphraseMatchCaseInsensitive() async throws {
+        let digester = SearchPassphraseDigester(key: .zero())
         let codes: [VaultItem.Write] = [
-            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "n")
-                .makeWritable(),
-            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "N")
-                .makeWritable(),
-            anyOTPAuthCode(accountName: "aaa")
-                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "nn").makeWritable(),
-            anyOTPAuthCode(issuerName: "aaa")
-                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "nnn").makeWritable(),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "n"),
+            ).makeWritable(),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "N"),
+            ).makeWritable(),
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "nn"),
+            ).makeWritable(),
+            anyOTPAuthCode(issuerName: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "nnn"),
+            ).makeWritable(),
         ]
         var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
@@ -648,24 +657,31 @@ final class PersistedLocalVaultStoreTests {
         }
 
         let query = VaultStoreQuery(filterText: "n")
-        let result = try await sut.retrieve(query: query)
+        let result = try await sut.retrieve(query: query, searchPassphraseMatcher: digester)
         #expect(
-            result.items.map(\.metadata.id) == [insertedIDs[0], insertedIDs[1]],
-            "Only the first item is an exact match",
+            Set(result.items.map(\.metadata.id)) == Set([insertedIDs[0], insertedIDs[1]]),
+            "Both items match — passphrase comparison is case-insensitive",
         )
         #expect(result.errors == [])
     }
 
     @Test
     func retrieveMatchingQuery_returnsPassphraseMatches() async throws {
+        let digester = SearchPassphraseDigester(key: .zero())
         let codes: [VaultItem.Write] = [
             anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .full).makeWritable(),
-            anySecureNote(title: "aaa").wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "a")
-                .makeWritable(),
-            anyOTPAuthCode(accountName: "aaa")
-                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "b").makeWritable(),
-            anyOTPAuthCode(accountName: "aaa")
-                .wrapInAnyVaultItem(searchableLevel: .onlyPassphrase, searchPassphrase: "q").makeWritable(),
+            anySecureNote(title: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "a"),
+            ).makeWritable(),
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "b"),
+            ).makeWritable(),
+            anyOTPAuthCode(accountName: "aaa").wrapInAnyVaultItem(
+                searchableLevel: .onlyPassphrase,
+                searchPassphrase: digester.makeDigest(phrase: "q"),
+            ).makeWritable(),
         ]
         var insertedIDs = [Identifier<VaultItem>]()
         for code in codes {
@@ -674,9 +690,9 @@ final class PersistedLocalVaultStoreTests {
         }
 
         let query = VaultStoreQuery(filterText: "a")
-        let result = try await sut.retrieve(query: query)
+        let result = try await sut.retrieve(query: query, searchPassphraseMatcher: digester)
         #expect(
-            result.items.map(\.metadata.id) == [insertedIDs[0], insertedIDs[1]],
+            Set(result.items.map(\.metadata.id)) == Set([insertedIDs[0], insertedIDs[1]]),
             "Matches first on text, second on passphrase",
         )
         #expect(result.errors == [])

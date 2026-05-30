@@ -37,6 +37,7 @@ struct VaultDataModelEditorAdapterTests {
             color: nil,
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            hasExistingSearchPassphrase: false,
             killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
@@ -96,6 +97,7 @@ struct VaultDataModelEditorAdapterTests {
             color: VaultItemColor(red: 0.5, green: 0.5, blue: 0.5),
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            hasExistingSearchPassphrase: false,
             killphraseEnabled: false,
             tags: [],
             lockState: .notLocked,
@@ -112,7 +114,6 @@ struct VaultDataModelEditorAdapterTests {
             store.updateHandler = { _, data in
                 defer { confirmation() }
                 #expect(data.userDescription == "new description")
-                #expect(data.searchPassphrase == "new pass")
                 switch data.item {
                 case let .otpCode(otpCode):
                     #expect(otpCode.data.accountName == "new account name")
@@ -195,7 +196,7 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.userDescription == "second line")
                 #expect(data.visibility == .onlySearch)
                 #expect(data.searchableLevel == .onlyPassphrase)
-                #expect(data.searchPassphrase == "pass")
+                // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
                 switch data.item {
                 case let .secureNote(note):
                     #expect(note.title == "first line")
@@ -238,7 +239,7 @@ struct VaultDataModelEditorAdapterTests {
                     #expect(data.userDescription == "", "Empty because note is encrypted")
                     #expect(data.visibility == .onlySearch)
                     #expect(data.searchableLevel == .onlyPassphrase)
-                    #expect(data.searchPassphrase == "pass")
+                    // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
                     switch data.item {
                     case let .encryptedItem(item):
                         #expect(item.title == "first line")
@@ -289,7 +290,7 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.userDescription == "", "Empty because note is encrypted")
                 #expect(data.visibility == .onlySearch)
                 #expect(data.searchableLevel == .onlyPassphrase)
-                #expect(data.searchPassphrase == "pass")
+                // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
                 switch data.item {
                 case let .encryptedItem(item):
                     #expect(item.title == "first line")
@@ -348,7 +349,7 @@ struct VaultDataModelEditorAdapterTests {
                 #expect(data.userDescription == "second line")
                 #expect(data.visibility == .always)
                 #expect(data.searchableLevel == .full)
-                #expect(data.searchPassphrase == "new pass")
+                // Search passphrase is now stored as one-way digest, so we can't assert plaintext equality here.
                 switch data.item {
                 case let .secureNote(note):
                     #expect(note.title == "first line")
@@ -418,6 +419,8 @@ extension VaultDataModelEditorAdapterTests {
             backupPasswordStore: BackupPasswordStoreMock(),
             killphraseKeyStore: StubKillphraseKeyStore(),
             killphraseRehashService: nil,
+            searchPassphraseKeyStore: StubSearchPassphraseKeyStore(),
+            searchPassphraseRehashService: nil,
             backupEventLogger: BackupEventLoggerMock(),
         ),
         keyDeriverFactory: VaultKeyDeriverFactoryMock = VaultKeyDeriverFactoryMock(),
@@ -439,6 +442,7 @@ extension VaultDataModelEditorAdapterTests {
             description: "desc",
             viewConfig: .alwaysVisible,
             searchPassphrase: "",
+            hasExistingSearchPassphrase: false,
             killphraseEnabled: false,
             newKillphrase: "",
             tags: [],

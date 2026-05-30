@@ -28,6 +28,8 @@ func anyVaultDataModel(
     backupPasswordStore: some BackupPasswordStore = BackupPasswordStoreMock(),
     killphraseKeyStore: (any KillphraseKeyStore)? = nil,
     killphraseRehashService: KillphraseRehashService? = nil,
+    searchPassphraseKeyStore: (any SearchPassphraseKeyStore)? = nil,
+    searchPassphraseRehashService: SearchPassphraseRehashService? = nil,
     backupEventLogger: some BackupEventLogger = BackupEventLoggerMock(),
 ) -> VaultDataModel {
     VaultDataModel(
@@ -40,6 +42,8 @@ func anyVaultDataModel(
         backupPasswordStore: backupPasswordStore,
         killphraseKeyStore: killphraseKeyStore ?? StubKillphraseKeyStore(),
         killphraseRehashService: killphraseRehashService,
+        searchPassphraseKeyStore: searchPassphraseKeyStore ?? StubSearchPassphraseKeyStore(),
+        searchPassphraseRehashService: searchPassphraseRehashService,
         backupEventLogger: backupEventLogger,
     )
 }
@@ -48,6 +52,14 @@ func anyVaultDataModel(
 /// the killphrase digest path. Returns a fixed all-zero key so
 /// `loadOrCreate` never fatal-errors when called from `setup()`.
 struct StubKillphraseKeyStore: KillphraseKeyStore {
+    func loadOrCreate() async throws -> KeyData<Bits256> {
+        .zero()
+    }
+}
+
+/// Default no-op key store for VaultDataModel tests that don't exercise
+/// the search-passphrase digest path. Returns a fixed all-zero key.
+struct StubSearchPassphraseKeyStore: SearchPassphraseKeyStore {
     func loadOrCreate() async throws -> KeyData<Bits256> {
         .zero()
     }
@@ -207,7 +219,7 @@ func anyVaultItemMetadata(
     visibility: VaultItemVisibility = .always,
     tags: Set<Identifier<VaultItemTag>> = [],
     searchableLevel: VaultItemSearchableLevel = .full,
-    searchPassphrase: String? = nil,
+    searchPassphrase: SearchPassphraseDigest? = nil,
     killphrase: KillphraseDigest? = nil,
     lockState: VaultItemLockState = .notLocked,
     color: VaultItemColor? = nil,
@@ -238,7 +250,7 @@ extension SecureNote {
         visibility: VaultItemVisibility = .always,
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String? = nil,
+        searchPassphrase: SearchPassphraseDigest? = nil,
         killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
@@ -267,7 +279,7 @@ extension EncryptedItem {
         visibility: VaultItemVisibility = .always,
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String? = nil,
+        searchPassphrase: SearchPassphraseDigest? = nil,
         killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         showInQuickType: Bool = true,
@@ -296,7 +308,7 @@ extension OTPAuthCode {
         visibility: VaultItemVisibility = .always,
         tags: Set<Identifier<VaultItemTag>> = [],
         searchableLevel: VaultItemSearchableLevel = .full,
-        searchPassphrase: String? = nil,
+        searchPassphrase: SearchPassphraseDigest? = nil,
         killphrase: KillphraseDigest? = nil,
         lockState: VaultItemLockState = .notLocked,
         color: VaultItemColor? = nil,
