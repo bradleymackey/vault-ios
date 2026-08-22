@@ -8,7 +8,7 @@ on:
     branches: [main]
 
 env:
-  XCODE_VERSION: "26.5"
+  XCODE_VERSION: "26.6"
 
 jobs:
   release-config:
